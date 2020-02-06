@@ -1,11 +1,18 @@
 import React from "react";
+import {HashRouter, Route, Switch} from "react-router-dom";
+
+import Dashboard from "../members/Dashboard";
+import Login from "./Login";
 
 const App: React.FunctionComponent = () => {
 
   return (
-    <div className="App">
-      <h1>Hello World!</h1>
-    </div>
+    <HashRouter>
+      <Switch>
+        <Route exact path = "/" component = {Dashboard} />
+        <Route exact path = "/login" component = {Login} />
+      </Switch>
+    </HashRouter>
   );
 };
 
