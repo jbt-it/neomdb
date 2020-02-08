@@ -1,4 +1,9 @@
+/**
+ * Component that handles the login process
+ */
 import React, { useState } from "react";
+
+import api from "../utils/api";
 
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -15,6 +20,16 @@ const Login: React.FunctionComponent = () => {
    * Handles the API call and cleans state thereafter
    */
   const login: VoidFunction = () => {
+    api.post("/login", {
+      username: username,
+      password: password
+    })
+    .then((res) => {
+      console.log(res.data);
+    }, (err) => {
+      console.log(err);
+    });
+
     setUsername("");
     setPassword("");
   };
