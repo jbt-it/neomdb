@@ -8,16 +8,15 @@ import Textfield from "@material-ui/core/TextField";
 
 const Login: React.FunctionComponent = () => {
 
-  const [username, setUsername] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   /**
    * Handles the API call and cleans state thereafter
    */
   const login: VoidFunction = () => {
-    // TODO: Implement API call here
-    setUsername(null);
-    setPassword(null);
+    setUsername("");
+    setPassword("");
   };
 
   return (
@@ -26,9 +25,9 @@ const Login: React.FunctionComponent = () => {
         <CardContent>
           <h1>Login</h1>
           <form className="login-form">
-            <Textfield id="username" label="Benutzername" type="text"
+            <Textfield id="username" label="Benutzername" type="text" value={username}
               onChange = {event => {setUsername(event.target.value);}}/>
-            <Textfield id="password" label="Passwort" type="password"
+            <Textfield id="password" label="Passwort" type="password" value={password}
               onChange = {event => {setPassword(event.target.value);}}/>
           </form>
         </CardContent>
