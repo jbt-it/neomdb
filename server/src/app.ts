@@ -1,11 +1,17 @@
+/**
+ * Configure our API endpoint
+ */
 import express = require("express");
 import dotenv = require("dotenv");
+
+import membersRoutes = require("./members/membersRoutes");
+
 dotenv.config();
 const app = express();
 
 app.set("port", process.env.PORT);
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 /**
@@ -19,11 +25,8 @@ app.all("/*", (req, res, next) => {
 });
 
 /**
- * Handle login request and respond with entered data
+ * Use routes
  */
-app.post("/login", (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
-});
+app.use("/users", membersRoutes);
 
 export default app;
