@@ -14,8 +14,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-    "start": "nodemon ./dist/server.js",
+    "start": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "prod": "npm run build && npm run start",
     "lint": "tslint --project ./"
   }
