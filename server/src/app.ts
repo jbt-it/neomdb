@@ -9,8 +9,6 @@ import membersRoutes = require("./members/membersRoutes");
 dotenv.config();
 const app = express();
 
-app.set("port", process.env.PORT);
-
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
