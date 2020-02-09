@@ -2,7 +2,7 @@ import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
 
 import Dashboard from "../members/Dashboard";
-import Login from "./Login";
+import Login from "../members/Login";
 
 const App: React.FunctionComponent = () => {
 

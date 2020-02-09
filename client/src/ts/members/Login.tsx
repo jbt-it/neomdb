@@ -20,7 +20,7 @@ const Login: React.FunctionComponent = () => {
    * Handles the API call and cleans state thereafter
    */
   const login: VoidFunction = () => {
-    api.post("/login", {
+    api.post("/users/login", {
       username: username,
       password: password
     })
