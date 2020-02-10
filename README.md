@@ -2,6 +2,9 @@
 
 ## Development
 ### Backend
+
+Download the .env file from the nextcloud and copy it into `/server`
+
 The server uses https to secure the communication between frontend and backend. 
 To continue developing you'll need a self-signed certificate.
 
@@ -18,3 +21,16 @@ To continue developing you'll need a self-signed certificate.
       3. Click `Add Exception`
       4. Type `https://localhost:3030` into the form
       5. Add Exception
+
+
+Development database can be found in the nextcloud, use MySQL and phpmyadmin within docker to continue development
+    
+  1. Install docker
+  2. Create MySQL database `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d mysql:latest`
+  3. Start phpmyadmin instance `docker run --name mdb-phpmyadmin -d --link mdb:db -p 8081:80 phpmyadmin/phpmyadmin`
+  4. In Browser navigate to `localhost:8081`
+  5. Create new database user with all global privileges
+  __IMPORTANT__: use the `Native MySQL authentication` as Authentication Plugin or database connection will fail.
+  For more iformation see: https://github.com/mysqljs/mysql/pull/2233
+  6. Create new database and import file from nextcloud
+  7. Update your .env file accordingly
