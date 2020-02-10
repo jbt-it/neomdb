@@ -8,12 +8,15 @@ dotenv.config();
 
 import app from "./app";
 
-const config = {
+/**
+ * Config to enable https requests to the backend
+ */
+const serverConfig = {
   key: fs.readFileSync(process.env.PATH_TO_KEY),
   cert: fs.readFileSync(process.env.PATH_TO_CERT)
 };
 
-const server = https.createServer(config, app);
+const server = https.createServer(serverConfig, app);
 
 server.listen(process.env.PORT, () => {
   console.log("Listening on port " + process.env.PORT);
