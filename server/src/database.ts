@@ -10,23 +10,25 @@ const databaseConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
+  connectionLimit: 50
 };
+
+const pool: mysql.Pool = mysql.createPool(databaseConfig);
 
 /**
- * Create connection to database
+ * Aquires connection from pool, executes query, releaeses connection and
+ * returns promise
+ * @param sql Query string
+ * @param args Array with query arguments
  */
-const connectDatabase = (): mysql.Connection => {
-  const connection = mysql.createConnection(databaseConfig);
-
-  connection.connect((err): mysql.MysqlError => {
-    if (err) {
-      console.error("Error connecting database \n" + err.stack);
-      return;
-    }
-    console.log("Database connection established ...");
+export const query = (sql: string, args: (string | number)[]) => {
+  return new Promise((resolve, reject) => {
+    pool.query(sql, args, (queryError: mysql.MysqlError, result: (string | number)[]) => {
+        if (queryError) {
+          return reject(queryError);
+        }
+        return resolve(result);
+    });
   });
-  return connection;
 };
-
-module.exports = connectDatabase();

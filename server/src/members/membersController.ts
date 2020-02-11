@@ -2,24 +2,25 @@
  * Definition of the handler functions for the users module
  */
 import {Request, Response} from "express";
-
-import * as usersTypes from "members/membersTypes";
+import database = require("../database");
 
 /**
  * Handles transmitted credentials and replies accordingly
  */
 export const replyCredentials = (req: Request, res: Response): void => {
-  res.json(checkCredentials(req.body));
-};
-
-/**
- * Checks if complete credenials were specified
- * @param credentials Credentials specified by the user
- */
-const checkCredentials = (credentials: usersTypes.Credentials): string | usersTypes.Credentials => {
- if(credentials.username === "" || credentials.password === ""){
-   return("credetials are not complete");
+ if(req.body.username === "" || req.body.password === ""){
+   res.status(400).send("Credentials incomplete");
  } else {
-  return(credentials);
+   database.query("SELECT * FROM mitglied WHERE name = ? AND passwort = ?", [req.body.username, req.body.password])
+    .then((result: (string | number)[]) => {
+      if (result.length === 0) {
+        res.status(401).send("Username or password wrong");
+      }
+      res.status(200).json(JSON.stringify(result));
+    })
+    .catch(err => {
+      console.log("Error " + err);
+      res.status(500).send("Query Error");
+    });
  }
 };
