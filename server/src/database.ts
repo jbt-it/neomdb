@@ -24,7 +24,7 @@ const pool: mysql.Pool = mysql.createPool(databaseConfig);
  */
 export const query = (sql: string, args: (string | number)[]) => {
   return new Promise((resolve, reject) => {
-    pool.query(sql, args, (queryError: mysql.MysqlError, result) => {
+    pool.query(sql, args, (queryError: mysql.MysqlError, result: (string | number)[]) => {
         if (queryError) {
           return reject(queryError);
         }
