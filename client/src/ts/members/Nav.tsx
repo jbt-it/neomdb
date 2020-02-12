@@ -1,20 +1,4 @@
-import React, { ReactElement, useState } from "react";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-import EventIcon from "@material-ui/icons/Event";
-import BuildIcon from "@material-ui/icons/Build";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import AppsIcon from "@material-ui/icons/Apps";
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -28,18 +12,13 @@ import {
 } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import {NavLink} from 'react-router-dom';
-import Collapse from "@material-ui/core/Collapse";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+
+import MenuDrawer from './MenuDrawer';
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   list: {
     width: 250
-  },
-  fullList: {
-    width: "auto"
   },
   root: {
     flexGrow: 1
@@ -96,178 +75,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   }
 }));
 
-// interface for the drawer props
-interface DrawerProps {
-  open: boolean,
-  drawer: Function
-}
-
-/**
- * a drawer which enters from the left and depicts various options for navigation
- * 
- * @param props
- */
-const SwipeableTemporaryDrawer = (props: DrawerProps) => {
-  const classes = useStyles();
-
-  const [memberOpen, setMemberOpen] = useState(false);
-
-  /**
-   * handles the click event on the different extendable list items
-   * 
-   * @param value topic of the extendable list item
-   */
-  const handleClick = (value: string) => (event: React.MouseEvent) =>  {
-    switch (value){
-      case "Mitglieder" : {
-        setMemberOpen(!memberOpen);
-      }
-    }
-  }
-
-  // the side list, which containts all navigational options
-  const sideList = () => (
-    <div className={classes.list}>
-      <List>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <NavLink exact to="/" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary="Dashboard" />
-          </NavLink>
-        </ListItem>
-        <ListItem button onClick={handleClick("Mitglieder")}>
-          <ListItemIcon>
-            <PeopleAltIcon />
-          </ListItemIcon>
-          <ListItemText primary="Mitglieder" />
-          {memberOpen ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={memberOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Mitglieder" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Gesamtübersicht"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Vorstand" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Der Vorstand"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/EvHistorie" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Ewige EV-Liste"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Expertenwissen" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Expertenwissen"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Geburtstage" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Geburtstage"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Generationenbeauftragte" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Generationenbeauftragte"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Traineebereich" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Traineebereich"} />
-              </NavLink>
-            </ListItem>
-            <ListItem button onClick={props.drawer(false)}>
-              <NavLink exact to="/Kuratoren" activeStyle={{color:"orange", textDecoration:"none"}}>
-                <ListItemText primary={"Kuratoren"} />
-              </NavLink>
-            </ListItem>
-          </List>
-        </Collapse>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <TrendingUpIcon />
-          </ListItemIcon>
-          <NavLink exact to="/Projekte" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary={"Projekte"} />
-          </NavLink>
-        </ListItem>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <EventIcon />
-          </ListItemIcon>
-          <NavLink exact to="/Veranstaltungen" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary={"Veranstaltungen"} />
-          </NavLink>
-        </ListItem>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <BuildIcon />
-          </ListItemIcon>
-          <NavLink exact to="/Tools" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary={"Tools"} />
-          </NavLink>
-        </ListItem>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <AppsIcon />
-          </ListItemIcon>
-          <NavLink exact to="/MeineFunktionen" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary={"Meine Funktionen"} />
-          </NavLink>
-        </ListItem>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <MoreHorizIcon />
-          </ListItemIcon>
-          <NavLink exact to="/WeitereFunktionen" activeStyle={{color:"orange", textDecoration:"none"}}>
-            <ListItemText primary={"Weitere Funktionen"} />
-          </NavLink>
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-      <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <EmojiObjectsIcon />
-          </ListItemIcon>
-          <ListItemText primary={"KVP"} />
-        </ListItem>
-        <ListItem button onClick={props.drawer(false)}>
-          <ListItemIcon>
-            <ExitToAppIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Logout"} />
-        </ListItem>
-      </List>
-    </div>
-  );
-
-  
-  return (
-    <div
-    role="presentation"
-    onKeyDown={props.drawer(false)}
-    >
-      <SwipeableDrawer
-        open={props.open}
-        onClose={props.drawer(false)}
-        onOpen={props.drawer(true)}
-      >
-        {sideList()}
-      </SwipeableDrawer>
-    </div>
-  );
-}
-
 /**
  * the navigation of the application 
  */
-const Nav = () => {
+const Nav:React.FunctionComponent = () => {
 
   const classes = useStyles();
 
@@ -306,7 +117,7 @@ const Nav = () => {
       <MenuIcon />
     </IconButton>
     <Typography className={classes.title} variant="h6" noWrap>
-      JBT neoMDB LOGO{" "}
+      JBT neoMDB
     </Typography>
     <div className={classes.search}>
       <div className={classes.searchIcon}>
@@ -323,7 +134,7 @@ const Nav = () => {
     </div>
   </Toolbar>
 </AppBar>
-<SwipeableTemporaryDrawer open={state} drawer={toggleDrawer}/>
+<MenuDrawer open={state} drawer={toggleDrawer}/>
 </div>);
 }
 
