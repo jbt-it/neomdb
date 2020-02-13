@@ -4,6 +4,7 @@
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
 
+import {Request, Response, NextFunction} from "express";
 import * as globalTypes from "./globalTypes";
 
 const JWTKeys = {
@@ -38,5 +39,16 @@ export const verifyJWT = (token: string) => {
   }
   catch (err) {
     return false;
+  }
+};
+
+/**
+ * Verifies JWT and protects following routes from unauthorised access
+ */
+export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization && verifyJWT(req.headers.authorization.replace("Bearer ", ""))) {
+    next();
+  } else {
+    return res.status(401).send("Authentication failed: Please log in");
   }
 };
