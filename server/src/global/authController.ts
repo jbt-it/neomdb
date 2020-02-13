@@ -1,5 +1,5 @@
 /**
- * Definition of the functions required for authentification
+ * Definition of the functions required for authentification and authorization
  */
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
@@ -51,4 +51,21 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
   } else {
     return res.status(401).send("Authentication failed: Please log in");
   }
+};
+
+/**
+ * Checks if user has the right permissions to use the following routes
+ * Every permission in the permissions array needs to be included in the permissions
+ * of the received jwt
+ * @param permissions Array of permissions which are allowed to use following routes
+ */
+export const restrictRoutes = (permissions: number[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const jwtPermissions = verifyJWT(req.headers.authorization.replace("Bearer ", "")).permissions;
+    if(permissions.every(element => jwtPermissions.includes(element))) {
+      next();
+    } else {
+      return res.status(401).send("Authorization failed: You are not permitted to do this");
+    }
+  };
 };
