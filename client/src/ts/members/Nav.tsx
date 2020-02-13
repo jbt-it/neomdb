@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     flexGrow: 1
   },
   bar: {
-    backgroundColor: "orange"
+    backgroundColor: "rgb(246,137,31)"
   },
   menuButton: {
     marginRight: theme.spacing(2)
