@@ -38,3 +38,20 @@ export const replyCredentials = (req: Request, res: Response): void => {
     });
  }
 };
+
+/**
+ * Retrieves an overview of all registered users
+ */
+export const retrieveMemberList = (req: Request, res: Response): void => {
+  database.query(
+   `SELECT nachname, vorname, handy
+   FROM mitglied
+   ORDER BY nachname DESC`,
+   [])
+   .then((result: membersTypes.GetMembersQueryResult) => {
+     res.status(200).json(result);
+   })
+   .catch(err => {
+    res.status(500).send("Query Error");
+   });
+};
