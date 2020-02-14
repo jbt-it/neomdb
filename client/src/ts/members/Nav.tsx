@@ -17,9 +17,6 @@ import MenuDrawer from './MenuDrawer';
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  list: {
-    width: 250
-  },
   root: {
     flexGrow: 1
   },
@@ -82,7 +79,7 @@ const Nav:React.FunctionComponent = () => {
 
   const classes = useStyles();
 
-  const [state, setState] = React.useState(false);
+  const [isMenuDrawerOpen, setIsMenuDrawerOpen] = React.useState(false);
 
   /**
    * handles the toogle drawer event
@@ -101,7 +98,7 @@ const Nav:React.FunctionComponent = () => {
       return;
     }
 
-    setState(open);
+    setIsMenuDrawerOpen(open);
   };
 
   return (<div>
@@ -124,7 +121,7 @@ const Nav:React.FunctionComponent = () => {
         <SearchIcon />
       </div>
       <InputBase
-        placeholder="Search…"
+        placeholder="Suche..."
         classes={{
           root: classes.inputRoot,
           input: classes.inputInput
@@ -134,7 +131,7 @@ const Nav:React.FunctionComponent = () => {
     </div>
   </Toolbar>
 </AppBar>
-<MenuDrawer open={state} drawer={toggleDrawer}/>
+<MenuDrawer open={isMenuDrawerOpen} drawer={toggleDrawer}/>
 </div>);
 }
 
