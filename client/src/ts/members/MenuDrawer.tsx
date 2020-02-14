@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
@@ -14,34 +14,15 @@ import AppsIcon from "@material-ui/icons/Apps";
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import {
-    createStyles,
-    Theme,
-    makeStyles,
-    } from "@material-ui/core/styles";
-
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-    list: {
-        width: 300
-      },
-      listItem: {
-        color: "black",
-        textDecoration: "none"
-      },
-      subListItemText: {
-        marginLeft: 65,
-      }
-}));
 
   // interface for the drawer props
   interface DrawerProps {
     open: boolean,
-    drawer: Function
+    drawer: Function,
   }
   
   /**
@@ -50,9 +31,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
    * @param props
    */
   const MenuDrawer:React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
-    const classes = useStyles();
-  
-    const [activeNavLink, setActiveNavLink] = useState("");
+
+    useEffect(() => {
+      let url = window.location.href;
+      setActiveNavLink(url.slice(url.lastIndexOf("/"),url.length));
+  });
+
+    const [activeNavLink, setActiveNavLink] = useState();
     const [memberOpen, setMemberOpen] = useState(false);
     const [toolsOpen, setToolsOpen] = useState(false);
 
@@ -83,10 +68,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
      * 
      * @param value topic of the nav link
      */
-    const handleNavLinkClick = (value:string) => (event: React.MouseEvent) => {
+    const handleNavLinkClick = (pathname:string) => (event: React.MouseEvent) => {
       setMemberOpen(false);
       setToolsOpen(false);
-      setActiveNavLink(value);
+      setActiveNavLink(pathname)
     }
 
     /**
@@ -95,20 +80,38 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
      * @param value the topic of the nav link
      */
     const determineIconColor = (value:string) => {
-      // when the value and the activeNavLink are equivalent then the color of should change
+        // special case for the collapseable menu entries: when a sub menu entry is clicked the parent menu entry will be also highlighted for better orientation
+        switch (value) {
+            case "Mitglieder" : {
+                if (activeNavLink === "/Mitglieder" || activeNavLink === "/Vorstand" || activeNavLink === "/EvHistorie" 
+                  || activeNavLink === "/Expertenwissen" || activeNavLink === "/Geburtstage" || activeNavLink === "/Generationenbeauftragte"
+                  || activeNavLink === "/Traineebereich" || activeNavLink === "/Kuratoren") {
+                    return {color: "rgb(246,137,31)"};
+                }
+                break;
+            }
+            case "Tools" : {
+              if (activeNavLink === "/MMTracking" || activeNavLink === "/PL-QM-Tool" || activeNavLink === "/Raumreservierung" 
+                || activeNavLink === "/Innovationsmanagement") {
+                return {color: "rgb(246,137,31)"};
+              }
+              break;
+            }
+        }
+      // when the value and the activeNavLink are equivalent the color should change
       if(value === activeNavLink){
         return {color: "rgb(246,137,31)"};
       }
     }
 
     // the side list, which containts all navigational options
-    const sideList = () => (
-      <div className={classes.list}>
+    const sideList = (pathname:string) => (
+      <div className="menuDrawer">
         <List>
-            <NavLink exact to="/" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Dashboard")}>
+            <NavLink exact to="/" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
                 <ListItemIcon>
-                  <DashboardIcon style={determineIconColor("Dashboard")}/>
+                  <DashboardIcon style={determineIconColor("/")}/>
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
             </ListItem>
@@ -122,60 +125,60 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
           </ListItem>
           <Collapse in={memberOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-            <NavLink exact to="/Mitglieder" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+            <NavLink exact to="/Mitglieder" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
-                  <ListItemText className={classes.subListItemText} primary={"Gesamtübersicht"} />
+                  <ListItemText className="subListItem" primary={"Gesamtübersicht"} />
               </ListItem>
               </NavLink>
-              <NavLink exact to="/Vorstand" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/Vorstand" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Der Vorstand"} />
+                    <ListItemText className="subListItem" primary={"Der Vorstand"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/EvHistorie" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/EvHistorie" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Ewige EV-Liste"} />
+                    <ListItemText className="subListItem" primary={"Ewige EV-Liste"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Expertenwissen" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/Expertenwissen" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Expertenwissen"} />
+                    <ListItemText className="subListItem" primary={"Expertenwissen"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Geburtstage" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/Geburtstage" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Geburtstage"} />
+                    <ListItemText className="subListItem" primary={"Geburtstage"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Generationenbeauftragte" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/Generationenbeauftragte" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Generationenbeauftragte"} />          
+                    <ListItemText className="subListItem" primary={"Generationenbeauftragte"} />          
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Traineebereich" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Mitglieder")}>
+              <NavLink exact to="/Traineebereich" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Traineebereich"} />
+                    <ListItemText className="subListItem" primary={"Traineebereich"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Kuratoren" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Kuratoren")}>
+              <NavLink exact to="/Kuratoren" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Kuratoren"} />
+                    <ListItemText className="subListItem" primary={"Kuratoren"} />
                 </ListItem>
               </NavLink>
             </List>
           </Collapse>
-          <NavLink exact to="/Projekte" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Projekte")}>
+          <NavLink exact to="/Projekte" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
                 <ListItemIcon>
-                <TrendingUpIcon style={determineIconColor("Projekte")}/>
+                <TrendingUpIcon style={determineIconColor("/Projekte")}/>
                 </ListItemIcon>
                 <ListItemText primary={"Projekte"} />
             </ListItem>
           </NavLink>
-          <NavLink exact to="/Veranstaltungen" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Veranstaltungen")}> 
+          <NavLink exact to="/Veranstaltungen" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}> 
             <ListItem button onClick={props.drawer(false)}>
                 <ListItemIcon>
-                <EventIcon style={determineIconColor("Veranstaltungen")}/>
+                <EventIcon style={determineIconColor("/Veranstaltungen")}/>
                 </ListItemIcon>
                 <ListItemText primary={"Veranstaltungen"} />
             </ListItem>
@@ -190,40 +193,40 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
           </ListItem>
           <Collapse in={toolsOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-            <NavLink exact to="/MMTracking" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Tools")}>
+            <NavLink exact to="/MMTracking" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
-                  <ListItemText className={classes.subListItemText} primary={"MM-Tracking"} />
+                  <ListItemText className="subListItem" primary={"MM-Tracking"} />
               </ListItem>
               </NavLink>
-              <NavLink exact to="/PL-QM-Tool" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Tools")}>
+              <NavLink exact to="/PL-QM-Tool" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"PL-/QM-Tool"} />
+                    <ListItemText className="subListItem" primary={"PL-/QM-Tool"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Raumreservierung" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Tools")}>
+              <NavLink exact to="/Raumreservierung" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Raumreservierung"} />
+                    <ListItemText className="subListItem" primary={"Raumreservierung"} />
                 </ListItem>
               </NavLink>
-              <NavLink exact to="/Innovationsmanagement" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("Tools")}>
+              <NavLink exact to="/Innovationsmanagement" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
-                    <ListItemText className={classes.subListItemText} primary={"Innovationsmanagement"} />
+                    <ListItemText className="subListItem" primary={"Innovationsmanagement"} />
                 </ListItem>
               </NavLink>
             </List>
           </Collapse>
-          <NavLink exact to="/MeineFunktionen" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("MeineFunktionen")}>
+          <NavLink exact to="/MeineFunktionen" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
                 <ListItemIcon>
-                <AppsIcon style={determineIconColor("MeineFunktionen")}/>
+                <AppsIcon style={determineIconColor("/MeineFunktionen")}/>
                 </ListItemIcon>
                 <ListItemText primary={"Meine Funktionen"} />
             </ListItem>
           </NavLink>
-          <NavLink exact to="/WeitereFunktionen" className={classes.listItem} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("WeitereFunktionen")}>
+          <NavLink exact to="/WeitereFunktionen" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
                 <ListItemIcon>
-                <MoreHorizIcon style={determineIconColor("WeitereFunktionen")}/>
+                <MoreHorizIcon style={determineIconColor("/WeitereFunktionen")}/>
                 </ListItemIcon>
                 <ListItemText primary={"Weitere Funktionen"} />
             </ListItem>
@@ -231,10 +234,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         </List>
         <Divider />
         <List>
-          <NavLink exact to="/KVP" className={classes.listItem} activeStyle={{color: "rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick("KVP")}>
+          <NavLink exact to="/KVP" className="listItem" activeStyle={{color: "rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
               <ListItemIcon>
-                <EmojiObjectsIcon style={determineIconColor("KVP")}/>
+                <EmojiObjectsIcon style={determineIconColor("/KVP")}/>
               </ListItemIcon>
               <ListItemText primary={"KVP"} />
             </ListItem>
@@ -260,7 +263,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
           onClose={props.drawer(false)}
           onOpen={props.drawer(true)}
         >
-          {sideList()}
+          {sideList(useLocation().pathname)}
         </SwipeableDrawer>
       </div>
     );
