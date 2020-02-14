@@ -4,6 +4,7 @@
 import express = require("express");
 const router = express.Router();
 
+import * as authController from "../global/authController";
 import * as usersController from "./membersController";
 
 router.post("/login", usersController.replyCredentials);
