@@ -1,8 +1,24 @@
 // contains the syling of the menu drawer
 
 .menuDrawer {
-    width: 20em;
+    width: 19em;
   }
+.avatar-section {
+  margin-left: 0.5em;
+    padding: 0.5em;
+    .MuiAvatar-root {
+      margin-bottom: 0.5em;
+    }
+  }
+.avatar-info {
+  .avatar-name {
+    font-weight: bold;
+    font-size: medium;
+  }
+  .avatar-mail {
+    font-size: small;
+  }
+}
 .listItem {
     color: black;
     text-decoration: none;
@@ -10,7 +26,6 @@
 .subListItem {
     margin-left: 4em;
   }
-
 .icon {
   color: rgb(246,137,31);
 }

@@ -11,29 +11,30 @@ import EventIcon from "@material-ui/icons/Event";
 import BuildIcon from "@material-ui/icons/Build";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import AppsIcon from "@material-ui/icons/Apps";
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import {NavLink, useLocation} from 'react-router-dom';
+import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
+import {NavLink, useLocation} from "react-router-dom";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import { Avatar, Typography } from "@material-ui/core";
 
-  // interface for the drawer props
+  // Interface for the drawer props
   interface DrawerProps {
-    open: boolean,
-    drawer: Function,
+    open: boolean;
+    drawer: Function;
   }
-  
+
   /**
-   * a drawer which enters from the left and depicts various options for navigation
-   * 
+   * A drawer which enters from the left and depicts various options for navigation
+   *
    * @param props
    */
   const MenuDrawer:React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
 
     useEffect(() => {
-      let url = window.location.href;
+      const url = window.location.href;
       setActiveNavLink(url.slice(url.lastIndexOf("/"),url.length));
   });
 
@@ -61,18 +62,18 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
           break;
         }
       }
-    }
-  
+    };
+
     /**
      * handles the click Event of the nav links 
-     * 
+     *
      * @param value topic of the nav link
      */
     const handleNavLinkClick = (pathname:string) => (event: React.MouseEvent) => {
       setMemberOpen(false);
       setToolsOpen(false);
       setActiveNavLink(pathname)
-    }
+    };
 
     /**
      * determines the color for text and icons 
@@ -80,7 +81,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
      * @param value the topic of the nav link
      */
     const determineIconColor = (value:string) => {
-        // special case for the collapseable menu entries: when a sub menu entry is clicked the parent menu entry will be also highlighted for better orientation
+        // Special case for the collapseable menu entries: when a sub menu entry is clicked the parent menu entry will be also highlighted for better orientation
         switch (value) {
             case "Mitglieder" : {
                 if (activeNavLink === "/Mitglieder" || activeNavLink === "/Vorstand" || activeNavLink === "/EvHistorie" 
@@ -98,15 +99,23 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
               break;
             }
         }
-      // when the value and the activeNavLink are equivalent the color should change
+      // When the value and the activeNavLink are equivalent the color should change
       if(value === activeNavLink){
         return {color: "rgb(246,137,31)"};
       }
-    }
+    };
 
-    // the side list, which containts all navigational options
+    // The side list, which containts all navigational options
     const sideList = (pathname:string) => (
       <div className="menuDrawer">
+        <div className="avatar-section">
+          <Avatar/>
+          <div className="avatar-info">
+            <Typography className="avatar-name">Lennart Rukower</Typography>
+            <Typography className="avatar-mail">l.rukower@studentische-bartung.de</Typography>
+          </div>
+        </div>
+        <Divider/>
         <List>
             <NavLink exact to="/" className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
             <ListItem button onClick={props.drawer(false)}>
@@ -251,8 +260,8 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
         </List>
       </div>
     );
-  
-    
+
+
     return (
       <div
       role="presentation"
@@ -267,6 +276,6 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
         </SwipeableDrawer>
       </div>
     );
-  }
+  };
 
   export default MenuDrawer;
