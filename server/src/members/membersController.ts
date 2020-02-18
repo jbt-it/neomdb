@@ -11,7 +11,7 @@ import {JWTPayload} from "../global/globalTypes";
 /**
  * Obtains username and corresponding permissions
  */
-export const replyCredentials = (req: Request, res: Response): void => {
+export const login = (req: Request, res: Response): void => {
  if(req.body.username === "" || req.body.password === ""){
    res.status(400).send("Credentials incomplete");
  } else {
