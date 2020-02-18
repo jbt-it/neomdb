@@ -29,12 +29,16 @@ export const replyCredentials = (req: Request, res: Response): void => {
       }
       bcrypt.compare(req.body.password, result[0].passwordHash)
       .then((match) => {
+        if(match) {
       const payload: JWTPayload = {
         mitgliedID: result[0].mitgliedID,
         name: result[0].name,
         permissions: result[0].permissions.split(",").map(Number)
       };
       res.status(200).json(auth.generateJWT(payload));
+        } else {
+          res.status(401).send("Username ot password wrong");
+        }
     })
       .catch((err) => {
         res.status(401).send("Username or password wrong");
