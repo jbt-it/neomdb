@@ -25,6 +25,11 @@ const Login: React.FunctionComponent = () => {
       password: password
     })
     .then((res) => {
+      if (res.status = 200){
+        localStorage.setItem("token", res.data);
+      } else {
+        console.log("Login Failed");
+      }
       console.log(res.data);
     }, (err) => {
       console.log(err);
