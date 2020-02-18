@@ -62,3 +62,10 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
     res.status(500).send("Query Error");
    });
 };
+
+/**
+ * Creates a new member
+ */
+export const createNewMember = (req: Request, res: Response): void => {
+ console.log(req.body);
+};
