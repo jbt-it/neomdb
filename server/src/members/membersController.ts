@@ -55,3 +55,21 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
     res.status(500).send("Query Error");
    });
 };
+
+/**
+ * Retrieves an overview of all issued permissions
+ */
+export const retrievePermissionsList = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT vorname, nachname, berechtigung_berechtigungID AS permission
+    FROM mitglied
+    INNER JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+  [])
+  .then((result: membersTypes.GetPermissionsQueryResult) => {
+    res.status(200).json(result);
+  })
+  .catch((err) => {
+    res.status(500).send("Query Error: Getting permissions failed");
+  });
+};
+

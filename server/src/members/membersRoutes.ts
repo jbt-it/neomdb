@@ -15,4 +15,6 @@ router.post("/login", usersController.login);
 router.use(authController.protectRoutes);
 
 router.get("/", usersController.retrieveMemberList);
+router.get("/permissions", usersController.retrievePermissionsList);
+
 module.exports = router;
