@@ -73,3 +73,18 @@ export const retrievePermissionsList = (req: Request, res: Response): void => {
   });
 };
 
+/**
+ * Create new permission
+ */
+export const createPermission = (req: Request, res: Response): void => {
+  database.query(
+    `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
+    VALUES (?, ?)`,
+  [req.body.memberID, req.body.permissionID])
+  .then((result) => {
+    res.status(201).send("Permission created");
+  })
+  .catch((err) => {
+    res.status(500).send("Database Error: Creating Permission failed");
+  });
+};
