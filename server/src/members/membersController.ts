@@ -88,3 +88,20 @@ export const createPermission = (req: Request, res: Response): void => {
     res.status(500).send("Database Error: Creating Permission failed");
   });
 };
+
+/**
+ * Delete issued permission
+ */
+export const deletePermission = (req: Request, res: Response): void => {
+  database.query(
+    `DELETE
+    FROM mitglied_has_berechtigung
+    WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
+  [req.body.memberID, req.body.permissionID])
+  .then((result) => {
+    res.status(200).send("Permission deleted");
+  })
+  .catch((err) => {
+    res.status(500).send("Database Error: Deleting Permission failed");
+  });
+};
