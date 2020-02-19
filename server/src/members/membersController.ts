@@ -30,14 +30,14 @@ export const login = (req: Request, res: Response): void => {
       bcrypt.compare(req.body.password, result[0].passwordHash)
       .then((match) => {
         if(match) {
-      const payload: JWTPayload = {
-        mitgliedID: result[0].mitgliedID,
-        name: result[0].name,
-        permissions: result[0].permissions.split(",").map(Number)
-      };
-      res.status(200).json(auth.generateJWT(payload));
+          const payload: JWTPayload = {
+            mitgliedID: result[0].mitgliedID,
+            name: result[0].name,
+            permissions: result[0].permissions.split(",").map(Number)
+          };
+          res.status(200).json(auth.generateJWT(payload));
         } else {
-          res.status(401).send("Username ot password wrong");
+          res.status(401).send("Username or password wrong");
         }
     })
       .catch((err) => {
@@ -71,5 +71,22 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
  * Creates a new member
  */
 export const createNewMember = (req: Request, res: Response): void => {
- console.log(req.body);
+  bcrypt.hash(req.body.password, 12)
+  .then((hash) => {
+    database.query(
+      `INSERT INTO mitglied (vorname, nachname, name, passwordHash, geschlecht,
+        geburtsdatum, handy)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [req.body.vorname, req.body.nachname, req.body.name, hash, req.body.geschlecht,
+        req.body.geburtsdatum, req.body.handy])
+      .then((result) => {
+        res.status(201).send("User created");
+      })
+      .catch((err) => {
+        res.status(500).send("Query Error: Creating User");
+      });
+  })
+  .catch((err) => {
+    res.status(500).send("Hashing error");
+  });
 };
