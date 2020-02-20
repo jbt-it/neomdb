@@ -1,5 +1,5 @@
 /**
- * Definition of the handler functions for the users module
+ * Definition of the handler functions for the members module
  */
 import database = require("../database");
 import auth = require("../global/authController");
@@ -51,7 +51,7 @@ export const login = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves an overview of all registered users
+ * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
   database.query(
@@ -68,9 +68,30 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves a member specified by id
+ */
+export const retrieveMember = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT *
+    FROM mitglied
+    WHERE mitgliedID = ?`,
+  [req.params.id])
+  .then((result: []) => {
+    if(result.length === 0){
+      res.status(404).send("User not found");
+    } else {
+      res.status(200).json(result);
+    }
+  })
+  .catch((err) => {
+    res.status(500).send("Query Error");
+  });
+};
+
+/**
  * Creates a new member
  */
-export const createNewMember = (req: Request, res: Response): void => {
+export const createMember = (req: Request, res: Response): void => {
   bcrypt.hash(req.body.password, 12)
   .then((hash) => {
     database.query(
