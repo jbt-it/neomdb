@@ -90,3 +90,53 @@ export const createNewMember = (req: Request, res: Response): void => {
     res.status(500).send("Hashing error");
   });
 };
+
+/**
+ * Retrieves an overview of all issued permissions
+ */
+export const retrievePermissionsList = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT vorname, nachname, berechtigung_berechtigungID AS permission
+    FROM mitglied
+    INNER JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+  [])
+  .then((result: membersTypes.GetPermissionsQueryResult) => {
+    res.status(200).json(result);
+  })
+  .catch((err) => {
+    res.status(500).send("Query Error: Getting permissions failed");
+  });
+};
+
+/**
+ * Create new permission
+ */
+export const createPermission = (req: Request, res: Response): void => {
+  database.query(
+    `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
+    VALUES (?, ?)`,
+  [req.body.memberID, req.body.permissionID])
+  .then((result) => {
+    res.status(201).send("Permission created");
+  })
+  .catch((err) => {
+    res.status(500).send("Database Error: Creating Permission failed");
+  });
+};
+
+/**
+ * Delete issued permission
+ */
+export const deletePermission = (req: Request, res: Response): void => {
+  database.query(
+    `DELETE
+    FROM mitglied_has_berechtigung
+    WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
+  [req.body.memberID, req.body.permissionID])
+  .then((result) => {
+    res.status(200).send("Permission deleted");
+  })
+  .catch((err) => {
+    res.status(500).send("Database Error: Deleting Permission failed");
+  });
+};

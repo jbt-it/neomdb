@@ -13,3 +13,9 @@ export type GetMembersQueryResult = {
   nachname: string;
   handy: number;
 };
+
+export type GetPermissionsQueryResult = {
+  vorname: string;
+  nachname: string;
+  permission: number;
+};
