@@ -4,6 +4,7 @@
 export type LoginQueryResult = {
   mitgliedID: number;
   name: string;
+  passwordHash: string;
   permissions: string;
 };
 
