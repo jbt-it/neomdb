@@ -15,4 +15,11 @@ router.post("/login", usersController.login);
 router.use(authController.protectRoutes);
 
 router.get("/", usersController.retrieveMemberList);
+
+/**
+ * =======>>> ALL routes after this point are restricted to certain roles <<<=======
+ */
+router.use(authController.restrictRoutes([1]));
+router.post("/", usersController.createNewMember);
+
 module.exports = router;
