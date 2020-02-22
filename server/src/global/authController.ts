@@ -54,6 +54,17 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
 };
 
 /**
+ * Checks if member is himself to grant access to own ressource
+ */
+export const restrictRoutesSelf = (req:Request, res:Response, next: NextFunction) => {
+  if (Number(req.params.id) === verifyJWT(req.headers.authorization.replace("Bearer ", "")).mitgliedID){
+    next();
+  } else {
+    return res.status(401).send("Authorization failed: You are not permitted to do this");
+  }
+};
+
+/**
  * Checks if user has the right permissions to use the following routes
  * Every permission in the permissions array needs to be included in the permissions
  * of the received jwt
