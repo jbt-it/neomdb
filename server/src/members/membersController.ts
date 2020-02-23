@@ -113,6 +113,31 @@ export const createMember = (req: Request, res: Response): void => {
 };
 
 /**
+ * Updates an existing member
+ */
+export const updateMember = (req: Request, res: Response): void => {
+  database.query(
+    `UPDATE mitglied
+    SET handy = ?, arbeitgeber = ?, strasse1 = ?, plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?,
+    plz2 = ?, ort2 = ?, tel2 = ?, email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?,
+    studienende = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?, fuehrerschein = ?,
+    ersthelferausbildung = ?
+    WHERE mitgliedID = ?
+  `,
+  [req.body.handy, req.body.arbeitgeber, req.body.strasse1, req.body.plz1, req.body.ort1, req.body.tel1,
+    req.body.email1, req.body.strasse2, req.body.plz2, req.body.ort2, req.body.tel2, req.body.email2,
+    req.body.hochschule, req.body.studiengang, req.body.studienbeginn, req.body.studienende, req.body.ausbildung,
+    req.body.kontoinhaber, req.body.iban, req.body.bic, req.body.fuehrerschein, req.body.ersthelferausbildung,
+    req.params.id])
+  .then((result) => {
+    res.status(200).send("Profile Update Successful");
+  })
+  .catch((err) => {
+    res.status(500).send("Query Error: Updating Profile failed");
+  });
+};
+
+/**
  * Retrieves an overview of all issued permissions
  */
 export const retrievePermissionsList = (req: Request, res: Response): void => {
