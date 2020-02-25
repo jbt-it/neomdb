@@ -63,7 +63,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
        permissions.every(element => jwt.permissions.includes(element)))) {
         next();
        } else {
-        return res.status(401).send("Authorization failed: You are not permitted to do this");
+        return res.status(403).send("Authorization failed: You are not permitted to do this");
        }
   };
 };
@@ -80,7 +80,7 @@ export const restrictRoutes = (permissions: number[]) => {
     if(permissions.every(element => jwtPermissions.includes(element))) {
       next();
     } else {
-      return res.status(401).send("Authorization failed: You are not permitted to do this");
+      return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
   };
 };
