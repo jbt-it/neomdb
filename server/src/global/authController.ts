@@ -54,13 +54,16 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
 };
 
 /**
- * Checks if member is himself or has specified permission to grant access to ressource
+ * Checks if memberID equals ressource id or member has specified permission
+ * to grant access to ressource
  */
 export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
-    if (Number(req.params.id === jwt.mitgliedID ||
-       permissions.every(element => jwt.permissions.includes(element)))) {
+    if (Number(req.params.id) === jwt.mitgliedID ||
+       permissions.every(element => jwt.permissions.includes(element))) {
+        res.locals.memberID = jwt.mitgliedID;
+        res.locals.permissions = jwt.permissions;
         next();
        } else {
         return res.status(403).send("Authorization failed: You are not permitted to do this");
