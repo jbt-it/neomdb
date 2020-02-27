@@ -7,7 +7,9 @@ If you like to contribute to this repository, please first discuss the change yo
 2. Create a new branch referencing the created issue `#{number of issue}-short-descriptive-name` e.g. `#2-jwt-support`
 3. Exclusively commit all changes regarding the issue to this branch
 4. Diligently test your contribution
-5. Open Pull Request
+5. Pull `develop` branch into your created branch
+6. Resolve merge conflicts
+7. Open Pull Request
 
 
 ## Set Up Development Environment
