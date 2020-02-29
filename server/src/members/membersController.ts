@@ -69,10 +69,38 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 
 /**
  * Retrieves a member specified by id
+ * Returns financial data iff member has permission or is himself
  */
 export const retrieveMember = (req: Request, res: Response): void => {
+  if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)){
   database.query(
-    `SELECT *
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
+      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
+      strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
+      studiengang, studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber,
+      iban, bic, engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
+      FROM mitglied
+      WHERE mitgliedID = ?`,
+    [req.params.id])
+    .then((result: []) => {
+      if(result.length === 0){
+        res.status(404).send("User not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+  } else {
+    database.query(
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
+      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
+      strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
+      studiengang, studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL,
+      canQM, lastchange, fuehrerschein, ersthelferausbildung
     FROM mitglied
     WHERE mitgliedID = ?`,
   [req.params.id])
@@ -86,6 +114,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
   .catch((err) => {
     res.status(500).send("Query Error");
   });
+  }
 };
 
 /**

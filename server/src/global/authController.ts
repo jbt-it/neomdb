@@ -46,7 +46,10 @@ export const verifyJWT = (token: string) => {
  * Verifies JWT and protects following routes from unauthorised access
  */
 export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  if (req.headers.authorization && verifyJWT(req.headers.authorization.replace("Bearer ", ""))) {
+  const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+  if (req.headers.authorization && jwt) {
+    res.locals.memberID = jwt.mitgliedID;
+    res.locals.permissions = jwt.permissions;
     next();
   } else {
     return res.status(401).send("Authentication failed: Please log in");
