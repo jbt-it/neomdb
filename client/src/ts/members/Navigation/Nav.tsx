@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import MenuDrawer from "./MenuDrawerTest";
+import MenuDrawer from "./MenuDrawer";
 
 // TODO: convert into scss
 const useStyles = makeStyles((theme: Theme) => createStyles({
