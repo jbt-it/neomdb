@@ -19,13 +19,16 @@
     font-size: small;
   }
 }
-.listItem {
+.list-item-nav-text {
     color: black;
     text-decoration: none;
-  }
+}
 .subListItem {
     margin-left: 4em;
   }
-.icon {
-  color: rgb(246,137,31);
+.drawer-list-item-active {
+    color: rgb(246,137,31);
+  }
+.drawer-list-item {
+  color: inherit;
 }

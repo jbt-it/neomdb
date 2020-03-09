@@ -21,7 +21,7 @@ import {
 } from "@material-ui/core";
 import MenuDrawerIcon from "./MenuDrawerIcon";
 
- // Contains all information which should be depicted by the drawer
+ // Contains the main items which should be depicted by the drawer
  const higherDrawerLitItems:{
     text: string;
     path: string;
@@ -117,6 +117,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     }
   ];
 
+  // Contains the secondary items which should be depicted by the drawer
   const lowerDrawerLitItems:{
       text: string;
       path: string;
@@ -148,7 +149,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
    *
    * @param props
    */
-  const MenuDrawer:React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
+  const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
 
     useEffect(() => {
       const url = window.location.href;
@@ -161,7 +162,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
 
 
     /**
-     * handles the click event on the different extendable list items
+     * Handles the click event on the different extendable list items
      *
      * @param value topic of the extendable list item
      */
@@ -181,7 +182,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     };
 
     /**
-     * handles the click Event of the nav links
+     * Handles the click Event of the nav links
      *
      * @param value topic of the nav link
      */
@@ -192,37 +193,41 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     };
 
     /**
-     * Determines the color for text and icons
+     * Determines the class for list items
      *
-     * @param value the topic of the nav link
+     * @param value the topic of the list item
      */
-    const determineColor = (value:string) => {
+    const determineListItemClass = (value:string) => {
         // Special case for the collapseable list items: when a sub list item is clicked the parent list item will be also highlighted for better orientation
         switch (value) {
             case "Mitglieder" : {
                 if (activeNavLink === "/Mitglieder" || activeNavLink === "/Vorstand" || activeNavLink === "/EvHistorie"
                   || activeNavLink === "/Expertenwissen" || activeNavLink === "/Geburtstage" || activeNavLink === "/Generationenbeauftragte"
                   || activeNavLink === "/Traineebereich" || activeNavLink === "/Kuratoren") {
-                    return {color: "rgb(246,137,31)"};
+                    return "drawer-list-item-active";
                 }
                 break;
             }
             case "Tools" : {
               if (activeNavLink === "/MMTracking" || activeNavLink === "/PL-QM-Tool" || activeNavLink === "/Raumreservierung"
                 || activeNavLink === "/Innovationsmanagement") {
-                return {color: "rgb(246,137,31)"};
+                return "drawer-list-item-active";
               }
               break;
             }
         }
-      // Normal case for list items without collapseable sub list items: When the value and the activeNavLink are equivalent the color should change
+      // Normal case for list items without collapseable sub list items: When the value and the activeNavLink are equivalent the class of the list item should change
       if(value === activeNavLink){
-        return {color: "rgb(246,137,31)"};
+        return "drawer-list-item-active";
       }
-
-      return {color: ""};
+      return "drawer-list-item";
     };
 
+    /**
+     * Determines whether a collapsable list item should be collapsed or not
+     *
+     * @param collapseableListName the name of the collapseable list item
+     */
     const determineCollapseState = (collapseableListName:string) => {
         if (collapseableListName === "Mitglieder"){
             return memberOpen;
@@ -239,7 +244,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
           <Avatar/>
           <div className="avatar-info">
             <Typography className="avatar-name">Lennart Rukower</Typography>
-            <Typography className="avatar-mail">l.rukower@studentische-bartung.de</Typography>
+            <Typography className="avatar-mail">l.rukower@studentische-beratung.de</Typography>
           </div>
         </div>
         <Divider/>
@@ -248,10 +253,10 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
                 higherDrawerLitItems.map(drawerListItem => {
                     // When there are no sub list items
                     if(drawerListItem.sublist.length === 0){
-                        return (<NavLink exact to={drawerListItem.path} className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                        return (<NavLink exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                         <ListItem button onClick={props.drawer(false)}>
                             <ListItemIcon>
-                                <MenuDrawerIcon listItemTopic={drawerListItem.text} styleObj={determineColor(drawerListItem.path)}/>
+                                <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.path)} />
                             </ListItemIcon>
                             <ListItemText primary={drawerListItem.text} />
                         </ListItem>
@@ -260,15 +265,15 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
                         return (<div>
                                     <ListItem button onClick={handleCollpaseClick(drawerListItem.text)}>
                                         <ListItemIcon>
-                                            <MenuDrawerIcon listItemTopic={drawerListItem.text} styleObj={determineColor(drawerListItem.text)}/>
+                                            <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.text)}/>
                                         </ListItemIcon>
-                                        <ListItemText primary={drawerListItem.text} style={determineColor(drawerListItem.text)}/>
+                                        <ListItemText primary={drawerListItem.text} className={determineListItemClass(drawerListItem.text)} />
                                         {determineCollapseState(drawerListItem.text) ? <ExpandLess /> : <ExpandMore />}
                                     </ListItem>
                                     <Collapse in={determineCollapseState(drawerListItem.text)} timeout="auto" unmountOnExit>
                                         <List component="div" disablePadding>
                                             {drawerListItem.sublist.map(subListItem => (
-                                                <NavLink exact to={subListItem.path} className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                                                <NavLink exact to={subListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                                                 <ListItem button onClick={props.drawer(false)}>
                                                     <ListItemText className="subListItem" primary={subListItem.text} />
                                                 </ListItem>
@@ -286,10 +291,10 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     <List>
         {
             lowerDrawerLitItems.map(drawerListItem => {
-                    return (<NavLink exact to={drawerListItem.path} className="listItem" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                    return (<NavLink exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                     <ListItem button onClick={props.drawer(false)}>
                         <ListItemIcon>
-                            <MenuDrawerIcon listItemTopic={drawerListItem.text} styleObj={determineColor(drawerListItem.path)}/>
+                            <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.path)}/>
                         </ListItemIcon>
                         <ListItemText primary={drawerListItem.text} />
                     </ListItem>

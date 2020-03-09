@@ -12,9 +12,7 @@ import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 // Interface for the drawer icon props
 interface MenuDrawerIconProps {
     listItemTopic: string;
-    styleObj: {
-        color: string;
-    };
+    className: string;
 }
 
 /**
@@ -22,39 +20,31 @@ interface MenuDrawerIconProps {
  *
  * @param props
  */
-const MenuDrawerIcon:React.FunctionComponent<MenuDrawerIconProps> = (props:MenuDrawerIconProps) => {
+const MenuDrawerIcon: React.FunctionComponent<MenuDrawerIconProps> = (props:MenuDrawerIconProps) => {
     switch (props.listItemTopic){
         case "Dashboard" : {
-            return <DashboardIcon style={props.styleObj}/>;
-            break;
+            return <DashboardIcon className={props.className}/>;
         }
         case "Mitglieder" : {
-            return <PeopleAltIcon style={props.styleObj}/>;
-            break;
+            return <PeopleAltIcon className={props.className}/>;
         }
         case "Projekte" : {
-            return <TrendingUpIcon style={props.styleObj}/>;
-            break;
+            return <TrendingUpIcon className={props.className}/>;
         }
         case "Veranstaltungen" : {
-            return <EventIcon style={props.styleObj}/>;
-            break;
+            return <EventIcon className={props.className}/>;
         }
         case "Tools" : {
-            return <BuildIcon style={props.styleObj}/>;
-            break;
+            return <BuildIcon className={props.className}/>;
         }
         case "Meine Funktionen" : {
-            return <AppsIcon style={props.styleObj}/>;
-            break;
+            return <AppsIcon className={props.className}/>;
         }
         case "Weitere Funktionen" : {
-            return <MoreHorizIcon style={props.styleObj}/>;
-            break;
+            return <MoreHorizIcon className={props.className}/>;
         }
         case "KVP" : {
-            return <EmojiObjectsIcon style={props.styleObj}/>;
-            break;
+            return <EmojiObjectsIcon className={props.className}/>;
         }
         case "Logout" : {
             return <ExitToAppIcon/>;
