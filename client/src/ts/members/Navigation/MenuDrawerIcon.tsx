@@ -47,7 +47,7 @@ const MenuDrawerIcon: React.FunctionComponent<MenuDrawerIconProps> = (props:Menu
             return <EmojiObjectsIcon className={props.className}/>;
         }
         case "Logout" : {
-            return <ExitToAppIcon/>;
+            return <ExitToAppIcon className={props.className}/>;
         }
     }
     return null;
