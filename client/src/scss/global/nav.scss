@@ -1,0 +1,166 @@
+// contains the syling of the menu drawer
+
+// variables for search background
+$search-background-color: rgba(255, 255, 255, 0.15);
+$search-background-color-hovered: rgba(255, 255, 255, 0.25);
+
+// styles for mobile screen
+@media only screen 
+and (min-width : 320px){
+  .bar-root {
+    flex-grow: 1;
+    .bar {
+      background-color: $ci-orange;
+      .menu-button {
+        margin-right: 16px;
+      }
+      .title {
+        flex-grow: 1;
+        display: none;
+      }
+      .search {
+        position: relative;
+        border-radius: 2px;
+        background-color: $search-background-color;
+        margin-left: 0;
+        width: 100%;
+        &:hover {
+          background-color: $search-background-color-hovered;
+        }
+        .search-icon {
+          width: 56px;
+          height: 100%;
+          position: absolute;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .search-input-root {
+          color: white;
+        } 
+        .search-input-input {
+          padding-top: 8px;
+          padding-bottom: 8px;
+          padding-right: 8px;
+          padding-left: 56px;
+          width: 100%;
+        }
+      }
+      .search-active {
+        position: relative;
+        border-radius: 2px;
+        background-color: $search-background-color;
+        margin-left: 0;
+        width: 100%;
+        &:hover {
+          background-color: $search-background-color-hovered;
+        }
+        .search-icon {
+          width: 56px;
+          height: 100%;
+          position: absolute;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .search-input-root {
+          color: white;
+        } 
+        .search-input-input {
+          padding-top: 8px;
+          padding-bottom: 8px;
+          padding-right: 8px;
+          padding-left: 56px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// styles for tablet and desktop screen
+@media only screen 
+and (min-width : 768px){
+  .bar-root {
+    flex-grow: 1;
+    .bar {
+      background-color: $ci-orange;
+      .menu-button {
+        margin-right: 16px;
+      }
+        .title {
+          flex-grow: 1;
+          display: block;
+        }
+        .search {
+          position: relative;
+          border-radius: 2px;
+          background-color: $search-background-color;
+          margin-left: 8px;
+          width: 180px;
+          transition: width 0.5s;
+          &:hover {
+          background-color: $search-background-color-hovered;
+          }
+          .search-icon {
+            width: 56px;
+            height: 100%;
+            position: absolute;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .search-input-root {
+            color: white;
+          }  
+          .search-input-input {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            padding-right: 8px;
+            padding-left: 56px;              
+            width: 120;
+            &:focus {
+              width: 200
+            }
+          }
+        }
+        .search-active {
+          position: relative;
+          border-radius: 2px;
+          background-color: $search-background-color;
+          margin-left: 8px;
+          width: 250px;
+          &:hover {
+            background-color: $search-background-color-hovered;
+          }
+          .search-icon {
+            width: 56px;
+            height: 100%;
+            position: absolute;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .search-input-root {
+            color: white;
+          }  
+          .search-input-input {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            padding-right: 8px;
+            padding-left: 56px;              
+            width: 120;
+            &:focus {
+              width: 200
+            }
+          }
+        }
+    }
+  }
+  
+  
+}
