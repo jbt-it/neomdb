@@ -2,7 +2,6 @@ import React, {
   useState,
   useEffect
 } from "react";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
@@ -140,7 +139,6 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
 
    // Interface for the drawer props
    interface DrawerProps {
-    open: boolean;
     drawer: Function;
   }
 
@@ -154,9 +152,9 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     useEffect(() => {
       const url = window.location.href;
       setActiveNavLink(url.slice(url.lastIndexOf("/"),url.length));
-  });
+  },[]);
 
-    const [activeNavLink, setActiveNavLink] = useState();
+    const [activeNavLink, setActiveNavLink] = useState("");
     const [memberOpen, setMemberOpen] = useState(false);
     const [toolsOpen, setToolsOpen] = useState(false);
 
@@ -244,7 +242,6 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
           <Avatar/>
           <div className="avatar-info">
             <Typography className="avatar-name">Lennart Rukower</Typography>
-            <Typography className="avatar-mail">l.rukower@studentische-beratung.de</Typography>
           </div>
         </div>
         <Divider/>
@@ -253,7 +250,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
                 higherDrawerLitItems.map(drawerListItem => {
                     // When there are no sub list items
                     if(drawerListItem.sublist.length === 0){
-                        return (<NavLink exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                        return (<NavLink key={drawerListItem.text} exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                         <ListItem button onClick={props.drawer(false)}>
                             <ListItemIcon>
                                 <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.path)} />
@@ -262,7 +259,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
                         </ListItem>
                         </NavLink>);
                     } else { // When there are sub list items
-                        return (<div>
+                        return (<div key={drawerListItem.text}>
                                     <ListItem button onClick={handleCollpaseClick(drawerListItem.text)}>
                                         <ListItemIcon>
                                             <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.text)}/>
@@ -273,7 +270,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
                                     <Collapse in={determineCollapseState(drawerListItem.text)} timeout="auto" unmountOnExit>
                                         <List component="div" disablePadding>
                                             {drawerListItem.sublist.map(subListItem => (
-                                                <NavLink exact to={subListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                                                <NavLink key={subListItem.text}exact to={subListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                                                 <ListItem button onClick={props.drawer(false)}>
                                                     <ListItemText className="subListItem" primary={subListItem.text} />
                                                 </ListItem>
@@ -291,7 +288,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     <List>
         {
             lowerDrawerLitItems.map(drawerListItem => {
-                    return (<NavLink exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+                    return (<NavLink key={drawerListItem.text} exact to={drawerListItem.path} className="list-item-nav-text" activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
                     <ListItem button onClick={props.drawer(false)}>
                         <ListItemIcon>
                             <MenuDrawerIcon listItemTopic={drawerListItem.text} className={determineListItemClass(drawerListItem.path)}/>
@@ -305,20 +302,8 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     </List>
     </div>);
 
-    return (
-      <div
-      role="presentation"
-      onKeyDown={props.drawer(false)}
-      >
-        <SwipeableDrawer
-          open={props.open}
-          onClose={props.drawer(false)}
-          onOpen={props.drawer(true)}
-        >
-          {sideList(useLocation().pathname)}
-        </SwipeableDrawer>
-      </div>
-    );
+    return sideList(useLocation().pathname);
+
   };
 
   export default MenuDrawer;

@@ -87,8 +87,9 @@ and (min-width : 768px){
     flex-grow: 1;
     .bar {
       background-color: $ci-orange;
+      z-index: 1;
       .menu-button {
-        margin-right: 16px;
+          display: none;
       }
         .title {
           flex-grow: 1;
@@ -159,6 +160,10 @@ and (min-width : 768px){
             }
           }
         }
+    }
+    .permanent-drawer {
+      position: fixed;
+      z-index: 0;
     }
   }
   

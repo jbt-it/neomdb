@@ -1,8 +1,24 @@
 // contains the syling of the menu drawer
-
-.menuDrawer {
-    width: 19em;
+.menu-drawer {
+    width: 280px;
+    z-index: 0;
   }
+
+// styles for tablet and desktop screen
+@media only screen 
+and (min-width : 768px){
+.avatar-section {
+  margin-top: 65px;
+  margin-left: 0.5em;
+    padding: 0.5em;
+    .MuiAvatar-root {
+      margin-bottom: 0.5em;
+    }
+  }
+}
+
+@media only screen 
+and (min-width : 320px){
 .avatar-section {
   margin-left: 0.5em;
     padding: 0.5em;
@@ -10,13 +26,12 @@
       margin-bottom: 0.5em;
     }
   }
+}
+
 .avatar-info {
   .avatar-name {
     font-weight: bold;
     font-size: medium;
-  }
-  .avatar-mail {
-    font-size: small;
   }
 }
 .list-item-nav-text {
