@@ -139,7 +139,9 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
 
    // Interface for the drawer props
    interface DrawerProps {
-    drawer: Function;
+    drawer: (open: boolean) => (
+            event: React.KeyboardEvent | React.MouseEvent
+            ) => void;
   }
 
   /**
@@ -152,7 +154,7 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     useEffect(() => {
       const url = window.location.href;
       setActiveNavLink(url.slice(url.lastIndexOf("/"),url.length));
-  },[]);
+    });
 
     const [activeNavLink, setActiveNavLink] = useState("");
     const [memberOpen, setMemberOpen] = useState(false);
@@ -199,17 +201,17 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
         // Special case for the collapseable list items: when a sub list item is clicked the parent list item will be also highlighted for better orientation
         switch (value) {
             case "Mitglieder" : {
-                if (activeNavLink === "/Mitglieder" || activeNavLink === "/Vorstand" || activeNavLink === "/EvHistorie"
-                  || activeNavLink === "/Expertenwissen" || activeNavLink === "/Geburtstage" || activeNavLink === "/Generationenbeauftragte"
-                  || activeNavLink === "/Traineebereich" || activeNavLink === "/Kuratoren") {
-                    return "drawer-list-item-active";
-                }
-                break;
+              if (activeNavLink === "/Mitglieder" || activeNavLink === "/Vorstand" || activeNavLink === "/EvHistorie"
+                || activeNavLink === "/Expertenwissen" || activeNavLink === "/Geburtstage" || activeNavLink === "/Generationenbeauftragte"
+                || activeNavLink === "/Traineebereich" || activeNavLink === "/Kuratoren") {
+                  return "drawer-list-item-active";
+              }
+              break;
             }
             case "Tools" : {
               if (activeNavLink === "/MMTracking" || activeNavLink === "/PL-QM-Tool" || activeNavLink === "/Raumreservierung"
                 || activeNavLink === "/Innovationsmanagement") {
-                return "drawer-list-item-active";
+                  return "drawer-list-item-active";
               }
               break;
             }
@@ -227,17 +229,17 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
      * @param collapseableListName the name of the collapseable list item
      */
     const determineCollapseState = (collapseableListName:string) => {
-        if (collapseableListName === "Mitglieder"){
-            return memberOpen;
-        } else if (collapseableListName === "Tools") {
-            return toolsOpen;
-        }
-        return false;
+      if (collapseableListName === "Mitglieder"){
+          return memberOpen;
+      } else if (collapseableListName === "Tools") {
+          return toolsOpen;
+      }
+      return false;
     };
 
     // The side list, which containts all navigational options
     const sideList = (pathname:string) => (
-      <div className="menuDrawer">
+      <div className="menu-drawer">
         <div className="avatar-section">
           <Avatar/>
           <div className="avatar-info">
