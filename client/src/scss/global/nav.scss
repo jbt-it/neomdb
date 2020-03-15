@@ -4,9 +4,9 @@
 $search-background-color: rgba(255, 255, 255, 0.15);
 $search-background-color-hovered: rgba(255, 255, 255, 0.25);
 
-// styles for mobile screen
+// styles for mobile and tablet screen
 @media only screen 
-and (min-width : 320px){
+and (min-width : 0px){
   .bar-root {
     flex-grow: 1;
     .bar {
@@ -80,9 +80,9 @@ and (min-width : 320px){
   }
 }
 
-// styles for tablet and desktop screen
+// styles for desktop screen
 @media only screen 
-and (min-width : 768px){
+and (min-width : 960px){
   .bar-root {
     flex-grow: 1;
     .bar {

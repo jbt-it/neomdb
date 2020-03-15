@@ -89,7 +89,7 @@ const Nav:React.FunctionComponent = () => {
       </Toolbar>
     </AppBar>
     <nav className="permanent-drawer">
-        <Hidden smUp implementation="css">
+        <Hidden mdUp implementation="css">
           <SwipeableDrawer
           variant="temporary"
           open={isMenuDrawerOpen}
@@ -102,7 +102,7 @@ const Nav:React.FunctionComponent = () => {
             <MenuDrawer drawer={toggleDrawer}/>
           </SwipeableDrawer>
           </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden smDown implementation="css">
           <Drawer
             variant="permanent"
             open

@@ -1,12 +1,12 @@
 // contains the syling of the menu drawer
+
 .menu-drawer {
     width: 280px;
-    z-index: 0;
-  }
+}
 
-// styles for tablet and desktop screen
+// styles for desktop screen
 @media only screen 
-and (min-width : 768px){
+and (min-width : 960px){
 .avatar-section {
   margin-top: 65px;
   margin-left: 0.5em;
@@ -18,7 +18,7 @@ and (min-width : 768px){
 }
 
 @media only screen 
-and (min-width : 320px){
+and (min-width : 0px){
 .avatar-section {
   margin-left: 0.5em;
     padding: 0.5em;
