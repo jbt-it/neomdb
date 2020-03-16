@@ -11,7 +11,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import MenuDrawer from "./MenuDrawer";
-
+import ScrollTopBtn from "./ScrollTopBtn";
 /**
  * The navigation of the application
  */
@@ -111,6 +111,7 @@ const Nav:React.FunctionComponent = () => {
           </Drawer>
         </Hidden>
       </nav>
+      <ScrollTopBtn/>
 </div>);
 };
 
