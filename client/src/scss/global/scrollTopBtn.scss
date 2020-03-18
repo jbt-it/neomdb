@@ -5,17 +5,18 @@
     bottom: 16px;
     right: 16px;
     .scroll-top-fab {
-        background-color: $ci-orange;
-        .scroll-top-icon{
-            color: white;
-        }
-    }
-    .scroll-top-fab:hover {
         background-color: $ci-grey;
         .scroll-top-icon{
             color: black;
         }
+        &:hover {
+            background-color: $ci-orange;
+            .scroll-top-icon{
+                color: white;
+            }
+        }
     }
+    
 }
 
 

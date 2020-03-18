@@ -2,20 +2,22 @@ import React, {
   useState,
   useEffect
 } from "react";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import {
   NavLink,
   useLocation
 } from "react-router-dom";
-import Collapse from "@material-ui/core/Collapse";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import {
+  ExpandLess,
+  ExpandMore
+} from "@material-ui/icons";
 import {
   Avatar,
+  List,
+  Divider,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
   Typography
 } from "@material-ui/core";
 import MenuDrawerIcon from "./MenuDrawerIcon";
@@ -139,7 +141,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
     ];
 
    // Interface for the drawer props
-   interface DrawerProps {
+  interface DrawerProps {
     drawer: (open: boolean) => (
             event: React.KeyboardEvent | React.MouseEvent
             ) => void;
@@ -151,10 +153,10 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
    * @param props
    */
   const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
+    const location = useLocation();
 
     useEffect(() => {
-      const url = window.location.href;
-      setActiveNavLink(url.slice(url.lastIndexOf("/"),url.length));
+      setActiveNavLink(location.pathname);
     });
 
     const [activeNavLink, setActiveNavLink] = useState("");

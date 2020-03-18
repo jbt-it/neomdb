@@ -1,8 +1,10 @@
 import React from "react";
-import Fab from "@material-ui/core/Fab";
+import {
+  Zoom,
+  Fab,
+  useScrollTrigger
+} from "@material-ui/core";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import Zoom from "@material-ui/core/Zoom";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 
 /**
  * A button, which scrolls back to the top of the page, when clicked

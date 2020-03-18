@@ -1,15 +1,19 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  SwipeableDrawer,
+  Typography,
+  InputBase,
+  CssBaseline,
+  Drawer,
+  Hidden
+} from "@material-ui/core";
+import {
+  Menu,
+  Search
+} from "@material-ui/icons";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
 import JBTLogoWhite from "../../../images/jbt-logo-white.png";
@@ -64,17 +68,17 @@ const Nav:React.FunctionComponent = () => {
           aria-label="open drawer"
           onClick={toggleDrawer(true)}
         >
-          <MenuIcon />
+          <Menu/>
         </IconButton>
         <div className="title">
           <Typography variant="h6" noWrap>
             JBT neoMDB
           </Typography>
-          <img src={JBTLogoWhite} className="jbt-logo"/>
+          <img src={JBTLogoWhite} alt="JBT Logo" className="jbt-logo"/>
         </div>
         <div className={getClassForSearchBar()}>
           <div className="search-icon">
-            <SearchIcon />
+            <Search/>
           </div>
           <InputBase
             placeholder="Suche..."
