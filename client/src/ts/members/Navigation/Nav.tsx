@@ -12,6 +12,8 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
+import JBTLogoWhite from "../../../images/jbt-logo-white.png";
+
 /**
  * The navigation of the application
  */
@@ -64,9 +66,12 @@ const Nav:React.FunctionComponent = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography className="title" variant="h6" noWrap>
-          JBT neoMDB
-        </Typography>
+        <div className="title">
+          <Typography variant="h6" noWrap>
+            JBT neoMDB
+          </Typography>
+          <img src={JBTLogoWhite} className="jbt-logo"/>
+        </div>
         <div className={getClassForSearchBar()}>
           <div className="search-icon">
             <SearchIcon />
@@ -81,9 +86,9 @@ const Nav:React.FunctionComponent = () => {
             onFocus={() => {
               setIsSearchBarActive(true);
             }}
-          onBlur={() => {
-            setIsSearchBarActive(false);
-          }}
+            onBlur={() => {
+              setIsSearchBarActive(false);
+            }}
           />
         </div>
       </Toolbar>

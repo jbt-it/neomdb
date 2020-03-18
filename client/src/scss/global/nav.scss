@@ -93,7 +93,14 @@ and (min-width : 960px){
       }
         .title {
           flex-grow: 1;
-          display: block;
+          display: flex;
+          align-items: baseline;
+          margin-bottom: 2px;
+          .jbt-logo {
+            display: block;
+            width: 45px;
+            margin-left: 5px;
+          }
         }
         .search {
           position: relative;

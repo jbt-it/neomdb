@@ -19,6 +19,7 @@ import {
   Typography
 } from "@material-ui/core";
 import MenuDrawerIcon from "./MenuDrawerIcon";
+import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 
  // Contains the main items which should be depicted by the drawer
  const higherDrawerLitItems:{
@@ -241,7 +242,8 @@ import MenuDrawerIcon from "./MenuDrawerIcon";
     const sideList = (pathname:string) => (
       <div className="menu-drawer">
         <div className="avatar-section">
-          <Avatar/>
+          {/* Default avatar */}
+          <Avatar src={JBTLogoBlack}/>
           <div className="avatar-info">
             <Typography className="avatar-name">Lennart Rukower</Typography>
           </div>
