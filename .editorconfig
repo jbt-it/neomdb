@@ -1,0 +1,9 @@
+# For further information about EditorConfig check: https://EditorConfig.org
+
+# Project root
+root = true
+
+# Indetation rules for every file
+[*]
+indent_style = space
+indent_size = 2
