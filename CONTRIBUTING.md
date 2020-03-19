@@ -1,6 +1,7 @@
 # Contributing
 
 If you like to contribute to this repository, please first discuss the change you wish to make by opening an issue.
+Please consider to make use of .editorconfig in your IDE to mitigate indentation issues.
 
 ## Contribution Process
 1. Open an issue describing the change you would like to implement in detail
