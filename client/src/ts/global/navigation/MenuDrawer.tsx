@@ -51,7 +51,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 
       useEffect(() => {
         setActiveNavLink(location.pathname);
-      });
+      }, [location.pathname]);
 
       const [activeNavLink, setActiveNavLink] = useState("");
       const [memberOpen, setMemberOpen] = useState(false);
