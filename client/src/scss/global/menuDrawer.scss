@@ -1,7 +1,7 @@
 // contains the syling of the menu drawer
 
 .menu-drawer {
-    width: 280px;
+  width: 280px;
 }
 
 // styles for mobile and tablet screen
@@ -37,16 +37,20 @@ and (min-width : 960px){
     font-size: medium;
   }
 }
+
 .list-item-nav-text {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
+
 .subListItem {
-    margin-left: 4em;
-  }
+  margin-left: 4em;
+}
+
 .drawer-list-item-active {
-    color: rgb(246,137,31);
-  }
+  color: $ci-orange;
+}
+
 .drawer-list-item {
   color: inherit;
 }

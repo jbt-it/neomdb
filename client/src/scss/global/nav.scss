@@ -1,9 +1,5 @@
 // contains the syling of the menu drawer
 
-// variables for search background
-$search-background-color: rgba(255, 255, 255, 0.15);
-$search-background-color-hovered: rgba(255, 255, 255, 0.25);
-
 // styles for mobile and tablet screen
 @media only screen 
 and (min-width : 0px){
@@ -11,12 +7,18 @@ and (min-width : 0px){
     flex-grow: 1;
     .bar {
       background-color: $ci-orange;
-      .menu-button {
-        margin-right: 16px;
-      }
-      .title {
+      
+      .bar-content {
         flex-grow: 1;
-        display: none;
+        align-items: center;
+        .jbt-logo {
+          display: block;
+          width: 45px;
+          margin-right: 12px;
+        }
+        .title {
+          display: none;
+        }
       }
       .search {
         position: relative;
@@ -89,19 +91,22 @@ and (min-width : 960px){
       background-color: $ci-orange;
       z-index: 1;
       .menu-button {
-          display: none;
+        display: none;
       }
-        .title {
-          flex-grow: 1;
-          display: flex;
-          align-items: baseline;
-          margin-bottom: 2px;
-          .jbt-logo {
-            display: block;
-            width: 45px;
-            margin-left: 5px;
-          }
+      .bar-content {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
+        .jbt-logo {
+          display: block;
+          width: 45px;
+          margin-left: 5px;
         }
+        .title {
+          display: flex;
+        }
+      }
         .search {
           position: relative;
           border-radius: 2px;
