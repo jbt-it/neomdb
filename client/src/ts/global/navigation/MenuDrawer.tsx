@@ -95,7 +95,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
         // Special case for the collapseable list items: when a sub list item is clicked the parent list item will be also highlighted for better orientation
         switch (value) {
           case "Mitglieder" : {
-            if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/geburtstage" 
+            if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/geburtstage"
               || activeNavLink === "/traineebereich" || activeNavLink === "/kuratoren") {
                 return "drawer-list-item-active";
             }
