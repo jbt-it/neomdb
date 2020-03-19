@@ -55,7 +55,7 @@ export const login = (req: Request, res: Response): void => {
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
   database.query(
-   `SELECT nachname, vorname, handy
+   `SELECT mitgliedID, nachname, vorname, handy, mitgliedstatus
    FROM mitglied
    ORDER BY nachname DESC`,
    [])
