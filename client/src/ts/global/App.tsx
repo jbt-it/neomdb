@@ -9,7 +9,10 @@ const App: React.FunctionComponent = () => {
 
   return (
     <HashRouter>
-      <Nav/>
+      {
+      // Renders the Nav componenent if the jwt is set
+      (localStorage.getItem("token") !== null) ? <Nav/> : null
+      }
       <Switch>
         <Route exact path = "/" component = {Dashboard} />
         <Route exact path = "/gesamtuebersicht" component = {Dashboard} />
