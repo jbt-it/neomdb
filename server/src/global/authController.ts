@@ -46,11 +46,32 @@ export const verifyJWT = (token: string) => {
  * Verifies JWT and protects following routes from unauthorised access
  */
 export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  if (req.headers.authorization && verifyJWT(req.headers.authorization.replace("Bearer ", ""))) {
+  const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+  if (req.headers.authorization && jwt) {
+    res.locals.memberID = jwt.mitgliedID;
+    res.locals.permissions = jwt.permissions;
     next();
   } else {
     return res.status(401).send("Authentication failed: Please log in");
   }
+};
+
+/**
+ * Checks if memberID equals ressource id or member has specified permission
+ * to grant access to ressource
+ */
+export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+    if (Number(req.params.id) === jwt.mitgliedID ||
+       permissions.every(element => jwt.permissions.includes(element))) {
+        res.locals.memberID = jwt.mitgliedID;
+        res.locals.permissions = jwt.permissions;
+        next();
+       } else {
+        return res.status(403).send("Authorization failed: You are not permitted to do this");
+       }
+  };
 };
 
 /**
@@ -65,7 +86,7 @@ export const restrictRoutes = (permissions: number[]) => {
     if(permissions.every(element => jwtPermissions.includes(element))) {
       next();
     } else {
-      return res.status(401).send("Authorization failed: You are not permitted to do this");
+      return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
   };
 };

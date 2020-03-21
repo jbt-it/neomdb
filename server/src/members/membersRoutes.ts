@@ -5,23 +5,25 @@ import express = require("express");
 const router = express.Router();
 
 import * as authController from "../global/authController";
-import * as usersController from "./membersController";
+import * as membersController from "./membersController";
 
-router.post("/login", usersController.login);
+router.post("/login", membersController.login);
 
 /**
  * =======>>> ALL routes after this point are accessible for loged in users only <<<=======
  */
 router.use(authController.protectRoutes);
-router.get("/", usersController.retrieveMemberList);
+router.get("/", membersController.retrieveMemberList);
+router.get("/:id", membersController.retrieveMember);
+router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 /**
  * =======>>> ALL routes after this point are restricted to certain roles <<<=======
  */
 router.use(authController.restrictRoutes([1]));
-router.post("/", usersController.createNewMember);
-router.get("/permissions", usersController.retrievePermissionsList);
-router.post("/permissions", usersController.createPermission);
-router.delete("/permissions", usersController.deletePermission);
+router.post("/", membersController.createMember);
+router.get("/permissions", membersController.retrievePermissionsList);
+router.post("/permissions", membersController.createPermission);
+router.delete("/permissions", membersController.deletePermission);
 
 module.exports = router;

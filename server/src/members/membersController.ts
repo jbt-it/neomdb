@@ -1,5 +1,5 @@
 /**
- * Definition of the handler functions for the users module
+ * Definition of the handler functions for the members module
  */
 import database = require("../database");
 import auth = require("../global/authController");
@@ -51,11 +51,11 @@ export const login = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves an overview of all registered users
+ * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
   database.query(
-   `SELECT nachname, vorname, handy
+   `SELECT mitgliedID, nachname, vorname, handy, mitgliedstatus
    FROM mitglied
    ORDER BY nachname DESC`,
    [])
@@ -68,9 +68,59 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves a member specified by id
+ * Returns financial data iff member has permission or is himself
+ */
+export const retrieveMember = (req: Request, res: Response): void => {
+  if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)){
+    database.query(
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
+      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
+      strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
+      studiengang, studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber,
+      iban, bic, engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
+      FROM mitglied
+      WHERE mitgliedID = ?`,
+    [req.params.id])
+    .then((result: []) => {
+      if(result.length === 0){
+        res.status(404).send("User not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+  } else {
+    database.query(
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
+      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
+      strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
+      studiengang, studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL,
+      canQM, lastchange, fuehrerschein, ersthelferausbildung
+      FROM mitglied
+      WHERE mitgliedID = ?`,
+    [req.params.id])
+    .then((result: []) => {
+      if(result.length === 0){
+        res.status(404).send("User not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+  }
+};
+
+/**
  * Creates a new member
  */
-export const createNewMember = (req: Request, res: Response): void => {
+export const createMember = (req: Request, res: Response): void => {
   bcrypt.hash(req.body.password, 12)
   .then((hash) => {
     database.query(
@@ -89,6 +139,97 @@ export const createNewMember = (req: Request, res: Response): void => {
   .catch((err) => {
     res.status(500).send("Hashing error");
   });
+};
+
+/**
+ * Updates an existing member
+ * Update of critical fields can be done by member with certain permission
+ * Update of critical and non critical fields can be done by member himself with additional permission
+ */
+export const updateMember = (req: Request, res: Response): void => {
+  const date: Date = new Date();
+
+  // Format date yyyy-mm-dd hh:mm:ss
+  const lastChangeTime =
+  date.getFullYear() + "-" +
+  ("00" + (date.getMonth() + 1)).slice(-2)+ "-" +
+  ("00" + date.getDate()).slice(-2) + " " +
+  ("00" + date.getHours()).slice(-2) + ":" +
+  ("00" + date.getMinutes()).slice(-2) + ":" +
+  ("00" + date.getSeconds()).slice(-2);
+
+  // Grants access to all fields if member is himself and has additional permission
+  if (Number(req.params.id) === res.locals.memberID && res.locals.permissions.includes(1)){
+    database.query(
+      `UPDATE mitglied
+      SET handy = ?, mitgliedstatus = ?, generation = ?, internesprojekt = ?, mentor = ?, trainee_seit = ?,
+      mitglied_seit = ?, alumnus_seit = ?, senior_seit = ?, aktiv_seit = ?, passiv_seit = ?,
+      ausgetreten_seit = ?, ressort = ?, arbeitgeber = ?, strasse1 = ?, plz1 = ?, ort1 = ?, tel1 = ?,
+      email1 = ?, strasse2 = ?, plz2 = ?, ort2 = ?, tel2 = ?, email2 = ?, hochschule = ?, studiengang = ?,
+      studienbeginn = ?, studienende = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?,
+      engagement = ?, canPL = ?, canQM = ?, lastchange = ?, fuehrerschein = ?, ersthelferausbildung = ?
+      WHERE mitgliedID = ?`,
+    [req.body.handy, req.body.mitgliedstatus, req.body.generation, req.body.internesprojekt,
+      req.body.mentor, req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit,
+      req.body.senior_seit, req.body.aktiv_seit, req.body.passiv_seit, req.body.ausgetreten_seit,
+      req.body.ressort, req.body.arbeitgeber, req.body.strasse1, req.body.plz1, req.body.ort1,
+      req.body.tel1, req.body.email1, req.body.strasse2, req.body.plz2, req.body.ort2, req.body.tel2,
+      req.body.email2, req.body.hochschule, req.body.studiengang, req.body.studienbeginn,
+      req.body.studienende, req.body.ausbildung, req.body.kontoinhaber, req.body.iban, req.body.bic,
+      req.body.engagement, req.body.canPL, req.body.canQM, lastChangeTime, req.body.fuehrerschein,
+      req.body.ersthelferausbildung, req.params.id])
+    .then((result) => {
+      res.status(200).send("Profile Update Successful");
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error: Updating Profile failed");
+    });
+  }
+
+  // Grants access to non critical fields to the member himself
+  else if (Number(req.params.id) === res.locals.memberID) {
+    database.query(
+      `UPDATE mitglied
+      SET handy = ?, arbeitgeber = ?, strasse1 = ?, plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?,
+      plz2 = ?, ort2 = ?, tel2 = ?, email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?,
+      studienende = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?, lastchange = ?, fuehrerschein = ?,
+      ersthelferausbildung = ?
+      WHERE mitgliedID = ?`,
+    [req.body.handy, req.body.arbeitgeber, req.body.strasse1, req.body.plz1, req.body.ort1, req.body.tel1,
+      req.body.email1, req.body.strasse2, req.body.plz2, req.body.ort2, req.body.tel2, req.body.email2,
+      req.body.hochschule, req.body.studiengang, req.body.studienbeginn, req.body.studienende, req.body.ausbildung,
+      req.body.kontoinhaber, req.body.iban, req.body.bic, lastChangeTime, req.body.fuehrerschein,
+      req.body.ersthelferausbildung, req.params.id])
+    .then((result) => {
+      res.status(200).send("Profile Update Successful");
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error: Updating Profile failed");
+    });
+  }
+
+  // Grants access to critical fields for members with permission
+  else if (res.locals.permissions.includes(1)) {
+    database.query(
+      `UPDATE mitglied
+      SET mitgliedstatus = ?, generation = ?, internesprojekt = ?, mentor = ?,
+      trainee_seit = ?, mitglied_seit = ?, alumnus_seit = ?, senior_seit = ?,
+      aktiv_seit = ?, passiv_seit = ?, ausgetreten_seit = ?, ressort = ?,
+      engagement = ?, canPL = ?, canQM = ?
+      WHERE mitgliedID = ?`,
+    [req.body.mitgliedstatus, req.body.generation, req.body.internesprojekt, req.body.mentor,
+      req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit, req.body.senior_seit,
+      req.body.aktiv_seit, req.body.passiv_seit, req.body.ausgetreten_seit, req.body.ressort,
+      req.body.engagement, req.body.canPL, req.body.canQM, req.params.id])
+    .then((result) => {
+      res.status(200).send("Profile Update Successful");
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error: Updating Profile failed");
+    });
+  } else {
+    res.status(403).send("Authorization failed: You are not permitted to do this");
+  }
 };
 
 /**
