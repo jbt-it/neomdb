@@ -1,0 +1,56 @@
+// contains the syling of the menu drawer
+
+.menu-drawer {
+  width: 280px;
+}
+
+// styles for mobile and tablet screen
+@media only screen 
+and (min-width : 0px){
+  .avatar-section {
+    margin-left: 8px;
+    padding: 8px;
+    .MuiAvatar-root {
+      margin-bottom: 8px;
+      background-color: $ci-grey;
+    }
+  }
+}
+
+// styles for desktop screen
+@media only screen 
+and (min-width : 960px){
+  .avatar-section {
+    margin-top: 65px;
+    margin-left: 8px;
+    padding: 8px;
+    .MuiAvatar-root {
+      margin-bottom: 8px;
+      background-color: $ci-grey;
+    }
+  }
+}
+
+.avatar-info {
+  .avatar-name {
+    font-weight: bold;
+    font-size: medium;
+  }
+}
+
+.list-item-nav-text {
+  color: black;
+  text-decoration: none;
+}
+
+.subListItem {
+  margin-left: 4em;
+}
+
+.drawer-list-item-active {
+  color: $ci-orange;
+}
+
+.drawer-list-item {
+  color: inherit;
+}
