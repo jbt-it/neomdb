@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
 
+import {AuthContext} from "./AuthContext";
 import Dashboard from "../members/Dashboard";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 
 const App: React.FunctionComponent = () => {
 
+  const [authenticated] = useContext(AuthContext);
+
   return (
-    <HashRouter>
+      <HashRouter>
       {
       // Renders the Nav componenent if the jwt is set
-      (localStorage.getItem("token") !== null) ? <Nav/> : null
+      (authenticated ? <Nav/> : null)
       }
       <Switch>
         <Route exact path = "/" component = {Dashboard} />

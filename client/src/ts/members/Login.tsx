@@ -1,9 +1,10 @@
 /**
  * Component that handles the login process
  */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import api from "../utils/api";
+import {AuthContext} from "../global/AuthContext";
 
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -12,6 +13,8 @@ import Button from "@material-ui/core/Button";
 import Textfield from "@material-ui/core/TextField";
 
 const Login: React.FunctionComponent = () => {
+
+  const [authenticated, setAuthenticated] = useContext(AuthContext);
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -27,6 +30,7 @@ const Login: React.FunctionComponent = () => {
     .then((res) => {
       if (res.status = 200){
         localStorage.setItem("token", res.data);
+        setAuthenticated(true);
       } else {
         console.log("Login Failed");
       }
