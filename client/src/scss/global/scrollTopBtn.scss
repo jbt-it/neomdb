@@ -1,0 +1,21 @@
+// contains the syling of the scroll top button
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  .scroll-top-fab {
+    background-color: $ci-grey;
+    .scroll-top-icon{
+      color: black;
+    }
+    &:hover {
+      background-color: $ci-orange;
+      .scroll-top-icon{
+        color: white;
+      }
+    }
+  }
+}
+
+
