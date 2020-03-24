@@ -13,7 +13,7 @@ const App: React.FunctionComponent = () => {
   return (
       <HashRouter>
       {
-      // Renders the Nav componenent if the jwt is set
+      // Renders the Nav componenent if the user is authenticated
       (authenticated ? <Nav/> : null)
       }
       <Switch>

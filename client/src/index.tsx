@@ -5,4 +5,8 @@ import {AuthProvider} from "./ts/global/AuthContext";
 
 import "./scss/app.scss";
 
-ReactDOM.render(<AuthProvider><App /></AuthProvider>, document.getElementById("root"));
+ReactDOM.render(
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+  , document.getElementById("root"));
