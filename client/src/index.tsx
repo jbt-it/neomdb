@@ -9,4 +9,4 @@ ReactDOM.render(
   <AuthProvider>
     <App />
   </AuthProvider>
-  , document.getElementById("root"));
+  ,document.getElementById("root"));
