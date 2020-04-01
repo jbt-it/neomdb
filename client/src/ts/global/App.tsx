@@ -2,20 +2,21 @@ import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
 
 import Dashboard from "../members/Dashboard";
+import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 
 const App: React.FunctionComponent = () => {
 
   return (
-    <HashRouter>
+      <HashRouter>
       {
       // Renders the Nav componenent if the jwt is set
       (localStorage.getItem("token") !== null) ? <Nav/> : null
       }
       <Switch>
         <Route exact path = "/" component = {Dashboard} />
-        <Route exact path = "/gesamtuebersicht" component = {Dashboard} />
+        <Route exact path = "/gesamtuebersicht" component = {MemberOverview} />
         <Route exact path = "/vorstand" component = {Dashboard} />
         <Route exact path = "/geburtstage" component = {Dashboard} />
         <Route exact path = "/traineebereich" component = {Dashboard} />

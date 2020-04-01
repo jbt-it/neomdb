@@ -1,0 +1,119 @@
+// contains the syling of the member overview
+
+// styles for mobile and tablet screen
+@media only screen 
+and (min-width : 0px){
+  .member-overview-root {
+    flex-grow: 1;
+    padding: 5px;
+    margin-top: 68px;
+    .amount-of-entries {
+      margin-bottom: 10px;
+      padding: 7px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .filter-container {
+      margin-bottom: 10px;
+      .filters {
+        display: flex;
+        align-items: center;
+        .filter-element {
+          margin: 7px;
+          width: 120px;
+        }
+        .status-filter {
+          margin: 7px;
+          width: 100px;
+        }
+        .filter-btn {
+          margin-top: 15px;
+          margin-bottom: 7px;
+          margin-right: 5px;
+          margin-left: 25px;
+        }
+      }
+        .additional-filters {
+          .filter-element {
+            margin: 7px;
+            width: 110px;
+          }
+          .sort-element {
+            margin: 7px;
+            width: 205px;
+          }
+        }
+    }
+    .table-head-cell {
+      background-color: $ci-orange;
+      color: white;
+    }
+  }
+}
+
+// styles for desktop screen
+@media only screen 
+and (min-width : 960px){
+  .member-overview-root {
+    flex-grow: 1;
+    padding: 5px;
+    margin-top: 75px;
+    margin-left: 280px;
+    .amount-of-entries {
+      margin-bottom: 10px;
+      padding: 7px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .filter-container {
+      margin-bottom: 10px;
+      .filters {
+        display: flex;
+        align-items: flex-end;
+        .filter-element {
+          margin: 7px;
+          width: 165px;
+        }
+        .status-filter {
+          margin: 7px;
+          width: 165px;
+        }
+        .filter-btn {
+          margin-top: 12px;
+          margin-bottom: 7px;
+          margin-right: 5px;
+          margin-left: 50px;
+        }
+      }
+      .additional-filters {
+        display: block;
+      }
+    }
+  }
+  .table-head-cell {
+    background-color: $ci-orange;
+    color: white;
+  }
+}
+
+// style of ressort-filter in landscape mode 
+@media screen and (orientation:landscape)
+{
+  .ressort-filter-main {
+    display: block;
+  }
+  .ressort-filter-additional {
+    display: none;
+  }
+}
+
+// style of ressort-filter in portrait mode 
+@media screen and (orientation:portrait)
+{
+  .ressort-filter-main {
+    display: none;
+  }
+  .ressort-filter-additional {
+    display: block;
+  }
+}
