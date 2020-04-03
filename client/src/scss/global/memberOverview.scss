@@ -94,6 +94,9 @@ and (min-width : 960px){
     background-color: $ci-orange;
     color: white;
   }
+  .table-head-sort-btn {
+    display: flex;
+  }
 }
 
 // style of ressort-filter in landscape mode 

@@ -22,25 +22,12 @@ import {
 } from "@material-ui/core";
 import {
   AddCircle,
-  RemoveCircle
+  RemoveCircle,
+  UnfoldMore,
+  ExpandLess,
+  ExpandMore
 } from "@material-ui/icons";
 import api from "../utils/api";
-
-// Dummy Data
-const data = [
-  {id: "1", name: "Lennart Rukower", handy: "00000001", mail: "l.rukower@mail.com", ressort: "IT", status: "Aktives Mitglied" },
-  {id: "2", name: "Quentin Newald", handy: "00000002", mail: "q.newald@mail.com", ressort: "QM", status: "Aktives Mitglied" },
-  {id: "3", name: "Christian Obst", handy: "00000003", mail: "c.obst@mail.com", ressort: "NET", status: "Aktives Mitglied" },
-  {id: "4", name: "Lennart Rukower", handy: "00000001", mail: "l.rukower@mail.com", ressort: "IT", status: "Aktives Mitglied" },
-  {id: "5", name: "Quentin Newald", handy: "00000002", mail: "q.newald@mail.com", ressort: "QM", status: "Aktives Mitglied" },
-  {id: "6", name: "Christian Obst", handy: "00000003", mail: "c.obst@mail.com", ressort: "NET", status: "Aktives Mitglied" },
-  {id: "7", name: "Lennart Rukower", handy: "00000001", mail: "l.rukower@mail.com", ressort: "IT", status: "Aktives Mitglied" },
-  {id: "8", name: "Quentin Newald", handy: "00000002", mail: "q.newald@mail.com", ressort: "QM", status: "Aktives Mitglied" },
-  {id: "9", name: "Christian Obst", handy: "00000003", mail: "c.obst@mail.com", ressort: "NET", status: "Aktives Mitglied" },
-  {id: "10", name: "Lennart Rukower", handy: "00000001", mail: "l.rukower@mail.com", ressort: "IT", status: "Aktives Mitglied" },
-  {id: "11", name: "Quentin Newald", handy: "00000002", mail: "q.newald@mail.com", ressort: "QM", status: "Aktives Mitglied" },
-  {id: "12", name: "Christian Obst", handy: "00000003", mail: "c.obst@mail.com", ressort: "NET", status: "Aktives Mitglied" }
-];
 
 // Theme used to specify color for TextFields (and other MUI-components)
 const theme = createMuiTheme({
@@ -53,72 +40,227 @@ const theme = createMuiTheme({
 });
 
 /**
+ * Interface for the member object
+ */
+interface Member {
+  mitgliedID: number;
+  nachname: string;
+  vorname: string;
+  handy: string;
+  mitgliedstatus: number;
+}
+
+/**
  * Depicts a table with all members and a filter section to filter the members
  */
 const MemberOverview = () => {
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState(data);
+  const [members, setMembers] = useState<Member[]>([]);
   const [searchFilter, setSearchFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [ressortFilter, setRessortFilter] = useState("");
   const [sortOption, setSortOption] = useState("");
 
+  const [nameSort, setNameSort] = useState("");
+  const [statusSort, setStatusSort] = useState("");
+
+
   // Retrieves the members
   const getMembers = () => {
-    // Api call
+    api.get("/users/", {
+      headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
+    })
+    .then((res) => {
+      if (res.status === 200){
+        setMembers(res.data);
+      } else {
+        console.log("Login Failed");
+      }
+      console.log(res.data);
+    }, (err) => {
+      console.log(err);
+    });
   };
 
   useEffect(() => getMembers(), []);
 
-  // Handles the change event on the search filter input
+  /**
+   * Handles the change event on the search filter input
+   *
+   * @param event
+   */
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchFilter(event.target.value);
   };
 
-  // Handles the change event on the status filter input
+  /**
+   * Handles the change event on the status filter input
+   *
+   * @param event
+   */
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatusFilter(event.target.value);
   };
 
-  // Handles the change event on the ressort filter input
+  /**
+   * Handles the change event on the ressort filter input
+   *
+   * @param event
+   */
   const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRessortFilter(event.target.value);
   };
 
-  // Handles the change event on the sort input
+  /**
+   * Handles the change event on the sort input
+   *
+   * @param event
+   */
   const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSortOption(event.target.value);
   };
 
-  // Filters the member data and returns it
-  const getfilteredMembers = () => {
+  /**
+   * Filters and sorts the member data and returns it
+   */
+  const getFilteredAndSortedMembers = () => {
     let filteredMembers = members;
 
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
-        return member.status === statusFilter;
+        return member.mitgliedstatus.toString() === statusFilter;
       });
     }
-    if (ressortFilter !== "") {
+ /*   if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.ressort === ressortFilter;
       });
-    }
+    }*/
     filteredMembers = filteredMembers.filter(member => {
       return (
-        member.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        member.mail.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        member.nachname.toLowerCase().includes(searchFilter.toLowerCase()) ||
         member.handy.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
+
+    if (nameSort === "up") {
+      filteredMembers = filteredMembers.sort((a,b) => {
+        return a.nachname.localeCompare(b.nachname);
+      });
+    } else if (nameSort === "down") {
+      filteredMembers = filteredMembers.sort((a,b) => {
+        return -a.nachname.localeCompare(b.nachname);
+      });
+    }
+
+    if (statusSort === "up") {
+      filteredMembers = filteredMembers.sort((a,b) => {
+        if(a.mitgliedstatus < b.mitgliedstatus) {
+          return -1;
+        } else if (a.mitgliedstatus > b.mitgliedstatus) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    } else if (statusSort === "down") {
+      filteredMembers = filteredMembers.sort((a,b) => {
+        if(a.mitgliedstatus < b.mitgliedstatus) {
+          return 1;
+        } else if (a.mitgliedstatus > b.mitgliedstatus) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+    }
+
     return filteredMembers;
   };
 
-  // Handles the filter toggle
+  /**
+   * Handles the filter toggle
+   */
   const toggleFilters = () => {
     setAddtionalFiltersState(!additionalFiltersState);
   };
+
+  /**
+   * Toggles between the name sort options
+   */
+  const toggleNameSort = () => {
+    switch (nameSort) {
+      case "": {
+        setNameSort("up");
+        break;
+      }
+      case "up": {
+        setNameSort("down");
+        break;
+      }
+      case "down": {
+        setNameSort("");
+        break;
+      }
+    }
+  };
+
+  /**
+   * Returns the sort icon for the name column
+   */
+  const getNameSortIcon = () => {
+      switch (nameSort) {
+        case "" : {
+          return <UnfoldMore/>;
+        }
+        case "up" : {
+          return <ExpandLess/>;
+        }
+        case "down" : {
+          return <ExpandMore/>;
+        }
+      }
+  };
+
+  /**
+   * Toggles between the status sort options
+   */
+  const toggleStatusSort = () => {
+    switch (statusSort) {
+      case "": {
+        setStatusSort("up");
+        break;
+      }
+      case "up": {
+        setStatusSort("down");
+        break;
+      }
+      case "down": {
+        setStatusSort("");
+        break;
+      }
+    }
+  };
+
+  /**
+   * Returns the sort icon for the status column
+   */
+  const getStatusSortIcon = () => {
+      switch (statusSort) {
+        case "" : {
+          return <UnfoldMore/>;
+        }
+        case "up" : {
+          return <ExpandLess/>;
+        }
+        case "down" : {
+          return <ExpandMore/>;
+        }
+      }
+  };
+
 
   // The additional filters
   const additionalFilters = (
@@ -216,7 +358,7 @@ const MemberOverview = () => {
         {additionalFiltersState ? additionalFilters : null}
       </Paper>
       <Paper className="amount-of-entries">
-        {`${getfilteredMembers().length} Einträge`}
+        {`${getFilteredAndSortedMembers().length} Einträge`}
       </Paper>
       <TableContainer
           component={Paper}
@@ -231,7 +373,10 @@ const MemberOverview = () => {
                 <TableCell
                   className="table-head-cell"
                 >
+                  <div className="table-head-sort-btn" onClick={toggleNameSort}>
                     Name
+                    {getNameSortIcon()}
+                  </div>
                 </TableCell>
                 <TableCell
                   className="table-head-cell"
@@ -246,7 +391,10 @@ const MemberOverview = () => {
                 <TableCell
                   className="table-head-cell"
                 >
-                  Status
+                  <div className="table-head-sort-btn" onClick={toggleStatusSort}>
+                    Status
+                    {getStatusSortIcon()}
+                  </div>
                 </TableCell>
                 <TableCell
                   className="table-head-cell"
@@ -256,18 +404,18 @@ const MemberOverview = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {getfilteredMembers().map((member, i) => (
+              {getFilteredAndSortedMembers().map((member, i) => (
                 <TableRow hover key={i}>
                   <TableCell
                     component="th"
                     scope="row"
                   >
-                    {member.name}
+                    {`${member.vorname} ${member.nachname}`}
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.mail}</TableCell>
-                  <TableCell>{member.status}</TableCell>
-                  <TableCell>{member.ressort}</TableCell>
+                  <TableCell>{member.nachname}</TableCell>
+                  <TableCell>{member.mitgliedstatus}</TableCell>
+                  {/*<TableCell>{member.ressort}</TableCell>*/}
                 </TableRow>
                   ))}
             </TableBody>
