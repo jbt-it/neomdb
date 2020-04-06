@@ -55,8 +55,9 @@ export const login = (req: Request, res: Response): void => {
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
   database.query(
-   `SELECT mitgliedID, nachname, vorname, handy, jbt_email, mitgliedstatus, ressort
+   `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus, ressort.kuerzel AS ressort
    FROM mitglied
+   INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
    ORDER BY nachname DESC`,
    [])
    .then((result: membersTypes.GetMembersQueryResult) => {
