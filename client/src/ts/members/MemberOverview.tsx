@@ -201,7 +201,7 @@ const MemberOverview = () => {
         break;
       }
       case "down": {
-        setNameSort("");
+        setNameSort("up");
         break;
       }
     }
@@ -238,7 +238,7 @@ const MemberOverview = () => {
         break;
       }
       case "down": {
-        setStatusSort("");
+        setStatusSort("up");
         break;
       }
     }
@@ -413,7 +413,8 @@ const MemberOverview = () => {
                     {`${member.vorname} ${member.nachname}`}
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.nachname}</TableCell>
+                  {/*TODO nachname --> mail*/}
+                  <TableCell></TableCell>
                   <TableCell>{member.mitgliedstatus}</TableCell>
                   {/*<TableCell>{member.ressort}</TableCell>*/}
                 </TableRow>
