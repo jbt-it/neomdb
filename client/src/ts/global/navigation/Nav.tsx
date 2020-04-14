@@ -18,14 +18,101 @@ import {
 } from "@material-ui/icons";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
+import { createStyles, fade, Theme, makeStyles } from "@material-ui/core/styles";
 import JBTLogoWhite from "../../../images/jbt-logo-white.png";
+
+/**
+ * Function which proivdes the styles of the Nav
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  barRoot: {
+    flexGrow: 1,
+  },
+  bar: {
+    backgroundColor: theme.palette.primary.main,
+    zIndex: 1,
+  },
+  menuButton: {
+    display: "block",
+    color: "white",
+    [theme.breakpoints.up("md")]: {
+      display: "none",
+    },
+  },
+  barContent: {
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "2px",
+  },
+  jbtLogo: {
+    display: "block",
+    width: "45px",
+    marginLeft: "5px",
+    marginRight: "10px",
+  },
+  title: {
+    flexGrow: 1,
+    color: theme.palette.text.secondary,
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
+    },
+  },
+  search: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto",
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "white",
+  },
+  searchInputRoot: {
+    color: "white",
+  },
+  searchInputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+  permanentDrawer: {
+    [theme.breakpoints.up("md")]: {
+      position: "fixed",
+      zIndex: 0,
+    },
+  },
+}));
 
 /**
  * The navigation of the application
  */
 const Nav:React.FunctionComponent = () => {
+  const classes = useStyles();
+
   const [isMenuDrawerOpen, setIsMenuDrawerOpen] = React.useState(false);
-  const [isSearchBarActive, setIsSearchBarActive] = React.useState(false);
 
   /**
    * Handles the toogle drawer event
@@ -46,59 +133,41 @@ const Nav:React.FunctionComponent = () => {
     setIsMenuDrawerOpen(open);
   };
 
- /**
-  * Returns the scss-class for the search bar
-  */
-  const getClassForSearchBar = () => {
-    if(isSearchBarActive) {
-      return "search-active";
-    } else {
-      return "search";
-    }
-  };
-
   return (
-    <div className="bar-root">
+    <div className={classes.barRoot}>
       <CssBaseline />
-      <AppBar position="fixed" className="bar">
+      <AppBar position="fixed" className={classes.bar}>
         <Toolbar>
           <IconButton
             edge="start"
-            className="menu-button"
-            color="inherit"
+            className={classes.menuButton}
             aria-label="open drawer"
             onClick={toggleDrawer(true)}
           >
             <Menu/>
           </IconButton>
-          <div className="bar-content">
-            <img src={JBTLogoWhite} alt="JBT Logo" className="jbt-logo"/>
-            <Typography className="title" variant="h6" noWrap>
+          <div className={classes.barContent}>
+            <img src={JBTLogoWhite} alt="JBT Logo" className={classes.jbtLogo}/>
+            <Typography className={classes.title} variant="h6" noWrap>
               JBT neoMDB
             </Typography>
           </div>
-          <div className={getClassForSearchBar()}>
-            <div className="search-icon">
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
               <Search/>
             </div>
             <InputBase
               placeholder="Suche..."
               classes={{
-                root: "search-input-root",
-                input: "search-input-input"
+                root: classes.searchInputRoot,
+                input: classes.searchInputInput
               }}
               inputProps={{ "aria-label": "search" }}
-              onFocus={() => {
-                setIsSearchBarActive(true);
-              }}
-              onBlur={() => {
-                setIsSearchBarActive(false);
-              }}
             />
           </div>
         </Toolbar>
       </AppBar>
-      <nav className="permanent-drawer">
+      <nav className={classes.permanentDrawer}>
         <Hidden mdUp implementation="css">
           <SwipeableDrawer
             variant="temporary"
