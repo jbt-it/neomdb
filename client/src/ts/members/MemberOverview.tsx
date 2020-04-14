@@ -37,9 +37,10 @@ interface Member {
   nachname: string;
   vorname: string;
   handy: string;
-  ressort: string,
-  mail: string,
+  jbt_email: string;
   mitgliedstatus: number;
+  ressort: string;
+
 }
 
 /**
@@ -404,7 +405,7 @@ const MemberOverview = () => {
                     {`${member.vorname} ${member.nachname}`}
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.mail}</TableCell>
+                  <TableCell>{member.jbt_email}</TableCell>
                   <TableCell>{member.mitgliedstatus}</TableCell>
                   {<TableCell>{member.ressort}</TableCell>}
                 </TableRow>
