@@ -36,6 +36,9 @@ import {
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 
+/**
+ * Function which proivdes the styles of the MenuDrawer
+ */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   menuDrawer: {
     width: "280px",
@@ -46,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       padding: theme.spacing(),
     },
     [theme.breakpoints.up("md")]: {
-      marginTop: theme.spacing(7),
+      marginTop: theme.spacing(8),
       marginLeft: theme.spacing(),
       padding: theme.spacing(),
     },
