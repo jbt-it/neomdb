@@ -14,6 +14,10 @@ export const globalTheme = createMuiTheme({
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
+    },
+    text: {
+      primary: "black",
+      secondary: "white",
     }
   },
 });
