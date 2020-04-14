@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import {HashRouter, Route, Switch} from "react-router-dom";
+import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
 
 import {AuthContext} from "./AuthContext";
 import Dashboard from "../members/Dashboard";
@@ -10,6 +10,22 @@ const App: React.FunctionComponent = () => {
 
   const [authenticated] = useContext(AuthContext);
 
+  /**
+   * Renders the specified component if the user is authenticated otherwise
+   * the user gets redirected to the login page
+   */
+  const PrivateRoute = ({component: Component, ...rest}: any) => {
+    return(
+      <Route {...rest} render = {props => (
+        authenticated ? (
+          <Component {...props}/>
+        ) : (
+          <Redirect to={{pathname: "/login"}}/>
+        )
+      )}/>
+    );
+  };
+
   return (
       <HashRouter>
       {
@@ -17,21 +33,21 @@ const App: React.FunctionComponent = () => {
       (authenticated ? <Nav/> : null)
       }
       <Switch>
-        <Route exact path = "/" component = {Dashboard} />
-        <Route exact path = "/gesamtuebersicht" component = {Dashboard} />
-        <Route exact path = "/vorstand" component = {Dashboard} />
-        <Route exact path = "/geburtstage" component = {Dashboard} />
-        <Route exact path = "/traineebereich" component = {Dashboard} />
-        <Route exact path = "/kuratoren" component = {Dashboard} />
-        <Route exact path = "/projekte" component = {Dashboard} />
-        <Route exact path = "/veranstaltungen" component = {Dashboard} />
-        <Route exact path = "/mm-tracking" component = {Dashboard} />
-        <Route exact path = "/pl-qm-tool" component = {Dashboard} />
-        <Route exact path = "/raumreservierung" component = {Dashboard} />
-        <Route exact path = "/innovationsmanagement" component = {Dashboard} />
-        <Route exact path = "/meine-funktionen" component = {Dashboard} />
-        <Route exact path = "/weitere-funktionen" component = {Dashboard} />
-        <Route exact path = "/kvp" component = {Dashboard} />
+        <PrivateRoute exact path = "/" component = {Dashboard} />
+        <PrivateRoute exact path = "/gesamtuebersicht" component = {Dashboard} />
+        <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
+        <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
+        <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
+        <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />
+        <PrivateRoute exact path = "/projekte" component = {Dashboard} />
+        <PrivateRoute exact path = "/veranstaltungen" component = {Dashboard} />
+        <PrivateRoute exact path = "/mm-tracking" component = {Dashboard} />
+        <PrivateRoute exact path = "/pl-qm-tool" component = {Dashboard} />
+        <PrivateRoute exact path = "/raumreservierung" component = {Dashboard} />
+        <PrivateRoute exact path = "/innovationsmanagement" component = {Dashboard} />
+        <PrivateRoute exact path = "/meine-funktionen" component = {Dashboard} />
+        <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
+        <PrivateRoute exact path = "/kvp" component = {Dashboard} />
         <Route exact path = "/login" component = {Login} />
       </Switch>
     </HashRouter>
