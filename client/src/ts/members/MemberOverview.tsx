@@ -29,16 +29,6 @@ import {
 } from "@material-ui/icons";
 import api from "../utils/api";
 
-// Theme used to specify color for TextFields (and other MUI-components)
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      // Ci-orange as hex
-      main: "#f6891f",
-    },
-  },
-});
-
 /**
  * Interface for the member object
  */
@@ -301,7 +291,6 @@ const MemberOverview = () => {
 
 
   return (
-    <ThemeProvider theme={theme}>
       <div className="member-overview-root">
       <Paper className="filter-container">
         <form className="filters" noValidate autoComplete="off">
@@ -423,7 +412,6 @@ const MemberOverview = () => {
           </Table>
         </TableContainer>
     </div>
-    </ThemeProvider>
   );
 };
 
