@@ -37,6 +37,8 @@ interface Member {
   nachname: string;
   vorname: string;
   handy: string;
+  ressort: string,
+  mail: string,
   mitgliedstatus: number;
 }
 
@@ -47,13 +49,13 @@ const MemberOverview = () => {
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
-  const [searchFilter, setSearchFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [ressortFilter, setRessortFilter] = useState("");
-  const [sortOption, setSortOption] = useState("");
+  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [ressortFilter, setRessortFilter] = useState<string>("");
+  const [sortOption, setSortOption] = useState<string>("");
 
-  const [nameSort, setNameSort] = useState("");
-  const [statusSort, setStatusSort] = useState("");
+  const [nameSort, setNameSort] = useState<string>("");
+  const [statusSort, setStatusSort] = useState<string>("");
 
 
   // Retrieves the members
@@ -122,11 +124,11 @@ const MemberOverview = () => {
         return member.mitgliedstatus.toString() === statusFilter;
       });
     }
- /*   if (ressortFilter !== "") {
+    if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.ressort === ressortFilter;
       });
-    }*/
+    }
     filteredMembers = filteredMembers.filter(member => {
       return (
         member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -402,10 +404,9 @@ const MemberOverview = () => {
                     {`${member.vorname} ${member.nachname}`}
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
-                  {/*TODO nachname --> mail*/}
-                  <TableCell></TableCell>
+                  <TableCell>{member.mail}</TableCell>
                   <TableCell>{member.mitgliedstatus}</TableCell>
-                  {/*<TableCell>{member.ressort}</TableCell>*/}
+                  {<TableCell>{member.ressort}</TableCell>}
                 </TableRow>
                   ))}
             </TableBody>
