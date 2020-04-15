@@ -10,7 +10,7 @@ import NotFound from "./NotFound";
 const App: React.FunctionComponent = () => {
 
   /**
-   * Checks if token in local storage is still valid
+   * Checks if token in local storage is expired
    */
   const checkAuth = (): boolean => {
     const token = localStorage.getItem("token");
