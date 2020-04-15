@@ -5,6 +5,7 @@ import decode from "jwt-decode";
 import Dashboard from "../members/Dashboard";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
+import NotFound from "./NotFound";
 
 const App: React.FunctionComponent = () => {
 
@@ -71,6 +72,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
         <PrivateRoute exact path = "/kvp" component = {Dashboard} />
         <Route exact path = "/login" component = {Login} />
+        <Route path = "*" component = {NotFound} />
       </Switch>
     </HashRouter>
   );
