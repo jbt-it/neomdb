@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import {
   NavLink,
+  useHistory,
   useLocation
 } from "react-router-dom";
 import {
@@ -48,6 +49,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
      */
     const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
       const location = useLocation();
+      const history = useHistory();
 
       useEffect(() => {
         setActiveNavLink(location.pathname);
@@ -85,6 +87,14 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
         setMemberOpen(false);
         setToolsOpen(false);
         setActiveNavLink(pathname);
+      };
+
+      /**
+       * Handles click on logout link
+       */
+      const handleLogout: VoidFunction = () => {
+        localStorage.clear();
+        history.push("/login");
       };
 
       /**
@@ -246,7 +256,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
                 <ListItemText primary="KVP" />
               </ListItem>
             </NavLink>
-            <ListItem button onClick={props.drawer(false)}>
+            <ListItem button onClick={() => {props.drawer(false); handleLogout();}}>
               <ListItemIcon>
                 <ExitToApp />
               </ListItemIcon>
