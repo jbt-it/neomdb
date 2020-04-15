@@ -2,7 +2,6 @@
 
 import React, {
   useState,
-  useContext,
   useEffect
 } from "react";
 import {
@@ -17,8 +16,6 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  createMuiTheme,
-  ThemeProvider
 } from "@material-ui/core";
 import {
   AddCircle,
@@ -27,7 +24,109 @@ import {
   ExpandLess,
   ExpandMore
 } from "@material-ui/icons";
+import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import api from "../utils/api";
+
+/**
+ * Function which proivdes the styles of the MemberOverview
+ */
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  memberOverviewRoot: {
+    flexGrow: 1,
+    padding: "5px",
+    [theme.breakpoints.up("md")]: {
+      marginTop: "75px",
+      marginLeft: "280px",
+    },
+    [theme.breakpoints.down("md")]: {
+      marginTop: "96px",
+    },
+  },
+  amountOfEntries: {
+    marginBottom: "10px",
+    padding: "7px",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  filterContainer: {
+    marginBottom: "10px",
+  },
+  filters: {
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+      alignItems: "flex-end",
+    },
+    [theme.breakpoints.down("md")]: {
+      display: "flex",
+      alignItems: "center",
+    },
+  },
+  filterElement: {
+    [theme.breakpoints.up("md")]: {
+      margin: "7px",
+      width: "165px",
+    },
+    [theme.breakpoints.down("md")]: {
+      margin: "7px",
+      width: "120px",
+    },
+  },
+  statusFilter: {
+    [theme.breakpoints.up("md")]: {
+      margin: "7px",
+      width: "165px",
+    },
+    [theme.breakpoints.down("md")]: {
+      margin: "7px",
+      width: "100px",
+    },
+  },
+  filterBtn: {
+    [theme.breakpoints.up("md")]: {
+      marginTop: "12px",
+      marginBottom: "7px",
+      marginRight: "5px",
+      marginLeft: "50px",
+    },
+    [theme.breakpoints.down("md")]: {
+      marginTop: "15px",
+      marginBottom: "7px",
+      marginRight: "5px",
+      marginLeft: "25px",
+    },
+  },
+  sortElement: {
+    margin: "7px",
+    width: "205px",
+  },
+  tableContainer: {
+    maxHeight: (window.screen.height - 40) * 0.8,
+  },
+  tableHeadCell: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.text.secondary,
+  },
+  tableHeadSortBtn: {
+    display: "flex",
+    alignItems: "center",
+  },
+  ressortFilterMain: {
+    "@media screen and (orientation:landscape)": {
+      display: "block",
+    },
+    "@media screen and (orientation:portrait)": {
+      display: "none",
+    },
+  },
+  ressortFilterAdditional: {
+    "@media screen and (orientation:landscape)": {
+      display: "none",
+    },
+    "@media screen and (orientation:portrait)": {
+      display: "block",
+    },
+  },
+}));
 
 /**
  * Interface for the member object
@@ -47,6 +146,7 @@ interface Member {
  * Depicts a table with all members and a filter section to filter the members
  */
 const MemberOverview = () => {
+  const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
@@ -257,11 +357,11 @@ const MemberOverview = () => {
 
   // The additional filters
   const additionalFilters = (
-    <div className="additional-filters">
-      <Grid item xs={6} sm={3} className="ressort-filter-additional">
+    <div>
+      <Grid item xs={6} sm={3} className={classes.ressortFilterAdditional}>
         <TextField
           label="Ressort"
-          className="filter-element"
+          className={classes.filterElement}
           color="primary"
           onChange={handleRessortChange}
           value={ressortFilter}
@@ -278,7 +378,7 @@ const MemberOverview = () => {
         </TextField>
       </Grid>
       <TextField
-        className="sort-element"
+        className={classes.sortElement}
         color="primary"
         onChange={handleSortOptionChange}
         value={sortOption}
@@ -294,14 +394,14 @@ const MemberOverview = () => {
 
 
   return (
-      <div className="member-overview-root">
-      <Paper className="filter-container">
-        <form className="filters" noValidate autoComplete="off">
+      <div className={classes.memberOverviewRoot}>
+      <Paper className={classes.filterContainer}>
+        <form className={classes.filters} noValidate autoComplete="off">
         <Grid container spacing={8}>
           <Grid item xs={6} sm={3}>
             <TextField
               label="Name/Mail/..."
-              className="filter-element"
+              className={classes.filterElement}
               color="primary"
               onChange={handleSearchInput}
             />
@@ -309,7 +409,7 @@ const MemberOverview = () => {
           <Grid item xs={6} sm={3}>
             <TextField
               label="Status"
-              className="status-filter"
+              className={classes.statusFilter}
               color="primary"
               onChange={handleStatusChange}
               value={statusFilter}
@@ -326,7 +426,7 @@ const MemberOverview = () => {
           <Grid item xs={6} sm={3} className="ressort-filter-main">
             <TextField
               label="Ressort"
-              className="filter-element"
+              className={classes.filterElement}
               color="primary"
               onChange={handleRessortChange}
               value={ressortFilter}
@@ -343,54 +443,51 @@ const MemberOverview = () => {
             </TextField>
           </Grid>
         </Grid>
-          <IconButton aria-label="more filter options" className="filter-btn" onClick={toggleFilters}>
+          <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
             {additionalFiltersState ? <RemoveCircle fontSize="inherit" /> : <AddCircle fontSize="inherit" />}
           </IconButton>
         </form>
         {additionalFiltersState ? additionalFilters : null}
       </Paper>
-      <Paper className="amount-of-entries">
+      <Paper className={classes.amountOfEntries}>
         {`${getFilteredAndSortedMembers().length} Einträge`}
       </Paper>
       <TableContainer
           component={Paper}
-          style={
-            // Table gets a fixed percentage of the total screen height
-            { maxHeight: (window.screen.height - 40) * 0.8 }
-          }
+          className={classes.tableContainer}
         >
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell
-                  className="table-head-cell"
+                  className={classes.tableHeadCell}
                 >
-                  <div className="table-head-sort-btn" onClick={toggleNameSort}>
+                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
                     Name
                     {getNameSortIcon()}
                   </div>
                 </TableCell>
                 <TableCell
-                  className="table-head-cell"
+                  className={classes.tableHeadCell}
                 >
                   Handy
                 </TableCell>
                 <TableCell
-                  className="table-head-cell"
-                >
+                  className={classes.tableHeadCell}
+                  >
                   Mail
                 </TableCell>
                 <TableCell
-                  className="table-head-cell"
-                >
-                  <div className="table-head-sort-btn" onClick={toggleStatusSort}>
+                  className={classes.tableHeadCell}
+                  >
+                  <div className={classes.tableHeadSortBtn} onClick={toggleStatusSort}>
                     Status
                     {getStatusSortIcon()}
                   </div>
                 </TableCell>
                 <TableCell
-                  className="table-head-cell"
-                >
+                  className={classes.tableHeadCell}
+                  >
                   Ressort
                 </TableCell>
               </TableRow>
