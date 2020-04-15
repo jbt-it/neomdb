@@ -2,7 +2,8 @@
 
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useContext
 } from "react";
 import {
   NavLink,
@@ -35,6 +36,7 @@ import {
   TrendingUp
 } from "@material-ui/icons";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
+import {AuthContext} from "../AuthContext";
 
      // Interface for the drawer props
     interface DrawerProps {
@@ -48,6 +50,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
      * @param props
      */
     const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
+      const [authenticated, setAuthenticated] = useContext(AuthContext);
       const location = useLocation();
       const history = useHistory();
 
@@ -93,6 +96,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
        * Handles click on logout link
        */
       const handleLogout: VoidFunction = () => {
+        setAuthenticated(false);
         localStorage.clear();
         history.push("/login");
       };
