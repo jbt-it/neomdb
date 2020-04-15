@@ -12,6 +12,10 @@ export type GetMembersQueryResult = {
   vorname: string;
   nachname: string;
   handy: number;
+  jbt_email: string;
+  mitgliedstatus: string;
+  ressort: string;
+  lastchange: string;
 };
 
 export type GetPermissionsQueryResult = {
