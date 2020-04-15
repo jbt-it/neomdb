@@ -1,14 +1,36 @@
 import React, { useContext } from "react";
 import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
+import decode from "jwt-decode";
 
-import {AuthContext} from "./AuthContext";
 import Dashboard from "../members/Dashboard";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 
 const App: React.FunctionComponent = () => {
 
-  const [authenticated] = useContext(AuthContext);
+  /**
+   * Checks if token in local storage is still valid
+   */
+  const checkAuth = (): boolean => {
+    const token = localStorage.getItem("token");
+    if (!token){
+      return false;
+    } else {
+      try {
+        const { exp } = decode(token);
+
+        // JWT gives expiration time in seconds therefore date needs to be
+        // Converted from miliseconds
+        if (exp < new Date().getTime() / 1000) {
+          return false;
+        } else {
+          return true;
+        }
+      } catch {
+        return false;
+      }
+    }
+  };
 
   /**
    * Renders the specified component if the user is authenticated otherwise
@@ -17,7 +39,7 @@ const App: React.FunctionComponent = () => {
   const PrivateRoute = ({component: Component, ...rest}: any) => {
     return(
       <Route {...rest} render = {props => (
-        authenticated ? (
+        checkAuth() ? (
           <Component {...props}/>
         ) : (
           <Redirect to={{pathname: "/login"}}/>
@@ -30,7 +52,7 @@ const App: React.FunctionComponent = () => {
       <HashRouter>
       {
       // Renders the Nav componenent if the user is authenticated
-      (authenticated ? <Nav/> : null)
+        checkAuth() ? <Nav/> : null
       }
       <Switch>
         <PrivateRoute exact path = "/" component = {Dashboard} />
