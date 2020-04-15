@@ -2,6 +2,7 @@
  * Component that handles the login process
  */
 import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import api from "../utils/api";
 import {AuthContext} from "../global/AuthContext";
@@ -13,7 +14,7 @@ import Button from "@material-ui/core/Button";
 import Textfield from "@material-ui/core/TextField";
 
 const Login: React.FunctionComponent = () => {
-
+  const history = useHistory();
   const [authenticated, setAuthenticated] = useContext(AuthContext);
 
   const [username, setUsername] = useState<string>("");
@@ -31,6 +32,7 @@ const Login: React.FunctionComponent = () => {
       if (res.status = 200){
         localStorage.setItem("token", res.data);
         setAuthenticated(true);
+        history.push("/");
       } else {
         console.log("Login Failed");
       }
