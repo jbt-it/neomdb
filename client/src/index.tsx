@@ -16,8 +16,8 @@ export const globalTheme = createMuiTheme({
       main: "#aeb0b2",
     },
     text: {
-      primary: "black",
-      secondary: "white",
+      primary: "#000000",
+      secondary: "#ffffff",
     }
   },
 });
