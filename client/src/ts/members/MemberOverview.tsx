@@ -38,9 +38,9 @@ interface Member {
   vorname: string;
   handy: string;
   jbt_email: string;
-  mitgliedstatus: number;
+  mitgliedstatus: string;
   ressort: string;
-
+  lastchange: string;
 }
 
 /**
@@ -317,9 +317,9 @@ const MemberOverview = () => {
             >
               <MenuItem value={""}>-</MenuItem>
               <MenuItem value={"Trainee"}>Trainee</MenuItem>
-              <MenuItem value={"Aktives Mitglied"}>Aktives Mitglied</MenuItem>
+              <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
               <MenuItem value={"Senior"}>Senior</MenuItem>
-              <MenuItem value={"Passives Mitglied"}>Passives Mitglied</MenuItem>
+              <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
               <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
             </TextField>
           </Grid>
