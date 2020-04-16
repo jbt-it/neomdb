@@ -2,10 +2,12 @@
 
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useContext
 } from "react";
 import {
   NavLink,
+  useHistory,
   useLocation
 } from "react-router-dom";
 import {
@@ -34,6 +36,7 @@ import {
   TrendingUp
 } from "@material-ui/icons";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
+import {AuthContext} from "../AuthContext";
 
      // Interface for the drawer props
     interface DrawerProps {
@@ -47,7 +50,9 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
      * @param props
      */
     const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
+      const [authenticated, setAuthenticated] = useContext(AuthContext);
       const location = useLocation();
+      const history = useHistory();
 
       useEffect(() => {
         setActiveNavLink(location.pathname);
@@ -85,6 +90,15 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
         setMemberOpen(false);
         setToolsOpen(false);
         setActiveNavLink(pathname);
+      };
+
+      /**
+       * Handles click on logout link
+       */
+      const handleLogout: VoidFunction = () => {
+        setAuthenticated(false);
+        localStorage.clear();
+        history.push("/login");
       };
 
       /**
@@ -246,7 +260,7 @@ import JBTLogoBlack from "../../../images/jbt-logo-black.png";
                 <ListItemText primary="KVP" />
               </ListItem>
             </NavLink>
-            <ListItem button onClick={props.drawer(false)}>
+            <ListItem button onClick={() => {props.drawer(false); handleLogout();}}>
               <ListItemIcon>
                 <ExitToApp />
               </ListItemIcon>
