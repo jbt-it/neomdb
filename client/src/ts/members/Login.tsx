@@ -108,12 +108,6 @@ const Login: React.FunctionComponent = () => {
   /**
    * Check if Capslock is enabled
    */
-  /*
-  const handleKeyUp = (isCapsEnabled:boolean) => {
-    setCapslock(isCapsEnabled);
-  };
-  */
-
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     setCapslock(event.getModifierState("CapsLock"));
   };
