@@ -22,7 +22,7 @@ import {
   RemoveCircle,
   UnfoldMore,
   ExpandLess,
-  ExpandMore
+  ExpandMore,
 } from "@material-ui/icons";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import api from "../utils/api";
@@ -145,7 +145,7 @@ interface Member {
 /**
  * Depicts a table with all members and a filter section to filter the members
  */
-const MemberOverview = () => {
+const MemberOverview: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
@@ -160,7 +160,7 @@ const MemberOverview = () => {
 
 
   // Retrieves the members
-  const getMembers = () => {
+  const getMembers: VoidFunction = () => {
     api.get("/users/", {
       headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
     })
@@ -168,7 +168,7 @@ const MemberOverview = () => {
       if (res.status === 200){
         setMembers(res.data);
       } else {
-        console.log("Login Failed");
+        console.log("Member Retrieval Failed!");
       }
       console.log(res.data);
     }, (err) => {
@@ -183,7 +183,7 @@ const MemberOverview = () => {
    *
    * @param event
    */
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchFilter(event.target.value);
   };
 
@@ -192,7 +192,7 @@ const MemberOverview = () => {
    *
    * @param event
    */
-  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setStatusFilter(event.target.value);
   };
 
@@ -201,7 +201,7 @@ const MemberOverview = () => {
    *
    * @param event
    */
-  const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setRessortFilter(event.target.value);
   };
 
@@ -210,26 +210,31 @@ const MemberOverview = () => {
    *
    * @param event
    */
-  const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSortOption(event.target.value);
   };
 
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = () => {
+  const getFilteredAndSortedMembers = ():Member[] => {
     let filteredMembers = members;
 
+    // Filters after status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.mitgliedstatus.toString() === statusFilter;
       });
     }
+
+    // Filters after ressort
     if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.ressort === ressortFilter;
       });
     }
+
+    // Filters after search input
     filteredMembers = filteredMembers.filter(member => {
       return (
         member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -238,52 +243,64 @@ const MemberOverview = () => {
       );
     });
 
+    let sortedMembers = filteredMembers;
+
+    // Sorts after last changed in ascending order
+    if (sortOption === "lastchange ASC") {
+      sortedMembers = sortedMembers.sort((a,b) => {
+        const dateA = new Date(a.lastchange);
+        const dateB = new Date(b.lastchange);
+
+        if (dateA < dateB) {
+          return -1;
+        } else if (dateA > dateB) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    // Sorts after last changed in descending order
+    } else if (sortOption === "lastchange DESC") {
+      sortedMembers = sortedMembers.sort((a,b) => {
+        const dateA = new Date(a.lastchange);
+        const dateB = new Date(b.lastchange);
+
+        if (dateA < dateB) {
+          return 1;
+        } else if (dateA > dateB) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+    }
+
+    // Sorts after lastname in ascending alphabetical order
     if (nameSort === "up") {
-      filteredMembers = filteredMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a,b) => {
         return a.nachname.localeCompare(b.nachname);
       });
+    // Sorts after lastname in descending alphabetical order
     } else if (nameSort === "down") {
-      filteredMembers = filteredMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a,b) => {
         return -a.nachname.localeCompare(b.nachname);
       });
     }
 
-    if (statusSort === "up") {
-      filteredMembers = filteredMembers.sort((a,b) => {
-        if(a.mitgliedstatus < b.mitgliedstatus) {
-          return -1;
-        } else if (a.mitgliedstatus > b.mitgliedstatus) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-    } else if (statusSort === "down") {
-      filteredMembers = filteredMembers.sort((a,b) => {
-        if(a.mitgliedstatus < b.mitgliedstatus) {
-          return 1;
-        } else if (a.mitgliedstatus > b.mitgliedstatus) {
-          return -1;
-        } else {
-          return 0;
-        }
-      });
-    }
-
-    return filteredMembers;
+    return sortedMembers;
   };
 
   /**
    * Handles the filter toggle
    */
-  const toggleFilters = () => {
+  const toggleFilters: VoidFunction = () => {
     setAddtionalFiltersState(!additionalFiltersState);
   };
 
   /**
    * Toggles between the name sort options
    */
-  const toggleNameSort = () => {
+  const toggleNameSort:VoidFunction = () => {
     switch (nameSort) {
       case "": {
         setNameSort("up");
@@ -294,7 +311,7 @@ const MemberOverview = () => {
         break;
       }
       case "down": {
-        setNameSort("up");
+        setNameSort("");
         break;
       }
     }
@@ -303,7 +320,7 @@ const MemberOverview = () => {
   /**
    * Returns the sort icon for the name column
    */
-  const getNameSortIcon = () => {
+  const getNameSortIcon:VoidFunction = () => {
       switch (nameSort) {
         case "" : {
           return <UnfoldMore/>;
@@ -316,44 +333,6 @@ const MemberOverview = () => {
         }
       }
   };
-
-  /**
-   * Toggles between the status sort options
-   */
-  const toggleStatusSort = () => {
-    switch (statusSort) {
-      case "": {
-        setStatusSort("up");
-        break;
-      }
-      case "up": {
-        setStatusSort("down");
-        break;
-      }
-      case "down": {
-        setStatusSort("up");
-        break;
-      }
-    }
-  };
-
-  /**
-   * Returns the sort icon for the status column
-   */
-  const getStatusSortIcon = () => {
-      switch (statusSort) {
-        case "" : {
-          return <UnfoldMore/>;
-        }
-        case "up" : {
-          return <ExpandLess/>;
-        }
-        case "down" : {
-          return <ExpandMore/>;
-        }
-      }
-  };
-
 
   // The additional filters
   const additionalFilters = (
@@ -386,8 +365,8 @@ const MemberOverview = () => {
         label="Sortieren nach..."
       >
         <MenuItem value={""}>-</MenuItem>
-        <MenuItem value={"Zuletzt Aktualisiert (aufsteigend)"}>Zuletzt Aktualisiert (aufsteigend)</MenuItem>
-        <MenuItem value={"Zuletzt Aktualisiert (absteigend)"}>Zuletzt Aktualisiert (absteigend)</MenuItem>
+        <MenuItem value={"lastchange ASC"}>Zuletzt Aktualisiert (aufsteigend)</MenuItem>
+        <MenuItem value={"lastchange DESC"}>Zuletzt Aktualisiert (absteigend)</MenuItem>
       </TextField>
     </div>
   );
@@ -480,10 +459,7 @@ const MemberOverview = () => {
                 <TableCell
                   className={classes.tableHeadCell}
                   >
-                  <div className={classes.tableHeadSortBtn} onClick={toggleStatusSort}>
-                    Status
-                    {getStatusSortIcon()}
-                  </div>
+                  Status
                 </TableCell>
                 <TableCell
                   className={classes.tableHeadCell}
