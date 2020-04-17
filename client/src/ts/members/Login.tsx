@@ -95,22 +95,29 @@ const Login: React.FunctionComponent = () => {
         <Textfield error className={classes.inputfield} id="password" label="Passwort" type="password"
           helperText="Passwort oder Benutzername sind nicht korrekt" value={password}
           onChange = {event => {setPassword(event.target.value);}}
-          onKeyUp={event => {handleKeyUp(event.getModifierState("CapsLock"));}} fullWidth />
+          onKeyUp={handleKeyUp} fullWidth />
       );
     }
     return (
       <Textfield className={classes.inputfield} id="password" label="Passwort" type="password" value={password}
         onChange = {event => {setPassword(event.target.value);}}
-        onKeyUp={event => {handleKeyUp(event.getModifierState("CapsLock"));}} fullWidth />
+        onKeyUp={handleKeyUp} fullWidth />
     );
   };
 
   /**
    * Check if Capslock is enabled
    */
+  /*
   const handleKeyUp = (isCapsEnabled:boolean) => {
     setCapslock(isCapsEnabled);
   };
+  */
+
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    setCapslock(event.getModifierState("CapsLock"));
+  };
+
 
   /*
    * Warn if capslock is enabled
@@ -132,7 +139,7 @@ const Login: React.FunctionComponent = () => {
             <form className={classes.login} onSubmit={event => {login();}}>
               <Textfield className={classes.inputfield} id="username" label="Benutzername" type="text" value={username}
                 onChange = {event => {setUsername(event.target.value);}}
-                onKeyUp={event => {handleKeyUp(event.getModifierState("CapsLock"));}} fullWidth />
+                onKeyUp={handleKeyUp} fullWidth />
               {getPasswordField()}
               <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
                       Login
