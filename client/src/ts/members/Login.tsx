@@ -1,7 +1,8 @@
 /**
  * Component that handles the login process
  */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import api from "../utils/api";
 import Paper from "@material-ui/core/Paper";
@@ -13,6 +14,8 @@ import logo from "../../images/jbt-logo-black.png";
 import Link from "@material-ui/core/Link";
 
 const Login: React.FunctionComponent = () => {
+  const history = useHistory();
+  const [authenticated, setAuthenticated] = useContext(AuthContext);
 
   /**
    * Styles
@@ -77,6 +80,8 @@ const Login: React.FunctionComponent = () => {
     .then((res) => {
       if (res.status === 200){
         localStorage.setItem("token", res.data);
+        setAuthenticated(true);
+        history.push("/");
       } else {
         setFailedLogin(true);
       }
