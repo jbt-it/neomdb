@@ -1,4 +1,6 @@
-// The MemberOverview-Component displays a all members and filter-options
+/**
+ * The MemberOverview-Component displays all members in a table and filter-options
+ */
 
 import React, {
   useState,
@@ -16,6 +18,9 @@ import {
   MenuItem,
   IconButton,
   Grid,
+  createStyles,
+  Theme,
+  makeStyles,
 } from "@material-ui/core";
 import {
   AddCircle,
@@ -24,7 +29,6 @@ import {
   ExpandLess,
   ExpandMore,
 } from "@material-ui/icons";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import api from "../utils/api";
 
 /**
@@ -156,8 +160,6 @@ const MemberOverview: React.FunctionComponent = () => {
   const [sortOption, setSortOption] = useState<string>("");
 
   const [nameSort, setNameSort] = useState<string>("");
-  const [statusSort, setStatusSort] = useState<string>("");
-
 
   // Retrieves the members
   const getMembers: VoidFunction = () => {
