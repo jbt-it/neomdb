@@ -38,12 +38,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   memberOverviewRoot: {
     flexGrow: 1,
     padding: "5px",
+    marginTop: "58px",
     [theme.breakpoints.up("md")]: {
-      marginTop: "75px",
+      marginTop: "65px",
       marginLeft: "280px",
     },
-    [theme.breakpoints.down("md")]: {
-      marginTop: "96px",
+    [theme.breakpoints.up("sm")]: {
+      marginTop: "65px",
     },
   },
   amountOfEntries: {
@@ -68,9 +69,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   filterElement: {
     [theme.breakpoints.up("md")]: {
       margin: "7px",
-      width: "165px",
+      width: "155px",
     },
     [theme.breakpoints.down("md")]: {
+      margin: "7px",
+      width: "120px",
+    },
+    [theme.breakpoints.down("sm")]: {
       margin: "7px",
       width: "120px",
     },
@@ -104,7 +109,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: "205px",
   },
   tableContainer: {
-    maxHeight: (window.screen.height - 40) * 0.8,
+    maxHeight: (window.screen.height - 75) * 0.8,
   },
   tableHeadCell: {
     backgroundColor: theme.palette.primary.main,
@@ -113,6 +118,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   tableHeadSortBtn: {
     display: "flex",
     alignItems: "center",
+  },
+  statusFilterMain: {
+    display: "block",
+    "@media screen and (max-width: 350px)": {
+      display: "none",
+    },
+  },
+  statusFilterAdditional: {
+    display: "none",
+    "@media screen and (max-width: 350px)": {
+      display: "block",
+    },
   },
   ressortFilterMain: {
     "@media screen and (orientation:landscape)": {
@@ -169,12 +186,7 @@ const MemberOverview: React.FunctionComponent = () => {
     .then((res) => {
       if (res.status === 200){
         setMembers(res.data);
-      } else {
-        console.log("Member Retrieval Failed!");
       }
-      console.log(res.data);
-    }, (err) => {
-      console.log(err);
     });
   };
 
@@ -339,6 +351,23 @@ const MemberOverview: React.FunctionComponent = () => {
   // The additional filters
   const additionalFilters = (
     <div>
+      <Grid item xs={6} sm={3} className={classes.statusFilterAdditional}>
+            <TextField
+              label="Status"
+              className={classes.filterElement}
+              color="primary"
+              onChange={handleStatusChange}
+              value={statusFilter}
+              select
+            >
+              <MenuItem value={""}>-</MenuItem>
+              <MenuItem value={"Trainee"}>Trainee</MenuItem>
+              <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+              <MenuItem value={"Senior"}>Senior</MenuItem>
+              <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+              <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+            </TextField>
+          </Grid>
       <Grid item xs={6} sm={3} className={classes.ressortFilterAdditional}>
         <TextField
           label="Ressort"
@@ -387,10 +416,10 @@ const MemberOverview: React.FunctionComponent = () => {
               onChange={handleSearchInput}
             />
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
             <TextField
               label="Status"
-              className={classes.statusFilter}
+              className={classes.filterElement}
               color="primary"
               onChange={handleStatusChange}
               value={statusFilter}
@@ -404,7 +433,7 @@ const MemberOverview: React.FunctionComponent = () => {
               <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={6} sm={3} className="ressort-filter-main">
+          <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
             <TextField
               label="Ressort"
               className={classes.filterElement}
