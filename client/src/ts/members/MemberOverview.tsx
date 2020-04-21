@@ -1,5 +1,5 @@
 /**
- * The MemberOverview-Component displays all members in a table and filter-options
+ * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
 import React, {
