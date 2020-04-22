@@ -5,6 +5,7 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import api from "../utils/api";
+import { AuthContext } from "../global/AuthContext";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
