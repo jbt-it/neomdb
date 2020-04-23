@@ -180,14 +180,21 @@ const MemberOverview: React.FunctionComponent = () => {
 
   // Retrieves the members
   const getMembers: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
     api.get("/users/", {
       headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
     })
     .then((res) => {
       if (res.status === 200){
-        setMembers(res.data);
+        if(mounted) {
+          setMembers(res.data);
+        }
       }
     });
+
+    // Clean-up function
+    return () => {mounted = false;};
   };
 
   useEffect(() => getMembers(), []);
