@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   title: {
     flexGrow: 1,
-    color: theme.palette.text.secondary,
+    color: "white",
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "block",
