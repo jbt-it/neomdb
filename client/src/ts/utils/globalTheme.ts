@@ -13,10 +13,6 @@ export default createMuiTheme({
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
-    },
-    text: {
-      primary: "#000000",
-      secondary: "#ffffff",
     }
   },
 });
