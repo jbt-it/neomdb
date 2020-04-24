@@ -23,8 +23,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import {
-  AddCircle,
-  RemoveCircle,
   UnfoldMore,
   ExpandLess,
   ExpandMore,
@@ -461,7 +459,7 @@ const MemberOverview: React.FunctionComponent = () => {
           </Grid>
         </Grid>
           <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
-            {additionalFiltersState ? <RemoveCircle fontSize="inherit" /> : <AddCircle fontSize="inherit" />}
+            {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
           </IconButton>
         </form>
         {additionalFiltersState ? additionalFilters : null}
