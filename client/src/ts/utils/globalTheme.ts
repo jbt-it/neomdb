@@ -4,7 +4,7 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 // Global theme
-const globalTheme = createMuiTheme({
+export default createMuiTheme({
   palette: {
     primary: {
       // Ci-orange as hex
@@ -20,5 +20,3 @@ const globalTheme = createMuiTheme({
     }
   },
 });
-
-export default globalTheme;
