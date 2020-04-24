@@ -201,7 +201,6 @@ const MemberOverview: React.FunctionComponent = () => {
 
   /**
    * Handles the change event on the search filter input
-   *
    * @param event
    */
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -210,7 +209,6 @@ const MemberOverview: React.FunctionComponent = () => {
 
   /**
    * Handles the change event on the status filter input
-   *
    * @param event
    */
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -219,7 +217,6 @@ const MemberOverview: React.FunctionComponent = () => {
 
   /**
    * Handles the change event on the ressort filter input
-   *
    * @param event
    */
   const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -228,7 +225,6 @@ const MemberOverview: React.FunctionComponent = () => {
 
   /**
    * Handles the change event on the sort input
-   *
    * @param event
    */
   const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -241,21 +237,21 @@ const MemberOverview: React.FunctionComponent = () => {
   const getFilteredAndSortedMembers = ():Member[] => {
     let filteredMembers = members;
 
-    // Filters after status
+    // Filters by status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.mitgliedstatus.toString() === statusFilter;
       });
     }
 
-    // Filters after ressort
+    // Filters by ressort
     if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter(member => {
         return member.ressort === ressortFilter;
       });
     }
 
-    // Filters after search input
+    // Filters by search input
     filteredMembers = filteredMembers.filter(member => {
       return (
         member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -266,7 +262,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
     let sortedMembers = filteredMembers;
 
-    // Sorts after last changed in ascending order
+    // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
       sortedMembers = sortedMembers.sort((a,b) => {
         const dateA = new Date(a.lastchange);
@@ -280,7 +276,8 @@ const MemberOverview: React.FunctionComponent = () => {
           return 0;
         }
       });
-    // Sorts after last changed in descending order
+
+    // Sorts by last changed in descending order
     } else if (sortOption === "lastchange DESC") {
       sortedMembers = sortedMembers.sort((a,b) => {
         const dateA = new Date(a.lastchange);
@@ -296,18 +293,17 @@ const MemberOverview: React.FunctionComponent = () => {
       });
     }
 
-    // Sorts after lastname in ascending alphabetical order
+    // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sortedMembers = sortedMembers.sort((a,b) => {
         return a.nachname.localeCompare(b.nachname);
       });
-    // Sorts after lastname in descending alphabetical order
+    // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sortedMembers = sortedMembers.sort((a,b) => {
         return -a.nachname.localeCompare(b.nachname);
       });
     }
-
     return sortedMembers;
   };
 
