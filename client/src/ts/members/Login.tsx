@@ -137,7 +137,7 @@ const Login: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo}/>
             <h1>Login</h1>
-            <form className={classes.login} id="loginform" onSubmit={event => {login(event);}} action="#/login">
+            <form className={classes.login} id="loginform" onSubmit={event => {login(event);}}>
               <Textfield className={classes.inputfield} id="username" label="Benutzername" type="text" value={username}
                 onChange = {event => {setUsername(event.target.value);}}
                 onKeyUp={handleKeyUp} fullWidth />
