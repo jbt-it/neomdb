@@ -189,6 +189,8 @@ const MemberOverview: React.FunctionComponent = () => {
           setMembers(res.data);
         }
       }
+    }).catch((error) => {
+      console.log(error);
     });
 
     // Clean-up function
