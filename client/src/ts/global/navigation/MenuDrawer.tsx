@@ -2,10 +2,12 @@
 
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useContext
 } from "react";
 import {
   NavLink,
+  useHistory,
   useLocation
 } from "react-router-dom";
 import {
@@ -33,8 +35,13 @@ import {
   ExitToApp,
   TrendingUp
 } from "@material-ui/icons";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { 
+  makeStyles, 
+  createStyles, 
+  Theme } 
+from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
+import {AuthContext} from "../AuthContext";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
@@ -83,14 +90,15 @@ interface DrawerProps {
           event: React.KeyboardEvent | React.MouseEvent
           ) => void;
 }
-
 /**
  * A drawer which enters from the left and depicts various options for navigation
  * @param props
  */
 const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
+  const [authenticated, setAuthenticated] = useContext(AuthContext);
   const classes = useStyles();
   const location = useLocation();
+  const history = useHistory();
 
   useEffect(() => {
     setActiveNavLink(location.pathname);
@@ -131,6 +139,15 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
   };
 
   /**
+   * Handles click on logout link
+   */
+  const handleLogout: VoidFunction = () => {
+    setAuthenticated(false);
+    localStorage.clear();
+    history.push("/login");
+  };
+
+  /**
    * Determines the class for list items
    * @param value the topic of the list item
    */
@@ -140,7 +157,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
       case "Mitglieder" : {
         if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/geburtstage"
           || activeNavLink === "/traineebereich" || activeNavLink === "/kuratoren") {
-            return classes.drawerListItemActive;
+            return "drawer-list-item-active";
         }
         break;
       }
@@ -289,7 +306,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
             <ListItemText primary="KVP" />
           </ListItem>
         </NavLink>
-        <ListItem button onClick={props.drawer(false)}>
+        <ListItem button onClick={() => {props.drawer(false); handleLogout();}}>
           <ListItemIcon>
             <ExitToApp />
           </ListItemIcon>
