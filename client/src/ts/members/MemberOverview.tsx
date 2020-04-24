@@ -461,9 +461,9 @@ const MemberOverview: React.FunctionComponent = () => {
           </IconButton>
         </form>
         {additionalFiltersState ? additionalFilters : null}
-      </Paper>
-      <Paper className={classes.amountOfEntries}>
+        <div className={classes.amountOfEntries}>
         {`${getFilteredAndSortedMembers().length} Einträge`}
+        </div>
       </Paper>
       <TableContainer
           component={Paper}
@@ -503,8 +503,8 @@ const MemberOverview: React.FunctionComponent = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {getFilteredAndSortedMembers().map((member, i) => (
-                <TableRow hover key={i}>
+              {getFilteredAndSortedMembers().map((member, index) => (
+                <TableRow hover key={index}>
                   <TableCell
                     component="th"
                     scope="row"
