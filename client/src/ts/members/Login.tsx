@@ -77,8 +77,7 @@ const Login: React.FunctionComponent = () => {
     api.post("/users/login", {
       username,
       password
-    })
-    .then((res) => {
+    }).then((res) => {
       if (res.status === 200){
         localStorage.setItem("token", res.data);
         setAuthenticated(true);
@@ -86,7 +85,7 @@ const Login: React.FunctionComponent = () => {
       } else {
         setFailedLogin(true);
       }
-    }, () => {
+    }).catch((error) => {
       setFailedLogin(true);
     });
     setPassword("");
@@ -117,7 +116,6 @@ const Login: React.FunctionComponent = () => {
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     setCapslock(event.getModifierState("CapsLock"));
   };
-
 
   /*
    * Warn if capslock is enabled
