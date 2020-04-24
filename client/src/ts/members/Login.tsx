@@ -73,7 +73,8 @@ const Login: React.FunctionComponent = () => {
   /**
    * Handles the API call and cleans state thereafter
    */
-  const login: VoidFunction = () => {
+  const login = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     api.post("/users/login", {
       username,
       password
@@ -136,7 +137,7 @@ const Login: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo}/>
             <h1>Login</h1>
-            <form className={classes.login} onSubmit={event => {login();}}>
+            <form className={classes.login} id="loginform" onSubmit={event => {login(event);}} action="#/login">
               <Textfield className={classes.inputfield} id="username" label="Benutzername" type="text" value={username}
                 onChange = {event => {setUsername(event.target.value);}}
                 onKeyUp={handleKeyUp} fullWidth />
