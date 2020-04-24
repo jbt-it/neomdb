@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginTop: "58px",
     [theme.breakpoints.up("md")]: {
       marginTop: "65px",
-      marginLeft: "280px",
+      marginLeft: "287px",
+      marginRight: "7px",
     },
     [theme.breakpoints.up("sm")]: {
       marginTop: "65px",
@@ -404,7 +405,6 @@ const MemberOverview: React.FunctionComponent = () => {
       </TextField>
     </div>
   );
-
 
   return (
       <div className={classes.memberOverviewRoot}>
