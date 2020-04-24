@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-  // Interface for the drawer props
+// Interface for the drawer props
 interface DrawerProps {
   drawer: (open: boolean) => (
           event: React.KeyboardEvent | React.MouseEvent
