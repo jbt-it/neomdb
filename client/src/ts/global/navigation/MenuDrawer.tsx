@@ -157,7 +157,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
       case "Mitglieder" : {
         if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/geburtstage"
           || activeNavLink === "/traineebereich" || activeNavLink === "/kuratoren") {
-            return "drawer-list-item-active";
+            return classes.drawerListItemActive;
         }
         break;
       }
