@@ -35,11 +35,11 @@ import {
   ExitToApp,
   TrendingUp
 } from "@material-ui/icons";
-import { 
-  makeStyles, 
-  createStyles, 
-  Theme } 
-from "@material-ui/core/styles";
+import {
+  makeStyles,
+  createStyles,
+  Theme
+} from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import {AuthContext} from "../AuthContext";
 
@@ -90,6 +90,7 @@ interface DrawerProps {
           event: React.KeyboardEvent | React.MouseEvent
           ) => void;
 }
+
 /**
  * A drawer which enters from the left and depicts various options for navigation
  * @param props
@@ -107,7 +108,6 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
   const [activeNavLink, setActiveNavLink] = useState("");
   const [memberOpen, setMemberOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
-
 
   /**
    * Handles the click event on the different extendable list items
