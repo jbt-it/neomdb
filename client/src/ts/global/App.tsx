@@ -4,6 +4,7 @@ import decode from "jwt-decode";
 
 import {AuthContext} from "../global/AuthContext";
 import Dashboard from "../members/Dashboard";
+import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
@@ -62,7 +63,7 @@ const App: React.FunctionComponent = () => {
       }
       <Switch>
         <PrivateRoute exact path = "/" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht" component = {Dashboard} />
+        <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
         <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
         <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
         <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
