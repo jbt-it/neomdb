@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles({
   root: {
+    backgroundColor: "white",
     minWidth: 250,
     maxWidth: 330,
   },
@@ -24,41 +25,37 @@ const useStyles = makeStyles({
   },
   notFound: {
     backgroundColor: "white",
+    position: "absolute",
+    left: "35%",
+    top: "20%",
   },
 });
-
 const NotFound: React.FunctionComponent = () => {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   return (
     <div className={classes.notFound}>
-      <span style={{
-        position: "relative",
-        top: 100,
-        left: 600
-      }}>
-        <Card className={classes.root}>
-          <CardContent>
-            <Typography className={classes.title} color="textSecondary" gutterBottom>
-              Fehler:
+      <Card className={classes.root}>
+        <CardContent>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>
+            Fehler:
         </Typography>
-            <Typography variant="h5" component="h2">
-              Mi{bull}se Fri{bull}se
+          <Typography variant="h5" component="h2">
+            Diese Seite wurde nicht gefunden.
         </Typography>
-            <Typography className={classes.pos} color="textSecondary">
-              404
+          <Typography className={classes.pos} color="textSecondary">
+            404
         </Typography>
-            <Typography variant="body2" component="p">
-              Diese Seite wurde nicht gefunden.
-          <br />
-              {""}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small" variant="contained" color="primary" href="./">Zurück zum Dashboard</Button>
-          </CardActions>
-        </Card>
-      </span>
+          <Typography variant="body2" component="p">
+            Bei Problemen bitte melden bei: <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
+            <br />
+            {""}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="small" variant="contained" color="primary" href="./">Zurück zum Dashboard</Button>
+        </CardActions>
+      </Card>
     </div>
   );
 };
