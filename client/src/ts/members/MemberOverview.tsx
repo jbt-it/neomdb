@@ -7,6 +7,9 @@ import React, {
   useEffect
 } from "react";
 import {
+  NavLink
+} from "react-router-dom";
+import {
   Paper,
   Table,
   TableBody,
@@ -509,7 +512,7 @@ const MemberOverview: React.FunctionComponent = () => {
                     component="th"
                     scope="row"
                   >
-                    {`${member.vorname} ${member.nachname}`}
+                    <NavLink to={`/gesamtuebersicht/${member.mitgliedID}`}>{`${member.vorname} ${member.nachname}`}</NavLink>
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
                   <TableCell>{member.jbt_email}</TableCell>
