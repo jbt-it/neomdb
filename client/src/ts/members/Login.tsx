@@ -81,7 +81,7 @@ const Login: React.FunctionComponent = () => {
     })
     .then((res) => {
       if (res.status === 200){
-        localStorage.setItem("token", res.data);
+        localStorage.setItem("token", res.data.token);
         setAuthenticated(true);
         history.push("/");
       } else {

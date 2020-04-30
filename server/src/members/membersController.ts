@@ -35,7 +35,11 @@ export const login = (req: Request, res: Response): void => {
             name: result[0].name,
             permissions: result[0].permissions.split(",").map(Number)
           };
-          res.status(200).json(auth.generateJWT(payload));
+          res.status(200).json({
+            token: auth.generateJWT(payload),
+            id: result[0].mitgliedID,
+            name: result[0].name
+          });
         } else {
           res.status(401).send("Username or password wrong");
         }
