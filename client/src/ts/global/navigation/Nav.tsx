@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   bar: {
     backgroundColor: theme.palette.primary.main,
-    zIndex: 1,
+    zIndex: 100,
   },
   menuButton: {
     display: "block",
@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   permanentDrawer: {
     [theme.breakpoints.up("md")]: {
       position: "fixed",
-      zIndex: 0,
+      zIndex: 50,
     },
   },
 }));
