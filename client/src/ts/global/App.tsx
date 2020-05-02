@@ -8,7 +8,7 @@ import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
-import MemberPage from "../members/MemberPage";
+import MemberPage from "../members/member-page/MemberPage";
 
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated] = useContext(AuthContext);

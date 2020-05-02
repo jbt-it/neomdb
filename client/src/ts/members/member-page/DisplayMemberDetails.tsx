@@ -1,11 +1,8 @@
 /**
- * The MemberPage-Component displays details of a member and can be edited by the owner of this page
+ * The DislpayMemberDetails-Component displays details of a member
  */
 
-import React, {
-  useState,
-  useEffect
-} from "react";
+import React from "react";
 import {
   makeStyles,
   createStyles,
@@ -19,8 +16,6 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from "@material-ui/core";
-import api from "../utils/api";
-import { RouteComponentProps } from "react-router-dom";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -103,13 +98,6 @@ interface MemberDetails {
   lastchange: string;
   fuehrerschein: string;
   ersthelferausbildung: string;
-}
-
-/**
- * Interface for the match parameter of the router
- */
-interface RouterMatch {
-  id: string;
 }
 
 /**
@@ -326,36 +314,4 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   );
 };
 
-
-const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (props: RouteComponentProps<RouterMatch>) => {
-
-  const [memberDetails, setMembersDetails] = useState<MemberDetails>();
-
-  /**
-   * Retrieves the member details
-   */
-  const getMemberDetails: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api.get(`/users/${props.match.params.id}`, {
-      headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
-    })
-    .then((res) => {
-      if (res.status === 200){
-        if (mounted){
-          setMembersDetails(res.data[0]);
-        }
-      }
-    });
-
-    return () => {mounted = false;};
-  };
-
-  useEffect(() => getMemberDetails(), []);
-
-  return (
-    <DisplayMemberDetails memberDetails={memberDetails}/>
-  );
-};
-
-export default MemberPage;
+export default DisplayMemberDetails;
