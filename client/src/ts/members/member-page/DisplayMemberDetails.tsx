@@ -39,8 +39,23 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       color: theme.palette.text.secondary,
     },
+    categoryTitlePaper: {
+      backgroundColor: theme.palette.secondary.main,
+      marginTop: "-16px",
+      marginLeft: "-17px",
+      marginRight: "-17px",
+      paddingTop: "10px",
+      paddingBottom: "10px",
+      borderBottomRightRadius: "0px",
+      borderBottomLeftRadius: "0px"
+    },
     categoryTitle: {
       textAlign: "center",
+    },
+    expandCategoryTitlePaper: {
+      borderTopRightRadius: "5px",
+      borderTopLeftRadius: "5px",
+      backgroundColor: theme.palette.secondary.main,
     },
     expandCategoryTitle: {
       display: "flex",
@@ -114,18 +129,16 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const classes = useStyles();
 
   const {memberDetails} = props;
-  /**
-   * Renders the category for payment informations
-   */
-  const renderPaymentInformation = () => {
+
+  const renderImage: VoidFunction = () => {
     if (memberDetails) {
-      return (<Grid item xs={12} sm={12}>
+      return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Zahlungsinformationen</Typography>
-                  <Typography>Kontoinhaber: {memberDetails.kontoinhaber}</Typography>
-                  <Typography>IBAN: {memberDetails.iban}</Typography>
-                  <Typography>BIC: {memberDetails.bic}</Typography>
-                </Paper>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+                  </Paper>
+                  <Typography>BILD</Typography>
+                  </Paper>
               </Grid>);
     }
     return null;
@@ -134,11 +147,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the category for general information
    */
-  const renderGeneralInformation = () => {
+  const renderGeneralInformation: VoidFunction = () => {
     if (memberDetails) {
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Allgemeine Angaben</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Allgemeine Angaben</Typography>
+                  </Paper>
                   <Typography>Vorname: {memberDetails.vorname}</Typography>
                   <Typography>Nachname: {memberDetails.nachname}</Typography>
                   <Typography>Geschlecht: {memberDetails.geschlecht}</Typography>
@@ -154,11 +169,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the category for club information
    */
-  const renderClubInformation = () => {
+  const renderClubInformation: VoidFunction = () => {
     if(memberDetails) {
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Verein</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Verein</Typography>
+                  </Paper>
                   <Typography>Status: {memberDetails.mitgliedstatus}</Typography>
                   <Typography>
                     {(memberDetails.trainee_seit !== null)
@@ -188,11 +205,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the category for club information
    */
-  const renderStudyInformation = () => {
+  const renderStudyInformation: VoidFunction = () => {
     if (memberDetails) {
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Studium</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Studium</Typography>
+                  </Paper>
                   <Typography>Hochschule: {memberDetails.hochschule}</Typography>
                   <Typography>Studiengang: {memberDetails.studiengang}</Typography>
                   <Typography>Studienbeginn: {memberDetails.studienbeginn}</Typography>
@@ -205,13 +224,34 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   /**
-   * Renders the category for qualification information
+   * Renders the category for payment informations
    */
-  const renderQualificationInformation = () => {
+  const renderPaymentInformation: VoidFunction = () => {
     if (memberDetails) {
       return (<Grid item xs={12} sm={12}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Qualifikationen</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Zahlungsinformationen</Typography>
+                  </Paper>
+                  <Typography>Kontoinhaber: {memberDetails.kontoinhaber}</Typography>
+                  <Typography>IBAN: {memberDetails.iban}</Typography>
+                  <Typography>BIC: {memberDetails.bic}</Typography>
+                </Paper>
+              </Grid>);
+    }
+    return null;
+  };
+
+  /**
+   * Renders the category for qualification information
+   */
+  const renderQualificationInformation: VoidFunction = () => {
+    if (memberDetails) {
+      return (<Grid item xs={12} sm={12}>
+                <Paper className={classes.category}>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Qualifikationen</Typography>
+                  </Paper>
                   <Typography>Sprachen: </Typography>
                   <Typography>Ausbildung: {memberDetails.ausbildung}</Typography>
                 </Paper>
@@ -223,11 +263,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the category for work address information
    */
-  const renderWorkAddressInformation = () => {
+  const renderWorkAddressInformation: VoidFunction = () => {
     if (memberDetails) {
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Studien- oder Büroanschrift</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Studien- oder Büroanschrift</Typography>
+                  </Paper>
                   <Typography>Straße: {memberDetails.strasse1}</Typography>
                   <Typography>PLZ: {memberDetails.plz1}</Typography>
                   <Typography>Ort: {memberDetails.ort1}</Typography>
@@ -242,11 +284,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the category for home address information
    */
-  const renderHomeAdressInformation = () => {
+  const renderHomeAdressInformation: VoidFunction = () => {
     if (memberDetails) {
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
-                  <Typography className={classes.categoryTitle}>Heimatanschrift</Typography>
+                  <Paper className={classes.categoryTitlePaper}>
+                    <Typography className={classes.categoryTitle}>Heimatanschrift</Typography>
+                  </Paper>
                   <Typography>Straße: {memberDetails.strasse2}</Typography>
                   <Typography>PLZ: {memberDetails.plz2}</Typography>
                   <Typography>Ort: {memberDetails.ort2}</Typography>
@@ -261,16 +305,15 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Paper className={classes.category}>Bild</Paper>
-        </Grid>
-          {renderGeneralInformation()}
-          {renderClubInformation()}
+        {renderImage()}
+        {renderGeneralInformation()}
+        {renderClubInformation()}
         <Grid item xs={12} sm={12}>
           <ExpansionPanel >
             <ExpansionPanelSummary
               aria-controls="project-list-of-member"
               id="project-list"
+              className={classes.expandCategoryTitlePaper}
               classes={{
                 content: classes.expandCategoryTitle
               }}
@@ -290,6 +333,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <ExpansionPanelSummary
               aria-controls="workshop-list-of-member"
               id="workshop-list"
+              className={classes.expandCategoryTitlePaper}
               classes={{
                 content: classes.expandCategoryTitle
               }}
@@ -304,11 +348,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </Grid>
-          {renderQualificationInformation()}
-          {renderPaymentInformation()}
-          {renderStudyInformation()}
-          {renderWorkAddressInformation()}
-          {renderHomeAdressInformation()}
+        {renderQualificationInformation()}
+        {renderPaymentInformation()}
+        {renderStudyInformation()}
+        {renderWorkAddressInformation()}
+        {renderHomeAdressInformation()}
       </Grid>
     </div>
   );
