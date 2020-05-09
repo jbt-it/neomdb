@@ -22,18 +22,8 @@ import {
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    displayMemberDetailsRoot: {
       flexGrow: 1,
-      padding: "5px",
-      marginTop: "58px",
-      [theme.breakpoints.up("md")]: {
-        marginTop: "65px",
-        marginLeft: "287px",
-        marginRight: "7px",
-      },
-      [theme.breakpoints.up("sm")]: {
-        marginTop: "65px",
-      },
     },
     category: {
       padding: theme.spacing(2),
@@ -51,6 +41,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     categoryTitle: {
       textAlign: "center",
+    },
+    categoryLine: {
+      paddingTop: "12.5px",
+      paddingBottom: "11.5px",
     },
     expandCategoryTitlePaper: {
       borderTopRightRadius: "5px",
@@ -135,7 +129,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       return (<Grid item xs={12} sm={4}>
                 <Paper className={classes.category}>
                   <Paper className={classes.categoryTitlePaper}>
-                    <Typography className={classes.categoryTitle}>{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+                    <Typography className={classes.categoryTitle}>
+                        {`${memberDetails?.vorname} ${memberDetails?.nachname}`}
+                      </Typography>
                   </Paper>
                   <Typography>BILD</Typography>
                   </Paper>
@@ -154,12 +150,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Allgemeine Angaben</Typography>
                   </Paper>
-                  <Typography>Vorname: {memberDetails.vorname}</Typography>
-                  <Typography>Nachname: {memberDetails.nachname}</Typography>
-                  <Typography>Geschlecht: {memberDetails.geschlecht}</Typography>
-                  <Typography>Geburtsdatum: {memberDetails.geburtsdatum}</Typography>
-                  <Typography>Handy: {memberDetails.handy}</Typography>
-                  <Typography>JBT-E-Mail: {memberDetails.jbt_email}</Typography>
+                  <Typography className={classes.categoryLine}>Vorname: {memberDetails.vorname}</Typography>
+                  <Typography className={classes.categoryLine}>Nachname: {memberDetails.nachname}</Typography>
+                  <Typography className={classes.categoryLine}>Geschlecht: {memberDetails.geschlecht}</Typography>
+                  <Typography className={classes.categoryLine}>Geburtsdatum: {memberDetails.geburtsdatum}</Typography>
+                  <Typography className={classes.categoryLine}>Handy: {memberDetails.handy}</Typography>
+                  <Typography className={classes.categoryLine}>JBT-E-Mail: {memberDetails.jbt_email}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -176,26 +172,26 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Verein</Typography>
                   </Paper>
-                  <Typography>Status: {memberDetails.mitgliedstatus}</Typography>
-                  <Typography>
+                  <Typography className={classes.categoryLine}>Status: {memberDetails.mitgliedstatus}</Typography>
                     {(memberDetails.trainee_seit !== null)
-                      ? `Trainee seit: ${memberDetails.trainee_seit}`
+                      ?<Typography className={classes.categoryLine}>
+                        {`Trainee seit: ${memberDetails.trainee_seit}`}
+                      </Typography>
                       : null}
-                  </Typography>
-                  <Typography>
                     {(memberDetails.mitglied_seit !== null)
-                    ? `Mitglied seit: ${memberDetails.mitglied_seit}`
+                    ?<Typography className={classes.categoryLine}>
+                      {`Mitglied seit: ${memberDetails.mitglied_seit}`}
+                    </Typography>
                     : null}
-                  </Typography>
-                  <Typography>
-                    {(memberDetails.aktiv_seit !== null)
-                    ? `Aktiv seit: ${memberDetails.aktiv_seit}`
+                  {(memberDetails.aktiv_seit !== null)
+                    ?<Typography className={classes.categoryLine}>
+                      {`Aktiv seit: ${memberDetails.aktiv_seit}`}
+                    </Typography>
                     : null}
-                  </Typography>
-                  <Typography>Ressort: {memberDetails.ressort}</Typography>
-                  <Typography>Mentor: {memberDetails.mentor}</Typography>
-                  <Typography>Mentee: </Typography>
-                  <Typography>Arbeitgeber: {memberDetails.arbeitgeber}</Typography>
+                  <Typography className={classes.categoryLine}>Ressort: {memberDetails.ressort}</Typography>
+                  <Typography className={classes.categoryLine}>Mentor: {memberDetails.mentor}</Typography>
+                  <Typography className={classes.categoryLine}>Mentee: </Typography>
+                  <Typography className={classes.categoryLine}>Arbeitgeber: {memberDetails.arbeitgeber}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -212,11 +208,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Studium</Typography>
                   </Paper>
-                  <Typography>Hochschule: {memberDetails.hochschule}</Typography>
-                  <Typography>Studiengang: {memberDetails.studiengang}</Typography>
-                  <Typography>Studienbeginn: {memberDetails.studienbeginn}</Typography>
-                  <Typography>Studienende: {memberDetails.studienende}</Typography>
-                  <Typography>Vertiefungen: {memberDetails.vertiefungen}</Typography>
+                  <Typography className={classes.categoryLine}>Hochschule: {memberDetails.hochschule}</Typography>
+                  <Typography className={classes.categoryLine}>Studiengang: {memberDetails.studiengang}</Typography>
+                  <Typography className={classes.categoryLine}>Studienbeginn: {memberDetails.studienbeginn}</Typography>
+                  <Typography className={classes.categoryLine}>Studienende: {memberDetails.studienende}</Typography>
+                  <Typography className={classes.categoryLine}>Vertiefungen: {memberDetails.vertiefungen}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -233,9 +229,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Zahlungsinformationen</Typography>
                   </Paper>
-                  <Typography>Kontoinhaber: {memberDetails.kontoinhaber}</Typography>
-                  <Typography>IBAN: {memberDetails.iban}</Typography>
-                  <Typography>BIC: {memberDetails.bic}</Typography>
+                  <Typography className={classes.categoryLine}>Kontoinhaber: {memberDetails.kontoinhaber}</Typography>
+                  <Typography className={classes.categoryLine}>IBAN: {memberDetails.iban}</Typography>
+                  <Typography className={classes.categoryLine}>BIC: {memberDetails.bic}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -252,8 +248,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Qualifikationen</Typography>
                   </Paper>
-                  <Typography>Sprachen: </Typography>
-                  <Typography>Ausbildung: {memberDetails.ausbildung}</Typography>
+                  <Typography className={classes.categoryLine}>Sprachen: </Typography>
+                  <Typography className={classes.categoryLine}>Ausbildung: {memberDetails.ausbildung}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -270,11 +266,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Studien- oder Büroanschrift</Typography>
                   </Paper>
-                  <Typography>Straße: {memberDetails.strasse1}</Typography>
-                  <Typography>PLZ: {memberDetails.plz1}</Typography>
-                  <Typography>Ort: {memberDetails.ort1}</Typography>
-                  <Typography>Telefon: {memberDetails.tel1}</Typography>
-                  <Typography>E-Mail geschäftlich: {memberDetails.email1}</Typography>
+                  <Typography className={classes.categoryLine}>Straße: {memberDetails.strasse1}</Typography>
+                  <Typography className={classes.categoryLine}>PLZ: {memberDetails.plz1}</Typography>
+                  <Typography className={classes.categoryLine}>Ort: {memberDetails.ort1}</Typography>
+                  <Typography className={classes.categoryLine}>Telefon: {memberDetails.tel1}</Typography>
+                  <Typography className={classes.categoryLine}>E-Mail geschäftlich: {memberDetails.email1}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -291,11 +287,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Paper className={classes.categoryTitlePaper}>
                     <Typography className={classes.categoryTitle}>Heimatanschrift</Typography>
                   </Paper>
-                  <Typography>Straße: {memberDetails.strasse2}</Typography>
-                  <Typography>PLZ: {memberDetails.plz2}</Typography>
-                  <Typography>Ort: {memberDetails.ort2}</Typography>
-                  <Typography>Telefon: {memberDetails.tel2}</Typography>
-                  <Typography>E-Mail privat: {memberDetails.email2}</Typography>
+                  <Typography className={classes.categoryLine}>Straße: {memberDetails.strasse2}</Typography>
+                  <Typography className={classes.categoryLine}>PLZ: {memberDetails.plz2}</Typography>
+                  <Typography className={classes.categoryLine}>Ort: {memberDetails.ort2}</Typography>
+                  <Typography className={classes.categoryLine}>Telefon: {memberDetails.tel2}</Typography>
+                  <Typography className={classes.categoryLine}>E-Mail privat: {memberDetails.email2}</Typography>
                 </Paper>
               </Grid>);
     }
@@ -303,7 +299,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.displayMemberDetailsRoot}>
       <Grid container spacing={3}>
         {renderImage()}
         {renderGeneralInformation()}

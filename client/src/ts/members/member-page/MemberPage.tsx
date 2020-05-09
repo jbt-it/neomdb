@@ -9,6 +9,31 @@ import React, {
 import { RouteComponentProps } from "react-router-dom";
 import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
+import classes from "*.module.css";
+import { IconButton, Button, Paper, Typography } from "@material-ui/core";
+import {
+  makeStyles,
+  createStyles,
+  Theme,
+} from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme:Theme) =>
+  createStyles({
+    memberPageRoot:{
+      flexGrow: 1,
+      padding: "5px",
+        marginTop: "58px",
+        [theme.breakpoints.up("md")]: {
+          marginTop: "65px",
+          marginLeft: "287px",
+          marginRight: "7px",
+        },
+        [theme.breakpoints.up("sm")]: {
+          marginTop: "65px",
+        },
+    },
+  })
+);
 
 /**
  * Interface for the member object
@@ -69,6 +94,7 @@ interface RouterMatch {
 }
 
 const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (props: RouteComponentProps<RouterMatch>) => {
+  const classes = useStyles();
 
   const [memberDetails, setMembersDetails] = useState<MemberDetails>();
 
@@ -95,7 +121,9 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (p
   useEffect(() => getMemberDetails(), []);
 
   return (
-    <DisplayMemberDetails memberDetails={memberDetails}/>
+    <div className={classes.memberPageRoot}>
+      <DisplayMemberDetails memberDetails={memberDetails}/>
+    </div>
   );
 };
 
