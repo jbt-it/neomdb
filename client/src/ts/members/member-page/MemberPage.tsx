@@ -122,7 +122,7 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (p
 
   return (
     <div className={classes.memberPageRoot}>
-      <DisplayMemberDetails memberDetails={memberDetails}/>
+      {memberDetails ? <DisplayMemberDetails memberDetails={memberDetails}/> : null}
     </div>
   );
 };
