@@ -36,19 +36,6 @@ import api from "../utils/api";
  * Function which proivdes the styles of the MemberOverview
  */
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  memberOverviewRoot: {
-    flexGrow: 1,
-    padding: "5px",
-    marginTop: "58px",
-    [theme.breakpoints.up("md")]: {
-      marginTop: "65px",
-      marginLeft: "287px",
-      marginRight: "7px",
-    },
-    [theme.breakpoints.up("sm")]: {
-      marginTop: "65px",
-    },
-  },
   amountOfEntries: {
     marginBottom: "10px",
     padding: "7px",
@@ -410,7 +397,7 @@ const MemberOverview: React.FunctionComponent = () => {
   );
 
   return (
-      <div className={classes.memberOverviewRoot}>
+      <div className="content-page">
       <Paper className={classes.filterContainer}>
         <form className={classes.filters} noValidate autoComplete="off">
         <Grid container spacing={8}>
