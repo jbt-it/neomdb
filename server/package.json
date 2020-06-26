@@ -18,12 +18,19 @@
     "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/chai-http": "^4.2.0",
+    "@types/mocha": "^7.0.2",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.0.1",
     "tslint": "^6.0.0"
   },
   "scripts": {
     "build": "tsc",
     "start": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
     "prod": "npm run build && npm run start",
-    "lint": "tslint --project ./"
+    "lint": "tslint --project ./",
+    "test": "mocha -r ts-node/register test/**/*.ts --exit"
   }
 }
