@@ -7,9 +7,12 @@ import fs = require("fs");
 import {Request, Response, NextFunction} from "express";
 import * as globalTypes from "./globalTypes";
 
+/**
+ * Keys to generate and validate JWT with default values for testing
+ */
 const JWTKeys = {
-  public: fs.readFileSync(process.env.JWT_PUBLIC),
-  private: fs.readFileSync(process.env.JWT_PRIVATE)
+  public: fs.readFileSync(process.env.JWT_PUBLIC || "./dev_certs/public.key"),
+  private: fs.readFileSync(process.env.JWT_PRIVATE || "./dev_certs/private.key")
 };
 
 const JWTSignOptions: jwt.SignOptions = {

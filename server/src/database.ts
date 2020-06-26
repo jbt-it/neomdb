@@ -4,13 +4,13 @@
 import mysql = require("mysql");
 
 /**
- * Config for the MySQL database
+ * Config for the MySQL database with default values for testing
  */
 const databaseConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "develop",
+  password: process.env.DB_PASSWORD || "passw0rd",
+  database: process.env.DB_NAME || "mdb",
   connectionLimit: 50
 };
 
