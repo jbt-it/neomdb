@@ -5,7 +5,7 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cors = require("cors");
 
-import membersRoutes = require("./members/membersRoutes");
+import membersRoutes from "./members/membersRoutes";
 
 dotenv.config();
 const app = express();

@@ -26,4 +26,4 @@ router.get("/permissions", membersController.retrievePermissionsList);
 router.post("/permissions", membersController.createPermission);
 router.delete("/permissions", membersController.deletePermission);
 
-module.exports = router;
+export default router;
