@@ -70,28 +70,17 @@ describe("Global Test", () => {
             assert.isArray(users.body, "Response should contain array");
             assert.isNotEmpty(users.body, "Retrieved array should contain members");
 
-            // Content of the response
-            assert.exists(users.body[0].mitgliedID, "Responed Object contains member id");
-            assert.exists(users.body[0].nachname, "Responed Object contains last name");
-            assert.exists(users.body[0].vorname, "Responed Object contains first name");
-            assert.exists(users.body[0].handy, "Responed Object contains mobile phone number");
-            assert.exists(users.body[0].jbt_email, "Responed Object contains internal email address");
-            assert.exists(users.body[0].mitgliedstatus, "Responed Object contains member status");
-            assert.exists(users.body[0].ressort, "Responed Object contains department id");
-            assert.isDefined(users.body[0].lastchange, "Responed Object contains date of last profile update");
-
             // Type of content of the response
-            assert.typeOf(users.body[0].mitgliedID, "number", "Member id is a number");
-            assert.typeOf(users.body[0].nachname, "string", "Last name is a string");
-            assert.typeOf(users.body[0].vorname, "string", "First name is a string");
-            assert.typeOf(users.body[0].handy, "string", "Phone number is a string");
-            assert.typeOf(users.body[0].jbt_email, "string", "Email address is a string");
-            assert.typeOf(users.body[0].mitgliedstatus, "string", "Member status is a string");
-            assert.typeOf(users.body[0].ressort, "string", "Department id is a string");
-            assert.typeOf(users.body[0].lastchange, "null", "Date of last profile update is a string ");
+            assert.typeOf(users.body[0].mitgliedID, "number", "Response contains member id of type number");
+            assert.typeOf(users.body[0].nachname, "string", "Response contains last name of type string");
+            assert.typeOf(users.body[0].vorname, "string", "Response contains first name of type string");
+            assert.typeOf(users.body[0].handy, "string", "Response contains mobile phone number of type string");
+            assert.typeOf(users.body[0].jbt_email, "string", "Response contains email address of type string");
+            assert.typeOf(users.body[0].mitgliedstatus, "string", "Response contains member status of type string");
+            assert.typeOf(users.body[0].ressort, "string", "Response contains department id of type string");
             expect(users.body[1].lastchange).to.satisfy((s: any) => {
               return s === null || typeof(s) === "string";
-            }, "Date of last profile update is a string or null");
+            }, "Response contains date of last profile update of type string or null");
           });
         });
       });
