@@ -118,7 +118,7 @@ describe("Global Test", () => {
           .get("/users/profile/8167")
           .set("Authorization", "Bearer " + res.body.token)
           .then((profile) => {
-            
+
             // General response
             assert.equal(profile.status, 200, "Request should be successful");
             assert.isArray(profile.body, "Response should contain array");
@@ -518,6 +518,32 @@ describe("Global Test", () => {
         .then((res) => {
           assert.equal(res.status, 401, "Request should fail with status 401");
           assert.isEmpty(res.body, "Empty response body after failed authentication");
+        });
+      });
+    });
+  });
+  describe("Retrieve members permissions", () => {
+    describe("GET /users/permissions/", () => {
+      it("Permission retrieval should succeed due to permission", () => {
+        return chai.request(app)
+        .post("/users/login")
+        .send({"username": "w.luft", "password": "s3cre7"})
+        .then((res) => {
+          return chai.request(app)
+          .get("/users/permissions")
+          .set("Authorization", "Bearer " + res.body.token)
+          .then((permissions) => {
+
+            // Check if response status is correct
+            assert.equal(permissions.status, 200, "Request should be successful");
+            assert.isArray(permissions.body, "Response should contain array");
+            assert.isNotEmpty(permissions.body, "Response contains at least one permission");
+
+            // Response should contain
+            assert.typeOf(permissions.body[0].vorname, "string", "Response contains first name of type string");
+            assert.typeOf(permissions.body[0].nachname, "string", "Response contains last name of type string");
+            assert.typeOf(permissions.body[0].permission, "number", "Response contains permission id of type number");
+          });
         });
       });
     });
