@@ -115,7 +115,7 @@ describe("Global Test", () => {
         .send({"username": "m.decker", "password": "s3cre7"})
         .then((res) => {
           return chai.request(app)
-          .get("/users/8167")
+          .get("/users/profile/8167")
           .set("Authorization", "Bearer " + res.body.token)
           .then((profile) => {
             
@@ -214,7 +214,7 @@ describe("Global Test", () => {
         .send({"username": "w.luft", "password": "s3cre7"})
         .then((res) => {
           return chai.request(app)
-          .get("/users/8324")
+          .get("/users/profile/8324")
           .set("Authorization", "Bearer " + res.body.token)
           .then((profile) => {
 
@@ -311,7 +311,7 @@ describe("Global Test", () => {
         .send({"username": "m.decker", "password": "s3cre7"})
         .then((res) => {
           return chai.request(app)
-          .get("/users/8324")
+          .get("/users/profile/8324")
           .set("Authorization", "Bearer " + res.body.token)
           .then((profile) => {
             
@@ -408,7 +408,7 @@ describe("Global Test", () => {
         .send({"username": "w.luft", "password": "s3cre7"})
         .then((res) => {
           return chai.request(app)
-          .get("/users/8167")
+          .get("/users/profile/8167")
           .set("Authorization", "Bearer " + res.body.token)
           .then((profile) => {
             
@@ -501,7 +501,7 @@ describe("Global Test", () => {
       });
       it("Member profile retrieval should fail without JWT", () => {
         return chai.request(app)
-        .get("/users/8167")
+        .get("/users/profile/8167")
         .set("Authorization", "Bearer ")
         .then((res) => {
           assert.equal(res.status, 401, "Request should fail with status 401");
@@ -510,7 +510,7 @@ describe("Global Test", () => {
       });
       it("Member profile retrieval should fail with outdated JWT", () => {
         return chai.request(app)
-        .get("/users/8167")
+        .get("/users/profile/8167")
         .set("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.\
         eyJtaXRnbGllZElEIjo4NzA1LCJuYW1lIjoicC5ncmlmZmluIiwicGVybWlzc2lvbnMiOls2LDIxXSwiaWF0I\
         joxNTgxNjA0ODk5LCJleHAiOjE1ODE2OTEyOTl9.CJJpSO66yBhzqJdiah9BpAgWU2loceJI_w-SSAGEBVz7nN\
