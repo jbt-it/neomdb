@@ -16,7 +16,8 @@ import Link from "@material-ui/core/Link";
 
 const Login: React.FunctionComponent = () => {
   const history = useHistory();
-  const [authenticated, setAuthenticated] = useContext(AuthContext);
+  const [authenticated, setAuthenticated,
+        userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
   /**
    * Styles
@@ -83,6 +84,8 @@ const Login: React.FunctionComponent = () => {
       if (res.status === 200){
         localStorage.setItem("token", res.data.token);
         setAuthenticated(true);
+        setUserID(JSON.parse(atob(res.data.token.split(".")[1])).mitgliedID);
+        setUserName(JSON.parse(atob(res.data.token.split(".")[1])).name);
         history.push("/");
       } else {
         setFailedLogin(true);

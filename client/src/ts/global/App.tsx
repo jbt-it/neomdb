@@ -10,7 +10,9 @@ import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 
 const App: React.FunctionComponent = () => {
-  const [authenticated, setAuthenticated] = useContext(AuthContext);
+  const [authenticated, setAuthenticated,
+        userID, setUserID, userName, setUserName] = useContext(AuthContext);
+
   /**
    * Checks if token in local storage is expired
    */
@@ -18,6 +20,8 @@ const App: React.FunctionComponent = () => {
     const token = localStorage.getItem("token");
     if (!token){
       setAuthenticated(false);
+      setUserID(-1);
+      setUserName("");
       return false;
     } else {
       try {
@@ -27,13 +31,19 @@ const App: React.FunctionComponent = () => {
         // Converted from miliseconds
         if (exp < new Date().getTime() / 1000) {
           setAuthenticated(false);
+          setUserID(-1);
+          setUserName("");
           return false;
         } else {
           setAuthenticated(true);
+          setUserID(JSON.parse(atob(token.split(".")[1])).mitgliedID);
+          setUserName(JSON.parse(atob(token.split(".")[1])).name);
           return true;
         }
       } catch {
         setAuthenticated(false);
+        setUserID(-1);
+        setUserName("");
         return false;
       }
     }

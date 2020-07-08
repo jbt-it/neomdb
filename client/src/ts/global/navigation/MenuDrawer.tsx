@@ -50,7 +50,8 @@ import {AuthContext} from "../AuthContext";
      * @param props
      */
     const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
-      const [authenticated, setAuthenticated] = useContext(AuthContext);
+      const [authenticated, setAuthenticated,
+            userID, setUserID, userName, setUserName] = useContext(AuthContext);
       const location = useLocation();
       const history = useHistory();
 
@@ -137,7 +138,7 @@ import {AuthContext} from "../AuthContext";
             {/* Default avatar */}
             <Avatar src={JBTLogoBlack}/>
             <div className="avatar-info">
-              <Typography className="avatar-name">Lennart Rukower</Typography>
+              <Typography className="avatar-name">{userName}</Typography>
             </div>
           </div>
           <Divider/>
