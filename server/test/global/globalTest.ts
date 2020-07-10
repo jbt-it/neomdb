@@ -11,7 +11,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 
 describe("Global Test", () => {
-  describe("Login Test", () => {
+  describe("Login", () => {
     describe("POST /users/login", () => {
       it("Should get a valid response after successful login", () => {
         return chai.request(app)
@@ -544,6 +544,43 @@ describe("Global Test", () => {
             assert.typeOf(permissions.body[0].nachname, "string", "Response contains last name of type string");
             assert.typeOf(permissions.body[0].permission, "number", "Response contains permission id of type number");
           });
+        });
+      });
+      it("Permissions retrieval should fail due to no permission", () => {
+        return chai.request(app)
+        .post("/users/login")
+        .send({"username": "m.decker", "password": "s3cre7"})
+        .then((res) => {
+          return chai.request(app)
+          .get("/users/permissions")
+          .set("Authorization", "Bearer " + res.body.token)
+          .then((permissions) => {
+
+            // Check if response status is correct
+            assert.equal(permissions.status, 403, "Request should be successful");
+            assert.isEmpty(permissions.body, "Response contains no permissions");
+          });
+        });
+      });
+      it("Permissions retrieval should fail without JWT", () => {
+        return chai.request(app)
+        .get("/users/permissions")
+        .set("Authorization", "Bearer ")
+        .then((res) => {
+          assert.equal(res.status, 401, "Request should fail with status 401");
+          assert.isEmpty(res.body, "Empty response body after failed authentication");
+        });
+      });
+      it("Permissions retrieval should fail with outdated JWT", () => {
+        return chai.request(app)
+        .get("/users/permissions")
+        .set("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.\
+        eyJtaXRnbGllZElEIjo4NzA1LCJuYW1lIjoicC5ncmlmZmluIiwicGVybWlzc2lvbnMiOls2LDIxXSwiaWF0I\
+        joxNTgxNjA0ODk5LCJleHAiOjE1ODE2OTEyOTl9.CJJpSO66yBhzqJdiah9BpAgWU2loceJI_w-SSAGEBVz7nN\
+        ivTt6oLkLf0_HMy_oX5usNF2impE5jyMlPKl2pkA")
+        .then((res) => {
+          assert.equal(res.status, 401, "Request should fail with status 401");
+          assert.isEmpty(res.body, "Empty response body after failed authentication");
         });
       });
     });
