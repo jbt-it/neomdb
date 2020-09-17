@@ -33,12 +33,12 @@ export const generateJWT = (payload: globalTypes.JWTPayload): string => {
  * Verifies recived JWT from the user and returnes decoded payload or false
  * @param token JWT sent with the users request
  */
-export const verifyJWT = (token: string) => {
+export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
   try {
-    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions);
+    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as globalTypes.JWTPayload;
   }
   catch (err) {
-    return false;
+    return null;
   }
 };
 
@@ -46,10 +46,10 @@ export const verifyJWT = (token: string) => {
  * Verifies JWT and protects following routes from unauthorised access
  */
 export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
-  if (req.headers.authorization && jwt) {
-    res.locals.memberID = jwt.mitgliedID;
-    res.locals.permissions = jwt.permissions;
+  const jwtData = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+  if (req.headers.authorization && jwtData !== null) {
+    res.locals.memberID = jwtData.mitgliedID;
+    res.locals.permissions = jwtData.permissions;
     next();
   } else {
     return res.status(401).send("Authentication failed: Please log in");
@@ -62,11 +62,11 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
  */
 export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const jwt = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
-    if (Number(req.params.id) === jwt.mitgliedID ||
-       permissions.every(element => jwt.permissions.includes(element))) {
-        res.locals.memberID = jwt.mitgliedID;
-        res.locals.permissions = jwt.permissions;
+    const jwtData = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+    if (Number(req.params.id) === jwtData.mitgliedID ||
+       permissions.every(element => jwtData.permissions.includes(element))) {
+        res.locals.memberID = jwtData.mitgliedID;
+        res.locals.permissions = jwtData.permissions;
         next();
        } else {
         return res.status(403).send("Authorization failed: You are not permitted to do this");
@@ -82,8 +82,8 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
  */
 export const restrictRoutes = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const jwtPermissions = verifyJWT(req.headers.authorization.replace("Bearer ", "")).permissions;
-    if(permissions.every(element => jwtPermissions.includes(element))) {
+    const jwtDataPermissions = verifyJWT(req.headers.authorization.replace("Bearer ", "")).permissions;
+    if(permissions.every(element => jwtDataPermissions.includes(element))) {
       next();
     } else {
       return res.status(403).send("Authorization failed: You are not permitted to do this");

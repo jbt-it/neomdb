@@ -46,6 +46,7 @@ const Login: React.FunctionComponent = () => {
     },
     submit: {
       margin: theme.spacing(3, 0, 1),
+      color: "white",
     },
     linkItem: {
       display: "flex",

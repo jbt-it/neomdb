@@ -1,9 +1,44 @@
-// base file which imports all used styling files
+// contains the global syling of the application
 
-// import core styling
-@import "global/variables";
-@import "global/global";
-@import "global/login";
-@import "global/menuDrawer";
-@import "global/nav";
-@import "global/scrollTopBtn";
+body,
+html {
+  font-family: "Segoe UI", source-sans-pro, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: -0.01rem;
+  touch-action: manipulation;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+  line-height: 1.5;
+  width: 100%;
+  background-color: white !important;
+}
+
+body {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  height: 100%;
+  width: 100%;
+}
+
+/*
+ * every page needs to have this class at its root in order to 
+ * display the content without it getting covered by the navigation
+ */
+.content-page {
+  flex-grow: 1;
+  padding: 5px;
+  margin-top: 58px;
+  @media only screen and (min-width: 960px){
+    margin-top: 65px;
+    margin-left: 287px;
+    margin-right: 7px;
+  }
+  @media only screen and (min-width: 600px){
+    margin-top: 65px;
+  }
+}
