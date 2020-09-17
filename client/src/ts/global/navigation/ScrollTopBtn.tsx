@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     position: "fixed",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
+    zIndex: 20,
   },
   scrollTopFab: {
     backgroundColor: theme.palette.secondary.main,
