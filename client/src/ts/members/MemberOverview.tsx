@@ -399,14 +399,14 @@ const MemberOverview: React.FunctionComponent = () => {
       <div className="content-page">
       <Paper className={classes.filterContainer}>
         <form className={classes.filters} noValidate autoComplete="off">
-        <Grid container spacing={8}>
-          <Grid item xs={6} sm={3}>
-            <TextField
-              label="Name/Mail/..."
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleSearchInput}
-            />
+          <Grid container spacing={8}>
+            <Grid item xs={6} sm={3}>
+              <TextField
+                label="Name/Mail/..."
+                className={classes.filterElement}
+                color="primary"
+                onChange={handleSearchInput}
+              />
           </Grid>
           <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
             <TextField
@@ -510,7 +510,12 @@ const MemberOverview: React.FunctionComponent = () => {
           </Table>
         </TableContainer>
         </div>
-        <PageBar pageTitle="Mitgliederübersicht"/>
+        <PageBar pageTitle="Mitgliederübersicht" helpText="Das hier ist ein Hilfetext." pageOptions={
+          [
+            {optionName: "Option 1", optionFunciton: () => {console.log("Option 1");}},
+            {optionName: "Option 2", optionFunciton: () => {console.log("Option 2");}}
+          ]
+          }/>
     </div>
   );
 };
