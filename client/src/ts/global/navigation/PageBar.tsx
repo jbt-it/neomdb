@@ -1,8 +1,14 @@
-
+/*
+ * The PageBar -Component displays the name of the page, the user is currently at,
+ * a help button (optional) and page-specific options (optional)
+ */
 import React from "react";
 import { Typography, makeStyles, Theme, createStyles, Popover, IconButton, Menu, MenuItem, Modal, Paper } from "@material-ui/core";
 import { HelpOutline, MoreVert } from "@material-ui/icons";
 
+/**
+ * Function which proivdes the styles of the PageBar
+ */
 const useStyles = makeStyles((theme:Theme) => createStyles({
   pageBar: {
     position: "fixed",
@@ -36,27 +42,46 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
   }
 }));
 
+/**
+ * Interface for the option-item of page-specific options
+ */
 interface Option {
   optionName: string;
   optionFunciton: ()=>void;
 }
 
+/**
+ * Interface for the props of the PageBar
+ */
 interface PageBarProps {
   pageTitle: string;
   helpText?: string;
   pageOptions?: Option[];
 }
 
+/**
+ * Functional Component which displays a PageBar at the bottom of the page
+ * @param props The props of the PageBar (implements the interface PageBarProps)
+ */
 const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => {
   const classes = useStyles();
 
+  /**
+   * Functional Component which displays a help button
+   */
   const Help: React.FunctionComponent = () => {
     const [open, setOpen] = React.useState(false);
 
+    /**
+     * Handles the click on the help button
+     */
     const handleOpen = () => {
       setOpen(true);
     };
 
+    /**
+     * Handles the click to exit the help modal
+     */
     const handleClose = () => {
       setOpen(false);
     };
@@ -80,13 +105,23 @@ const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => 
     );
   };
 
+  /**
+   * Functional Component which displays the page-specific option button
+   */
   const Options: React.FunctionComponent = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+    /**
+     * Handles the click on the options button
+     * @param event The click event on the options button 
+     */
     const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
     };
 
+    /**
+     * Handles the closing of the menu
+     */
     const handleClose = () => {
       setAnchorEl(null);
     };
