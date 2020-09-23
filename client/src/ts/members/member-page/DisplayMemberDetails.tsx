@@ -14,8 +14,10 @@ import {
   Typography,
   ExpansionPanel,
   ExpansionPanelSummary,
-  ExpansionPanelDetails,
+  ExpansionPanelDetails, IconButton
 } from "@material-ui/core";
+import JBTLogoBlack from "../../../images/jbt-logo-black.png";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -24,6 +26,20 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     displayMemberDetailsRoot: {
       flexGrow: 1,
+    },
+    imageSection: {
+      display: "flex",
+      alignItems: "center",
+    },
+    imageSectionStatus: {
+      fontStyle: "italic"
+    },
+    memberImage: {
+      backgroundColor: "grey",
+      borderRadius: "50%",
+      border: "3px solid var(--white,#fff)",
+      boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+      width: "40%",
     },
     category: {
       padding: theme.spacing(2),
@@ -55,6 +71,18 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "center",
     },
+    subCategoryHeader: {
+      display: "flex",
+      alignItems: "center",
+    },
+    hr: {
+      display: "block",
+      height: "1px",
+      border: 0,
+      borderTop: "1px solid #ccc",
+      margin: "1em 0",
+      padding: 0,
+  },
   })
 );
 
@@ -125,16 +153,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const {memberDetails} = props;
 
   const renderImage: VoidFunction = () => {
-    return (<Grid item xs={12} sm={4}>
-              <Paper className={classes.category}>
-                <Paper className={classes.categoryTitlePaper}>
-                  <Typography className={classes.categoryTitle}>
-                      {`${memberDetails?.vorname} ${memberDetails?.nachname}`}
-                    </Typography>
-                </Paper>
-                <Typography>BILD</Typography>
-                </Paper>
-            </Grid>);
+    return (<div className={classes.imageSection}>
+              <img className={classes.memberImage} src={JBTLogoBlack}/>
+              <div>
+                <Typography>{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+                <Typography className={classes.imageSectionStatus}>{`${memberDetails.mitgliedstatus}`}</Typography>
+              </div>
+            </div>);
   };
 
   /**
@@ -143,15 +168,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderGeneralInformation: VoidFunction = () => {
     return (<Grid item xs={12} sm={4}>
               <Paper className={classes.category}>
-                <Paper className={classes.categoryTitlePaper}>
-                  <Typography className={classes.categoryTitle}>Allgemeine Angaben</Typography>
-                </Paper>
-                <Typography className={classes.categoryLine}>Vorname: {memberDetails.vorname}</Typography>
-                <Typography className={classes.categoryLine}>Nachname: {memberDetails.nachname}</Typography>
-                <Typography className={classes.categoryLine}>Geschlecht: {memberDetails.geschlecht}</Typography>
+                <Typography>Allgemeine Angaben</Typography>
                 <Typography className={classes.categoryLine}>Geburtsdatum: {memberDetails.geburtsdatum}</Typography>
                 <Typography className={classes.categoryLine}>Handy: {memberDetails.handy}</Typography>
                 <Typography className={classes.categoryLine}>JBT-E-Mail: {memberDetails.jbt_email}</Typography>
+                <Typography className={classes.categoryLine}>Straße/Hausnummer: {memberDetails.strasse1}</Typography>
+                <Typography className={classes.categoryLine}>PLZ/Ort: {memberDetails.plz1}</Typography>
               </Paper>
             </Grid>);
   };
@@ -162,28 +184,25 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderClubInformation: VoidFunction = () => {
     return (<Grid item xs={12} sm={4}>
               <Paper className={classes.category}>
-                <Paper className={classes.categoryTitlePaper}>
-                  <Typography className={classes.categoryTitle}>Verein</Typography>
-                </Paper>
-                <Typography className={classes.categoryLine}>Status: {memberDetails.mitgliedstatus}</Typography>
-                  {(memberDetails.trainee_seit !== null)
-                    ?<Typography className={classes.categoryLine}>
-                      {`Trainee seit: ${memberDetails.trainee_seit}`}
-                    </Typography>
-                    : null}
-                  {(memberDetails.mitglied_seit !== null)
-                  ?<Typography className={classes.categoryLine}>
-                    {`Mitglied seit: ${memberDetails.mitglied_seit}`}
-                  </Typography>
-                  : null}
-                {(memberDetails.aktiv_seit !== null)
-                  ?<Typography className={classes.categoryLine}>
-                    {`Aktiv seit: ${memberDetails.aktiv_seit}`}
-                  </Typography>
-                  : null}
+                <Typography>Verein</Typography>
                 <Typography className={classes.categoryLine}>Ressort: {memberDetails.ressort}</Typography>
                 <Typography className={classes.categoryLine}>Mentor: {memberDetails.mentor}</Typography>
-                <Typography className={classes.categoryLine}>Mentee: </Typography>
+                <Typography className={classes.categoryLine}>Mentees: </Typography>
+
+                <div>
+                  <div>
+                    <div className={classes.subCategoryHeader}>
+                      <Typography>Werdegang</Typography>
+                      <IconButton aria-label="more filter options">
+                        { true ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+                      </IconButton>
+                    </div>
+                    <hr/>
+                    {/* TODO: Implement "career"-item */}
+                  </div>
+
+                </div>
+
                 <Typography className={classes.categoryLine}>Arbeitgeber: {memberDetails.arbeitgeber}</Typography>
               </Paper>
             </Grid>);
@@ -247,9 +266,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <Paper className={classes.categoryTitlePaper}>
                   <Typography className={classes.categoryTitle}>Studien- oder Büroanschrift</Typography>
                 </Paper>
-                <Typography className={classes.categoryLine}>Straße: {memberDetails.strasse1}</Typography>
-                <Typography className={classes.categoryLine}>PLZ: {memberDetails.plz1}</Typography>
-                <Typography className={classes.categoryLine}>Ort: {memberDetails.ort1}</Typography>
                 <Typography className={classes.categoryLine}>Telefon: {memberDetails.tel1}</Typography>
                 <Typography className={classes.categoryLine}>E-Mail geschäftlich: {memberDetails.email1}</Typography>
               </Paper>
