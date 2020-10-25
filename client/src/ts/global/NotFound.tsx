@@ -21,15 +21,15 @@ const useStyles = makeStyles((theme: Theme) =>
     notFoundCard: {
       backgroundColor: "white",
       [theme.breakpoints.up("xl")]: {
-        transform: "scale(1.1, 1.1)",
-        maxWidth: "45%",
+        transform: "scale(1.2, 1.2)",
+        maxWidth: "30%",
         marginTop: "5%",
         marginLeft: "auto",
         marginRight: "auto",
       },
       [theme.breakpoints.only("lg")]: {
         transform: "scale(1.1, 1.1)",
-        maxWidth: "50%",
+        maxWidth: "570px",
         marginTop: "5%",
         marginLeft: "auto",
         marginRight: "auto",
