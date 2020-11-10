@@ -6,7 +6,6 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -59,9 +58,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "#f6891f",
     },
   }));
+
 const NotFound: React.FunctionComponent = () => {
   const classes = useStyles();
-
   return (
     <div className={"content-page ${classes.root}"}>
       <Card className={classes.notFoundCard} variant="outlined">
