@@ -1,6 +1,9 @@
+/**
+ * Component that handles the not found error
+ */
 import React from "react";
 import Button from "@material-ui/core/Button";
-import { makeStyles, Theme, createStyles} from "@material-ui/core/styles";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -14,14 +17,11 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       fontSize: 17,
     },
-    pos: {
-      marginBottom: 10,
-    },
     notFoundCard: {
       backgroundColor: "white",
       [theme.breakpoints.up("xl")]: {
         transform: "scale(1.2, 1.2)",
-        maxWidth: "30%",
+        maxWidth: "580px",
         marginTop: "5%",
         marginLeft: "auto",
         marginRight: "auto",
@@ -67,21 +67,20 @@ const NotFound: React.FunctionComponent = () => {
         <CardContent>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
             Fehler:
-        </Typography>
+          </Typography>
           <Typography variant="h5" component="h2">
-            Diese Seite wurde nicht gefunden.
-        </Typography>
-          <Typography className={classes.pos} color="textSecondary">
-            404
-        </Typography>
+            404: Diese Seite wurde nicht gefunden.
+          </Typography>
           <Typography variant="body2" component="p">
-            Bei Problemen bitte melden bei: <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
+            Bei Problemen bitte melden bei:
+            <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
             <br />
-            {""}
           </Typography>
         </CardContent>
         <CardActions>
-          <Button className={classes.backButton} size="medium" variant="contained" disableElevation href="./">Zurück zum Dashboard</Button>
+          <Button className={classes.backButton} size="medium" variant="contained" disableElevation href="./">
+            Zurück zum Dashboard
+         </Button>
         </CardActions>
       </Card>
     </div>
