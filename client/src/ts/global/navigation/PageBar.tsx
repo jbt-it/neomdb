@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "8px",
+        zIndex: 10,
         [theme.breakpoints.up("md")]:{
             marginLeft: "280px",
             paddingRight: "280px",
