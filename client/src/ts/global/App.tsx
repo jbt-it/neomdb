@@ -20,8 +20,8 @@ const App: React.FunctionComponent = () => {
     const token = localStorage.getItem("token");
     if (!token){
       setAuthenticated(false);
-      setUserID(-1);
-      setUserName("");
+      setUserID(null);
+      setUserName(null);
       return false;
     } else {
       try {
@@ -31,8 +31,8 @@ const App: React.FunctionComponent = () => {
         // Converted from miliseconds
         if (exp < new Date().getTime() / 1000) {
           setAuthenticated(false);
-          setUserID(-1);
-          setUserName("");
+          setUserID(null);
+          setUserName(null);
           return false;
         } else {
           setAuthenticated(true);
@@ -42,8 +42,8 @@ const App: React.FunctionComponent = () => {
         }
       } catch {
         setAuthenticated(false);
-        setUserID(-1);
-        setUserName("");
+        setUserID(null);
+        setUserName(null);
         return false;
       }
     }
