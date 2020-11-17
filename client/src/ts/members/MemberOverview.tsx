@@ -510,13 +510,7 @@ const MemberOverview: React.FunctionComponent = () => {
           </Table>
         </TableContainer>
         </div>
-        {/* For testing purposes only */}
-        <PageBar pageTitle="Mitgliederübersicht" helpText="Das hier ist ein Hilfetext." pageOptions={
-          [
-            {optionName: "Option 1", optionFunciton: () => {console.log("Option 1");}},
-            {optionName: "Option 2", optionFunciton: () => {console.log("Option 2");}}
-          ]
-          }/>
+        <PageBar pageTitle="Mitgliederübersicht" />
     </div>
   );
 };
