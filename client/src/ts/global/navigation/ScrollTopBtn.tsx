@@ -18,7 +18,7 @@ import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme: Theme) => createStyles({
   scrollTopBtn: {
     position: "fixed",
-    bottom: theme.spacing(2),
+    bottom: theme.spacing(5.5),
     right: theme.spacing(2),
     zIndex: 20,
   },
