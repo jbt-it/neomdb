@@ -2,13 +2,18 @@
  * Class that facilitates working with dates
  */
 
+const dateOptions = {day: "2-digit", year: "numeric", month: "2-digit"};
+const dateTimeOptions = {day: "2-digit", year: "numeric", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"};
+const locales = "de-DE";
+
 /**
  * Returns the current date as a string that can be interpreted by SQL
  * @returns the current date and time in yyyy-mm-dd hh:mm:ss format
  */
 export const getCurrentDateAsSQL = () => {
-  const date = new Date();
-  return date.getUTCFullYear() + "-" + (date.getUTCMonth()+1) + "-" + date.getUTCDate() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds();
+    const date = new Date();
+    return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " "
+    + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 };
 
 /**
@@ -17,39 +22,36 @@ export const getCurrentDateAsSQL = () => {
  * @returns the date and time in yyyy-mm-dd hh:mm:ss format
  */
 export const getDateAsSQL = (date:Date) => {
-  return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " "
+    + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 };
 
 /**
- * Converts an sql datetime into a string month dd yyyy hh:mm:ss
+ * Converts an sql datetime into a string dd.MM.yyyy (hh:mm:ss)
  * @param {Date} date the sql date to convert into a string
+ * @param {boolean} withTime a boolean that specifies if the string should contain time
+ * @returns the date and time if not otherwise specified
  */
-export const sqlDateTimeToString = (date:Date) => {
-  return (new Date(date).toString().substring(4, 24));
+export const sqlDateTimeToString = (date:Date, withTime:boolean=true) => {
+    if (withTime) {
+        return (new Date(date).toLocaleDateString(locales, dateTimeOptions));
+    } else {
+        return (new Date(date).toLocaleDateString(locales, dateOptions));
+    }
 };
 
 /**
- * Converts an sql date into a string of format dd.mm.yyyy
- * @param {Date} date the sql date to convert into a string
+ * Converts a date as a string to a string in sql-readable form (yyyy-MM-dd hh:mm:ss)
+ * @param stringDate the date as a string to convert into a sql-readable string
+ * @param withTime a boolean that specifies if the string contains time
  */
-export const sqlDateToString = (date:Date) => {
-  const d = new Date(date);
-  let s = "";
-
-  if (date.getDate() < 10) {
-      s = s + "0" + d.getDate(); 
-  } else {
-      s = s + d.getDate(); 
-  }
-
-  s = s + ".";
-  if (d.getMonth()+1 < 10) {
-      s = s + "0" + (d.getMonth()+1);
-  } else {
-      s = s + (d.getMonth()+1);
-  }
-
-  s = s + ".";
-  s = s + d.getFullYear();
-  return s;
+export const stringToSql = (stringDate:string, withTime:boolean=false) => {
+    if (withTime) {
+        const dateElements = stringDate.split(" ")[0].split(".");
+        const timeElements = stringDate.split(" ")[1].split(":");
+        return dateElements[2] + "-" + dateElements[1] + "-" + dateElements[0] + " " + timeElements[0] + ":" + timeElements[1] + ":" + timeElements[2];
+    } else {
+        const dateElements = stringDate.split(".");
+        return dateElements[2] + "-" + dateElements[1] + "-" + dateElements[0];  
+    }
 };
