@@ -17,7 +17,7 @@ Please consider to make use of .editorconfig in your IDE to mitigate indentation
 
 ### Backend
 
-Download the `env.txt` file from the nextcloud and copy it into `/server` and change format to .env
+Download the `env.txt` file from the nextcloud and copy it into `/server` and change the name to `.env`
 
 The server uses https to secure the communication between frontend and backend. 
 To continue developing you'll need a self-signed certificate.
@@ -28,8 +28,9 @@ WINDOWS:
 
 
 UNIX:
-1. Navigate to the root level of `server`
-2. Create self-signed certificate and key by running:
+1. Navigate to `/server`
+2. Create Folder `mkdir dev_certs`
+3. Create self-signed certificate and key by running:
  `sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./dev_certs/selfsigned.key -out ./dev_certs/selfsigned.crt`
 
 
@@ -37,11 +38,15 @@ UNIX:
     * Chrome: Type `chrome://flags/#allow-insecure-localhost`into search bar and enable "Allow invalid certificates for resources loaded from localhost."
 
     * Firefox:
-      1. Navigate to `Preferences > Privacy & Security > Certificates`
-      2. Click `View Certificates`
-      3. Click `Add Exception`
-      4. Type `https://localhost:3030` into the form
-      5. Add Exception
+      1. You have to start the backend server so Firefox can fetch the certificate from localhost
+        1. Navigate to `/server`
+        2. Run `npm i && npm start`
+      2. Navigate to `Preferences > Privacy & Security > Certificates`
+      3. Click `View Certificates`
+      4. Navigate to `Servers`
+      4. Click `Add Exception`
+      5. Type `https://localhost:3030` into the form and click `Get Certificate`
+      6. Add Exception
 
 
 Development database can be found in the nextcloud, use MySQL and phpmyadmin within docker to continue development
