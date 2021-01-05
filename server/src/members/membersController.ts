@@ -80,7 +80,7 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 export const retrieveMember = (req: Request, res: Response): void => {
   if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)){
     database.query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, jbt_email, mitgliedstatus,
       generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
       senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
@@ -101,7 +101,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
     });
   } else {
     database.query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, jbt_email, mitgliedstatus,
       generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
       senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
