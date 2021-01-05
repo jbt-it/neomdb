@@ -204,9 +204,9 @@ export const updateMember = (req: Request, res: Response): void => {
       WHERE mitgliedID = ?`,
     [req.body.handy, req.body.arbeitgeber, req.body.strasse1, req.body.plz1, req.body.ort1, req.body.tel1,
       req.body.email1, req.body.strasse2, req.body.plz2, req.body.ort2, req.body.tel2, req.body.email2,
-      req.body.hochschule, req.body.studiengang, req.body.studienbeginn, req.body.studienende, req.body.vertiefungen,
-      req.body.ausbildung, req.body.kontoinhaber, req.body.iban, req.body.bic, lastChangeTime, req.body.fuehrerschein,
-      req.body.ersthelferausbildung, req.params.id])
+      req.body.hochschule, req.body.studiengang, req.body.studienbeginn, req.body.studienende,
+      req.body.vertiefungen, req.body.ausbildung, req.body.kontoinhaber, req.body.iban, req.body.bic, 
+      lastChangeTime, req.body.fuehrerschein, req.body.ersthelferausbildung, req.params.id])
     .then((result) => {
       res.status(200).send("Profile Update Successful");
     })
