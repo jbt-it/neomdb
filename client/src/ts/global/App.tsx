@@ -14,7 +14,7 @@ const App: React.FunctionComponent = () => {
         userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
   /**
-   * Checks if token in local storage is expired
+   * Checks if token in local storage is set or expired
    */
   const checkAuth = (): boolean => {
     const token = localStorage.getItem("token");
