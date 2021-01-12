@@ -2,35 +2,26 @@
  * The MemberPage-Component displays details of a member and can be edited by the owner of this page
  */
 
-import React, {
-  useState,
-  useEffect
-} from "react";
+import React, { useState, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
-import classes from "*.module.css";
-import { IconButton, Button, Paper, Typography } from "@material-ui/core";
-import {
-  makeStyles,
-  createStyles,
-  Theme,
-} from "@material-ui/core/styles";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme:Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    memberPageRoot:{
+    memberPageRoot: {
       flexGrow: 1,
       padding: "5px",
-        marginTop: "58px",
-        [theme.breakpoints.up("md")]: {
-          marginTop: "65px",
-          marginLeft: "287px",
-          marginRight: "7px",
-        },
-        [theme.breakpoints.up("sm")]: {
-          marginTop: "65px",
-        },
+      marginTop: "58px",
+      [theme.breakpoints.up("md")]: {
+        marginTop: "65px",
+        marginLeft: "287px",
+        marginRight: "7px",
+      },
+      [theme.breakpoints.up("sm")]: {
+        marginTop: "65px",
+      },
     },
   })
 );
@@ -47,45 +38,44 @@ interface MemberDetails {
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
-  generation: string;
-  internesprojekt: string;
-  mentor: string;
-  trainee_seit: string;
-  mitglied_seit: string;
-  alumnus_seit: string;
-  senior_seit: string;
-  aktiv_seit: string;
-  passiv_seit: string;
-  ausgetreten_seit: string;
+  generation: string | null;
+  internesprojekt: string | null;
+  mentor: string | null;
+  trainee_seit: string | null;
+  mitglied_seit: string | null;
+  alumnus_seit: string | null;
+  senior_seit: string | null;
+  aktiv_seit: string | null;
+  passiv_seit: string | null;
+  ausgetreten_seit: string | null;
   ressort: string;
-  arbeitgeber: string;
+  arbeitgeber: string | null;
   strasse1: string;
   plz1: number;
   ort1: string;
   tel1: number;
   email1: string;
-  strasse2: string;
-  plz2: number;
-  ort2: string;
-  tel2: number;
-  email2: string;
+  strasse2: string | null;
+  plz2: number | null;
+  ort2: string | null;
+  tel2: number | null;
+  email2: string | null;
   hochschule: string;
   studiengang: string;
   studienbeginn: string;
   studienende: string;
-  vertiefungen: string;
-  ausbildung: string;
+  vertiefungen: string | null;
+  ausbildung: string | null;
   kontoinhaber: string;
   iban: string;
   bic: string;
-  engagement: string;
-  canPL: string;
-  canQM: string;
+  engagement: string | null;
+  canPL: string | null;
+  canQM: string | null;
   lastchange: string;
-  fuehrerschein: string;
-  ersthelferausbildung: string;
+  fuehrerschein: boolean;
+  ersthelferausbildung: boolean;
 }
-
 /**
  * Interface for the match parameter of the router
  */
@@ -93,7 +83,9 @@ interface RouterMatch {
   id: string;
 }
 
-const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (props: RouteComponentProps<RouterMatch>) => {
+const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
+  props: RouteComponentProps<RouterMatch>
+) => {
   const classes = useStyles();
 
   const [memberDetails, setMembersDetails] = useState<MemberDetails>();
@@ -104,25 +96,57 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (p
   const getMemberDetails: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api.get(`/users/${props.match.params.id}`, {
-      headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
-    })
-    .then((res) => {
-      if (res.status === 200){
-        if (mounted){
-          setMembersDetails(res.data[0]);
+    api
+      .get(`/users/${props.match.params.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembersDetails(res.data[0]);
+          }
         }
-      }
-    });
+      });
 
-    return () => {mounted = false;};
+    return () => {
+      mounted = false;
+    };
+  };
+
+  /**
+   * Updates the member details
+   */
+  const updateMemberDetails = (data: MemberDetails) => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .patch(`/users/${props.match.params.id}`, data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            // TODO: call Success-Snackbar
+          }
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   };
 
   useEffect(() => getMemberDetails(), []);
 
   return (
     <div className={classes.memberPageRoot}>
-      {memberDetails ? <DisplayMemberDetails memberDetails={memberDetails}/> : null}
+      {memberDetails ? (
+        <DisplayMemberDetails
+          memberDetails={memberDetails}
+          getMemberDetails={getMemberDetails}
+          updateMemberDetails={updateMemberDetails}
+        />
+      ) : null}
     </div>
   );
 };
