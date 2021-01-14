@@ -88,9 +88,13 @@ export const retrieveMember = (req: Request, res: Response): void => {
       senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
       studiengang, studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber,
-      iban, bic, engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
+      iban, bic, engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung,
+      GROUP_CONCAT(sprachen.wert) AS languages,
+      GROUP_CONCAT(sprachen.niveau) AS levels
       FROM mitglied
-      WHERE mitgliedID = ?`,
+      LEFT JOIN sprachen ON mitglied.mitgliedID = sprachen.mitglied_mitgliedID
+      WHERE mitgliedID = ?
+      GROUP BY mitgliedID`,
     [req.params.id])
     .then((result: []) => {
       if(result.length === 0){
@@ -109,9 +113,13 @@ export const retrieveMember = (req: Request, res: Response): void => {
       senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
       studiengang, studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL,
-      canQM, lastchange, fuehrerschein, ersthelferausbildung
+      canQM, lastchange, fuehrerschein, ersthelferausbildung,
+      GROUP_CONCAT(sprachen.wert) AS languages,
+      GROUP_CONCAT(sprachen.niveau) AS levels
       FROM mitglied
-      WHERE mitgliedID = ?`,
+      LEFT JOIN sprachen ON mitglied.mitgliedID = sprachen.mitglied_mitgliedID
+      WHERE mitgliedID = ?
+      GROUP BY mitgliedID`,
     [req.params.id])
     .then((result: []) => {
       if(result.length === 0){
