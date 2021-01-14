@@ -17,9 +17,11 @@ export const login = (req: Request, res: Response): void => {
    res.status(401).send("Credentials incomplete");
  } else {
    database.query(
-    `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+    `SELECT mitgliedID, name, passwordHash,
+    GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
     FROM mitglied
-    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+    LEFT JOIN mitglied_has_berechtigung
+    ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
     WHERE mitglied.name = ?
     GROUP BY mitgliedID, name`,
     [req.body.username])
@@ -59,7 +61,8 @@ export const login = (req: Request, res: Response): void => {
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
   database.query(
-   `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
+   `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung
+   AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
    FROM mitglied
    INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
    INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
@@ -80,8 +83,8 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 export const retrieveMember = (req: Request, res: Response): void => {
   if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)){
     database.query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, jbt_email, mitgliedstatus,
-      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, jbt_email,
+      mitgliedstatus, generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
       senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
       studiengang, studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber,
