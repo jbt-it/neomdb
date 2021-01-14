@@ -37,8 +37,6 @@ export const login = (req: Request, res: Response): void => {
           };
           res.status(200).json({
             token: auth.generateJWT(payload),
-            id: result[0].mitgliedID,
-            name: result[0].name
           });
         } else {
           res.status(401).send("Username or password wrong");

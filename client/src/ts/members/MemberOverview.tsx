@@ -27,6 +27,7 @@ import {
   ExpandLess,
   ExpandMore,
 } from "@material-ui/icons";
+import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
 
 /**
@@ -394,17 +395,18 @@ const MemberOverview: React.FunctionComponent = () => {
   );
 
   return (
+    <div>
       <div className="content-page">
       <Paper className={classes.filterContainer}>
         <form className={classes.filters} noValidate autoComplete="off">
-        <Grid container spacing={8}>
-          <Grid item xs={6} sm={3}>
-            <TextField
-              label="Name/Mail/..."
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleSearchInput}
-            />
+          <Grid container spacing={8}>
+            <Grid item xs={6} sm={3}>
+              <TextField
+                label="Name/Mail/..."
+                className={classes.filterElement}
+                color="primary"
+                onChange={handleSearchInput}
+              />
           </Grid>
           <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
             <TextField
@@ -507,6 +509,8 @@ const MemberOverview: React.FunctionComponent = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        </div>
+        <PageBar pageTitle="Mitgliederübersicht" />
     </div>
   );
 };

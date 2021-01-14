@@ -1,46 +1,34 @@
+/**
+ * Component that implements custom Snackbar using notistack
+ */
 import React from "react";
-import Button from "@material-ui/core/Button";
-import { useSnackbar } from "notistack";
+import Button, { ButtonProps } from "@material-ui/core/Button";
+import { useSnackbar, SnackbarMessage, OptionsObject } from "notistack";
 
-
-interface SnackBarProps {
-    message: string | React.ReactNode;
-    variant?: "default" | "error" | "success" | "warning" | "info" | undefined;
-    duration?: number | null | undefined;
-    // handleClose: (event?: React.SyntheticEvent, reason?: string) => void;
+interface Props {
+    snackbarMessage: SnackbarMessage;
+    snackProps?: OptionsObject;
+    buttonProps?: ButtonProps;
 }
-
-
-
-const CustomSnackbar = (props: SnackBarProps) => {
+const CustomSnackbar = (props: Props) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
     const action = (key: string | number) => (
         <React.Fragment>
-            <Button onClick={() => { closeSnackbar(key); }}>
+            <Button onClick={() => { closeSnackbar(key); }} {...props.buttonProps} >
                 Dismiss
                 </Button>
         </React.Fragment>
     );
-
-    const enqueueCustomSnackbar = () => {
-        enqueueSnackbar(props.message, {
-            variant: props.variant,
-            autoHideDuration: props.duration,
+    const wrapperEnqueueSnackbar = () => {
+        enqueueSnackbar(props.snackbarMessage, {
             action,
-            ...props,
+            ...props.snackProps,
         });
+        return (null);
     };
-
     return (
         <div>
-            {enqueueSnackbar(props.message, {
-                variant: props.variant,
-                autoHideDuration: props.duration,
-                action,
-                ...props,
-           })}
+            {wrapperEnqueueSnackbar()}
         </div>);
-
-}
-export default { CustomSnackbar };
+};
+export default CustomSnackbar;
