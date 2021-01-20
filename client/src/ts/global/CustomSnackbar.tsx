@@ -1,29 +1,43 @@
 /**
- * Component that implements custom Snackbar using notistack
+ * Component that implements a custom Snackbar using notistack
  */
 import React from "react";
-import Button, { ButtonProps } from "@material-ui/core/Button";
 import { useSnackbar, SnackbarMessage, OptionsObject } from "notistack";
+import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
 
 interface Props {
     snackbarMessage: SnackbarMessage;
     snackProps?: OptionsObject;
-    buttonProps?: ButtonProps;
+    buttonProps?: IconButtonProps;
+    iconProps?: SvgIconProps;
+    showID?: boolean;
 }
 const CustomSnackbar = (props: Props) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    /**
+     * Default close button for Snackbar with Close Icon.
+     */
     const action = (key: string | number) => (
         <React.Fragment>
-            <Button onClick={() => { closeSnackbar(key); }} {...props.buttonProps} >
-                Dismiss
-                </Button>
+            <IconButton onClick={() => { closeSnackbar(key); }} {...props.buttonProps}>
+                <CloseIcon {...props.iconProps} />
+            </IconButton>
         </React.Fragment>
     );
+    /**
+     * Calls a Snackbar. When showID is set to true,
+     * it will return the ID of the Snackbar as React.ReactText.
+     */
     const wrapperEnqueueSnackbar = () => {
-        enqueueSnackbar(props.snackbarMessage, {
+        const output = enqueueSnackbar(props.snackbarMessage, {
             action,
             ...props.snackProps,
         });
+        if (props.showID) {
+            return (output);
+        }
         return (null);
     };
     return (
