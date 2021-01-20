@@ -9,10 +9,12 @@ export default createMuiTheme({
     primary: {
       // Ci-orange as hex
       main: "#f6891f",
+      contrastText: "white",
     },
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
+      contrastText: "black",
     }
   },
 });
