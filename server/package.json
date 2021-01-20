@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
+    "start": "ts-node-dev --respawn --transpile-only --poll ./src/server.ts",
     "prod": "npm run build && npm run start",
     "lint": "tslint --project ./"
   }

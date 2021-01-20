@@ -19,7 +19,7 @@ export const login = (req: Request, res: Response): void => {
    database.query(
     `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
     FROM mitglied
-    INNER JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
     WHERE mitglied.name = ?
     GROUP BY mitgliedID, name`,
     [req.body.username])
@@ -33,12 +33,10 @@ export const login = (req: Request, res: Response): void => {
           const payload: JWTPayload = {
             mitgliedID: result[0].mitgliedID,
             name: result[0].name,
-            permissions: result[0].permissions.split(",").map(Number)
+            permissions: result[0].permissions ? result[0].permissions.split(",").map(Number) : []
           };
           res.status(200).json({
             token: auth.generateJWT(payload),
-            id: result[0].mitgliedID,
-            name: result[0].name
           });
         } else {
           res.status(401).send("Username or password wrong");

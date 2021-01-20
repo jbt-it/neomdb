@@ -96,7 +96,8 @@ interface DrawerProps {
  * @param props
  */
 const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
-  const [authenticated, setAuthenticated] = useContext(AuthContext);
+  const [authenticated, setAuthenticated,
+    userID, setUserID, userName, setUserName] = useContext(AuthContext);
   const classes = useStyles();
   const location = useLocation();
   const history = useHistory();
@@ -183,7 +184,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         {/* Default avatar */}
         <Avatar className={classes.muiAvatarRoot} src={JBTLogoBlack}/>
         <div>
-          <Typography className={classes.avatarName}>Lennart Rukower</Typography>
+          <Typography className={classes.avatarName}>{userName}</Typography>
         </div>
       </div>
       <Divider/>
