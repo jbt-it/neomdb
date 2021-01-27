@@ -28,6 +28,7 @@ export const parseDate = (dateAsString: string) => {
     if (partsOfDate !== null) {
         return new Date(parseInt(partsOfDate[2], 10), parseInt(partsOfDate[1], 10) - 1, parseInt(partsOfDate[0], 10));
     } else {
+        // TODO: should be null or sth.
         return new Date();
     }
 };
