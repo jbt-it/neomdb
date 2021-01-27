@@ -2,11 +2,13 @@
  * The MemberPage-Component displays details of a member and can be edited by the owner of this page
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import {AuthContext} from "../../global/AuthContext";
+import PageBar from "../../global/navigation/PageBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: "5px",
       marginTop: "58px",
+      marginBottom: "45px",
       [theme.breakpoints.up("md")]: {
         marginTop: "65px",
         marginLeft: "287px",
@@ -87,8 +90,11 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
+  const [authenticated, setAuthenticated,
+    userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
   const [memberDetails, setMembersDetails] = useState<MemberDetails>();
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   /**
    * Retrieves the member details
@@ -136,17 +142,25 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
     };
   };
 
-  useEffect(() => getMemberDetails(), []);
+  useEffect(() => {
+    // Checks if the user is the owner of the member page
+    setIsOwner(userID === parseInt(props.match.params.id, 10));
+    getMemberDetails();
+  }, []);
 
   return (
-    <div className={classes.memberPageRoot}>
-      {memberDetails ? (
-        <DisplayMemberDetails
-          memberDetails={memberDetails}
-          getMemberDetails={getMemberDetails}
-          updateMemberDetails={updateMemberDetails}
-        />
-      ) : null}
+    <div>
+      <div className={classes.memberPageRoot}>
+        {memberDetails ? (
+          <DisplayMemberDetails
+            memberDetails={memberDetails}
+            isOwner={isOwner}
+            getMemberDetails={getMemberDetails}
+            updateMemberDetails={updateMemberDetails}
+          />
+        ) : null}
+      </div>
+      <PageBar pageTitle="Profilseite" />
     </div>
   );
 };

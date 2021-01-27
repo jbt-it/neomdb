@@ -2,7 +2,7 @@
  * The DislpayMemberDetails-Component displays details of a member
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import {
   Grid,
@@ -25,9 +25,8 @@ import {
   sqlDateTimeToString,
   stringToSql,
 } from "../../utils/dateUtils";
+ 
 
-// TODO: Berechtigungen anschauen und hier einarbeiten
-// TODO: Felder, die ein Owner nicht bearbeiten kann, ausgrauen, wenn er keine zusätzlichen Bereichtigungen hat
 // TODO: For later: validation of the different input fields
 
 /**
@@ -210,6 +209,7 @@ interface MemberDetails {
  */
 interface DisplayMemberDetailsProps {
   memberDetails: MemberDetails;
+  isOwner: boolean;
   updateMemberDetails: (data: MemberDetails) => void;
   getMemberDetails: () => void;
 }
@@ -228,7 +228,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const { memberDetails } = props;
 
   const [careerOpen, setCareerOpen] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
 
   const [lastname, setLastname] = useState(memberDetails.nachname);
   const [name, setName] = useState<string>(memberDetails.vorname);
@@ -348,11 +347,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     setQualificationInfoDialogOpen,
   ] = useState<boolean>(false);
 
-  useEffect(() => {
-    // TODO: check if the user is the owner of the member page
-    setIsOwner(true);
-  }, []);
-
   /**
    * Submits the changed data
    * @param event FormEvent
@@ -360,6 +354,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Data which will be submitted
     const data = {
       mitgliedID: memberDetails.mitgliedID,
       nachname: lastname,
@@ -584,7 +579,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                 {
                   /*When the user is owner or has the permission to manage all members they can edit this section*/
-                  isOwner || permissionList.includes(1) ? (
+                  props.isOwner || permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -840,7 +835,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div onClick={(event) => handleStudyInfoDialogOpen(event)}>
                 {
                   /*When the user is owner or has the permission to manage all members they can edit this section*/
-                  isOwner || permissionList.includes(1) ? (
+                  props.isOwner || permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -909,7 +904,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Renders the category for payment informations
    */
   const renderPaymentInformation: VoidFunction = () => {
-    if (isOwner || permissionList.includes(6)) {
+    if (props.isOwner || permissionList.includes(6)) {
       return (
         <Grid item xs={12} sm={12}>
           <ExpansionPanel>
@@ -926,7 +921,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <div onClick={(event) => handlePaymentInfoDialogOpen(event)}>
                   {
                     /*When the user is owner or has the permission to manage all members they can edit this section*/
-                    isOwner || permissionList.includes(1) ? (
+                    props.isOwner || permissionList.includes(1) ? (
                       <IconButton>
                         <Edit fontSize="inherit" />
                       </IconButton>
@@ -993,7 +988,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               >
                 {
                   /*When the user is owner or has the permission to manage all members they can edit this section*/
-                  isOwner || permissionList.includes(1) ? (
+                  props.isOwner || permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
