@@ -401,20 +401,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       iban: ibanState,
       bic: bicState,
       engagement: engagementState,
-      canPL: getDateAsSQL(
-        new Date(
-          memberDetails.canPL
-            ? memberDetails.canPL
-            : "January 01, 1970 00:00:00"
-        )
-      ),
-      canQM: getDateAsSQL(
-        new Date(
-          memberDetails.canQM
-            ? memberDetails.canQM
-            : "January 01, 1970 00:00:00"
-        )
-      ),
+      canPL: memberDetails.canPL
+      ? getDateAsSQL(new Date(memberDetails.canPL))
+      : null,
+      canQM: memberDetails.canQM
+      ? getDateAsSQL(new Date(memberDetails.canQM))
+      : null,
       lastchange: "",
       fuehrerschein: driversLicense,
       ersthelferausbildung: firstAid,
@@ -529,24 +521,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const handleQualificationInfoDialogClose = () => {
     setQualificationInfoDialogOpen(false);
-  };
-
-  /**
-   * Returns 0 if the user is the member and has member management permissions
-   * Returns 1 if the user is the member but hasn't member management permissions
-   * Returns 2 if the user is not the member but has member management permissions
-   * Returns -1 if the user has no right to edit the member
-   */
-  const checkPermissions = () => {
-    if ((permissionList.includes(1) && props.isOwner)|| permissionList.includes(100)) {
-      return 0;
-    } else if (props.isOwner) {
-      return 1;
-    } else if (permissionList.includes(1)) {
-      return 2;
-    } else {
-      return -1;
-    }
   };
 
   /**
@@ -842,7 +816,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div onClick={(event) => handleStudyInfoDialogOpen(event)}>
                 {
                   /*When the user is owner or has the permission to manage all members they can edit this section*/
-                  props.isOwner || permissionList.includes(1) ? (
+                  props.isOwner ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -928,7 +902,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <div onClick={(event) => handlePaymentInfoDialogOpen(event)}>
                   {
                     /*When the user is owner or has the permission to manage all members they can edit this section*/
-                    props.isOwner || permissionList.includes(1) ? (
+                    props.isOwner ? (
                       <IconButton>
                         <Edit fontSize="inherit" />
                       </IconButton>
@@ -995,7 +969,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               >
                 {
                   /*When the user is owner or has the permission to manage all members they can edit this section*/
-                  props.isOwner || permissionList.includes(1) ? (
+                  props.isOwner ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -1141,7 +1115,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
-                  disabled={!(checkPermissions() === 0)}
+                  disabled={!props.isOwner}
                   id="smartphone-field"
                   label="Handy"
                   variant="outlined"
@@ -1156,7 +1130,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
-                  disabled={!checkPermissions()}
+                  disabled={!permissionList.includes(1)}
                   id="jbt-email-field"
                   label="JBT-E-Mail"
                   variant="outlined"
@@ -1171,6 +1145,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
+                  disabled={!props.isOwner}
                   id="street-field"
                   label="Straße/Hausnummer"
                   variant="outlined"
@@ -1185,6 +1160,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
+                  disabled={!props.isOwner}
                   id="plz-field"
                   label="PLZ"
                   variant="outlined"
@@ -1199,6 +1175,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
+                  disabled={!props.isOwner}
                   id="place-of-residence-field"
                   label="Ort"
                   variant="outlined"
@@ -1212,6 +1189,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="employer-field"
                   label="Arbeitgeber"
                   variant="outlined"
@@ -1276,7 +1254,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  id="alumni-field"
+                  disabled={!permissionList.includes(1)}
+                  id="passive-member-field"
                   label="Passives Mitglied seit"
                   variant="outlined"
                   value={passiveSince}
@@ -1289,6 +1268,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!permissionList.includes(1)}
                   id="alumni-field"
                   label="Alumna*Alumnus seit"
                   variant="outlined"
@@ -1302,6 +1282,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!permissionList.includes(1)}
                   id="senior-field"
                   label="Senior seit"
                   variant="outlined"
@@ -1315,6 +1296,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!permissionList.includes(1)}
                   id="member-field"
                   label="Aktives Mitglied seit"
                   variant="outlined"
@@ -1328,6 +1310,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!permissionList.includes(1)}
                   id="trainee-field"
                   label="Trainee seit"
                   variant="outlined"
@@ -1392,6 +1375,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="uni-field"
                   label="Hochschule"
                   variant="outlined"
@@ -1405,6 +1389,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="course-of-study-field"
                   label="Studiengang"
                   variant="outlined"
@@ -1418,6 +1403,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="start-of-study-field"
                   label="Studienbeginn"
                   variant="outlined"
@@ -1431,6 +1417,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="end-of-study-field"
                   label="Studienende"
                   variant="outlined"
@@ -1444,6 +1431,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="speciality-field"
                   label="Vertiefungen"
                   variant="outlined"
@@ -1510,6 +1498,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="account-holder-field"
                   label="Ausbildung"
                   variant="outlined"
@@ -1576,6 +1565,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="account-holder-field"
                   label="Kontoinhaber"
                   variant="outlined"
@@ -1589,6 +1579,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="iban-field"
                   label="IBAN"
                   variant="outlined"
@@ -1602,6 +1593,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
+                  disabled={!props.isOwner}
                   id="bic-field"
                   label="BIC"
                   variant="outlined"
