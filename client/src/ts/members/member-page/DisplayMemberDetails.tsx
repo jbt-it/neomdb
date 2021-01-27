@@ -223,7 +223,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const classes = useStyles();
 
   // Placeholder for the permissions of the user
-  const permissionList: number[] = [];
+  const permissionList: number[] = [1];
 
   const { memberDetails } = props;
 
@@ -532,13 +532,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   /**
-   * Returns true if the user has member management permissions
+   * Returns 0 if the user is the member and has member management permissions
+   * Returns 1 if the user is the member but hasn't member management permissions
+   * Returns 2 if the user is not the member but has member management permissions
+   * Returns -1 if the user has no right to edit the member
    */
   const checkPermissions = () => {
-    if (permissionList.includes(1) || permissionList.includes(100)) {
-      return true;
+    if ((permissionList.includes(1) && props.isOwner)|| permissionList.includes(100)) {
+      return 0;
+    } else if (props.isOwner) {
+      return 1;
+    } else if (permissionList.includes(1)) {
+      return 2;
     } else {
-      return false;
+      return -1;
     }
   };
 
@@ -1119,7 +1126,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
-                  disabled={!checkPermissions()}
+                  disabled
                   id="birthday-field"
                   label="Geburtstag"
                   variant="outlined"
@@ -1134,6 +1141,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   required
                   color="primary"
+                  disabled={!(checkPermissions() === 0)}
                   id="smartphone-field"
                   label="Handy"
                   variant="outlined"
