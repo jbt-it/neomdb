@@ -8,6 +8,7 @@ import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
+import DepartmentOverview from "../members/DepartmentOverview";
 
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated,
@@ -74,7 +75,7 @@ const App: React.FunctionComponent = () => {
       <Switch>
         <PrivateRoute exact path = "/" component = {Dashboard} />
         <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
-        <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
+        <PrivateRoute exact path = "/ressorts" component = {DepartmentOverview} />
         <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
         <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
         <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />

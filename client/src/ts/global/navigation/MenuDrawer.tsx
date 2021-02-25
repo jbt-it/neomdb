@@ -211,9 +211,9 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
                 <ListItemText className={classes.subListItem} primary="Gesamtübersicht" />
               </ListItem>
             </NavLink>
-            <NavLink exact to="/vorstand" className={classes.listItemNavText} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
+            <NavLink exact to="/ressorts" className={classes.listItemNavText} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText className={classes.subListItem} primary="Der Vorstand" />
+                <ListItemText className={classes.subListItem} primary="Ressorts" />
                   </ListItem>
             </NavLink>
             <NavLink exact to="/geburtstage" className={classes.listItemNavText} activeStyle={{color:"rgb(246,137,31)", textDecoration:"none"}} onClick={handleNavLinkClick(pathname)}>
