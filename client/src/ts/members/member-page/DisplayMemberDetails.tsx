@@ -25,7 +25,7 @@ import {
   sqlDateTimeToString,
   stringToSql,
 } from "../../utils/dateUtils";
- 
+
 
 // TODO: For later: validation of the different input fields
 
@@ -412,6 +412,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       ersthelferausbildung: firstAid,
     };
     props.updateMemberDetails(data);
+    handleGeneralInfoDialogClose();
+    handleClubInfoDialogClose();
+    handleStudyInfoDialogClose();
+    handleQualificationInfoDialogClose();
+    handlePaymentInfoDialogClose();
+    
   };
 
   /**

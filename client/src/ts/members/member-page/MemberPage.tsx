@@ -9,6 +9,7 @@ import DisplayMemberDetails from "./DisplayMemberDetails";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import {AuthContext} from "../../global/AuthContext";
 import PageBar from "../../global/navigation/PageBar";
+import CustomSnackbar from "../../global/CustomSnackbar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,6 +91,7 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
+  const [open, setOpen] = useState<number>(0);
   const [authenticated, setAuthenticated,
     userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
@@ -102,8 +104,7 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   const getMemberDetails: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api
-      .get(`/users/${props.match.params.id}`, {
+    api.get(`/users/${props.match.params.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -132,7 +133,7 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            // TODO: call Success-Snackbar
+            setOpen(open+1);
           }
         }
       });
@@ -161,6 +162,7 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
         ) : null}
       </div>
       <PageBar pageTitle="Profilseite" />
+      { open ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{variant:"success"}}/> : null}
     </div>
   );
 };
