@@ -128,7 +128,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
   database.query(
     `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung 
     FROM mitglied, ressort
-    WHERE ressort = ressortID
+    WHERE ressort = ressortID AND mitgliedstatus <= 3 
     ORDER BY ressortID`, [])
   .then((result: []) => {
     if(result.length === 0){
