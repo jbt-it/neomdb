@@ -31,7 +31,7 @@ import React, {
   } from "@material-ui/icons";
   import PageBar from "../global/navigation/PageBar";
   import api from "../utils/api";
-  
+
   /**
    * Function which proivdes the styles of the MemberManagement
    */
@@ -156,7 +156,7 @@ import React, {
       },
     },
   }));
-  
+
   /**
    * Interface for the member object
    */
@@ -170,22 +170,21 @@ import React, {
     ressort: string;
     lastchange: string;
   }
-  
+
   /**
    * Depicts a table with all members and a filter section to filter the members
    */
   const MemberManagement: React.FunctionComponent = () => {
     const classes = useStyles();
-  
+
     const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
     const [members, setMembers] = useState<Member[]>([]);
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [statusFilter, setStatusFilter] = useState<string>("");
     const [ressortFilter, setRessortFilter] = useState<string>("");
     const [sortOption, setSortOption] = useState<string>("");
-  
     const [nameSort, setNameSort] = useState<string>("");
-  
+
     // Retrieves the members
     const getMembers: VoidFunction = () => {
       // Variable for checking, if the component is mounted
@@ -202,13 +201,13 @@ import React, {
       }).catch((error) => {
         console.log(error);
       });
-  
+
       // Clean-up function
       return () => {mounted = false;};
     };
-  
+
     useEffect(() => getMembers(), []);
-  
+
     /**
      * Handles the change event on the search filter input
      * @param event
@@ -216,7 +215,7 @@ import React, {
     const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
       setSearchFilter(event.target.value);
     };
-  
+
     /**
      * Handles the change event on the status filter input
      * @param event
@@ -224,7 +223,7 @@ import React, {
     const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
       setStatusFilter(event.target.value);
     };
-  
+
     /**
      * Handles the change event on the ressort filter input
      * @param event
@@ -232,7 +231,7 @@ import React, {
     const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
       setRessortFilter(event.target.value);
     };
-  
+
     /**
      * Handles the change event on the sort input
      * @param event
@@ -240,27 +239,27 @@ import React, {
     const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
       setSortOption(event.target.value);
     };
-  
+
     /**
      * Filters and sorts the member data and returns it
      */
     const getFilteredAndSortedMembers = ():Member[] => {
       let filteredMembers = members;
-  
+
       // Filters by status
       if (statusFilter !== "") {
         filteredMembers = filteredMembers.filter(member => {
           return member.mitgliedstatus.toString() === statusFilter;
         });
       }
-  
+
       // Filters by ressort
       if (ressortFilter !== "") {
         filteredMembers = filteredMembers.filter(member => {
           return member.ressort === ressortFilter;
         });
       }
-  
+
       // Filters by search input
       filteredMembers = filteredMembers.filter(member => {
         return (
@@ -269,15 +268,15 @@ import React, {
           member.handy.toLowerCase().includes(searchFilter.toLowerCase())
         );
       });
-  
+
       let sortedMembers = filteredMembers;
-  
+
       // Sorts by last changed in ascending order
       if (sortOption === "lastchange ASC") {
         sortedMembers = sortedMembers.sort((a,b) => {
           const dateA = new Date(a.lastchange);
           const dateB = new Date(b.lastchange);
-  
+
           if (dateA < dateB) {
             return -1;
           } else if (dateA > dateB) {
@@ -286,13 +285,13 @@ import React, {
             return 0;
           }
         });
-  
+
       // Sorts by last changed in descending order
       } else if (sortOption === "lastchange DESC") {
         sortedMembers = sortedMembers.sort((a,b) => {
           const dateA = new Date(a.lastchange);
           const dateB = new Date(b.lastchange);
-  
+
           if (dateA < dateB) {
             return 1;
           } else if (dateA > dateB) {
@@ -302,7 +301,7 @@ import React, {
           }
         });
       }
-  
+
       // Sorts by lastname in ascending alphabetical order
       if (nameSort === "up") {
         sortedMembers = sortedMembers.sort((a,b) => {
@@ -316,14 +315,14 @@ import React, {
       }
       return sortedMembers;
     };
-  
+
     /**
      * Handles the filter toggle
      */
     const toggleFilters: VoidFunction = () => {
       setAddtionalFiltersState(!additionalFiltersState);
     };
-  
+
     /**
      * Toggles between the name sort options
      */
@@ -343,7 +342,7 @@ import React, {
         }
       }
     };
-  
+
     /**
      * Returns the sort icon for the name column
      */
@@ -360,7 +359,7 @@ import React, {
           }
         }
     };
-  
+
     // The additional filters
     const additionalFilters = (
       <div>
@@ -414,13 +413,13 @@ import React, {
         </TextField>
       </div>
     );
-  
+
     return (
       <div>
         <div className="content-page">
         <Paper className={classes.filterContainer}>
           <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container> 
+            <Grid container>
               <Grid item xs={12} sm={12}>
                 <Typography variant="h5" className={classes.paperHeaderText}>
                   Neues Mitglied hinzufügen
@@ -526,5 +525,5 @@ import React, {
       </div>
     );
   };
-  
+
   export default MemberManagement;
