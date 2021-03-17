@@ -130,7 +130,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
     FROM mitglied, ressort
     WHERE ressort = ressortID AND mitgliedstatus <= 3 
     ORDER BY ressortID`, [])
-  .then((result: []) => {
+  .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
     if(result.length === 0){
       res.status(404).send("Members not found");
     } else {
