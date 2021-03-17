@@ -26,8 +26,8 @@ export type GetDirectorsQueryResult = {
   kuerzel: string;
   bezeichnung_maennlich: string;
   bezeichnung_weiblich: string;
-  von: Date;
-  bis: Date;
+  von: string | null;
+  bis: string | null;
 };
 
 export type GetPermissionsQueryResult = {
