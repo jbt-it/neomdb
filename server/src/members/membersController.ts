@@ -153,7 +153,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
     `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis 
     FROM mitglied, mitglied_has_evposten, evposten
     WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `, [])
-  .then((result: []) => {
+  .then((result: membersTypes.GetDirectorsQueryResult[]) => {
     if(result.length === 0){
       res.status(404).send("Directors not found");
     } else {
