@@ -167,6 +167,26 @@ export const createMember = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves the history of directors
+ */
+export const retrieveDirectors = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis
+    FROM mitglied, mitglied_has_evposten, evposten
+    WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `, [])
+    .then((result: membersTypes.GetDirectorsQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Directors not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Updates an existing member
  * Update of critical fields can be done by member with certain permission
  * Update of critical and non critical fields can be done by member himself with additional permission
