@@ -18,8 +18,28 @@ export type GetMembersQueryResult = {
   lastchange: string;
 };
 
+export type GetDirectorsQueryResult = {
+  mitgleidID: number;
+  vorname: string;
+  nachname: string;
+  geschlecht: string;
+  kuerzel: string;
+  bezeichnung_maennlich: string;
+  bezeichnung_weiblich: string;
+  von: string | null;
+  bis: string | null;
+};
+
 export type GetPermissionsQueryResult = {
   vorname: string;
   nachname: string;
   permission: number;
+};
+
+export type GetDepartmentMembersQueryResult = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  ressort: string;
+  bezeichnung: string;
 };
