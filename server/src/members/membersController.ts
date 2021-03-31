@@ -122,6 +122,27 @@ export const retrieveMember = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves all members of a department
+ */
+export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
+    FROM mitglied, ressort
+    WHERE ressort = ressortID AND mitgliedstatus <= 3
+    ORDER BY ressortID`, [])
+    .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Members not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Creates a new member
  */
 export const createMember = (req: Request, res: Response): void => {

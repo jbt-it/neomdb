@@ -67,24 +67,25 @@ const NotFound: React.FunctionComponent = () => {
         <CardContent>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
             Fehler:
-          </Typography>
+                    </Typography>
           <Typography variant="h5" component="h2">
             404: Diese Seite wurde nicht gefunden.
-          </Typography>
+                    </Typography>
           <Typography variant="body2" component="p">
             Bei Problemen bitte melden bei:
-            <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
+                        <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
             <br />
           </Typography>
         </CardContent>
         <CardActions>
           <Button className={classes.backButton} size="medium" variant="contained" disableElevation href="./">
             Zurück zum Dashboard
-         </Button>
+                    </Button>
         </CardActions>
       </Card>
     </div>
   );
 };
+
 
 export default NotFound;

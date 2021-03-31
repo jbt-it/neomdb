@@ -35,3 +35,11 @@ export type GetPermissionsQueryResult = {
   nachname: string;
   permission: number;
 };
+
+export type GetDepartmentMembersQueryResult = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  ressort: string;
+  bezeichnung: string;
+};
