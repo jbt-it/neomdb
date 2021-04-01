@@ -8,7 +8,7 @@ import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
-import MemberPage from "../members/member-page/MemberPage";
+import MemberProfile from "../members/member-page/MemberPage";
 
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated,
@@ -88,7 +88,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/meine-funktionen" component = {Dashboard} />
         <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
         <PrivateRoute exact path = "/kvp" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht/:id" component = {MemberPage} />
+        <PrivateRoute exact path = "/gesamtuebersicht/:id" component = {MemberProfile} />
         <Route exact path = "/login" component = {Login} />
         <PrivateRoute path = "*" component = {NotFound} />
       </Switch>

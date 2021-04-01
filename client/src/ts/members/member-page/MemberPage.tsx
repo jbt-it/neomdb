@@ -87,7 +87,7 @@ interface RouterMatch {
   id: string;
 }
 
-const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
+const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
@@ -167,4 +167,4 @@ const MemberPage: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   );
 };
 
-export default MemberPage;
+export default MemberProfile;
