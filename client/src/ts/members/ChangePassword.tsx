@@ -146,7 +146,7 @@ const ChangePassword: React.FunctionComponent = () => {
    * new password fild
    */
   const getNewPasswordField = () => {
-    if (!checkNewPassword(newPassword)) {
+    if (!checkNewPassword(newPassword) && newPassword !== "") {
       return (
         <Textfield error className={classes.inputfield} id="newpassword" label="neues Passwort" type="password" helperText="erfüllt nicht die Vorraussetzungen" value={newPassword}
           onChange={event => { setNewPassword(event.target.value); }}
