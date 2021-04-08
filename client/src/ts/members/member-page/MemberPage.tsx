@@ -66,8 +66,8 @@ interface MemberDetails {
   email2: string | null;
   hochschule: string;
   studiengang: string;
-  studienbeginn: string;
-  studienende: string;
+  studienbeginn: string | null;
+  studienende: string | null;
   vertiefungen: string | null;
   ausbildung: string | null;
   kontoinhaber: string;
@@ -79,6 +79,8 @@ interface MemberDetails {
   lastchange: string;
   fuehrerschein: boolean;
   ersthelferausbildung: boolean;
+  sprachen: string[];
+  mentees: string[];
 }
 /**
  * Interface for the match parameter of the router
@@ -91,7 +93,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
-  const [open, setOpen] = useState<number>(0);
+  const [successOpen, setSuccessOpen] = useState<number>(0);
+  const [errorOpen, setErrorOpen] = useState<number>(0);
   const [authenticated, setAuthenticated,
     userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
@@ -107,13 +110,13 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     api.get(`/users/${props.match.params.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembersDetails(res.data[0]);
-          }
+    .then((res) => {
+      if (res.status === 200) {
+        if (mounted) {
+          setMembersDetails(res.data[0]);
         }
-      });
+      }
+    });
 
     return () => {
       mounted = false;
@@ -126,17 +129,19 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   const updateMemberDetails = (data: MemberDetails) => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api
-      .patch(`/users/${props.match.params.id}`, data, {
+    api.patch(`/users/${props.match.params.id}`, data, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setOpen(open+1);
-          }
+    .then((res) => {
+      if (res.status === 200) {
+        if (mounted) {
+          setSuccessOpen(successOpen+1);
+          setMembersDetails(res.data[0]);
         }
-      });
+      } else if (res.status === 500) {
+        setErrorOpen(errorOpen+1);
+      }
+    });
 
     return () => {
       mounted = false;
@@ -162,7 +167,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         ) : null}
       </div>
       <PageBar pageTitle="Profilseite" />
-      { open ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{variant:"success"}}/> : null}
+      { successOpen ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{variant:"success"}}/> : null}
+      { errorOpen ? <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{variant:"error"}}/> : null}
     </div>
   );
 };
