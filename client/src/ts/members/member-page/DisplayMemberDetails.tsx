@@ -20,13 +20,12 @@ import {
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import { ExpandLess, ExpandMore, Edit } from "@material-ui/icons";
 import {
-  parseDate,
-  getDateAsSQL,
-  sqlDateTimeToString,
-  stringToSql,
+  transformSQLStringToGermanDate,
+  transformGermanDateToSQLString,
+  transformStringToSQLString,
 } from "../../utils/dateUtils";
 
-
+// TODO: Add 'mentee' and 'mentor' and 'sprachen' to dialogs (possibly???)
 // TODO: For later: validation of the different input fields
 
 /**
@@ -118,6 +117,22 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "100%",
       },
     },
+    categoryItemList: {
+      display: "flex",
+      flexDirection: "column",
+      [theme.breakpoints.up("md")]: {
+        width: "30%",
+      },
+      [theme.breakpoints.down("md")]: {
+        width: "50%",
+      },
+      [theme.breakpoints.down("sm")]: {
+        width: "60%",
+      },
+      [theme.breakpoints.down("xs")]: {
+        width: "100%",
+      },
+    },
     hr: {
       display: "block",
       height: "1px",
@@ -156,7 +171,7 @@ const useStyles = makeStyles((theme: Theme) =>
 /**
  * Interface for the member object
  */
-interface MemberDetails {
+ interface MemberDetails {
   mitgliedID: number;
   nachname: string;
   vorname: string;
@@ -189,8 +204,8 @@ interface MemberDetails {
   email2: string | null;
   hochschule: string;
   studiengang: string;
-  studienbeginn: string;
-  studienende: string;
+  studienbeginn: string | null;
+  studienende: string | null;
   vertiefungen: string | null;
   ausbildung: string | null;
   kontoinhaber: string;
@@ -202,6 +217,8 @@ interface MemberDetails {
   lastchange: string;
   fuehrerschein: boolean;
   ersthelferausbildung: boolean;
+  sprachen: string[];
+  mentees: string[];
 }
 
 /**
@@ -222,7 +239,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 ) => {
   const classes = useStyles();
 
-  // Placeholder for the permissions of the user
+  // TODO: Placeholder for the permissions of the user
   const permissionList: number[] = [1];
 
   const { memberDetails } = props;
@@ -232,9 +249,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [lastname, setLastname] = useState(memberDetails.nachname);
   const [name, setName] = useState<string>(memberDetails.vorname);
   const [birthday, setBirthday] = useState<string>(
-    memberDetails.geburtsdatum
-      ? sqlDateTimeToString(new Date(memberDetails.geburtsdatum), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.geburtsdatum)
   );
   const [smartphone, setSmartphone] = useState<string>(
     memberDetails.handy ? memberDetails.handy : ""
@@ -243,6 +258,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [memberState, setMemberState] = useState<string>(
     memberDetails.mitgliedstatus
   );
+  const [mentor, setMentor] = useState<string>(memberDetails.mentor ? memberDetails.mentor : "");
   const [employer, setEmployer] = useState<string>(
     memberDetails.arbeitgeber ? memberDetails.arbeitgeber : ""
   );
@@ -281,10 +297,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     memberDetails.studiengang
   );
   const [startOfStudy, setStartOfStudy] = useState<string>(
-    sqlDateTimeToString(new Date(memberDetails.studienbeginn), false)
+    transformSQLStringToGermanDate(memberDetails.studienbeginn)
   );
   const [endOfStudy, setEndOfStudy] = useState<string>(
-    sqlDateTimeToString(new Date(memberDetails.studienende), false)
+    transformSQLStringToGermanDate(memberDetails.studienende)
   );
   const [speciality, setSpeciality] = useState<string>(
     memberDetails.vertiefungen ? memberDetails.vertiefungen : ""
@@ -306,30 +322,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [firstAid, setFirstAid] = useState<boolean>(
     memberDetails.ersthelferausbildung
   );
+  const [languages, setLanguages] = useState<string[]>(memberDetails.sprachen);
+  const [menteeList, setMenteeList] = useState<string[]>(memberDetails.mentees);
+
   const [traineeSince, setTraineeSince] = useState<string>(
-    memberDetails.trainee_seit
-      ? sqlDateTimeToString(new Date(memberDetails.trainee_seit), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.trainee_seit)
   );
   const [memberSince, setMemberSince] = useState<string>(
-    memberDetails.mitglied_seit
-      ? sqlDateTimeToString(new Date(memberDetails.mitglied_seit), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.mitglied_seit)
   );
   const [seniorSince, setSeniorSince] = useState<string>(
-    memberDetails.senior_seit
-      ? sqlDateTimeToString(new Date(memberDetails.senior_seit), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.senior_seit)
   );
   const [alumniSince, setAlumniSince] = useState<string>(
-    memberDetails.alumnus_seit
-      ? sqlDateTimeToString(new Date(memberDetails.alumnus_seit), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.alumnus_seit)
   );
   const [passiveSince, setPassiveSince] = useState<string>(
-    memberDetails.passiv_seit
-      ? sqlDateTimeToString(new Date(memberDetails.passiv_seit), false)
-      : ""
+    transformSQLStringToGermanDate(memberDetails.passiv_seit)
   );
 
   const [generalInfoDialogOpen, setGeneralInfoDialogOpen] = useState<boolean>(
@@ -342,10 +351,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(
     false
   );
-  const [
-    qualificationInfoDialogOpen,
-    setQualificationInfoDialogOpen,
-  ] = useState<boolean>(false);
+  const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
 
   /**
    * Submits the changed data
@@ -360,25 +366,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       nachname: lastname,
       vorname: name,
       geschlecht: memberDetails.geschlecht,
-      geburtsdatum: stringToSql(birthday),
+      geburtsdatum: transformGermanDateToSQLString(birthday),
       handy: smartphone,
       jbt_email: jbtMail,
       mitgliedstatus: memberState,
       generation: memberDetails.generation,
       internesprojekt: memberDetails.internesprojekt,
       mentor: memberDetails.mentor,
-      // If traineeSince is not null or undefined transform the date to an SQL-date
-      trainee_seit: traineeSince ? getDateAsSQL(parseDate(traineeSince)) : null,
-      mitglied_seit: memberSince ? getDateAsSQL(parseDate(memberSince)) : null,
-      alumnus_seit: alumniSince ? getDateAsSQL(parseDate(alumniSince)) : null,
-      senior_seit: seniorSince ? getDateAsSQL(parseDate(seniorSince)) : null,
-      aktiv_seit: memberDetails.aktiv_seit
-        ? getDateAsSQL(new Date(memberDetails.aktiv_seit))
-        : null,
-      passiv_seit: passiveSince ? getDateAsSQL(parseDate(passiveSince)) : null,
-      ausgetreten_seit: memberDetails.ausgetreten_seit
-        ? getDateAsSQL(new Date(memberDetails.ausgetreten_seit))
-        : null,
+      trainee_seit: transformGermanDateToSQLString(traineeSince),
+      mitglied_seit: transformGermanDateToSQLString(memberSince),
+      alumnus_seit: transformGermanDateToSQLString(alumniSince),
+      senior_seit: transformGermanDateToSQLString(seniorSince),
+      aktiv_seit: transformStringToSQLString(memberDetails.aktiv_seit),
+      passiv_seit: transformGermanDateToSQLString(passiveSince),
+      ausgetreten_seit: memberDetails.ausgetreten_seit,
       ressort: memberDetails.ressort,
       arbeitgeber: employer,
       strasse1: street1,
@@ -393,23 +394,21 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       email2: email2State,
       hochschule: university,
       studiengang: courseOfStudy,
-      studienbeginn: stringToSql(startOfStudy ? startOfStudy : "01.01.1970"),
-      studienende: stringToSql(endOfStudy ? endOfStudy : "01.01.1970"),
+      studienbeginn: transformGermanDateToSQLString(startOfStudy),
+      studienende: transformGermanDateToSQLString(endOfStudy),
       vertiefungen: speciality,
       ausbildung: apprenticeship,
       kontoinhaber: accountHolder,
       iban: ibanState,
       bic: bicState,
       engagement: engagementState,
-      canPL: memberDetails.canPL
-      ? getDateAsSQL(new Date(memberDetails.canPL))
-      : null,
-      canQM: memberDetails.canQM
-      ? getDateAsSQL(new Date(memberDetails.canQM))
-      : null,
+      canPL: transformStringToSQLString(memberDetails.canPL),
+      canQM: transformStringToSQLString(memberDetails.canQM),
       lastchange: "",
       fuehrerschein: driversLicense,
       ersthelferausbildung: firstAid,
+      sprachen: languages,
+      mentees: menteeList,
     };
     props.updateMemberDetails(data);
     handleGeneralInfoDialogClose();
@@ -417,20 +416,19 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     handleStudyInfoDialogClose();
     handleQualificationInfoDialogClose();
     handlePaymentInfoDialogClose();
-    
   };
 
   /**
    * Toogles the career area
    */
-  const toggleCareerState = () => {
+  const toggleCareerState: VoidFunction = () => {
     setCareerOpen(!careerOpen);
   };
 
   /**
    * Handles the click on the image
    */
-  const handleEditImage = () => {
+  const handleEditImage: VoidFunction = () => {
     // TODO: handle edit image dialog
   };
 
@@ -438,9 +436,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the general information section
    * @param event MouseEvent
    */
-  const handleGeneralInfoDialogOpen = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleGeneralInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     setGeneralInfoDialogOpen(true);
   };
@@ -449,7 +445,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the closing of the general infromation dialog
    * @param event FormEvent
    */
-  const handleGeneralInfoDialogClose = () => {
+  const handleGeneralInfoDialogClose: VoidFunction = () => {
     setGeneralInfoDialogOpen(false);
   };
 
@@ -457,9 +453,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the club information section
    * @param event MouseEvent
    */
-  const handleClubInfoDialogOpen = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleClubInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     setClubInfoDialogOpen(true);
   };
@@ -468,7 +462,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the closing of the club infromation dialog
    * @param event FormEvent
    */
-  const handleClubInfoDialogClose = () => {
+  const handleClubInfoDialogClose: VoidFunction = () => {
     setClubInfoDialogOpen(false);
   };
 
@@ -476,9 +470,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the study information section
    * @param event MouseEvent
    */
-  const handleStudyInfoDialogOpen = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleStudyInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     setStudyInfoDialogOpen(true);
   };
@@ -487,7 +479,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the closing of the study infromation dialog
    * @param event FormEvent
    */
-  const handleStudyInfoDialogClose = () => {
+  const handleStudyInfoDialogClose: VoidFunction = () => {
     setStudyInfoDialogOpen(false);
   };
 
@@ -495,9 +487,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the payment information section
    * @param event MouseEvent
    */
-  const handlePaymentInfoDialogOpen = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handlePaymentInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     setPaymentInfoDialogOpen(true);
   };
@@ -506,7 +496,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the closing of the payment infromation dialog
    * @param event FormEvent
    */
-  const handlePaymentInfoDialogClose = () => {
+  const handlePaymentInfoDialogClose: VoidFunction = () => {
     setPaymentInfoDialogOpen(false);
   };
 
@@ -514,9 +504,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the qualification information section
    * @param event MouseEvent
    */
-  const handleQualificationInfoDialogOpen = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleQualificationInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     setQualificationInfoDialogOpen(true);
   };
@@ -525,7 +513,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the closing of the payment infromation dialog
    * @param event FormEvent
    */
-  const handleQualificationInfoDialogClose = () => {
+  const handleQualificationInfoDialogClose: VoidFunction = () => {
     setQualificationInfoDialogOpen(false);
   };
 
@@ -565,7 +553,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                 {
-                  /*When the user is owner or has the permission to manage all members they can edit this section*/
+                  /*When the user is owner or has the permission to
+                  manage all members they can edit this section*/
                   props.isOwner || permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -582,10 +571,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   Geburtsdatum:&nbsp;&nbsp;
                 </Typography>
                 <Typography className={classes.categoryLine}>
-                  {sqlDateTimeToString(
-                    new Date(memberDetails.geburtsdatum),
-                    false
-                  )}
+                  {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
                 </Typography>
               </div>
               <div className={classes.categoryItem}>
@@ -646,7 +632,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the different items for the career section
    */
-  const renderCareerItems = () => {
+  const renderCareerItems: VoidFunction = () => {
     return (
       <div>
         {memberDetails.passiv_seit ? (
@@ -655,10 +641,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <strong>{"Passives Mitglied"}</strong>
             </Typography>
             <Typography>
-              {`Seit ${sqlDateTimeToString(
-                new Date(memberDetails.passiv_seit),
-                false
-              )}`}
+              {`Seit ${transformSQLStringToGermanDate(memberDetails.passiv_seit)}`}
             </Typography>
           </div>
         ) : null}
@@ -668,10 +651,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <strong>{"Alumna*Alumnus"}</strong>
             </Typography>
             <Typography>
-              {`Seit ${sqlDateTimeToString(
-                new Date(memberDetails.alumnus_seit),
-                false
-              )}`}
+              {`Seit ${transformSQLStringToGermanDate(memberDetails.alumnus_seit)}`}
             </Typography>
           </div>
         ) : null}
@@ -681,10 +661,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <strong>{"Senior"}</strong>
             </Typography>
             <Typography>
-              {`Seit ${sqlDateTimeToString(
-                new Date(memberDetails.senior_seit),
-                false
-              )}`}
+              {`Seit ${transformSQLStringToGermanDate(memberDetails.senior_seit)}`}
             </Typography>
           </div>
         ) : null}
@@ -694,10 +671,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <strong>{"Aktives Mitglied"}</strong>
             </Typography>
             <Typography>
-              {`Seit ${sqlDateTimeToString(
-                new Date(memberDetails.mitglied_seit),
-                false
-              )}`}
+              {`Seit ${transformSQLStringToGermanDate(memberDetails.mitglied_seit)}`}
             </Typography>
           </div>
         ) : null}
@@ -707,10 +681,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <strong>{"Trainee"}</strong>
             </Typography>
             <Typography>
-              {`Seit ${sqlDateTimeToString(
-                new Date(memberDetails.trainee_seit),
-                false
-              )}`}
+              {`Seit ${transformSQLStringToGermanDate(memberDetails.trainee_seit)}`}
             </Typography>
           </div>
         ) : null}
@@ -738,7 +709,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div onClick={(event) => handleClubInfoDialogOpen(event)}>
                 {
-                  /*When the user has the permission to manage all members they can edit this section*/
+                  /*When the user has the permission to
+                  manage all members they can edit this section*/
                   permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -771,9 +743,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Typography className={classes.categoryLine}>
                     Mentees:
                   </Typography>
-                  <Typography className={classes.categoryLine}>
-                    {"PLATZHALTER"}
-                  </Typography>
+                  <div className={classes.categoryItemList}>
+                    {memberDetails.mentees.map(mentee => {
+                        return <Typography className={classes.categoryLine}>
+                          {`${mentee}`}
+                        </Typography>;
+                      })}
+                  </div>
                 </div>
               </div>
               <div>
@@ -821,7 +797,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div onClick={(event) => handleStudyInfoDialogOpen(event)}>
                 {
-                  /*When the user is owner or has the permission to manage all members they can edit this section*/
+                  /*When the user is owner or has the permission to
+                  manage all members they can edit this section*/
                   props.isOwner ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -854,10 +831,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   Studienbeginn:&nbsp;&nbsp;
                 </Typography>
                 <Typography className={classes.categoryLine}>
-                  {sqlDateTimeToString(
-                    new Date(memberDetails.studienbeginn),
-                    false
-                  )}
+                  {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
                 </Typography>
               </div>
               <div className={classes.categoryItem}>
@@ -865,10 +839,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   Studienende:&nbsp;&nbsp;
                 </Typography>
                 <Typography className={classes.categoryLine}>
-                  {sqlDateTimeToString(
-                    new Date(memberDetails.studienende),
-                    false
-                  )}
+                  {transformSQLStringToGermanDate(memberDetails.studienende)}
                 </Typography>
               </div>
               {/* speciality  is not correct */}
@@ -990,8 +961,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <Typography className={classes.categoryLine}>
                   Sprachen:{" "}
                 </Typography>
-                <div className={classes.categoryLine}>
-                  {/* TODO: iterate over the different languages */}
+                <div className={classes.categoryItemList}>
+                  {memberDetails.sprachen.map(language => {
+                      return <Typography className={classes.categoryLine}>
+                        {`${language}`}
+                      </Typography>;
+                    })}
                 </div>
               </div>
               <div className={classes.categoryItem}>
@@ -1085,7 +1060,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the dialog for changing the general informations
    */
-  const renderGeneralInformationDialog = () => {
+  const renderGeneralInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={generalInfoDialogOpen}
@@ -1134,8 +1109,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
+                  required
                   disabled={!permissionList.includes(1)}
                   id="jbt-email-field"
                   label="JBT-E-Mail"
@@ -1242,7 +1217,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the dialog for changing the club informations
    */
-  const renderClubInformationDialog = () => {
+  const renderClubInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={clubInfoDialogOpen}
@@ -1363,7 +1338,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the dialog for changing the study informations
    */
-  const renderStudyInformationDialog = () => {
+  const renderStudyInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={studyInfoDialogOpen}
@@ -1484,7 +1459,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the dialog for changing the qualification informations
    */
-  const renderQualificationInformationDialog = () => {
+  const renderQualificationInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={qualificationInfoDialogOpen}
@@ -1551,7 +1526,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   /**
    * Renders the dialog for changing the payment informations
    */
-  const renderPaymentInformationDialog = () => {
+  const renderPaymentInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={paymentInfoDialogOpen}
@@ -1662,7 +1637,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         <Grid item>
           <strong>
             Letzte Änderung:{" "}
-            {sqlDateTimeToString(new Date(memberDetails.lastchange), false)}
+            {transformSQLStringToGermanDate(memberDetails.lastchange)}
           </strong>
         </Grid>
       </Grid>
