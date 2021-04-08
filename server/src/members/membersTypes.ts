@@ -43,3 +43,11 @@ export type GetDepartmentMembersQueryResult = {
   ressort: string;
   bezeichnung: string;
 };
+/**
+ * Type of query results of all department retrieval.
+ */
+export type GetDepartmentsQueryResult = {
+  ressortID: number;
+  bezeichnung: string;
+  kuerzel: string;
+};
