@@ -129,6 +129,27 @@ export const retrieveMember = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves all members of a department
+ */
+export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
+    FROM mitglied, ressort
+    WHERE ressort = ressortID AND mitgliedstatus <= 3
+    ORDER BY ressortID`, [])
+    .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Members not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Creates a new member
  */
 export const createMember = (req: Request, res: Response): void => {
@@ -149,6 +170,26 @@ export const createMember = (req: Request, res: Response): void => {
     })
     .catch((err) => {
       res.status(500).send("Hashing error");
+    });
+};
+
+/**
+ * Retrieves the history of directors
+ */
+export const retrieveDirectors = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis
+    FROM mitglied, mitglied_has_evposten, evposten
+    WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `, [])
+    .then((result: membersTypes.GetDirectorsQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Directors not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
     });
 };
 
