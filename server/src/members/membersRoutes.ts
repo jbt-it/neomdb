@@ -16,6 +16,7 @@ router.use(authController.protectRoutes);
 router.get("/", membersController.retrieveMemberList);
 router.get("/:id", membersController.retrieveMember);
 router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
+router.post("/change-password", membersController.changePassword);
 
 /**
  * =======>>> ALL routes after this point are restricted to certain roles <<<=======
