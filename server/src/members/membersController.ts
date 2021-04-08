@@ -148,7 +148,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
   database.query(
     `SELECT mitgliedID, vorname, nachname
     FROM mitglied, mitglied_has_evposten
-    WHERE mitgliedID = mitlied_mitglied_ID`, [])
+    WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis`, [])
     .then((result: membersTypes.GetCurrentDirectorsQueryResult[]) => {
       if (result.length === 0) {
         res.status(404).send("Directors not found");
