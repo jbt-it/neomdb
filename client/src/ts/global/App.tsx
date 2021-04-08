@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
 import decode from "jwt-decode";
-
 import {AuthContext} from "../global/AuthContext";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";

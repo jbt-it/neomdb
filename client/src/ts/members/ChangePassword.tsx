@@ -52,7 +52,6 @@ const ChangePassword: React.FunctionComponent = () => {
   const [postSuccesful, setPostSuccesful] = useState<boolean>(true);
   const [resResponse200, setResResponse200] = useState<boolean>(false);
 
-
   /**
    * checks old PW
    * Handles the API call and cleans state thereafter
@@ -70,29 +69,26 @@ const ChangePassword: React.FunctionComponent = () => {
 
       // Post request
       api.post("/users/change-password", data, {
-
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       })
         .then((res) => {
           if (res.status === 200) {
-            // Worked
+            // Password change was succefull
             setResResponse200(true);
             return [{ status: res.status }];
           } else {
-            return [{ status: res.status }];
             setFailedoldPassword(true);
             setResResponse200(false);
+            return [{ status: res.status }];
           }
         })
         .catch((error) => {
           console.error(error);
           setFailedoldPassword(true);
         });
-
     } else {
       setPostSuccesful(false);
       setResResponse200(false);
-      console.error("new passwords not the same or not complex enough, so no request sent");
     }
     setOldPassword("");
     setNewPassword("");
@@ -141,7 +137,6 @@ const ChangePassword: React.FunctionComponent = () => {
           fullWidth />
       );
     }
-
   };
 
   /**
@@ -195,7 +190,6 @@ const ChangePassword: React.FunctionComponent = () => {
   return (
     <div>
       <div className="content-page">
-
         <Paper className={classes.paper}>
           <p>
             Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen Buchstaben enthalten
