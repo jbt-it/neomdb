@@ -1,23 +1,24 @@
 /**
- * Component for resetting the password by the user without the help of a admin
+ * Component for resetting the password by the user without the help of a admin, when logged in
  *
  */
-
 import React, { useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
-
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Textfield from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import decode from "jwt-decode";
 import PageBar from "../global/navigation/PageBar";
 
+/**
+ * Function that allows the user to change the password when logged in, by posting the new password to the backend
+ * @returns returns the interface for the user
+ */
 const ChangePassword: React.FunctionComponent = () => {
-
+  /**
+   * Function which proivdes the styles of the MenuDrawer
+   */
   const useStyles = makeStyles((theme) => ({
     inputfield: {
     },
@@ -44,7 +45,6 @@ const ChangePassword: React.FunctionComponent = () => {
   const classes = useStyles();
   const [authenticated, setAuthenticated,
     userID, setUserID, userName, setUserName] = useContext(AuthContext);
-
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [newPasswordValidation, setNewPasswordValidation] = useState<string>("");
@@ -124,7 +124,6 @@ const ChangePassword: React.FunctionComponent = () => {
     );
   };
 
-
   /**
    * new password fild
    */
@@ -202,13 +201,10 @@ const ChangePassword: React.FunctionComponent = () => {
             Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen Buchstaben enthalten
           </p>
         </Paper>
-
         <Paper className={classes.paper}>
           <div>
             {getOldPasswordField()}
-
             {getNewPasswordField()}
-
             {getNewPasswordFieldValidation()}
           </div>
           <div>
@@ -222,9 +218,7 @@ const ChangePassword: React.FunctionComponent = () => {
             </p>
           </div>
         </Paper>
-
         {resResponse200Field()}
-
       </div>
       <PageBar pageTitle="Passwort ändern" />
     </div>
