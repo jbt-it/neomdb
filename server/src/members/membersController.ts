@@ -141,6 +141,25 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       res.status(500).send("Query Error");
     });
 };
+/**
+ * Retrieves all current directors
+ */
+ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT mitgliedID, vorname, nachname
+    FROM mitglied, mitglied_has_evposten
+    WHERE mitgliedID = mitlied_mitglied_ID`, [])
+    .then((result: membersTypes.GetCurrentDirectorsQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Directors not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
 
 /**
  * Creates a new member
