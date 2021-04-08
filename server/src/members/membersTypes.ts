@@ -17,7 +17,9 @@ export type GetMembersQueryResult = {
   ressort: string;
   lastchange: string;
 };
-
+/**
+ * Type of query results of all directors retrieval.
+ */
 export type GetDirectorsQueryResult = {
   mitgleidID: number;
   vorname: string;
@@ -35,11 +37,21 @@ export type GetPermissionsQueryResult = {
   nachname: string;
   permission: number;
 };
-
+/**
+ * Type of query results of department members retrieval.
+ */
 export type GetDepartmentMembersQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
   ressort: string;
   bezeichnung: string;
+};
+/**
+ * Type of query results of current directors retrieval.
+ */
+export type GetCurrentDirectorsQueryResult = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
 };
