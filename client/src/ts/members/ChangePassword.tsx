@@ -41,26 +41,9 @@ const ChangePassword: React.FunctionComponent = () => {
     },
   }));
 
-  /**
-   *  get username from auth token
-   */
-  const getUsernameFromToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.warn("no token");
-    } else {
-      try {
-        const { name } = decode(token);
-        return name;
-      }
-      catch {
-        console.warn("token Problem");
-      }
-    }
-  };
-
   const classes = useStyles();
-  const username = getUsernameFromToken();
+  const [authenticated, setAuthenticated,
+    userID, setUserID, userName, setUserName] = useContext(AuthContext);
 
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
@@ -68,7 +51,6 @@ const ChangePassword: React.FunctionComponent = () => {
   const [failedOldPassword, setFailedoldPassword] = useState<boolean>(false);
   const [postSuccesful, setPostSuccesful] = useState<boolean>(true);
   const [resResponse200, setResResponse200] = useState<boolean>(false);
-
 
 
   /**
@@ -82,7 +64,8 @@ const ChangePassword: React.FunctionComponent = () => {
       const data = {
         oldPassword,
         newPassword,
-        username,
+        userID,
+        userName
       };
 
       // Post request
