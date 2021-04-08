@@ -1,6 +1,6 @@
 /**
  * Component for resetting the password by the user without the help of a admin
- * 
+ *
  */
 
 import React, { useState, useContext } from "react";
@@ -50,14 +50,14 @@ const ChangePassword: React.FunctionComponent = () => {
       console.warn("no token");
     } else {
       try {
-        const { name } = decode(token)
+        const { name } = decode(token);
         return name;
       }
       catch {
         console.warn("token Problem");
       }
     }
-  }
+  };
 
   const classes = useStyles();
   const username = getUsernameFromToken();
@@ -65,8 +65,9 @@ const ChangePassword: React.FunctionComponent = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [newPasswordValidation, setNewPasswordValidation] = useState<string>("");
-  const [failedOldPassword, setFailedoldPassword] = useState<Boolean>(false);
-  const [postSuccesful, setPostSuccesful] = useState<Boolean>(true);
+  const [failedOldPassword, setFailedoldPassword] = useState<boolean>(false);
+  const [postSuccesful, setPostSuccesful] = useState<boolean>(true);
+  const [resResponse200, setResResponse200] = useState<boolean>(false);
 
 
 
@@ -77,39 +78,38 @@ const ChangePassword: React.FunctionComponent = () => {
   const postPassword = () => {
     if (newPassword === newPasswordValidation && checkNewPassword(newPassword)) {
       setPostSuccesful(true);
-      //post new password
+      // Data package
       const data = {
         oldPassword,
         newPassword,
         username,
       };
-      console.log(data + " post TBD");
 
-      api.post("/users/change-password",data, {
+      // Post request
+      api.post("/users/change-password", data, {
 
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       })
         .then((res) => {
           if (res.status === 200) {
-            /**
-             * check if new PW and Validation are the same and post them if true
-             */
-            console.log(res.status);
-
+            // Worked
+            setResResponse200(true);
+            return [{ status: res.status }];
           } else {
-            console.log("failed old password")
-            console.log(res.status);
+            return [{ status: res.status }];
             setFailedoldPassword(true);
+            setResResponse200(false);
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           setFailedoldPassword(true);
         });
 
     } else {
       setPostSuccesful(false);
-      console.log("new passwords not the same or not complex enough, so no request sent")
+      setResResponse200(false);
+      console.error("new passwords not the same or not complex enough, so no request sent");
     }
     setOldPassword("");
     setNewPassword("");
@@ -120,9 +120,9 @@ const ChangePassword: React.FunctionComponent = () => {
    * check if the new PW is okay: min 8 chars; mind 1 je num/a-z/A-Z
    */
   const checkNewPassword = (testString: string) => {
-    var regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
     return regex.test(testString);
-  }
+  };
 
   /*
   * Gets the password correct state of the password field, depending on if a previous login attempt failed
@@ -160,10 +160,10 @@ const ChangePassword: React.FunctionComponent = () => {
       );
     }
 
-  }
+  };
 
   /**
-   * new password field validation 
+   * new password field validation
    */
   const getNewPasswordFieldValidation = () => {
     if (newPassword === newPasswordValidation) {
@@ -179,7 +179,7 @@ const ChangePassword: React.FunctionComponent = () => {
           fullWidth />
       );
     }
-  }
+  };
 
   /**
    * if PW post was not sent
@@ -190,8 +190,25 @@ const ChangePassword: React.FunctionComponent = () => {
     } else {
       return "";
     }
-  }
+  };
 
+  /**
+   * if res is code 200
+   */
+  const resResponse200Field = () => {
+    if (resResponse200) {
+      return (
+        <Paper className={classes.paper}>
+          <p>
+            Das Passwort wurde geändert
+          </p>
+        </Paper>
+      );
+    }
+    else {
+      return null;
+    }
+  };
 
   return (
     <div>
@@ -217,9 +234,14 @@ const ChangePassword: React.FunctionComponent = () => {
           </Button>
           </div>
           <div>
-            {postNotSentWarning()}
+            <p>
+              {postNotSentWarning()}
+            </p>
           </div>
         </Paper>
+
+        {resResponse200Field()}
+
       </div>
       <PageBar pageTitle="Passwort ändern" />
     </div>
