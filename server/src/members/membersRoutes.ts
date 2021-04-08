@@ -14,6 +14,8 @@ router.post("/login", membersController.login);
  */
 router.use(authController.protectRoutes);
 router.get("/", membersController.retrieveMemberList);
+router.get("/directors", membersController.retrieveDirectors);
+router.get("/department-members", membersController.retrieveDepartmentMembers);
 router.get("/:id", membersController.retrieveMember);
 router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
