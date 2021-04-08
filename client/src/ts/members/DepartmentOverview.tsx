@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     border: "0",
     backgroundColor: "#F6891F",
     color: "white",
-    '&:hover': {
+    "&:hover": {
       color: "black",
     }
   },
@@ -70,39 +70,118 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginBottom: "auto",
   },
   img: {
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
+    margin: "auto",
+    display: "block",
+    maxWidth: "100%",
+    maxHeight: "100%",
   },
 }));
 
-function RessortOverview() {
+/**
+ * Interface for the member object
+ */
+interface Member {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  ressort: string;
+  bezeichnung: string;
+}
+
+interface Department {
+  ressortID: number;
+  bezeichnung: string;
+}
+
+const RessortOverview: React.FunctionComponent = () => {
   const classes = useStyles();
+
+  const [members, setMembers] = useState<Member[]>([]);
+
+  // Retrieves the department members
+  const getDepartmentMembers: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api.get("/users/department-members/", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembers(res.data);
+          }
+        }
+      }).catch((error) => {
+        console.log(error);
+      });
+
+    // Clean-up function
+    return () => { mounted = false; };
+  };
+
+  useEffect(() => getDepartmentMembers(), []);
+
+  const getMembersOfDeparment = (ressortID: string) => {
+    switch (ressortID) {
+      case "1": {
+        return members.filter(member => { return member.ressort.toString() === "1"; });
+      }
+      case "2": {
+        return members.filter(member => { return member.ressort.toString() === "2"; });
+      }
+      case "3": {
+        return members.filter(member => { return member.ressort.toString() === "3"; });
+      }
+      case "4": {
+        return members.filter(member => { return member.ressort.toString() === "4"; });
+      }
+      case "5": {
+        return members.filter(member => { return member.ressort.toString() === "5"; });
+      }
+      case "7": {
+        return members.filter(member => { return member.ressort.toString() === "7"; });
+      }
+      case "8": {
+        return members.filter(member => { return member.ressort.toString() === "8"; });
+      }
+      default: { return []; }
+    }
+  };
+
+  const departments: Department[]=[];
   return (
     <div>
       <div className="content-page">
-        <Paper elevation={3} className={classes.paper}>
-          <Grid container spacing={2}>
-            <Grid className={classes.content}>
-              <h1>1.Vorstand</h1>
-              <div className={classes.buttonGroup}>
-                <Button className={classes.button} variant="contained">Zum Wiki-Artikel</Button>
-                <div className={classes.spacing}></div>
-                <Button className={classes.button} variant="contained">Zu den Zielen</Button>
-                <div className={classes.spacing}></div>
-                <Button className={classes.button} variant="contained">Zur Organisation</Button>
-              </div>
-              <h3>Mitglieder:</h3>
-            </Grid>
-            <Grid className={classes.image}>
-              Picture
-            <h3>Ressortleiter:</h3>
-            </Grid>
-          </Grid>
-        </Paper>
+        {departments.map(department => {
+          return (
+            <Paper elevation={3} className={classes.paper}>
+              <Grid container spacing={2}>
+                <Grid className={classes.content}>
+                  <h1>{department.bezeichnung}</h1>
+                  <div className={classes.buttonGroup}>
+                    <Button className={classes.button} variant="contained">Zum Wiki-Artikel</Button>
+                    <div className={classes.spacing}></div>
+                    <Button className={classes.button} variant="contained">Zu den Zielen</Button>
+                    <div className={classes.spacing}></div>
+                    <Button className={classes.button} variant="contained">Zur Organisation</Button>
+                  </div>
+                  <h3>Mitglieder:</h3>
+                  {
+                    getMembersOfDeparment("1").map(departmentIT => {
+                      return (<div>{departmentIT.vorname}</div>);
+                    })
+                  }
+                </Grid>
+                <Grid className={classes.image}>
+                  Picture
+              <h3>Ressortleiter:</h3>
+                </Grid>
+              </Grid>
+            </Paper>
+          );
+        })}
       </div>
-      <PageBar pageTitle="Ressorts"/>
+      <PageBar pageTitle="Ressorts" />
     </div>
   );
 };
