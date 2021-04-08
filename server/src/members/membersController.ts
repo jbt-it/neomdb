@@ -59,7 +59,6 @@ export const changePassword = (req: Request, res: Response): void => {
   res.status(200).send("not implemented yet");
 };
 
-
 /**
  * Retrieves an overview of all registered members
  */

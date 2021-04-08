@@ -10,7 +10,6 @@ import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import ChangePassword from "../members/ChangePassword";
 
-
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated,
         userID, setUserID, userName, setUserName] = useContext(AuthContext);
