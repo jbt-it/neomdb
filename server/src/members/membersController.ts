@@ -74,7 +74,7 @@ export const changePassword = (req: Request, res: Response): void => {
               // Store hash in your password DB
               database.query(
                 `UPDATE mitglied
-                passwoordHash = ?
+                passwordHash = ?
                 WHERE mitglied.name = ?
                 AND mitglied.mitgliedID = ?`,
                 [hash, req.body.userName, req.body.userID])
