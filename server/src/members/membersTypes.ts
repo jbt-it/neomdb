@@ -43,3 +43,8 @@ export type GetDepartmentMembersQueryResult = {
   ressort: string;
   bezeichnung: string;
 };
+
+export type GetPasswordForValidation = {
+  name: string;
+  passwordHash: string;
+}
