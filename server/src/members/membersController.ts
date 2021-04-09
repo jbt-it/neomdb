@@ -60,8 +60,8 @@ export const login = (req: Request, res: Response): void => {
 export const changePassword = (req: Request, res: Response): void => {
   database.query(
     `SELECT passwordHash
-  FROM mitglied
-  WHERE mitglied.name = ?`,
+    FROM mitglied
+    WHERE mitglied.name = ?`,
     [req.body.userName])
     .then((result: membersTypes.GetPasswordForValidation[]) => {
       if (result.length === 0) {
