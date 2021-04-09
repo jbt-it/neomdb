@@ -84,6 +84,9 @@ export const changePassword = (req: Request, res: Response): void => {
                 .catch(() => {
                   res.status(500).send("Update query Error");
                 });
+            })
+            .catch((error) => {
+              res.status(500).send("Internal Error");
             });
           } else {
             res.status(401).send("The old password was not correct");
