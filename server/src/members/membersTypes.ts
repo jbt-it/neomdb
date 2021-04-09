@@ -47,4 +47,4 @@ export type GetDepartmentMembersQueryResult = {
 export type GetPasswordForValidation = {
   name: string;
   passwordHash: string;
-}
+};
