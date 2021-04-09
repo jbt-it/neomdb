@@ -54,10 +54,46 @@ export const login = (req: Request, res: Response): void => {
 
 /**
  * User can change his password knowing his old one
+ * Updates the passwordHash in the database
+ * Returns a 200 only when the update was succesfull
  */
 export const changePassword = (req: Request, res: Response): void => {
-  res.status(200).send("not implemented yet");
+  database.query(
+    `SELECT passwordHash
+  FROM mitglied
+  WHERE mitglied.name = ?`,
+    [req.body.userName])
+    .then((result: membersTypes.GetPasswordForValidation[]) => {
+      if (result.length === 0) {
+        res.status(204).send("User does not exist");
+      }
+      bcrypt.compare(req.body.oldPassword, result[0].passwordHash)
+        .then((match) => {
+          if (match) {
+            bcrypt.hash(req.body.newPassword, 10).then((hash) => {
+              // Store hash in your password DB
+              database.query(
+                `UPDATE mitglied
+                passwoordHash = ?
+                WHERE mitglied.name = ?`,
+                [hash, req.body.userName])
+                .then(() => {
+                  res.status(200).send("The new password has been saved");
+                })
+                .catch(() => {
+                  res.status(500).send("Update query Error");
+                });
+            });
+          } else {
+            res.status(401).send("The old password was not correct");
+          }
+        });
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
 };
+
 
 /**
  * Retrieves an overview of all registered members
