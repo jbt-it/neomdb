@@ -75,8 +75,9 @@ export const changePassword = (req: Request, res: Response): void => {
               database.query(
                 `UPDATE mitglied
                 passwoordHash = ?
-                WHERE mitglied.name = ?`,
-                [hash, req.body.userName])
+                WHERE mitglied.name = ?
+                AND mitglied.mitgliedID = ?`,
+                [hash, req.body.userName, req.body.userID])
                 .then(() => {
                   res.status(200).send("The new password has been saved");
                 })
