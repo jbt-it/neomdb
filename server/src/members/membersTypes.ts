@@ -44,6 +44,9 @@ export type GetDepartmentMembersQueryResult = {
   bezeichnung: string;
 };
 
+/**
+ * Returns the name and passwordHash associated to verify the current password
+ */
 export type GetPasswordForValidation = {
   name: string;
   passwordHash: string;
