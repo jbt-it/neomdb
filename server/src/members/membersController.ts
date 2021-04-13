@@ -98,7 +98,6 @@ export const changePassword = (req: Request, res: Response): void => {
     });
 };
 
-
 /**
  * Retrieves an overview of all registered members
  */
