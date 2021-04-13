@@ -141,6 +141,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       res.status(500).send("Query Error");
     });
 };
+
 /**
  * Retrieves all current directors
  */
