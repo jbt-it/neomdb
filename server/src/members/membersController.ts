@@ -192,7 +192,8 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
  export const retrieveDepartments = (req: Request, res: Response): void => {
   database.query(
     `SELECT ressortID, bezeichnung, kuerzel
-    FROM ressort`, [])
+    FROM ressort
+    WHERE bezeichnung != "Ohne Ressort"`, [])
     .then((result: membersTypes.GetDepartmentsQueryResult[]) => {
       if (result.length === 0) {
         res.status(404).send("Departments not found");
