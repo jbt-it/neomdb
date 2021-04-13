@@ -389,7 +389,7 @@ import React, {
             value={ressortFilter}
             select
           >
-              <MenuItem value={""}>-</MenuItem>
+            <MenuItem value={""}>-</MenuItem>
             <MenuItem value={"NET"}>NET</MenuItem>
             <MenuItem value={"QM"}>QM</MenuItem>
             <MenuItem value={"F&R"}>F&R</MenuItem>
@@ -420,61 +420,68 @@ import React, {
         <Paper className={classes.filterContainer}>
           <form className={classes.filters} noValidate autoComplete="off">
             <Grid container>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12}>
                 <Typography variant="h5" className={classes.paperHeaderText}>
                   Neues Mitglied hinzufügen
                 </Typography>
                 <Divider className={classes.paperHeaderDivider}/>
               </Grid>
-              <Grid item xs={3} sm={4} className={classes.inputContainer}>
-                <TextField
-                  label="Vorname"
-                  className={classes.inputField}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                />
+              <Grid container xs={12} sm={12} md={6} lg={6}>
+                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                  <TextField
+                    label="Vorname"
+                    className={classes.inputField}
+                    color="primary"
+                    onChange={handleStatusChange}
+                    value={statusFilter}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                  <TextField
+                    label="Nachname"
+                    className={classes.inputField}
+                    color="primary"
+                    onChange={handleStatusChange}
+                    value={statusFilter}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                  <TextField
+                    label="Private E-Mail-Adresse"
+                    className={classes.inputField}
+                    color="primary"
+                    onChange={handleStatusChange}
+                    value={statusFilter}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={3} sm={4} className={classes.inputContainer}>
-                <TextField
-                  label="Nachname"
-                  className={classes.inputField}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                />
-              </Grid>
-              <Grid item xs={3} sm={4} className={classes.inputContainer}>
-                <TextField
-                  label="Private E-Mail-Adresse"
-                  className={classes.inputField}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                />
-              </Grid>
-              <Grid item xs={3} sm={4} className={classes.inputContainer}>
-                <TextField
-                  label="Mentor"
-                  className={classes.inputField}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                />
-              </Grid>
-              <Grid item xs={3} sm={4} className={classes.inputContainer}>
-                <TextField
-                  label="Trainee Generation"
-                  className={classes.inputField}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                  select
-                />
-              </Grid>
+
+              <Grid container xs={12} sm={12} md={6} lg={6}>
+                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                    <TextField
+                      label="Mentor"
+                      className={classes.inputField}
+                      color="primary"
+                      onChange={handleStatusChange}
+                      value={statusFilter}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                    <TextField
+                      label="Trainee Generation"
+                      className={classes.inputField}
+                      color="primary"
+                      onChange={handleStatusChange}
+                      value={statusFilter}
+                      select
+                    />
+                  </Grid>
+                </Grid>
+
               <Grid item xs={12} sm={12}>
-                <Button variant="outlined" color="primary" className={classes.inputButton}>Benutzer anlegen</Button>
-              </Grid>
+                  <Button variant="outlined" color="primary" className={classes.inputButton}>Benutzer anlegen</Button>
+                </Grid>
+
               <Grid item xs={12} sm={12}>
                 <Typography variant="h5" className={classes.paperHeaderText}>
                   Mitglied als ausgetreten markieren
