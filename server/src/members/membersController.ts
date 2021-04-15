@@ -194,6 +194,26 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves the departments
+ */
+ export const retrieveDepartments = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT ressortID, bezeichnung, kuerzel
+    FROM ressort
+    WHERE bezeichnung != "Ohne Ressort"`, [])
+    .then((result: membersTypes.GetDepartmentsQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Departments not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Updates an existing member
  * Update of critical fields can be done by member with certain permission
  * Update of critical and non critical fields can be done by member himself with additional permission
