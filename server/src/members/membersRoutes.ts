@@ -17,8 +17,8 @@ router.get("/", membersController.retrieveMemberList);
 router.get("/directors", membersController.retrieveDirectors);
 router.get("/department-members", membersController.retrieveDepartmentMembers);
 router.get("/:id", membersController.retrieveMember);
-router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 router.patch("/change-password", membersController.changePassword);
+router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 /**
  * =======>>> ALL routes after this point are restricted to certain roles <<<=======
