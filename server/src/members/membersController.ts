@@ -147,9 +147,9 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
  */
  export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database.query(
-    `SELECT mitgliedID, vorname, nachname
-    FROM mitglied, mitglied_has_evposten
-    WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis`, [])
+    `SELECT mitgliedID, vorname, nachname, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+    FROM mitglied, mitglied_has_evposten, evposten
+    WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`, [])
     .then((result: membersTypes.GetCurrentDirectorsQueryResult[]) => {
       if (result.length === 0) {
         res.status(404).send("Directors not found");
