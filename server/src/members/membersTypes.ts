@@ -51,3 +51,12 @@ export type GetPasswordForValidation = {
   name: string;
   passwordHash: string;
 };
+
+/**
+ * Type of query results of all department retrieval.
+ */
+export type GetDepartmentsQueryResult = {
+  ressortID: number;
+  bezeichnung: string;
+  kuerzel: string;
+};
