@@ -66,23 +66,21 @@ const ForgotPassword: React.FunctionComponent = () => {
   const [email, setEmail] = useState<string>("");
   const [submitBoolean, setSubmitBoolean] = useState<boolean>(false);
 
-  /** 
+  /**
    * send the email to the backend
-  */
+   */
   const sendPassword = () => {
 
     const data = {
       email
-    }
-    console.log(email);
+    };
     api.patch("/users/forgot-password", data
     )
     .then((res) => {
       if(res.status === 200)
-      setSubmitBoolean(true)
-    })
-  }
-
+      setSubmitBoolean(true);
+    });
+  };
 
   /**
    * check if input is an email
@@ -116,9 +114,7 @@ const ForgotPassword: React.FunctionComponent = () => {
     }else{
       return;
     }
-    
   };
-
 
   return (
     <div className="forgotPassword">
@@ -127,7 +123,7 @@ const ForgotPassword: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo} />
             <h1>Forgot Password</h1>
-            <form id="emailForm" onSubmit={event => { sendPassword() }}>
+            <form id="emailForm" onSubmit={event => { sendPassword(); }}>
               <Textfield className={classes.inputfield} id="email" label="Email" type="text" value={email}
                 onChange={event => { setEmail(event.target.value); }} fullWidth />
               <p className={classes.warningText}>
