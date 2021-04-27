@@ -121,7 +121,7 @@ import React, {
     },
     tableHeadCell: {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.secondary,
+      color: theme.palette.primary.contrastText,
     },
     tableHeadSortBtn: {
       display: "flex",
@@ -184,6 +184,11 @@ import React, {
     const [ressortFilter, setRessortFilter] = useState<string>("");
     const [sortOption, setSortOption] = useState<string>("");
     const [nameSort, setNameSort] = useState<string>("");
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [mentor, setMentor] = useState<string>("");
+    const [traineeGeneration, setTraineeGeneration] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
 
     // Retrieves the members
     const getMembers: VoidFunction = () => {
@@ -360,6 +365,46 @@ import React, {
         }
     };
 
+    /**
+     * Handles the change event of the first name field
+     * @param event
+     */
+    const handleFirstName = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setFirstName(event.target.value);
+    };
+
+    /**
+     * Handles the change event of the last name field
+     * @param event
+     */
+    const handleLastName = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setLastName(event.target.value);
+    };
+
+    /**
+     * Handles the change event of the mentor field
+     * @param event
+     */
+    const handleMentor = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setMentor(event.target.value);
+    };
+
+    /**
+     * Handles the change event of the trainee generation field
+     * @param event
+     */
+    const handleTraineeGeneration = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setTraineeGeneration(event.target.value);
+    };
+
+    /**
+     * Handles the change event of the email field
+     * @param event
+     */
+     const handleEmail = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setEmail(event.target.value);
+    };
+
     // The additional filters
     const additionalFilters = (
       <div>
@@ -417,116 +462,187 @@ import React, {
     return (
       <div>
         <div className="content-page">
-        <Paper className={classes.filterContainer}>
-          <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Neues Mitglied hinzufügen
-                </Typography>
-                <Divider className={classes.paperHeaderDivider}/>
-              </Grid>
-              <Grid container xs={12} sm={12} md={6} lg={6}>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Vorname"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleStatusChange}
-                    value={statusFilter}
-                  />
+          <Paper className={classes.filterContainer}>
+            <form className={classes.filters} noValidate autoComplete="off">
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography variant="h5" className={classes.paperHeaderText}>
+                    Neues Mitglied hinzufügen
+                  </Typography>
+                  <Divider className={classes.paperHeaderDivider}/>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Nachname"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleStatusChange}
-                    value={statusFilter}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Private E-Mail-Adresse"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleStatusChange}
-                    value={statusFilter}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container xs={12} sm={12} md={6} lg={6}>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                <Grid container xs={12} sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
                     <TextField
-                      label="Mentor"
+                      label="Vorname"
                       className={classes.inputField}
                       color="primary"
-                      onChange={handleStatusChange}
-                      value={statusFilter}
+                      onChange={handleFirstName}
+                      value={firstName}
                     />
                   </Grid>
                   <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
                     <TextField
-                      label="Trainee Generation"
+                      label="Nachname"
                       className={classes.inputField}
                       color="primary"
-                      onChange={handleStatusChange}
-                      value={statusFilter}
-                      select
+                      onChange={handleLastName}
+                      value={lastName}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                    <TextField
+                      label="Private E-Mail-Adresse"
+                      className={classes.inputField}
+                      color="primary"
+                      onChange={handleEmail}
+                      value={email}
                     />
                   </Grid>
                 </Grid>
 
-              <Grid item xs={12} sm={12}>
-                  <Button variant="outlined" color="primary" className={classes.inputButton}>Benutzer anlegen</Button>
-                </Grid>
+                <Grid container xs={12} sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                      <TextField
+                        label="Mentor"
+                        className={classes.inputField}
+                        color="primary"
+                        onChange={handleMentor}
+                        value={mentor}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
+                      <TextField
+                        label="Trainee Generation"
+                        className={classes.inputField}
+                        color="primary"
+                        onChange={handleTraineeGeneration}
+                        value={traineeGeneration}
+                        select
+                      />
+                    </Grid>
+                  </Grid>
 
-              <Grid item xs={12} sm={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Mitglied als ausgetreten markieren
-                </Typography>
-                <Divider className={classes.paperHeaderDivider}/>
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+                <Grid item xs={12} sm={12}>
+                    <Button variant="outlined" color="primary" className={classes.inputButton}>Benutzer anlegen</Button>
+                  </Grid>
+
+                <Grid item xs={12} sm={12}>
+                  <Typography variant="h5" className={classes.paperHeaderText}>
+                    Status eines Mitglieds ändern
+                  </Typography>
+                  <Divider className={classes.paperHeaderDivider}/>
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <TextField
+                    label="Name/Mail/..."
+                    className={classes.filterElement}
+                    color="primary"
+                    onChange={handleSearchInput}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+                  <TextField
+                    label="Status"
+                    className={classes.filterElement}
+                    color="primary"
+                    onChange={handleStatusChange}
+                    value={statusFilter}
+                    select
+                  >
+                    <MenuItem value={""}>-</MenuItem>
+                    <MenuItem value={"Trainee"}>Trainee</MenuItem>
+                    <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+                    <MenuItem value={"Senior"}>Senior</MenuItem>
+                    <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+                    <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+                  </TextField>
+                </Grid>
+              <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
                 <TextField
-                  label="Status"
+                  label="Ressort"
                   className={classes.filterElement}
                   color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
+                  onChange={handleRessortChange}
+                  value={ressortFilter}
                   select
                 >
                   <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"Trainee"}>Trainee</MenuItem>
-                  <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-                  <MenuItem value={"Senior"}>Senior</MenuItem>
-                  <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-                  <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+                  <MenuItem value={"NET"}>NET</MenuItem>
+                  <MenuItem value={"QM"}>QM</MenuItem>
+                  <MenuItem value={"F&R"}>F&R</MenuItem>
+                  <MenuItem value={"FK"}>FK</MenuItem>
+                  <MenuItem value={"MIT"}>MIT</MenuItem>
+                  <MenuItem value={"MAR"}>MAR</MenuItem>
+                  <MenuItem value={"IT"}>IT</MenuItem>
                 </TextField>
               </Grid>
-            <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
-              <TextField
-                label="Ressort"
-                className={classes.filterElement}
-                color="primary"
-                onChange={handleRessortChange}
-                value={ressortFilter}
-                select
-              >
-                <MenuItem value={""}>-</MenuItem>
-                <MenuItem value={"NET"}>NET</MenuItem>
-                <MenuItem value={"QM"}>QM</MenuItem>
-                <MenuItem value={"F&R"}>F&R</MenuItem>
-                <MenuItem value={"FK"}>FK</MenuItem>
-                <MenuItem value={"MIT"}>MIT</MenuItem>
-                <MenuItem value={"MAR"}>MAR</MenuItem>
-                <MenuItem value={"IT"}>IT</MenuItem>
-              </TextField>
+
             </Grid>
-          </Grid>
-          </form>
-        </Paper>
+              <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+                {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+              </IconButton>
+            </form>
+            {additionalFiltersState ? additionalFilters : null}
+            <div className={classes.amountOfEntries}>
+            {`${getFilteredAndSortedMembers().length} Einträge`}
+            </div>
+          </Paper>
+          <TableContainer
+            component={Paper}
+            className={classes.tableContainer}
+          >
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                  >
+                    <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+                      <Typography variant="h6">Name</Typography>
+                      {getNameSortIcon()}
+                    </div>
+                  </TableCell>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                  >
+                    <Typography variant="h6">Handy</Typography>
+                  </TableCell>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                    >
+                    <Typography variant="h6">Mail</Typography>
+                  </TableCell>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                    >
+                    <Typography variant="h6">Status</Typography>
+                  </TableCell>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                    >
+                    <Typography variant="h6">Ressort</Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {getFilteredAndSortedMembers().map((member, index) => (
+                  <TableRow hover key={index}>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                    >
+                      {`${member.vorname} ${member.nachname}`}
+                    </TableCell>
+                    <TableCell>{member.handy}</TableCell>
+                    <TableCell>{member.jbt_email}</TableCell>
+                    <TableCell>{member.mitgliedstatus}</TableCell>
+                    {<TableCell>{member.ressort}</TableCell>}
+                  </TableRow>
+                    ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
         <PageBar pageTitle="Mitgliederübersicht" />
       </div>
