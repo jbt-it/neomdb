@@ -57,6 +57,10 @@ export type GetCurrentDirectorsQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
+  geschlecht: string;
+  bezeichnung_weiblich: string;
+  bezeichnung_maennlich: string;
+  kuerzel: string;
 };
 
 /*
