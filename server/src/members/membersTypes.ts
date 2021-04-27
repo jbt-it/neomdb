@@ -58,3 +58,20 @@ export type GetCurrentDirectorsQueryResult = {
   vorname: string;
   nachname: string;
 };
+
+/*
+ * Returns the name and passwordHash associated to verify the current password
+ */
+export type GetPasswordForValidation = {
+  name: string;
+  passwordHash: string;
+};
+
+/**
+ * Type of query results of all department retrieval.
+ */
+export type GetDepartmentsQueryResult = {
+  ressortID: number;
+  bezeichnung: string;
+  kuerzel: string;
+};

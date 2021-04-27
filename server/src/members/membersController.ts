@@ -53,6 +53,52 @@ export const login = (req: Request, res: Response): void => {
 };
 
 /**
+ * User can change his password knowing his old one
+ * Updates the passwordHash in the database
+ * Returns a 200 only when the update was succesfull
+ */
+export const changePassword = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT passwordHash
+    FROM mitglied
+    WHERE mitglied.name = ?`,
+    [req.body.userName])
+    .then((result: membersTypes.GetPasswordForValidation[]) => {
+      if (result.length === 0) {
+        res.status(204).send("User does not exist");
+      }
+      bcrypt.compare(req.body.oldPassword, result[0].passwordHash)
+        .then((match) => {
+          if (match) {
+            bcrypt.hash(req.body.newPassword, 10).then((hash) => {
+              // Store hash in your password DB
+              database.query(
+                `UPDATE mitglied
+                SET passwordHash = ?
+                WHERE mitglied.name = ?
+                AND mitglied.mitgliedID = ?`,
+                [hash, req.body.userName, req.body.userID])
+                .then(() => {
+                  res.status(200).send("The new password has been saved");
+                })
+                .catch(() => {
+                  res.status(500).send("Update query Error");
+                });
+            })
+            .catch((error) => {
+              res.status(500).send("Internal Error");
+            });
+          } else {
+            res.status(401).send("The old password was not correct");
+          }
+        });
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
@@ -197,6 +243,26 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
     .then((result: membersTypes.GetDirectorsQueryResult[]) => {
       if (result.length === 0) {
         res.status(404).send("Directors not found");
+      } else {
+        res.status(200).json(result);
+      }
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * Retrieves the departments
+ */
+ export const retrieveDepartments = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT ressortID, bezeichnung, kuerzel
+    FROM ressort
+    WHERE bezeichnung != "Ohne Ressort"`, [])
+    .then((result: membersTypes.GetDepartmentsQueryResult[]) => {
+      if (result.length === 0) {
+        res.status(404).send("Departments not found");
       } else {
         res.status(200).json(result);
       }

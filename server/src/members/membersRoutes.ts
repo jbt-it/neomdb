@@ -17,7 +17,9 @@ router.get("/", membersController.retrieveMemberList);
 router.get("/directors", membersController.retrieveDirectors);
 router.get("/current-directors", membersController.retrieveCurrentDirectors);
 router.get("/department-members", membersController.retrieveDepartmentMembers);
+router.get("/departments", membersController.retrieveDepartments);
 router.get("/:id", membersController.retrieveMember);
+router.patch("/change-password", membersController.changePassword);
 router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 /**
