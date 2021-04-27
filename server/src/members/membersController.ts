@@ -99,6 +99,14 @@ export const changePassword = (req: Request, res: Response): void => {
 };
 
 /**
+ * @param req email
+ * @param res 200 if process is available, 404 else
+ */
+export const passwordReset = (req: Request, res:Response): void => {
+  res.status(200).send("not implemented");
+};
+
+/**
  * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
