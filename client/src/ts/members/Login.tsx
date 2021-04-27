@@ -2,7 +2,7 @@
  * Component that handles the login process
  */
 import React, { useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, NavLink } from "react-router-dom";
 
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
@@ -151,9 +151,9 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <Link href="#/login" variant="body2">
-                    Forgot password?
-                  </Link>
+                  <NavLink exact to="/forgot-password" >
+                    Forgot Password?
+                  </NavLink>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
                   <Link id="capswarning" variant="body2" className={classes.warningText}>
