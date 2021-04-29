@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
 import decode from "jwt-decode";
-
 import {AuthContext} from "../global/AuthContext";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";
@@ -9,6 +8,7 @@ import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import DepartmentOverview from "../members/DepartmentOverview";
+import ChangePassword from "../members/ChangePassword";
 
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated,
@@ -73,6 +73,7 @@ const App: React.FunctionComponent = () => {
       (authenticated ? <Nav/> : null)
       }
       <Switch>
+        <PrivateRoute exact path = "/user-change-password" component = {ChangePassword} />
         <PrivateRoute exact path = "/" component = {Dashboard} />
         <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
         <PrivateRoute exact path = "/ressorts" component = {DepartmentOverview} />
