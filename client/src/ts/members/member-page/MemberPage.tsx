@@ -31,6 +31,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
+ * Interface for the language
+ */
+ interface Language {
+  wert: string;
+  niveau: string;
+}
+
+/**
  * Interface for the member object
  */
 interface MemberDetails {
@@ -79,7 +87,7 @@ interface MemberDetails {
   lastchange: string;
   fuehrerschein: boolean;
   ersthelferausbildung: boolean;
-  sprachen: string[];
+  sprachen: Language[];
   mentees: string[];
 }
 /**
@@ -113,6 +121,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     .then((res) => {
       if (res.status === 200) {
         if (mounted) {
+          setSuccessOpen(0);
           setMembersDetails(res.data[0]);
         }
       }
@@ -136,7 +145,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       if (res.status === 200) {
         if (mounted) {
           setSuccessOpen(successOpen+1);
-          setMembersDetails(res.data[0]);
+          // setMembersDetails(res.data[0]);
+          getMemberDetails();
         }
       } else if (res.status === 500) {
         setErrorOpen(errorOpen+1);
@@ -149,6 +159,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   };
 
   useEffect(() => {
+    setSuccessOpen(0);
     // Checks if the user is the owner of the member page
     setIsOwner(userID === parseInt(props.match.params.id, 10));
     getMemberDetails();

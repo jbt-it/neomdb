@@ -16,16 +16,19 @@ import {
   DialogContent,
   TextField,
   Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
-import { ExpandLess, ExpandMore, Edit } from "@material-ui/icons";
+import { ExpandLess, ExpandMore, Edit, AddCircleOutline, Clear, Language } from "@material-ui/icons";
 import {
   transformSQLStringToGermanDate,
   transformGermanDateToSQLString,
   transformStringToSQLString,
 } from "../../utils/dateUtils";
 
-// TODO: Add 'mentee' and 'mentor' and 'sprachen' to dialogs (possibly???)
 // TODO: For later: validation of the different input fields
 
 /**
@@ -86,6 +89,7 @@ const useStyles = makeStyles((theme: Theme) =>
     categoryLine: {
       paddingTop: "12.5px",
       paddingBottom: "11.5px",
+      textAlign: "right",
     },
     expandCategoryTitlePaper: {
       borderTopRightRadius: "5px",
@@ -120,18 +124,11 @@ const useStyles = makeStyles((theme: Theme) =>
     categoryItemList: {
       display: "flex",
       flexDirection: "column",
-      [theme.breakpoints.up("md")]: {
-        width: "30%",
-      },
-      [theme.breakpoints.down("md")]: {
-        width: "50%",
-      },
-      [theme.breakpoints.down("sm")]: {
-        width: "60%",
-      },
-      [theme.breakpoints.down("xs")]: {
-        width: "100%",
-      },
+      alignItems: "right",
+    },
+    addListItemBtn: {
+      display: "flex",
+      alignContent: "center",
     },
     hr: {
       display: "block",
@@ -152,6 +149,13 @@ const useStyles = makeStyles((theme: Theme) =>
     fullWidth: {
       width: "100%",
     },
+    dialogListItem: {
+      display: "flex",
+    },
+    dialogItemAddBtn: {
+      display: "flex",
+      alignContent: "center",
+    },
     submitContainer: {
       width: "100%",
       display: "flex",
@@ -167,6 +171,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+/**
+ * Interface for the language
+ */
+ interface Language {
+  wert: string;
+  niveau: string;
+}
 
 /**
  * Interface for the member object
@@ -217,7 +229,7 @@ const useStyles = makeStyles((theme: Theme) =>
   lastchange: string;
   fuehrerschein: boolean;
   ersthelferausbildung: boolean;
-  sprachen: string[];
+  sprachen: Language[];
   mentees: string[];
 }
 
@@ -322,8 +334,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [firstAid, setFirstAid] = useState<boolean>(
     memberDetails.ersthelferausbildung
   );
-  const [languages, setLanguages] = useState<string[]>(memberDetails.sprachen);
-  const [menteeList, setMenteeList] = useState<string[]>(memberDetails.mentees);
 
   const [traineeSince, setTraineeSince] = useState<string>(
     transformSQLStringToGermanDate(memberDetails.trainee_seit)
@@ -352,6 +362,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     false
   );
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
+
+  // TODO Dummy data
+  const [menteeList, setMenteeList] = useState<string[]>(["Lennart Rukower", "Benji", "Sven Berg"]);
+  const [languages, setLanguages] = useState<Language[]>([{wert: "Englisch", niveau: "Fließend"}, {wert: "Deutsch", niveau: "Muttersprache"}, {wert: "Französisch", niveau: "Grundkenntnisse"}]);
 
   /**
    * Submits the changed data
@@ -743,8 +757,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   <Typography className={classes.categoryLine}>
                     Mentees:
                   </Typography>
-                  <div className={classes.categoryItemList}>
-                    {memberDetails.mentees.map(mentee => {
+                    <div className={classes.categoryItemList}>
+                    {menteeList.map(mentee => {
                         return <Typography className={classes.categoryLine}>
                           {`${mentee}`}
                         </Typography>;
@@ -959,14 +973,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.category}>
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>
-                  Sprachen:{" "}
+                  Sprachen:
                 </Typography>
                 <div className={classes.categoryItemList}>
-                  {memberDetails.sprachen.map(language => {
-                      return <Typography className={classes.categoryLine}>
-                        {`${language}`}
-                      </Typography>;
-                    })}
+                  {languages.map(language => {
+                    return <Typography className={classes.categoryLine}>
+                      {`${language.wert}: ${language.niveau}`}
+                    </Typography>;
+                  })}
                 </div>
               </div>
               <div className={classes.categoryItem}>
@@ -1300,6 +1314,45 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                     setTraineeSince(event.target.value);
                   }}
                 />
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} sm={12} md={12} lg={12}>
+                   <Typography>Sprachen:</Typography>
+                  </Grid>
+                {menteeList.map((mentee, index) => {
+                    return <Grid item xs={11} sm={8} md={6} lg={4} className={classes.dialogListItem}>
+                              <TextField
+                                className={classes.fullWidth}
+                                color="primary"
+                                disabled={!permissionList.includes(1)}
+                                id="mentee-field"
+                                variant="outlined"
+                                value={mentee}
+                                onChange={(event) => {
+                                  const list = [...menteeList];
+                                  list[index] = event.target.value;
+                                  setMenteeList(list);
+                                }}
+                              />
+                              <IconButton aria-label="delete" color="primary" 
+                                onClick={
+                                () => {setMenteeList(menteeList.filter((value) => !(value === mentee)));}
+                                }
+                              >
+                                <Clear />
+                              </IconButton>
+                            </Grid>;
+                  })}
+                  <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                    <IconButton aria-label="add" color="primary" disabled={menteeList.includes("")}
+                    onClick={
+                      () => {setMenteeList([...menteeList, ""]);}
+                      }>
+                      <AddCircleOutline />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </Grid>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
@@ -1488,6 +1541,70 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                     setApprenticeship(event.target.value);
                   }}
                 />
+                <Grid item xs={12} sm={12} md={12} lg={12}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                    <Typography>Sprachen:</Typography>
+                    </Grid>
+                      {languages.map((language, index) => {
+                        return <Grid item container spacing={1} xs={11} sm={8} md={6} lg={4} className={classes.dialogListItem}>
+                          <Grid item xs={5}>
+                                  <TextField
+                                    className={classes.fullWidth}
+                                    color="primary"
+                                    disabled={!permissionList.includes(1)}
+                                    id="language-field"
+                                    variant="outlined"
+                                    value={language.wert}
+                                    onChange={(event) => {
+                                      const list = [...languages];
+                                      // Make a new object of updated language
+                                      const updatedLanguage: Language = { ...languages[index], wert: event.target.value};
+                                      // Make new list of lanugages by combining updated language
+                                      list[index] = updatedLanguage;
+                                      setLanguages(list);
+                                    }}
+                                  /></Grid><Grid item xs={5}>
+                                   <FormControl className={classes.fullWidth}>
+                                    <InputLabel id="language-niveau-select-label">Niveau</InputLabel>
+                                    <Select
+                                      labelId="language-niveau-select-label"
+                                      id="language-niveau-select"
+                                      value={language.niveau}
+                                      onChange={(event) => {
+                                        const list = [...languages];
+                                        // Make a new object of updated language
+                                        const updatedLanguage: Language = { ...languages[index], niveau: ""+event.target.value};
+                                        // Make new list of lanugages by combining updated language
+                                        list[index] = updatedLanguage;
+                                        setLanguages(list);
+                                      }}
+                                    >
+                                      <MenuItem value={"Muttersprache"}>Muttersprache</MenuItem>
+                                      <MenuItem value={"Verhandlungssicher"}>Verhandlungssicher</MenuItem>
+                                      <MenuItem value={"Fließend"}>Fließend</MenuItem>
+                                      <MenuItem value={"Grundkenntnisse"}>Grundkenntnisse</MenuItem>
+                                    </Select>
+                                  </FormControl></Grid>
+                                  <Grid item xs={2}>
+                                  <IconButton aria-label="delete" color="primary" 
+                                    onClick={() => {setLanguages(languages.filter((value) => !(value.wert === language.wert)));}}
+                                  >
+                                    <Clear />
+                                  </IconButton>
+                                  </Grid>
+                                </Grid>;
+                        })}
+                      <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                        <IconButton aria-label="add" color="primary" 
+                          disabled={languages.some(lang => lang.wert === "" || lang.niveau === "")} 
+                          onClick={() => {setLanguages([...languages, {wert: "", niveau: ""}]);}}
+                        >
+                          <AddCircleOutline />
+                        </IconButton>
+                      </Grid>
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
