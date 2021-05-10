@@ -710,7 +710,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderClubInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel>
+        <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary
             aria-controls="club-information-of-a-member"
             id="club-information"
@@ -798,7 +798,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderStudyInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel>
+        <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary
             aria-controls="study-information-of-a-member"
             id="study-information"
@@ -944,7 +944,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderQualificationInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel>
+        <ExpansionPanel defaultExpanded={true}>
           <ExpansionPanelSummary
             aria-controls="qualifications-information-of-a-member"
             id="qualifications-information"
