@@ -1,6 +1,7 @@
 /**
  * Definition of used types within the users module
  */
+
 export type LoginQueryResult = {
   mitgliedID: number;
   name: string;
@@ -8,6 +9,9 @@ export type LoginQueryResult = {
   permissions: string;
 };
 
+/**
+ * Type of query results of members retrieval
+ */
 export type GetMembersQueryResult = {
   vorname: string;
   nachname: string;
@@ -16,6 +20,74 @@ export type GetMembersQueryResult = {
   mitgliedstatus: string;
   ressort: string;
   lastchange: string;
+};
+
+/**
+ * Type of query results of member retrieval
+ */
+export type GetMemberQueryResult = {
+  mitgliedID: number;
+  nachname: string;
+  vorname: string;
+  geschlecht: string;
+  geburtsdatum: string;
+  handy: string;
+  jbt_email: string;
+  mitgliedstatus: string;
+  generation: string | null;
+  internesprojekt: string | null;
+  mentor: string | null;
+  trainee_seit: string | null;
+  mitglied_seit: string | null;
+  alumnus_seit: string | null;
+  senior_seit: string | null;
+  aktiv_seit: string | null;
+  passiv_seit: string | null;
+  ausgetreten_seit: string | null;
+  ressort: string;
+  arbeitgeber: string | null;
+  strasse1: string;
+  plz1: number;
+  ort1: string;
+  tel1: number;
+  email1: string;
+  strasse2: string | null;
+  plz2: number | null;
+  ort2: string | null;
+  tel2: number | null;
+  email2: string | null;
+  hochschule: string;
+  studiengang: string;
+  studienbeginn: string | null;
+  studienende: string | null;
+  vertiefungen: string | null;
+  ausbildung: string | null;
+  kontoinhaber: string;
+  iban: string;
+  bic: string;
+  engagement: string | null;
+  canPL: string | null;
+  canQM: string | null;
+  lastchange: string;
+  fuehrerschein: boolean;
+  ersthelferausbildung: boolean;
+};
+
+/**
+ * Type of query results of langauges retrieval for a specific member
+ */
+export type GetLanguagesOfMemberQueryResult = {
+  wert: string;
+  niveau: string;
+};
+
+/**
+ * Type of query results of mentees retrieval for a specific member
+ */
+export type GetMenteesOfMemberQueryResult = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
 };
 
 /**
@@ -33,6 +105,9 @@ export type GetDirectorsQueryResult = {
   bis: string | null;
 };
 
+/**
+ * Type of query results of permissions retrieval
+ */
 export type GetPermissionsQueryResult = {
   vorname: string;
   nachname: string;
