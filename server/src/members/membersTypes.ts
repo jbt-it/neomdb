@@ -62,9 +62,9 @@ export type GetMemberQueryResult = {
   studienende: string | null;
   vertiefungen: string | null;
   ausbildung: string | null;
-  kontoinhaber: string;
-  iban: string;
-  bic: string;
+  kontoinhaber?: string;
+  iban?: string;
+  bic?: string;
   engagement: string | null;
   canPL: string | null;
   canQM: string | null;
@@ -74,17 +74,26 @@ export type GetMemberQueryResult = {
 };
 
 /**
- * Type of query results of langauges retrieval for a specific member
+ * Type of query results of langauge retrieval for a specific member
  */
-export type GetLanguagesOfMemberQueryResult = {
+export type GetLanguageOfMemberQueryResult = {
   wert: string;
   niveau: string;
 };
 
 /**
- * Type of query results of mentees retrieval for a specific member
+ * Type of query results of mentor retrieval for a specific member
  */
-export type GetMenteesOfMemberQueryResult = {
+export type GetMentorOfMemberQueryResult = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+}
+
+/**
+ * Type of query results of mentee retrieval for a specific member
+ */
+export type GetMenteeOfMemberQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
