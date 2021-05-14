@@ -124,20 +124,63 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
 export const retrieveMember = (req: Request, res: Response): void => {
   if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)) {
     database.query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
-      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
-      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
-      strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
-      studiengang, studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber,
-      iban, bic, engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+      mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
+      trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit, passiv_seit,
+      ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber, strasse1, plz1, ort1,
+      tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule, studiengang,
+      studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber, iban, bic,
+      engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
       FROM mitglied
+      INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
+      INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
       WHERE mitgliedID = ?`,
       [req.params.id])
-      .then((result: []) => {
+      .then((result: membersTypes.GetMemberQueryResult[]) => {
         if (result.length === 0) {
           res.status(404).send("User not found");
         } else {
-          res.status(200).json(result);
+          database.query(
+            `SELECT wert, niveau
+            FROM sprachen
+            WHERE mitglied_mitgliedID = ?`,
+            [req.params.id])
+            .then((resultLang: membersTypes.GetLanguageOfMemberQueryResult[]) => {
+              database.query(
+                `SELECT mitgliedID, vorname, nachname
+                FROM mitglied
+                WHERE mentor = ?`,
+                [req.params.id])
+                .then((resultMentees: membersTypes.GetMenteeOfMemberQueryResult[]) => {
+                  database.query(
+                    `SELECT mitgliedID, vorname, nachname
+                    FROM mitglied
+                    WHERE mitgliedID =
+                    (SELECT mentor
+                    FROM mitglied
+                    WHERE mitgliedID = ?)`,
+                    [req.params.id])
+                    .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
+                      // Combine the three different query results
+                      const member = [{
+                        ...result[0],
+                        mentor: resultMentor[0],
+                        mentees: resultMentees,
+                        sprachen: resultLang
+                      }];
+                      res.status(200).json(member);
+                    })
+                    .catch((err) => {
+                    res.status(500).send("Query Error");
+                    });
+                })
+                .catch((err) => {
+                res.status(500).send("Query Error");
+                });
+            })
+            .catch((err) => {
+            res.status(500).send("Query Error");
+            });
         }
       })
       .catch((err) => {
@@ -145,20 +188,63 @@ export const retrieveMember = (req: Request, res: Response): void => {
       });
   } else {
     database.query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy, mitgliedstatus,
-      generation, internesprojekt, mentor, trainee_seit, mitglied_seit, alumnus_seit,
-      senior_seit, aktiv_seit, passiv_seit, ausgetreten_seit, ressort, arbeitgeber,
+      `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+      mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
+      mentor, trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit,
+      passiv_seit, ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber,
       strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
       studiengang, studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL,
       canQM, lastchange, fuehrerschein, ersthelferausbildung
       FROM mitglied
+      INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
+      INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
       WHERE mitgliedID = ?`,
       [req.params.id])
-      .then((result: []) => {
+      .then((result: membersTypes.GetMemberQueryResult[]) => {
         if (result.length === 0) {
           res.status(404).send("User not found");
         } else {
-          res.status(200).json(result);
+          database.query(
+            `SELECT wert, niveau
+            FROM sprachen
+            WHERE mitglied_mitgliedID = ?`,
+            [req.params.id])
+            .then((resultLang: membersTypes.GetLanguageOfMemberQueryResult[]) => {
+              database.query(
+                `SELECT mitgliedID, vorname, nachname
+                FROM mitglied
+                WHERE mentor = ?`,
+                [req.params.id])
+                .then((resultMentees: membersTypes.GetMenteeOfMemberQueryResult[]) => {
+                  database.query(
+                    `SELECT mitgliedID, vorname, nachname
+                    FROM mitglied
+                    WHERE mitgliedID =
+                    (SELECT mentor
+                    FROM mitglied
+                    WHERE mitgliedID = ?)`,
+                    [req.params.id])
+                    .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
+                      // Combine the three different query results
+                      const member = [{
+                        ...result[0],
+                        mentor: resultMentor[0],
+                        mentees: resultMentees,
+                        sprachen: resultLang
+                      }];
+                      res.status(200).json(member);
+                    })
+                    .catch((err) => {
+                    res.status(500).send("Query Error");
+                    });
+                })
+                .catch((err) => {
+                res.status(500).send("Query Error");
+                });
+            })
+            .catch((err) => {
+            res.status(500).send("Query Error");
+            });
         }
       })
       .catch((err) => {
