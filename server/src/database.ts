@@ -2,6 +2,7 @@
  * Wrapper for the MySQL connections
  */
 import mysql = require("mysql");
+import { resolveModuleName } from "typescript";
 
 /**
  * Config for the MySQL database
@@ -30,5 +31,26 @@ export const query = (sql: string, args: (string | number)[]) => {
         }
         return resolve(result);
     });
+  });
+};
+
+/**
+ * Executes multiple queries by iterating through them
+ * @param queries Array with query strings
+ * @returns promise
+ */
+export const executeMultipleQueries = (queries: string[]) => {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    queries.map(singleQuery => {
+      query(singleQuery, [])
+      .then(result => {
+        results.push(result);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+    });
+    return resolve(results);
   });
 };
