@@ -24,9 +24,12 @@ export const transformSQLStringToGermanDate = (sqlString: string | null) => {
 /**
  * Transforms a german date in string format to a sql date in string format
  * @param germanDate A german date in string format
- * @returns The german date as a sql date in string format
+ * @returns The german date as a sql date in string format or null
  */
 export const transformGermanDateToSQLString = (germanDate: string) => {
+  if (germanDate === "") {
+    return null;
+  }
   const dateElements = germanDate.split(".");
   return dateElements[2] + "-" + dateElements[1] + "-" + dateElements[0];
 };
