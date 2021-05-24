@@ -359,6 +359,25 @@
  };
 
  /**
+  * Retrieves the departments
+  */
+  export const retrieveLanguages = (req: Request, res: Response): void => {
+    database.query(
+      `SELECT DISTINCT wert
+      FROM sprachen`, [])
+      .then((result: string[]) => {
+        if (result.length === 0) {
+          res.status(404).send("Languages not found");
+        } else {
+          res.status(200).json(result);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send("Query Error");
+      });
+  };
+
+ /**
   * Updates an existing member
   * Update of critical fields can be done by member with certain permission
   * Update of critical and non critical fields can be done by member himself with additional permission
@@ -375,6 +394,8 @@
      ("00" + date.getMinutes()).slice(-2) + ":" +
      ("00" + date.getSeconds()).slice(-2);
 
+   const mentorID = req.body.mentor ? req.body.mentor.mitgliedID : null;
+
    // Grants access to all fields if member is himself and has additional permission
    if (Number(req.params.id) === res.locals.memberID && res.locals.permissions.includes(1)) {
      database.query(
@@ -389,7 +410,7 @@
        fuehrerschein = ?, ersthelferausbildung = ?
        WHERE mitgliedID = ?`,
        [req.body.handy, req.body.mitgliedstatus, req.body.generation, req.body.internesprojekt,
-       req.body.mentor.mitgliedID, req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit,
+       mentorID, req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit,
        req.body.senior_seit, req.body.aktiv_seit, req.body.passiv_seit, req.body.ausgetreten_seit,
        req.body.ressort, req.body.arbeitgeber, req.body.strasse1, req.body.plz1, req.body.ort1,
        req.body.tel1, req.body.email1, req.body.strasse2, req.body.plz2, req.body.ort2, req.body.tel2,
@@ -398,23 +419,28 @@
        req.body.engagement, req.body.canPL, req.body.canQM, lastChangeTime, req.body.fuehrerschein,
        req.body.ersthelferausbildung, req.params.id])
        .then((result) => {
-         // To save/update the different languages of the member sql strings are saved into an array
-         const queries = [];
          // Delete the exisitng entries of languages of the specific member in the database
-         queries.push(`DELETE FROM sprachen WHERE mitglied_mitgliedID = ${req.params.id};`);
-         // To save/update the different languages of the member sql strings are saved into an array
-         req.body.sprachen.map(language => {
-          queries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
-            VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
-            ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
-         });
-         database.executeMultipleQueries(queries)
-          .then(langResult => {
-            res.status(200).send("Profile Update Successful");
-          })
-          .catch(err => {
-            res.status(500).send("Query Error: Updating Languages failed");
-          });
+         database.query(`DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
+           .then(deleteResult => {
+              // To save/update the different languages of the member sql strings are saved into an array
+              const queries = [];
+              // To save/update the different languages of the member sql strings are saved into an array
+              req.body.sprachen.map(language => {
+              queries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
+                VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
+                ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
+              });
+              database.executeMultipleQueries(queries)
+              .then(langResult => {
+                res.status(200).send("Profile Update Successful");
+              })
+              .catch(err => {
+                res.status(500).send("Query Error: Updating Languages failed");
+              });
+           })
+           .catch(err => {
+             res.status(500).send("Query Error: Deleting Languages")
+           });
        })
        .catch((err) => {
          res.status(500).send("Query Error: Updating Profile failed");
@@ -466,7 +492,7 @@
        ressort = (SELECT ressortID FROM ressort WHERE bezeichnung = ?), engagement = ?,
        canPL = ?, canQM = ?
        WHERE mitgliedID = ?`,
-       [req.body.mitgliedstatus, req.body.generation, req.body.internesprojekt, req.body.mentor.mitgliedID,
+       [req.body.mitgliedstatus, req.body.generation, req.body.internesprojekt, mentorID,
        req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit, req.body.senior_seit,
        req.body.aktiv_seit, req.body.passiv_seit, req.body.ausgetreten_seit, req.body.ressort,
        req.body.engagement, req.body.canPL, req.body.canQM, req.params.id])
