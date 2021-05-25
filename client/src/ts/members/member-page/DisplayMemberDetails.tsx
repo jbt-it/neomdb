@@ -309,9 +309,8 @@
    const classes = useStyles();
    const filter = createFilterOptions<Language>();
 
-
-   // TODO: Placeholder for the permissions of the user
-   const permissionList: number[] = [1];
+   // Needs to be filled with permissions of the user
+   const permissionList: number[] = [];
    const { members } = props;
    const { departments } = props;
    const { listOfLanguages } = props;
@@ -432,7 +431,6 @@
     */
    const submit = (event: React.FormEvent<HTMLFormElement>) => {
      event.preventDefault();
-     console.log(languages);
      // Data which will be submitted
      const data = {
        mitgliedID: memberDetails.mitgliedID,
@@ -490,21 +488,21 @@
      handleQualificationInfoDialogClose();
      handlePaymentInfoDialogClose();
    };
- 
+
    /**
     * Toogles the career area
     */
    const toggleCareerState: VoidFunction = () => {
      setCareerOpen(!careerOpen);
    };
- 
+
    /**
     * Handles the click on the image
     */
    const handleEditImage: VoidFunction = () => {
-     // TODO: handle edit image dialog
+     // Handle edit image dialog
    };
- 
+
    /**
     * Handles the click on the edit button of the general information section
     * @param event MouseEvent
@@ -513,7 +511,7 @@
      event.stopPropagation();
      setGeneralInfoDialogOpen(true);
    };
- 
+
    /**
     * Handles the closing of the general infromation dialog
     * @param event FormEvent
@@ -521,7 +519,7 @@
    const handleGeneralInfoDialogClose: VoidFunction = () => {
      setGeneralInfoDialogOpen(false);
    };
- 
+
    /**
     * Handles the click on the edit button of the club information section
     * @param event MouseEvent
@@ -530,7 +528,7 @@
      event.stopPropagation();
      setClubInfoDialogOpen(true);
    };
- 
+
    /**
     * Handles the closing of the club infromation dialog
     * @param event FormEvent
@@ -538,7 +536,7 @@
    const handleClubInfoDialogClose: VoidFunction = () => {
      setClubInfoDialogOpen(false);
    };
- 
+
    /**
     * Handles the click on the edit button of the study information section
     * @param event MouseEvent
@@ -547,7 +545,7 @@
      event.stopPropagation();
      setStudyInfoDialogOpen(true);
    };
- 
+
    /**
     * Handles the closing of the study infromation dialog
     * @param event FormEvent
@@ -555,7 +553,7 @@
    const handleStudyInfoDialogClose: VoidFunction = () => {
      setStudyInfoDialogOpen(false);
    };
- 
+
    /**
     * Handles the click on the edit button of the payment information section
     * @param event MouseEvent
@@ -564,7 +562,7 @@
      event.stopPropagation();
      setPaymentInfoDialogOpen(true);
    };
- 
+
    /**
     * Handles the closing of the payment infromation dialog
     * @param event FormEvent
@@ -572,7 +570,7 @@
    const handlePaymentInfoDialogClose: VoidFunction = () => {
      setPaymentInfoDialogOpen(false);
    };
- 
+
    /**
     * Handles the click on the edit button of the qualification information section
     * @param event MouseEvent
@@ -590,21 +588,26 @@
      setQualificationInfoDialogOpen(false);
    };
 
+   /**
+    * Returns the string representation of the niveau number
+    * @param niveau A number which represents the niveau
+    * @returns A string representation of the niveau
+    */
    const getNiveauLabel = (niveau: number) => {
      switch (niveau) {
-       case 0: {
+       case 1: {
          return "Grundkenntnisse";
        }
-       case 1: {
+       case 2: {
          return "Gute Kenntnisse";
        }
-       case 2: {
+       case 3: {
          return "Fließend";
        }
-       case 3: {
+       case 4: {
          return "Verhandlungssicher";
        }
-       case 4: {
+       case 5: {
          return "Muttersprache";
        }
      }
@@ -720,7 +723,7 @@
        </Grid>
      );
    };
- 
+
    /**
     * Renders the different items for the career section
     */
@@ -781,7 +784,7 @@
        </div>
      );
    };
- 
+
    /**
     * Renders the category for club information
     */
@@ -870,7 +873,7 @@
        </Grid>
      );
    };
- 
+
    /**
     * Renders the category for club information
     */
@@ -950,7 +953,7 @@
        </Grid>
      );
    };
- 
+
    /**
     * Renders the category for payment informations
     */
@@ -1066,6 +1069,7 @@
                  </Typography>
                  <div className={classes.categoryItemList}>
                    {memberDetails.sprachen.map(language => {
+                     console.log(language)
                      return <Typography className={classes.categoryLine}>
                        {`${language.wert}: ${getNiveauLabel(parseInt(language.niveau, 10))}`}
                      </Typography>;
@@ -1699,7 +1703,7 @@
                                      </Select>
                                    </FormControl></Grid>
                                    <Grid item xs={2}>
-                                   <IconButton aria-label="delete" color="primary" 
+                                   <IconButton aria-label="delete" color="primary"
                                      onClick={() => {setLanguages(languages.filter((value) => !(value.wert === language.wert)));}}
                                    >
                                      <Clear />
