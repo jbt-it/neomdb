@@ -82,6 +82,14 @@ export type GetLanguageOfMemberQueryResult = {
 };
 
 /**
+ * Type of query results of edv skills retrieval for a specific member
+ */
+ export type GetEDVSkillsOfMemberQueryResult = {
+  wert: string;
+  niveau: string;
+}
+
+/**
  * Type of query results of mentor retrieval for a specific member
  */
 export type GetMentorOfMemberQueryResult = {
