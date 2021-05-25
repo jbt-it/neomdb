@@ -161,31 +161,41 @@
                      WHERE mitgliedID = ?)`,
                      [req.params.id])
                      .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
-                       // Combine the three different query results
-                       const member = [{
-                         ...result[0],
-                         mentor: resultMentor[0],
-                         mentees: resultMentees,
-                         sprachen: resultLang
-                       }];
-                       res.status(200).json(member);
+                      database.query(
+                        `SELECT wert, niveau
+                        FROM edvkenntnisse
+                        WHERE mitglied_mitgliedID = ?`, [req.params.id])
+                        .then((resultEDV: membersTypes.GetEDVSkillsOfMemberQueryResult) => {
+                           // Combine the four different query results
+                           const member = [{
+                             ...result[0],
+                             mentor: resultMentor[0],
+                             mentees: resultMentees,
+                             sprachen: resultLang,
+                             edvkenntnisse: resultEDV,
+                           }];
+                           res.status(200).json(member);
+                        })
+                        .catch((err) => {
+                          res.status(500).send("Query Error: Retrieving EDV Skills")
+                        });
                      })
                      .catch((err) => {
-                     res.status(500).send("Query Error");
-                     });
+                      res.status(500).send("Query Error: Retrieving Mentor");
+                    });
                  })
                  .catch((err) => {
-                 res.status(500).send("Query Error");
-                 });
+                  res.status(500).send("Query Error: Retrieving Mentees");
+                });
              })
              .catch((err) => {
-             res.status(500).send("Query Error");
-             });
+              res.status(500).send("Query Error: Retrieving Languages");
+            });
          }
        })
        .catch((err) => {
-         res.status(500).send("Query Error");
-       });
+        res.status(500).send("Query Error: Retrieving Member");
+      });
    } else {
      database.query(
        `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
@@ -225,30 +235,40 @@
                      WHERE mitgliedID = ?)`,
                      [req.params.id])
                      .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
-                       // Combine the three different query results
-                       const member = [{
-                         ...result[0],
-                         mentor: resultMentor[0],
-                         mentees: resultMentees,
-                         sprachen: resultLang
-                       }];
-                       res.status(200).json(member);
+                       database.query(
+                         `SELECT wert, niveau
+                         FROM edvkenntnisse
+                         WHERE mitglied_mitgliedID = ?`, [req.params.id])
+                         .then((resultEDV: membersTypes.GetEDVSkillsOfMemberQueryResult) => {
+                            // Combine the four different query results
+                            const member = [{
+                              ...result[0],
+                              mentor: resultMentor[0],
+                              mentees: resultMentees,
+                              sprachen: resultLang,
+                              edvkenntnisse: resultEDV,
+                            }];
+                            res.status(200).json(member);
+                         })
+                         .catch((err) => {
+                           res.status(500).send("Query Error: Retrieving EDV Skills")
+                         });
                      })
                      .catch((err) => {
-                     res.status(500).send("Query Error");
+                     res.status(500).send("Query Error: Retrieving Mentor");
                      });
                  })
                  .catch((err) => {
-                 res.status(500).send("Query Error");
+                 res.status(500).send("Query Error: Retrieving Mentees");
                  });
              })
              .catch((err) => {
-             res.status(500).send("Query Error");
+             res.status(500).send("Query Error: Retrieving Languages");
              });
          }
        })
        .catch((err) => {
-         res.status(500).send("Query Error");
+         res.status(500).send("Query Error: Retrieving Member");
        });
    }
  };
