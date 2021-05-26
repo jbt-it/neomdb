@@ -177,7 +177,7 @@
                            res.status(200).json(member);
                         })
                         .catch((err) => {
-                          res.status(500).send("Query Error: Retrieving EDV Skills")
+                          res.status(500).send("Query Error: Retrieving EDV Skills");
                         });
                      })
                      .catch((err) => {
@@ -251,7 +251,7 @@
                             res.status(200).json(member);
                          })
                          .catch((err) => {
-                           res.status(500).send("Query Error: Retrieving EDV Skills")
+                           res.status(500).send("Query Error: Retrieving EDV Skills");
                          });
                      })
                      .catch((err) => {
@@ -379,7 +379,7 @@
  };
 
  /**
-  * Retrieves the departments
+  * Retrieves the languages
   */
   export const retrieveLanguages = (req: Request, res: Response): void => {
     database.query(
@@ -439,27 +439,48 @@
        req.body.engagement, req.body.canPL, req.body.canQM, lastChangeTime, req.body.fuehrerschein,
        req.body.ersthelferausbildung, req.params.id])
        .then((result) => {
-         // Delete the exisitng entries of languages of the specific member in the database
+         // Delete the exisitng entries of languages of the specific member
          database.query(`DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
-           .then(deleteResult => {
+           .then(deleteLangResult => {
               // To save/update the different languages of the member sql strings are saved into an array
-              const queries = [];
+              const langQueries = [];
               // To save/update the different languages of the member sql strings are saved into an array
               req.body.sprachen.map(language => {
-              queries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
+                langQueries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
                 VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
                 ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
               });
-              database.executeMultipleQueries(queries)
-              .then(langResult => {
-                res.status(200).send("Profile Update Successful");
-              })
-              .catch(err => {
-                res.status(500).send("Query Error: Updating Languages failed");
-              });
+              database.executeMultipleQueries(langQueries)
+                .then(langResult => {
+                  // Delete the existing entries of edv skills of the specific member
+                  database.query(`DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [req.params.id])
+                    .then((deleteEDVResult) => {
+                      // To save/update the different edv skills of the member sql strings are saved into an array
+                      const edvQueries = [];
+                      // To save/update the different edv skills of the member sql strings are saved into an array
+                      req.body.edvkenntnisse.map(edv => {
+                      edvQueries.push(`INSERT INTO edvkenntnisse (mitglied_mitgliedID, wert, niveau)
+                        VALUES (${req.params.id}, '${edv.wert}', ${edv.niveau})
+                        ON DUPLICATE KEY UPDATE niveau = ${edv.niveau};`);
+                      });
+                      database.executeMultipleQueries(edvQueries)
+                        .then((edvResult) => {
+                          res.status(200).send("Profile Update Successful");
+                        })
+                        .catch(err => {
+                          res.status(500).send("Query Error: Updating EDV Skills failed");
+                        });
+                    })
+                    .catch(err => {
+                      res.status(500).send("Query Error: Deleting EDV Skills failed");
+                    });
+                })
+                .catch(err => {
+                  res.status(500).send("Query Error: Updating Languages failed");
+                });
            })
            .catch(err => {
-             res.status(500).send("Query Error: Deleting Languages")
+             res.status(500).send("Query Error: Deleting Languages failed");
            });
        })
        .catch((err) => {
@@ -481,22 +502,49 @@
        req.body.kontoinhaber, req.body.iban, req.body.bic, lastChangeTime, req.body.fuehrerschein,
        req.body.ersthelferausbildung, req.params.id])
        .then((result) => {
-          const queries = [];
-          // Delete the exisitng entries of languages of the specific member in the database
-          queries.push(`DELETE FROM sprachen WHERE mitglied_mitgliedID = ${req.params.id};`);
-          // To save/update the different languages of the member sql strings are saved into an array
-          req.body.sprachen.map(language => {
-            queries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
+          // Delete the exisitng entries of languages of the specific member
+         database.query(`DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
+         .then(deleteLangResult => {
+            // To save/update the different languages of the member sql strings are saved into an array
+            const langQueries = [];
+            // To save/update the different languages of the member sql strings are saved into an array
+            req.body.sprachen.map(language => {
+              langQueries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
               VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
               ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
-          });
-          database.executeMultipleQueries(queries)
-            .then(langResult => {
-              res.status(200).send("Profile Update Successful");
-            })
-            .catch(err => {
-            res.status(500).send("Query Error: Updating Languages failed");
             });
+            database.executeMultipleQueries(langQueries)
+              .then(langResult => {
+                // Delete the existing entries of edv skills of the specific member
+                database.query(`DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [req.params.id])
+                  .then((deleteEDVResult) => {
+                    // To save/update the different edv skills of the member sql strings are saved into an array
+                    const edvQueries = [];
+                    // To save/update the different edv skills of the member sql strings are saved into an array
+                    req.body.edvkenntnisse.map(edv => {
+                    edvQueries.push(`INSERT INTO edvkenntnisse (mitglied_mitgliedID, wert, niveau)
+                      VALUES (${req.params.id}, '${edv.wert}', ${edv.niveau})
+                      ON DUPLICATE KEY UPDATE niveau = ${edv.niveau};`);
+                    });
+                    database.executeMultipleQueries(edvQueries)
+                      .then((edvResult) => {
+                        res.status(200).send("Profile Update Successful");
+                      })
+                      .catch(err => {
+                        res.status(500).send("Query Error: Updating EDV Skills failed");
+                      });
+                  })
+                  .catch(err => {
+                    res.status(500).send("Query Error: Deleting EDV Skills failed");
+                  });
+              })
+              .catch(err => {
+                res.status(500).send("Query Error: Updating Languages failed");
+              });
+         })
+         .catch(err => {
+           res.status(500).send("Query Error: Deleting Languages failed");
+         });
        })
        .catch((err) => {
          res.status(500).send("Query Error: Updating Profile failed");
