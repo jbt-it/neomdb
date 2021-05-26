@@ -397,6 +397,25 @@
       });
   };
 
+  /**
+   * Retrieves the edv skills
+   */
+  export const retrieveEDVSkills = (req: Request, res: Response): void => {
+    database.query(
+      `SELECT DISTINCT wert
+      FROM edvkenntnisse`, [])
+      .then((result: string[]) => {
+        if (result.length === 0) {
+          res.status(404).send("EDV Skills not found");
+        } else {
+          res.status(200).json(result);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send("Query Error");
+      });
+  };
+
  /**
   * Updates an existing member
   * Update of critical fields can be done by member with certain permission
