@@ -205,6 +205,18 @@
   }
 
   /**
+   * Interface for an edv skill
+   */
+  interface EDVSkill {
+    /*
+     * Additional attribute which is needed for the Automplece Component
+     * It is only used for filtering
+     */
+    inputValue?: string;
+    wert: string;
+  }
+
+  /**
    * Interface for the department
    */
   interface Department {
@@ -304,6 +316,7 @@
    members: Member[];
    departments: Department[];
    listOfLanguages: Language[];
+   listOfEDVSkills: EDVSkill[];
    memberDetails: MemberDetails;
    isOwner: boolean;
    updateMemberDetails: (data: MemberDetails) => void;
@@ -317,13 +330,15 @@
    props: DisplayMemberDetailsProps
  ) => {
    const classes = useStyles();
-   const filter = createFilterOptions<Language>();
+   const langFilter = createFilterOptions<Language>();
+   const edvFilter = createFilterOptions<EDVSkill>();
 
    // Needs to be filled with permissions of the user
    const permissionList: number[] = [];
    const { members } = props;
    const { departments } = props;
    const { listOfLanguages } = props;
+   const { listOfEDVSkills } = props;
    const { memberDetails } = props;
 
    const [careerOpen, setCareerOpen] = useState(false);
@@ -434,7 +449,7 @@
 
    const [menteeList, setMenteeList] = useState<Mentee[]>(memberDetails.mentees);
    const [languages, setLanguages] = useState<LanguageOfMember[]>(memberDetails.sprachen);
-   const [edv, setEdv] = useState<EDVSkillOfMember[]>(memberDetails.edvkenntnisse);
+   const [edvSkills, setEdvSkills] = useState<EDVSkillOfMember[]>(memberDetails.edvkenntnisse);
 
    /**
     * Submits the changed data
@@ -491,7 +506,7 @@
        ersthelferausbildung: firstAid,
        sprachen: languages,
        mentees: menteeList,
-       edvkenntnisse: edv,
+       edvkenntnisse: edvSkills,
      };
      props.updateMemberDetails(data);
      handleGeneralInfoDialogClose();
@@ -1111,9 +1126,9 @@
                    EDV-Kenntnisse:
                  </Typography>
                  <div className={classes.categoryItemList}>
-                   {memberDetails.edvkenntnisse.map(edvSkill => {
+                   {memberDetails.edvkenntnisse.map(edv => {
                      return <Typography className={classes.categoryLine}>
-                       {`${edvSkill.wert}: ${getEDVNiveauLabel(parseInt(edvSkill.niveau, 10))}`}
+                       {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
                      </Typography>;
                    })}
                  </div>
@@ -1694,7 +1709,7 @@
                                   }
                               }}
                               filterOptions={(options, params) => {
-                                const filtered = filter(options, params);
+                                const filtered = langFilter(options, params);
                                 // Suggest the creation of a new value
                                 if (params.inputValue !== "") {
                                   filtered.push({
@@ -1726,7 +1741,6 @@
                                      <InputLabel id="language-niveau-select-label">Niveau</InputLabel>
                                      <Select
                                        labelId="language-niveau-select-label"
-                                       id="language-niveau-select"
                                        value={language.niveau}
                                        onChange={(event) => {
                                          const list = [...languages];
@@ -1737,11 +1751,11 @@
                                          setLanguages(list);
                                        }}
                                      >
+                                       <MenuItem value={5}>{getLanguageNiveauLabel(5)}</MenuItem>
                                        <MenuItem value={4}>{getLanguageNiveauLabel(4)}</MenuItem>
                                        <MenuItem value={3}>{getLanguageNiveauLabel(3)}</MenuItem>
                                        <MenuItem value={2}>{getLanguageNiveauLabel(2)}</MenuItem>
                                        <MenuItem value={1}>{getLanguageNiveauLabel(1)}</MenuItem>
-                                       <MenuItem value={0}>{getLanguageNiveauLabel(0)}</MenuItem>
                                      </Select>
                                    </FormControl></Grid>
                                    <Grid item xs={2}>
@@ -1757,6 +1771,107 @@
                          <IconButton aria-label="add" color="primary"
                            disabled={languages.some(lang => lang.wert === "" || lang.niveau === "")}
                            onClick={() => {setLanguages([...languages, {wert: "", niveau: ""}]);}}
+                         >
+                           <AddCircleOutline />
+                         </IconButton>
+                       </Grid>
+                   </Grid>
+                 </Grid>
+                 <Grid item xs={12} sm={12} md={12} lg={12}>
+                   <Grid container spacing={1}>
+                     <Grid item xs={12} sm={12} md={12} lg={12}>
+                     <Typography>EDV-Kenntnisse:</Typography>
+                     </Grid>
+                       {edvSkills.map((edvSkill, index) => {
+                         return <Grid item container spacing={1} xs={11} sm={8} md={6} lg={4} className={classes.dialogListItem}>
+                           <Grid item xs={5}>
+                           <Autocomplete
+                              value={edvSkill.wert}
+                              onChange={(event, newValue) => {
+                                  if (typeof newValue === "string") {
+                                    const list = [...edvSkills];
+                                    // Make a new object of the updated edv skill
+                                    const updatedEdvSkill: EDVSkillOfMember = { ...edvSkills[index], wert: newValue};
+                                    // Overwrite old value with the new edv skill
+                                    list[index] = updatedEdvSkill;
+                                    setEdvSkills(list);
+                                  } else if (newValue && newValue.inputValue) {
+                                    const list = [...edvSkills];
+                                    // Make a new object of the updated edv skill
+                                    const updatedEdvSkill: EDVSkillOfMember = { ...edvSkills[index], wert: newValue.inputValue};
+                                    // Overwrite old value with the new edv skill
+                                    list[index] = updatedEdvSkill;
+                                    setEdvSkills(list);
+                                  } else if (newValue) {
+                                    const list = [...edvSkills];
+                                    // Make a new object of the updated edv skill
+                                    const updatedEdvSkill: EDVSkillOfMember = { ...edvSkills[index], wert: newValue.wert};
+                                    // Overwrite old value with the new edv skill
+                                    list[index] = updatedEdvSkill;
+                                    setEdvSkills(list);
+                                  }
+                              }}
+                              filterOptions={(options, params) => {
+                                const filtered = edvFilter(options, params);
+                                // Suggest the creation of a new value
+                                if (params.inputValue !== "") {
+                                  filtered.push({
+                                    inputValue: params.inputValue,
+                                    wert: `"${params.inputValue}" hinzufügen`,
+                                  });
+                                }
+                                return filtered;
+                              }}
+                              selectOnFocus
+                              clearOnBlur
+                              options={listOfEDVSkills}
+                              getOptionLabel={(option) => {
+                                if (typeof option === "string") {
+                                  return option;
+                                }
+                                return option.wert;
+                              }}
+                              freeSolo
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="EDV-Kenntnis"
+                                  variant="outlined"
+                                />
+                              )}
+                            /></Grid><Grid item xs={5}>
+                                    <FormControl className={classes.fullWidth}>
+                                     <InputLabel id="edv-skill-niveau-select-label">Niveau</InputLabel>
+                                     <Select
+                                       labelId="edv-skill-niveau-select-label"
+                                       value={edvSkill.niveau}
+                                       onChange={(event) => {
+                                         const list = [...edvSkills];
+                                         // Make a new object of updated language
+                                         const updatedEdvSkill: EDVSkillOfMember = { ...edvSkills[index], niveau: ""+event.target.value};
+                                         // Overwrite old value with the new language
+                                         list[index] = updatedEdvSkill;
+                                         setEdvSkills(list);
+                                       }}
+                                     >
+                                       <MenuItem value={3}>{getEDVNiveauLabel(3)}</MenuItem>
+                                       <MenuItem value={2}>{getEDVNiveauLabel(2)}</MenuItem>
+                                       <MenuItem value={1}>{getEDVNiveauLabel(1)}</MenuItem>
+                                     </Select>
+                                   </FormControl></Grid>
+                                   <Grid item xs={2}>
+                                   <IconButton aria-label="delete" color="primary"
+                                     onClick={() => {setEdvSkills(edvSkills.filter((value) => !(value.wert === edvSkill.wert)));}}
+                                   >
+                                     <Clear />
+                                   </IconButton>
+                                   </Grid>
+                                 </Grid>;
+                         })}
+                       <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                         <IconButton aria-label="add" color="primary"
+                           disabled={edvSkills.some(edv => edv.wert === "" || edv.niveau === "")}
+                           onClick={() => {setEdvSkills([...edvSkills, {wert: "", niveau: ""}]);}}
                          >
                            <AddCircleOutline />
                          </IconButton>

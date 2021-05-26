@@ -54,6 +54,13 @@
   }
 
   /**
+   * Interface for an edv skill
+   */
+  interface EDVSkill {
+    wert: string;
+  }
+
+  /**
    * Interface for the department
    */
   interface Department {
@@ -165,6 +172,7 @@
    const [members, setMembers] = useState<Member[]>([]);
    const [departments, setDepartments] = useState<Department[]>([]);
    const [languages, setLanguages] = useState<Language[]>([]);
+   const [edvSkills, setEdvSkills] = useState<EDVSkill[]>([]);
    const [memberDetails, setMembersDetails] = useState<MemberDetails>();
    const [isOwner, setIsOwner] = useState<boolean>(false);
 
@@ -212,10 +220,10 @@
       };
     };
 
-    /**
-     * Retrieves all languages
-     */
-    const getLanguages: VoidFunction = () => {
+  /**
+   * Retrieves all languages
+   */
+  const getLanguages: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users/languages`,{
@@ -225,6 +233,28 @@
       if (res.status === 200) {
         if (mounted) {
           setLanguages(res.data);
+        }
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  };
+
+    /**
+     * Retrieves all edv skills
+     */
+    const getEdvSkills: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api.get(`/users/edv-skills`,{
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+    .then((res) => {
+      if (res.status === 200) {
+        if (mounted) {
+          setEdvSkills(res.data);
         }
       }
     });
@@ -289,6 +319,7 @@
      getMembers();
      getDepartments();
      getLanguages();
+     getEdvSkills();
      getMemberDetails();
    }, []);
 
@@ -300,6 +331,7 @@
              members={members}
              departments={departments}
              listOfLanguages={languages}
+             listOfEDVSkills={edvSkills}
              memberDetails={memberDetails}
              isOwner={isOwner}
              getMemberDetails={getMemberDetails}
