@@ -183,6 +183,15 @@
     niveau: string;
   }
 
+ /**
+  * Interface for the edv skill
+  */
+  interface EDVSkillOfMember {
+    wert: string;
+    niveau: string;
+  }
+
+
   /**
    * Interface for a language
    */
@@ -285,6 +294,7 @@
    ersthelferausbildung: boolean;
    sprachen: LanguageOfMember[];
    mentees: Mentee[];
+   edvkenntnisse: EDVSkillOfMember[];
  }
 
  /**
@@ -424,6 +434,7 @@
 
    const [menteeList, setMenteeList] = useState<Mentee[]>(memberDetails.mentees);
    const [languages, setLanguages] = useState<LanguageOfMember[]>(memberDetails.sprachen);
+   const [edv, setEdv] = useState<EDVSkillOfMember[]>(memberDetails.edvkenntnisse);
 
    /**
     * Submits the changed data
@@ -480,6 +491,7 @@
        ersthelferausbildung: firstAid,
        sprachen: languages,
        mentees: menteeList,
+       edvkenntnisse: edv,
      };
      props.updateMemberDetails(data);
      handleGeneralInfoDialogClose();
@@ -589,11 +601,11 @@
    };
 
    /**
-    * Returns the string representation of the niveau number
-    * @param niveau A number which represents the niveau
+    * Returns the string representation of the niveau number of a language
+    * @param niveau A number which represents the niveau of a language
     * @returns A string representation of the niveau
     */
-   const getNiveauLabel = (niveau: number) => {
+   const getLanguageNiveauLabel = (niveau: number) => {
      switch (niveau) {
        case 1: {
          return "Grundkenntnisse";
@@ -609,6 +621,25 @@
        }
        case 5: {
          return "Muttersprache";
+       }
+     }
+   };
+
+   /**
+    * Returns the string representation of the niveau number of an edv skill
+    * @param niveau A number which represents the niveau of an edv skill
+    * @returns A string representation of the niveau
+    */
+   const getEDVNiveauLabel = (niveau: number) => {
+     switch (niveau) {
+       case 1: {
+         return "Grundkenntnisse";
+       }
+       case 2: {
+         return "Vertiefte Kenntnisse";
+       }
+       case 3: {
+         return "Expertenwissen";
        }
      }
    };
@@ -1069,9 +1100,20 @@
                  </Typography>
                  <div className={classes.categoryItemList}>
                    {memberDetails.sprachen.map(language => {
-                     console.log(language)
                      return <Typography className={classes.categoryLine}>
-                       {`${language.wert}: ${getNiveauLabel(parseInt(language.niveau, 10))}`}
+                       {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
+                     </Typography>;
+                   })}
+                 </div>
+               </div>
+               <div className={classes.categoryItem}>
+                 <Typography className={classes.categoryLine}>
+                   EDV-Kenntnisse:
+                 </Typography>
+                 <div className={classes.categoryItemList}>
+                   {memberDetails.edvkenntnisse.map(edvSkill => {
+                     return <Typography className={classes.categoryLine}>
+                       {`${edvSkill.wert}: ${getEDVNiveauLabel(parseInt(edvSkill.niveau, 10))}`}
                      </Typography>;
                    })}
                  </div>
@@ -1695,11 +1737,11 @@
                                          setLanguages(list);
                                        }}
                                      >
-                                       <MenuItem value={4}>{getNiveauLabel(4)}</MenuItem>
-                                       <MenuItem value={3}>{getNiveauLabel(3)}</MenuItem>
-                                       <MenuItem value={2}>{getNiveauLabel(2)}</MenuItem>
-                                       <MenuItem value={1}>{getNiveauLabel(1)}</MenuItem>
-                                       <MenuItem value={0}>{getNiveauLabel(0)}</MenuItem>
+                                       <MenuItem value={4}>{getLanguageNiveauLabel(4)}</MenuItem>
+                                       <MenuItem value={3}>{getLanguageNiveauLabel(3)}</MenuItem>
+                                       <MenuItem value={2}>{getLanguageNiveauLabel(2)}</MenuItem>
+                                       <MenuItem value={1}>{getLanguageNiveauLabel(1)}</MenuItem>
+                                       <MenuItem value={0}>{getLanguageNiveauLabel(0)}</MenuItem>
                                      </Select>
                                    </FormControl></Grid>
                                    <Grid item xs={2}>

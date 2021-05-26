@@ -39,6 +39,14 @@
   }
 
   /**
+   * Interface for the edv skill
+   */
+  interface EDVSkillOfMember {
+    wert: string;
+    niveau: string;
+  }
+
+  /**
    * Interface for a language
    */
   interface Language {
@@ -135,6 +143,7 @@
    ersthelferausbildung: boolean;
    sprachen: LanguageOfMember[];
    mentees: Mentee[];
+   edvkenntnisse: EDVSkillOfMember[];
  }
 
  /**
@@ -304,5 +313,5 @@
      </div>
    );
  };
- 
+
  export default MemberProfile;
