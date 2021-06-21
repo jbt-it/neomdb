@@ -11,6 +11,9 @@ import { AuthContext } from "../../global/AuthContext";
 import PageBar from "../../global/navigation/PageBar";
 import CustomSnackbar from "../../global/CustomSnackbar";
 
+/**
+ * Function which proivdes the styles of the MemberPage
+ */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     memberPageRoot: {
@@ -168,7 +171,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   const [errorOpen, setErrorOpen] = useState<number>(0);
   const [members, setMembers] = useState<Member[]>([]);
   const [authenticated, setAuthenticated,
-    userID, setUserID, userName, setUserName] = useContext(AuthContext);  const [departments, setDepartments] = useState<Department[]>([]);
+    userID, setUserID, userName, setUserName] = useContext(AuthContext);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<EDVSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<MemberDetails>();
@@ -311,15 +315,20 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   };
 
   useEffect(() => {
-    setSuccessOpen(0);
     // Checks if the user is the owner of the member page
     setIsOwner(userID === parseInt(props.match.params.id, 10));
+  }, [props.match.params.id, userID]);
+
+  useEffect(() => {
     getMembers();
     getDepartments();
     getLanguages();
     getEdvSkills();
-    getMemberDetails();
   }, []);
+
+  useEffect(() => { setSuccessOpen(0); }, []);
+
+  useEffect(getMemberDetails, [props.match.params.id]);
 
   return (
     <div>
@@ -338,8 +347,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         ) : null}
       </div>
       <PageBar pageTitle="Profilseite" />
-      { successOpen ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{ variant: "success" }} /> : null}
-      { errorOpen ? <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} /> : null}
+      {successOpen ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{ variant: "success" }} /> : null}
+      {errorOpen ? <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} /> : null}
     </div>
   );
 };
