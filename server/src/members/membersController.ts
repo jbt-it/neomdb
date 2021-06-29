@@ -102,7 +102,15 @@ export const changePassword = (req: Request, res: Response): void => {
  * @param req email
  * @param res 200 if process is available, 404 else
  */
-export const passwordReset = (req: Request, res:Response): void => {
+export const sendPasswordResetLink = (req: Request, res:Response): void => {
+  res.status(200).send("not implemented");
+};
+
+/**
+ * @param req email
+ * @param res 200 if process is available, 404 else
+ */
+ export const resetPasswordWithKey = (req: Request, res:Response): void => {
   res.status(200).send("not implemented");
 };
 

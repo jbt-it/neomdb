@@ -8,7 +8,8 @@ import * as authController from "../global/authController";
 import * as membersController from "./membersController";
 
 router.post("/login", membersController.login);
-router.patch("/forgot-password", membersController.passwordReset);
+router.patch("/forgot-password", membersController.sendPasswordResetLink);
+router.patch("/reset-forgot-password", membersController.resetPasswordWithKey);
 
 /**
  * =======>>> ALL routes after this point are accessible for loged in users only <<<=======
