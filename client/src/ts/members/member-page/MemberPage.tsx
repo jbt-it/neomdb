@@ -182,6 +182,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Retrieves all members
    */
   const getMembers: VoidFunction = () => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users`, {
@@ -195,6 +196,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
@@ -204,6 +206,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Retrieves all departments
    */
   const getDepartments: VoidFunction = () => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users/departments`, {
@@ -217,6 +220,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
@@ -226,6 +230,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Retrieves all languages
    */
   const getLanguages: VoidFunction = () => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users/languages`, {
@@ -239,6 +244,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
@@ -248,6 +254,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Retrieves all edv skills
    */
   const getEdvSkills: VoidFunction = () => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users/edv-skills`, {
@@ -261,6 +268,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
@@ -270,6 +278,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Retrieves the member details
    */
   const getMemberDetails: VoidFunction = () => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get(`/users/${props.match.params.id}`, {
@@ -284,6 +293,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
@@ -293,6 +303,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
    * Updates the member details
    */
   const updateMemberDetails = (data: MemberDetails) => {
+
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.patch(`/users/${props.match.params.id}`, data, {
@@ -309,25 +320,22 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       });
 
+    // Clean-up function
     return () => {
       mounted = false;
     };
   };
 
-  useEffect(() => {
+  useEffect(() =>
+
     // Checks if the user is the owner of the member page
-    setIsOwner(userID === parseInt(props.match.params.id, 10));
-  }, [props.match.params.id, userID]);
-
-  useEffect(() => {
-    getMembers();
-    getDepartments();
-    getLanguages();
-    getEdvSkills();
-  }, []);
-
-  useEffect(() => { setSuccessOpen(0); }, []);
-
+    setIsOwner(userID === parseInt(props.match.params.id, 10))
+  , [props.match.params.id, userID]);
+  useEffect(() => getMembers(), []);
+  useEffect(() => getDepartments(), []);
+  useEffect(() => getLanguages(), []);
+  useEffect(() => getEdvSkills(), []);
+  useEffect(() => setSuccessOpen(0), []);
   useEffect(getMemberDetails, [props.match.params.id]);
 
   return (
