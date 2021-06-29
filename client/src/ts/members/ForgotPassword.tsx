@@ -12,8 +12,7 @@ import Textfield from "@material-ui/core/TextField";
 import api from "../utils/api";
 
 /**
- * Function that allwos the suer to reset the password, if forgotten
- * @returns returns the interface for the user
+ * Function that allwos the user to reset the password, if forgotten by sending them a reset link
  */
 const ForgotPassword: React.FunctionComponent = () => {
   /**
@@ -76,10 +75,10 @@ const ForgotPassword: React.FunctionComponent = () => {
     };
     api.patch("/users/forgot-password", data
     )
-    .then((res) => {
-      if(res.status === 200)
-      setSubmitBoolean(true);
-    });
+      .then((res) => {
+        if (res.status === 200)
+          setSubmitBoolean(true);
+      });
   };
 
   /**
@@ -105,13 +104,13 @@ const ForgotPassword: React.FunctionComponent = () => {
    * the button was clicked
    */
   const informationOfSubmit = () => {
-    if(submitBoolean){
+    if (submitBoolean) {
       return (
         <Paper className={classes.paper}>
           If you gave your correct email, you should recieve a new password
         </Paper>
       );
-    }else{
+    } else {
       return;
     }
   };
