@@ -4,8 +4,10 @@
 
 // Options for formatting dates
 const dateOptions = { day: "2-digit", year: "numeric", month: "2-digit" };
+
 // Options for formatting datetimes
 const dateTimeOptions = { day: "2-digit", year: "numeric", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" };
+
 // Local option (formats dates and datetimes into the german format dd.mm.yyyy hh.MM.ss)
 const locales = "de-DE";
 
