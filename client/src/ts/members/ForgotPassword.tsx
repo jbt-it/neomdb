@@ -68,7 +68,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   /**
    * send the email to the backend
    */
-  const sendPassword = () => {
+  const sendEmailWithLink = () => {
 
     const data = {
       email
@@ -122,7 +122,7 @@ const ForgotPassword: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo} />
             <h1>Forgot Password</h1>
-            <form id="emailForm" onSubmit={event => { sendPassword(); }}>
+            <form id="emailForm" onSubmit={event => { sendEmailWithLink(); }}>
               <Textfield className={classes.inputfield} id="email" label="Email" type="text" value={email}
                 onChange={event => { setEmail(event.target.value); }} fullWidth />
               <p className={classes.warningText}>
