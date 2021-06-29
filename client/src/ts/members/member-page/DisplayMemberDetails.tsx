@@ -190,24 +190,20 @@ interface EDVSkillOfMember {
 
 /**
  * Interface for a language
+ * inputValue is an additional (optional) attribute which is needed for the Automplece Component
+ * It is only used for filtering
  */
 interface Language {
-  /*
-   * Additional attribute which is needed for the Automplece Component
-   * It is only used for filtering
-   */
   inputValue?: string;
   wert: string;
 }
 
 /**
  * Interface for an edv skill
+ * inputValue is an additional (optional) attribute which is needed for the Automplece Component
+ * It is only used for filtering
  */
 interface EDVSkill {
-  /*
-   * Additional attribute which is needed for the Automplece Component
-   * It is only used for filtering
-   */
   inputValue?: string;
   wert: string;
 }
@@ -326,8 +322,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   props: DisplayMemberDetailsProps
 ) => {
   const classes = useStyles();
+
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<Language>();
+
   // Filter of languages for the autocomplete component
   const edvFilter = createFilterOptions<EDVSkill>();
 
@@ -448,10 +446,30 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Enum for the differents types of actions for the languages reducer function
    */
   enum languagesReducerActionType {
+
+    /**
+     * Action type for adding the value of a language in string format
+     */
     addNewLanguageWithValueAsString = "ADD-NEW-LANGUAGE-WITH-VALUE-AS-STRING",
+
+    /**
+     * Action type for adding the value of a language in an object format
+     */
     addNewLanguageWithValueAsObject = "ADD-NEW-LANGUAGE-WITH-VALUE-AS-OBJECT",
+
+    /**
+     * Action type for adding the niveau of a language
+     */
     addNewLanguageWithNiveau = "ADD-NEW-LANGUAGE-WITH-NIVEAU",
+
+    /**
+     * Action type for adding an empty language (with empty value and niveau fields)
+     */
     addEmptyLanguage = "ADD-EMPTY-LANGUAGE",
+
+    /**
+     * Action type for deleting a language
+     */
     deleteLanguage = "DELETE-LANGUAGE",
   }
 
@@ -509,10 +527,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @returns An updated list of languages
    */
   const updateLanguages = (list: LanguageOfMember[], index: number, value: string, typeOfValue: string) => {
+
     // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
+
         // Updates the language
         const updatedLanguage: LanguageOfMember =
           { ...list[index], wert: value };
@@ -520,6 +540,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         return newList;
       }
       case "NIVEAU": {
+
         // Updates the language
         const updatedLanguage: LanguageOfMember =
           { ...list[index], niveau: value };
@@ -552,6 +573,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             return state;
           }
           return updateLanguages(state, action.payload.index, action.payload.lang.inputValue, "WERT");
+        } else if (action.payload.lang.wert) {
+          if (checkLanguagesForDuplicates(state, action.payload.lang.wert)) {
+            return state;
+          }
+          return updateLanguages(state, action.payload.index, action.payload.lang.wert, "WERT");
         } else {
           return state;
         }
@@ -576,11 +602,30 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Enum for the differents types of actions for the edv skills reducer function
    */
   enum edvSkillsReducerActionType {
+
+    /**
+     * Action type for adding the value of an edv skill in string format
+     */
     addNewEdvSkillWithValueAsString = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-STRING",
+
+    /**
+     * Action type for adding the value of an edv skill in an object format
+     */
     addNewEdvSkillWithValueAsObject = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-OBJECT",
-    addEdvSkillWithValue = "ADD-EDV-SKILL-WITH-VALUE",
+
+    /**
+     * Action type for adding the niveau of an edv skill
+     */
     addNewEdvSkillWithNiveau = "ADD-NEW-EDV-SKILL-WITH-NIVEAU",
+
+    /**
+     * Action type for adding an empty edv skill (with empty value and niveau fields)
+     */
     addEmptyEdvSkill = "ADD-EMPTY-EDV-SKILL",
+
+    /**
+     * Action type for deleting an edv skill
+     */
     deleteEdvSkill = "DELETE-EDV-SKILL",
   }
 
@@ -589,7 +634,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   type edvSkillsReducerAction =
     | {
-      type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject | edvSkillsReducerActionType.addEdvSkillWithValue;
+      type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject;
       payload: {
         index: number;
         edvSkill: EDVSkill;
@@ -638,10 +683,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @returns An updated list of languages
    */
   const updateEdvSkills = (list: EDVSkillOfMember[], index: number, value: string, typeOfValue: string) => {
+
     // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
+
         // Updates the language
         const updatedEdvSkill: EDVSkillOfMember =
           { ...list[index], wert: value };
@@ -649,6 +696,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         return newList;
       }
       case "NIVEAU": {
+
         // Updates the language
         const updatedEdvSkill: EDVSkillOfMember =
           { ...list[index], niveau: value };
@@ -681,15 +729,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             return state;
           }
           return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.inputValue, "WERT");
+        } else if (action.payload.edvSkill.wert) {
+          if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.wert)) {
+            return state;
+          }
+          return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.wert, "WERT");
         } else {
           return state;
         }
-      }
-      case edvSkillsReducerActionType.addEdvSkillWithValue: {
-        if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.wert)) {
-          return state;
-        }
-        return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.wert, "WERT");
       }
       case edvSkillsReducerActionType.addNewEdvSkillWithNiveau: {
         return updateEdvSkills(state, action.payload.index, action.payload.niveau, "NIVEAU");
@@ -716,6 +763,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     // Data which will be submitted
     const data = {
       mitgliedID: memberDetails.mitgliedID,
@@ -950,7 +998,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 </Typography>
               </div>
               <div>
-                {/*When the user is owner or has the permission to
+                {
+                /*When the user is owner or has the permission to
                    manage all members they can edit this section*/
                   props.isOwner || permissionList.includes(1) ? (
                     <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
@@ -1964,14 +2013,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                     payload: { index, value: newValue }
                                   }
                                 );
-                              } else if (newValue && newValue.inputValue) {
-                                dispatchLanguages(
-                                  {
-                                    type: languagesReducerActionType.addNewLanguageWithValueAsObject,
-                                    payload: { index, lang: newValue }
-                                  }
-                                );
-                              } else if (newValue) {
+                              } else if (newValue && newValue.inputValue || newValue) {
                                 dispatchLanguages(
                                   {
                                     type: languagesReducerActionType.addNewLanguageWithValueAsObject,
@@ -2081,17 +2123,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                     payload: { index, value: newValue }
                                   }
                                 );
-                              } else if (newValue && newValue.inputValue) {
+                              } else if (newValue && newValue.inputValue || newValue) {
                                 dispatchEdvSkills(
                                   {
                                     type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject,
-                                    payload: { index, edvSkill: newValue }
-                                  }
-                                );
-                              } else if (newValue) {
-                                dispatchEdvSkills(
-                                  {
-                                    type: edvSkillsReducerActionType.addEdvSkillWithValue,
                                     payload: { index, edvSkill: newValue }
                                   }
                                 );
