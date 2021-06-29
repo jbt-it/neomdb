@@ -2,7 +2,6 @@
  * Wrapper for the MySQL connections
  */
 import mysql = require("mysql");
-import { resolveModuleName } from "typescript";
 
 /**
  * Config for the MySQL database
@@ -44,12 +43,12 @@ export const executeMultipleQueries = (queries: string[]) => {
     const results = [];
     queries.map(singleQuery => {
       query(singleQuery, [])
-      .then(result => {
-        results.push(result);
-      })
-      .catch(err => {
-        return reject(err);
-      });
+        .then(result => {
+          results.push(result);
+        })
+        .catch(err => {
+          return reject(err);
+        });
     });
     return resolve(results);
   });
