@@ -9,6 +9,7 @@ import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import ChangePassword from "../members/ChangePassword";
 import ForgotPassword from "../members/ForgotPassword";
+import ResetForgotPassword from "../members/ResetForgotPassword";
 
 const App: React.FunctionComponent = () => {
   const [authenticated, setAuthenticated,
@@ -91,6 +92,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/kvp" component = {Dashboard} />
         <Route exact path = "/login" component = {Login} />
         <Route exact path = "/forgot-password" component = {ForgotPassword} />
+        <Route exact path = "/reset-forgot-password/:key" component = {ResetForgotPassword} />
         <PrivateRoute path = "*" component = {NotFound} />
       </Switch>
     </HashRouter>
