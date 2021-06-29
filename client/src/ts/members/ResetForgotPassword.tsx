@@ -10,6 +10,7 @@ import Textfield from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import { useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 /**
  * Functions that allows the user to reset the password with the sent reset link
@@ -64,17 +65,19 @@ const ResetForgotPassword: React.FunctionComponent = () => {
    * Sends the new PW to the database
    */
   const postResetPassword = () => {
-    const data = {
-      email,
-      key,
-      newPassword
-    };
-    api.patch("/users/reset-forgot-password", data
-    )
-      .then((res) => {
-        if (res.status === 200)
-          setResResponse200(true);
-      });
+    if(newPassword === newPasswordValidation && checkNewPassword(newPassword)){
+      const data = {
+        email,
+        key,
+        newPassword
+      };
+      api.patch("/users/reset-forgot-password", data
+      )
+        .then((res) => {
+          if (res.status === 200)
+            setResResponse200(true);
+        });
+    }
   };
 
   /**
@@ -124,6 +127,25 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
+   * check if input is an email
+   */
+  const emailRegexTest = (testEmail: string) => {
+    const regex = /^.+@.+\..{1,6}/i;
+    return regex.test(testEmail);
+  };
+
+  /**
+   * return a warning if it is not a valid email
+   */
+  const invalidEmailWarning = () => {
+    if (!emailRegexTest(email)) {
+      return "This is not an Email";
+    } else {
+      return "";
+    }
+  };
+
+  /**
    * if res is code 200
    */
   const resResponse200Field = () => {
@@ -131,8 +153,13 @@ const ResetForgotPassword: React.FunctionComponent = () => {
       return (
         <Paper className={classes.paper}>
           <p>
-            Das passwort wurde gesendet
+            Das passwort wurde gesendet und wird gespeichert, falls die Email korrekt war
           </p>
+          <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
+            <NavLink exact to="/login" >
+              Login
+            </NavLink>
+          </Button>
         </Paper>
       );
     }
@@ -159,6 +186,9 @@ const ResetForgotPassword: React.FunctionComponent = () => {
               <div>
                 <Textfield className={classes.inputfield} id="email" label="Email" type="text" value={email}
                   onChange={event => { setEmail(event.target.value); }} fullWidth />
+                <p className={classes.warningText}>
+                  {invalidEmailWarning()}
+                </p>
               </div>
               <div>
                 <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
