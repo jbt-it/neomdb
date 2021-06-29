@@ -2,6 +2,9 @@
  * Definition of used types within the users module
  */
 
+/**
+ * Type of query result of the login
+ */
 export type LoginQueryResult = {
   mitgliedID: number;
   name: string;
