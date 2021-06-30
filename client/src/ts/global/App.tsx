@@ -91,8 +91,8 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
         <PrivateRoute exact path = "/kvp" component = {Dashboard} />
         <Route exact path = "/login" component = {Login} />
-        <Route exact path = "/forgot-password" component = {ForgotPassword} />
-        <Route exact path = "/reset-forgot-password/:key" component = {ResetForgotPassword} />
+        <Route exact path = "/passwort-vergessen" component = {ForgotPassword} />
+        <Route exact path = "/passwort-vergessen-zuruecksetzten/:key" component = {ResetForgotPassword} />
         <PrivateRoute path = "*" component = {NotFound} />
       </Switch>
     </HashRouter>
