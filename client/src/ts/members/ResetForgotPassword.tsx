@@ -81,7 +81,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * check if the new PW is okay: min 8 chars; mind 1 je num/a-z/A-Z
+   * Check if the new password is okay: min 8 chars; min 1 per num/a-z/A-Z
    */
   const checkNewPassword = (testString: string) => {
     const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -89,7 +89,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * new password fild
+   * New password field that checks if the new password conforms with the requirements
    */
   const getNewPasswordField = () => {
     if (!checkNewPassword(newPassword) && newPassword !== "") {
@@ -108,7 +108,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * new password field validation
+   * New password validation field that checks if both entered passwords are the same
    */
   const getNewPasswordFieldValidation = () => {
     if (newPassword === newPasswordValidation) {
@@ -127,7 +127,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * check if input is an email
+   * Check if input is an email
    */
   const emailRegexTest = (testEmail: string) => {
     const regex = /^.+@.+\..{1,6}/i;
@@ -135,7 +135,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * return a warning if it is not a valid email
+   * Return a warning if it is not a valid email
    */
   const invalidEmailWarning = () => {
     if (!emailRegexTest(email)) {
@@ -146,7 +146,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * if res is code 200
+   * If res is code 200
    */
   const resResponse200Field = () => {
     if (resResponse200) {
