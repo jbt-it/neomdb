@@ -16,7 +16,7 @@ import api from "../utils/api";
  */
 const ForgotPassword: React.FunctionComponent = () => {
   /**
-   * Function which proivdes the styles of the MenuDrawer
+   * Function which proivdes the styles of the ForgotPassword
    */
   const useStyles = makeStyles((theme) => ({
     forgotPassword: {
