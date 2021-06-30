@@ -1,6 +1,5 @@
 /**
  * Component for resetting the password by the user without the help of a admin, bofore logging in
- *
  */
 import React, { useState, useContext } from "react";
 import Paper from "@material-ui/core/Paper";
