@@ -65,7 +65,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   const [submitBoolean, setSubmitBoolean] = useState<boolean>(false);
 
   /**
-   * send the email to the backend
+   * Send the email to the backend
    */
   const sendEmailWithLink = () => {
 
@@ -81,7 +81,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * check if input is an email
+   * Check if input is an email
    */
   const emailRegexTest = (testEmail: string) => {
     const regex = /^.+@.+\..{1,6}/i;
@@ -89,7 +89,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * return a warning if it is not a valid email
+   * Return a warning if it is not a valid email
    */
   const invalidEmailWarning = () => {
     if (email !== "" && !emailRegexTest(email)) {
@@ -100,7 +100,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * the button was clicked
+   * The button was clicked and the user is informed about the action
    */
   const informationOfSubmit = () => {
     if (submitBoolean) {
