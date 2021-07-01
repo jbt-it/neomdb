@@ -4,7 +4,7 @@
 import express = require("express");
 const router = express.Router();
 
-import * as authController from "../global/authController";
+import * as authController from "../global/auth/authController";
 import * as membersController from "./membersController";
 
 router.post("/login", membersController.login);

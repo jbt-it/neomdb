@@ -5,7 +5,7 @@ import jwt = require("jsonwebtoken");
 import fs = require("fs");
 
 import {Request, Response, NextFunction} from "express";
-import * as globalTypes from "./globalTypes";
+import * as globalTypes from "./../globalTypes";
 
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
@@ -64,13 +64,13 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtData = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
     if (Number(req.params.id) === jwtData.mitgliedID ||
-       permissions.every(element => jwtData.permissions.includes(element))) {
+      permissions.every(element => jwtData.permissions.includes(element))) {
         res.locals.memberID = jwtData.mitgliedID;
         res.locals.permissions = jwtData.permissions;
         next();
-       } else {
+      } else {
         return res.status(403).send("Authorization failed: You are not permitted to do this");
-       }
+      }
   };
 };
 

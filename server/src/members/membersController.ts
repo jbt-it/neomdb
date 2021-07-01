@@ -2,7 +2,7 @@
  * Definition of the handler functions for the members module
  */
 import database = require("../database");
-import auth = require("../global/authController");
+import auth = require("../global/auth/authController");
 import bcrypt = require("bcryptjs");
 
 import { Request, Response } from "express";
