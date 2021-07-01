@@ -171,3 +171,11 @@ export const retrieveUserData = (req: Request, res: Response) => {
       res.status(500).send("Query Error");
     });
 };
+
+/**
+ * Loggs the user out by removing the jwt from the cookie
+ */
+export const logout = (req: Request, res: Response) => {
+  const token = null;
+  res.cookie("token", token, cookieOptions).status(200).send("Logout succesful!");
+};

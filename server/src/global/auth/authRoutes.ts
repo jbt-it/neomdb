@@ -13,5 +13,6 @@ router.post("/login", authController.login);
  */
 router.use(authController.protectRoutes);
 router.get("/user-data", authController.retrieveUserData);
+router.post("/logout", authController.logout);
 
 module.exports = router;
