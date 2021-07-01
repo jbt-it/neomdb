@@ -149,3 +149,25 @@ export const login = (req: Request, res: Response): void => {
       });
   }
 };
+
+/**
+ * Retrieves the data of the currently logged in user
+ */
+export const retrieveUserData = (req: Request, res: Response) => {
+
+  // Decode the JWT to access the id of the user
+  const jwtData = verifyJWT(req.cookies.token);
+  database.query(
+    `SELECT mitgliedID, name, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+    FROM mitglied
+    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+    WHERE mitgliedID = ?
+    GROUP BY mitgliedID, name`,
+    [jwtData.mitgliedID])
+    .then((result: authTypes.UserDataQueryResult[]) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.status(500).send("Query Error");
+    });
+};

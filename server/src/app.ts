@@ -28,6 +28,7 @@ app.use(cookieParser());
 /**
  * Use routes
  */
+app.use("/auth", authRoutes);
 app.use("/users", membersRoutes);
 
 export default app;
