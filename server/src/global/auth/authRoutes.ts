@@ -1,3 +1,6 @@
+/**
+ * Definition of the API routes and invocation of the correct handler function
+ */
 import express = require("express");
 const router = express.Router();
 
