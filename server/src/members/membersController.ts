@@ -85,9 +85,9 @@ export const changePassword = (req: Request, res: Response): void => {
                   res.status(500).send("Update query Error");
                 });
             })
-            .catch((error) => {
-              res.status(500).send("Internal Error");
-            });
+              .catch((error) => {
+                res.status(500).send("Internal Error");
+              });
           } else {
             res.status(401).send("The old password was not correct");
           }
@@ -191,7 +191,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 /**
  * Retrieves all current directors
  */
- export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
+export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database.query(
     `SELECT mitgliedID, vorname, nachname, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
     FROM mitglied, mitglied_has_evposten, evposten
@@ -255,7 +255,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
 /**
  * Retrieves the departments
  */
- export const retrieveDepartments = (req: Request, res: Response): void => {
+export const retrieveDepartments = (req: Request, res: Response): void => {
   database.query(
     `SELECT ressortID, bezeichnung, kuerzel
     FROM ressort
@@ -364,13 +364,32 @@ export const updateMember = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves an overview of all issued permissions
+ * Retrieves all directors and members with their permission and name 
  */
-export const retrievePermissionsList = (req: Request, res: Response): void => {
+export const retrievePermissionsOfMembers = (req: Request, res: Response): void => {
   database.query(
-    `SELECT vorname, nachname, berechtigung_berechtigungID AS permission
+    `SELECT kuerzel AS name, berechtigung_berechtigungID AS permission, canDelegate
+    FROM evposten
+    INNER JOIN evposten_has_berechtigung ON evposten.evpostenID = evposten_has_berechtigung.evposten_evpostenID
+    UNION
+    SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate
     FROM mitglied
     INNER JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+    [])
+    .then((result: membersTypes.GetPermissionsQueryResult) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error: Getting permissions failed");
+    });
+};
+
+/**
+ * Retrieves name, description and ID of all permissions
+ */
+export const retrievePermissions = (req: Request, res: Response): void => {
+  database.query(
+    `SELECT * FROM berechtigung`,
     [])
     .then((result: membersTypes.GetPermissionsQueryResult) => {
       res.status(200).json(result);
