@@ -3,9 +3,12 @@
  */
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
-
+import bcrypt = require("bcryptjs");
 import {Request, Response, NextFunction} from "express";
+import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
+import * as authTypes from "./authTypes";
+
 
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
@@ -19,6 +22,15 @@ const JWTSignOptions: jwt.SignOptions = {
 
 const JWTVerifyOptions:jwt.VerifyOptions = {
   algorithms: ["RS256"]
+};
+
+/**
+ * Options fot the cookie
+ */
+const cookieOptions = {
+  httpOnly: true, // Cookie is onyl accesible via the browser
+  secure: true, // Cookie can only be sent to an HTTPS page
+  sameSite: true // Cookie can only be sent to the same site
 };
 
 /**
@@ -46,11 +58,15 @@ export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
  * Verifies JWT and protects following routes from unauthorised access
  */
 export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  const jwtData = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
-  if (req.headers.authorization && jwtData !== null) {
-    res.locals.memberID = jwtData.mitgliedID;
-    res.locals.permissions = jwtData.permissions;
-    next();
+  if (req.cookies) {
+    const jwtData = verifyJWT(req.cookies.token);
+    if (jwtData !== null) {
+      res.locals.memberID = jwtData.mitgliedID;
+      res.locals.permissions = jwtData.permissions;
+      next();
+    } else {
+      return res.status(401).send("Authentication failed: Please log in");
+    }
   } else {
     return res.status(401).send("Authentication failed: Please log in");
   }
@@ -62,15 +78,15 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
  */
 export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const jwtData = verifyJWT(req.headers.authorization.replace("Bearer ", ""));
+    const jwtData = verifyJWT(req.cookies.token);
     if (Number(req.params.id) === jwtData.mitgliedID ||
       permissions.every(element => jwtData.permissions.includes(element))) {
-        res.locals.memberID = jwtData.mitgliedID;
-        res.locals.permissions = jwtData.permissions;
-        next();
-      } else {
-        return res.status(403).send("Authorization failed: You are not permitted to do this");
-      }
+      res.locals.memberID = jwtData.mitgliedID;
+      res.locals.permissions = jwtData.permissions;
+      next();
+    } else {
+      return res.status(403).send("Authorization failed: You are not permitted to do this");
+    }
   };
 };
 
@@ -82,11 +98,54 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
  */
 export const restrictRoutes = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const jwtDataPermissions = verifyJWT(req.headers.authorization.replace("Bearer ", "")).permissions;
-    if(permissions.every(element => jwtDataPermissions.includes(element))) {
+    const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
+    if (permissions.every(element => jwtDataPermissions.includes(element))) {
       next();
     } else {
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
   };
+};
+
+/**
+ * Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions
+ */
+export const login = (req: Request, res: Response): void => {
+  if (req.body.username === "" || req.body.password === "") {
+    res.status(401).send("Credentials incomplete");
+  } else {
+    database.query(
+      `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+    FROM mitglied
+    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+    WHERE mitglied.name = ?
+    GROUP BY mitgliedID, name`,
+      [req.body.username])
+      .then((result: authTypes.LoginQueryResult[]) => {
+        if (result.length === 0) {
+          res.status(401).send("Username or password wrong");
+        }
+        bcrypt.compare(req.body.password, result[0].passwordHash)
+          .then((match) => {
+            if (match) {
+              const payload: globalTypes.JWTPayload = {
+                mitgliedID: result[0].mitgliedID,
+                name: result[0].name,
+                permissions: result[0].permissions ?
+                  result[0].permissions.split(",").map(Number) : []
+              };
+              const token = generateJWT(payload);
+              res.cookie("token", token, cookieOptions).status(200).json(payload);
+            } else {
+              res.status(401).send("Username or password wrong");
+            }
+          })
+          .catch((err) => {
+            res.status(401).send("Username or password wrong");
+          });
+      })
+      .catch((err) => {
+        res.status(500).send("Query Error");
+      });
+  }
 };
