@@ -63,9 +63,11 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the dashboard page
    */
   const LoginRoute = ({ component: Component, ...rest }: any) => {
+    useEffect(() => checkAuth(), []);
+
     return (
       <Route {...rest} render={props => (
-        !checkAuth() ? (
+        !authenticated ? (
           <Component {...props} />
         ) : (
           <Redirect to={{ pathname: "/" }} />
