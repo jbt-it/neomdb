@@ -77,22 +77,23 @@ const Login: React.FunctionComponent = () => {
    */
   const login = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    api.post("/users/login", {
+    api.post("/auth/login", {
       username,
       password
     })
     .then((res) => {
       if (res.status === 200){
-        localStorage.setItem("token", res.data.token);
         setAuthenticated(true);
-        setUserID(JSON.parse(atob(res.data.token.split(".")[1])).mitgliedID);
-        setUserName(JSON.parse(atob(res.data.token.split(".")[1])).name);
+        setUserID(res.data.mitgliedID);
+        setUserName(res.data.name);
         history.push("/");
       } else {
+        setAuthenticated(false);
         setFailedLogin(true);
       }
     })
     .catch((error) => {
+      setAuthenticated(false);
       setFailedLogin(true);
     });
     setPassword("");
