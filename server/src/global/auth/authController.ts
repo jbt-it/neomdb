@@ -4,7 +4,7 @@
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
 import bcrypt = require("bcryptjs");
-import {Request, Response, NextFunction} from "express";
+import { Request, Response, NextFunction } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
@@ -16,11 +16,11 @@ const JWTKeys = {
 };
 
 const JWTSignOptions: jwt.SignOptions = {
-  expiresIn: 60*60, // Expires in 1 hour
+  expiresIn: 60 * 60, // Expires in 1 hour
   algorithm: "RS256"
 };
 
-const JWTVerifyOptions:jwt.VerifyOptions = {
+const JWTVerifyOptions: jwt.VerifyOptions = {
   algorithms: ["RS256"]
 };
 
