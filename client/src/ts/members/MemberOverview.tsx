@@ -29,6 +29,8 @@ import {
 } from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
+import { AuthContext } from "../global/AuthContext";
+import { useContext } from "react";
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -165,6 +167,9 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
+  const [authenticated, setAuthenticated,
+        userID, setUserID, userName, setUserName] = useContext(AuthContext);
+
   // Retrieves the members
   const getMembers: VoidFunction = () => {
     // Variable for checking, if the component is mounted
@@ -177,8 +182,11 @@ const MemberOverview: React.FunctionComponent = () => {
         if(mounted) {
           setMembers(res.data);
         }
+      } else if (res.status === 401){
+        setAuthenticated(false);
       }
     }).catch((error) => {
+      setAuthenticated(false);
       console.log(error);
     });
 
