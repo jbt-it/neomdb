@@ -16,7 +16,7 @@ const JWTKeys = {
 };
 
 const JWTSignOptions: jwt.SignOptions = {
-  expiresIn: 60 * 60, // Expires in 1 hour
+  expiresIn: 60 * 60 * 10, // Expires in 10 hours
   algorithm: "RS256"
 };
 
