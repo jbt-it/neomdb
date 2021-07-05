@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
-import {AuthContext} from "../global/AuthContext";
+import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";
@@ -44,13 +44,13 @@ const App: React.FunctionComponent = () => {
    * Renders the specified component if the user is authenticated otherwise
    * the user gets redirected to the login page
    */
-  const PrivateRoute = ({component: Component, ...rest}: any) => {
+  const PrivateRoute = ({ component: Component, ...rest }: any) => {
     useEffect(() => checkAuth(), []);
 
-    return(
-      <Route {...rest} render = {props => (
+    return (
+      <Route {...rest} render={props => (
         authenticated ? (
-          <Component {...props}/>
+          <Component {...props} />
         ) : (
           <Redirect to={{ pathname: "/login" }} />
         )
