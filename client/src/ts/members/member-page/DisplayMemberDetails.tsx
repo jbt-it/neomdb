@@ -2013,7 +2013,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                     payload: { index, value: newValue }
                                   }
                                 );
-                              } else if (newValue && newValue.inputValue || newValue) {
+                              } else if ((newValue && newValue.inputValue) || newValue) {
                                 dispatchLanguages(
                                   {
                                     type: languagesReducerActionType.addNewLanguageWithValueAsObject,
@@ -2123,7 +2123,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                     payload: { index, value: newValue }
                                   }
                                 );
-                              } else if (newValue && newValue.inputValue || newValue) {
+                              } else if ((newValue && newValue.inputValue) || newValue) {
                                 dispatchEdvSkills(
                                   {
                                     type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject,
