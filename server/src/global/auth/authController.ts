@@ -25,10 +25,10 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
 };
 
 /**
- * Options fot the cookie
+ * Options for the cookie
  */
 const cookieOptions = {
-  httpOnly: true, // Cookie is onyl accesible via the browser
+  httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
   sameSite: true // Cookie can only be sent to the same site
 };
@@ -116,10 +116,10 @@ export const login = (req: Request, res: Response): void => {
   } else {
     database.query(
       `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
-    FROM mitglied
-    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
-    WHERE mitglied.name = ?
-    GROUP BY mitgliedID, name`,
+        FROM mitglied
+        LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+        WHERE mitglied.name = ?
+        GROUP BY mitgliedID, name`,
       [req.body.username])
       .then((result: authTypes.LoginQueryResult[]) => {
         if (result.length === 0) {
@@ -159,10 +159,10 @@ export const retrieveUserData = (req: Request, res: Response) => {
   const jwtData = verifyJWT(req.cookies.token);
   database.query(
     `SELECT mitgliedID, name, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
-    FROM mitglied
-    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
-    WHERE mitgliedID = ?
-    GROUP BY mitgliedID, name`,
+      FROM mitglied
+      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+      WHERE mitgliedID = ?
+      GROUP BY mitgliedID, name`,
     [jwtData.mitgliedID])
     .then((result: authTypes.UserDataQueryResult[]) => {
       res.status(200).json(result);

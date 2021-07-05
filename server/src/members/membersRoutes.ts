@@ -8,7 +8,7 @@ import * as authController from "../global/auth/authController";
 import * as membersController from "./membersController";
 
 /**
- * =======>>> ALL routes after this point are accessible for loged in users only <<<=======
+ * =======>>> ALL routes after this point are accessible for logged in users only <<<=======
  */
 router.use(authController.protectRoutes);
 router.get("/", membersController.retrieveMemberList);
