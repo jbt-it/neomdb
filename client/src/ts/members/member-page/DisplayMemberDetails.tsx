@@ -841,7 +841,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     };
 
   /**
-   * Handles the closing of the general infromation dialog
+   * Handles the closing of the general information dialog
    * @param event FormEvent
    */
   const handleGeneralInfoDialogClose: VoidFunction = () => {
@@ -999,8 +999,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div>
                 {
-                /*When the user is owner or has the permission to
-                   manage all members they can edit this section*/
+                  /*When the user is owner or has the permission to
+                     manage all members they can edit this section*/
                   props.isOwner || permissionList.includes(1) ? (
                     <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                       <Edit fontSize="inherit" />
