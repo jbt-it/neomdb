@@ -999,8 +999,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div>
                 {
-                  /*When the user is owner or has the permission to
-                     manage all members they can edit this section*/
+                  /* When the user is owner or has the permission to
+                      manage all members they can edit this section */
                   props.isOwner || permissionList.includes(1) ? (
                     <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                       <Edit fontSize="inherit" />
@@ -1155,8 +1155,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div onClick={(event) => handleClubInfoDialogOpen(event)}>
                 {
-                  /*When the user has the permission to
-                  manage all members they can edit this section*/
+                  /* When the user has the permission to
+                    manage all members they can edit this section */
                   permissionList.includes(1) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -1246,8 +1246,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </div>
               <div onClick={(event) => handleStudyInfoDialogOpen(event)}>
                 {
-                  /*When the user is owner or has the permission to
-                  manage all members they can edit this section*/
+                  /* When the user is owner or has the permission to
+                    manage all members they can edit this section */
                   props.isOwner ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -1291,7 +1291,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   {transformSQLStringToGermanDate(memberDetails.studienende)}
                 </Typography>
               </div>
-              {/* speciality  is not correct */}
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>
                   Vertiefungen:&nbsp;&nbsp;
@@ -1327,8 +1326,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 </div>
                 <div onClick={(event) => handlePaymentInfoDialogOpen(event)}>
                   {
-                    /*When the user is owner or has the permission to manage all
-                    members they can edit this section*/
+                    /* When the user is owner or has the permission to manage all
+                      members they can edit this section */
                     props.isOwner ? (
                       <IconButton>
                         <Edit fontSize="inherit" />
@@ -1395,8 +1394,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 onClick={(event) => handleQualificationInfoDialogOpen(event)}
               >
                 {
-                  /*When the user is owner or has the permission to manage all
-                  members they can edit this section*/
+                  /* When the user is owner or has the permission to manage all
+                    members they can edit this section */
                   props.isOwner ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
@@ -2024,6 +2023,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             }}
                             filterOptions={(options, params) => {
                               const filtered = langFilter(options, params);
+
                               // Suggest the creation of a new value
                               if (params.inputValue !== "") {
                                 filtered.push({
@@ -2134,6 +2134,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             }}
                             filterOptions={(options, params) => {
                               const filtered = edvFilter(options, params);
+
                               // Suggest the creation of a new value
                               if (params.inputValue !== "") {
                                 filtered.push({
