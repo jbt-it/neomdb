@@ -180,7 +180,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         break;
       }
       case "Meine Funktionen": {
-        if (activeNavLink === "user-change-password" || activeNavLink === "/meine-funktionen") {
+        if (activeNavLink === "/user-change-password" || activeNavLink === "/meine-funktionen" || activeNavLink === `/gesamtuebersicht/${userID}`) {
           return classes.drawerListItemActive;
         }
       }
@@ -304,7 +304,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         </ListItem>
         <Collapse in={myFunctionsOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <NavLink exact to="/meine-funktionen" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
+            <NavLink exact to={`/gesamtuebersicht/${userID}`} className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Meine Seite" />
               </ListItem>
