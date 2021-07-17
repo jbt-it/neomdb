@@ -364,7 +364,7 @@ export const updateMember = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves all directors and members with their permission and name 
+ * Retrieves all directors and members with their permission and name
  */
 export const retrievePermissionsOfMembers = (req: Request, res: Response): void => {
   database.query(
