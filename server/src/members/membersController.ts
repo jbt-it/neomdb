@@ -70,21 +70,22 @@ export const changePassword = (req: Request, res: Response): void => {
       bcrypt.compare(req.body.oldPassword, result[0].passwordHash)
         .then((match) => {
           if (match) {
-            bcrypt.hash(req.body.newPassword, 10).then((hash) => {
-              // Store hash in your password DB
-              database.query(
-                `UPDATE mitglied
-                SET passwordHash = ?
-                WHERE mitglied.name = ?
-                AND mitglied.mitgliedID = ?`,
-                [hash, req.body.userName, req.body.userID])
-                .then(() => {
-                  res.status(200).send("The new password has been saved");
-                })
-                .catch(() => {
-                  res.status(500).send("Update query Error");
-                });
-            })
+            bcrypt.hash(req.body.newPassword, 10)
+              .then((hash) => {
+                // Store hash in your password DB
+                database.query(
+                  `UPDATE mitglied
+                  SET passwordHash = ?
+                  WHERE mitglied.name = ?
+                  AND mitglied.mitgliedID = ?`,
+                  [hash, req.body.userName, req.body.userID])
+                  .then(() => {
+                    res.status(200).send("The new password has been saved");
+                  })
+                  .catch(() => {
+                    res.status(500).send("Update query Error");
+                  });
+              })
               .catch((error) => {
                 res.status(500).send("Internal Error");
               });
