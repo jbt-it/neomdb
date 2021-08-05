@@ -30,7 +30,8 @@ router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), members
  */
 router.use(authController.restrictRoutes([1]));
 router.post("/", membersController.createMember);
-router.get("/permissions", membersController.retrievePermissionsList);
+router.get("/permissions-of-members", membersController.retrievePermissionsOfMembers);
+router.get("/permissions", membersController.retrievePermissions);
 router.post("/permissions", membersController.createPermission);
 router.delete("/permissions", membersController.deletePermission);
 
