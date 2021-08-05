@@ -99,7 +99,7 @@ const Login: React.FunctionComponent = () => {
     setPassword("");
   };
 
-  /*
+  /**
    * Gets the password correct state of the password field, depending on if a previous login attempt failed
    */
   const getPasswordField: VoidFunction = () => {

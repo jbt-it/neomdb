@@ -1,5 +1,5 @@
 /**
- * Definition of used types within the users module
+ * Definition of used types within the auth module
  */
 
 /**
