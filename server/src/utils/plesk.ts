@@ -44,7 +44,7 @@ const connectionConfig = {
         password: PLESK_PASSWORD
     },
 
-    // Makes it possible to get access plesk without providing https certificates
+    // Makes it possible to access plesk without providing https certificates
     httpsAgent: new https.Agent({
         rejectUnauthorized: false
     })
