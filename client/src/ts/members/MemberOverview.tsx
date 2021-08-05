@@ -32,6 +32,7 @@ import {
 } from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
+import * as membersTypes from "./membersTypes"
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -140,27 +141,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 /**
- * Interface for the member object
- */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  ressort: string;
-  lastchange: string;
-}
-
-/**
  * Depicts a table with all members and a filter section to filter the members
  */
 const MemberOverview: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -226,7 +213,7 @@ const MemberOverview: React.FunctionComponent = () => {
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = ():Member[] => {
+  const getFilteredAndSortedMembers = ():membersTypes.Member[] => {
     let filteredMembers = members;
 
     // Filters by status

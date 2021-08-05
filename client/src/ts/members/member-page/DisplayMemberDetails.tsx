@@ -30,6 +30,7 @@ import {
   transformGermanDateToSQLString,
   transformStringToSQLString,
 } from "../../utils/dateUtils";
+import * as membersTypes from "../membersTypes";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -173,145 +174,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Interface for the language
- */
-interface LanguageOfMember {
-  wert: string;
-  niveau: string;
-}
-
-/**
- * Interface for the edv skill
- */
-interface EDVSkillOfMember {
-  wert: string;
-  niveau: string;
-}
-
-/**
- * Interface for a language
- * inputValue is an additional (optional) attribute which is needed for the Automplece Component
- * It is only used for filtering
- */
-interface Language {
-  inputValue?: string;
-  wert: string;
-}
-
-/**
- * Interface for an edv skill
- * inputValue is an additional (optional) attribute which is needed for the Automplece Component
- * It is only used for filtering
- */
-interface EDVSkill {
-  inputValue?: string;
-  wert: string;
-}
-
-/**
- * Interface for the department
- */
-interface Department {
-  ressortID: number;
-  bezeichnung: string;
-  kuerzel: string;
-}
-
-/**
- * Interface for mentor
- */
-interface Mentor {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
-}
-
-/**
- * Interface for mentee
- */
-interface Mentee {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
-}
-
-/**
- * Interface for the member
- */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  jbt_email: string;
-  ressort: string;
-  mitgliedstatus: string;
-}
-
-/**
- * Interface for the member object
- */
-interface MemberDetails {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  geschlecht: string;
-  geburtsdatum: string | null;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
-  mentor: Mentor | null;
-  trainee_seit: string | null;
-  mitglied_seit: string | null;
-  alumnus_seit: string | null;
-  senior_seit: string | null;
-  aktiv_seit: string | null;
-  passiv_seit: string | null;
-  ausgetreten_seit: string | null;
-  ressort: string | null;
-  arbeitgeber: string | null;
-  strasse1: string;
-  plz1: number;
-  ort1: string;
-  tel1: number;
-  email1: string;
-  strasse2: string | null;
-  plz2: number | null;
-  ort2: string | null;
-  tel2: number | null;
-  email2: string | null;
-  hochschule: string;
-  studiengang: string;
-  studienbeginn: string | null;
-  studienende: string | null;
-  vertiefungen: string | null;
-  ausbildung: string | null;
-  kontoinhaber: string;
-  iban: string;
-  bic: string;
-  engagement: string | null;
-  canPL: string | null;
-  canQM: string | null;
-  lastchange: string;
-  fuehrerschein: boolean;
-  ersthelferausbildung: boolean;
-  sprachen: LanguageOfMember[];
-  mentees: Mentee[];
-  edvkenntnisse: EDVSkillOfMember[];
-}
-
-/**
  * Interface for the props of the DisplayMemberDetails
  */
 interface DisplayMemberDetailsProps {
-  members: Member[];
-  departments: Department[];
-  listOfLanguages: Language[];
-  listOfEDVSkills: EDVSkill[];
-  memberDetails: MemberDetails;
+  members: membersTypes.Member[];
+  departments: membersTypes.Department[];
+  listOfLanguages: membersTypes.Language[];
+  listOfEDVSkills: membersTypes.EDVSkill[];
+  memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
-  updateMemberDetails: (data: MemberDetails) => void;
+  updateMemberDetails: (data: membersTypes.MemberDetails) => void;
   getMemberDetails: () => void;
 }
 
@@ -324,10 +196,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const classes = useStyles();
 
   // Filter of languages for the autocomplete component
-  const langFilter = createFilterOptions<Language>();
+  const langFilter = createFilterOptions<membersTypes.Language>();
 
   // Filter of languages for the autocomplete component
-  const edvFilter = createFilterOptions<EDVSkill>();
+  const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
   const permissionList: number[] = [];
   const { members } = props;
@@ -350,7 +222,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     memberDetails.mitgliedstatus
   );
   const [department, setDepartment] = useState<string | null>(memberDetails.ressort);
-  const [mentorState, setMentorState] = useState<Mentor | null>(
+  const [mentorState, setMentorState] = useState<membersTypes.Mentor | null>(
     memberDetails.mentor ? memberDetails.mentor : null
   );
   const [employer, setEmployer] = useState<string>(
@@ -440,7 +312,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   );
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
-  const [menteeList] = useState<Mentee[]>(memberDetails.mentees);
+  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails.mentees);
 
   /**
    * Enum for the differents types of actions for the languages reducer function
@@ -481,7 +353,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       type: languagesReducerActionType.addNewLanguageWithValueAsObject;
       payload: {
         index: number;
-        lang: Language;
+        lang: membersTypes.Language;
       };
     }
     | {
@@ -501,7 +373,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     | {
       type: languagesReducerActionType.deleteLanguage;
       payload: {
-        lang: Language;
+        lang: membersTypes.Language;
       };
     }
     | {
@@ -514,7 +386,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param value the new value that should be inserted
    * @returns true it there would be a duplicate
    */
-  const checkLanguagesForDuplicates = (list: LanguageOfMember[], value: string) => {
+  const checkLanguagesForDuplicates = (list: membersTypes.LanguageOfMember[], value: string) => {
     return list.filter((language) => (language.wert === value)).length !== 0;
   };
 
@@ -526,7 +398,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param typeOfValue specifies which type the value is and what attribute of language should be updated
    * @returns An updated list of languages
    */
-  const updateLanguages = (list: LanguageOfMember[], index: number, value: string, typeOfValue: string) => {
+  const updateLanguages = (list: membersTypes.LanguageOfMember[], index: number, value: string, typeOfValue: string) => {
 
     // Creates a copy of the current list of languages
     const newList = [...list];
@@ -534,7 +406,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       case "WERT": {
 
         // Updates the language
-        const updatedLanguage: LanguageOfMember =
+        const updatedLanguage: membersTypes.LanguageOfMember =
           { ...list[index], wert: value };
         newList[index] = updatedLanguage;
         return newList;
@@ -542,7 +414,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       case "NIVEAU": {
 
         // Updates the language
-        const updatedLanguage: LanguageOfMember =
+        const updatedLanguage: membersTypes.LanguageOfMember =
           { ...list[index], niveau: value };
         newList[index] = updatedLanguage;
         return newList;
@@ -559,7 +431,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param action the action that should be performed
    * @returns the new state of the languages
    */
-  const languagesReducer = (state: LanguageOfMember[], action: languagesReducerAction) => {
+  const languagesReducer = (state: membersTypes.LanguageOfMember[], action: languagesReducerAction) => {
     switch (action.type) {
       case languagesReducerActionType.addNewLanguageWithValueAsString: {
         if (checkLanguagesForDuplicates(state, action.payload.value)) {
@@ -637,7 +509,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject;
       payload: {
         index: number;
-        edvSkill: EDVSkill;
+        edvSkill: membersTypes.EDVSkill;
       };
     }
     | {
@@ -657,7 +529,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     | {
       type: edvSkillsReducerActionType.deleteEdvSkill;
       payload: {
-        edvSkill: EDVSkill;
+        edvSkill: membersTypes.EDVSkill;
       };
     }
     | {
@@ -670,7 +542,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param value the new value that should be inserted
    * @returns true it there would be a duplicate
    */
-  const checkEdvSkillsForDuplicates = (list: EDVSkillOfMember[], value: string) => {
+  const checkEdvSkillsForDuplicates = (list: membersTypes.EDVSkillOfMember[], value: string) => {
     return list.filter((edvSkill) => (edvSkill.wert === value)).length !== 0;
   };
 
@@ -682,7 +554,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param typeOfValue specifies which type the value is and what attribute of edv skill should be updated
    * @returns An updated list of languages
    */
-  const updateEdvSkills = (list: EDVSkillOfMember[], index: number, value: string, typeOfValue: string) => {
+  const updateEdvSkills = (list: membersTypes.EDVSkillOfMember[], index: number, value: string, typeOfValue: string) => {
 
     // Creates a copy of the current list of languages
     const newList = [...list];
@@ -690,7 +562,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       case "WERT": {
 
         // Updates the language
-        const updatedEdvSkill: EDVSkillOfMember =
+        const updatedEdvSkill: membersTypes.EDVSkillOfMember =
           { ...list[index], wert: value };
         newList[index] = updatedEdvSkill;
         return newList;
@@ -698,7 +570,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       case "NIVEAU": {
 
         // Updates the language
-        const updatedEdvSkill: EDVSkillOfMember =
+        const updatedEdvSkill: membersTypes.EDVSkillOfMember =
           { ...list[index], niveau: value };
         newList[index] = updatedEdvSkill;
         return newList;
@@ -715,7 +587,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param action the action that should be performed
    * @returns the new state of the edvSkills
    */
-  const edvSkillsReducer = (state: EDVSkillOfMember[], action: edvSkillsReducerAction) => {
+  const edvSkillsReducer = (state: membersTypes.EDVSkillOfMember[], action: edvSkillsReducerAction) => {
     switch (action.type) {
       case edvSkillsReducerActionType.addNewEdvSkillWithValueAsString: {
         if (checkEdvSkillsForDuplicates(state, action.payload.value)) {
