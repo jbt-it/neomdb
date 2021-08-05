@@ -9,7 +9,6 @@ import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
 
-
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
   private: fs.readFileSync(process.env.JWT_PRIVATE)
@@ -108,6 +107,20 @@ export const restrictRoutes = (permissions: number[]) => {
 };
 
 /**
+ * Sleeps randomly between a given minimum and maximum of miliseconds
+ * @param minMiliSec Minimum of miliseconds
+ * @param maxMiliSec Maximum of miliseconds
+ */
+const sleepRandomly = (minMiliSec, maxMiliSec) => {
+  const randomMiliSec = Math.floor(Math.random() * (maxMiliSec - minMiliSec)) + minMiliSec;
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < randomMiliSec);
+};
+
+/**
  * Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions
  */
 export const login = (req: Request, res: Response): void => {
@@ -123,7 +136,11 @@ export const login = (req: Request, res: Response): void => {
       [req.body.username])
       .then((result: authTypes.LoginQueryResult[]) => {
         if (result.length === 0) {
+
+          // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
+          sleepRandomly(50,110);
           res.status(401).send("Username or password wrong");
+          return;
         }
         bcrypt.compare(req.body.password, result[0].passwordHash)
           .then((match) => {
