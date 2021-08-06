@@ -16,14 +16,14 @@ router.use(authController.protectRoutes);
 
 //  =======>>> Get routes <<<=======
 router.get("/", membersController.retrieveMemberList);
-router.get("/directors", membersController.retrieveDirectors);
 router.get("/current-directors", membersController.retrieveCurrentDirectors);
-router.get("/department-members", membersController.retrieveDepartmentMembers);
 router.get("/departments", membersController.retrieveDepartments);
-router.get("/languages", membersController.retrieveLanguages);
+router.get("/department-members", membersController.retrieveDepartmentMembers);
+router.get("/directors", membersController.retrieveDirectors);
 router.get("/edv-skills", membersController.retrieveEDVSkills);
-router.get("/permissions-of-members", authController.restrictRoutes([1]), membersController.retrievePermissionsOfMembers);
+router.get("/languages", membersController.retrieveLanguages);
 router.get("/permissions", authController.restrictRoutes([1]), membersController.retrievePermissions);
+router.get("/permissions-of-members", authController.restrictRoutes([1]), membersController.retrievePermissionsOfMembers);
 router.get("/:id", membersController.retrieveMember);
 
 //  =======>>> Post routes <<<=======
