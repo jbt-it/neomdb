@@ -136,3 +136,135 @@ export type MemberDetails = {
     mentees: Mentee[];
     edvkenntnisse: EDVSkillOfMember[];
 };
+
+/**
+ * Enum for the differents types of actions for the languages reducer function
+ */
+export enum languagesReducerActionType {
+
+    /**
+     * Action type for adding the value of a language in string format
+     */
+    addNewLanguageWithValueAsString = "ADD-NEW-LANGUAGE-WITH-VALUE-AS-STRING",
+
+    /**
+     * Action type for adding the value of a language in an object format
+     */
+    addNewLanguageWithValueAsObject = "ADD-NEW-LANGUAGE-WITH-VALUE-AS-OBJECT",
+
+    /**
+     * Action type for adding the niveau of a language
+     */
+    addNewLanguageWithNiveau = "ADD-NEW-LANGUAGE-WITH-NIVEAU",
+
+    /**
+     * Action type for adding an empty language (with empty value and niveau fields)
+     */
+    addEmptyLanguage = "ADD-EMPTY-LANGUAGE",
+
+    /**
+     * Action type for deleting a language
+     */
+    deleteLanguage = "DELETE-LANGUAGE",
+}
+
+/**
+ * Type of the different actions for the languages
+ */
+export type languagesReducerAction =
+    | {
+        type: languagesReducerActionType.addNewLanguageWithValueAsObject;
+        payload: {
+            index: number;
+            lang: Language;
+        };
+    }
+    | {
+        type: languagesReducerActionType.addNewLanguageWithValueAsString;
+        payload: {
+            index: number;
+            value: string;
+        };
+    }
+    | {
+        type: languagesReducerActionType.addNewLanguageWithNiveau;
+        payload: {
+            index: number;
+            niveau: string;
+        };
+    }
+    | {
+        type: languagesReducerActionType.deleteLanguage;
+        payload: {
+            lang: Language;
+        };
+    }
+    | {
+        type: languagesReducerActionType.addEmptyLanguage;
+    };
+
+/**
+   * Enum for the differents types of actions for the edv skills reducer function
+   */
+export enum edvSkillsReducerActionType {
+
+    /**
+     * Action type for adding the value of an edv skill in string format
+     */
+    addNewEdvSkillWithValueAsString = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-STRING",
+
+    /**
+     * Action type for adding the value of an edv skill in an object format
+     */
+    addNewEdvSkillWithValueAsObject = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-OBJECT",
+
+    /**
+     * Action type for adding the niveau of an edv skill
+     */
+    addNewEdvSkillWithNiveau = "ADD-NEW-EDV-SKILL-WITH-NIVEAU",
+
+    /**
+     * Action type for adding an empty edv skill (with empty value and niveau fields)
+     */
+    addEmptyEdvSkill = "ADD-EMPTY-EDV-SKILL",
+
+    /**
+     * Action type for deleting an edv skill
+     */
+    deleteEdvSkill = "DELETE-EDV-SKILL",
+}
+
+/**
+ * Type of the different actions for the edv skills
+ */
+export type edvSkillsReducerAction =
+    | {
+        type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject;
+        payload: {
+            index: number;
+            edvSkill: EDVSkill;
+        };
+    }
+    | {
+        type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsString;
+        payload: {
+            index: number;
+            value: string;
+        };
+    }
+    | {
+        type: edvSkillsReducerActionType.addNewEdvSkillWithNiveau;
+        payload: {
+            index: number;
+            niveau: string;
+        };
+    }
+    | {
+        type: edvSkillsReducerActionType.deleteEdvSkill;
+        payload: {
+            edvSkill: EDVSkill;
+        };
+    }
+    | {
+        type: edvSkillsReducerActionType.addEmptyEdvSkill;
+    };
