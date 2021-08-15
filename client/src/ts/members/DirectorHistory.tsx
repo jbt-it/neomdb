@@ -29,6 +29,7 @@ import {
 } from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
+import {transformSQLStringToGermanDate} from "../utils/dateUtils";
 
 /**
  * Function which proivdes the styles of the DirectorHistory
@@ -408,8 +409,8 @@ const DirectorHistory: React.FunctionComponent = () => {
                   </TableCell>
                   
                   <TableCell>{director.kuerzel}</TableCell>
-                  <TableCell>{director.von}</TableCell>
-                  {<TableCell>{director.bis}</TableCell>}
+                  <TableCell>{transformSQLStringToGermanDate(director.von)}</TableCell>
+                  {<TableCell>{transformSQLStringToGermanDate(director.bis)}</TableCell>}
                 </TableRow>
                   ))}
             </TableBody>
