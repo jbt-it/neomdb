@@ -22,7 +22,7 @@ export type GetMembersQueryResult = {
  * Type of query results of all directors retrieval.
  */
 export type GetDirectorsQueryResult = {
-  mitgleidID: number;
+  mitgliedID: number;
   vorname: string;
   nachname: string;
   geschlecht: string;
