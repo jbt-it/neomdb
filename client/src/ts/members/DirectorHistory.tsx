@@ -30,6 +30,8 @@ import {
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
 import {transformSQLStringToGermanDate} from "../utils/dateUtils";
+import CustomSnackbar from "../global/CustomSnackbar";
+import {NavLink} from "react-router-dom";
 
 /**
  * Function which proivdes the styles of the DirectorHistory
@@ -149,15 +151,12 @@ interface Director {
  */
 const DirectorHistory: React.FunctionComponent = () => {
   const classes = useStyles();
-
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [directors, setdirectors] = useState<Director[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
-  const [sortOption, setSortOption] = useState<string>("");
-
   const [nameSort, setNameSort] = useState<string>("");
+  const [errorOpen, setErrorOpen] = useState<number>(0);
 
   // Retrieves the directors
   const getdirectors: VoidFunction = () => {
@@ -173,13 +172,13 @@ const DirectorHistory: React.FunctionComponent = () => {
         }
       }
     }).catch((error) => {
-      console.log(error);
+      setErrorOpen(errorOpen + 1);
     });
 
     // Clean-up function
     return () => {mounted = false;};
   };
-
+  useEffect(() => setErrorOpen(0), []);
   useEffect(() => getdirectors(), []);
 
   /**
@@ -191,27 +190,11 @@ const DirectorHistory: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the status filter input
-   * @param event
-   */
-  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setStatusFilter(event.target.value);
-  };
-
-  /**
    * Handles the change event on the kuerzel filter input
    * @param event
    */
   const handlekuerzelChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setkuerzelFilter(event.target.value);
-  };
-
-  /**
-   * Handles the change event on the sort input
-   * @param event
-   */
-  const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setSortOption(event.target.value);
   };
 
   /**
@@ -235,7 +218,6 @@ const DirectorHistory: React.FunctionComponent = () => {
         director.nachname.toLowerCase().includes(searchFilter.toLowerCase()) 
       );
     });
-
     let sorteddirectors = filtereddirectors;
 
     // Sorts by lastname in ascending alphabetical order
@@ -299,7 +281,6 @@ const DirectorHistory: React.FunctionComponent = () => {
   // The additional filters
   const additionalFilters = (
     <div>
-     
       <Grid item xs={6} sm={3} className={classes.kuerzelFilterAdditional}>
         <TextField
           label="kuerzel"
@@ -319,7 +300,6 @@ const DirectorHistory: React.FunctionComponent = () => {
           <MenuItem value={"IT"}>IT</MenuItem>
         </TextField>
       </Grid>
-     
     </div>
   );
 
@@ -359,7 +339,6 @@ const DirectorHistory: React.FunctionComponent = () => {
             </TextField>
           </Grid>
         </Grid>
-          
         </form>
         {additionalFiltersState ? additionalFilters : null}
         <div className={classes.amountOfEntries}>
@@ -405,9 +384,8 @@ const DirectorHistory: React.FunctionComponent = () => {
                     component="th"
                     scope="row"
                   >
-                    {`${director.vorname} ${director.nachname}`}
+                    <NavLink to={`/gesamtuebersicht/${director.mitgliedID}`}>{`${director.vorname} ${director.nachname}`}</NavLink>
                   </TableCell>
-                  
                   <TableCell>{director.kuerzel}</TableCell>
                   <TableCell>{transformSQLStringToGermanDate(director.von)}</TableCell>
                   {<TableCell>{transformSQLStringToGermanDate(director.bis)}</TableCell>}
@@ -418,6 +396,7 @@ const DirectorHistory: React.FunctionComponent = () => {
         </TableContainer>
         </div>
         <PageBar pageTitle="Ewige EV-Liste" />
+      {errorOpen ? <CustomSnackbar snackbarMessage="Internal Server Error" snackProps={{ variant: "error" }} /> : null}
     </div>
   );
 };
