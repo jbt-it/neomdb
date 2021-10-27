@@ -309,7 +309,7 @@ const DirectorHistory: React.FunctionComponent = () => {
           <Grid container spacing={8}>
             <Grid item xs={6} sm={3}>
               <TextField
-                label="Name/Mail/..."
+                label="Name"
                 className={classes.filterElement}
                 color="primary"
                 onChange={handleSearchInput}
