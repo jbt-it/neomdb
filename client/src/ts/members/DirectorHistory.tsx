@@ -1,5 +1,5 @@
 /**
- * The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
+ *The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
  */
 
  import React, {
