@@ -202,7 +202,6 @@ const DirectorHistory: React.FunctionComponent = () => {
   const getFilteredandSortedDirectors = ():Director[] => {
     let filtereddirectors = directors;
 
-
     // Filters by kuerzel
     if (kuerzelFilter !== "") {
       filtereddirectors = filtereddirectors.filter(director => {
