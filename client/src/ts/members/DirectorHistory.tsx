@@ -16,7 +16,6 @@ import {
   TableRow,
   TextField,
   MenuItem,
-  IconButton,
   Grid,
   createStyles,
   Theme,
