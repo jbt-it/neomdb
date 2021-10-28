@@ -93,7 +93,8 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/user-change-password" component = {ChangePassword} />
         <PrivateRoute exact path = "/" component = {Dashboard} />
         <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
-        <PrivateRoute exact path = "/vorstand" component = {DirectorHistory} />
+        <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
+        <PrivateRoute exact path = "/ewigervorstand" component = {DirectorHistory} />
         <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
         <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
         <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />
