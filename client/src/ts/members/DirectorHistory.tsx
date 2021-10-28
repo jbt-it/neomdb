@@ -1,8 +1,8 @@
 /**
- *The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
+ * The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
  */
 
- import React, {
+import React, {
   useState,
   useEffect
 } from "react";
