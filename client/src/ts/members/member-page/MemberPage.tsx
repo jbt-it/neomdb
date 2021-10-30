@@ -10,6 +10,7 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { AuthContext } from "../../global/AuthContext";
 import PageBar from "../../global/navigation/PageBar";
 import CustomSnackbar from "../../global/CustomSnackbar";
+import * as membersTypes from "../membersTypes"
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -34,129 +35,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 /**
- * Interface for the language of a specific member
- */
-interface LanguageOfMember {
-  wert: string;
-  niveau: string;
-}
-
-/**
- * Interface for the edv skill
- */
-interface EDVSkillOfMember {
-  wert: string;
-  niveau: string;
-}
-
-/**
- * Interface for a language
- */
-interface Language {
-  wert: string;
-}
-
-/**
- * Interface for an edv skill
- */
-interface EDVSkill {
-  wert: string;
-}
-
-/**
- * Interface for the department
- */
-interface Department {
-  ressortID: number;
-  bezeichnung: string;
-  kuerzel: string;
-}
-
-/**
- * Interface for mentor
- */
-interface Mentor {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
-}
-
-/**
- * Interface for mentee
- */
-interface Mentee {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
-}
-
-/**
- * Interface for the member
- */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  jbt_email: string;
-  ressort: string;
-  mitgliedstatus: string;
-}
-
-/**
- * Interface for the member details object
- */
-interface MemberDetails {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  geschlecht: string;
-  geburtsdatum: string | null;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
-  mentor: Mentor | null;
-  trainee_seit: string | null;
-  mitglied_seit: string | null;
-  alumnus_seit: string | null;
-  senior_seit: string | null;
-  aktiv_seit: string | null;
-  passiv_seit: string | null;
-  ausgetreten_seit: string | null;
-  ressort: string | null;
-  arbeitgeber: string | null;
-  strasse1: string;
-  plz1: number;
-  ort1: string;
-  tel1: number;
-  email1: string;
-  strasse2: string | null;
-  plz2: number | null;
-  ort2: string | null;
-  tel2: number | null;
-  email2: string | null;
-  hochschule: string;
-  studiengang: string;
-  studienbeginn: string | null;
-  studienende: string | null;
-  vertiefungen: string | null;
-  ausbildung: string | null;
-  kontoinhaber: string;
-  iban: string;
-  bic: string;
-  engagement: string | null;
-  canPL: string | null;
-  canQM: string | null;
-  lastchange: string;
-  fuehrerschein: boolean;
-  ersthelferausbildung: boolean;
-  sprachen: LanguageOfMember[];
-  mentees: Mentee[];
-  edvkenntnisse: EDVSkillOfMember[];
-}
-
-/**
  * Interface for the match parameter of the router
  */
 interface RouterMatch {
@@ -169,13 +47,13 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   const classes = useStyles();
   const [successOpen, setSuccessOpen] = useState<number>(0);
   const [errorOpen, setErrorOpen] = useState<number>(0);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [authenticated, setAuthenticated,
     userID, setUserID, userName, setUserName] = useContext(AuthContext);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [edvSkills, setEdvSkills] = useState<EDVSkill[]>([]);
-  const [memberDetails, setMembersDetails] = useState<MemberDetails>();
+  const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
+  const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
+  const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
+  const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   /**
@@ -302,7 +180,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   /**
    * Updates the member details
    */
-  const updateMemberDetails = (data: MemberDetails) => {
+  const updateMemberDetails = (data: membersTypes.MemberDetails) => {
 
     // Variable for checking, if the component is mounted
     let mounted = true;
