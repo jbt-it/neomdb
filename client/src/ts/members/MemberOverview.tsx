@@ -2,7 +2,7 @@
  * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Paper,
@@ -160,7 +160,7 @@ const MemberOverview: React.FunctionComponent = () => {
   ] = useContext(AuthContext);
 
   // Retrieves the members
-  const getMembers: VoidFunction = () => {
+  const getMembers: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -185,9 +185,9 @@ const MemberOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  };
+  }, [setAuthenticated]);
 
-  useEffect(() => getMembers(), []);
+  useEffect(() => getMembers(), [getMembers]);
 
   /**
    * Handles the change event on the search filter input
