@@ -4,13 +4,11 @@
 import express = require("express");
 const router = express.Router();
 
-import * as authController from "../global/authController";
+import * as authController from "../global/auth/authController";
 import * as membersController from "./membersController";
 
-router.post("/login", membersController.login);
-
 /**
- * =======>>> ALL routes after this point are accessible for loged in users only <<<=======
+ * =======>>> ALL routes after this point are accessible for logged in users only <<<=======
  */
 router.use(authController.protectRoutes);
 
