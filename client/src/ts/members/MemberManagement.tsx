@@ -366,6 +366,14 @@ import React, {
     };
 
     /**
+     * Kicks the selected member
+     */
+    const kickMember = (id: number) => {
+      console.log("kicking Lennart and: " + id)
+      // TODO: prompt user to confirm kick
+      // TODO: Kick member
+    };
+    /**
      * Handles the change event of the first name field
      * @param event
      */
@@ -623,6 +631,11 @@ import React, {
                     >
                     <Typography variant="h6">Ressort</Typography>
                   </TableCell>
+                  <TableCell
+                    className={classes.tableHeadCell}
+                    >
+                    <Typography variant="h6">Austreten</Typography>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -637,7 +650,10 @@ import React, {
                     <TableCell>{member.handy}</TableCell>
                     <TableCell>{member.jbt_email}</TableCell>
                     <TableCell>{member.mitgliedstatus}</TableCell>
-                    {<TableCell>{member.ressort}</TableCell>}
+                    <TableCell>{member.ressort}</TableCell>
+                    <TableCell>
+                      <Button variant="outlined" onClick={() => kickMember(member.mitgliedID)}>Austreten</Button>
+                    </TableCell>
                   </TableRow>
                     ))}
               </TableBody>
