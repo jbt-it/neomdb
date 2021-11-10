@@ -65,3 +65,6 @@ dist/
 
 # self signed certificates for developing https api
 dev_certs/
+
+# prevent .DS_store files from being comitted
+**/.DS_Store
