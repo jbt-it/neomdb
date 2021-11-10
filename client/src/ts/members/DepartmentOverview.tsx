@@ -30,7 +30,8 @@ import {
 } from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
-import SettingsIcon from '@material-ui/icons/Settings';
+import SettingsIcon from "@material-ui/icons/Settings";
+import CustomSnackbar from "../global/CustomSnackbar";
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -68,8 +69,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   header: {
     display: "flex",
     flexDirection: "row",
-    //alignContent: "space-between",
-    //justifyContent: "space-between",
+    // alignContent: "space-between",
+    // justifyContent: "space-between",
 
   },
   image: {
@@ -105,6 +106,9 @@ interface Department {
   ressortID: number;
   bezeichnung: string;
   kuerzel: string;
+  jbt_email: string;
+  linkZielvorstellung: string;
+  linkOrganigramm: string;
 }
 
 /**
@@ -118,10 +122,11 @@ interface Director {
 
 const RessortOverview: React.FunctionComponent = () => {
   const classes = useStyles();
-
   const [members, setMembers] = useState<Member[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [directors, setCurrentDirectors] = useState<Director[]>([]);
+  const [successOpen, setSuccessOpen] = useState<number>(0);
+  const [errorOpen, setErrorOpen] = useState<number>(0);
 
   // Retrieves the departments
   const getDepartments: VoidFunction = () => {
@@ -137,7 +142,7 @@ const RessortOverview: React.FunctionComponent = () => {
           }
         }
       }).catch((error) => {
-        console.log(error);
+        setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
@@ -159,7 +164,7 @@ const RessortOverview: React.FunctionComponent = () => {
           }
         }
       }).catch((error) => {
-        console.log(error);
+        setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
@@ -180,7 +185,7 @@ const RessortOverview: React.FunctionComponent = () => {
           }
         }
       }).catch((error) => {
-        console.log(error);
+        setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
@@ -193,7 +198,7 @@ const RessortOverview: React.FunctionComponent = () => {
     getCurrentDircetors();
   }, []);
 
-  //Filters members in their departments
+  // Filters members in their departments
   const getMembersOfDeparment = (ressortID: number) => {
     switch (ressortID) {
       case 1: {
@@ -221,7 +226,7 @@ const RessortOverview: React.FunctionComponent = () => {
     }
   };
 
-  //Filters cirectors in their departments
+  // Filters cirectors in their departments
   const getDepartmentOfDirector = (evpostenID: number) => {
     switch (evpostenID) {
       case 1: {
@@ -249,6 +254,31 @@ const RessortOverview: React.FunctionComponent = () => {
     }
   };
 
+   // Updates thedepartment details
+     const updateDepartment = (data: Department) => {
+
+      // Variable for checking, if the component is mounted
+      let mounted = true;
+      api.patch(`/users/departments/${props.match.params.id}`, data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            if (mounted) {
+              setSuccessOpen(successOpen + 1);
+              getDepartments();
+            }
+          } else if (res.status === 500) {
+            setErrorOpen(errorOpen + 1);
+          }
+        });
+
+      // Clean-up function
+      return () => {
+        mounted = false;
+      };
+    };
+
   return (
     <div>
       <div className="content-page">
@@ -259,26 +289,25 @@ const RessortOverview: React.FunctionComponent = () => {
                 <Grid item xl={10}>
                   <div className={classes.header}>
                     <h1>{department.bezeichnung}</h1>
-                    <IconButton aria-label="delete" disabled color="primary">
+                    <IconButton aria-label="Bearbeiten" disabled color="primary">
                       <SettingsIcon />
                     </IconButton>
                   </div>
                   <div className={classes.buttonGroup}>
                     <Button className={classes.button} variant="contained">Zum Wiki-Artikel</Button>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained">Zu den Zielen</Button>
+                    <Button className={classes.button} variant="contained" href={department.linkZielvorstellung} target="_blank">Zu den Zielen</Button>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained">Zur Organisation</Button>
+                    <Button className={classes.button} variant="contained" href={department.linkOrganigramm} target="_blank">Zur Organisation</Button>
                   </div>
                   <div className={classes.textFieldGroup}>
                     <TextField id="button-link-wiki" label="Wiki-Link einfügen"/>
                     <div className={classes.spacing}></div>
                     <TextField id="button-link-targets" label="Ziele-Link einfügen"/>
                     <div className={classes.spacing}></div>
-                    <TextField id="button-link-orgaistation" label="Orga-Link einfügen"/>
+                    <TextField id="button-link-organistation" label="Orga-Link einfügen"/>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained">Speichern</Button>
-
+                    <Button className={classes.button} variant="contained" onClick={updateDepartment}>Speichern</Button>
                   </div>
                   <h3>Mitglieder:</h3>
                   {
@@ -304,6 +333,8 @@ const RessortOverview: React.FunctionComponent = () => {
         })}
       </div>
       <PageBar pageTitle="Ressorts" />
+      {/* {successOpen ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{ variant: "success" }} /> : null} */}
+      {errorOpen ? <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} /> : null}
     </div>
   );
 };
