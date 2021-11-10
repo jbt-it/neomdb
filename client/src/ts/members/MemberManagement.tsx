@@ -368,8 +368,8 @@ import React, {
     /**
      * Kicks the selected member
      */
-    const kickMember = (id: number) => {
-      console.log("kicking Lennart and: " + id)
+    const kickMember = (id: number, status: String) => {
+      console.log("kicking Lennart and: " + id + " " + status)
       // TODO: prompt user to confirm kick
       // TODO: Kick member
     };
@@ -611,30 +611,17 @@ import React, {
                       {getNameSortIcon()}
                     </div>
                   </TableCell>
-                  <TableCell
-                    className={classes.tableHeadCell}
-                  >
+                  <TableCell className={classes.tableHeadCell}>
                     <Typography variant="h6">Handy</Typography>
                   </TableCell>
-                  <TableCell
-                    className={classes.tableHeadCell}
-                    >
+                  <TableCell className={classes.tableHeadCell}>
                     <Typography variant="h6">Mail</Typography>
                   </TableCell>
-                  <TableCell
-                    className={classes.tableHeadCell}
-                    >
+                  <TableCell className={classes.tableHeadCell}>
                     <Typography variant="h6">Status</Typography>
                   </TableCell>
-                  <TableCell
-                    className={classes.tableHeadCell}
-                    >
+                  <TableCell className={classes.tableHeadCell}>
                     <Typography variant="h6">Ressort</Typography>
-                  </TableCell>
-                  <TableCell
-                    className={classes.tableHeadCell}
-                    >
-                    <Typography variant="h6">Austreten</Typography>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -649,11 +636,27 @@ import React, {
                     </TableCell>
                     <TableCell>{member.handy}</TableCell>
                     <TableCell>{member.jbt_email}</TableCell>
-                    <TableCell>{member.mitgliedstatus}</TableCell>
-                    <TableCell>{member.ressort}</TableCell>
                     <TableCell>
-                      <Button variant="outlined" onClick={() => kickMember(member.mitgliedID)}>Austreten</Button>
+                      <TextField
+                        label="Status"
+                        className={classes.filterElement}
+                        color="primary"
+                        onChange={(event) => {
+                          // TODO: change value of drop down filed after selecting new value
+                          kickMember(member.mitgliedID, event.target.value);
+                        }}
+                        value={member.mitgliedstatus}
+                        select
+                      >
+                        <MenuItem value={"Trainee"}>Trainee</MenuItem>
+                        <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+                        <MenuItem value={"Senior"}>Senior</MenuItem>
+                        <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+                        <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+                        <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
+                      </TextField>
                     </TableCell>
+                    <TableCell>{member.ressort}</TableCell>
                   </TableRow>
                     ))}
               </TableBody>
