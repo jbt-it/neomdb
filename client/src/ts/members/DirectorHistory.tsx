@@ -213,7 +213,7 @@ const DirectorHistory: React.FunctionComponent = () => {
     filtereddirectors = filtereddirectors.filter(director => {
       return (
         director.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        director.nachname.toLowerCase().includes(searchFilter.toLowerCase()) 
+        director.nachname.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
     let sorteddirectors = filtereddirectors;
