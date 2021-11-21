@@ -169,7 +169,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
     // Special case for the collapseable list items: when a sub list item is clicked the parent list item will be also highlighted for better orientation
     switch (value) {
       case "Mitglieder": {
-        if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/geburtstage"
+        if (activeNavLink === "/gesamtuebersicht" || activeNavLink === "/vorstand" || activeNavLink === "/ewigervorstand" || activeNavLink === "/geburtstage"
           || activeNavLink === "/traineebereich" || activeNavLink === "/kuratoren") {
           return classes.drawerListItemActive;
         }
@@ -232,6 +232,11 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
             <NavLink exact to="/vorstand" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Der Vorstand" />
+              </ListItem>
+            </NavLink>
+            <NavLink exact to="/ewigervorstand" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
+              <ListItem button onClick={props.drawer(false)}>
+                <ListItemText className={classes.subListItem} primary="Ewiger Vorstand" />
               </ListItem>
             </NavLink>
             <NavLink exact to="/geburtstage" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>

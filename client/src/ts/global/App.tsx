@@ -9,6 +9,7 @@ import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
+import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 
 const App: React.FunctionComponent = () => {
@@ -88,6 +89,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/" component = {Dashboard} />
         <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
         <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
+        <PrivateRoute exact path = "/ewigervorstand" component = {DirectorsHistory} />
         <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
         <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
         <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />
