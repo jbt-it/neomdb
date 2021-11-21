@@ -148,7 +148,7 @@ interface Director {
 /**
  * Depicts a table with all directors and a filter section to filter the directors
  */
-const DirectorHistory: React.FunctionComponent = () => {
+const DirectorsHistory: React.FunctionComponent = () => {
   const classes = useStyles();
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [directors, setdirectors] = useState<Director[]>([]);
@@ -399,4 +399,4 @@ const DirectorHistory: React.FunctionComponent = () => {
   );
 };
 
-export default DirectorHistory;
+export default DirectorsHistory;

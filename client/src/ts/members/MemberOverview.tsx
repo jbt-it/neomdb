@@ -2,13 +2,8 @@
  * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, {
-  useState,
-  useEffect
-} from "react";
-import {
-  NavLink
-} from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -25,133 +20,120 @@ import {
   Theme,
   makeStyles,
 } from "@material-ui/core";
-import {
-  UnfoldMore,
-  ExpandLess,
-  ExpandMore,
-} from "@material-ui/icons";
+import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
+import { AuthContext } from "../global/AuthContext";
+import { useContext } from "react";
+import * as membersTypes from "./membersTypes";
 
 /**
  * Function which proivdes the styles of the MemberOverview
  */
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  amountOfEntries: {
-    marginBottom: "10px",
-    padding: "7px",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  filterContainer: {
-    marginBottom: "10px",
-  },
-  filters: {
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-      alignItems: "flex-end",
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    amountOfEntries: {
+      marginBottom: "10px",
+      padding: "7px",
+      textAlign: "center",
+      fontWeight: "bold",
     },
-    [theme.breakpoints.down("md")]: {
+    filterContainer: {
+      marginBottom: "10px",
+    },
+    filters: {
+      [theme.breakpoints.up("md")]: {
+        display: "flex",
+        alignItems: "flex-end",
+      },
+      [theme.breakpoints.down("md")]: {
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+    filterElement: {
+      [theme.breakpoints.up("md")]: {
+        margin: "7px",
+        width: "155px",
+      },
+      [theme.breakpoints.down("md")]: {
+        margin: "7px",
+        width: "120px",
+      },
+      [theme.breakpoints.down("sm")]: {
+        margin: "7px",
+        width: "120px",
+      },
+    },
+    statusFilter: {
+      [theme.breakpoints.up("md")]: {
+        margin: "7px",
+        width: "165px",
+      },
+      [theme.breakpoints.down("md")]: {
+        margin: "7px",
+        width: "100px",
+      },
+    },
+    filterBtn: {
+      [theme.breakpoints.up("md")]: {
+        marginTop: "12px",
+        marginBottom: "7px",
+        marginRight: "5px",
+        marginLeft: "50px",
+      },
+      [theme.breakpoints.down("md")]: {
+        marginTop: "15px",
+        marginBottom: "7px",
+        marginRight: "5px",
+        marginLeft: "25px",
+      },
+    },
+    sortElement: {
+      margin: "7px",
+      width: "205px",
+    },
+    tableContainer: {
+      maxHeight: (window.screen.height - 75) * 0.8,
+    },
+    tableHeadCell: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.text.secondary,
+    },
+    tableHeadSortBtn: {
       display: "flex",
       alignItems: "center",
     },
-  },
-  filterElement: {
-    [theme.breakpoints.up("md")]: {
-      margin: "7px",
-      width: "155px",
-    },
-    [theme.breakpoints.down("md")]: {
-      margin: "7px",
-      width: "120px",
-    },
-    [theme.breakpoints.down("sm")]: {
-      margin: "7px",
-      width: "120px",
-    },
-  },
-  statusFilter: {
-    [theme.breakpoints.up("md")]: {
-      margin: "7px",
-      width: "165px",
-    },
-    [theme.breakpoints.down("md")]: {
-      margin: "7px",
-      width: "100px",
-    },
-  },
-  filterBtn: {
-    [theme.breakpoints.up("md")]: {
-      marginTop: "12px",
-      marginBottom: "7px",
-      marginRight: "5px",
-      marginLeft: "50px",
-    },
-    [theme.breakpoints.down("md")]: {
-      marginTop: "15px",
-      marginBottom: "7px",
-      marginRight: "5px",
-      marginLeft: "25px",
-    },
-  },
-  sortElement: {
-    margin: "7px",
-    width: "205px",
-  },
-  tableContainer: {
-    maxHeight: (window.screen.height - 75) * 0.8,
-  },
-  tableHeadCell: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.text.secondary,
-  },
-  tableHeadSortBtn: {
-    display: "flex",
-    alignItems: "center",
-  },
-  statusFilterMain: {
-    display: "block",
-    "@media screen and (max-width: 350px)": {
-      display: "none",
-    },
-  },
-  statusFilterAdditional: {
-    display: "none",
-    "@media screen and (max-width: 350px)": {
+    statusFilterMain: {
       display: "block",
+      "@media screen and (max-width: 350px)": {
+        display: "none",
+      },
     },
-  },
-  ressortFilterMain: {
-    "@media screen and (orientation:landscape)": {
-      display: "block",
-    },
-    "@media screen and (orientation:portrait)": {
+    statusFilterAdditional: {
       display: "none",
+      "@media screen and (max-width: 350px)": {
+        display: "block",
+      },
     },
-  },
-  ressortFilterAdditional: {
-    "@media screen and (orientation:landscape)": {
-      display: "none",
+    ressortFilterMain: {
+      "@media screen and (orientation:landscape)": {
+        display: "block",
+      },
+      "@media screen and (orientation:portrait)": {
+        display: "none",
+      },
     },
-    "@media screen and (orientation:portrait)": {
-      display: "block",
+    ressortFilterAdditional: {
+      "@media screen and (orientation:landscape)": {
+        display: "none",
+      },
+      "@media screen and (orientation:portrait)": {
+        display: "block",
+      },
     },
-  },
-}));
-
-/**
- * Interface for the member object
- */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  ressort: string;
-  lastchange: string;
-}
+  })
+);
 
 /**
  * Depicts a table with all members and a filter section to filter the members
@@ -160,7 +142,7 @@ const MemberOverview: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -168,34 +150,52 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
+  const [
+    authenticated,
+    setAuthenticated,
+    userID,
+    setUserID,
+    userName,
+    setUserName,
+  ] = useContext(AuthContext);
+
   // Retrieves the members
-  const getMembers: VoidFunction = () => {
+  const getMembers: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api.get("/users/", {
-      headers: {Authorization : `Bearer ${localStorage.getItem("token")}`}
-    })
-    .then((res) => {
-      if (res.status === 200){
-        if(mounted) {
-          setMembers(res.data);
+    api
+      .get("/users/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembers(res.data);
+          }
+        } else if (res.status === 401) {
+          setAuthenticated(false);
         }
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+      })
+      .catch((error) => {
+        setAuthenticated(false);
+        console.log(error);
+      });
 
     // Clean-up function
-    return () => {mounted = false;};
-  };
+    return () => {
+      mounted = false;
+    };
+  }, [setAuthenticated]);
 
-  useEffect(() => getMembers(), []);
+  useEffect(() => getMembers(), [getMembers]);
 
   /**
    * Handles the change event on the search filter input
    * @param event
    */
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleSearchInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setSearchFilter(event.target.value);
   };
 
@@ -203,7 +203,9 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the status filter input
    * @param event
    */
-  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleStatusChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setStatusFilter(event.target.value);
   };
 
@@ -211,7 +213,9 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the ressort filter input
    * @param event
    */
-  const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleRessortChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setRessortFilter(event.target.value);
   };
 
@@ -219,32 +223,34 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the sort input
    * @param event
    */
-  const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleSortOptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setSortOption(event.target.value);
   };
 
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = ():Member[] => {
+  const getFilteredAndSortedMembers = (): membersTypes.Member[] => {
     let filteredMembers = members;
 
     // Filters by status
     if (statusFilter !== "") {
-      filteredMembers = filteredMembers.filter(member => {
+      filteredMembers = filteredMembers.filter((member) => {
         return member.mitgliedstatus.toString() === statusFilter;
       });
     }
 
     // Filters by ressort
     if (ressortFilter !== "") {
-      filteredMembers = filteredMembers.filter(member => {
+      filteredMembers = filteredMembers.filter((member) => {
         return member.ressort === ressortFilter;
       });
     }
 
     // Filters by search input
-    filteredMembers = filteredMembers.filter(member => {
+    filteredMembers = filteredMembers.filter((member) => {
       return (
         member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
         member.nachname.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -256,7 +262,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
     // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
-      sortedMembers = sortedMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a, b) => {
         const dateA = new Date(a.lastchange);
         const dateB = new Date(b.lastchange);
 
@@ -269,9 +275,9 @@ const MemberOverview: React.FunctionComponent = () => {
         }
       });
 
-    // Sorts by last changed in descending order
+      // Sorts by last changed in descending order
     } else if (sortOption === "lastchange DESC") {
-      sortedMembers = sortedMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a, b) => {
         const dateA = new Date(a.lastchange);
         const dateB = new Date(b.lastchange);
 
@@ -287,12 +293,12 @@ const MemberOverview: React.FunctionComponent = () => {
 
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
-      sortedMembers = sortedMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a, b) => {
         return a.nachname.localeCompare(b.nachname);
       });
-    // Sorts by lastname in descending alphabetical order
+      // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
-      sortedMembers = sortedMembers.sort((a,b) => {
+      sortedMembers = sortedMembers.sort((a, b) => {
         return -a.nachname.localeCompare(b.nachname);
       });
     }
@@ -309,7 +315,7 @@ const MemberOverview: React.FunctionComponent = () => {
   /**
    * Toggles between the name sort options
    */
-  const toggleNameSort:VoidFunction = () => {
+  const toggleNameSort: VoidFunction = () => {
     switch (nameSort) {
       case "": {
         setNameSort("up");
@@ -329,40 +335,40 @@ const MemberOverview: React.FunctionComponent = () => {
   /**
    * Returns the sort icon for the name column
    */
-  const getNameSortIcon:VoidFunction = () => {
-      switch (nameSort) {
-        case "" : {
-          return <UnfoldMore/>;
-        }
-        case "up" : {
-          return <ExpandLess/>;
-        }
-        case "down" : {
-          return <ExpandMore/>;
-        }
+  const getNameSortIcon: VoidFunction = () => {
+    switch (nameSort) {
+      case "": {
+        return <UnfoldMore />;
       }
+      case "up": {
+        return <ExpandLess />;
+      }
+      case "down": {
+        return <ExpandMore />;
+      }
+    }
   };
 
   // The additional filters
   const additionalFilters = (
     <div>
       <Grid item xs={6} sm={3} className={classes.statusFilterAdditional}>
-            <TextField
-              label="Status"
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleStatusChange}
-              value={statusFilter}
-              select
-            >
-              <MenuItem value={""}>-</MenuItem>
-              <MenuItem value={"Trainee"}>Trainee</MenuItem>
-              <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-              <MenuItem value={"Senior"}>Senior</MenuItem>
-              <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-              <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
-            </TextField>
-          </Grid>
+        <TextField
+          label="Status"
+          className={classes.filterElement}
+          color="primary"
+          onChange={handleStatusChange}
+          value={statusFilter}
+          select
+        >
+          <MenuItem value={""}>-</MenuItem>
+          <MenuItem value={"Trainee"}>Trainee</MenuItem>
+          <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+          <MenuItem value={"Senior"}>Senior</MenuItem>
+          <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+          <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+        </TextField>
+      </Grid>
       <Grid item xs={6} sm={3} className={classes.ressortFilterAdditional}>
         <TextField
           label="Ressort"
@@ -372,7 +378,7 @@ const MemberOverview: React.FunctionComponent = () => {
           value={ressortFilter}
           select
         >
-  	      <MenuItem value={""}>-</MenuItem>
+          <MenuItem value={""}>-</MenuItem>
           <MenuItem value={"NET"}>NET</MenuItem>
           <MenuItem value={"QM"}>QM</MenuItem>
           <MenuItem value={"F&R"}>F&R</MenuItem>
@@ -391,8 +397,12 @@ const MemberOverview: React.FunctionComponent = () => {
         label="Sortieren nach..."
       >
         <MenuItem value={""}>-</MenuItem>
-        <MenuItem value={"lastchange ASC"}>Zuletzt Aktualisiert (aufsteigend)</MenuItem>
-        <MenuItem value={"lastchange DESC"}>Zuletzt Aktualisiert (absteigend)</MenuItem>
+        <MenuItem value={"lastchange ASC"}>
+          Zuletzt Aktualisiert (aufsteigend)
+        </MenuItem>
+        <MenuItem value={"lastchange DESC"}>
+          Zuletzt Aktualisiert (absteigend)
+        </MenuItem>
       </TextField>
     </div>
   );
@@ -400,120 +410,113 @@ const MemberOverview: React.FunctionComponent = () => {
   return (
     <div>
       <div className="content-page">
-      <Paper className={classes.filterContainer}>
-        <form className={classes.filters} noValidate autoComplete="off">
-          <Grid container spacing={8}>
-            <Grid item xs={6} sm={3}>
-              <TextField
-                label="Name/Mail/..."
-                className={classes.filterElement}
-                color="primary"
-                onChange={handleSearchInput}
-              />
-          </Grid>
-          <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
-            <TextField
-              label="Status"
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleStatusChange}
-              value={statusFilter}
-              select
+        <Paper className={classes.filterContainer}>
+          <form className={classes.filters} noValidate autoComplete="off">
+            <Grid container spacing={8}>
+              <Grid item xs={6} sm={3}>
+                <TextField
+                  label="Name/Mail/..."
+                  className={classes.filterElement}
+                  color="primary"
+                  onChange={handleSearchInput}
+                />
+              </Grid>
+              <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+                <TextField
+                  label="Status"
+                  className={classes.filterElement}
+                  color="primary"
+                  onChange={handleStatusChange}
+                  value={statusFilter}
+                  select
+                >
+                  <MenuItem value={""}>-</MenuItem>
+                  <MenuItem value={"Trainee"}>Trainee</MenuItem>
+                  <MenuItem value={"aktives Mitglied"}>
+                    aktives Mitglied
+                  </MenuItem>
+                  <MenuItem value={"Senior"}>Senior</MenuItem>
+                  <MenuItem value={"passives Mitglied"}>
+                    passives Mitglied
+                  </MenuItem>
+                  <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
+                <TextField
+                  label="Ressort"
+                  className={classes.filterElement}
+                  color="primary"
+                  onChange={handleRessortChange}
+                  value={ressortFilter}
+                  select
+                >
+                  <MenuItem value={""}>-</MenuItem>
+                  <MenuItem value={"NET"}>NET</MenuItem>
+                  <MenuItem value={"QM"}>QM</MenuItem>
+                  <MenuItem value={"F&R"}>F&R</MenuItem>
+                  <MenuItem value={"FK"}>FK</MenuItem>
+                  <MenuItem value={"MIT"}>MIT</MenuItem>
+                  <MenuItem value={"MAR"}>MAR</MenuItem>
+                  <MenuItem value={"IT"}>IT</MenuItem>
+                </TextField>
+              </Grid>
+            </Grid>
+            <IconButton
+              aria-label="more filter options"
+              className={classes.filterBtn}
+              onClick={toggleFilters}
             >
-              <MenuItem value={""}>-</MenuItem>
-              <MenuItem value={"Trainee"}>Trainee</MenuItem>
-              <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-              <MenuItem value={"Senior"}>Senior</MenuItem>
-              <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-              <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
-            <TextField
-              label="Ressort"
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleRessortChange}
-              value={ressortFilter}
-              select
-            >
-              <MenuItem value={""}>-</MenuItem>
-              <MenuItem value={"NET"}>NET</MenuItem>
-              <MenuItem value={"QM"}>QM</MenuItem>
-              <MenuItem value={"F&R"}>F&R</MenuItem>
-              <MenuItem value={"FK"}>FK</MenuItem>
-              <MenuItem value={"MIT"}>MIT</MenuItem>
-              <MenuItem value={"MAR"}>MAR</MenuItem>
-              <MenuItem value={"IT"}>IT</MenuItem>
-            </TextField>
-          </Grid>
-        </Grid>
-          <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
-            {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-          </IconButton>
-        </form>
-        {additionalFiltersState ? additionalFilters : null}
-        <div className={classes.amountOfEntries}>
-        {`${getFilteredAndSortedMembers().length} Einträge`}
-        </div>
-      </Paper>
-      <TableContainer
-          component={Paper}
-          className={classes.tableContainer}
-        >
+              {additionalFiltersState ? (
+                <ExpandLess fontSize="inherit" />
+              ) : (
+                <ExpandMore fontSize="inherit" />
+              )}
+            </IconButton>
+          </form>
+          {additionalFiltersState ? additionalFilters : null}
+          <div className={classes.amountOfEntries}>
+            {`${getFilteredAndSortedMembers().length} Einträge`}
+          </div>
+        </Paper>
+        <TableContainer component={Paper} className={classes.tableContainer}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell
-                  className={classes.tableHeadCell}
-                >
-                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+                <TableCell className={classes.tableHeadCell}>
+                  <div
+                    className={classes.tableHeadSortBtn}
+                    onClick={toggleNameSort}
+                  >
                     Name
                     {getNameSortIcon()}
                   </div>
                 </TableCell>
-                <TableCell
-                  className={classes.tableHeadCell}
-                >
-                  Handy
-                </TableCell>
-                <TableCell
-                  className={classes.tableHeadCell}
-                  >
-                  Mail
-                </TableCell>
-                <TableCell
-                  className={classes.tableHeadCell}
-                  >
-                  Status
-                </TableCell>
-                <TableCell
-                  className={classes.tableHeadCell}
-                  >
-                  Ressort
-                </TableCell>
+                <TableCell className={classes.tableHeadCell}>Handy</TableCell>
+                <TableCell className={classes.tableHeadCell}>Mail</TableCell>
+                <TableCell className={classes.tableHeadCell}>Status</TableCell>
+                <TableCell className={classes.tableHeadCell}>Ressort</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {getFilteredAndSortedMembers().map((member, index) => (
                 <TableRow hover key={index}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                  >
-                    <NavLink to={`/gesamtuebersicht/${member.mitgliedID}`}>{`${member.vorname} ${member.nachname}`}</NavLink>
+                  <TableCell component="th" scope="row">
+                    <NavLink
+                      to={`/gesamtuebersicht/${member.mitgliedID}`}
+                    >{`${member.vorname} ${member.nachname}`}</NavLink>
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
                   <TableCell>{member.jbt_email}</TableCell>
                   <TableCell>{member.mitgliedstatus}</TableCell>
                   {<TableCell>{member.ressort}</TableCell>}
                 </TableRow>
-                  ))}
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
-        </div>
-        <PageBar pageTitle="Mitgliederübersicht" />
+      </div>
+      <PageBar pageTitle="Mitgliederübersicht" />
     </div>
   );
 };

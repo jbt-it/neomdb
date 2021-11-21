@@ -3,16 +3,6 @@
  */
 
 /**
- * Type of query result of the login
- */
-export type LoginQueryResult = {
-  mitgliedID: number;
-  name: string;
-  passwordHash: string;
-  permissions: string;
-};
-
-/**
  * Type of query results of members retrieval
  */
 export type GetMembersQueryResult = {
@@ -90,7 +80,7 @@ export type GetLanguageOfMemberQueryResult = {
  export type GetEDVSkillsOfMemberQueryResult = {
   wert: string;
   niveau: string;
-}
+};
 
 /**
  * Type of query results of mentor retrieval for a specific member
@@ -99,7 +89,7 @@ export type GetMentorOfMemberQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
-}
+};
 
 /**
  * Type of query results of mentee retrieval for a specific member
@@ -158,7 +148,7 @@ export type GetCurrentDirectorsQueryResult = {
   kuerzel: string;
 };
 
-/*
+/**
  * Returns the name and passwordHash associated to verify the current password
  */
 export type GetPasswordForValidation = {

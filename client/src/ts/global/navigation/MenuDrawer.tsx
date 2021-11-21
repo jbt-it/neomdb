@@ -42,6 +42,7 @@ import {
 } from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import { AuthContext } from "../AuthContext";
+import api from "../../utils/api";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
@@ -153,9 +154,11 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles click on logout link
    */
   const handleLogout: VoidFunction = () => {
-    setAuthenticated(false);
-    localStorage.clear();
-    history.push("/login");
+    api.post("/auth/logout")
+      .then(result => {
+          history.push("/login");
+          setAuthenticated(false);
+      });
   };
 
   /**
