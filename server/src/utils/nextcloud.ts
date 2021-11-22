@@ -34,12 +34,12 @@ const DEFAULT_QUOTA = "2GB";
  * The config of the nextcloud api connection
  */
 const connectionConfig = {
-    baseURL: `http://${NC_HOST}:${NC_PORT}/ocs/v1.php/cloud`,
-    headers: { "OCS-APIRequest": true },
-    auth: {
-        username: NC_USER,
-        password: NC_PASSWORD
-    }
+  baseURL: `http://${NC_HOST}:${NC_PORT}/ocs/v1.php/cloud`,
+  headers: { "OCS-APIRequest": true },
+  auth: {
+    username: NC_USER,
+    password: NC_PASSWORD,
+  },
 };
 
 /**
@@ -48,7 +48,7 @@ const connectionConfig = {
 const nextcloudConnection = axios.create(connectionConfig);
 
 /**
- * Creates a new user and returns a promise
+ * Creates a new nextcloud user and returns a promise
  * @param username The name of the user, which also acts as the id
  * @param displayUserName The displayes user name
  * @param userPassword The password of the user
@@ -56,21 +56,28 @@ const nextcloudConnection = axios.create(connectionConfig);
  * @param userGroups The different groups the user should be in
  * @returns A promise
  */
-export const createNCUser = (username: string, displayUserName: string, userPassword: string, userEmail: string, userGroups: string[]) => {
-    return new Promise((resolve, reject) => {
-        nextcloudConnection.post("/users", {
-            userid: username,
-            password: userPassword,
-            displayName: displayUserName,
-            email: userEmail,
-            groups: userGroups,
-            quota: DEFAULT_QUOTA
-        })
-            .then(res => {
-                resolve(res.data.ocs.meta.statuscode);
-            })
-            .catch(err => {
-                reject(err);
-            });
-    });
+export const createNCUser = (
+  username: string,
+  displayUserName: string,
+  userPassword: string,
+  userEmail: string,
+  userGroups: string[]
+) => {
+  return new Promise((resolve, reject) => {
+    nextcloudConnection
+      .post("/users", {
+        userid: username,
+        password: userPassword,
+        displayName: displayUserName,
+        email: userEmail,
+        groups: userGroups,
+        quota: DEFAULT_QUOTA,
+      })
+      .then((res) => {
+        resolve(res.data.ocs.meta);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };

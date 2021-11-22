@@ -28,26 +28,26 @@ const PLESK_PASSWORD = process.env.PLESK_PASSWORD;
 /**
  * The default mailbox quota of a new mail account
  */
-const DEFAULT_QUOTA = "1GB";
+const DEFAULT_QUOTA = "1G";
 
 /**
  * The config of the plesk api connection
  */
 const connectionConfig = {
-    baseURL: `https://${PLESK_HOST}:${PLESK_PORT}/api/v2`,
-    headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    },
-    auth: {
-        username: PLESK_USER,
-        password: PLESK_PASSWORD
-    },
+  baseURL: `https://${PLESK_HOST}:${PLESK_PORT}/api/v2`,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+  auth: {
+    username: PLESK_USER,
+    password: PLESK_PASSWORD,
+  },
 
-    // Makes it possible to access plesk without providing https certificates
-    httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-    })
+  // Makes it possible to access plesk without providing https certificates
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
 };
 
 /**
@@ -62,20 +62,25 @@ const pleskConnection = axios.create(connectionConfig);
  * @returns A promise
  */
 export const createMailAccount = (mailAccount: string, mailPsw: string) => {
-    return new Promise((resolve, reject) => {
-        pleskConnection.post("/cli/mail/call", {
-            params: [
-                "--create", mailAccount,
-                "-mailbox", "true",
-                "-passwd", mailPsw,
-                "-mbox_quota", DEFAULT_QUOTA
-            ]
-        })
-            .then(res => {
-                resolve(res.data.code);
-            })
-            .catch(err => {
-                reject(err);
-            });
-    });
+  return new Promise((resolve, reject) => {
+    pleskConnection
+      .post("/cli/mail/call", {
+        params: [
+          "--create",
+          mailAccount,
+          "-mailbox",
+          "true",
+          "-passwd",
+          mailPsw,
+          "-mbox_quota",
+          DEFAULT_QUOTA,
+        ],
+      })
+      .then((res) => {
+            resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };
