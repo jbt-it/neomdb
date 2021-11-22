@@ -79,3 +79,33 @@ export type GetDepartmentsQueryResult = {
   bezeichnung: string;
   kuerzel: string;
 };
+
+/**
+ * Type of plesk api call result
+ */
+export type PleskApiResult = {
+  code: number;
+  stdout: string;
+  stderr: string;
+};
+
+/**
+ * Type of nextcloud api call result
+ */
+export type NCApiResult = {
+  status: string;
+  statuscode: number;
+  message: string;
+  totalitems: number;
+  itemsperpage: number;
+};
+
+/**
+ * Type of mediawiki api call result
+ */
+export type MWApiResult = {
+  status: string;
+  message: string;
+  messagecode: string;
+  canpreservestate: boolean;
+};
