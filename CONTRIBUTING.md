@@ -52,7 +52,7 @@ UNIX:
 Development database can be found in the nextcloud, use MySQL and phpmyadmin within docker to continue development
     
   1. Install docker
-  2. Create MySQL database `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d mysql:latest` (for M1 architecture docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d --platform linux/amd64 mysql:latest
+  2. Create MySQL database `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d mysql:latest` (for M1 architecture docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d --platform linux/amd64 mysql:latest)
   4. Start phpmyadmin instance `docker run --name mdb-phpmyadmin -d --link mdb:db -p 8081:80 phpmyadmin/phpmyadmin`
   5. In Browser navigate to `localhost:8081`
   6. Create new database user with all global privileges
