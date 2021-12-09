@@ -60,3 +60,6 @@ Development database can be found in the nextcloud, use MySQL and phpmyadmin wit
   For more iformation see: https://github.com/mysqljs/mysql/pull/2233
   6. Create new database and import file from nextcloud
   7. Update your .env file accordingly
+
+## Node and NPM
+* For this Projekt Node Version 14 needs to be installed
