@@ -151,7 +151,7 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <NavLink exact to="/forgot-password" >
+                  <NavLink exact to="/passwort-vergessen" >
                     Forgot Password?
                   </NavLink>
                 </Grid>
