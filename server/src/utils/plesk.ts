@@ -77,7 +77,38 @@ export const createMailAccount = (mailAccount: string, mailPsw: string) => {
         ],
       })
       .then((res) => {
-            resolve(res.data);
+        resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * Adds a mail account to a mail list
+ * @param mailList The list to which the mail account should be added
+ * @param mailAccount The mail account that should be added to the list
+ * @returns A promise
+ */
+export const addMailAccountToMailingList = (
+  mailList: string,
+  mailAccount: string
+) => {
+  return new Promise((resolve, reject) => {
+    pleskConnection
+      .post("/cli/maillist/call", {
+        params: [
+          "-u",
+          mailList,
+          "-members",
+          `add:${mailAccount}`,
+          "-domain",
+          "studentische-beratung.de",
+        ],
+      })
+      .then((res) => {
+        resolve(res.data);
       })
       .catch((err) => {
         reject(err);
