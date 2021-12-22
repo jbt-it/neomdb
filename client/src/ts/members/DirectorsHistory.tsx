@@ -232,12 +232,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
     return sorteddirectors;
   };
 
-  /**
-   * Handles the filter toggle
-   */
-   const toggleFilters: VoidFunction = () => {
-    setAddtionalFiltersState(!additionalFiltersState);
-  };
 
   /**
    * Toggles between the name sort options
