@@ -156,19 +156,21 @@ export const login = (req: Request, res: Response): void => {
             [result[0].mitgliedID]
           )
           .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
-            // Adds 'normal' permissions to the role permissions
             let permissions = [];
+            // Adds role permissions to the permissions array
             if (directorPermissionsResult.length !== 0) {
               permissions = directorPermissionsResult;
-              if (result[0].permissions) {
-                result[0].permissions
-                  .split(",")
-                  .map(Number)
-                  .map((perm) => {
-                    // A Permission which was delegated to a member  cannot be delegated further (therefore canDelegate is always 0)
-                    permissions.push({ permissionID: perm, canDelegate: 0 });
-                  });
-              }
+            }
+
+            // Adds normal permissions to the permissions array
+            if (result[0].permissions) {
+              result[0].permissions
+                .split(",")
+                .map(Number)
+                .map((perm) => {
+                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                  permissions.push({ permissionID: perm, canDelegate: 0 });
+                });
             }
             bcrypt
               .compare(req.body.password, result[0].passwordHash)
@@ -226,19 +228,22 @@ export const retrieveUserData = (req: Request, res: Response) => {
           [jwtData.mitgliedID]
         )
         .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
-          // Adds 'normal' permissions to the role permissions
           let permissions = [];
+
+          // Adds role permissions to the permissions array
           if (directorPermissionsResult.length !== 0) {
             permissions = directorPermissionsResult;
-            if (result[0].permissions) {
-              result[0].permissions
-                .split(",")
-                .map(Number)
-                .map((perm) => {
-                  // A Permission which was delegated to a member  cannot be delegated further (therefore canDelegate is always 0)
-                  permissions.push({ permissionID: perm, canDelegate: 0 });
-                });
-            }
+          }
+
+          // Adds normal permissions to the permissions array
+          if (result[0].permissions) {
+            result[0].permissions
+              .split(",")
+              .map(Number)
+              .map((perm) => {
+                // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                permissions.push({ permissionID: perm, canDelegate: 0 });
+              });
           }
           res.status(200).json({ ...result[0], permissions });
         })
