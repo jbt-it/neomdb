@@ -26,6 +26,7 @@ import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
 import { useContext } from "react";
 import * as membersTypes from "./membersTypes";
+import { authReducerActionType } from "../global/globalTypes";
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -150,14 +151,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
-  const [
-    authenticated,
-    setAuthenticated,
-    userID,
-    setUserID,
-    userName,
-    setUserName,
-  ] = useContext(AuthContext);
+  const { dispatchAuth } = useContext(AuthContext);
 
   // Retrieves the members
   const getMembers: VoidFunction = useCallback(() => {
@@ -173,11 +167,11 @@ const MemberOverview: React.FunctionComponent = () => {
             setMembers(res.data);
           }
         } else if (res.status === 401) {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       })
       .catch((error) => {
-        setAuthenticated(false);
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
         console.log(error);
       });
 
@@ -185,7 +179,7 @@ const MemberOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  }, [setAuthenticated]);
+  }, [dispatchAuth]);
 
   useEffect(() => getMembers(), [getMembers]);
 

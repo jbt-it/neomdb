@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
@@ -12,52 +12,57 @@ import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
+import { authReducerActionType } from "./globalTypes";
 
 const App: React.FunctionComponent = () => {
-  const [authenticated, setAuthenticated,
-    userID, setUserID, userName, setUserName] = useContext(AuthContext);
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
    * Checks if the user is (still) authenticated
    * and retrieves the data of the logged in user
    */
-  const checkAuth = () => {
-
+  const checkAuth = useCallback(() => {
     // Tries to retrieve the user data
-    api.get("auth/user-data")
+    api
+      .get("auth/user-data")
       .then((res) => {
-
         // If the retrieval of the user data is succesfull the user is authenticated
         if (res.status === 200) {
-          setUserID(res.data[0].mitgliedID);
-          setUserName(res.data[0].name);
-          setAuthenticated(true);
+          const userID = res.data[0].mitgliedID;
+          const userName = res.data[0].name;
+          const permissions = res.data[0].permissions;
+          dispatchAuth({
+            type: authReducerActionType.authenticate,
+            payload: { userID, userName, permissions },
+          });
         } else {
-          setAuthenticated(false);
-          setUserID(null);
-          setUserName(null);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       })
       .catch((err) => {
-        setAuthenticated(false);
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
       });
-  };
+  }, [dispatchAuth]);
+
+  // Calls checkAuth on (re)render of routes
+  useEffect(() => checkAuth(), [checkAuth]);
 
   /**
    * Renders the specified component if the user is authenticated otherwise
    * the user gets redirected to the login page
    */
   const PrivateRoute = ({ component: Component, ...rest }: any) => {
-    useEffect(() => checkAuth(), []);
-
     return (
-      <Route {...rest} render={props => (
-        authenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/login" }} />
-        )
-      )} />
+      <Route
+        {...rest}
+        render={(props) =>
+          auth.authenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={{ pathname: "/login" }} />
+          )
+        }
+      />
     );
   };
 
@@ -66,16 +71,17 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the dashboard page
    */
   const LoginRoute = ({ component: Component, ...rest }: any) => {
-    useEffect(() => checkAuth(), []);
-
     return (
-      <Route {...rest} render={props => (
-        !authenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/" }} />
-        )
-      )} />
+      <Route
+        {...rest}
+        render={(props) =>
+          !auth.authenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={{ pathname: "/" }} />
+          )
+        }
+      />
     );
   };
 
@@ -83,7 +89,7 @@ const App: React.FunctionComponent = () => {
     <HashRouter>
       {
         // Renders the Nav componenent if the user is authenticated
-        (authenticated ? <Nav /> : null)
+        auth.authenticated ? <Nav /> : null
       }
       <Switch>
         <PrivateRoute exact path = "/user-change-password" component = {ChangePassword} />

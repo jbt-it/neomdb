@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "white",
       backgroundColor: "#f6891f",
     },
-  }));
+  })
+);
 
 const NotFound: React.FunctionComponent = () => {
   const classes = useStyles();
@@ -65,7 +66,11 @@ const NotFound: React.FunctionComponent = () => {
     <div className={"content-page ${classes.root}"}>
       <Card className={classes.notFoundCard} variant="outlined">
         <CardContent>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
+          <Typography
+            className={classes.title}
+            color="textSecondary"
+            gutterBottom
+          >
             Fehler:
           </Typography>
           <Typography variant="h5" component="h2">
@@ -73,12 +78,20 @@ const NotFound: React.FunctionComponent = () => {
           </Typography>
           <Typography variant="body2" component="p">
             Bei Problemen bitte melden bei:
-            <a href="mailto:it@studentische-beratung.de">it@studentische-beratung.de</a>
+            <a href="mailto:it@studentische-beratung.de">
+              it@studentische-beratung.de
+            </a>
             <br />
           </Typography>
         </CardContent>
         <CardActions>
-          <Button className={classes.backButton} size="medium" variant="contained" disableElevation href="./">
+          <Button
+            className={classes.backButton}
+            size="medium"
+            variant="contained"
+            disableElevation
+            href="#/"
+          >
             Zurück zum Dashboard
           </Button>
         </CardActions>
@@ -86,6 +99,5 @@ const NotFound: React.FunctionComponent = () => {
     </div>
   );
 };
-
 
 export default NotFound;

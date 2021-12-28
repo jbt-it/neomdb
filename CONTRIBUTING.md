@@ -52,11 +52,15 @@ UNIX:
 Development database can be found in the nextcloud, use MySQL and phpmyadmin within docker to continue development
     
   1. Install docker
-  2. Create MySQL database `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d mysql:latest`
-  3. Start phpmyadmin instance `docker run --name mdb-phpmyadmin -d --link mdb:db -p 8081:80 phpmyadmin/phpmyadmin`
-  4. In Browser navigate to `localhost:8081`
-  5. Create new database user with all global privileges
+  2. Create MySQL database `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d mysql:latest` (for M1 architecture `docker run -h localhost -p 3306:3306 --name mdb -e MYSQL_ROOT_PASSWORD=passw0rd -d --platform linux/amd64 mysql:latest`)
+  4. Start phpmyadmin instance `docker run --name mdb-phpmyadmin -d --link mdb:db -p 8081:80 phpmyadmin/phpmyadmin`
+  5. In Browser navigate to `localhost:8081` (username: `root` | password: `passw0rd`)
+  6. Create new database __user__ with all global privileges
   __IMPORTANT__: use the `Native MySQL authentication` as Authentication Plugin or database connection will fail.
   For more iformation see: https://github.com/mysqljs/mysql/pull/2233
-  6. Create new database and import file from nextcloud
+  6. Create new database and import file from nextcloud into the new database
   7. Update your .env file accordingly
+
+## Node and NPM
+* For this Projekt Node Version 14 needs to be installed
+* navigate into the `/server` folder, run `npm i` and do the same in the `/client` folder (to start the app rum `npm start`in each folder)
