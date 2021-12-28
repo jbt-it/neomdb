@@ -1,10 +1,7 @@
 /**
  * The RessortOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, {
-  useState,
-  useEffect
-} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Paper,
@@ -20,74 +17,68 @@ import {
   Grid,
   createStyles,
   Theme,
-  makeStyles
+  makeStyles,
 } from "@material-ui/core";
-import {
-  UnfoldMore,
-  ExpandLess,
-  ExpandMore,
-  Settings
-} from "@material-ui/icons";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
-import SettingsIcon from "@material-ui/icons/Settings";
-import CustomSnackbar from "../global/CustomSnackbar";
+import { NavLink } from "react-router-dom";
+import { NoEncryptionTwoTone } from "@material-ui/icons";
 
 /**
  * Function which proivdes the styles of the MemberOverview
  */
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  spacing: {
-    margin: "10px",
-  },
-  paper: {
-    paddingLeft: "30px",
-    paddingTop: "5px",
-    marginBottom: "25px",
-    minHeight: "200px",
-  },
-  textFieldGroup: {
-    display: "flex",
-    flexDirection: "row",
-    marginRight: "10px",
-    paddingRight: "10px",
-  },
-  buttonGroup: {
-    display: "flex",
-  },
-  button: {
-    border: "0",
-    backgroundColor: "#F6891F",
-    color: "white",
-    "&:hover": {
-      color: "black",
-    }
-  },
-  content: {
-    // padding: "10px",
-  },
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    // alignContent: "space-between",
-    // justifyContent: "space-between",
-
-  },
-  image: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    maxWidth: "200px",
-    marginLeft: "auto",
-    marginRight: "10%",
-  },
-  img: {
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  },
-}));
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    spacing: {
+      margin: "10px",
+    },
+    paper: {
+      paddingLeft: "30px",
+      paddingTop: "5px",
+      marginBottom: "25px",
+      minHeight: "200px",
+    },
+    textFieldGroup: {
+      display: "flex",
+      flexDirection: "row",
+      marginRight: "10px",
+      paddingRight: "10px",
+    },
+    buttonGroup: {
+      display: "flex",
+    },
+    button: {
+      border: "0",
+      backgroundColor: "#F6891F",
+      color: "white",
+      "&:hover": {
+        color: "black",
+      },
+    },
+    header: {
+      display: "flex",
+      flexDirection: "row",
+    },
+    image: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-end",
+      maxWidth: "200px",
+      marginLeft: "auto",
+      marginRight: "10%",
+    },
+    img: {
+      margin: "auto",
+      display: "block",
+      maxWidth: "100%",
+      maxHeight: "100%",
+    },
+    navLink: {
+      textDecoration: "none",
+      color: "red",
+    },
+  })
+);
 
 /**
  * Interface for the member object
@@ -116,6 +107,8 @@ interface Department {
  */
 interface Director {
   evpostenID: number;
+  ressortID: number;
+  mitgliedID: number;
   vorname: string;
   nachname: string;
 }
@@ -125,71 +118,87 @@ const RessortOverview: React.FunctionComponent = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [directors, setCurrentDirectors] = useState<Director[]>([]);
-  const [successOpen, setSuccessOpen] = useState<number>(0);
   const [errorOpen, setErrorOpen] = useState<number>(0);
 
-  // Retrieves the departments
+  /**
+   * Retrieves the departments
+   */
   const getDepartments: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api.get("/users/departments/", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    })
+    api
+      .get("/users/departments/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
             setDepartments(res.data);
           }
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   };
 
-
-  // Retrieves the department members
+  /**
+   * Retrieves the department members
+   */
   const getDepartmentMembers: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api.get("/users/department-members/", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    })
+    api
+      .get("/users/department-members/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
             setMembers(res.data);
           }
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   };
 
-  // Retrieves the directors of the departments
+  /**
+   * Retrieves the directors of the departments
+   */
   const getCurrentDirectors: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
-    api.get("/users/current-directors", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    })
+    api
+      .get("/users/current-directors", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
             setCurrentDirectors(res.data);
           }
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         setErrorOpen(errorOpen + 1);
       });
 
     // Clean-up function
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   };
 
   useEffect(() => {
@@ -198,88 +207,99 @@ const RessortOverview: React.FunctionComponent = () => {
     getCurrentDirectors();
   }, []);
 
-  // Filters members in their departments
+  /**
+   * Filters members in their departments
+   * @param ressortID
+   */
   const getMembersOfDeparment = (ressortID: number) => {
     switch (ressortID) {
       case 1: {
-        return members.filter(member => { return member.ressort === 1; });
+        return members.filter((member) => {
+          return member.ressort === 1;
+        });
       }
       case 2: {
-        return members.filter(member => { return member.ressort === 2; });
+        return members.filter((member) => {
+          return member.ressort === 2;
+        });
       }
       case 3: {
-        return members.filter(member => { return member.ressort === 3; });
+        return members.filter((member) => {
+          return member.ressort === 3;
+        });
       }
       case 4: {
-        return members.filter(member => { return member.ressort === 4; });
+        return members.filter((member) => {
+          return member.ressort === 4;
+        });
       }
       case 5: {
-        return members.filter(member => { return member.ressort === 5; });
+        return members.filter((member) => {
+          return member.ressort === 5;
+        });
       }
       case 7: {
-        console.log("HALLLOOOOOOOOOO");
-        return members.filter(member => { return member.ressort === 7; });
+        return members.filter((member) => {
+          return member.ressort === 7;
+        });
       }
       case 8: {
-        return members.filter(member => { return member.ressort === 8; });
+        return members.filter((member) => {
+          return member.ressort === 8;
+        });
       }
-      default: { return []; }
+      default: {
+        return [];
+      }
     }
   };
 
-  // Filters cirectors in their departments
-  const getDepartmentOfDirector = (evpostenID: number) => {
-    switch (evpostenID) {
+  /**
+   * Filters cirectors in their departments
+   * @param ressortID
+   */
+  const getDirectorOfDepartment = (ressortID: number) => {
+    switch (ressortID) {
       case 1: {
-        return directors.filter(director => { return director.evpostenID === 1; });
+        return directors.filter((director) => {
+          return director.ressortID === 1;
+        });
       }
       case 2: {
-        return directors.filter(director => { return director.evpostenID === 2; });
+        return directors.filter((director) => {
+          return director.ressortID === 2;
+        });
       }
       case 3: {
-        return directors.filter(director => { return director.evpostenID === 3; });
+        return directors.filter((director) => {
+          return director.ressortID === 3;
+        });
       }
       case 4: {
-        return directors.filter(director => { return director.evpostenID === 4; });
+        return directors.filter((director) => {
+          return director.ressortID === 4;
+        });
       }
       case 5: {
-        return directors.filter(director => { return director.evpostenID === 5; });
+        return directors.filter((director) => {
+          return director.ressortID === 5;
+        });
       }
       case 7: {
-        return directors.filter(director => { return director.evpostenID === 7; });
+        return directors.filter((director) => {
+          return director.ressortID === 7;
+        });
       }
       case 8: {
-        console.log("Hallo");
-        return directors.filter(director => { return director.evpostenID === 8; });
+        return directors.filter((director) => {
+          return director.ressortID === 8;
+        });
       }
-      default: { return []; }
+      default: {
+        return [];
+      }
     }
   };
-
-  //  // Updates the department details
-  //    const updateDepartment = (data: Department) => {
-
-  //     // Variable for checking, if the component is mounted
-  //     let mounted = true;
-  //     api.patch(`/users/departments/${props.match.params.id}`, data, {
-  //       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  //     })
-  //       .then((res) => {
-  //         if (res.status === 200) {
-  //           if (mounted) {
-  //             setSuccessOpen(successOpen + 1);
-  //             getDepartments();
-  //           }
-  //         } else if (res.status === 500) {
-  //           setErrorOpen(errorOpen + 1);
-  //         }
-  //       });
-
-  //     // Clean-up function
-  //     return () => {
-  //       mounted = false;
-  //     };
-  //   };
 
   return (
     <div>
@@ -288,45 +308,62 @@ const RessortOverview: React.FunctionComponent = () => {
           return (
             <Paper key={`department-${index}`} elevation={7} className={classes.paper}>
               <Grid container direction="row" spacing={2}>
-                <Grid item xl={10}>
+                <Grid item xs={6}>
                   <div className={classes.header}>
                     <h1>{department.bezeichnung}</h1>
-                    <IconButton aria-label="Bearbeiten" disabled color="primary">
-                      <SettingsIcon />
-                    </IconButton>
                   </div>
                   <div className={classes.buttonGroup}>
-                    <Button className={classes.button} variant="contained">Zum Wiki-Artikel</Button>
+                    <Button className={classes.button} variant="contained">
+                      Zum Wiki-Artikel
+                    </Button>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained" href={department.linkZielvorstellung} target="_blank">Zu den Zielen</Button>
+                    <Button
+                      className={classes.button}
+                      variant="contained"
+                      href={department.linkZielvorstellung}
+                      target="_blank"
+                    >
+                      Zu den Zielen
+                    </Button>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained" href={department.linkOrganigramm} target="_blank">Zur Organisation</Button>
+                    <Button
+                      className={classes.button}
+                      variant="contained"
+                      href={department.linkOrganigramm}
+                      target="_blank"
+                    >
+                      Zur Organisation
+                    </Button>
                   </div>
-                  <div className={classes.textFieldGroup}>
-                    <TextField id="button-link-wiki" label="Wiki-Link einfügen"/>
-                    <div className={classes.spacing}></div>
-                    <TextField id="button-link-targets" label="Ziele-Link einfügen"/>
-                    <div className={classes.spacing}></div>
-                    <TextField id="button-link-organistation" label="Orga-Link einfügen"/>
-                    <div className={classes.spacing}></div>
-                    {/* <Button className={classes.button} variant="contained" onClick={updateDepartment}>Speichern</Button> */}
-                  </div>
-                  <h3>Mitglieder:</h3>
-                  {
-                    getMembersOfDeparment(department.ressortID).map(member => {
-                      return (<div>{member.vorname} {member.nachname} </div>);
-                    })
-                  }
-                </Grid>
-                <Grid className={classes.image}>
-                  Picture
                   <div>
-                    <h3>Ressortleiter:</h3>
-                    {
-                      getDepartmentOfDirector(department.ressortID).map(director => {
-                        return (<div>{director.vorname} {director.nachname} </div>);
-                      })
-                    }
+                    <h2>Ressortleiter*in:</h2>
+                    {getDirectorOfDepartment(department.ressortID).map((director) => {
+                      return (
+                        <div>
+                          <h3>
+                            <NavLink
+                              className="navLink"
+                              to={`/gesamtuebersicht/${director.mitgliedID}`}
+                            >{`${director.vorname} ${director.nachname}`}</NavLink>
+                          </h3>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div>
+                    <h2>Mitglieder:</h2>
+                    {getMembersOfDeparment(department.ressortID).map((member) => {
+                      return (
+                        <div>
+                          <h3>
+                            <NavLink
+                              className="navLink"
+                              to={`/gesamtuebersicht/${member.mitgliedID}`}
+                            >{`${member.vorname} ${member.nachname}`}</NavLink>
+                          </h3>
+                        </div>
+                      );
+                    })}
                   </div>
                 </Grid>
               </Grid>
@@ -335,8 +372,6 @@ const RessortOverview: React.FunctionComponent = () => {
         })}
       </div>
       <PageBar pageTitle="Ressorts" />
-      {/* {successOpen ? <CustomSnackbar snackbarMessage="Aktualisierung des Profils war erfolgreich!" snackProps={{ variant: "success" }} /> : null} */}
-      {errorOpen ? <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} /> : null}
     </div>
   );
 };

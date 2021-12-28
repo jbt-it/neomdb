@@ -77,7 +77,7 @@ export type GetLanguageOfMemberQueryResult = {
 /**
  * Type of query results of edv skills retrieval for a specific member
  */
- export type GetEDVSkillsOfMemberQueryResult = {
+export type GetEDVSkillsOfMemberQueryResult = {
   wert: string;
   niveau: string;
 };
@@ -142,6 +142,8 @@ export type GetCurrentDirectorsQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
+  evpostenID: number;
+  ressortID: number;
   geschlecht: string;
   bezeichnung_weiblich: string;
   bezeichnung_maennlich: string;
