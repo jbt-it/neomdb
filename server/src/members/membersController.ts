@@ -9,7 +9,7 @@ import { Request, Response } from "express";
 import * as membersTypes from "./membersTypes";
 import { JWTPayload } from "../global/globalTypes";
 import { createNCUser } from "../utils/nextcloud";
-import { createMailAccount } from "../utils/plesk";
+import { addMailAccountToMailingList, createMailAccount } from "../utils/plesk";
 import { createMWUser } from "../utils/mediawiki";
 
 /**
@@ -262,6 +262,12 @@ export const createMember = (req: Request, res: Response): void => {
     // Error message if mail account creation failed
     mailErrorMsg: "",
 
+    // Status of the mail api-call to add the mail account to a mailing list
+    mailListStatus: "fail",
+
+    // Error message if mail account couldn't be added to the mailing list
+    mailListErrorMsg: "",
+
     // Status of the nextcloud api-call to create a nextcloud account
     nextcloudStatus: "fail",
 
@@ -280,7 +286,7 @@ export const createMember = (req: Request, res: Response): void => {
     .then((hash) => {
       database
         .query(
-           `INSERT INTO mitglied (vorname, nachname, name, passwordHash, geschlecht,
+          `INSERT INTO mitglied (vorname, nachname, name, passwordHash, geschlecht,
            geburtsdatum, handy, mitgliedstatus, ressort)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
@@ -300,7 +306,7 @@ export const createMember = (req: Request, res: Response): void => {
           statusOverview = { ...statusOverview, queryStatus: "success" };
 
           const mailAccountName = `${req.body.name}@studentische-beratung.de`;
-          createMailAccount(mailAccountName, "454geg54egtKl34,5l.")
+          createMailAccount(mailAccountName, hash)
             .then((mailResult: membersTypes.PleskApiResult) => {
               if (mailResult.code === 0) {
                 // Set the status of the mail
@@ -314,77 +320,114 @@ export const createMember = (req: Request, res: Response): void => {
                 res.status(500).json(statusOverview);
                 return;
               }
-
-              createNCUser(req.body.name, req.body.name, "", mailAccountName, [
-                "Mitglied",
-              ])
-                .then((ncResult: membersTypes.NCApiResult) => {
-                  if (ncResult.statuscode === 100) {
-                    // Set the status of the nextcloud
+              addMailAccountToMailingList(
+                "trainee",
+                `${req.body.name}@studentische-beratung.de`
+              )
+                .then((mailListRes: membersTypes.PleskApiResult) => {
+                  if (mailListRes.code === 0) {
+                    // Set the status of the mailing list
                     statusOverview = {
                       ...statusOverview,
-                      nextcloudStatus: "success",
+                      mailListStatus: "success",
                     };
                   } else {
+                    // Set the error message of the mailing list
                     statusOverview = {
                       ...statusOverview,
-                      nextcloudErrorMsg: ncResult.message,
+                      mailErrorMsg: mailListRes.stderr,
                     };
+                    return;
                   }
-
-                  createMWUser(req.body.name, "", mailAccountName)
-                    .then((mwResult: membersTypes.MWApiResult) => {
-                      if (mwResult.status === "PASS") {
-                        // Set the status of the mediawiki
+                  createNCUser(
+                    req.body.name,
+                    req.body.name,
+                    "",
+                    mailAccountName,
+                    ["Mitglied"]
+                  )
+                    .then((ncResult: membersTypes.NCApiResult) => {
+                      if (ncResult.statuscode === 100) {
+                        // Set the status of the nextcloud
                         statusOverview = {
                           ...statusOverview,
-                          wikiStatus: "success",
+                          nextcloudStatus: "success",
                         };
-                        res.status(201).json(statusOverview);
                       } else {
                         statusOverview = {
                           ...statusOverview,
-                          wikiErrorMsg: mwResult.message,
+                          nextcloudErrorMsg: ncResult.message,
                         };
-                        res.status(500).json(statusOverview);
                       }
+
+                      createMWUser(req.body.name, hash, mailAccountName)
+                        .then((mwResult: membersTypes.MWApiResult) => {
+                          if (mwResult.status === "PASS") {
+                            // Set the status of the mediawiki
+                            statusOverview = {
+                              ...statusOverview,
+                              wikiStatus: "success",
+                            };
+                            res.status(201).json(statusOverview);
+                          } else {
+                            statusOverview = {
+                              ...statusOverview,
+                              wikiErrorMsg: mwResult.message,
+                            };
+                            res.status(500).json(statusOverview);
+                          }
+                        })
+                        .catch((err) => {
+                          statusOverview = {
+                            ...statusOverview,
+                            wikiErrorMsg: err,
+                          };
+                          res.status(500).json(statusOverview);
+                        });
                     })
-                    .catch((err) => {
+                    .catch((ncErr) => {
                       statusOverview = {
                         ...statusOverview,
-                        wikiErrorMsg: err,
+                        nextcloudErrorMsg: ncErr,
                       };
-                      res.status(500).json(statusOverview);
+                      createMWUser(req.body.name, hash, mailAccountName)
+                        .then((mwResult: membersTypes.MWApiResult) => {
+                          if (mwResult.status === "PASS") {
+                            // Set the status of the mediawiki
+                            statusOverview = {
+                              ...statusOverview,
+                              wikiStatus: "success",
+                            };
+                          } else {
+                            statusOverview = {
+                              ...statusOverview,
+                              wikiErrorMsg: mwResult.message,
+                            };
+                          }
+                          res.status(500).json(statusOverview);
+                        })
+                        .catch((err) => {
+                          statusOverview = {
+                            ...statusOverview,
+                            wikiErrorMsg: err,
+                          };
+                          res.status(500).json(statusOverview);
+                        });
                     });
                 })
-                .catch(() => {
-                  createMWUser(req.body.name, "", mailAccountName)
-                    .then((mwResult: membersTypes.MWApiResult) => {
-                      if (mwResult.status === "PASS") {
-                        // Set the status of the mediawiki
-                        statusOverview = {
-                          ...statusOverview,
-                          wikiStatus: "success",
-                        };
-                      } else {
-                        statusOverview = {
-                          ...statusOverview,
-                          wikiErrorMsg: mwResult.message,
-                        };
-                      }
-                      res.status(500).json(statusOverview);
-                    })
-                    .catch((err) => {
-                      statusOverview = {
-                        ...statusOverview,
-                        wikiErrorMsg: err,
-                      };
-                      res.status(500).json(statusOverview);
-                    });
+                .catch((err) => {
+                  // Set the error message of the mailing list
+                  statusOverview = {
+                    ...statusOverview,
+                    mailListErrorMsg: err,
+                  };
                 });
             })
             .catch((err) => {
-              statusOverview = { ...statusOverview, nextcloudErrorMsg: err };
+              statusOverview = {
+                ...statusOverview,
+                mailErrorMsg: err,
+              };
               res.status(500).json(statusOverview);
             });
         })
