@@ -172,7 +172,7 @@ const RessortOverview: React.FunctionComponent = () => {
   };
 
   // Retrieves the directors of the departments
-  const getCurrentDircetors: VoidFunction = () => {
+  const getCurrentDirectors: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get("/users/current-directors", {
@@ -195,7 +195,7 @@ const RessortOverview: React.FunctionComponent = () => {
   useEffect(() => {
     getDepartmentMembers();
     getDepartments();
-    getCurrentDircetors();
+    getCurrentDirectors();
   }, []);
 
   // Filters members in their departments
@@ -217,6 +217,7 @@ const RessortOverview: React.FunctionComponent = () => {
         return members.filter(member => { return member.ressort === 5; });
       }
       case 7: {
+        console.log("HALLLOOOOOOOOOO");
         return members.filter(member => { return member.ressort === 7; });
       }
       case 8: {
@@ -248,36 +249,37 @@ const RessortOverview: React.FunctionComponent = () => {
         return directors.filter(director => { return director.evpostenID === 7; });
       }
       case 8: {
+        console.log("Hallo");
         return directors.filter(director => { return director.evpostenID === 8; });
       }
       default: { return []; }
     }
   };
 
-   // Updates thedepartment details
-     const updateDepartment = (data: Department) => {
+  //  // Updates the department details
+  //    const updateDepartment = (data: Department) => {
 
-      // Variable for checking, if the component is mounted
-      let mounted = true;
-      api.patch(`/users/departments/${props.match.params.id}`, data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            if (mounted) {
-              setSuccessOpen(successOpen + 1);
-              getDepartments();
-            }
-          } else if (res.status === 500) {
-            setErrorOpen(errorOpen + 1);
-          }
-        });
+  //     // Variable for checking, if the component is mounted
+  //     let mounted = true;
+  //     api.patch(`/users/departments/${props.match.params.id}`, data, {
+  //       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //     })
+  //       .then((res) => {
+  //         if (res.status === 200) {
+  //           if (mounted) {
+  //             setSuccessOpen(successOpen + 1);
+  //             getDepartments();
+  //           }
+  //         } else if (res.status === 500) {
+  //           setErrorOpen(errorOpen + 1);
+  //         }
+  //       });
 
-      // Clean-up function
-      return () => {
-        mounted = false;
-      };
-    };
+  //     // Clean-up function
+  //     return () => {
+  //       mounted = false;
+  //     };
+  //   };
 
   return (
     <div>
@@ -307,7 +309,7 @@ const RessortOverview: React.FunctionComponent = () => {
                     <div className={classes.spacing}></div>
                     <TextField id="button-link-organistation" label="Orga-Link einfügen"/>
                     <div className={classes.spacing}></div>
-                    <Button className={classes.button} variant="contained" onClick={updateDepartment}>Speichern</Button>
+                    {/* <Button className={classes.button} variant="contained" onClick={updateDepartment}>Speichern</Button> */}
                   </div>
                   <h3>Mitglieder:</h3>
                   {
