@@ -53,6 +53,22 @@ export type GetPasswordForValidation = {
 };
 
 /**
+ * Returns the email, to verify if it exists
+ */
+export type GetEmailToVerifyValidity = {
+  email: string;
+};
+
+/**
+ * Returns the email, to verify if it exists
+ */
+ export type GetEmailDateTokenToVerifyValidity = {
+  email: string;
+  datediff: number;
+  token: string;
+};
+
+/**
  * Type of query results of all department retrieval.
  */
 export type GetDepartmentsQueryResult = {
