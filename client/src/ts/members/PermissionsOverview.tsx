@@ -25,28 +25,29 @@ import CloseIcon from "@material-ui/icons/Close";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 interface MemberPermissions {
-  vorname: string;
-  nachname: string;
-  permission: number;
-}
-interface PermissionsOverview {
-  permissionName: string;
-  description: string;
-  permission: number;
-}
-interface DirectorPermissions {
-  ressortID: number;
+  name: string;
   permission: number;
   canDelegate: number;
 }
-interface Directors {
-  ressortID: number;
-  shortName: string;
+interface PermissionsOverview {
+  bezeichnung: string;
+  beschreibung: string;
+  berechtigungID: number;
 }
-interface Posten {
-  permission: number;
-  name: string;
-}
+// interface DirectorPermissions {
+//   ressortID: number;
+//   permission: number;
+//   canDelegate: number;
+// }
+// interface Directors {
+//   ressortID: number;
+//   shortName: string;
+// }
+// interface Posten {
+//   permission: number;
+//   name: string;
+// }
+
 /**
  * Function which proivdes the styles of the PermissionsOverview
  */
@@ -117,15 +118,18 @@ const PermissionsOverview: React.FunctionComponent = () => {
     console.info("You clicked the Chip.");
   };
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
-  const [directorPermissions, setDirectorPermissions] = useState<DirectorPermissions[]>([]);
+  //const [directorPermissions, setDirectorPermissions] = useState<DirectorPermissions[]>([]);
   const [permissionsOverview, setPermissionsOverview] = useState<PermissionsOverview[]>([]);
-  const [directors, setDirectors] = useState<Directors[]>([]);
-  const [posten, setPosten] = useState<Posten[]>([]);
+  // const [directors, setDirectors] = useState<Directors[]>([]);
+  // const [posten, setPosten] = useState<Posten[]>([]);
   const [tmpState, setTmpState] = useState<string[] | []>([]);
   const tmp: string[] = [];
   //const allNames: string[] = [];
-  const allNames = posten.map(p => p.name);
-  const allDirectors = directors.map(d => d.shortName);
+  const allNames = memberPermissions.map(p => p.name);
+
+  console.log("allNames");
+  console.log(allNames);
+  // const allDirectors = directors.map(d => d.shortName);
   /**
    * Handles the API call and cleans state thereafter
    */
@@ -138,52 +142,9 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setMemberPermissions(res.data);
-            setPermissionsOverview([{ permissionName: "Mitgliederverwaltung", description: "Mitglieder hinzufügen, löschen, beliebige Profile", permission: 1 },
-            { permissionName: "PL/QM Tool", description: "PL/QM-Befähigungen eintragen (anschauen kann jeder.", permission: 2 },
-            { permissionName: "MM-Tracking", description: "MM-Tracking eintragen (anschauen kann jeder)", permission: 3 },
-            { permissionName: "Workshopverwaltung", description: "Workshops eintragen, Teilnehmer auswählen, Feedbac..", permission: 4 },
-            { permissionName: "Ausgetretene", description: "Ausgetretene Mitglieder sehen", permission: 5 },
-            { permissionName: "Finanzdaten", description: "Finanzdaten aller Mitglieder sehen", permission: 6 },]);
-
-            setDirectorPermissions([{ ressortID: 1, permission: 1, canDelegate: 0, },
-            { ressortID: 1, permission: 2, canDelegate: 0, },
-            { ressortID: 1, permission: 3, canDelegate: 0, },
-            { ressortID: 1, permission: 4, canDelegate: 0, },
-            { ressortID: 1, permission: 8, canDelegate: 1, },
-            { ressortID: 1, permission: 9, canDelegate: 0, },
-            { ressortID: 3, permission: 6, canDelegate: 1, },
-            { ressortID: 2, permission: 4, canDelegate: 1, },
-            { ressortID: 3, permission: 4, canDelegate: 1, },
-            { ressortID: 3, permission: 5, canDelegate: 1, },
-            { ressortID: 2, permission: 5, canDelegate: 1, },
-            { ressortID: 1, permission: 5, canDelegate: 1, },
-            { ressortID: 8, permission: 5, canDelegate: 1, },
-            ]);
-            setDirectors([{ ressortID: 1, shortName: "1V" },
-            { ressortID: 2, shortName: "2V" },
-            { ressortID: 3, shortName: "3V" },
-            { ressortID: 4, shortName: "GF" },
-            { ressortID: 8, shortName: "RL IT" },
-            { ressortID: 10, shortName: "RL MIT" },
-            { ressortID: 11, shortName: "RL NET" },
-            { ressortID: 14, shortName: "RL MAR" },
-            { ressortID: 44, shortName: "RL FK" },
-            ]);
-            setPosten([{ name: "Kellan Mclaughlin", permission: 1 },
-            { permission: 1, name: "Brandon-Lee Frye" },
-            { permission: 2, name: "Wolfgang U Luft" },
-            { permission: 3, name: "Talha Driscoll" },
-            { permission: 4, name: "Radhika Norton" },
-            { permission: 5, name: "Miruna Decker" },
-            { permission: 6, name: "Jorja Bautista" },
-            { permission: 1, name: "Mariana Macdonald" },
-            { permission: 2, name: "Jimmie O'Brien" },
-            ]);
-            //posten.map((p) => (allNames.push(p.name)));
-            const allNames = posten.map(p => p.name);
-            console.log("allNames");
-            console.log(allNames);
+            console.log("PermissionsOverview");
+            console.log(res.data);
+            setPermissionsOverview(res.data);
           }
         }
       }).catch((error) => {
@@ -192,21 +153,45 @@ const PermissionsOverview: React.FunctionComponent = () => {
     // Clean-up function
     return () => { mounted = false; };
   };
-  const [mergedData, setMergedData] = useState<Posten[]>([]);
 
-  const mergeData = () => {
-    permissionsOverview.map((overview) => {
-      posten.map((postenP) => {
-        if (overview.permission === postenP.permission) {
-
-          setMergedData(mergedData.concat(postenP));
-
+  const getPermissionsOfMembers: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api.get("/users/permissions-of-members", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            console.log("memberPermissions");
+            console.log(res.data);
+            setMemberPermissions(res.data);
+          }
         }
+      }).catch((error) => {
+        console.log(error);
       });
-    });
+    // Clean-up function
+    return () => { mounted = false; };
   };
 
-  useEffect(() => { getPermissions(); mergeData(); }, []);
+  // const [mergedData, setMergedData] = useState<Posten[]>([]);
+
+  // const mergeData = () => {
+  //   permissionsOverview.map((overview) => {
+  //     posten.map((postenP) => {
+  //       if (permissionsOverview.berechtigungID === postenP.permission) {
+
+  //         setMergedData(mergedData.concat(postenP));
+
+  //       }
+  //     });
+  //   });
+  // };
+
+  useEffect(() => getPermissions(), []);
+  //useEffect(() => mergeData(), []);
+  useEffect(() => getPermissionsOfMembers(), []);
 
   return (
     <div>
@@ -221,32 +206,32 @@ const PermissionsOverview: React.FunctionComponent = () => {
                 <Divider className={classes.paperHeaderDivider} />
               </Grid>
               <Grid container spacing={0}>
-                {permissionsOverview.map((overview) => (
+                {permissionsOverview.map((permissions) => (
                   <Grid item container spacing={0} className={classes.contentContainer}>
                     <Grid item xs={6}>
                       <Grid item xs={12}>
                         <Typography>
-                          {overview.permissionName}
+                          {permissions.bezeichnung}
                         </Typography>
                       </Grid>
                     </Grid>
                     <Grid container spacing={0} xs={10}>
-                      {directorPermissions.map((directorP) => {
-                        if (overview.permission === directorP.permission) {
-                          if (directors.filter(entry => directorP.ressortID === entry.ressortID).length > 0) {
-                            const directorInfo = directors.filter(entry => entry.ressortID === directorP.ressortID)[0];
-                            tmp.push(directorInfo.shortName);
+                      {memberPermissions.map((memberP) => {
+                        if (permissions.berechtigungID === memberP.permission) {
+                          if (memberPermissions.map(entry => memberP.permission === entry.permission).length > 0) {
+                            //const directorInfo = memberPermissions.filter(entry => entry.permission === memberP.permission)[0];
+                            tmp.push(memberP.name);
                           }
                         }
                       })
                       }
-                      {posten.map((postenP) => {
-                        if (overview.permission === postenP.permission) {
+                      {/* {posten.map((postenP) => {
+                        if (permissionsOverview.berechtigungID === postenP.permission) {
                           tmp.push(postenP.name);
                         }
                       }
-                      )}
-                      {(tmp.length > 1) ? <Grid item xs >
+                      )} */}
+                      {(tmp.length >= 1) ? <Grid item xs >
                         <Autocomplete
                           multiple
                           id="tags-standard"
