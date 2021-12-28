@@ -105,7 +105,33 @@ export const changePassword = (req: Request, res: Response): void => {
  * @param res 200 if process is available, 404 else
  */
 export const sendPasswordResetLink = (req: Request, res:Response): void => {
-  res.status(200).send("not implemented");
+  let date = new Date;
+  let name = req.body.email.split("@");
+  //create a token
+  let plaintextToken = req.body.email.concat(date.getTime());
+  //create a hash from the token
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(plaintextToken, salt, function(err, hash) {
+      //check if email is valid
+      database.query(`SELECT jbt_email
+      FROM mitglied
+      WHERE mitglied.name = ?`,
+      [name])
+      .then((result: membersTypes.GetEmailToVerifyValidity []) => {
+        if(result.length === 1){
+          //insert the values into the passwort_reset table
+          database.query(
+            `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
+            VALUES (?, ?, ?)`,
+          [req.body.email, salt, hash])
+          .then(
+            //send email with correct URL to usermail
+
+          )
+        }
+      } )
+    });
+});
 };
 
 /**
@@ -116,7 +142,49 @@ export const sendPasswordResetLink = (req: Request, res:Response): void => {
  * @param res 200 if process is available, 404 else
  */
  export const resetPasswordWithKey = (req: Request, res:Response): void => {
-  res.status(200).send("not implemented");
+  let name = req.body.email.split("@");
+  // Get current date
+  let today = new Date()
+  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  // Check if a valid email and token are safed in the table
+  database.query(
+    `SELECT mitglied_jbt_email, DATEDIFF(day, datum, ?), token 
+    FROM passwort_reset
+    WHERE mitglied_jbt_email = ?
+    AND token = ?`,
+  [date, req.body.email, req.body.key])
+  .then((result: membersTypes.GetEmailDateTokenToVerifyValidity []) => {
+    if(result.length !== 0){
+      // Check if the entry is older then five days
+      if(result[0].datediff <5){
+        bcrypt.hash(req.body.newPassword, 10).then((hash) => {
+          // Store hash in your password DB
+          database.query(
+            `UPDATE mitglied
+            SET passwordHash = ?
+            WHERE mitglied.name = ?`,
+            [hash, name])
+            .then(() => {
+              res.status(200).send();
+              // Delete used entry
+            })
+            .catch(() => {
+              res.status(500).send("Update Error");
+            });
+        })
+      }
+      else{
+        // User got the correct result since the date was to to old
+      res.status(200).send();
+      }
+    }else{
+      // User got the correct result since the email or token was invalid
+      res.status(200).send();
+    }
+  })
+  .catch(err => {
+    res.status(404).send("Error");
+  });
 };
 
 /**
