@@ -3,27 +3,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import {
-  Avatar,
-  List,
-  Divider,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  Typography,
-} from "@material-ui/core";
-import {
-  Dashboard,
-  PeopleAlt,
-  Event,
-  Build,
-  MoreHoriz,
-  Apps,
-  EmojiObjects,
-  ExitToApp,
-  TrendingUp,
-} from "@material-ui/icons";
+import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Collapse, Typography } from "@material-ui/core";
+import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, ExitToApp, TrendingUp } from "@material-ui/icons";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import { AuthContext } from "../AuthContext";
@@ -75,18 +56,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 // Interface for the drawer props
 interface DrawerProps {
-  drawer: (
-    open: boolean
-  ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
+  drawer: (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => void;
 }
 
 /**
  * A drawer which enters from the left and depicts various options for navigation
  * @param props
  */
-const MenuDrawer: React.FunctionComponent<DrawerProps> = (
-  props: DrawerProps
-) => {
+const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const classes = useStyles();
   const location = useLocation();
@@ -132,13 +109,12 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
    * Handles the click Event of the nav links
    * @param value topic of the nav link
    */
-  const handleNavLinkClick =
-    (pathname: string) => (event: React.MouseEvent) => {
-      setMemberOpen(false);
-      setToolsOpen(false);
-      setMyFunctionsOpen(false);
-      setActiveNavLink(pathname);
-    };
+  const handleNavLinkClick = (pathname: string) => (event: React.MouseEvent) => {
+    setMemberOpen(false);
+    setToolsOpen(false);
+    setMyFunctionsOpen(false);
+    setActiveNavLink(pathname);
+  };
 
   /**
    * Handles click on logout link
@@ -204,9 +180,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
         {/* Default avatar */}
         <Avatar className={classes.muiAvatarRoot} src={JBTLogoBlack} />
         <div>
-          <Typography className={classes.avatarName}>
-            {auth.userName}
-          </Typography>
+          <Typography className={classes.avatarName}>{auth.userName}</Typography>
         </div>
       </div>
       <Divider />
@@ -229,10 +203,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
           <ListItemIcon>
             <PeopleAlt className={determineListItemClass("Mitglieder")} />
           </ListItemIcon>
-          <ListItemText
-            primary="Mitglieder"
-            className={determineListItemClass("Mitglieder")}
-          />
+          <ListItemText primary="Mitglieder" className={determineListItemClass("Mitglieder")} />
           {memberOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={memberOpen} timeout="auto" unmountOnExit>
@@ -245,10 +216,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Gesamtübersicht"
-                />
+                <ListItemText className={classes.subListItem} primary="Gesamtübersicht" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -259,23 +227,29 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Der Vorstand"
-                />
+                <ListItemText className={classes.subListItem} primary="Der Vorstand" />
               </ListItem>
             </NavLink>
-            <NavLink exact to="/ewigervorstand" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
+            <NavLink
+              exact
+              to="/ewigervorstand"
+              className={classes.listItemNavText}
+              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              onClick={handleNavLinkClick(pathname)}
+            >
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Ewiger Vorstand" />
               </ListItem>
             </NavLink>
-            <NavLink exact to="/geburtstage" className={classes.listItemNavText} activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }} onClick={handleNavLinkClick(pathname)}>
+            <NavLink
+              exact
+              to="/geburtstage"
+              className={classes.listItemNavText}
+              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              onClick={handleNavLinkClick(pathname)}
+            >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Geburtstage"
-                />
+                <ListItemText className={classes.subListItem} primary="Geburtstage" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -286,10 +260,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Traineebereich"
-                />
+                <ListItemText className={classes.subListItem} primary="Traineebereich" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -300,10 +271,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Kuratoren"
-                />
+                <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
             </NavLink>
           </List>
@@ -340,10 +308,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
           <ListItemIcon>
             <Build className={determineListItemClass("Tools")} />
           </ListItemIcon>
-          <ListItemText
-            primary="Tools"
-            className={determineListItemClass("Tools")}
-          />
+          <ListItemText primary="Tools" className={determineListItemClass("Tools")} />
           {toolsOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={toolsOpen} timeout="auto" unmountOnExit>
@@ -356,10 +321,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="MM-Tracking"
-                />
+                <ListItemText className={classes.subListItem} primary="MM-Tracking" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -370,10 +332,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="PL-QM-Tool"
-                />
+                <ListItemText className={classes.subListItem} primary="PL-QM-Tool" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -384,10 +343,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Raumreservierung"
-                />
+                <ListItemText className={classes.subListItem} primary="Raumreservierung" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -398,10 +354,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Innovationsmanagement"
-                />
+                <ListItemText className={classes.subListItem} primary="Innovationsmanagement" />
               </ListItem>
             </NavLink>
           </List>
@@ -410,10 +363,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
           <ListItemIcon>
             <PeopleAlt className={determineListItemClass("Meine Funktionen")} />
           </ListItemIcon>
-          <ListItemText
-            primary="Meine Funktionen"
-            className={determineListItemClass("Meine Funktionen")}
-          />
+          <ListItemText primary="Meine Funktionen" className={determineListItemClass("Meine Funktionen")} />
           {myFunctionsOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={myFunctionsOpen} timeout="auto" unmountOnExit>
@@ -426,10 +376,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Meine Seite"
-                />
+                <ListItemText className={classes.subListItem} primary="Meine Seite" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -440,10 +387,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Passwort ändern"
-                />
+                <ListItemText className={classes.subListItem} primary="Passwort ändern" />
               </ListItem>
             </NavLink>
             <NavLink
@@ -454,10 +398,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
-                <ListItemText
-                  className={classes.subListItem}
-                  primary="Lines abonieren"
-                />
+                <ListItemText className={classes.subListItem} primary="Lines abonieren" />
               </ListItem>
             </NavLink>
           </List>
@@ -471,9 +412,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (
         >
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
-              <MoreHoriz
-                className={determineListItemClass("/weitere-funktionen")}
-              />
+              <MoreHoriz className={determineListItemClass("/weitere-funktionen")} />
             </ListItemIcon>
             <ListItemText primary="Weitere Funktionen" />
           </ListItem>
