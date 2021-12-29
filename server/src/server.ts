@@ -4,6 +4,7 @@
 import https = require("https");
 import fs = require("fs");
 import dotenv = require("dotenv");
+import nodemailer = require("nodemailer");
 dotenv.config();
 
 import app from "./app";
