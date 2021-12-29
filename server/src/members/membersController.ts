@@ -42,11 +42,11 @@ export const login = (req: Request, res: Response): void => {
               res.status(401).send("Username or password wrong");
             }
           })
-          .catch((err) => {
+          .catch((_err) => {
             res.status(401).send("Username or password wrong");
           });
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error");
       });
   }
@@ -85,7 +85,7 @@ export const changePassword = (req: Request, res: Response): void => {
                   res.status(500).send("Update query Error");
                 });
             })
-            .catch((error) => {
+            .catch((_error) => {
               res.status(500).send("Internal Error");
             });
           } else {
@@ -93,7 +93,7 @@ export const changePassword = (req: Request, res: Response): void => {
           }
         });
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Query Error");
     });
 };
@@ -102,34 +102,40 @@ export const changePassword = (req: Request, res: Response): void => {
  * An email is sent with an password reset link and a key in the url to the user
  * The key used in the link is saved in the databse for the later verification
  * @param req email
- * @param res 200 if process is available, 404 else
+ * @param _res 200 if process is available, 404 else
  */
-export const sendPasswordResetLink = (req: Request, res:Response): void => {
-  let date = new Date;
-  let name = req.body.email.split("@");
-  //create a token
-  let plaintextToken = req.body.email.concat(date.getTime());
-  //create a hash from the token
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(plaintextToken, salt, function(err, hash) {
-      //check if email is valid
-      database.query(`SELECT jbt_email
+export const sendPasswordResetLink = (req: Request, _res:Response): void => {
+  const date = new Date();
+  const name = req.body.email.split("@");
+  // Create a token
+  const plaintextToken = req.body.email.concat(date.getTime());
+  // Create a hash from the token
+  bcrypt.genSalt(10, (_err, salt) => {
+    bcrypt.hash(plaintextToken, salt, (_, hash) => {
+      // Check if email is valid
+      database.query(
+        `SELECT jbt_email
       FROM mitglied
       WHERE mitglied.name = ?`,
       [name])
       .then((result: membersTypes.GetEmailToVerifyValidity []) => {
         if(result.length === 1){
-          //insert the values into the passwort_reset table
+          // Delete old entrys, if any exist
+          database.query(
+            `DELETE FROM passwort_reset
+            WHERE mitglied_jbt_email = ?`,
+            [req.body.email]);
+          // Insert the values into the passwort_reset table
           database.query(
             `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
             VALUES (?, ?, ?)`,
           [req.body.email, salt, hash])
           .then(
-            //send email with correct URL to usermail
+            // Send email with correct URL to usermail
 
-          )
+          );
         }
-      } )
+      } );
     });
 });
 };
@@ -142,13 +148,13 @@ export const sendPasswordResetLink = (req: Request, res:Response): void => {
  * @param res 200 if process is available, 404 else
  */
  export const resetPasswordWithKey = (req: Request, res:Response): void => {
-  let name = req.body.email.split("@");
+  const name = req.body.email.split("@");
   // Get current date
-  let today = new Date()
-  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  const today = new Date();
+  const date = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
   // Check if a valid email and token are safed in the table
   database.query(
-    `SELECT mitglied_jbt_email, DATEDIFF(day, datum, ?), token 
+    `SELECT mitglied_jbt_email, DATEDIFF(day, datum, ?), token
     FROM passwort_reset
     WHERE mitglied_jbt_email = ?
     AND token = ?`,
@@ -167,11 +173,15 @@ export const sendPasswordResetLink = (req: Request, res:Response): void => {
             .then(() => {
               res.status(200).send();
               // Delete used entry
+              database.query(
+                `DELETE FROM passwort_reset
+                WHERE mitglied_jbt_email = ?`,
+                [req.body.email]);
             })
             .catch(() => {
               res.status(500).send("Update Error");
             });
-        })
+        });
       }
       else{
         // User got the correct result since the date was to to old
@@ -182,7 +192,7 @@ export const sendPasswordResetLink = (req: Request, res:Response): void => {
       res.status(200).send();
     }
   })
-  .catch(err => {
+  .catch(_err => {
     res.status(404).send("Error");
   });
 };
@@ -190,7 +200,7 @@ export const sendPasswordResetLink = (req: Request, res:Response): void => {
 /**
  * Retrieves an overview of all registered members
  */
-export const retrieveMemberList = (req: Request, res: Response): void => {
+export const retrieveMemberList = (_req: Request, res: Response): void => {
   database.query(
     `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
    FROM mitglied
@@ -201,7 +211,7 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
     .then((result: membersTypes.GetMembersQueryResult) => {
       res.status(200).json(result);
     })
-    .catch(err => {
+    .catch(_err => {
       res.status(500).send("Query Error");
     });
 };
@@ -229,7 +239,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
           res.status(200).json(result);
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error");
       });
   } else {
@@ -250,7 +260,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
           res.status(200).json(result);
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error");
       });
   }
@@ -259,7 +269,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
 /**
  * Retrieves all members of a department
  */
-export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+export const retrieveDepartmentMembers = (_req: Request, res: Response): void => {
   database.query(
     `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
     FROM mitglied, ressort
@@ -272,7 +282,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Query Error");
     });
 };
@@ -289,14 +299,14 @@ export const createMember = (req: Request, res: Response): void => {
       VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [req.body.vorname, req.body.nachname, req.body.name, hash, req.body.geschlecht,
         req.body.geburtsdatum, req.body.handy])
-        .then((result) => {
+        .then((_result) => {
           res.status(201).send("User created");
         })
-        .catch((err) => {
+        .catch((_err) => {
           res.status(500).send("Query Error: Creating User");
         });
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Hashing error");
     });
 };
@@ -304,7 +314,7 @@ export const createMember = (req: Request, res: Response): void => {
 /**
  * Retrieves the history of directors
  */
-export const retrieveDirectors = (req: Request, res: Response): void => {
+export const retrieveDirectors = (_req: Request, res: Response): void => {
   database.query(
     `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis
     FROM mitglied, mitglied_has_evposten, evposten
@@ -316,7 +326,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Query Error");
     });
 };
@@ -324,7 +334,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
 /**
  * Retrieves the departments
  */
- export const retrieveDepartments = (req: Request, res: Response): void => {
+ export const retrieveDepartments = (_req: Request, res: Response): void => {
   database.query(
     `SELECT ressortID, bezeichnung, kuerzel
     FROM ressort
@@ -336,7 +346,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Query Error");
     });
 };
@@ -378,10 +388,10 @@ export const updateMember = (req: Request, res: Response): void => {
       req.body.studienende, req.body.ausbildung, req.body.kontoinhaber, req.body.iban, req.body.bic,
       req.body.engagement, req.body.canPL, req.body.canQM, lastChangeTime, req.body.fuehrerschein,
       req.body.ersthelferausbildung, req.params.id])
-      .then((result) => {
+      .then((_result) => {
         res.status(200).send("Profile Update Successful");
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error: Updating Profile failed");
       });
   }
@@ -400,10 +410,10 @@ export const updateMember = (req: Request, res: Response): void => {
       req.body.hochschule, req.body.studiengang, req.body.studienbeginn, req.body.studienende, req.body.ausbildung,
       req.body.kontoinhaber, req.body.iban, req.body.bic, lastChangeTime, req.body.fuehrerschein,
       req.body.ersthelferausbildung, req.params.id])
-      .then((result) => {
+      .then((_result) => {
         res.status(200).send("Profile Update Successful");
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error: Updating Profile failed");
       });
   }
@@ -421,10 +431,10 @@ export const updateMember = (req: Request, res: Response): void => {
       req.body.trainee_seit, req.body.mitglied_seit, req.body.alumnus_seit, req.body.senior_seit,
       req.body.aktiv_seit, req.body.passiv_seit, req.body.ausgetreten_seit, req.body.ressort,
       req.body.engagement, req.body.canPL, req.body.canQM, req.params.id])
-      .then((result) => {
+      .then((_result) => {
         res.status(200).send("Profile Update Successful");
       })
-      .catch((err) => {
+      .catch((_err) => {
         res.status(500).send("Query Error: Updating Profile failed");
       });
   } else {
@@ -435,7 +445,7 @@ export const updateMember = (req: Request, res: Response): void => {
 /**
  * Retrieves an overview of all issued permissions
  */
-export const retrievePermissionsList = (req: Request, res: Response): void => {
+export const retrievePermissionsList = (_req: Request, res: Response): void => {
   database.query(
     `SELECT vorname, nachname, berechtigung_berechtigungID AS permission
     FROM mitglied
@@ -444,7 +454,7 @@ export const retrievePermissionsList = (req: Request, res: Response): void => {
     .then((result: membersTypes.GetPermissionsQueryResult) => {
       res.status(200).json(result);
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Query Error: Getting permissions failed");
     });
 };
@@ -457,10 +467,10 @@ export const createPermission = (req: Request, res: Response): void => {
     `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
     VALUES (?, ?)`,
     [req.body.memberID, req.body.permissionID])
-    .then((result) => {
+    .then((_result) => {
       res.status(201).send("Permission created");
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Database Error: Creating Permission failed");
     });
 };
@@ -474,10 +484,10 @@ export const deletePermission = (req: Request, res: Response): void => {
     FROM mitglied_has_berechtigung
     WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
     [req.body.memberID, req.body.permissionID])
-    .then((result) => {
+    .then((_result) => {
       res.status(200).send("Permission deleted");
     })
-    .catch((err) => {
+    .catch((_err) => {
       res.status(500).send("Database Error: Deleting Permission failed");
     });
 };
