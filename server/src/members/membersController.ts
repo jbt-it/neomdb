@@ -172,9 +172,9 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
                         "There was a request to change your password for the MDB! \n\n" +
                         "If you did not make this request then please ignore this email. \n\n" +
                         "Otherwise, please use this url to change your password: \n\n" +
-                        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" +
+                        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
                         hash +
-                        "\n\n" + // TODO use actual website instead of localhost
+                        "\n\n" +
                         "Regards your IT ressort", // Plaintext body
                     };
                     res.status(200).send();
@@ -223,37 +223,39 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
       if (result.length !== 0) {
         // Check if the entry is older then five days
         if (result[0].datediff < 5) {
-          bcrypt.hash(req.body.newPassword, 10)
-          .then((hash) => {
-            // Store hash in your password DB
-            database
-              .query(
-                `UPDATE mitglied
+          bcrypt
+            .hash(req.body.newPassword, 10)
+            .then((hash) => {
+              // Store hash in your password DB
+              database
+                .query(
+                  `UPDATE mitglied
             SET passwordHash = ?
             WHERE mitglied.name = ?`,
-                [hash, name]
-              )
-              .then(() => {
-                // Delete used entry
-                database.query(
-                  `DELETE FROM passwort_reset
-                WHERE mitglied_jbt_email = ?`,
-                  [req.body.email]
+                  [hash, name]
                 )
                 .then(() => {
-                  res.status(200).send();
+                  // Delete used entry
+                  database
+                    .query(
+                      `DELETE FROM passwort_reset
+                WHERE mitglied_jbt_email = ?`,
+                      [req.body.email]
+                    )
+                    .then(() => {
+                      res.status(200).send();
+                    })
+                    .catch(() => {
+                      res.status(500).send("Internal Error");
+                    });
                 })
                 .catch(() => {
                   res.status(500).send("Internal Error");
                 });
-              })
-              .catch(() => {
-                res.status(500).send("Internal Error");
-              });
-          })
-          .catch(() => {
-            res.status(500).send("Internal Error");
-          })
+            })
+            .catch(() => {
+              res.status(500).send("Internal Error");
+            });
         } else {
           // User got the correct result since the date was to to old
           res.status(200).send();
