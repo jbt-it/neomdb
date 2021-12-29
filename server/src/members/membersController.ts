@@ -202,7 +202,7 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
  * The mail and the key in the url are then checked to se if it is a valid pair
  * If the pair is valid the new password is stored
  * @param req email, key, new password
- * @param res 200 if process is available, 404 else
+ * @param res 200 if process is available, 500 else
  */
 export const resetPasswordWithKey = (req: Request, res: Response): void => {
   const name = req.body.email.split("@");
