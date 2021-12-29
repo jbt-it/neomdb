@@ -156,8 +156,8 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
                       host: "studentische-beratung.de",
                       port: 465,
                       auth: {
-                        user: "foo@studentische-beratung.de", // TODO use actual email
-                        pass: "fooPassword", // TODO use actual PW
+                        user: "mdbpasswortreset@studentische-beratung.de", // Email
+                        pass: "pQam721?", // PW
                       },
                     }); // Setup e-mail data with unicode symbols
                     const mailOptions = {
