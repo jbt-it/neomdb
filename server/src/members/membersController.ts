@@ -11,6 +11,7 @@ import { JWTPayload } from "../global/globalTypes";
 import { createNCUser } from "../utils/nextcloud";
 import { addMailAccountToMailingList, createMailAccount } from "../utils/plesk";
 import { createMWUser } from "../utils/mediawiki";
+import { getRandomString } from "../utils/stringUtils";
 
 /**
  * Obtains username and corresponding permissions
@@ -246,6 +247,14 @@ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
  * for the different systems (webmail, nextcloud, mediawiki)
  */
 export const createMember = (req: Request, res: Response): void => {
+  let jbtMail = "";
+  if (req.body.name) {
+    jbtMail = `${req.body.name}@studentische-beratung.de`;
+  } else {
+    res.status(500).send("Username not specified");
+    return;
+  }
+
   /**
    * Overview of the status of the different account creation operations
    */
@@ -286,27 +295,30 @@ export const createMember = (req: Request, res: Response): void => {
     .then((hash) => {
       database
         .query(
-          `INSERT INTO mitglied (vorname, nachname, name, passwordHash, geschlecht,
-           geburtsdatum, handy, mitgliedstatus, ressort)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO mitglied (vorname, nachname, name, geschlecht, passwordHash, icalToken, mitgliedstatus, generation, trainee_seit, email2, jbt_email, ressort)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             req.body.vorname,
             req.body.nachname,
             req.body.name,
-            hash,
             req.body.geschlecht,
+            hash,
+            getRandomString(16),
+            1,
+            req.body.generation,
+            req.body.traineeSeit,
+            req.body.email,
+            jbtMail,
+            8,
             req.body.geburtsdatum,
             req.body.handy,
-            1,
-            8,
           ]
         )
         .then((result) => {
           // Set the status of the query
           statusOverview = { ...statusOverview, queryStatus: "success" };
 
-          const mailAccountName = `${req.body.name}@studentische-beratung.de`;
-          createMailAccount(mailAccountName, hash)
+          createMailAccount(jbtMail, hash)
             .then((mailResult: membersTypes.PleskApiResult) => {
               if (mailResult.code === 0) {
                 // Set the status of the mail
@@ -320,10 +332,7 @@ export const createMember = (req: Request, res: Response): void => {
                 res.status(500).json(statusOverview);
                 return;
               }
-              addMailAccountToMailingList(
-                "trainee",
-                `${req.body.name}@studentische-beratung.de`
-              )
+              addMailAccountToMailingList("trainee", jbtMail)
                 .then((mailListRes: membersTypes.PleskApiResult) => {
                   if (mailListRes.code === 0) {
                     // Set the status of the mailing list
@@ -339,13 +348,9 @@ export const createMember = (req: Request, res: Response): void => {
                     };
                     return;
                   }
-                  createNCUser(
-                    req.body.name,
-                    req.body.name,
-                    "",
-                    mailAccountName,
-                    ["Mitglied"]
-                  )
+                  createNCUser(req.body.name, req.body.name, "", jbtMail, [
+                    "Mitglied",
+                  ])
                     .then((ncResult: membersTypes.NCApiResult) => {
                       if (ncResult.statuscode === 100) {
                         // Set the status of the nextcloud
@@ -360,7 +365,7 @@ export const createMember = (req: Request, res: Response): void => {
                         };
                       }
 
-                      createMWUser(req.body.name, hash, mailAccountName)
+                      createMWUser(req.body.name, hash, jbtMail)
                         .then((mwResult: membersTypes.MWApiResult) => {
                           if (mwResult.status === "PASS") {
                             // Set the status of the mediawiki
@@ -390,7 +395,7 @@ export const createMember = (req: Request, res: Response): void => {
                         ...statusOverview,
                         nextcloudErrorMsg: ncErr,
                       };
-                      createMWUser(req.body.name, hash, mailAccountName)
+                      createMWUser(req.body.name, hash, jbtMail)
                         .then((mwResult: membersTypes.MWApiResult) => {
                           if (mwResult.status === "PASS") {
                             // Set the status of the mediawiki
