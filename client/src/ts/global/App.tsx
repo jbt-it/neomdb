@@ -1,53 +1,51 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
-import decode from "jwt-decode";
 import { AuthContext } from "../global/AuthContext";
+import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
+import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
+import DirectorsHistory from "../members/DirectorsHistory";
+import { useEffect } from "react";
+import { authReducerActionType } from "./globalTypes";
 
 const App: React.FunctionComponent = () => {
-  const [authenticated, setAuthenticated,
-    userID, setUserID, userName, setUserName] = useContext(AuthContext);
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
-   * Checks if token in local storage is set or expired
+   * Checks if the user is (still) authenticated
+   * and retrieves the data of the logged in user
    */
-  const checkAuth = (): boolean => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setAuthenticated(false);
-      setUserID(null);
-      setUserName(null);
-      return false;
-    } else {
-      try {
-        const { exp } = decode(token);
-
-        // JWT gives expiration time in seconds therefore date needs to be
-        // Converted from miliseconds
-        if (exp < new Date().getTime() / 1000) {
-          setAuthenticated(false);
-          setUserID(null);
-          setUserName(null);
-          return false;
+  const checkAuth = useCallback(() => {
+    // Tries to retrieve the user data
+    api
+      .get("auth/user-data")
+      .then((res) => {
+        // If the retrieval of the user data is succesfull the user is authenticated
+        if (res.status === 200) {
+          console.log(res.data.permissions);
+          const userID = res.data.mitgliedID;
+          const userName = res.data.name;
+          const permissions = res.data.permissions;
+          dispatchAuth({
+            type: authReducerActionType.authenticate,
+            payload: { userID, userName, permissions },
+          });
         } else {
-          setAuthenticated(true);
-          setUserID(JSON.parse(atob(token.split(".")[1])).mitgliedID);
-          setUserName(JSON.parse(atob(token.split(".")[1])).name);
-          return true;
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
-      } catch {
-        setAuthenticated(false);
-        setUserID(null);
-        setUserName(null);
-        return false;
-      }
-    }
-  };
+      })
+      .catch((err) => {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      });
+  }, [dispatchAuth]);
+
+  // Calls checkAuth on (re)render of routes
+  useEffect(() => checkAuth(), [checkAuth]);
 
   /**
    * Renders the specified component if the user is authenticated otherwise
@@ -55,13 +53,10 @@ const App: React.FunctionComponent = () => {
    */
   const PrivateRoute = ({ component: Component, ...rest }: any) => {
     return (
-      <Route {...rest} render={props => (
-        checkAuth() ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/login" }} />
-        )
-      )} />
+      <Route
+        {...rest}
+        render={(props) => (auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/login" }} />)}
+      />
     );
   };
 
@@ -71,13 +66,10 @@ const App: React.FunctionComponent = () => {
    */
   const LoginRoute = ({ component: Component, ...rest }: any) => {
     return (
-      <Route {...rest} render={props => (
-        !checkAuth() ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/" }} />
-        )
-      )} />
+      <Route
+        {...rest}
+        render={(props) => (!auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />)}
+      />
     );
   };
 
@@ -85,13 +77,14 @@ const App: React.FunctionComponent = () => {
     <HashRouter>
       {
         // Renders the Nav componenent if the user is authenticated
-        (authenticated ? <Nav /> : null)
+        auth.authenticated ? <Nav /> : null
       }
       <Switch>
         <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
         <PrivateRoute exact path="/vorstand" component={Dashboard} />
+        <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
         <PrivateRoute exact path="/geburtstage" component={Dashboard} />
         <PrivateRoute exact path="/traineebereich" component={Dashboard} />
         <PrivateRoute exact path="/kuratoren" component={Dashboard} />
@@ -104,6 +97,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/kvp" component={Dashboard} />
+        <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
         <LoginRoute exact path="/login" component={Login} />
         <PrivateRoute path="*" component={NotFound} />
       </Switch>
