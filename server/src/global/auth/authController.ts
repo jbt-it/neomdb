@@ -79,7 +79,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
     const jwtData = verifyJWT(req.cookies.token);
     if (
       Number(req.params.id) === jwtData.mitgliedID ||
-      permissions.every((element) => jwtData.permissions.includes(element))
+      permissions.every((element) => jwtData.permissions.some((permission) => permission.permissionID === element))
     ) {
       res.locals.memberID = jwtData.mitgliedID;
       res.locals.permissions = jwtData.permissions;
@@ -99,7 +99,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
 export const restrictRoutes = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
-    if (permissions.every((element) => jwtDataPermissions.includes(element))) {
+    if (permissions.every((element) => jwtDataPermissions.some((permission) => permission.permissionID === element))) {
       next();
     } else {
       return res.status(403).send("Authorization failed: You are not permitted to do this");
@@ -155,7 +155,7 @@ export const login = (req: Request, res: Response): void => {
         `,
             [result[0].mitgliedID]
           )
-          .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+          .then((directorPermissionsResult: globalTypes.Permission[]) => {
             let permissions = [];
             // Adds role permissions to the permissions array
             if (directorPermissionsResult.length !== 0) {
@@ -227,7 +227,7 @@ export const retrieveUserData = (req: Request, res: Response) => {
         `,
           [jwtData.mitgliedID]
         )
-        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+        .then((directorPermissionsResult: globalTypes.Permission[]) => {
           let permissions = [];
 
           // Adds role permissions to the permissions array
