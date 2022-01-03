@@ -4,7 +4,8 @@
 
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useCallback
 } from "react";
 import {
   Paper,
@@ -150,7 +151,6 @@ interface Director {
  */
 const DirectorsHistory: React.FunctionComponent = () => {
   const classes = useStyles();
-  const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [directors, setdirectors] = useState<Director[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
@@ -158,7 +158,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
   const [errorOpen, setErrorOpen] = useState<number>(0);
 
   // Retrieves the directors
-  const getdirectors: VoidFunction = () => {
+  const getdirectors = useCallback( () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get("/users/directors", {
@@ -170,15 +170,15 @@ const DirectorsHistory: React.FunctionComponent = () => {
           setdirectors(res.data);
         }
       }
-    }).catch((error) => {
+    }).catch(() => {
       setErrorOpen(errorOpen + 1);
     });
 
     // Clean-up function
     return () => {mounted = false;};
-  };
+  }, [errorOpen], );
   useEffect(() => setErrorOpen(0), []);
-  useEffect(() => getdirectors(), []);
+  useEffect(() => getdirectors(), [getdirectors]);
 
   /**
    * Handles the change event on the search filter input
@@ -309,7 +309,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
                 onChange={handleSearchInput}
               />
           </Grid>
-
           <Grid item xs={6} sm={3} className={classes.kuerzelFilterMain}>
             <TextField
               label="Vorstandsposten"
@@ -332,10 +331,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
           </Grid>
         </Grid>
         </form>
-        {additionalFiltersState ? additionalFilters : null}
-        <div className={classes.amountOfEntries}>
-        {`${getFilteredandSortedDirectors().length} Einträge`}
-        </div>
       </Paper>
       <TableContainer
           component={Paper}
