@@ -377,12 +377,12 @@ export const createMember = (req: Request, res: Response): void => {
             req.body.geschlecht,
             hash,
             getRandomString(16),
-            1,
+            1, // Status of member is at default "trainee"
             req.body.generation,
             req.body.traineeSeit,
             req.body.email,
             jbtMail,
-            8,
+            8, // Department is at default "Ohne Ressort"
           ]
         )
         .then((result) => {
