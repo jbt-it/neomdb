@@ -270,31 +270,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
       }
   };
 
-  // The additional filters
-  const additionalFilters = (
-    <div>
-      <Grid item xs={6} sm={3} className={classes.kuerzelFilterAdditional}>
-        <TextField
-          label="kuerzel"
-          className={classes.filterElement}
-          color="primary"
-          onChange={handlekuerzelChange}
-          value={kuerzelFilter}
-          select
-        >
-  	      <MenuItem value={""}>-</MenuItem>
-          <MenuItem value={"NET"}>NET</MenuItem>
-          <MenuItem value={"QM"}>QM</MenuItem>
-          <MenuItem value={"F&R"}>F&R</MenuItem>
-          <MenuItem value={"FK"}>FK</MenuItem>
-          <MenuItem value={"MIT"}>MIT</MenuItem>
-          <MenuItem value={"MAR"}>MAR</MenuItem>
-          <MenuItem value={"IT"}>IT</MenuItem>
-        </TextField>
-      </Grid>
-    </div>
-  );
-
   return (
     <div>
       <div className="content-page">
