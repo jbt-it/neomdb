@@ -185,13 +185,7 @@ const Login: React.FunctionComponent = () => {
                 fullWidth
               />
               {getPasswordField()}
-              <Button
-                className={classes.submit}
-                variant="contained"
-                fullWidth
-                color="primary"
-                type="submit"
-              >
+              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
                 Login
               </Button>
               <Grid container>
@@ -201,11 +195,7 @@ const Login: React.FunctionComponent = () => {
                   </Link>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
-                  <Link
-                    id="capswarning"
-                    variant="body2"
-                    className={classes.warningText}
-                  >
+                  <Link id="capswarning" variant="body2" className={classes.warningText}>
                     {setCapsLockWaring()}
                   </Link>
                 </Grid>
