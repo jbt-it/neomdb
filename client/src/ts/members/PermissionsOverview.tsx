@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
   Paper,
-  IconButton,
   Grid,
   createStyles,
   Theme,
@@ -14,6 +13,7 @@ import {
   Divider,
   Box,
   TextField,
+  Chip,
 } from "@material-ui/core";
 import api from "../utils/api";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -23,6 +23,7 @@ interface MemberPermissions {
   name: string;
   permission: number;
   canDelegate: number;
+  memberID: number;
 }
 interface PermissionsOverview {
   bezeichnung: string;
@@ -30,6 +31,10 @@ interface PermissionsOverview {
   berechtigungID: number;
 }
 
+interface AllNames {
+  name: string;
+  memberID: number;
+}
 /**
  * Function which proivdes the styles of the PermissionsOverview
  */
@@ -66,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
     },
     gridEntityPrimary: {
-      color: "white", //#f6891f
+      color: "white",
       minWidth: "60px",
       display: "inline-flex",
       margin: 5,
@@ -75,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       right: 5,
     },
     gridEntityPrimaryRolls: {
-      color: "white", //#f6891f
+      color: "white",
       display: "inline-flex",
       margin: 5,
       padding: 1,
@@ -83,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
       right: 5,
     },
     gridEntitySecondary: {
-      color: "white", //#f6891f
+      color: "white",
       display: "flex",
       margin: 1,
       padding: 3,
@@ -95,25 +100,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 const PermissionsOverview: React.FunctionComponent = () => {
   const classes = useStyles();
-  const handleDelete = () => {
-    console.info("You clicked the delete icon.");
-  };
-  const handleClick = () => {
-    console.info("You clicked the Chip.");
-  };
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
   const [permissionsOverview, setPermissionsOverview] = useState<PermissionsOverview[]>([]);
-  const [tmpState, setTmpState] = useState<string[] | []>([]);
-  const tmp: string[] = [];
-  const allNames = Array.from(new Set(memberPermissions.map((p) => p.name)));
+  const memberNames = memberPermissions
+    .filter((e) => e.memberID > 0)
+    .map((p) => ({ name: p.name, memberID: p.memberID }))
+    .filter(
+      (value, index, self) => index === self.findIndex((t) => t.memberID === value.memberID && t.name === value.name)
+    );
   const { auth, dispatchAuth } = useContext(AuthContext);
-
-  console.log("auth Start");
-  console.log(auth.permissions);
-  console.log("auth Ende");
-
-  console.log("allNames");
-  console.log(allNames);
+  let tmp: AllNames[] = [];
 
   /**
    * Handles the API call and cleans state thereafter
@@ -128,8 +124,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            console.log("PermissionsOverview");
-            console.log(res.data);
             setPermissionsOverview(res.data);
           }
         }
@@ -153,8 +147,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            console.log("memberPermissions");
-            console.log(res.data);
             setMemberPermissions(res.data);
           }
         }
@@ -166,6 +158,76 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
+  };
+
+  const createPermission = (memberID: number, permissionID: number) => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .post(
+        "/users/permissions",
+        { memberID, permissionID },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            console.log(res.data);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
+  const deletePermission = (memberID: number, permissionID: number) => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .delete("/users/permissions", {
+        data: { memberID, permissionID },
+
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            console.log(res.data);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
+  const handleOnChange = (newValue: AllNames[], details: any, permissionID: number) => {
+    if (newValue[newValue.length - 1] === details.option) {
+      createPermission(details.option.memberID, permissionID);
+    } else {
+      deletePermission(details.option.memberID, permissionID);
+    }
+  };
+
+  /**
+   * Retuns true if user can deligate permissionID else false
+   */
+  const checkDisable = (permissionID: number) => {
+    if (auth.permissions.filter((e) => e.permissionID === permissionID && e.canDelegate).length > 0) {
+      return false;
+    }
+    return true;
   };
 
   useEffect(() => getPermissions(), []);
@@ -195,27 +257,36 @@ const PermissionsOverview: React.FunctionComponent = () => {
                       {memberPermissions.map((memberP) => {
                         if (permissions.berechtigungID === memberP.permission) {
                           if (memberPermissions.map((entry) => memberP.permission === entry.permission).length > 0) {
-                            //const directorInfo = memberPermissions.filter(entry => entry.permission === memberP.permission)[0];
-                            tmp.push(memberP.name);
+                            tmp.push({ name: memberP.name, memberID: memberP.memberID });
                           }
                         }
                       })}
-                      {/* {posten.map((postenP) => {
-                         if (permissionsOverview.berechtigungID === postenP.permission) {
-                           tmp.push(postenP.name);
-                         }
-                       }
-                       )} */}
                       {tmp.length >= 1 ? (
                         <Grid item xs>
                           <Autocomplete
                             multiple
+                            disableClearable
+                            filterSelectedOptions
                             id="tags-standard"
-                            options={allNames}
-                            getOptionLabel={(option) => option}
-                            defaultValue={tmp.splice(0, tmp.length)}
                             color="primary"
-                            disabled={true}
+                            getOptionSelected={(option, value) => option.memberID === value.memberID}
+                            options={memberNames}
+                            getOptionLabel={(options) => options.name}
+                            defaultValue={tmp}
+                            disabled={checkDisable(permissions.berechtigungID)}
+                            onChange={(event, newValue, reason, details) => {
+                              handleOnChange(newValue, details, permissions.berechtigungID);
+                            }}
+                            renderTags={(tagValue, getTagProps) =>
+                              tagValue.map((option, index) => (
+                                <Chip
+                                  label={option.name}
+                                  {...getTagProps({ index })}
+                                  disabled={checkDisable(permissions.berechtigungID) || option.memberID < 0}
+                                />
+                              ))
+                            }
+                            {...(tmp = [])}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
@@ -228,7 +299,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                           />
                         </Grid>
                       ) : (
-                        tmp.splice(0, tmp.length)
+                        (tmp = [])
                       )}
                     </Grid>
                   </Grid>
