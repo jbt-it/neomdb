@@ -31,6 +31,7 @@ router.post("/permissions", authController.restrictRoutes([1]), membersControlle
 //  =======>>> Patch routes <<<=======
 router.patch("/change-password", membersController.changePassword);
 router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
+router.patch("/memberstatus/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMemberStatus);
 
 //  =======>>> Delete routes <<<=======
 router.delete("/permissions", authController.restrictRoutes([1]), membersController.deletePermission);
