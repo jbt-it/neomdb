@@ -11,6 +11,7 @@ import { AuthContext } from "../../global/AuthContext";
 import PageBar from "../../global/navigation/PageBar";
 import CustomSnackbar from "../../global/CustomSnackbar";
 import * as membersTypes from "../membersTypes";
+import { authReducerActionType } from "../../global/globalTypes";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -47,14 +48,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     const [successOpen, setSuccessOpen] = useState<number>(0);
     const [errorOpen, setErrorOpen] = useState<number>(0);
     const [members, setMembers] = useState<membersTypes.Member[]>([]);
-    const [
-      authenticated,
-      setAuthenticated,
-      userID,
-      setUserID,
-      userName,
-      setUserName,
-    ] = useContext(AuthContext);
+    const { auth, dispatchAuth } = useContext(AuthContext);
     const [departments, setDepartments] = useState<membersTypes.Department[]>(
       []
     );
@@ -82,7 +76,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -110,7 +104,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -138,7 +132,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -166,7 +160,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -195,7 +189,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -226,7 +220,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         })
         .catch((err) => {
-          setAuthenticated(false);
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
           console.log(err);
         });
 
@@ -239,15 +233,15 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     useEffect(
       () =>
         // Checks if the user is the owner of the member page
-        setIsOwner(userID === parseInt(props.match.params.id, 10)),
-      [props.match.params.id, userID]
+        setIsOwner(auth.userID === parseInt(props.match.params.id, 10)),
+      [props.match.params.id, auth.userID]
     );
     useEffect(() => getMembers(), []);
     useEffect(() => getDepartments(), []);
     useEffect(() => getLanguages(), []);
     useEffect(() => getEdvSkills(), []);
     useEffect(() => setSuccessOpen(0), []);
-    useEffect(getMemberDetails, [props.match.params.id]);
+    useEffect(getMemberDetails, [props.match.params.id, dispatchAuth]);
 
     return (
       <div>
