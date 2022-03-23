@@ -439,6 +439,8 @@ export const retrieveEDVSkills = (req: Request, res: Response): void => {
  * Update can be done by member himself with an additional permission
  */
 export const updateMemberStatus = (req: Request, res: Response): void => {
+  const date: Date = new Date();
+
   // Format date yyyy-mm-dd hh:mm:ss
   const lastChangeTime =
     date.getFullYear() +
