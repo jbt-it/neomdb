@@ -385,8 +385,10 @@ const MemberManagement: React.FunctionComponent = () => {
         if (res.status === 200) {
           getMembers();
           setSuccessOpen(successOpen + 1);
+          setSuccessOpen(0);
         } else {
           setErrorOpen(errorOpen + 1);
+          setErrorOpen(0);
         }
       })
       .catch((error) => {});
@@ -395,7 +397,9 @@ const MemberManagement: React.FunctionComponent = () => {
   /**
    * Adds the specified member
    */
-  const addMember = () => {};
+  const addMember = () => {
+    // TODO: Add member into database
+  };
 
   /**
    * Handles the change event of the first name field
