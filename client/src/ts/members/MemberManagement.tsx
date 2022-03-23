@@ -1,5 +1,5 @@
 /**
- * The MemberManagement-Component lets admins manually add members and set status of existing members to resigned
+ * The MemberManagement-Component lets admins manually add members and change the status of existing members
  */
 import React, {
     useState,
@@ -366,13 +366,33 @@ import React, {
     };
 
     /**
-     * Kicks the selected member
+     * Changes the status of the member
      */
-    const kickMember = (id: number, status: String) => {
-      console.log("kicking Lennart and: " + id + " " + status)
-      // TODO: prompt user to confirm kick
-      // TODO: Kick member
+    const changeMemberStatus = (id: number, status: string) => {
+      console.log("Changing member status of member with id " + id + " to " + status)
+      // TODO: prompt user to confirm status change
+
+      var members1 = members
+
+      members1.forEach(member => {
+        if (member.mitgliedID === id) {
+          console.log(member.mitgliedstatus + " set to " + status)
+          member.mitgliedstatus = status
+          setMembers(members1)
+          // TODO: Change member status in database
+          console.log("Found member with id")
+        }
+      });
+      console.log(members)
     };
+
+    /**
+     * Adds the specified member
+     */
+    const addMember = () => {
+      
+    };
+
     /**
      * Handles the change event of the first name field
      * @param event
@@ -526,13 +546,13 @@ import React, {
                         color="primary"
                         onChange={handleTraineeGeneration}
                         value={traineeGeneration}
-                        select
+
                       />
                     </Grid>
                   </Grid>
 
                 <Grid item xs={12} sm={12}>
-                    <Button variant="outlined" color="primary" className={classes.inputButton}>Benutzer anlegen</Button>
+                    <Button variant="outlined" color="primary" className={classes.inputButton} onClick={addMember}>Benutzer anlegen</Button>
                   </Grid>
 
                 <Grid item xs={12} sm={12}>
@@ -642,8 +662,7 @@ import React, {
                         className={classes.filterElement}
                         color="primary"
                         onChange={(event) => {
-                          // TODO: change value of drop down filed after selecting new value
-                          kickMember(member.mitgliedID, event.target.value);
+                          changeMemberStatus(member.mitgliedID, event.target.value);
                         }}
                         value={member.mitgliedstatus}
                         select
@@ -652,6 +671,7 @@ import React, {
                         <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
                         <MenuItem value={"Senior"}>Senior</MenuItem>
                         <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+            
                         <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
                         <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
                       </TextField>
