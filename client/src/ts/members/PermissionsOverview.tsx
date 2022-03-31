@@ -18,23 +18,35 @@ import {
 import api from "../utils/api";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { AuthContext } from "../global/AuthContext";
+import CustomSnackbar from "../global/CustomSnackbar";
 
+/**
+ * Interface of route get permissions-of-members
+ */
 interface MemberPermissions {
   name: string;
   permission: number;
   canDelegate: number;
   memberID: number;
 }
+
+/**
+ * Interface of route get permissions
+ */
 interface PermissionsOverview {
   bezeichnung: string;
   beschreibung: string;
   berechtigungID: number;
 }
 
+/**
+ * Interface used for autocomplete
+ */
 interface AllNames {
   name: string;
   memberID: number;
 }
+
 /**
  * Function which proivdes the styles of the PermissionsOverview
  */
@@ -98,17 +110,20 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+/**
+ * Implements Overview of permissions.
+ */
 const PermissionsOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
   const [permissionsOverview, setPermissionsOverview] = useState<PermissionsOverview[]>([]);
-  const memberNames = memberPermissions
-    .filter((e) => e.memberID > 0)
-    .map((p) => ({ name: p.name, memberID: p.memberID }))
-    .filter(
-      (value, index, self) => index === self.findIndex((t) => t.memberID === value.memberID && t.name === value.name)
-    );
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const [errorOpen, setErrorOpen] = useState<number>(0);
+  const [errorSet, setErrorSet] = useState<number>(0);
+  const [errorDelete, setErrorDelete] = useState<number>(0);
+  const [successDelete, setSuccessDelete] = useState<number>(0);
+  const [successSet, setSuccessSet] = useState<number>(0);
+  const { auth } = useContext(AuthContext);
   let tmp: AllNames[] = [];
 
   /**
@@ -129,7 +144,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        setErrorOpen(errorOpen + 1);
+        setErrorOpen(0);
       });
     // Clean-up function
     return () => {
@@ -152,7 +168,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        setErrorOpen(errorOpen + 1);
+        setErrorOpen(0);
       });
     // Clean-up function
     return () => {
@@ -172,14 +189,16 @@ const PermissionsOverview: React.FunctionComponent = () => {
         }
       )
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 201) {
           if (mounted) {
-            console.log(res.data);
+            setSuccessSet(successSet + 1);
+            setSuccessSet(0);
           }
         }
       })
       .catch((error) => {
-        console.log(error);
+        setErrorSet(errorSet + 1);
+        setErrorSet(0);
       });
     // Clean-up function
     return () => {
@@ -199,12 +218,14 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            console.log(res.data);
+            setSuccessDelete(successDelete + 1);
+            setSuccessDelete(0);
           }
         }
       })
       .catch((error) => {
-        console.log(error);
+        setErrorDelete(errorDelete + 1);
+        setErrorDelete(0);
       });
     // Clean-up function
     return () => {
@@ -212,6 +233,9 @@ const PermissionsOverview: React.FunctionComponent = () => {
     };
   };
 
+  /**
+   * Check if clicked event added or removed entity from autocomplete
+   */
   const handleOnChange = (newValue: AllNames[], details: any, permissionID: number) => {
     if (newValue[newValue.length - 1] === details.option) {
       createPermission(details.option.memberID, permissionID);
@@ -224,14 +248,19 @@ const PermissionsOverview: React.FunctionComponent = () => {
    * Retuns true if user can deligate permissionID else false
    */
   const checkDisable = (permissionID: number) => {
-    if (auth.permissions.filter((e) => e.permissionID === permissionID && e.canDelegate).length > 0) {
-      return false;
-    }
-    return true;
+    return !(
+      auth.permissions.filter((permission) => permission.permissionID === permissionID && permission.canDelegate)
+        .length > 0
+    );
   };
 
   useEffect(() => getPermissions(), []);
   useEffect(() => getPermissionsOfMembers(), []);
+  useEffect(() => setSuccessSet(0), []);
+  useEffect(() => setSuccessDelete(0), []);
+  useEffect(() => setErrorOpen(0), []);
+  useEffect(() => setErrorDelete(0), []);
+  useEffect(() => setErrorSet(0), []);
 
   return (
     <div>
@@ -247,17 +276,20 @@ const PermissionsOverview: React.FunctionComponent = () => {
               </Grid>
               <Grid container spacing={0}>
                 {permissionsOverview.map((permissions) => (
-                  <Grid item container spacing={0} className={classes.contentContainer}>
+                  <Grid item container spacing={0} className={classes.contentContainer} key={permissions.bezeichnung}>
                     <Grid item xs={6}>
                       <Grid item xs={12}>
                         <Typography>{permissions.bezeichnung}</Typography>
                       </Grid>
                     </Grid>
-                    <Grid container spacing={0} xs={10}>
+                    <Grid container spacing={0}>
                       {memberPermissions.map((memberP) => {
                         if (permissions.berechtigungID === memberP.permission) {
                           if (memberPermissions.map((entry) => memberP.permission === entry.permission).length > 0) {
-                            tmp.push({ name: memberP.name, memberID: memberP.memberID });
+                            tmp.push({
+                              name: memberP.name,
+                              memberID: memberP.memberID,
+                            });
                           }
                         }
                       })}
@@ -269,14 +301,29 @@ const PermissionsOverview: React.FunctionComponent = () => {
                             filterSelectedOptions
                             id="tags-standard"
                             color="primary"
-                            getOptionSelected={(option, value) => option.memberID === value.memberID}
-                            options={memberNames}
+                            getOptionSelected={(option, value) => {
+                              // Compare member ID of entities if not director else name
+                              if (value.memberID !== -1) {
+                                return option.memberID === value.memberID;
+                              } else {
+                                return option.name === value.name;
+                              }
+                            }}
+                            options={
+                              // Remove duplicated options
+                              memberPermissions.filter(
+                                (value, index, self) =>
+                                  index ===
+                                  self.findIndex((t) => t.memberID === value.memberID && t.name === value.name)
+                              )
+                            }
                             getOptionLabel={(options) => options.name}
                             defaultValue={tmp}
                             disabled={checkDisable(permissions.berechtigungID)}
                             onChange={(event, newValue, reason, details) => {
                               handleOnChange(newValue, details, permissions.berechtigungID);
                             }}
+                            getOptionDisabled={(option) => option.memberID === -1}
                             renderTags={(tagValue, getTagProps) =>
                               tagValue.map((option, index) => (
                                 <Chip
@@ -309,6 +356,33 @@ const PermissionsOverview: React.FunctionComponent = () => {
           </Paper>
         </Box>
       </div>
+      {errorOpen ? (
+        <CustomSnackbar
+          snackbarMessage="Berechtigungen konnten nicht geladen werden."
+          snackProps={{ variant: "error" }}
+        />
+      ) : null}
+      {errorSet ? (
+        <CustomSnackbar
+          snackbarMessage="Berechtigung konnten nicht hinzugefügt werden."
+          snackProps={{ variant: "error" }}
+        />
+      ) : null}
+      {errorDelete ? (
+        <CustomSnackbar
+          snackbarMessage="Berechtigung konnten nicht hinzugefügt werden."
+          snackProps={{ variant: "error" }}
+        />
+      ) : null}
+      {successDelete ? (
+        <CustomSnackbar
+          snackbarMessage="Berechtigung wurde erfolgreich entzogen."
+          snackProps={{ variant: "success" }}
+        />
+      ) : null}
+      {successSet ? (
+        <CustomSnackbar snackbarMessage="Berechtigung wurde erfolgreich erteilt." snackProps={{ variant: "success" }} />
+      ) : null}
     </div>
   );
 };
