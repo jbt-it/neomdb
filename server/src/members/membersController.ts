@@ -786,7 +786,9 @@ export const createPermission = (req: Request, res: Response): void => {
       [req.body.memberID, req.body.permissionID]
     )
     .then((result) => {
-      res.status(201).send("Permission created");
+      res
+        .status(201)
+        .send({ message: "Permission created", mitgliedID: req.body.memberID, berechtigungID: req.body.permissionID });
     })
     .catch((err) => {
       res.status(500).send("Database Error: Creating Permission failed");
