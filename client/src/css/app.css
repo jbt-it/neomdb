@@ -1,4 +1,3 @@
-// contains the global syling of the application
 
 body,
 html {
@@ -16,13 +15,12 @@ html {
 body {
   overflow-y: scroll;
   overflow-x: hidden;
-  
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-  }
   height: 100%;
   width: 100%;
+}
+body::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }
 
 /*
@@ -34,12 +32,16 @@ body {
   padding: 5px;
   margin-top: 58px;
   margin-bottom: 50px;
-  @media only screen and (min-width: 960px){
+}
+@media only screen and (min-width: 960px) {
+  .content-page {
     margin-top: 65px;
     margin-left: 287px;
     margin-right: 7px;
-  }
-  @media only screen and (min-width: 600px){
+ }
+}
+@media only screen and (min-width: 600px) {
+  .content-page {
     margin-top: 65px;
-  }
+ }
 }
