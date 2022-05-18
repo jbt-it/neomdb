@@ -14,12 +14,7 @@ export default createTheme({
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
-<<<<<<< HEAD
       contrastText: "#000000",
-    }
-=======
-      contrastText: "black",
     },
->>>>>>> develop
   },
 });
