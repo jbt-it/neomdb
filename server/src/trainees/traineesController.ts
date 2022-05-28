@@ -36,3 +36,13 @@ export const updateIP = (req: Request, res: Response): void => {
   //        req.params.{name of the url parameter}
   //        e.g.: req.params.id
 };
+
+/**
+ * Retrieves the mails for the specified internal projects
+ */
+export const retrieveTeamMails = (req: Request, res: Response) => {
+  // TODO: Add database.query call (see 'retrieveCurrentDirectors' function in membersController)
+  // Hint: You get the url parameter (in this case id) like this:
+  //        req.params.{name of the url parameter}
+  //        e.g.: req.params.id
+};
