@@ -26,3 +26,13 @@ export const retrieveIP = (req: Request, res: Response): void => {
   //        req.params.{name of the url parameter}
   //        e.g.: req.params.id
 };
+
+/**
+ * Updates an internal project
+ */
+export const updateIP = (req: Request, res: Response): void => {
+  // TODO: Add database.query call (see 'updateMember' function in membersController => You only need one database.query and not mutliple like in 'updateMember')
+  // Hint: You get the url parameter (in this case id) like this:
+  //        req.params.{name of the url parameter}
+  //        e.g.: req.params.id
+};
