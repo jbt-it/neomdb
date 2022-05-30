@@ -8,6 +8,7 @@ import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import MemberProfile from "../members/member-page/MemberPage";
+import InternalProject from "../trainees/InternalProject";
 import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
@@ -103,6 +104,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
         <PrivateRoute exact path = "/kvp" component = {Dashboard} />
         <PrivateRoute exact path = "/gesamtuebersicht/:id" component = {MemberProfile} />
+        <PrivateRoute exact path = "/internalproject" component = {InternalProject} />
         <LoginRoute exact path = "/login" component = {Login} />
         <PrivateRoute path = "*" component = {NotFound} />
       </Switch>
