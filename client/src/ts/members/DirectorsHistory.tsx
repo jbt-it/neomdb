@@ -4,7 +4,8 @@
 
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useCallback
 } from "react";
 import {
   Paper,
@@ -150,7 +151,6 @@ interface Director {
  */
 const DirectorsHistory: React.FunctionComponent = () => {
   const classes = useStyles();
-  const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [directors, setdirectors] = useState<Director[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
@@ -158,7 +158,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
   const [errorOpen, setErrorOpen] = useState<number>(0);
 
   // Retrieves the directors
-  const getdirectors: VoidFunction = () => {
+  const getdirectors = useCallback( () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api.get("/users/directors", {
@@ -170,15 +170,15 @@ const DirectorsHistory: React.FunctionComponent = () => {
           setdirectors(res.data);
         }
       }
-    }).catch((error) => {
+    }).catch(() => {
       setErrorOpen(errorOpen + 1);
     });
 
     // Clean-up function
     return () => {mounted = false;};
-  };
+  }, [errorOpen], );
   useEffect(() => setErrorOpen(0), []);
-  useEffect(() => getdirectors(), []);
+  useEffect(() => getdirectors(), [getdirectors]);
 
   /**
    * Handles the change event on the search filter input
@@ -232,12 +232,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
     return sorteddirectors;
   };
 
-  /**
-   * Handles the filter toggle
-   */
-   const toggleFilters: VoidFunction = () => {
-    setAddtionalFiltersState(!additionalFiltersState);
-  };
 
   /**
    * Toggles between the name sort options
@@ -276,31 +270,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
       }
   };
 
-  // The additional filters
-  const additionalFilters = (
-    <div>
-      <Grid item xs={6} sm={3} className={classes.kuerzelFilterAdditional}>
-        <TextField
-          label="kuerzel"
-          className={classes.filterElement}
-          color="primary"
-          onChange={handlekuerzelChange}
-          value={kuerzelFilter}
-          select
-        >
-  	      <MenuItem value={""}>-</MenuItem>
-          <MenuItem value={"NET"}>NET</MenuItem>
-          <MenuItem value={"QM"}>QM</MenuItem>
-          <MenuItem value={"F&R"}>F&R</MenuItem>
-          <MenuItem value={"FK"}>FK</MenuItem>
-          <MenuItem value={"MIT"}>MIT</MenuItem>
-          <MenuItem value={"MAR"}>MAR</MenuItem>
-          <MenuItem value={"IT"}>IT</MenuItem>
-        </TextField>
-      </Grid>
-    </div>
-  );
-
   return (
     <div>
       <div className="content-page">
@@ -315,7 +284,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
                 onChange={handleSearchInput}
               />
           </Grid>
-
           <Grid item xs={6} sm={3} className={classes.kuerzelFilterMain}>
             <TextField
               label="Vorstandsposten"
@@ -338,10 +306,6 @@ const DirectorsHistory: React.FunctionComponent = () => {
           </Grid>
         </Grid>
         </form>
-        {additionalFiltersState ? additionalFilters : null}
-        <div className={classes.amountOfEntries}>
-        {`${getFilteredandSortedDirectors().length} Einträge`}
-        </div>
       </Paper>
       <TableContainer
           component={Paper}
