@@ -1,0 +1,34 @@
+// How to get remote container development working with VSCode:
+// 1. Install "Remote Development" extension pack (ms-vscode-remote.vscode-remote-extensionpack)
+// 2. Select "Remote Containers - Reopen in container"
+
+{
+    "name": "NEOMDB ENV",
+    // "dockerComposeFile": [
+    //     "docker-compose.yml"
+    //   ],
+    "forwardPorts": [3000, 8081],
+    // "appPort": [3000],
+    // "runArgs": ["-u", "node"],
+    "settings": {
+        "workbench.colorTheme": "Default Dark+"
+	},
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "16"
+		}
+	},
+	"features": {
+		"docker-in-docker": "latest",
+		"git": "latest"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint"
+			]
+		}
+	},
+	"remoteUser": "node"
+}
