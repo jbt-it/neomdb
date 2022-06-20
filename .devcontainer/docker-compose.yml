@@ -1,0 +1,33 @@
+version: "3"
+
+# All services needed to run neoMDB
+services:
+
+    # devcontainer:
+    #     image: acme/orderservice-dev-container:0.1
+    #     build: .
+    #     container_name: orderservice-dev-container
+    #     hostname: orderservice-dev.local
+    #     working_dir: /src
+    #     volumes:
+    #     - ..:/src
+
+    # The mysql-service needed for the database
+    mdb-container:
+        image: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: passw0rd
+        ports:
+            - 3306:3306
+        volumes:
+            - mysql:/var/lib/mysql
+
+    # The phpmyadmin-service needed for managing the database 
+    mdb-phpmyadmin-container:
+        image: phpmyadmin/phpmyadmin
+        ports: 
+            - 8081:80
+        links:
+            - mdb-container:db
+volumes:
+    mysql:
