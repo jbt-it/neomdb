@@ -40,5 +40,6 @@
 		"docker-from-docker": "latest",
 		"git": "os-provided"
 	},
-	"postCreateCommand": "cd .devcontainer/ && docker-compose up"
+	"postCreateCommand": "cd client/ && npm i && cd ../server/ && npm i",
+	"postStartCommand": "cd .devcontainer/ && docker-compose up"
 }
