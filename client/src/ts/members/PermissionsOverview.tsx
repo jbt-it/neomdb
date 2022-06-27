@@ -2,7 +2,7 @@
  * The PermissionsOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import {
   Paper,
   Grid,
@@ -33,7 +33,7 @@ interface MemberPermissions {
 /**
  * Interface of route get permissions
  */
-interface PermissionsOverview {
+interface Permissions {
   bezeichnung: string;
   beschreibung: string;
   berechtigungID: number;
@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const PermissionsOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
-  const [permissionsOverview, setPermissionsOverview] = useState<PermissionsOverview[]>([]);
+  const [permissionsOverview, setPermissionsOverview] = useState<Permissions[]>([]);
   const [errorOpen, setErrorOpen] = useState<number>(0);
   const [errorSet, setErrorSet] = useState<number>(0);
   const [errorDelete, setErrorDelete] = useState<number>(0);
@@ -129,7 +129,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Handles the API call and cleans state thereafter
    */
-  const getPermissions: VoidFunction = () => {
+  const getPermissions: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -151,9 +151,12 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  };
+  }, [errorOpen]);
 
-  const getPermissionsOfMembers: VoidFunction = () => {
+  /**
+   * Retrieves the permissions of all members
+   */
+  const getPermissionsOfMembers: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -175,8 +178,11 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  };
+  }, [errorOpen]);
 
+  /**
+   * Create a new relation between a member and a permission
+   */
   const createPermission = (memberID: number, permissionID: number) => {
     // Variable for checking, if the component is mounted
     let mounted = true;
@@ -206,6 +212,9 @@ const PermissionsOverview: React.FunctionComponent = () => {
     };
   };
 
+  /**
+   * Deletes a given permission
+   */
   const deletePermission = (memberID: number, permissionID: number) => {
     // Variable for checking, if the component is mounted
     let mounted = true;
@@ -254,8 +263,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
     );
   };
 
-  useEffect(() => getPermissions(), []);
-  useEffect(() => getPermissionsOfMembers(), []);
+  useEffect(() => getPermissions(), [getPermissions]);
+  useEffect(() => getPermissionsOfMembers(), [getPermissionsOfMembers]);
   useEffect(() => setSuccessSet(0), []);
   useEffect(() => setSuccessDelete(0), []);
   useEffect(() => setErrorOpen(0), []);
