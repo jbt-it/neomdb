@@ -21,3 +21,16 @@ export const doesPermissionsInclude = (memberPermissions: Permission[], permissi
 export const doesPermissionHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
   return permissions.some((element) => memberPermissions.some((permission) => permission.permissionID === element));
 };
+
+/**
+ * Checks if a permission can be delegated by a member
+ *
+ * @param memberPermissions The array of permissions of the member
+ * @param permissionToBeDelegated The permission that should be delegated
+ * @returns true if the permission can be delegated by the member
+ */
+export const canPermissionBeDelegated = (memberPermissions: Permission[], permissionToBeDelegated: number) => {
+  return memberPermissions.some(
+    (permission) => permission.permissionID === permissionToBeDelegated && permission.canDelegate
+  );
+};
