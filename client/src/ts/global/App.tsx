@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 
 const App: React.FunctionComponent = () => {
-  const {auth, dispatchAuth} = useContext(AuthContext);
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
    * Checks if the user is (still) authenticated
@@ -81,27 +81,27 @@ const App: React.FunctionComponent = () => {
         auth.authenticated ? <Nav /> : null
       }
       <Switch>
-        <PrivateRoute exact path = "/user-change-password" component = {ChangePassword} />
-        <PrivateRoute exact path = "/" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
-        <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
-        <PrivateRoute exact path = "/ewigervorstand" component = {DirectorsHistory} />
-        <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
-        <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
-        <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />
-        <PrivateRoute exact path = "/projekte" component = {Dashboard} />
-        <PrivateRoute exact path = "/veranstaltungen" component = {Dashboard} />
-        <PrivateRoute exact path = "/mm-tracking" component = {Dashboard} />
-        <PrivateRoute exact path = "/pl-qm-tool" component = {Dashboard} />
-        <PrivateRoute exact path = "/raumreservierung" component = {Dashboard} />
-        <PrivateRoute exact path = "/innovationsmanagement" component = {Dashboard} />
-        <PrivateRoute exact path = "/meine-funktionen" component = {Dashboard} />
-        <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
-        <PrivateRoute exact path = "/kvp" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht/:id" component = {MemberProfile} />
-        <PrivateRoute exact path = "/internalproject" component = {InternalProject} />
-        <LoginRoute exact path = "/login" component = {Login} />
-        <PrivateRoute path = "*" component = {NotFound} />
+        <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
+        <PrivateRoute exact path="/" component={Dashboard} />
+        <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
+        <PrivateRoute exact path="/vorstand" component={Dashboard} />
+        <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
+        <PrivateRoute exact path="/geburtstage" component={Dashboard} />
+        <PrivateRoute exact path="/traineebereich" component={Dashboard} />
+        <PrivateRoute exact path="/kuratoren" component={Dashboard} />
+        <PrivateRoute exact path="/projekte" component={Dashboard} />
+        <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
+        <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
+        <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
+        <PrivateRoute exact path="/raumreservierung" component={Dashboard} />
+        <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
+        <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
+        <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
+        <PrivateRoute exact path="/kvp" component={Dashboard} />
+        <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
+        <PrivateRoute exact path="/internalproject" component={InternalProject} />
+        <LoginRoute exact path="/login" component={Login} />
+        <PrivateRoute path="*" component={NotFound} />
       </Switch>
     </HashRouter>
   );
