@@ -6,7 +6,14 @@
 const dateOptions = { day: "2-digit", year: "numeric", month: "2-digit" };
 
 // Options for formatting datetimes
-const dateTimeOptions = { day: "2-digit", year: "numeric", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" };
+const dateTimeOptions = {
+  day: "2-digit",
+  year: "numeric",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+};
 
 // Local option (formats dates and datetimes into the german format dd.mm.yyyy hh.MM.ss)
 const locales = "de-DE";
@@ -20,7 +27,7 @@ export const transformSQLStringToGermanDate = (sqlString: string | null) => {
   if (sqlString === null) {
     return "";
   }
-  return (new Date (sqlString)).toLocaleDateString(locales, dateOptions);
+  return new Date(sqlString).toLocaleDateString(locales, dateOptions);
 };
 
 /**
@@ -45,8 +52,10 @@ export const transformStringToSQLString = (dateString: string | null) => {
   if (dateString === null) {
     return null;
   }
+
   const date = new Date(dateString);
-  return date.getFullYear() + "-" +
-  ("00" + (date.getMonth() + 1)).slice(-2)+ "-" +
-  ("00" + date.getDate()).slice(-2);
-}
+  if (isNaN(date.getTime())) {
+    return null;
+  }
+  return date.getFullYear() + "-" + ("00" + (date.getMonth() + 1)).slice(-2) + "-" + ("00" + date.getDate()).slice(-2);
+};
