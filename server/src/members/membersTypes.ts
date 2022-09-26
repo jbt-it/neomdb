@@ -15,6 +15,10 @@ export type GetMembersQueryResult = {
   lastchange: string;
 };
 
+export type GetMembersNameQueryResult = {
+  name: string;
+};
+
 /**
  * Type of query results of member retrieval
  */
@@ -77,7 +81,7 @@ export type GetLanguageOfMemberQueryResult = {
 /**
  * Type of query results of edv skills retrieval for a specific member
  */
- export type GetEDVSkillsOfMemberQueryResult = {
+export type GetEDVSkillsOfMemberQueryResult = {
   wert: string;
   niveau: string;
 };
