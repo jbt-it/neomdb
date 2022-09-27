@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
@@ -12,8 +12,10 @@ import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
+import LoadingCircle from "./LoadingCircle";
 
 const App: React.FunctionComponent = () => {
+  const [checkAuthLoading, setCheckAuthLoading] = useState(true);
   const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
@@ -38,9 +40,11 @@ const App: React.FunctionComponent = () => {
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
+        setCheckAuthLoading(false);
       })
       .catch((err) => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
+        setCheckAuthLoading(false);
       });
   }, [dispatchAuth]);
 
@@ -52,7 +56,9 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the login page
    */
   const PrivateRoute = ({ component: Component, ...rest }: any) => {
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={(props) => (auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/login" }} />)}
@@ -65,7 +71,9 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the dashboard page
    */
   const LoginRoute = ({ component: Component, ...rest }: any) => {
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={(props) => (!auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />)}
