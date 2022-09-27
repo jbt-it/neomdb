@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, useLocation } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
@@ -12,6 +12,7 @@ import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
+import LoadingCircle from "./LoadingCircle";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -23,6 +24,7 @@ interface LocationState {
 }
 
 const App: React.FunctionComponent = () => {
+  const [checkAuthLoading, setCheckAuthLoading] = useState(true);
   const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
@@ -47,9 +49,11 @@ const App: React.FunctionComponent = () => {
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
+        setCheckAuthLoading(false);
       })
       .catch((err) => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
+        setCheckAuthLoading(false);
       });
   }, [dispatchAuth]);
 
@@ -61,7 +65,9 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the login page
    */
   const PrivateRoute = memo(({ component: Component, ...rest }: any) => {
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={({ location, ...props }) =>
@@ -86,14 +92,14 @@ const App: React.FunctionComponent = () => {
       return <Redirect to={state?.from || "/"} />;
     }
 
-    return <Route {...rest} render={(props) => <Component {...props} />} />;
+    return checkAuthLoading ? <LoadingCircle /> : <Route {...rest} render={(props) => <Component {...props} />} />;
   });
 
   /**
    * Renders the specified component if the user has the given permission
    * If not the user gets redirected to the dashboard page
    */
-  const ProtectedRoute = ({ component: Component, permissionID, ...rest }: any) => {
+  const ProtectedRoute = memo(({ component: Component, permissionID, ...rest }: any) => {
     /**
      * Checks if the currently logged in user has the permission number
      * @param permissionNumber number/id of the permission
@@ -102,12 +108,17 @@ const App: React.FunctionComponent = () => {
     const checkForPermission = (permissionNumber: number) => {
       let userIsPermitted = false;
       auth.permissions.forEach((permission) => {
-        userIsPermitted = permission.permissionID === permissionNumber;
+        console.log(permission);
+        if (permission.permissionID === permissionNumber) {
+          userIsPermitted = true;
+        }
       });
       return userIsPermitted;
     };
 
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={({ location, ...props }) =>
@@ -119,7 +130,7 @@ const App: React.FunctionComponent = () => {
         }
       />
     );
-  };
+  });
 
   return (
     <HashRouter>
