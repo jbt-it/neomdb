@@ -129,7 +129,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Handles the API call and cleans state thereafter
    */
-  const getPermissions: VoidFunction = useCallback(() => {
+  const getPermissions: VoidFunction = () => {
+    console.log("Hole getPermissions");
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -151,12 +152,12 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  }, [errorOpen]);
+  };
 
   /**
    * Retrieves the permissions of all members
    */
-  const getPermissionsOfMembers: VoidFunction = useCallback(() => {
+  const getPermissionsOfMembers: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -178,7 +179,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  }, [errorOpen]);
+  };
 
   /**
    * Create a new relation between a member and a permission
@@ -263,8 +264,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
     );
   };
 
-  useEffect(() => getPermissions(), [getPermissions]);
-  useEffect(() => getPermissionsOfMembers(), [getPermissionsOfMembers]);
+  useEffect(() => getPermissions(), []);
+  useEffect(() => getPermissionsOfMembers(), []);
   useEffect(() => setSuccessSet(0), []);
   useEffect(() => setSuccessDelete(0), []);
   useEffect(() => setErrorOpen(0), []);
