@@ -18,7 +18,7 @@ export const doesPermissionsInclude = (memberPermissions: Permission[], permissi
  * @param permissions The array of permission IDs the `memberPermissions` should include at least one
  * @returns true if at least one of the `permissions` are included in `memberPermissions`
  */
-export const doesPermissionHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
+export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
   return permissions.some((element) => memberPermissions.some((permission) => permission.permissionID === element));
 };
 

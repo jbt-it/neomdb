@@ -8,7 +8,7 @@ import { Request, Response, NextFunction } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-import { doesPermissionHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
+import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
 
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
@@ -107,7 +107,7 @@ export const restrictRoutes = (permissions: number[], includeAll: boolean = true
       }
     } else {
       // Checks if some of the permissions are inclded in the jwt (min. one permission must be included)
-      if (doesPermissionHaveSomeOf(jwtDataPermissions, permissions)) {
+      if (doesPermissionsHaveSomeOf(jwtDataPermissions, permissions)) {
         next();
       } else {
         return res.status(403).send("Authorization failed: You are not permitted to do this");

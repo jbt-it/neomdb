@@ -14,6 +14,7 @@ import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./LoadingCircle";
+import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 
 const App: React.FunctionComponent = () => {
   const [checkAuthLoading, setCheckAuthLoading] = useState(true);
@@ -85,26 +86,29 @@ const App: React.FunctionComponent = () => {
   /**
    * Renders the specified component if the user has the given permission
    * If not the user gets redirected to the dashboard page
+   * @param component The component, that should be displayed
+   * @param permissionIDs The array of permissions that should be checked
+   * (if the array is empty, any user with permissions can access the given component)
    */
-  const ProtectedRoute = ({ component: Component, permissionID, ...rest }: any) => {
+  const ProtectedRoute = ({ component: Component, permissionIDs, ...rest }: any) => {
     /**
-     * Checks if the currently logged in user has the permission number
-     * @param permissionNumber number/id of the permission
-     * @returns true if the user has the given permission
+     * Checks if the currently logged in user has the permission numbers specified
+     * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
+     * @returns true if the user has the given permissions
      */
-    const checkForPermission = (permissionNumber: number) => {
-      let userIsPermitted = false;
-      auth.permissions.forEach((permission) => {
-        userIsPermitted = permission.permissionID === permissionNumber;
-      });
-      return userIsPermitted;
+    const checkForPermission = (permissionNumbers: number[]) => {
+      if (permissionNumbers.length === 0) {
+        // Check if the given permissionNumbers array contains at least one permission id.
+        return auth.permissions.length > 0;
+      }
+      return doesPermissionsHaveSomeOf(auth.permissions, permissionNumbers);
     };
 
     return (
       <Route
         {...rest}
         render={(props) =>
-          checkForPermission(permissionID) ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
+          checkForPermission(permissionIDs) ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
         }
       />
     );
@@ -134,7 +138,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/kvp" component={Dashboard} />
-        <PrivateRoute exact path="/berechtigungen" component={PermissionsOverview} />
+        <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
         <LoginRoute exact path="/login" component={Login} />
         <PrivateRoute path="*" component={NotFound} />
