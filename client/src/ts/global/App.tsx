@@ -1,5 +1,5 @@
-import React, { useCallback, useContext } from "react";
-import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import React, { memo, useCallback, useContext } from "react";
+import { HashRouter, Route, Switch, Redirect, useLocation } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
@@ -12,6 +12,15 @@ import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
+
+/**
+ * Interfaces for the location state of react-router-dom
+ */
+interface LocationState {
+  from: {
+    pathname: string;
+  };
+}
 
 const App: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
@@ -51,27 +60,34 @@ const App: React.FunctionComponent = () => {
    * Renders the specified component if the user is authenticated otherwise
    * the user gets redirected to the login page
    */
-  const PrivateRoute = ({ component: Component, ...rest }: any) => {
+  const PrivateRoute = memo(({ component: Component, ...rest }: any) => {
     return (
       <Route
         {...rest}
-        render={(props) => (auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/login" }} />)}
+        render={({ location, ...props }) =>
+          auth.authenticated ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={{ pathname: "/login", state: { from: location } }} />
+          )
+        }
       />
     );
-  };
+  });
 
   /**
    * Renders the login component if the user is not authenticated otherwise
    * the user gets redirected to the dashboard page
    */
-  const LoginRoute = ({ component: Component, ...rest }: any) => {
-    return (
-      <Route
-        {...rest}
-        render={(props) => (!auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />)}
-      />
-    );
-  };
+  const LoginRoute = memo(({ component: Component, ...rest }: any) => {
+    const { state } = useLocation<LocationState>();
+
+    if (auth.authenticated === true) {
+      return <Redirect to={state?.from || "/"} />;
+    }
+
+    return <Route {...rest} render={(props) => <Component {...props} />} />;
+  });
 
   return (
     <HashRouter>
