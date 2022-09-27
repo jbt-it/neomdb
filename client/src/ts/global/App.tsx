@@ -110,8 +110,12 @@ const App: React.FunctionComponent = () => {
     return (
       <Route
         {...rest}
-        render={(props) =>
-          checkForPermission(permissionID) ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
+        render={({ location, ...props }) =>
+          checkForPermission(permissionID) ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={{ pathname: "/", state: { from: location } }} />
+          )
         }
       />
     );
@@ -132,7 +136,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/geburtstage" component={Dashboard} />
         <PrivateRoute exact path="/traineebereich" component={Dashboard} />
         <PrivateRoute exact path="/kuratoren" component={Dashboard} />
-        <PrivateRoute exact path="/projekte" component={Dashboard} />
+        <ProtectedRoute exact path="/projekte" component={Dashboard} permissionID={1} />
         <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
         <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
         <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
