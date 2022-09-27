@@ -21,8 +21,13 @@ router.get("/directors", membersController.retrieveDirectors);
 router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);
 router.get("/permissions", authController.restrictRoutes([1]), membersController.retrievePermissions);
-router.get("/permissions-of-members", authController.restrictRoutes([1]), membersController.retrievePermissionsOfMembers);
+router.get(
+  "/permissions-of-members",
+  authController.restrictRoutes([1]),
+  membersController.retrievePermissionsOfMembers
+);
 router.get("/:id", membersController.retrieveMember);
+router.get("/:id/permissions", membersController.retrievePermissionsByMemberId);
 
 //  =======>>> Post routes <<<=======
 router.post("/", authController.restrictRoutes([1]), membersController.createMember);
