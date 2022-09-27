@@ -104,7 +104,9 @@ const App: React.FunctionComponent = () => {
       return doesPermissionsHaveSomeOf(auth.permissions, permissionNumbers);
     };
 
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={(props) =>
