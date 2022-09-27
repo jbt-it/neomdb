@@ -8,6 +8,7 @@ import { Request, Response, NextFunction } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
+import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
 
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
@@ -77,10 +78,7 @@ export const protectRoutes = (req: Request, res: Response, next: NextFunction) =
 export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtData = verifyJWT(req.cookies.token);
-    if (
-      Number(req.params.id) === jwtData.mitgliedID ||
-      permissions.every((element) => jwtData.permissions.some((permission) => permission.permissionID === element))
-    ) {
+    if (Number(req.params.id) === jwtData.mitgliedID || doesPermissionsInclude(jwtData.permissions, permissions)) {
       res.locals.memberID = jwtData.mitgliedID;
       res.locals.permissions = jwtData.permissions;
       next();
@@ -92,17 +90,28 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
 
 /**
  * Checks if user has the right permissions to use the following routes
- * Every permission in the permissions array needs to be included in the permissions
+ * If `includeAll` is true,  every permission in the permissions array needs to be included in the permissions
  * of the received jwt
  * @param permissions Array of permissions which are allowed to use following routes
+ * @param includeAll Boolean that specifies if all permissions in `permissions` must be inclded in the jwt
  */
-export const restrictRoutes = (permissions: number[]) => {
+export const restrictRoutes = (permissions: number[], includeAll: boolean = true) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
-    if (permissions.every((element) => jwtDataPermissions.some((permission) => permission.permissionID === element))) {
-      next();
+    if (includeAll) {
+      // Checks if all permissions are included in the jwt
+      if (doesPermissionsInclude(jwtDataPermissions, permissions)) {
+        next();
+      } else {
+        return res.status(403).send("Authorization failed: You are not permitted to do this");
+      }
     } else {
-      return res.status(403).send("Authorization failed: You are not permitted to do this");
+      // Checks if some of the permissions are inclded in the jwt (min. one permission must be included)
+      if (doesPermissionsHaveSomeOf(jwtDataPermissions, permissions)) {
+        next();
+      } else {
+        return res.status(403).send("Authorization failed: You are not permitted to do this");
+      }
     }
   };
 };
