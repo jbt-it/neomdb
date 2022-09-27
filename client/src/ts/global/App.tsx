@@ -81,7 +81,7 @@ const App: React.FunctionComponent = () => {
     /**
      * Checks if the currently logged in user has the permission number
      * @param permissionNumber number/id of the permission
-     * @returns true if the user has the giben permission
+     * @returns true if the user has the given permission
      */
     const checkForPermission = (permissionNumber: number) => {
       let userIsPermitted = false;
