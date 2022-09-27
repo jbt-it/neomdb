@@ -24,6 +24,32 @@ body::-webkit-scrollbar {
 }
 
 /*
+ * class which rotates an image
+ */
+.rotate {
+  position: absolute;
+  width: 120;
+  height: 120;
+  margin-top: 200px;
+  margin-right: auto;
+  margin-left: auto;  -webkit-animation:spin 4s linear infinite;
+  -moz-animation:spin 4s linear infinite;
+  animation:spin 4s linear infinite;
+}
+@-moz-keyframes spin { 
+  100% { -moz-transform: rotate(360deg); } 
+}
+@-webkit-keyframes spin { 
+  100% { -webkit-transform: rotate(360deg); } 
+}
+@keyframes spin { 
+  100% { 
+      -webkit-transform: rotate(360deg); 
+      transform:rotate(360deg); 
+  } 
+}
+
+/*
  * every page needs to have this class at its root in order to 
  * display the content without it getting covered by the navigation
  */
