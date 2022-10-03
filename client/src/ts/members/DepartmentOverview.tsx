@@ -1,31 +1,14 @@
-/**
- * The RessortOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
+/*
+ * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  MenuItem,
-  IconButton,
-  Grid,
-  createStyles,
-  Theme,
-  makeStyles,
-} from "@material-ui/core";
+import React, { useState, useEffect, useCallback } from "react";
+import { Button, Paper, Grid, createStyles, Theme, makeStyles } from "@material-ui/core";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
 import { NavLink } from "react-router-dom";
-import { NoEncryptionTwoTone } from "@material-ui/icons";
 
 /**
- * Function which proivdes the styles of the MemberOverview
+ * Function which proivdes the styles of the DepartmentOverview
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -113,7 +96,11 @@ interface Director {
   nachname: string;
 }
 
-const RessortOverview: React.FunctionComponent = () => {
+/**
+ * Displays cards for every department
+ * @returns Cards with department information and buttons
+ */
+const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const [members, setMembers] = useState<Member[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -201,11 +188,9 @@ const RessortOverview: React.FunctionComponent = () => {
     };
   };
 
-  useEffect(() => {
-    getDepartmentMembers();
-    getDepartments();
-    getCurrentDirectors();
-  }, []);
+  useEffect(() => getDepartmentMembers(), []);
+  useEffect(() => getDepartments(), []);
+  useEffect(() => getCurrentDirectors(), []);
 
   /**
    * Filters members in their departments
@@ -255,7 +240,7 @@ const RessortOverview: React.FunctionComponent = () => {
   };
 
   /**
-   * Filters cirectors in their departments
+   * Filters directors in their departments
    * @param ressortID
    */
   const getDirectorOfDepartment = (ressortID: number) => {
@@ -375,4 +360,4 @@ const RessortOverview: React.FunctionComponent = () => {
     </div>
   );
 };
-export default RessortOverview;
+export default DepartmentOverview;

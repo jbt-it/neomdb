@@ -160,10 +160,10 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <div className="login">
-      <Grid container spacing={0} alignItems="center" justify="center">
+      <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={10} sm={8} md={6} lg={4}>
           <Paper className={classes.paper}>
-            <img className={classes.logo} src={logo} />
+            <img className={classes.logo} src={logo} alt="JBT-Logo" />
             <h1>Login</h1>
             <form
               className={classes.login}
@@ -185,13 +185,7 @@ const Login: React.FunctionComponent = () => {
                 fullWidth
               />
               {getPasswordField()}
-              <Button
-                className={classes.submit}
-                variant="contained"
-                fullWidth
-                color="primary"
-                type="submit"
-              >
+              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
                 Login
               </Button>
               <Grid container>
@@ -201,11 +195,7 @@ const Login: React.FunctionComponent = () => {
                   </Link>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
-                  <Link
-                    id="capswarning"
-                    variant="body2"
-                    className={classes.warningText}
-                  >
+                  <Link id="capswarning" variant="body2" className={classes.warningText}>
                     {setCapsLockWaring()}
                   </Link>
                 </Grid>

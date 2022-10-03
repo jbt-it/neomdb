@@ -4,17 +4,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Collapse, Typography } from "@material-ui/core";
-import {
-  Dashboard,
-  PeopleAlt,
-  Event,
-  Build,
-  MoreHoriz,
-  Apps,
-  EmojiObjects,
-  ExitToApp,
-  TrendingUp,
-} from "@material-ui/icons";
+import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, ExitToApp, TrendingUp } from "@material-ui/icons";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import { AuthContext } from "../AuthContext";
@@ -149,7 +139,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
           activeNavLink === "/vorstand" ||
           activeNavLink === "/geburtstage" ||
           activeNavLink === "/traineebereich" ||
-          activeNavLink === "/kuratoren"
+          activeNavLink === "/kuratoren" ||
+          activeNavLink === "/berechtigungen"
         ) {
           return classes.drawerListItemActive;
         }
@@ -302,6 +293,17 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
                 <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
             </NavLink>
+            <NavLink
+              exact
+              to="/berechtigungen"
+              className={classes.listItemNavText}
+              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              onClick={handleNavLinkClick(pathname)}
+            >
+              <ListItem button onClick={props.drawer(false)}>
+                <ListItemText className={classes.subListItem} primary="Berechtigungen" />
+              </ListItem>
+            </NavLink>
           </List>
         </Collapse>
         <NavLink
@@ -425,17 +427,9 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
               onClick={handleNavLinkClick(pathname)}
             >
-              <NavLink
-                exact
-                to="/meine-funktionen"
-                className={classes.listItemNavText}
-                activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
-                onClick={handleNavLinkClick(pathname)}
-              >
-                <ListItem button onClick={props.drawer(false)}>
-                  <ListItemText className={classes.subListItem} primary="Lines abonieren" />
-                </ListItem>
-              </NavLink>
+              <ListItem button onClick={props.drawer(false)}>
+                <ListItemText className={classes.subListItem} primary="Lines abonieren" />
+              </ListItem>
             </NavLink>
           </List>
         </Collapse>

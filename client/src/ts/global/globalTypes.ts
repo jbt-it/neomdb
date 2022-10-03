@@ -6,6 +6,11 @@ export type AuthContextType = {
   dispatchAuth: Function;
 };
 
+export type Permission = {
+  permissionID: number;
+  canDelegate: boolean;
+};
+
 /**
  * The type for the authentication object with user information
  */
@@ -13,7 +18,7 @@ export type Auth = {
   authenticated: boolean;
   userID: number | null;
   userName: string | null;
-  permissions: number[];
+  permissions: Permission[];
 };
 
 /**
@@ -38,7 +43,7 @@ export type authReducerAction =
       payload: {
         userID: number;
         userName: string;
-        permissions: number[];
+        permissions: Permission[];
       };
     }
   | {

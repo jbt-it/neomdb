@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
@@ -8,13 +8,17 @@ import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
 import DepartmentOverview from "../members/DepartmentOverview";
+import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
+import LoadingCircle from "./LoadingCircle";
+import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 
 const App: React.FunctionComponent = () => {
+  const [checkAuthLoading, setCheckAuthLoading] = useState(true);
   const { auth, dispatchAuth } = useContext(AuthContext);
 
   /**
@@ -28,9 +32,10 @@ const App: React.FunctionComponent = () => {
       .then((res) => {
         // If the retrieval of the user data is succesfull the user is authenticated
         if (res.status === 200) {
-          const userID = res.data[0].mitgliedID;
-          const userName = res.data[0].name;
-          const permissions = res.data[0].permissions;
+          console.log(res.data.permissions);
+          const userID = res.data.mitgliedID;
+          const userName = res.data.name;
+          const permissions = res.data.permissions;
           dispatchAuth({
             type: authReducerActionType.authenticate,
             payload: { userID, userName, permissions },
@@ -38,9 +43,11 @@ const App: React.FunctionComponent = () => {
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
+        setCheckAuthLoading(false);
       })
       .catch((err) => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
+        setCheckAuthLoading(false);
       });
   }, [dispatchAuth]);
 
@@ -52,16 +59,12 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the login page
    */
   const PrivateRoute = ({ component: Component, ...rest }: any) => {
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
-        render={(props) =>
-          auth.authenticated ? (
-            <Component {...props} />
-          ) : (
-            <Redirect to={{ pathname: "/login" }} />
-          )
-        }
+        render={(props) => (auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/login" }} />)}
       />
     );
   };
@@ -71,15 +74,44 @@ const App: React.FunctionComponent = () => {
    * the user gets redirected to the dashboard page
    */
   const LoginRoute = ({ component: Component, ...rest }: any) => {
-    return (
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
+      <Route
+        {...rest}
+        render={(props) => (!auth.authenticated ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />)}
+      />
+    );
+  };
+
+  /**
+   * Renders the specified component if the user has the given permission
+   * If not the user gets redirected to the dashboard page
+   * @param component The component, that should be displayed
+   * @param permissionIDs The array of permissions that should be checked
+   * (if the array is empty, any user with permissions can access the given component)
+   */
+  const ProtectedRoute = ({ component: Component, permissionIDs, ...rest }: any) => {
+    /**
+     * Checks if the currently logged in user has the permission numbers specified
+     * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
+     * @returns true if the user has the given permissions
+     */
+    const checkForPermission = (permissionNumbers: number[]) => {
+      if (permissionNumbers.length === 0) {
+        // Check if the given permissionNumbers array contains at least one permission id.
+        return auth.permissions.length > 0;
+      }
+      return doesPermissionsHaveSomeOf(auth.permissions, permissionNumbers);
+    };
+
+    return checkAuthLoading ? (
+      <LoadingCircle />
+    ) : (
       <Route
         {...rest}
         render={(props) =>
-          !auth.authenticated ? (
-            <Component {...props} />
-          ) : (
-            <Redirect to={{ pathname: "/" }} />
-          )
+          checkForPermission(permissionIDs) ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
         }
       />
     );
@@ -92,27 +124,27 @@ const App: React.FunctionComponent = () => {
         auth.authenticated ? <Nav /> : null
       }
       <Switch>
-        <PrivateRoute exact path = "/user-change-password" component = {ChangePassword} />
-        <PrivateRoute exact path = "/" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht" component = {MemberOverview} />
-        <PrivateRoute exact path = "/ressorts" component = {DepartmentOverview} />
-        <PrivateRoute exact path = "/vorstand" component = {Dashboard} />
-        <PrivateRoute exact path = "/ewigervorstand" component = {DirectorsHistory} />
-        <PrivateRoute exact path = "/geburtstage" component = {Dashboard} />
-        <PrivateRoute exact path = "/traineebereich" component = {Dashboard} />
-        <PrivateRoute exact path = "/kuratoren" component = {Dashboard} />
-        <PrivateRoute exact path = "/projekte" component = {Dashboard} />
-        <PrivateRoute exact path = "/veranstaltungen" component = {Dashboard} />
-        <PrivateRoute exact path = "/mm-tracking" component = {Dashboard} />
-        <PrivateRoute exact path = "/pl-qm-tool" component = {Dashboard} />
-        <PrivateRoute exact path = "/raumreservierung" component = {Dashboard} />
-        <PrivateRoute exact path = "/innovationsmanagement" component = {Dashboard} />
-        <PrivateRoute exact path = "/meine-funktionen" component = {Dashboard} />
-        <PrivateRoute exact path = "/weitere-funktionen" component = {Dashboard} />
-        <PrivateRoute exact path = "/kvp" component = {Dashboard} />
-        <PrivateRoute exact path = "/gesamtuebersicht/:id" component = {MemberProfile} />
-        <LoginRoute exact path = "/login" component = {Login} />
-        <PrivateRoute path = "*" component = {NotFound} />
+        <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
+        <PrivateRoute exact path="/" component={Dashboard} />
+        <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
+        <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
+        <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
+        <PrivateRoute exact path="/geburtstage" component={Dashboard} />
+        <PrivateRoute exact path="/traineebereich" component={Dashboard} />
+        <PrivateRoute exact path="/kuratoren" component={Dashboard} />
+        <PrivateRoute exact path="/projekte" component={Dashboard} />
+        <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
+        <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
+        <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
+        <PrivateRoute exact path="/raumreservierung" component={Dashboard} />
+        <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
+        <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
+        <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
+        <PrivateRoute exact path="/kvp" component={Dashboard} />
+        <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
+        <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
+        <LoginRoute exact path="/login" component={Login} />
+        <PrivateRoute path="*" component={NotFound} />
       </Switch>
     </HashRouter>
   );
