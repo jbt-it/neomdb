@@ -99,7 +99,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/kvp" component={Dashboard} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
-        <PrivateRoute exact path="/internalproject" component={InternalProject} />
+        <PrivateRoute exact path="/internes-projekt" component={InternalProject} />
         <LoginRoute exact path="/login" component={Login} />
         <PrivateRoute path="*" component={NotFound} />
       </Switch>

@@ -2,18 +2,12 @@
  * Component for resetting the password by the user without the help of a admin, when logged in
  *
  */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import * as membersTypes from "../members/membersTypes";
-import { Autocomplete } from "@material-ui/lab";
-import api from "../utils/api";
-import { AuthContext } from "../global/AuthContext";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import Textfield from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Grid, IconButton, Dialog, DialogTitle, DialogContent, TextField } from "@material-ui/core";
-
 import { Edit } from "@material-ui/icons";
 
 /**
@@ -119,10 +113,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
-
-  const [isOwner, setIsOwner] = useState<boolean>(false);
-  const permissionList: number[] = [];
-
   type IpInfoType = {
     id: number;
     name: string;
@@ -176,8 +166,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    * Retrieves dummy member details
    */
   const getInternalProjectDetails: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
     setInternalProjectDetails({
       id: 5,
       name: "Digitales Bootcamp",
@@ -193,13 +181,9 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       projektmitglieder: "Darko Cutkovic, Helen Förstner",
       qualitaetsmanager: "Franziska Keßler, Niklas Kamilli, Marco Hintennach",
     });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
   };
 
-  useEffect(getInternalProjectDetails);
+  useEffect(getInternalProjectDetails, []);
 
   /**
    * Renders the dialog for changing the internal project informations
