@@ -264,14 +264,23 @@ export const retrieveMember = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves all members of a department
+ * Retrieves all members of a department (this does not invclude the director of a department)
  */
 export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+  /*
+   * This database call searches for all members which are trainees, active members or seniors
+   * and their assigned departments if they are not currently a director
+   */
   database
     .query(
       `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
       FROM mitglied, ressort
       WHERE ressort = ressortID AND mitgliedstatus <= 3
+      AND NOT EXISTS (
+        SELECT mitglied_mitgliedID
+        FROM mitglied_has_evposten
+        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
+        )
       ORDER BY ressortID`,
       []
     )
@@ -283,6 +292,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       }
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).send("Query Error");
     });
 };
