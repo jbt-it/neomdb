@@ -193,11 +193,11 @@ const DepartmentOverview: React.FunctionComponent = () => {
   useEffect(() => getCurrentDirectors(), []);
 
   /**
-   * Filters members in their departments
-   * @param ressortID
+   * Filters members according to the given department id
+   * @param departmentID The id of the department from which all members should be
    */
-  const getMembersOfDeparment = (ressortID: number) => {
-    switch (ressortID) {
+  const getMembersOfDeparment = (departmentID: number) => {
+    switch (departmentID) {
       case 1: {
         return members.filter((member) => {
           return member.ressort === 1;
@@ -240,11 +240,11 @@ const DepartmentOverview: React.FunctionComponent = () => {
   };
 
   /**
-   * Filters directors in their departments
-   * @param ressortID
+   * Filters directors according to the given department id
+   * @param departmentID The id of the department from which the director should be
    */
-  const getDirectorOfDepartment = (ressortID: number) => {
-    switch (ressortID) {
+  const getDirectorOfDepartment = (departmentID: number) => {
+    switch (departmentID) {
       case 1: {
         return directors.filter((director) => {
           return director.ressortID === 1;
