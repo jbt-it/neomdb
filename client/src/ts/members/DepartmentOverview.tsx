@@ -1,7 +1,7 @@
 /*
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Paper, Grid, createStyles, Theme, makeStyles } from "@material-ui/core";
 import PageBar from "../global/navigation/PageBar";
 import api from "../utils/api";
@@ -104,7 +104,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const [members, setMembers] = useState<Member[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [directors, setCurrentDirectors] = useState<Director[]>([]);
+  const [directors, setDirectors] = useState<Director[]>([]);
   const [errorOpen, setErrorOpen] = useState<number>(0);
 
   /**
@@ -174,7 +174,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setCurrentDirectors(res.data);
+            setDirectors(res.data);
           }
         }
       })
@@ -321,7 +321,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
                     </Button>
                   </div>
                   <div>
-                    <h2>Ressortleiter*in:</h2>
+                    <h2>Ressortleitung:</h2>
                     {getDirectorOfDepartment(department.ressortID).map((director) => {
                       return (
                         <div>
