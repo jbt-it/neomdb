@@ -21,9 +21,9 @@ const createToastOptions = (duration: number, color: string) => ({
  * Displays an error message
  * @param {string} message The message that should be explained
  * @param {number} duration Duration of the toast to be displayed
- * @example showErrorMessage("Etwas ist schieflaufen, duration = 4000")
+ * @example showErrorMessage("Etwas ist schieflaufen", duration = 5000)
  */
-export const showErrorMessage = (message: string, duration: number = 4000) => {
+export const showErrorMessage = (message: string, duration: number = 5000) => {
   toast.error(message, createToastOptions(duration, "red"));
 };
 
@@ -31,8 +31,8 @@ export const showErrorMessage = (message: string, duration: number = 4000) => {
  * Displays an success message
  * @param {string} message The message that should be explained
  * @param {number} duration Duration of the toast to be displayed
- * @example showSuccessMessage("Alles hat geklappt, duration = 4000")
+ * @example showSuccessMessage("Alles hat geklappt", duration = 5000)
  */
-export const showSuccessMessage = (message: string, duration: number = 4000) => {
+export const showSuccessMessage = (message: string, duration: number = 5000) => {
   toast.success(message, createToastOptions(duration, "green"));
 };
