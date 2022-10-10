@@ -779,7 +779,6 @@ export const retrievePermissions = (req: Request, res: Response): void => {
  * Retrieves a list of all permissions of the member with the given ID
  */
 export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
-  console.log(req.params.id);
   database
     .query(
       `SELECT GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
