@@ -9,12 +9,12 @@ export default createTheme({
     primary: {
       // Ci-orange as hex
       main: "#f6891f",
-      contrastText: "white",
+      contrastText: "#ffffff",
     },
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
-      contrastText: "black",
+      contrastText: "#000000",
     },
   },
 });

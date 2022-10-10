@@ -6,7 +6,7 @@ export type AuthContextType = {
   dispatchAuth: Function;
 };
 
-type Permission = {
+export type Permission = {
   permissionID: number;
   canDelegate: boolean;
 };
