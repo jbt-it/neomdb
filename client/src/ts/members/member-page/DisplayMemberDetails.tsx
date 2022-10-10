@@ -32,7 +32,7 @@ import {
 } from "../../utils/dateUtils";
 import * as membersTypes from "../membersTypes";
 import * as globalTypes from "../../global/globalTypes";
-import { checkForPermissions } from "../../global/AuthContext";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -685,7 +685,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {
                   /* When the user is owner or has the permission to
                       manage all members they can edit this section */
-                  props.isOwner || checkForPermissions(props.listOfPermissions, 1) ? (
+                  props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
                     <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -802,7 +802,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {
                   /* When the user has the permission to
                     manage all members they can edit this section */
-                  checkForPermissions(props.listOfPermissions, 1) ? (
+                  doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -927,7 +927,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Renders the category for payment informations
    */
   const renderPaymentInformation: VoidFunction = () => {
-    if (props.isOwner || checkForPermissions(props.listOfPermissions, 6)) {
+    if (props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [6])) {
       return (
         <Grid item xs={12} sm={12}>
           <ExpansionPanel>
@@ -1152,7 +1152,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   color="primary"
                   required
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="jbt-email-field"
                   label="JBT-E-Mail"
                   variant="outlined"
@@ -1275,7 +1275,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <Autocomplete
                   id="mentor-select"
                   options={members}
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   onChange={(event, newMentor) => {
                     if (newMentor) {
                       setMentorState({
@@ -1295,7 +1295,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="passive-member-field"
                   label="Passives Mitglied seit"
                   variant="outlined"
@@ -1309,7 +1309,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="alumni-field"
                   label="Alumna*Alumnus seit"
                   variant="outlined"
@@ -1323,7 +1323,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="senior-field"
                   label="Senior seit"
                   variant="outlined"
@@ -1337,7 +1337,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="member-field"
                   label="Aktives Mitglied seit"
                   variant="outlined"
@@ -1351,7 +1351,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!checkForPermissions(props.listOfPermissions, 1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="trainee-field"
                   label="Trainee seit"
                   variant="outlined"

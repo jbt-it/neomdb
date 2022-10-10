@@ -1,7 +1,7 @@
 // The AuthContext provides a state, which indicates whether the user is authenticated or not
 
 import React, { createContext, useReducer } from "react";
-import { Auth, AuthContextType, authReducerAction, authReducerActionType, Permission } from "../global/globalTypes";
+import { Auth, AuthContextType, authReducerAction, authReducerActionType } from "../global/globalTypes";
 
 /**
  * The initial state of the auth object
@@ -67,14 +67,4 @@ export const AuthProvider = (props: { children?: any }) => {
   });
 
   return <AuthContext.Provider value={{ auth, dispatchAuth }}>{props.children}</AuthContext.Provider>;
-};
-
-/**
- * Checks if a given id is in the given permissions list
- * @param permissions The list of the permissions of the current user
- * @param id The id that the user should have
- * @returns true if the permissions list of the current user contains the given id
- */
-export const checkForPermissions = (permissions: Permission[], id: number) => {
-  return permissions.filter((perm) => perm.permissionID === id).length > 0;
 };
