@@ -473,7 +473,7 @@ export const updateMember = (req: Request, res: Response): void => {
             senior_seit = ?, aktiv_seit = ?, passiv_seit = ?, ausgetreten_seit = ?,
             ressort = (SELECT ressortID FROM ressort WHERE bezeichnung = ?), arbeitgeber = ?, strasse1 = ?,
             plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?, plz2 = ?, ort2 = ?, tel2 = ?,
-            email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?, studienende = ?, ausbildung = ?,
+            email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?, studienende = ?, vertiefungen = ?, ausbildung = ?,
             kontoinhaber = ?, iban = ?, bic = ?, engagement = ?, canPL = ?, canQM = ?, lastchange = ?,
             fuehrerschein = ?, ersthelferausbildung = ?
             WHERE mitgliedID = ?`,
@@ -506,6 +506,7 @@ export const updateMember = (req: Request, res: Response): void => {
               req.body.studiengang,
               req.body.studienbeginn,
               req.body.studienende,
+              req.body.vertiefungen,
               req.body.ausbildung,
               req.body.kontoinhaber,
               req.body.iban,
@@ -599,7 +600,7 @@ export const updateMember = (req: Request, res: Response): void => {
             `UPDATE mitglied
             SET handy = ?, arbeitgeber = ?, strasse1 = ?, plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?,
             plz2 = ?, ort2 = ?, tel2 = ?, email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?,
-            studienende = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?, lastchange = ?, fuehrerschein = ?,
+            studienende = ?, vertiefungen = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?, lastchange = ?, fuehrerschein = ?,
             ersthelferausbildung = ?
             WHERE mitgliedID = ?`,
             [
@@ -619,6 +620,7 @@ export const updateMember = (req: Request, res: Response): void => {
               req.body.studiengang,
               req.body.studienbeginn,
               req.body.studienende,
+              req.body.vertiefungen,
               req.body.ausbildung,
               req.body.kontoinhaber,
               req.body.iban,
