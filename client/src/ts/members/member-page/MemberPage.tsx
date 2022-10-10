@@ -223,6 +223,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         {memberDetails ? (
           <DisplayMemberDetails
             members={members}
+            listOfPermissions={auth.permissions}
             departments={departments}
             listOfLanguages={languages}
             listOfEDVSkills={edvSkills}

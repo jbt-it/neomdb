@@ -1,3 +1,4 @@
+// File for providing authenticaion based util functions
 import { Permission } from "global/globalTypes";
 
 /**

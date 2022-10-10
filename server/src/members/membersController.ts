@@ -734,6 +734,7 @@ export const updateMember = (req: Request, res: Response): void => {
         res.status(200).send("Profile Update Successful");
       })
       .catch((err) => {
+        console.log(err);
         res.status(500).send("Query Error: Updating Profile failed");
       });
   } else {
