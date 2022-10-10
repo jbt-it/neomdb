@@ -7,6 +7,7 @@ import { PoolConnection } from "mysql";
 
 import { Request, Response } from "express";
 import * as membersTypes from "./membersTypes";
+import * as authTypes from "./../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
 
 /**
@@ -773,6 +774,66 @@ export const retrievePermissions = (req: Request, res: Response): void => {
     })
     .catch((err) => {
       res.status(500).send("Query Error: Getting permissions failed");
+    });
+};
+
+/**
+ * Retrieves a list of all permissions of the member with the given ID
+ */
+export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
+  database
+    .query(
+      `SELECT GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+      FROM mitglied
+      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+      WHERE mitgliedID = ?
+      GROUP BY mitgliedID`,
+      [req.params.id]
+    )
+    .then((result: authTypes.UserDataQueryResult[]) => {
+      // If the result is empty, no member with the given id exists
+      if (result.length === 0) {
+        res.status(404).send(`Member with id "${req.params.id}" does not exist`);
+        return;
+      }
+      // Selects permissions belonging to a possible role of the member
+      database
+        .query(
+          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+          FROM mitglied_has_evposten
+          LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
+          WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
+        `,
+          [req.params.id]
+        )
+        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+          let permissions = [];
+
+          // Adds role permissions to the permissions array
+          if (directorPermissionsResult.length > 0) {
+            permissions = directorPermissionsResult;
+          }
+
+          if (result.length > 0) {
+            // Adds normal permissions to the permissions array
+            if (result[0].permissions) {
+              result[0].permissions
+                .split(",")
+                .map(Number)
+                .map((perm) => {
+                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                  permissions.push({ permissionID: perm, canDelegate: 0 });
+                });
+            }
+          }
+          res.status(200).json({ ...result[0], permissions });
+        })
+        .catch((error) => {
+          res.status(500).send("Query Error");
+        });
+    })
+    .catch((error) => {
+      res.status(500).send("Query Error");
     });
 };
 
