@@ -292,70 +292,59 @@ const DepartmentOverview: React.FunctionComponent = () => {
   return (
     <div>
       <div className="content-page">
-        {departments.map((department, index) => {
-          return (
-            <Paper key={`department-${index}`} elevation={7} className={classes.paper}>
-              <div className={classes.header}>
-                <h1>{department.bezeichnung}</h1>
-              </div>
-              <div className={classes.buttonGroup}>
-                <Button className={classes.button} variant="contained">
-                  Zum Wiki-Artikel
-                </Button>
-                <div className={classes.spacing}></div>
-                <Button
-                  className={classes.button}
-                  variant="contained"
-                  href={department.linkZielvorstellung}
-                  target="_blank"
-                >
-                  Zu den Zielen
-                </Button>
-                <div className={classes.spacing}></div>
-                <Button
-                  className={classes.button}
-                  variant="contained"
-                  href={department.linkOrganigramm}
-                  target="_blank"
-                >
-                  Zur Organisation
-                </Button>
-              </div>
-              <div>
-                <h2>Ressortleitung:</h2>
-                {getDirectorOfDepartment(department.ressortID).map((director) => {
-                  return (
-                    <div>
-                      <h3>
-                        <NavLink
-                          className="navLink"
-                          to={`/gesamtuebersicht/${director.mitgliedID}`}
-                        >{`${director.vorname} ${director.nachname}`}</NavLink>
-                      </h3>
-                    </div>
-                  );
-                })}
-              </div>
-              <div>
-                <h2>Mitglieder:</h2>
-                <Grid container spacing={1} className={classes.memberArea}>
-                  {getMembersOfDeparment(department.ressortID).map((member) => {
-                    return (
-                      <Grid item>
-                        <h3>
-                          <NavLink
-                            className="navLink"
-                            to={`/gesamtuebersicht/${member.mitgliedID}`}
-                          >{`${member.vorname} ${member.nachname}`}</NavLink>
-                        </h3>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </div>
-            </Paper>
-          );
-        })}
+        {departments.map((department, index) => (
+          <Paper key={`department-${index}`} elevation={7} className={classes.paper}>
+            <div className={classes.header}>
+              <h1>{department.bezeichnung}</h1>
+            </div>
+            <div className={classes.buttonGroup}>
+              <Button className={classes.button} variant="contained">
+                Zum Wiki-Artikel
+              </Button>
+              <div className={classes.spacing}></div>
+              <Button
+                className={classes.button}
+                variant="contained"
+                href={department.linkZielvorstellung}
+                target="_blank"
+              >
+                Zu den Zielen
+              </Button>
+              <div className={classes.spacing}></div>
+              <Button className={classes.button} variant="contained" href={department.linkOrganigramm} target="_blank">
+                Zur Organisation
+              </Button>
+            </div>
+            <div>
+              <h2>Ressortleitung:</h2>
+              {getDirectorOfDepartment(department.ressortID).map((director, dirIndex) => (
+                <div key={`director-${dirIndex}`}>
+                  <h3>
+                    <NavLink
+                      className="navLink"
+                      to={`/gesamtuebersicht/${director.mitgliedID}`}
+                    >{`${director.vorname} ${director.nachname}`}</NavLink>
+                  </h3>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h2>Mitglieder:</h2>
+              <Grid container spacing={1} className={classes.memberArea}>
+                {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
+                  <Grid item key={`member-${membIndex}`}>
+                    <h3>
+                      <NavLink
+                        className="navLink"
+                        to={`/gesamtuebersicht/${member.mitgliedID}`}
+                      >{`${member.vorname} ${member.nachname}`}</NavLink>
+                    </h3>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </Paper>
+        ))}
       </div>
       <PageBar pageTitle="Ressorts" />
     </div>
