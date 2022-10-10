@@ -329,7 +329,7 @@ export const createMember = async (req: Request, res: Response) => {
     }
     // Counter for the number of "duplicates" in the database
     let duplicateCounter = 1;
-    // If name already is taken than create name v.nachname1 (or v.nachname2 etc.)
+    // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
     while (newUserName === "") {
       const result = await database.query(`SELECT name FROM mitglied WHERE name = ?`, [
         req.body.name + duplicateCounter,
@@ -409,7 +409,7 @@ export const createMember = async (req: Request, res: Response) => {
           // Set the status of the query
           statusOverview = { ...statusOverview, queryStatus: "success" };
 
-          // Commented out for the time beeing
+          // TODO: Commented out for the time beeing
           // createMailAccount(jbtMail, hash)
           //   .then((mailResult: membersTypes.PleskApiResult) => {
           //     if (mailResult.code === 0) {
@@ -463,7 +463,18 @@ export const createMember = async (req: Request, res: Response) => {
           //                     ...statusOverview,
           //                     wikiStatus: "success",
           //                   };
-          res.status(201).json(statusOverview);
+          database
+            .query("SELECT name, mitgliedID, jbt_email FROM mitglied WHERE name = ?", [newUserName])
+            .then((result: membersTypes.GetMemberIdentificationQueryResult[]) => {
+              if (result.length === 0) {
+                res.status(500).send(`Error creating member with name: ${newUserName}`);
+                return;
+              }
+              res.status(201).json({ statusOverview, newUser: result[0] });
+            })
+            .catch((error) => {
+              res.status(500).send(`Error creating member with name: ${newUserName}`);
+            });
           //                 } else {
           //                   statusOverview = {
           //                     ...statusOverview,

@@ -15,6 +15,15 @@ export type GetMembersQueryResult = {
   lastchange: string;
 };
 
+/**
+ * Type of query result of the basic identification of a member
+ */
+export type GetMemberIdentificationQueryResult = {
+  mitgliedID: number;
+  name: string;
+  jbt_email: string;
+};
+
 export type GetMembersNameQueryResult = {
   name: string;
 };
