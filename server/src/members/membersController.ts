@@ -7,6 +7,8 @@ import { PoolConnection } from "mysql";
 
 import { Request, Response } from "express";
 import * as membersTypes from "./membersTypes";
+import * as authTypes from "./../global/auth/authTypes";
+import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
 
 /**
  * User can change his password knowing his old one
@@ -85,7 +87,7 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
  * Returns financial data iff member has permission or is himself
  */
 export const retrieveMember = (req: Request, res: Response): void => {
-  if (Number(req.params.id) === res.locals.memberID || res.locals.permissions.includes(6)) {
+  if (Number(req.params.id) === res.locals.memberID || doesPermissionsInclude(res.locals.permissions, [6])) {
     database
       .query(
         `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
@@ -458,7 +460,7 @@ export const updateMember = (req: Request, res: Response): void => {
   const mentorID = req.body.mentor ? req.body.mentor.mitgliedID : null;
 
   // Grants access to all fields if member is himself and has additional permission
-  if (Number(req.params.id) === res.locals.memberID && res.locals.permissions.includes(1)) {
+  if (Number(req.params.id) === res.locals.memberID && doesPermissionsInclude(res.locals.permissions, [1])) {
     database
       .startTransaction()
       .then((connection: PoolConnection) => {
@@ -699,7 +701,7 @@ export const updateMember = (req: Request, res: Response): void => {
   }
 
   // Grants access to critical fields for members with permission
-  else if (res.locals.permissions.includes(1)) {
+  else if (doesPermissionsInclude(res.locals.permissions, [1])) {
     database
       .query(
         `UPDATE mitglied
@@ -743,15 +745,16 @@ export const updateMember = (req: Request, res: Response): void => {
  * Retrieves all directors and members with their permission and name
  */
 export const retrievePermissionsOfMembers = (req: Request, res: Response): void => {
+  // Evposten gets memberID of -1 to fill NULL
   database
     .query(
-      `SELECT kuerzel AS name, berechtigung_berechtigungID AS permission, canDelegate
+      `SELECT kuerzel AS name, berechtigung_berechtigungID AS permission, canDelegate, -1 AS memberID
     FROM evposten
     INNER JOIN evposten_has_berechtigung ON evposten.evpostenID = evposten_has_berechtigung.evposten_evpostenID
     UNION
-    SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate
+    SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate, mitglied.mitgliedID AS memberID
     FROM mitglied
-    INNER JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
       []
     )
     .then((result: membersTypes.GetPermissionsQueryResult) => {
@@ -777,9 +780,78 @@ export const retrievePermissions = (req: Request, res: Response): void => {
 };
 
 /**
+ * Retrieves a list of all permissions of the member with the given ID
+ */
+export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
+  database
+    .query(
+      `SELECT GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+      FROM mitglied
+      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+      WHERE mitgliedID = ?
+      GROUP BY mitgliedID`,
+      [req.params.id]
+    )
+    .then((result: authTypes.UserDataQueryResult[]) => {
+      // If the result is empty, no member with the given id exists
+      if (result.length === 0) {
+        res.status(404).send(`Member with id "${req.params.id}" does not exist`);
+        return;
+      }
+      // Selects permissions belonging to a possible role of the member
+      database
+        .query(
+          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+          FROM mitglied_has_evposten
+          LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
+          WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
+        `,
+          [req.params.id]
+        )
+        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+          let permissions = [];
+
+          // Adds role permissions to the permissions array
+          if (directorPermissionsResult.length > 0) {
+            permissions = directorPermissionsResult;
+          }
+
+          if (result.length > 0) {
+            // Adds normal permissions to the permissions array
+            if (result[0].permissions) {
+              result[0].permissions
+                .split(",")
+                .map(Number)
+                .map((perm) => {
+                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                  permissions.push({ permissionID: perm, canDelegate: 0 });
+                });
+            }
+          }
+          res.status(200).json({ ...result[0], permissions });
+        })
+        .catch((error) => {
+          res.status(500).send("Query Error");
+        });
+    })
+    .catch((error) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Create new permission
  */
 export const createPermission = (req: Request, res: Response): void => {
+  // Checks if the member is allowed to delegate the permission
+  if (
+    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
+    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
+  ) {
+    res.status(403).send("Permission cannot be delegated!");
+    return;
+  }
+
   database
     .query(
       `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
@@ -787,7 +859,11 @@ export const createPermission = (req: Request, res: Response): void => {
       [req.body.memberID, req.body.permissionID]
     )
     .then((result) => {
-      res.status(201).send("Permission created");
+      res.status(201).send({
+        message: "Permission created",
+        mitgliedID: req.body.memberID,
+        berechtigungID: req.body.permissionID,
+      });
     })
     .catch((err) => {
       res.status(500).send("Database Error: Creating Permission failed");
@@ -798,6 +874,15 @@ export const createPermission = (req: Request, res: Response): void => {
  * Delete issued permission
  */
 export const deletePermission = (req: Request, res: Response): void => {
+  // Checks if the member is allowed to delete the permission
+  if (
+    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
+    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
+  ) {
+    res.status(403).send("Permission cannot be deleted!");
+    return;
+  }
+
   database
     .query(
       `DELETE
