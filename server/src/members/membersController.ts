@@ -1,12 +1,15 @@
 /**
  * Definition of the handler functions for the members module
  */
-import database = require("../database");
 import bcrypt = require("bcryptjs");
-import { PoolConnection } from "mysql";
-
 import { Request, Response } from "express";
+import database = require("../database");
+import { getRandomString } from "../utils/stringUtils";
+import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
+import { createMWUser } from "../utils/mediawiki";
+import { createNCUser } from "../utils/nextcloud";
 import * as membersTypes from "./membersTypes";
+import { PoolConnection } from "mysql";
 import * as authTypes from "./../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
 
@@ -312,36 +315,314 @@ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
 };
 
 /**
- * Creates a new member
+ * Creates a new member in the database and creates accounts
+ * for the different systems (webmail, nextcloud, mediawiki)
  */
-export const createMember = (req: Request, res: Response): void => {
+export const createMember = async (req: Request, res: Response) => {
+  let jbtMail = "";
+  // New user name if the name already exists
+  let newUserName = "";
+  if (req.body.name) {
+    // Search fot req.body.name to check if it already exists
+    const resultFirstQuery = await database.query(`SELECT name FROM mitglied WHERE name = ?`, [req.body.name]);
+    // Check if req.body.name already exists
+    if (Array.isArray(resultFirstQuery) && resultFirstQuery.length === 0) {
+      newUserName = req.body.name;
+    }
+    // Counter for the number of "duplicates" in the database
+    let duplicateCounter = 1;
+    // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
+    while (newUserName === "") {
+      const result = await database.query(`SELECT name FROM mitglied WHERE name = ?`, [
+        req.body.name + duplicateCounter,
+      ]);
+      // Check if the result is an array and if it's empty (this means, that the name does not already exist)
+      if (Array.isArray(result) && result.length === 0) {
+        newUserName = req.body.name + duplicateCounter;
+      }
+      duplicateCounter++;
+    }
+    jbtMail = `${newUserName}@studentische-beratung.de`;
+  } else {
+    res.status(500).send("Username not specified");
+    return;
+  }
+
+  /**
+   * Overview of the status of the different account creation operations
+   */
+  let statusOverview = {
+    // Status of the query to create a member in the database
+    queryStatus: "fail",
+
+    // Error message if query failed
+    queryErrorMsg: "",
+
+    // Status of the mail api-call to create a mail account
+    mailStatus: "fail",
+
+    // Error message if mail account creation failed
+    mailErrorMsg: "",
+
+    // Status of the mail api-call to add the mail account to a mailing list
+    mailListStatus: "fail",
+
+    // Error message if mail account couldn't be added to the mailing list
+    mailListErrorMsg: "",
+
+    // Status of the nextcloud api-call to create a nextcloud account
+    nextcloudStatus: "fail",
+
+    // Error message if nextcloud account creation failed
+    nextcloudErrorMsg: "",
+
+    // Status of the mediawiki api-call to create a mediawiki account
+    wikiStatus: "fail",
+
+    // Error message if wiki account creation failed
+    wikiErrorMsg: "",
+  };
+
   bcrypt
     .hash(req.body.password, 12)
     .then((hash) => {
       database
         .query(
-          `INSERT INTO mitglied (vorname, nachname, name, passwordHash, geschlecht,
-          geburtsdatum, handy)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO mitglied (vorname, nachname, geburtsdatum, handy, name, geschlecht, passwordHash, icalToken, mitgliedstatus, generation, trainee_seit, email2, jbt_email, ressort)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             req.body.vorname,
             req.body.nachname,
-            req.body.name,
-            hash,
-            req.body.geschlecht,
             req.body.geburtsdatum,
             req.body.handy,
+            newUserName,
+            req.body.geschlecht,
+            hash,
+            getRandomString(16),
+            1, // Status of member is at default "trainee"
+            req.body.generation,
+            req.body.traineeSeit,
+            req.body.email,
+            jbtMail,
+            8, // Department is at default "Ohne Ressort"
           ]
         )
         .then((result) => {
-          res.status(201).send("User created");
+          // Set the status of the query
+          statusOverview = { ...statusOverview, queryStatus: "success" };
+
+          // TODO: Commented out for the time beeing
+          // createMailAccount(jbtMail, hash)
+          //   .then((mailResult: membersTypes.PleskApiResult) => {
+          //     if (mailResult.code === 0) {
+          //       // Set the status of the mail
+          //       statusOverview = { ...statusOverview, mailStatus: "success" };
+          //     } else {
+          //       // Set the error message of the mail
+          //       statusOverview = {
+          //         ...statusOverview,
+          //         mailErrorMsg: mailResult.stderr,
+          //       };
+          //       res.status(500).json(statusOverview);
+          //       return;
+          //     }
+          //     addMailAccountToMailingList("trainee", jbtMail)
+          //       .then((mailListRes: membersTypes.PleskApiResult) => {
+          //         if (mailListRes.code === 0) {
+          //           // Set the status of the mailing list
+          //           statusOverview = {
+          //             ...statusOverview,
+          //             mailListStatus: "success",
+          //           };
+          //         } else {
+          //           // Set the error message of the mailing list
+          //           statusOverview = {
+          //             ...statusOverview,
+          //             mailErrorMsg: mailListRes.stderr,
+          //           };
+          //           return;
+          //         }
+          //         createNCUser(req.body.name, req.body.name, "", jbtMail, ["Mitglied"])
+          //           .then((ncResult: membersTypes.NCApiResult) => {
+          //             if (ncResult.statuscode === 100) {
+          //               // Set the status of the nextcloud
+          //               statusOverview = {
+          //                 ...statusOverview,
+          //                 nextcloudStatus: "success",
+          //               };
+          //             } else {
+          //               statusOverview = {
+          //                 ...statusOverview,
+          //                 nextcloudErrorMsg: ncResult.message,
+          //               };
+          //             }
+
+          //             createMWUser(req.body.name, hash, jbtMail)
+          //               .then((mwResult: membersTypes.MWApiResult) => {
+          //                 if (mwResult.status === "PASS") {
+          //                   // Set the status of the mediawiki
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiStatus: "success",
+          //                   };
+          database
+            .query("SELECT name, mitgliedID, jbt_email FROM mitglied WHERE name = ?", [newUserName])
+            .then((result: membersTypes.GetMemberIdentificationQueryResult[]) => {
+              if (result.length === 0) {
+                res.status(500).send(`Error creating member with name: ${newUserName}`);
+                return;
+              }
+              res.status(201).json({ statusOverview, newUser: result[0] });
+            })
+            .catch((error) => {
+              res.status(500).send(`Error creating member with name: ${newUserName}`);
+            });
+          //                 } else {
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiErrorMsg: mwResult.message,
+          //                   };
+          //                   res.status(500).json(statusOverview);
+          //                 }
+          //               })
+          //               .catch((mwErr) => {
+          //                 statusOverview = {
+          //                   ...statusOverview,
+          //                   wikiErrorMsg: mwErr,
+          //                 };
+          //                 res.status(500).json(statusOverview);
+          //               });
+          //           })
+          //           .catch((ncErr) => {
+          //             statusOverview = {
+          //               ...statusOverview,
+          //               nextcloudErrorMsg: ncErr,
+          //             };
+          //             createMWUser(req.body.name, hash, jbtMail)
+          //               .then((mwResult: membersTypes.MWApiResult) => {
+          //                 if (mwResult.status === "PASS") {
+          //                   // Set the status of the mediawiki
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiStatus: "success",
+          //                   };
+          //                 } else {
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiErrorMsg: mwResult.message,
+          //                   };
+          //                 }
+          //                 res.status(500).json(statusOverview);
+          //               })
+          //               .catch((err) => {
+          //                 statusOverview = {
+          //                   ...statusOverview,
+          //                   wikiErrorMsg: err,
+          //                 };
+          //                 res.status(500).json(statusOverview);
+          //               });
+          //           });
+          //       })
+          //       .catch((err) => {
+          //         // Set the error message of the mailing list
+          //         statusOverview = {
+          //           ...statusOverview,
+          //           mailListErrorMsg: err,
+          //         };
+          //         createNCUser(req.body.name, req.body.name, "", jbtMail, ["Mitglied"])
+          //           .then((ncResult: membersTypes.NCApiResult) => {
+          //             if (ncResult.statuscode === 100) {
+          //               // Set the status of the nextcloud
+          //               statusOverview = {
+          //                 ...statusOverview,
+          //                 nextcloudStatus: "success",
+          //               };
+          //             } else {
+          //               statusOverview = {
+          //                 ...statusOverview,
+          //                 nextcloudErrorMsg: ncResult.message,
+          //               };
+          //             }
+
+          //             createMWUser(req.body.name, hash, jbtMail)
+          //               .then((mwResult: membersTypes.MWApiResult) => {
+          //                 if (mwResult.status === "PASS") {
+          //                   // Set the status of the mediawiki
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiStatus: "success",
+          //                   };
+          //                   res.status(201).json(statusOverview);
+          //                 } else {
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiErrorMsg: mwResult.message,
+          //                   };
+          //                   res.status(500).json(statusOverview);
+          //                 }
+          //               })
+          //               .catch((mwErr) => {
+          //                 statusOverview = {
+          //                   ...statusOverview,
+          //                   wikiErrorMsg: mwErr,
+          //                 };
+          //                 res.status(500).json(statusOverview);
+          //               });
+          //           })
+          //           .catch((ncErr) => {
+          //             statusOverview = {
+          //               ...statusOverview,
+          //               nextcloudErrorMsg: ncErr,
+          //             };
+          //             createMWUser(req.body.name, hash, jbtMail)
+          //               .then((mwResult: membersTypes.MWApiResult) => {
+          //                 if (mwResult.status === "PASS") {
+          //                   // Set the status of the mediawiki
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiStatus: "success",
+          //                   };
+          //                 } else {
+          //                   statusOverview = {
+          //                     ...statusOverview,
+          //                     wikiErrorMsg: mwResult.message,
+          //                   };
+          //                 }
+          //                 res.status(500).json(statusOverview);
+          //               })
+          //               .catch((mwErr) => {
+          //                 statusOverview = {
+          //                   ...statusOverview,
+          //                   wikiErrorMsg: mwErr,
+          //                 };
+          //                 res.status(500).json(statusOverview);
+          //               });
+          //           });
+          //       });
+          //   })
+          //   .catch((err) => {
+          //     // Set the error message of the webmail
+          //     statusOverview = {
+          //       ...statusOverview,
+          //       mailErrorMsg: err,
+          //     };
+          //     res.status(500).json(statusOverview);
+          //   });
         })
         .catch((err) => {
-          res.status(500).send("Query Error: Creating User");
+          statusOverview = {
+            ...statusOverview,
+            queryErrorMsg: err.sqlMessage,
+          };
+          res.status(500).json(statusOverview);
         });
     })
     .catch((err) => {
-      res.status(500).send("Hashing error");
+      statusOverview = {
+        ...statusOverview,
+        queryErrorMsg: err,
+      };
+      res.status(500).json(statusOverview);
     });
 };
 

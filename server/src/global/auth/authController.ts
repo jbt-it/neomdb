@@ -164,7 +164,7 @@ export const login = (req: Request, res: Response): void => {
         `,
             [result[0].mitgliedID]
           )
-          .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+          .then((directorPermissionsResult: globalTypes.Permission[]) => {
             let permissions = [];
             // Adds role permissions to the permissions array
             if (directorPermissionsResult.length !== 0) {
@@ -236,7 +236,7 @@ export const retrieveUserData = (req: Request, res: Response) => {
         `,
           [jwtData.mitgliedID]
         )
-        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+        .then((directorPermissionsResult: globalTypes.Permission[]) => {
           let permissions = [];
 
           // Adds role permissions to the permissions array

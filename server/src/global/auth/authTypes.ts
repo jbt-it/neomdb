@@ -20,11 +20,3 @@ export type UserDataQueryResult = {
   name: string;
   permissions: string;
 };
-
-/**
- * Type of query results of the director permissions retrieval
- */
-export type DirectorPermissionsQueryResult = {
-  permissionID: number;
-  canDelegate: boolean;
-};
