@@ -37,6 +37,7 @@ router.get(
   membersController.retrievePermissionsOfMembers
 );
 router.get("/:id", membersController.retrieveMember);
+router.get("/:id/permissions", membersController.retrievePermissionsByMemberId);
 
 //  =======>>> Post routes <<<=======
 router.post("/", authController.restrictRoutes([1]), membersController.createMember);
