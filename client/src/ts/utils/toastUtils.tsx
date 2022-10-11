@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 /**
  * Creates the options for a toast
  * @param {number} duration Duration of the toast to be displayed
- * @param {color} color Color of the border and the icon
+ * @param {string} color Color of the border and the icon
  */
 const createToastOptions = (duration: number, color: string) => ({
   duration,
