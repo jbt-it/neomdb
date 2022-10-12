@@ -188,7 +188,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   /**
    * Renders the dialog for changing the internal project informations
    */
-  const rendetInternalProjectInformationDialog: VoidFunction = () => {
+  const renderInternalProjectInformationDialog: VoidFunction = () => {
     return (
       <Dialog
         open={internalProjectInfoDialogOpen}
@@ -250,7 +250,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="kickoff-field"
@@ -265,7 +264,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="angebot-abgegeben-field"
@@ -280,7 +278,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="ap-abgegeben-field"
@@ -295,7 +292,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="ap-datum-field"
@@ -310,7 +306,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="zp-abgegeben-field"
@@ -325,7 +320,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="zp-datum-field"
@@ -340,7 +334,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="dl-abgegeben-field"
@@ -355,7 +348,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="projektmitglieder-field"
@@ -370,7 +362,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   className={classes.fullWidth}
-                  required
                   color="primary"
                   disabled={!true}
                   id="qualitaetsmanager-field"
@@ -410,7 +401,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    */
   return (
     <div>
-      {rendetInternalProjectInformationDialog()}
+      {renderInternalProjectInformationDialog()}
 
       <div className="content-page">
         <Paper className={classes.paper}>
@@ -421,16 +412,11 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               </Typography>
             </div>
             <div>
-              {
-                /* When the user is owner or has the permission to
-                    manage all members they can edit this section */
-                //     isOwner || permissionList.includes(1)
-                true ? (
-                  <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
-                    <Edit fontSize="inherit" />
-                  </IconButton>
-                ) : null
-              }
+              {true ? (
+                <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
+                  <Edit fontSize="inherit" />
+                </IconButton>
+              ) : null}
             </div>
           </div>
           <br></br>
