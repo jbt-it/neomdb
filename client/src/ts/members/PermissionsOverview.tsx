@@ -2,7 +2,7 @@
  * The PermissionsOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Paper,
   Grid,
@@ -18,7 +18,7 @@ import {
 import api from "../utils/api";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { AuthContext } from "../global/AuthContext";
-import CustomSnackbar from "../global/CustomSnackbar";
+import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 
 /**
  * Interface of route get permissions-of-members
@@ -118,11 +118,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
   const [permissionsOverview, setPermissionsOverview] = useState<Permissions[]>([]);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
-  const [errorSet, setErrorSet] = useState<number>(0);
-  const [errorDelete, setErrorDelete] = useState<number>(0);
-  const [successDelete, setSuccessDelete] = useState<number>(0);
-  const [successSet, setSuccessSet] = useState<number>(0);
   const { auth } = useContext(AuthContext);
   let tmp: AllNames[] = [];
 
@@ -130,7 +125,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
    * Handles the API call and cleans state thereafter
    */
   const getPermissions: VoidFunction = () => {
-    console.log("Hole getPermissions");
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -145,8 +139,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
         }
       })
       .catch((error) => {
-        setErrorOpen(errorOpen + 1);
-        setErrorOpen(0);
+        showErrorMessage("Berechtigungen konnten nicht geladen werden");
       });
     // Clean-up function
     return () => {
@@ -172,8 +165,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
         }
       })
       .catch((error) => {
-        setErrorOpen(errorOpen + 1);
-        setErrorOpen(0);
+        showErrorMessage("Berechtigungen konnten nicht geladen werden");
       });
     // Clean-up function
     return () => {
@@ -198,14 +190,12 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 201) {
           if (mounted) {
-            setSuccessSet(successSet + 1);
-            setSuccessSet(0);
+            showSuccessMessage("Berechtigung wurde erfolgreich erteilt");
           }
         }
       })
       .catch((error) => {
-        setErrorSet(errorSet + 1);
-        setErrorSet(0);
+        showErrorMessage("Berechtigung konnte nicht erteilt werden");
       });
     // Clean-up function
     return () => {
@@ -228,14 +218,12 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setSuccessDelete(successDelete + 1);
-            setSuccessDelete(0);
+            showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
           }
         }
       })
       .catch((error) => {
-        setErrorDelete(errorDelete + 1);
-        setErrorDelete(0);
+        showErrorMessage("Berechtigung konnte nicht entzogen werden");
       });
     // Clean-up function
     return () => {
@@ -266,11 +254,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
 
   useEffect(() => getPermissions(), []);
   useEffect(() => getPermissionsOfMembers(), []);
-  useEffect(() => setSuccessSet(0), []);
-  useEffect(() => setSuccessDelete(0), []);
-  useEffect(() => setErrorOpen(0), []);
-  useEffect(() => setErrorDelete(0), []);
-  useEffect(() => setErrorSet(0), []);
 
   return (
     <div>
@@ -366,33 +349,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
           </Paper>
         </Box>
       </div>
-      {errorOpen ? (
-        <CustomSnackbar
-          snackbarMessage="Berechtigungen konnten nicht geladen werden."
-          snackProps={{ variant: "error" }}
-        />
-      ) : null}
-      {errorSet ? (
-        <CustomSnackbar
-          snackbarMessage="Berechtigung konnten nicht hinzugefügt werden."
-          snackProps={{ variant: "error" }}
-        />
-      ) : null}
-      {errorDelete ? (
-        <CustomSnackbar
-          snackbarMessage="Berechtigung konnten nicht hinzugefügt werden."
-          snackProps={{ variant: "error" }}
-        />
-      ) : null}
-      {successDelete ? (
-        <CustomSnackbar
-          snackbarMessage="Berechtigung wurde erfolgreich entzogen."
-          snackProps={{ variant: "success" }}
-        />
-      ) : null}
-      {successSet ? (
-        <CustomSnackbar snackbarMessage="Berechtigung wurde erfolgreich erteilt." snackProps={{ variant: "success" }} />
-      ) : null}
     </div>
   );
 };
