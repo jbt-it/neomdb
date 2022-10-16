@@ -50,8 +50,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -78,8 +79,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -106,8 +108,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -134,8 +137,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -163,8 +167,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -189,13 +194,14 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
             setSuccessOpen(successOpen + 1);
             getMemberDetails();
           }
-        } else if (res.status === 500) {
-          setErrorOpen(errorOpen + 1);
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          setErrorOpen(errorOpen + 1);
+        }
       });
 
     // Clean-up function
