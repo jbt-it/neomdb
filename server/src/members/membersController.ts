@@ -1024,6 +1024,29 @@ export const updateMember = (req: Request, res: Response): void => {
 };
 
 /**
+ * Change member status to left association (ausgetreten)
+ */
+export const deleteMember = (req: Request, res: Response): void => {
+  // Checks if the member is allowed to delete the permission
+  if (
+    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
+    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
+  ) {
+    res.status(403).send("No Permission to change member status!");
+    return;
+  }
+
+  database
+    .query("UPDATE mitglied SET mitgliedstatus=6 WHERE mitgliedID=?", [req.body.memberID])
+    .then((result) => {
+      res.status(200).send("Member status set to left association");
+    })
+    .catch((err) => {
+      res.status(500).send("Database Error: Changing member status failed");
+    });
+};
+
+/**
  * Retrieves all directors and members with their permission and name
  */
 export const retrievePermissionsOfMembers = (req: Request, res: Response): void => {

@@ -53,5 +53,5 @@ router.delete(
   authController.restrictRoutes(ALL_PERMISSIONS, false),
   membersController.deletePermission
 );
-
+router.delete("/members", authController.restrictRoutes(ALL_PERMISSIONS, false), membersController.deleteMember);
 module.exports = router;
