@@ -16,6 +16,19 @@ export type GetMembersQueryResult = {
 };
 
 /**
+ * Type of query result of the basic identification of a member
+ */
+export type GetMemberIdentificationQueryResult = {
+  mitgliedID: number;
+  name: string;
+  jbt_email: string;
+};
+
+export type GetMembersNameQueryResult = {
+  name: string;
+};
+
+/**
  * Type of query results of member retrieval
  */
 export type GetMemberQueryResult = {
@@ -168,4 +181,34 @@ export type GetDepartmentsQueryResult = {
   jbt_email: string;
   linkZielvorstellung: string;
   linkOrganigramm: string;
+};
+
+/**
+ * Type of plesk api call result
+ */
+export type PleskApiResult = {
+  code: number;
+  stdout: string;
+  stderr: string;
+};
+
+/**
+ * Type of nextcloud api call result
+ */
+export type NCApiResult = {
+  status: string;
+  statuscode: number;
+  message: string;
+  totalitems: number;
+  itemsperpage: number;
+};
+
+/**
+ * Type of mediawiki api call result
+ */
+export type MWApiResult = {
+  status: string;
+  message: string;
+  messagecode: string;
+  canpreservestate: boolean;
 };
