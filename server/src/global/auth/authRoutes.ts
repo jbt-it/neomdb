@@ -16,5 +16,3 @@ router.get("/user-data", authController.retrieveUserData);
 router.post("/logout", authController.logout);
 
 export default router;
-//
-// module.exports = router;
