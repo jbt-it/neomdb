@@ -96,7 +96,7 @@ const Login: React.FunctionComponent = () => {
           setFailedLogin(true);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
         setFailedLogin(true);
       });

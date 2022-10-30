@@ -61,7 +61,7 @@ const App: React.FunctionComponent = () => {
         }
         setCheckAuthLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
         setCheckAuthLoading(false);
       });

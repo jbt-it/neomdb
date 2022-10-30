@@ -27,7 +27,7 @@ export const AuthContext = createContext<AuthContextType>({
  *
  * @param props
  */
-export const AuthProvider = (props: { children?: any }) => {
+export const AuthProvider = (props: { children?: React.ReactChildren }) => {
   /**
    * The reducer function for the auth object
    * It manages how the auth object can be changed

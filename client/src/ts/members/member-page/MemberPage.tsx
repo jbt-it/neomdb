@@ -47,9 +47,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
@@ -75,9 +74,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
@@ -103,9 +101,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
@@ -131,9 +128,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
@@ -159,9 +155,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
@@ -190,9 +185,8 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
           showErrorMessage("Aktualisierung ist fehlgeschlagen!");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
       });
 
     // Clean-up function
