@@ -95,7 +95,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
  * @param permissions Array of permissions which are allowed to use following routes
  * @param includeAll Boolean that specifies if all permissions in `permissions` must be inclded in the jwt
  */
-export const restrictRoutes = (permissions: number[], includeAll: boolean = true) => {
+export const restrictRoutes = (permissions: number[], includeAll = true) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
     if (includeAll) {

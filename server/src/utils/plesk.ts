@@ -65,16 +65,7 @@ export const createMailAccount = (mailAccount: string, mailPsw: string) => {
   return new Promise((resolve, reject) => {
     pleskConnection
       .post("/cli/mail/call", {
-        params: [
-          "--create",
-          mailAccount,
-          "-mailbox",
-          "true",
-          "-passwd",
-          mailPsw,
-          "-mbox_quota",
-          DEFAULT_QUOTA,
-        ],
+        params: ["--create", mailAccount, "-mailbox", "true", "-passwd", mailPsw, "-mbox_quota", DEFAULT_QUOTA],
       })
       .then((res) => {
         resolve(res.data);
@@ -91,21 +82,11 @@ export const createMailAccount = (mailAccount: string, mailPsw: string) => {
  * @param mailAccount The mail account that should be added to the list
  * @returns A promise
  */
-export const addMailAccountToMailingList = (
-  mailList: string,
-  mailAccount: string
-) => {
+export const addMailAccountToMailingList = (mailList: string, mailAccount: string) => {
   return new Promise((resolve, reject) => {
     pleskConnection
       .post("/cli/maillist/call", {
-        params: [
-          "-u",
-          mailList,
-          "-members",
-          `add:${mailAccount}`,
-          "-domain",
-          "studentische-beratung.de",
-        ],
+        params: ["-u", mailList, "-members", `add:${mailAccount}`, "-domain", "studentische-beratung.de"],
       })
       .then((res) => {
         resolve(res.data);
