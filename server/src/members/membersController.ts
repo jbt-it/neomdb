@@ -94,7 +94,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
   if (Number(req.params.id) === res.locals.memberID || doesPermissionsInclude(res.locals.permissions, [6])) {
     database
       .query(
-        `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
         mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
         trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit, passiv_seit,
         ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber, strasse1, plz1, ort1,
@@ -181,7 +181,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
   } else {
     database
       .query(
-        `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
         mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
         mentor, trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit,
         passiv_seit, ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber,

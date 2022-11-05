@@ -20,3 +20,10 @@ export type UserDataQueryResult = {
   name: string;
   permissions: string;
 };
+
+/**
+ * Type of query results of the permission retrieval
+ */
+export type DirectorPermissionsQueryResult = {
+  permissions: string;
+};

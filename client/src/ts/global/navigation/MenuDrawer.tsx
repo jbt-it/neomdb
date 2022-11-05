@@ -275,17 +275,19 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
                 <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
             </NavLink>
-            <NavLink
-              exact
-              to="/berechtigungen"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
-              onClick={handleNavLinkClick(pathname)}
-            >
-              <ListItem button onClick={props.drawer(false)}>
-                <ListItemText className={classes.subListItem} primary="Berechtigungen" />
-              </ListItem>
-            </NavLink>
+            {auth.permissions.length > 0 ? (
+              <NavLink
+                exact
+                to="/berechtigungen"
+                className={classes.listItemNavText}
+                activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+                onClick={handleNavLinkClick(pathname)}
+              >
+                <ListItem button onClick={props.drawer(false)}>
+                  <ListItemText className={classes.subListItem} primary="Berechtigungen" />
+                </ListItem>
+              </NavLink>
+            ) : null}
           </List>
         </Collapse>
         <NavLink

@@ -166,12 +166,12 @@ const MemberOverview: React.FunctionComponent = () => {
           if (mounted) {
             setMembers(res.data);
           }
-        } else if (res.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       })
-      .catch(() => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
