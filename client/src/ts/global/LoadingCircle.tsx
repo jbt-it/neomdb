@@ -1,14 +1,14 @@
 /*
  * Component for rendering a loading circle
  */
-import { Avatar, createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
+import { Avatar, createStyles, makeStyles, Typography } from "@material-ui/core";
 import React from "react";
 import Lenni from "../../images/lenni.jpeg";
 
 /**
  * Function which proivdes the styles of the LoadingCircle
  */
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       width: 180,

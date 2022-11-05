@@ -11,7 +11,7 @@ const databaseConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  connectionLimit: 50
+  connectionLimit: 50,
 };
 
 const pool: mysql.Pool = mysql.createPool(databaseConfig);
@@ -46,7 +46,6 @@ export const connectionQuery = (connection: mysql.PoolConnection, sql: string, a
   return new Promise((resolve, reject) => {
     connection.query(sql, args, (queryError: mysql.MysqlError, result: (string | number)[]) => {
       if (queryError) {
-
         // If the query fails a rollback is automatically initiated
         rollback(connection)
           .then(() => {
@@ -138,11 +137,11 @@ const rollback = (connection: mysql.PoolConnection) => {
 const createPromises = (queryList: string[], connection?: mysql.PoolConnection) => {
   const promises = [];
   if (connection) {
-    queryList.map(singleQuery => {
+    queryList.map((singleQuery) => {
       promises.push(connectionQuery(connection, singleQuery, []));
     });
   } else {
-    queryList.map(singleQuery => {
+    queryList.map((singleQuery) => {
       promises.push(query(singleQuery, []));
     });
   }

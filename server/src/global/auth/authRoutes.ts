@@ -15,4 +15,4 @@ router.use(authController.protectRoutes);
 router.get("/user-data", authController.retrieveUserData);
 router.post("/logout", authController.logout);
 
-module.exports = router;
+export default router;

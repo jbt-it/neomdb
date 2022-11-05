@@ -54,4 +54,4 @@ router.delete(
   membersController.deletePermission
 );
 
-module.exports = router;
+export default router;

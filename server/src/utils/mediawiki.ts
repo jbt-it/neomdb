@@ -36,11 +36,7 @@ const wikiBot = new mwn({
  * @param userEmail The email of the user
  * @returns A promise
  */
-export const createMWUser = (
-  username: string,
-  userPassword: string,
-  userEmail: string
-) => {
+export const createMWUser = (username: string, userPassword: string, userEmail: string) => {
   return new Promise((resolve, reject) => {
     let result = null;
     wikiBot
