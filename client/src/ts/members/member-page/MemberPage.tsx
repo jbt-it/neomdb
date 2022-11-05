@@ -48,8 +48,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -76,8 +77,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -104,8 +106,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -132,8 +135,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -160,8 +164,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -186,13 +191,14 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
             showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
             getMemberDetails();
           }
-        } else if (res.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
       });
 
     // Clean-up function
