@@ -82,7 +82,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles the click event on the different extendable list items
    * @param value topic of the extendable list item
    */
-  const handleCollpaseClick = (value: string) => (event: React.MouseEvent) => {
+  const handleCollpaseClick = (value: string) => () => {
     switch (value) {
       case "Mitglieder": {
         setMemberOpen(!memberOpen);
@@ -109,7 +109,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles the click Event of the nav links
    * @param value topic of the nav link
    */
-  const handleNavLinkClick = (pathname: string) => (event: React.MouseEvent) => {
+  const handleNavLinkClick = (pathname: string) => () => {
     setMemberOpen(false);
     setToolsOpen(false);
     setMyFunctionsOpen(false);
@@ -120,7 +120,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles click on logout link
    */
   const handleLogout: VoidFunction = () => {
-    api.post("/auth/logout").then((result) => {
+    api.post("/auth/logout").then(() => {
       history.push("/login");
       dispatchAuth({ type: authReducerActionType.deauthenticate });
     });
@@ -293,17 +293,19 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
                 <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
             </NavLink>
-            <NavLink
-              exact
-              to="/berechtigungen"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
-              onClick={handleNavLinkClick(pathname)}
-            >
-              <ListItem button onClick={props.drawer(false)}>
-                <ListItemText className={classes.subListItem} primary="Berechtigungen" />
-              </ListItem>
-            </NavLink>
+            {auth.permissions.length > 0 ? (
+              <NavLink
+                exact
+                to="/berechtigungen"
+                className={classes.listItemNavText}
+                activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+                onClick={handleNavLinkClick(pathname)}
+              >
+                <ListItem button onClick={props.drawer(false)}>
+                  <ListItemText className={classes.subListItem} primary="Berechtigungen" />
+                </ListItem>
+              </NavLink>
+            ) : null}
           </List>
         </Collapse>
         <NavLink

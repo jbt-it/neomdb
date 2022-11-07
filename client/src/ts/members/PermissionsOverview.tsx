@@ -16,7 +16,7 @@ import {
   Chip,
 } from "@material-ui/core";
 import api from "../utils/api";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete, { AutocompleteChangeDetails } from "@material-ui/lab/Autocomplete";
 import { AuthContext } from "../global/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 
@@ -138,7 +138,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
+      .catch(() => {
         showErrorMessage("Berechtigungen konnten nicht geladen werden");
       });
     // Clean-up function
@@ -164,7 +164,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
+      .catch(() => {
         showErrorMessage("Berechtigungen konnten nicht geladen werden");
       });
     // Clean-up function
@@ -194,7 +194,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
+      .catch(() => {
         showErrorMessage("Berechtigung konnte nicht erteilt werden");
       });
     // Clean-up function
@@ -222,7 +222,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
+      .catch(() => {
         showErrorMessage("Berechtigung konnte nicht entzogen werden");
       });
     // Clean-up function
@@ -234,11 +234,18 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Check if clicked event added or removed entity from autocomplete
    */
-  const handleOnChange = (newValue: AllNames[], details: any, permissionID: number) => {
-    if (newValue[newValue.length - 1] === details.option) {
-      createPermission(details.option.memberID, permissionID);
-    } else {
-      deletePermission(details.option.memberID, permissionID);
+  const handleOnChange = (
+    newValue: AllNames[],
+    details: AutocompleteChangeDetails<AllNames> | undefined,
+    permissionID: number
+  ) => {
+    // Check if details is undefined
+    if (details) {
+      if (newValue[newValue.length - 1] === details.option) {
+        createPermission(details.option.memberID, permissionID);
+      } else {
+        deletePermission(details.option.memberID, permissionID);
+      }
     }
   };
 
