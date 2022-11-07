@@ -155,6 +155,8 @@ export type GetCurrentDirectorsQueryResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
+  evpostenID: number;
+  ressortID: number;
   geschlecht: string;
   bezeichnung_weiblich: string;
   bezeichnung_maennlich: string;
@@ -176,6 +178,9 @@ export type GetDepartmentsQueryResult = {
   ressortID: number;
   bezeichnung: string;
   kuerzel: string;
+  jbt_email: string;
+  linkZielvorstellung: string;
+  linkOrganigramm: string;
 };
 
 /**

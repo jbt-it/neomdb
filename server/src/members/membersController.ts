@@ -269,14 +269,23 @@ export const retrieveMember = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves all members of a department
+ * Retrieves all members of a department (this does not invclude the director of a department)
  */
 export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+  /*
+   * This database call searches for all members which are trainees, active members or seniors
+   * and their assigned departments if they are not currently a director
+   */
   database
     .query(
       `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
       FROM mitglied, ressort
       WHERE ressort = ressortID AND mitgliedstatus <= 3
+      AND NOT EXISTS (
+        SELECT mitglied_mitgliedID
+        FROM mitglied_has_evposten
+        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
+        )
       ORDER BY ressortID`,
       []
     )
@@ -298,7 +307,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+      `SELECT mitgliedID, vorname, nachname, evpostenID, ressort as ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
       FROM mitglied, mitglied_has_evposten, evposten
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []
@@ -656,7 +665,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
 export const retrieveDepartments = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT ressortID, bezeichnung, kuerzel
+      `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
       FROM ressort
       WHERE bezeichnung != "Ohne Ressort"`,
       []
