@@ -21,7 +21,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
-import PageBar from "../global/navigation/PageBar";
+import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
 import { useContext } from "react";

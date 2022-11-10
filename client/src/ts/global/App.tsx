@@ -5,7 +5,7 @@ import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
-import Nav from "./navigation/Nav";
+import Nav from "./components/navigation/Nav";
 import NotFound from "./NotFound";
 import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
