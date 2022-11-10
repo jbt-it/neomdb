@@ -14,7 +14,7 @@ import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
-import LoadingCircle from "./LoadingCircle";
+import LoadingCircle from "./components/LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 
 /**
