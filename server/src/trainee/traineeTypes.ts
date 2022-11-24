@@ -6,6 +6,7 @@
  * Type of query results of members retrieval
  */
 export type GetTraineeChoiceResult = {
+  mitgliedID: number;
   vorname: string;
   nachname: string;
   wahl_mentor: number;
@@ -20,4 +21,24 @@ export type GetTraineeChoiceResult = {
   wahl_ressort1: number;
   wahl_ressort2: number;
   wahl_ressort3: number;
+};
+
+export type GetTraineeMotivationResult = {
+  mitgliedID: number;
+  wahl_internesprojekt1_motivation: string;
+  wahl_internesprojekt2_motivation: string;
+  wahl_internesprojekt3_motivation: string;
+};
+
+export type GetGenerations = {
+  generationID: number;
+  bezeichnung: string;
+  bewerbung_start: Date;
+  bewerbung_ende: Date;
+  wwTermin: string;
+  auswahlWETermin: string;
+  infoabendBesucher: number;
+  tuercode: number;
+  wahl_start: Date;
+  wahl_ende: Date;
 };

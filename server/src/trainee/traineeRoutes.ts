@@ -20,10 +20,16 @@ router.use(authController.protectRoutes);
 
 //  =======>>> Get routes <<<=======
 router.get("/trainee-wahl", authController.restrictRoutes([14], false), traineeController.retrieveTraineeChoice);
+router.get("/trainee-generations", authController.restrictRoutes([14], false), traineeController.retrieveGenerations);
 //  =======>>> Post routes <<<=======
-
+router.post("/trainee-add-mentor", authController.restrictRoutes([14], false), traineeController.addMentor);
 //  =======>>> Patch routes <<<=======
-
+router.patch(
+  "/trainee-wahl-deadline-set",
+  authController.restrictRoutes([14], false),
+  traineeController.setVotingDeadline
+);
+router.patch("/trainee-assignment", authController.restrictRoutes([14], false), traineeController.setTraineeAssignment);
 //  =======>>> Delete routes <<<=======
 
 module.exports = router;
