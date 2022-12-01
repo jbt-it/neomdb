@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Grid, IconButton, Dialog, DialogTitle, DialogContent, TextField } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
+import * as traineesTypes from "./traineesTypes";
 
 /**
  * Function which provides the styles
@@ -113,21 +114,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   props: RouteComponentProps<RouterMatch>
 ) => {
   const classes = useStyles();
-  type IpInfoType = {
-    id: number;
-    name: string;
-    kuerzel: string;
-    traineegeneration: string;
-    kickoff: string;
-    angebotAbgegeben: string;
-    apDatum: string;
-    apAbgegeben: string;
-    zpDatum: string;
-    zpAbgegeben: string;
-    dlAbgegeben: string;
-    projektmitglieder: string;
-    qualitaetsmanager: string;
-  };
 
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   /**
@@ -147,7 +133,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setInternalProjectInfoDialogOpen(false);
   };
 
-  const [internalProjectDetails, setInternalProjectDetails] = useState<IpInfoType>();
+  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
 
   const [name, setName] = useState<string>();
   const [kuerzel, setKuerzel] = useState<string>();
@@ -168,7 +154,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const getInternalProjectDetails: VoidFunction = () => {
     setInternalProjectDetails({
       id: 5,
-      name: "Digitales Bootcamp",
+      name: "Analoges Bootcamp",
       kuerzel: "DB",
       traineegeneration: "22/WS",
       kickoff: "01.01.2020",
@@ -178,8 +164,8 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       zpDatum: "01.01.2020",
       zpAbgegeben: "Ja",
       dlAbgegeben: "Nein",
-      projektmitglieder: "Darko Cutkovic, Helen Förstner",
-      qualitaetsmanager: "Franziska Keßler, Niklas Kamilli, Marco Hintennach",
+      projektmitglieder: "Marko Müller, Ada Lovelace",
+      qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
     });
   };
 
@@ -195,7 +181,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         onClose={handleInternalProjectInfoDialogClose}
         fullWidth
         maxWidth="lg"
-        keepMounted
         aria-labelledby="general-dialog-title"
       >
         <DialogTitle id="general-dialog-title">Internes Projekt</DialogTitle>
