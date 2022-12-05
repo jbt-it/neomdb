@@ -127,7 +127,7 @@ export const setTraineeAssignment = (req: Request, res: Response): void => {
 };
 
 /**
- * Addes one new member as mentor for generation
+ * Addes one new member as mentor to generation
  * @param req mitglied_ID, generation_ID
  * @param res status code and message
  */
@@ -139,6 +139,47 @@ export const addMentor = (req: Request, res: Response): void => {
     ])
     .then((result) => {
       res.status(201).send("Added new mentor");
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * Gets memberID first and last name of Mentors of generationID
+ * @param req generation_ID
+ * @param res GetMentorsOfGeneration
+ */
+export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
+  database
+    .query(
+      `SELECT mitgliedID, vorname, nachname, generation_generationID
+    FROM mitglied
+    INNER JOIN generation_has_mentor
+    ON generation_has_mentor.mitglied_mitgliedID = mitglied.mitgliedID
+    WHERE generation_has_mentor.generation_generationID = ?`,
+      [req.body.generation_ID]
+    )
+    .then((result: traineeTypes.GetMentorsOfGeneration) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * Gets information of internal projects of generation
+ * @param req generation_ID
+ * @param res GetInternalProjectOfGeneration
+ */
+export const GetInternalProjectsOfGeneration = (req: Request, res: Response): void => {
+  database
+    .query(`SELECT internesprojektID, generation, projektname, kuerzel FROM internesprojekt WHERE generation=?`, [
+      req.body.generation_ID,
+    ])
+    .then((result: traineeTypes.GetInternalProjectOfGeneration) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
       res.status(500).send("Query Error");

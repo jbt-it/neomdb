@@ -42,3 +42,17 @@ export type GetGenerations = {
   wahl_start: Date;
   wahl_ende: Date;
 };
+
+export type GetMentorsOfGeneration = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  generation_generationID: number;
+};
+
+export type GetInternalProjectOfGeneration = {
+  internesprojektID: number;
+  generation: number;
+  projektname: string;
+  kuerzel: string;
+};

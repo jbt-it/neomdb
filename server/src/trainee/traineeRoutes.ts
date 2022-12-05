@@ -21,6 +21,16 @@ router.use(authController.protectRoutes);
 //  =======>>> Get routes <<<=======
 router.get("/trainee-wahl", authController.restrictRoutes([14], false), traineeController.retrieveTraineeChoice);
 router.get("/trainee-generations", authController.restrictRoutes([14], false), traineeController.retrieveGenerations);
+router.get(
+  "/trainee-generations-mentor",
+  authController.restrictRoutes([14], false),
+  traineeController.GetMentorsOfGeneration
+);
+router.get(
+  "/internal-projects-of-generation",
+  authController.restrictRoutes([14], false),
+  traineeController.GetInternalProjectsOfGeneration
+);
 //  =======>>> Post routes <<<=======
 router.post("/trainee-add-mentor", authController.restrictRoutes([14], false), traineeController.addMentor);
 //  =======>>> Patch routes <<<=======
