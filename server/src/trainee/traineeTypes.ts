@@ -1,9 +1,9 @@
 /**
- * Definition of used types within the users module
+ * Definition of used types within the tainee module
  */
 
 /**
- * Type of query results of members retrieval
+ * Type of query results of trainee choices
  */
 export type GetTraineeChoiceResult = {
   mitgliedID: number;
@@ -23,6 +23,9 @@ export type GetTraineeChoiceResult = {
   wahl_ressort3: number;
 };
 
+/**
+ * Type of query results of trainee motivation for internal projects
+ */
 export type GetTraineeMotivationResult = {
   mitgliedID: number;
   wahl_internesprojekt1_motivation: string;
@@ -30,6 +33,9 @@ export type GetTraineeMotivationResult = {
   wahl_internesprojekt3_motivation: string;
 };
 
+/**
+ * Type of query results of retrieving general information about generations
+ */
 export type GetGenerations = {
   generationID: number;
   bezeichnung: string;
@@ -43,6 +49,9 @@ export type GetGenerations = {
   wahl_ende: Date;
 };
 
+/**
+ * Type of query results of retrieving mentors for given generation
+ */
 export type GetMentorsOfGeneration = {
   mitgliedID: number;
   vorname: string;
@@ -50,6 +59,9 @@ export type GetMentorsOfGeneration = {
   generation_generationID: number;
 };
 
+/**
+ * Type of query results of retrieving general information about internal projects for given generation
+ */
 export type GetInternalProjectOfGeneration = {
   internesprojektID: number;
   generation: number;

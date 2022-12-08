@@ -14,9 +14,9 @@ import * as authTypes from "./../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
 
 /**
- * Retrieves an overview of all trainees of given generation
+ * Retrieves choices of mentor, internal project and department of all trainees of given generation
  * @param req generation_ID
- * @param res member ID and 3 motivation texts
+ * @param res member ID, first and last name and choices
  */
 export const retrieveTraineeChoice = (req: Request, res: Response): void => {
   database
@@ -40,7 +40,7 @@ export const retrieveTraineeChoice = (req: Request, res: Response): void => {
 };
 
 /**
- * Gets Letter of motivation form members of given generation
+ * Gets letter of motivation form trainees of given generation
  * @param req generation_ID
  * @param res member ID and 3 motivation texts
  */
@@ -65,8 +65,8 @@ export const retrieveTraineeMotivation = (req: Request, res: Response): void => 
 
 /**
  * Retrieves information about all generations
- * @param req generation_ID
- * @param res member ID and 3 motivation texts
+ * @param req null
+ * @param res generationID, short name and deadlines
  */
 export const retrieveGenerations = (req: Request, res: Response): void => {
   database
@@ -75,7 +75,7 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
       auswahlWETermin, infoabendBesucher,
       tuercode, wahl_start, wahl_ende
       FROM generation WHERE 1`,
-      [req.body.generation_ID]
+      []
     )
     .then((result: traineeTypes.GetGenerations) => {
       res.status(200).json(result);
@@ -86,7 +86,7 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
 };
 
 /**
- * Sets "wahl_start" and "wahl_ende"
+ * Sets "wahl_start" and "wahl_ende" for generation
  * @param req wahl_start and wahl_ende in form of DATETIME, generationID
  * @param res status code and message
  */
@@ -146,9 +146,9 @@ export const addMentor = (req: Request, res: Response): void => {
 };
 
 /**
- * Gets memberID first and last name of Mentors of generationID
- * @param req generation_ID
- * @param res GetMentorsOfGeneration
+ * Gets memberID first and last name of Mentors of generation
+ * @param req generationID
+ * @param res status code and message
  */
 export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
   database
@@ -158,7 +158,7 @@ export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
     INNER JOIN generation_has_mentor
     ON generation_has_mentor.mitglied_mitgliedID = mitglied.mitgliedID
     WHERE generation_has_mentor.generation_generationID = ?`,
-      [req.body.generation_ID]
+      [req.body.generationID]
     )
     .then((result: traineeTypes.GetMentorsOfGeneration) => {
       res.status(200).json(result);
@@ -171,7 +171,7 @@ export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
 /**
  * Gets information of internal projects of generation
  * @param req generation_ID
- * @param res GetInternalProjectOfGeneration
+ * @param res ID, generation, name and short name
  */
 export const GetInternalProjectsOfGeneration = (req: Request, res: Response): void => {
   database
