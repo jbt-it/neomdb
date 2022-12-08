@@ -5,13 +5,14 @@ import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import database = require("../database");
 import { getRandomString } from "../utils/stringUtils";
-import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
-import { createMWUser } from "../utils/mediawiki";
-import { createNCUser } from "../utils/nextcloud";
 import * as membersTypes from "./membersTypes";
 import { PoolConnection } from "mysql";
 import * as authTypes from "./../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
+// TODO: Out comment if external account creation is activated
+// import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
+// import { createMWUser } from "../utils/mediawiki";
+// import { createNCUser } from "../utils/nextcloud";
 
 /**
  * User can change his password knowing his old one
@@ -51,7 +52,7 @@ export const changePassword = (req: Request, res: Response): void => {
                   res.status(500).send("Update query Error");
                 });
             })
-            .catch((error) => {
+            .catch(() => {
               res.status(500).send("Internal Error");
             });
         } else {
@@ -59,7 +60,7 @@ export const changePassword = (req: Request, res: Response): void => {
         }
       });
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -80,7 +81,7 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
     .then((result: membersTypes.GetMembersQueryResult) => {
       res.status(200).json(result);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -93,7 +94,7 @@ export const retrieveMember = (req: Request, res: Response): void => {
   if (Number(req.params.id) === res.locals.memberID || doesPermissionsInclude(res.locals.permissions, [6])) {
     database
       .query(
-        `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
         mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
         trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit, passiv_seit,
         ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber, strasse1, plz1, ort1,
@@ -157,30 +158,30 @@ export const retrieveMember = (req: Request, res: Response): void => {
                           ];
                           res.status(200).json(member);
                         })
-                        .catch((err) => {
+                        .catch(() => {
                           res.status(500).send("Query Error: Retrieving EDV Skills");
                         });
                     })
-                    .catch((err) => {
+                    .catch(() => {
                       res.status(500).send("Query Error: Retrieving Mentor");
                     });
                 })
-                .catch((err) => {
+                .catch(() => {
                   res.status(500).send("Query Error: Retrieving Mentees");
                 });
             })
-            .catch((err) => {
+            .catch(() => {
               res.status(500).send("Query Error: Retrieving Languages");
             });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).send("Query Error: Retrieving Member");
       });
   } else {
     database
       .query(
-        `SELECT mitgliedID, vorname, nachname, geschlecht, geburtsdatum, handy,
+        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
         mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
         mentor, trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit,
         passiv_seit, ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber,
@@ -244,38 +245,47 @@ export const retrieveMember = (req: Request, res: Response): void => {
                           ];
                           res.status(200).json(member);
                         })
-                        .catch((err) => {
+                        .catch(() => {
                           res.status(500).send("Query Error: Retrieving EDV Skills");
                         });
                     })
-                    .catch((err) => {
+                    .catch(() => {
                       res.status(500).send("Query Error: Retrieving Mentor");
                     });
                 })
-                .catch((err) => {
+                .catch(() => {
                   res.status(500).send("Query Error: Retrieving Mentees");
                 });
             })
-            .catch((err) => {
+            .catch(() => {
               res.status(500).send("Query Error: Retrieving Languages");
             });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).send("Query Error: Retrieving Member");
       });
   }
 };
 
 /**
- * Retrieves all members of a department
+ * Retrieves all members of a department (this does not invclude the director of a department)
  */
 export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
+  /*
+   * This database call searches for all members which are trainees, active members or seniors
+   * and their assigned departments if they are not currently a director
+   */
   database
     .query(
       `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
       FROM mitglied, ressort
       WHERE ressort = ressortID AND mitgliedstatus <= 3
+      AND NOT EXISTS (
+        SELECT mitglied_mitgliedID
+        FROM mitglied_has_evposten
+        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
+        )
       ORDER BY ressortID`,
       []
     )
@@ -286,7 +296,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -297,7 +307,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+      `SELECT mitgliedID, vorname, nachname, evpostenID, ressort as ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
       FROM mitglied, mitglied_has_evposten, evposten
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []
@@ -309,7 +319,7 @@ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -407,7 +417,7 @@ export const createMember = async (req: Request, res: Response) => {
             8, // Department is at default "Ohne Ressort"
           ]
         )
-        .then((result) => {
+        .then(() => {
           // Set the status of the query
           statusOverview = { ...statusOverview, queryStatus: "success" };
 
@@ -474,7 +484,7 @@ export const createMember = async (req: Request, res: Response) => {
               }
               res.status(201).json({ statusOverview, newUser: result[0] });
             })
-            .catch((error) => {
+            .catch(() => {
               res.status(500).send(`Error creating member with name: ${newUserName}`);
             });
           //                 } else {
@@ -644,7 +654,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -655,7 +665,7 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
 export const retrieveDepartments = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT ressortID, bezeichnung, kuerzel
+      `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
       FROM ressort
       WHERE bezeichnung != "Ohne Ressort"`,
       []
@@ -667,7 +677,7 @@ export const retrieveDepartments = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -689,7 +699,7 @@ export const retrieveLanguages = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -711,7 +721,7 @@ export const retrieveEDVSkills = (req: Request, res: Response): void => {
         res.status(200).json(result);
       }
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -801,11 +811,11 @@ export const updateMember = (req: Request, res: Response): void => {
               req.params.id,
             ]
           )
-          .then((result) => {
+          .then(() => {
             // Delete the exisitng entries of languages of the specific member
             database
               .connectionQuery(connection, `DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
-              .then((deleteLangResult) => {
+              .then(() => {
                 // To save/update the different languages of the member sql strings are saved into an array
                 const langQueries = [];
 
@@ -817,13 +827,13 @@ export const updateMember = (req: Request, res: Response): void => {
                 });
                 database
                   .executeMultipleConnectionQueries(connection, langQueries)
-                  .then((langResult) => {
+                  .then(() => {
                     // Delete the existing entries of edv skills of the specific member
                     database
                       .connectionQuery(connection, `DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [
                         req.params.id,
                       ])
-                      .then((deleteEDVResult) => {
+                      .then(() => {
                         // To save/update the different edv skills of the member sql strings are saved into an array
                         const edvQueries = [];
 
@@ -835,37 +845,37 @@ export const updateMember = (req: Request, res: Response): void => {
                         });
                         database
                           .executeMultipleConnectionQueries(connection, edvQueries)
-                          .then((edvResult) => {
+                          .then(() => {
                             database
                               .commit(connection)
-                              .then((commitResult) => {
+                              .then(() => {
                                 res.status(200).send("Profile Update Successful");
                               })
-                              .catch((err) => {
+                              .catch(() => {
                                 res.status(500).send("Query Error: Commiting failed");
                               });
                           })
-                          .catch((err) => {
+                          .catch(() => {
                             res.status(500).send("Query Error: Updating EDV Skills failed");
                           });
                       })
-                      .catch((err) => {
+                      .catch(() => {
                         res.status(500).send("Query Error: Deleting EDV Skills failed");
                       });
                   })
-                  .catch((err) => {
+                  .catch(() => {
                     res.status(500).send("Query Error: Updating Languages failed");
                   });
               })
-              .catch((err) => {
+              .catch(() => {
                 res.status(500).send("Query Error: Deleting Languages failed");
               });
           })
-          .catch((err) => {
+          .catch(() => {
             res.status(500).send("Query Error: Updating Profile failed");
           });
       })
-      .catch((error) => {
+      .catch(() => {
         res.status(500).send("Query Error: Starting Transaction failed");
       });
   }
@@ -912,11 +922,11 @@ export const updateMember = (req: Request, res: Response): void => {
               req.params.id,
             ]
           )
-          .then((result) => {
+          .then(() => {
             // Delete the exisitng entries of languages of the specific member
             database
               .connectionQuery(connection, `DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
-              .then((deleteLangResult) => {
+              .then(() => {
                 // To save/update the different languages of the member sql strings are saved into an array
                 const langQueries = [];
 
@@ -928,13 +938,13 @@ export const updateMember = (req: Request, res: Response): void => {
                 });
                 database
                   .executeMultipleConnectionQueries(connection, langQueries)
-                  .then((langResult) => {
+                  .then(() => {
                     // Delete the existing entries of edv skills of the specific member
                     database
                       .connectionQuery(connection, `DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [
                         req.params.id,
                       ])
-                      .then((deleteEDVResult) => {
+                      .then(() => {
                         // To save/update the different edv skills of the member sql strings are saved into an array
                         const edvQueries = [];
 
@@ -946,37 +956,37 @@ export const updateMember = (req: Request, res: Response): void => {
                         });
                         database
                           .executeMultipleConnectionQueries(connection, edvQueries)
-                          .then((edvResult) => {
+                          .then(() => {
                             database
                               .commit(connection)
                               .then(() => {
                                 res.status(200).send("Profile Update Successful");
                               })
-                              .catch((err) => {
+                              .catch(() => {
                                 res.status(500).send("Query Error: Commiting failed");
                               });
                           })
-                          .catch((err) => {
+                          .catch(() => {
                             res.status(500).send("Query Error: Updating EDV Skills failed");
                           });
                       })
-                      .catch((err) => {
+                      .catch(() => {
                         res.status(500).send("Query Error: Deleting EDV Skills failed");
                       });
                   })
-                  .catch((err) => {
+                  .catch(() => {
                     res.status(500).send("Query Error: Updating Languages failed");
                   });
               })
-              .catch((err) => {
+              .catch(() => {
                 res.status(500).send("Query Error: Deleting Languages failed");
               });
           })
-          .catch((err) => {
+          .catch(() => {
             res.status(500).send("Query Error: Updating Profile failed");
           });
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).send("Query Error: Starting Transaction failed");
       });
   }
@@ -1011,11 +1021,10 @@ export const updateMember = (req: Request, res: Response): void => {
           req.params.id,
         ]
       )
-      .then((result) => {
+      .then(() => {
         res.status(200).send("Profile Update Successful");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         res.status(500).send("Query Error: Updating Profile failed");
       });
   } else {
@@ -1065,7 +1074,7 @@ export const retrievePermissionsOfMembers = (req: Request, res: Response): void 
     .then((result: membersTypes.GetPermissionsQueryResult) => {
       res.status(200).json(result);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error: Getting permissions failed");
     });
 };
@@ -1079,7 +1088,7 @@ export const retrievePermissions = (req: Request, res: Response): void => {
     .then((result: membersTypes.GetPermissionsQueryResult) => {
       res.status(200).json(result);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Query Error: Getting permissions failed");
     });
 };
@@ -1135,11 +1144,11 @@ export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
           }
           res.status(200).json({ ...result[0], permissions });
         })
-        .catch((error) => {
+        .catch(() => {
           res.status(500).send("Query Error");
         });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
@@ -1163,14 +1172,14 @@ export const createPermission = (req: Request, res: Response): void => {
       VALUES (?, ?)`,
       [req.body.memberID, req.body.permissionID]
     )
-    .then((result) => {
+    .then(() => {
       res.status(201).send({
         message: "Permission created",
         mitgliedID: req.body.memberID,
         berechtigungID: req.body.permissionID,
       });
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Database Error: Creating Permission failed");
     });
 };
@@ -1195,10 +1204,10 @@ export const deletePermission = (req: Request, res: Response): void => {
       WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
       [req.body.memberID, req.body.permissionID]
     )
-    .then((result) => {
+    .then(() => {
       res.status(200).send("Permission deleted");
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(500).send("Database Error: Deleting Permission failed");
     });
 };

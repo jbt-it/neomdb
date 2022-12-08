@@ -7,6 +7,7 @@ import MemberOverview from "../members/MemberOverview";
 import Login from "../members/Login";
 import Nav from "./navigation/Nav";
 import NotFound from "./NotFound";
+import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
@@ -62,7 +63,9 @@ const App: React.FunctionComponent = () => {
         setCheckAuthLoading(false);
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
         setCheckAuthLoading(false);
       });
   }, [dispatchAuth]);
@@ -154,7 +157,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
-        <PrivateRoute exact path="/vorstand" component={Dashboard} />
+        <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
         <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
         <PrivateRoute exact path="/geburtstage" component={Dashboard} />
         <PrivateRoute exact path="/traineebereich" component={Dashboard} />
