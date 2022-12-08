@@ -3,7 +3,7 @@
  */
 export type AuthContextType = {
   auth: Auth;
-  dispatchAuth: Function;
+  dispatchAuth: React.Dispatch<authReducerAction>;
 };
 
 export type Permission = {

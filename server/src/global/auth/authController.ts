@@ -95,7 +95,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
  * @param permissions Array of permissions which are allowed to use following routes
  * @param includeAll Boolean that specifies if all permissions in `permissions` must be inclded in the jwt
  */
-export const restrictRoutes = (permissions: number[], includeAll: boolean = true) => {
+export const restrictRoutes = (permissions: number[], includeAll = true) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
     if (includeAll) {
@@ -196,15 +196,15 @@ export const login = (req: Request, res: Response): void => {
                   res.status(401).send("Username or password wrong");
                 }
               })
-              .catch((err) => {
+              .catch(() => {
                 res.status(401).send("Username or password wrong");
               });
           })
-          .catch((err) => {
+          .catch(() => {
             res.status(500).send("Query Error");
           });
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).send("Query Error");
       });
   }
@@ -256,11 +256,11 @@ export const retrieveUserData = (req: Request, res: Response) => {
           }
           res.status(200).json({ ...result[0], permissions });
         })
-        .catch((error) => {
+        .catch(() => {
           res.status(500).send("Query Error");
         });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
