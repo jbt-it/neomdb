@@ -54,4 +54,5 @@ router.delete(
   membersController.deletePermission
 );
 router.delete("/:id", authController.restrictRoutes([1], false), membersController.deleteMember);
-module.exports = router;
+
+export default router;
