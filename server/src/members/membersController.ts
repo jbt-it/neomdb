@@ -1037,16 +1037,9 @@ export const updateMember = (req: Request, res: Response): void => {
  */
 export const deleteMember = (req: Request, res: Response): void => {
   // Checks if the member is allowed to delete the permission
-  if (
-    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
-    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
-  ) {
-    res.status(403).send("No Permission to change member status!");
-    return;
-  }
 
   database
-    .query("UPDATE mitglied SET mitgliedstatus=6 WHERE mitgliedID=?", [req.body.memberID])
+    .query("UPDATE mitglied SET mitgliedstatus=6 WHERE mitgliedID=?", [req.params.id])
     .then((result) => {
       res.status(200).send("Member status set to left association");
     })
