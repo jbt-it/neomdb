@@ -14,7 +14,7 @@ import {
 import { Edit } from "@material-ui/icons";
 
 /**
- * Function which proivdes the styles of the MemberPage
+ * Function which proivdes the styles of the InfoCard component
  */
 const useStyles = makeStyles(() =>
   createStyles({
