@@ -354,7 +354,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
     <div>
       <div className="content-page">
         {departments.map((department, index) => (
-          <>
+          <div key={department.kuerzel}>
             <InfoCard
               title={department.bezeichnung}
               isEditable={true}
@@ -428,7 +428,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
               department={department}
             />
             <br></br>
-          </>
+          </div>
         ))}
       </div>
       <PageBar pageTitle="Ressorts" />

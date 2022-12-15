@@ -12,9 +12,12 @@ import {
   TextField,
   Theme,
 } from "@material-ui/core";
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import { DepartmentDetails } from "../../members/membersTypes";
 import api from "../../utils/api";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
+import { AuthContext } from "../AuthContext";
+import { authReducerActionType } from "../globalTypes";
 
 /**
  * Function which proivdes the styles of the dialog department component
@@ -57,6 +60,7 @@ interface DepartmentDialogProps {
 const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((props: DepartmentDialogProps) => {
   const classes = useStyles();
   const { title, isOpen, onClose, department } = props;
+  const { dispatchAuth } = useContext(AuthContext);
 
   const [goalLink, setGoalLink] = useState(department.linkZielvorstellung);
   const [organisationLink, setOrganisationLink] = useState(department.linkOrganigramm);
@@ -67,10 +71,20 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
   const saveData = () => {
     // Given department object with changed wiki, goal and organisation links
     const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
-    //   api
-    //     .post("/", editedDepartment)
-    //     .then((res) => {})
-    //     .catch((err) => {});
+    api
+      .patch(`/users/departments/${editedDepartment.ressortID}`, editedDepartment)
+      .then((res) => {
+        if (res.status === 200) {
+          showSuccessMessage("Aktualisierung erfolgreich!");
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
+      });
   };
 
   return (
