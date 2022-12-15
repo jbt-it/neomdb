@@ -683,6 +683,24 @@ export const retrieveDepartments = (req: Request, res: Response): void => {
 };
 
 /**
+ * Updates the department infos with the given id
+ */
+export const updateDepartmentInfo = (req: Request, res: Response): void => {
+  database
+    .query(`UPDATE ressort SET linkOrganigramm = ?, linkZielvorstellung = ?  WHERE ressortID = ?`, [
+      req.body.linkOrganigramm,
+      req.body.linkZielvorstellung,
+      req.params.id,
+    ])
+    .then(() => {
+      res.status(200).send("Department Update succesful");
+    })
+    .catch(() => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
  * Retrieves the languages
  */
 export const retrieveLanguages = (req: Request, res: Response): void => {

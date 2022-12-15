@@ -93,7 +93,7 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
  * If `includeAll` is true,  every permission in the permissions array needs to be included in the permissions
  * of the received jwt
  * @param permissions Array of permissions which are allowed to use following routes
- * @param includeAll Boolean that specifies if all permissions in `permissions` must be inclded in the jwt
+ * @param includeAll Boolean that specifies if all permissions in `permissions` must be included in the jwt
  */
 export const restrictRoutes = (permissions: number[], includeAll = true) => {
   return (req: Request, res: Response, next: NextFunction) => {
