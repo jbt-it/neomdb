@@ -18,7 +18,11 @@ app.use(express.json());
 /**
  * Enable CORS for all incoming requests
  */
-app.use(cors({ origin: process.env.ORIGIN }));
+app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+
+app.use((req, res, next) => {
+  next();
+});
 
 /**
  * Enables the cookie parser middleware
