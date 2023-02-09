@@ -1,35 +1,46 @@
-/**
+/*
  * Configure our API endpoint
  */
 import express = require("express");
 import dotenv = require("dotenv");
-import cors = require("cors");
 import cookieParser = require("cookie-parser");
 
+import refererValidationMiddleware from "./middleware/refererValidation";
+import corsMiddleware from "./middleware/cors";
 import authRoutes from "./global/auth/authRoutes";
+import csrfProtectionMiddleware from "./middleware/csrf";
 import membersRoutes from "./members/membersRoutes";
 
 dotenv.config();
 const app = express();
 
+/*
+ * Express configuration
+ */
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-/**
- * Enable CORS for all incoming requests
+/*
+ * Enable CORS middleware for all incoming requests
  */
-app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+app.use(corsMiddleware);
 
-app.use((req, res, next) => {
-  next();
-});
-
-/**
+/*
  * Enables the cookie parser middleware
  */
 app.use(cookieParser());
 
-/**
+/*
+ * Enables CSRF protection middleware
+ */
+app.use(csrfProtectionMiddleware);
+
+/*
+ * Enables referer validation middleware
+ */
+app.use(refererValidationMiddleware);
+
+/*
  * Use routes
  */
 app.use("/auth", authRoutes);
