@@ -8,7 +8,6 @@ import cookieParser = require("cookie-parser");
 import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
 import authRoutes from "./global/auth/authRoutes";
-import csrfProtectionMiddleware from "./middleware/csrf";
 import membersRoutes from "./members/membersRoutes";
 
 dotenv.config();
@@ -29,11 +28,6 @@ app.use(corsMiddleware);
  * Enables the cookie parser middleware
  */
 app.use(cookieParser());
-
-/*
- * Enables CSRF protection middleware
- */
-app.use(csrfProtectionMiddleware);
 
 /*
  * Enables referer validation middleware
