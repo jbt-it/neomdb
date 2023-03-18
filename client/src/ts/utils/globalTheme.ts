@@ -1,20 +1,20 @@
 /**
  * Contains the global styling of the components
  */
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 
 // Global theme
-export default createMuiTheme({
+export default createTheme({
   palette: {
     primary: {
       // Ci-orange as hex
       main: "#f6891f",
-      contrastText: "white",
+      contrastText: "#ffffff",
     },
     secondary: {
       // Ci-grey as hex
       main: "#aeb0b2",
-      contrastText: "black",
-    }
+      contrastText: "#000000",
+    },
   },
 });

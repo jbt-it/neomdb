@@ -20,8 +20,7 @@ const ChangePassword: React.FunctionComponent = () => {
    * Function which proivdes the styles of the MenuDrawer
    */
   const useStyles = makeStyles((theme) => ({
-    inputfield: {
-    },
+    inputfield: {},
     submit: {
       margin: theme.spacing(3, 0, 1),
       color: "white",
@@ -43,8 +42,7 @@ const ChangePassword: React.FunctionComponent = () => {
   }));
 
   const classes = useStyles();
-  const [authenticated, setAuthenticated,
-    userID, setUserID, userName, setUserName] = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [newPasswordValidation, setNewPasswordValidation] = useState<string>("");
@@ -63,14 +61,15 @@ const ChangePassword: React.FunctionComponent = () => {
       const data = {
         oldPassword,
         newPassword,
-        userID,
-        userName
+        userID: auth.userID,
+        userName: auth.userName,
       };
 
       // Patch request
-      api.patch("/users/change-password", data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      })
+      api
+        .patch("/users/change-password", data, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => {
           if (res.status === 200) {
             // Password change was succefull
@@ -82,8 +81,7 @@ const ChangePassword: React.FunctionComponent = () => {
             return [{ status: res.status }];
           }
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(() => {
           setFailedoldPassword(true);
         });
     } else {
@@ -104,19 +102,38 @@ const ChangePassword: React.FunctionComponent = () => {
   };
 
   /*
-  * Gets the password correct state of the password field, depending on if a previous login attempt failed
-  */
+   * Gets the password correct state of the password field, depending on if a previous login attempt failed
+   */
   const getOldPasswordField = () => {
     if (failedOldPassword) {
       return (
-        <Textfield error className={classes.inputfield} id="oldPassword" label="altes Passwort" type="password"
-          helperText=" Altes Passwort ist nicht korrekt" value={oldPassword}
-          onChange={event => { setOldPassword(event.target.value); }} fullWidth />
+        <Textfield
+          error
+          className={classes.inputfield}
+          id="oldPassword"
+          label="altes Passwort"
+          type="password"
+          helperText=" Altes Passwort ist nicht korrekt"
+          value={oldPassword}
+          onChange={(event) => {
+            setOldPassword(event.target.value);
+          }}
+          fullWidth
+        />
       );
     }
     return (
-      <Textfield className={classes.inputfield} id="password" label="altes Passwort" type="password" value={oldPassword}
-        onChange={event => { setOldPassword(event.target.value); }} fullWidth />
+      <Textfield
+        className={classes.inputfield}
+        id="password"
+        label="altes Passwort"
+        type="password"
+        value={oldPassword}
+        onChange={(event) => {
+          setOldPassword(event.target.value);
+        }}
+        fullWidth
+      />
     );
   };
 
@@ -126,15 +143,33 @@ const ChangePassword: React.FunctionComponent = () => {
   const getNewPasswordField = () => {
     if (!checkNewPassword(newPassword) && newPassword !== "") {
       return (
-        <Textfield error className={classes.inputfield} id="newpassword" label="neues Passwort" type="password" helperText="erfüllt nicht die Vorraussetzungen" value={newPassword}
-          onChange={event => { setNewPassword(event.target.value); }}
-          fullWidth />
+        <Textfield
+          error
+          className={classes.inputfield}
+          id="newpassword"
+          label="neues Passwort"
+          type="password"
+          helperText="erfüllt nicht die Vorraussetzungen"
+          value={newPassword}
+          onChange={(event) => {
+            setNewPassword(event.target.value);
+          }}
+          fullWidth
+        />
       );
     } else {
       return (
-        <Textfield className={classes.inputfield} id="newpassword" label="neues Passwort" type="password" value={newPassword}
-          onChange={event => { setNewPassword(event.target.value); }}
-          fullWidth />
+        <Textfield
+          className={classes.inputfield}
+          id="newpassword"
+          label="neues Passwort"
+          type="password"
+          value={newPassword}
+          onChange={(event) => {
+            setNewPassword(event.target.value);
+          }}
+          fullWidth
+        />
       );
     }
   };
@@ -145,15 +180,33 @@ const ChangePassword: React.FunctionComponent = () => {
   const getNewPasswordFieldValidation = () => {
     if (newPassword === newPasswordValidation) {
       return (
-        <Textfield className={classes.inputfield} id="newpasswordvalidation" label="neues Passwort wiederholen" type="password" value={newPasswordValidation}
-          onChange={event => { setNewPasswordValidation(event.target.value); }}
-          fullWidth />
+        <Textfield
+          className={classes.inputfield}
+          id="newpasswordvalidation"
+          label="neues Passwort wiederholen"
+          type="password"
+          value={newPasswordValidation}
+          onChange={(event) => {
+            setNewPasswordValidation(event.target.value);
+          }}
+          fullWidth
+        />
       );
     } else {
       return (
-        <Textfield error className={classes.inputfield} id="newpasswordvalidation" label="neues Passwort wiederholen" type="password" helperText="Die Passwörter müsen gleich sein" value={newPasswordValidation}
-          onChange={event => { setNewPasswordValidation(event.target.value); }}
-          fullWidth />
+        <Textfield
+          error
+          className={classes.inputfield}
+          id="newpasswordvalidation"
+          label="neues Passwort wiederholen"
+          type="password"
+          helperText="Die Passwörter müsen gleich sein"
+          value={newPasswordValidation}
+          onChange={(event) => {
+            setNewPasswordValidation(event.target.value);
+          }}
+          fullWidth
+        />
       );
     }
   };
@@ -176,13 +229,10 @@ const ChangePassword: React.FunctionComponent = () => {
     if (resResponse200) {
       return (
         <Paper className={classes.paper}>
-          <p>
-            Das Passwort wurde geändert
-          </p>
+          <p>Das Passwort wurde geändert</p>
         </Paper>
       );
-    }
-    else {
+    } else {
       return null;
     }
   };
@@ -192,7 +242,8 @@ const ChangePassword: React.FunctionComponent = () => {
       <div className="content-page">
         <Paper className={classes.paper}>
           <p>
-            Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen Buchstaben enthalten
+            Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen
+            Buchstaben enthalten
           </p>
         </Paper>
         <Paper className={classes.paper}>
@@ -202,14 +253,19 @@ const ChangePassword: React.FunctionComponent = () => {
             {getNewPasswordFieldValidation()}
           </div>
           <div>
-            <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit" onClick={postPassword}>
+            <Button
+              className={classes.submit}
+              variant="contained"
+              fullWidth
+              color="primary"
+              type="submit"
+              onClick={postPassword}
+            >
               Neues Passwort speichern
-          </Button>
+            </Button>
           </div>
           <div>
-            <p>
-              {postNotSentWarning()}
-            </p>
+            <p>{postNotSentWarning()}</p>
           </div>
         </Paper>
         {resResponse200Field()}

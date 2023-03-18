@@ -14,11 +14,12 @@ import app from "./app";
  */
 const serverConfig = {
   key: fs.readFileSync(process.env.PATH_TO_KEY),
-  cert: fs.readFileSync(process.env.PATH_TO_CERT)
+  cert: fs.readFileSync(process.env.PATH_TO_CERT),
 };
 
 const server = https.createServer(serverConfig, app);
 
 server.listen(process.env.PORT, () => {
+  // eslint-disable-next-line no-console
   console.log("Listening on port " + process.env.PORT);
 });
