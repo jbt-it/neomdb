@@ -1,5 +1,5 @@
 /**
- * Definition of the handler functions for the members module
+ * Definition of the handler functions for the trainee module
  */
 import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
@@ -15,7 +15,7 @@ import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authU
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
- * @param req generation_ID
+ * @param req generationID
  * @param res member ID, first and last name and choices
  */
 export const retrieveTraineeChoice = (req: Request, res: Response): void => {
@@ -29,7 +29,7 @@ export const retrieveTraineeChoice = (req: Request, res: Response): void => {
       INNER JOIN generation
       ON mitglied.generation = generation.generationID
       WHERE  generation.generationID = ?`,
-      [req.body.generation_ID]
+      [req.body.generationID]
     )
     .then((result: traineeTypes.GetTraineeChoiceResult) => {
       res.status(200).json(result);
@@ -41,7 +41,8 @@ export const retrieveTraineeChoice = (req: Request, res: Response): void => {
 
 /**
  * Gets letter of motivation form trainees of given generation
- * @param req generation_ID
+ * @param {Request} req request object
+ * @param {number} req.body.generationID
  * @param res member ID and 3 motivation texts
  */
 export const retrieveTraineeMotivation = (req: Request, res: Response): void => {
@@ -53,7 +54,7 @@ export const retrieveTraineeMotivation = (req: Request, res: Response): void => 
       INNER JOIN generation
       ON mitglied.generation = generation.generationID
       WHERE generation.generationID = ?`,
-      [req.body.generation_ID]
+      [req.body.generationID]
     )
     .then((result: traineeTypes.GetTraineeMotivationResult) => {
       res.status(200).json(result);
@@ -65,7 +66,7 @@ export const retrieveTraineeMotivation = (req: Request, res: Response): void => 
 
 /**
  * Retrieves information about all generations
- * @param req null
+ * @param {Request} req empty request object
  * @param res generationID, short name and deadlines
  */
 export const retrieveGenerations = (req: Request, res: Response): void => {
@@ -77,7 +78,7 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
       FROM generation WHERE 1`,
       []
     )
-    .then((result: traineeTypes.GetGenerations) => {
+    .then((result: traineeTypes.GetGenerationsResult) => {
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -87,14 +88,17 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
 
 /**
  * Sets "wahl_start" and "wahl_ende" for generation
- * @param req wahl_start and wahl_ende in form of DATETIME, generationID
+ * @param {Request} req request object
+ * @param {Date} req.body.votingStart
+ * @param {Date} req.body.votingEnd
+ * @param {number} req.body.generationID
  * @param res status code and message
  */
 export const setVotingDeadline = (req: Request, res: Response): void => {
   database
     .query(`UPDATE generation SET wahl_start= "?", wahl_ende= "?"  WHERE generationID=?`, [
-      req.body.wahl_start,
-      req.body.wahl_ende,
+      req.body.votingStart,
+      req.body.votingEnd,
       req.body.generationID,
     ])
     .then((result) => {
@@ -107,7 +111,11 @@ export const setVotingDeadline = (req: Request, res: Response): void => {
 
 /**
  * Sets choices of internesprojekt, mentor and ressort of member
- * @param req internesprojektID, mentorID, ressortID, mitgliedID
+ * @param {Request} req request object
+ * @param {number} req.body.internesprojektID
+ * @param {number} req.body.mentorID
+ * @param {number} req.body.ressortID
+ * @param {number} req.body.mitgliedID
  * @param res status code and message
  */
 export const setTraineeAssignment = (req: Request, res: Response): void => {
@@ -128,14 +136,16 @@ export const setTraineeAssignment = (req: Request, res: Response): void => {
 
 /**
  * Addes one new member as mentor to generation
- * @param req mitglied_ID, generation_ID
+ * @param {Request} req request object
+ * @param {number} req.body.mitgliedID
+ * @param {number} req.body.generationID
  * @param res status code and message
  */
 export const addMentor = (req: Request, res: Response): void => {
   database
     .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
-      req.body.mitglied_ID,
-      req.body.generation_ID,
+      req.body.mitgliedID,
+      req.body.generationID,
     ])
     .then((result) => {
       res.status(201).send("Added new mentor");
@@ -147,10 +157,11 @@ export const addMentor = (req: Request, res: Response): void => {
 
 /**
  * Gets memberID first and last name of Mentors of generation
- * @param req generationID
+ * @param {Request} req request object
+ * @param {number} req.body.generationID
  * @param res status code and message
  */
-export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
+export const getMentorsOfGeneration = (req: Request, res: Response): void => {
   database
     .query(
       `SELECT mitgliedID, vorname, nachname, generation_generationID
@@ -160,7 +171,7 @@ export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
     WHERE generation_has_mentor.generation_generationID = ?`,
       [req.body.generationID]
     )
-    .then((result: traineeTypes.GetMentorsOfGeneration) => {
+    .then((result: traineeTypes.GetMentorsOfGenerationResult) => {
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -170,15 +181,16 @@ export const GetMentorsOfGeneration = (req: Request, res: Response): void => {
 
 /**
  * Gets information of internal projects of generation
- * @param req generation_ID
+ * @param {Request} req request object
+ * @param {number} req.body.generationID
  * @param res ID, generation, name and short name
  */
-export const GetInternalProjectsOfGeneration = (req: Request, res: Response): void => {
+export const getInternalProjectsOfGeneration = (req: Request, res: Response): void => {
   database
     .query(`SELECT internesprojektID, generation, projektname, kuerzel FROM internesprojekt WHERE generation=?`, [
-      req.body.generation_ID,
+      req.body.generationID,
     ])
-    .then((result: traineeTypes.GetInternalProjectOfGeneration) => {
+    .then((result: traineeTypes.GetInternalProjectOfGenerationResult) => {
       res.status(200).json(result);
     })
     .catch((err) => {
