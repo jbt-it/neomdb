@@ -5,7 +5,7 @@ import express = require("express");
 const router = express.Router();
 
 import * as authController from "../global/auth/authController";
-import * as traineeController from "./traineeController";
+import * as traineeController from "./traineesController";
 
 /**
  * Holds all permission IDs
@@ -42,4 +42,4 @@ router.patch(
 router.patch("/trainee-assignment", authController.restrictRoutes([14], false), traineeController.setTraineeAssignment);
 //  =======>>> Delete routes <<<=======
 
-module.exports = router;
+export default router;

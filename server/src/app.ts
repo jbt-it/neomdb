@@ -8,6 +8,7 @@ import cookieParser = require("cookie-parser");
 
 import authRoutes from "./global/auth/authRoutes";
 import membersRoutes from "./members/membersRoutes";
+import traineesRoutes from "./trainees/traineesRoutes";
 
 dotenv.config();
 const app = express();
@@ -34,5 +35,6 @@ app.use(cookieParser());
  */
 app.use("/auth", authRoutes);
 app.use("/users", membersRoutes);
+app.use("/trainees", traineesRoutes);
 
 export default app;

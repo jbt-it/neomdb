@@ -3,7 +3,7 @@
  */
 import { Request, Response } from "express";
 import database = require("../database");
-import * as traineeTypes from "./traineeTypes";
+import * as traineeTypes from "./traineesTypes";
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
