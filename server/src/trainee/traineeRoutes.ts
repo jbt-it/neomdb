@@ -24,12 +24,12 @@ router.get("/trainee-generations", authController.restrictRoutes([14], false), t
 router.get(
   "/trainee-generations-mentor",
   authController.restrictRoutes([14], false),
-  traineeController.GetMentorsOfGeneration
+  traineeController.getMentorsOfGeneration
 );
 router.get(
   "/internal-projects-of-generation",
   authController.restrictRoutes([14], false),
-  traineeController.GetInternalProjectsOfGeneration
+  traineeController.getInternalProjectsOfGeneration
 );
 //  =======>>> Post routes <<<=======
 router.post("/trainee-add-mentor", authController.restrictRoutes([14], false), traineeController.addMentor);

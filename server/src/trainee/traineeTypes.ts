@@ -36,7 +36,7 @@ export type GetTraineeMotivationResult = {
 /**
  * Type of query results of retrieving general information about generations
  */
-export type GetGenerations = {
+export type GetGenerationsResult = {
   generationID: number;
   bezeichnung: string;
   bewerbung_start: Date;
@@ -52,7 +52,7 @@ export type GetGenerations = {
 /**
  * Type of query results of retrieving mentors for given generation
  */
-export type GetMentorsOfGeneration = {
+export type GetMentorsOfGenerationResult = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
@@ -62,7 +62,7 @@ export type GetMentorsOfGeneration = {
 /**
  * Type of query results of retrieving general information about internal projects for given generation
  */
-export type GetInternalProjectOfGeneration = {
+export type GetInternalProjectOfGenerationResult = {
   internesprojektID: number;
   generation: number;
   projektname: string;
