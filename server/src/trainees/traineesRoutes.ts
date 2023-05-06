@@ -19,27 +19,39 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 router.use(authController.protectRoutes);
 
 //  =======>>> Get routes <<<=======
-router.get("/trainee-choice", authController.restrictRoutes([14], false), traineeController.retrieveTraineeChoice);
-router.get("/trainee-generations", authController.restrictRoutes([14], false), traineeController.retrieveGenerations);
 router.get(
-  "/trainee-generations-mentor",
+  "/generations/:id/trainee-choices",
+  authController.restrictRoutes([14], false),
+  traineeController.retrieveTraineeChoice
+);
+router.get(
+  "/generations/trainee-generations",
+  authController.restrictRoutes([14], false),
+  traineeController.retrieveGenerations
+);
+router.get(
+  "/generations/:id/mentors",
   authController.restrictRoutes([14], false),
   traineeController.getMentorsOfGeneration
 );
 router.get(
-  "/internal-projects-of-generation",
+  "/generations/:id/internal-projects",
   authController.restrictRoutes([14], false),
   traineeController.getInternalProjectsOfGeneration
 );
 //  =======>>> Post routes <<<=======
-router.post("/trainee-add-mentor", authController.restrictRoutes([14], false), traineeController.addMentor);
+router.post(
+  "/generations/:id/add-mentor/:member_id",
+  authController.restrictRoutes([14], false),
+  traineeController.addMentor
+);
 //  =======>>> Patch routes <<<=======
 router.patch(
-  "/trainee-choice-deadline-set",
+  "/generations/:id/set-deadline",
   authController.restrictRoutes([14], false),
   traineeController.setVotingDeadline
 );
-router.patch("/trainee-assignment", authController.restrictRoutes([14], false), traineeController.setTraineeAssignment);
+router.patch("/:id/assignment", authController.restrictRoutes([14], false), traineeController.setTraineeAssignment);
 //  =======>>> Delete routes <<<=======
 
 export default router;
