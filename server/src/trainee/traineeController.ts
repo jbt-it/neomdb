@@ -15,7 +15,8 @@ import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authU
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
- * @param req generationID
+ * @param {Request} req request object
+  * @param {number} req.body.generationID
  * @param res member ID, first and last name and choices
  */
 export const retrieveTraineeChoice = (req: Request, res: Response): void => {
