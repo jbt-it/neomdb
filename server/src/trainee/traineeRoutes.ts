@@ -19,7 +19,7 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 router.use(authController.protectRoutes);
 
 //  =======>>> Get routes <<<=======
-router.get("/trainee-wahl", authController.restrictRoutes([14], false), traineeController.retrieveTraineeChoice);
+router.get("/trainee-choice", authController.restrictRoutes([14], false), traineeController.retrieveTraineeChoice);
 router.get("/trainee-generations", authController.restrictRoutes([14], false), traineeController.retrieveGenerations);
 router.get(
   "/trainee-generations-mentor",
@@ -35,7 +35,7 @@ router.get(
 router.post("/trainee-add-mentor", authController.restrictRoutes([14], false), traineeController.addMentor);
 //  =======>>> Patch routes <<<=======
 router.patch(
-  "/trainee-wahl-deadline-set",
+  "/trainee-choice-deadline-set",
   authController.restrictRoutes([14], false),
   traineeController.setVotingDeadline
 );
