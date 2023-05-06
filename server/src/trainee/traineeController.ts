@@ -1,17 +1,9 @@
 /**
  * Definition of the handler functions for the trainee module
  */
-import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import database = require("../database");
-import { getRandomString } from "../utils/stringUtils";
-import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
-import { createMWUser } from "../utils/mediawiki";
-import { createNCUser } from "../utils/nextcloud";
 import * as traineeTypes from "./traineeTypes";
-import { PoolConnection } from "mysql";
-import * as authTypes from "./../global/auth/authTypes";
-import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
