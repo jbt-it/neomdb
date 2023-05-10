@@ -87,9 +87,12 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
  * @param {number} req.params.id ID of generation
  * @param res status code and message
  */
-export const setVotingDeadline = (req: Request, res: Response): void => {
-  // TODO: Add check if generation exists
-  database
+export const setVotingDeadline = async (req: Request, res: Response) => {
+  // Search for req.params.id to check if it already exists
+  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [req.params.id]); 
+  // Check if req.params.id is null or empty
+  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
+    database
     .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
       req.body.votingStart,
       req.body.votingEnd,
@@ -102,6 +105,10 @@ export const setVotingDeadline = (req: Request, res: Response): void => {
       console.log(err);
       res.status(500).send("Query Error");
     });
+   }  else {
+    res.status(500).send("Generation does not exist");
+    return; 
+   }
 };
 
 /**
@@ -113,9 +120,12 @@ export const setVotingDeadline = (req: Request, res: Response): void => {
  * @param {number} req.params.id ID of member
  * @param res status code and message
  */
-export const setTraineeAssignment = (req: Request, res: Response): void => {
-  // TODO: Add check if member exists
-  database
+export const setTraineeAssignment = async (req: Request, res: Response) => {
+  // Search for req.params.id to check if it already exists
+  const resultFirstQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [req.params.id]); 
+  // Check if req.params.id is null or empty
+  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
+    database
     .query(
       `UPDATE mitglied SET wahl_internesprojekt = ?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
       [
@@ -134,6 +144,10 @@ export const setTraineeAssignment = (req: Request, res: Response): void => {
     .catch((err) => {
       res.status(500).send("Query Error");
     });
+  } else {
+    res.status(500).send("Member does not exist");
+    return;
+  }
 };
 
 /**
@@ -143,9 +157,12 @@ export const setTraineeAssignment = (req: Request, res: Response): void => {
  * @param {number} req.params.id ID of generation
  * @param res status code and message
  */
-export const addMentor = (req: Request, res: Response): void => {
-  // TODO: Add check if generation exists
-  database
+export const addMentor = async (req: Request, res: Response) => {
+  // Search for req.params.id to check if it already exists
+  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [req.params.id]); 
+  // Check if req.params.id is null or empty
+  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
+    database
     .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
       req.params.member_id,
       req.params.id,
@@ -157,6 +174,10 @@ export const addMentor = (req: Request, res: Response): void => {
       console.log(err);
       res.status(500).send("Query Error");
     });
+  } else {
+    res.status(500).send("Generation does not exist");
+    return;
+  }
 };
 
 /**
