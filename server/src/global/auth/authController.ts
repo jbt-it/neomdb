@@ -30,7 +30,7 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
 const cookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: true, // Cookie can only be sent to the same site
+  sameSite: "none", // Cookie can only be sent to the same site
 };
 
 /**
