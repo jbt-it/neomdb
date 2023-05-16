@@ -53,8 +53,12 @@ type InfoCardProps = {
 };
 
 /**
- * Displays card with header and information
- * @returns card with header and information
+ * Displays a card with a header and an optional edit button which invokes the given `handleEdit` function
+ * This component can be used if information about a specific 'topic' (e.g. departments, specific member details etc.) should be displayed
+ *
+ * @example <InfoCard title="Title" isEditable={true} handleEdit={handleEdit} isExpandable={true} defaultExpanded={true}>
+ * // Insert content here
+ * </InfoCard>
  */
 const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) => {
   const classes = useStyles();
