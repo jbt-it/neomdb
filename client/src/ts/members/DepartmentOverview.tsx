@@ -364,10 +364,6 @@ const DepartmentOverview: React.FunctionComponent = () => {
               key={index}
             >
               <div className={classes.buttonGroup}>
-                <Button className={classes.button} variant="contained">
-                  Zum Wiki-Artikel
-                </Button>
-                <div className={classes.spacing}></div>
                 <Button
                   className={classes.button}
                   variant="contained"
