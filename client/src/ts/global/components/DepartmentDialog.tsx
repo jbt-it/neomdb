@@ -76,6 +76,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
       .then((res) => {
         if (res.status === 200) {
           showSuccessMessage("Aktualisierung erfolgreich!");
+          onClose();
         }
       })
       .catch((err) => {
