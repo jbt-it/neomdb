@@ -19,7 +19,7 @@ router.get("/ip/:id", traineesController.retrieveIP);
 // Get all internal projects of one generation
 router.get("/:generation-id/ip/", traineesController.retrieveAllIPsByGeneration);
 // Get team mails
-router.get("/ip/:id/mails");
+router.get("/ip/:id/mails", traineesController.retrieveTeamMails);
 
 //  =======>>> Patch routes <<<=======
 router.patch("/ip/:id", traineesController.updateIP);

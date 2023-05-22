@@ -10,12 +10,19 @@
  * Type of query results of internal project retrieval
  */
 export type GetInternalProjectType = {
-  // TODO: Add attributes
+  internesProjektID: number;
+  generation: number;
+  projektname: string;
+  kuerzel: string;
+  kickoff: string;
+  AngebotBeiEV: boolean;
+  ZPBeiEV: boolean;
+  ZPGehalten: boolean;
+  APBeiEV: boolean;
+  APGehlaten: boolean;
+  DLBeiEV: boolean;
 };
 
-/**
- * Type of query results of internal projects retrieval
- */
-export type GetInternalProjectsType = {
-  // TODO: Add attributes
+export type GetIPMailType = {
+  jbt_email: string;
 };
