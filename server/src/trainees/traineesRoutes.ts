@@ -24,4 +24,4 @@ router.get("/ip/:id/mails", traineesController.retrieveTeamMails);
 //  =======>>> Patch routes <<<=======
 router.patch("/ip/:id", traineesController.updateIP);
 
-module.exports = router;
+export default router;

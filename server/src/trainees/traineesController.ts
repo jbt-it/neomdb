@@ -5,6 +5,7 @@ import database = require("../database");
 
 import { Request, Response } from "express";
 import * as traineesTypes from "./traineesTypes";
+import { doesPermissionsInclude } from "../utils/authUtils";
 
 /**
  * Retrieves all internal projects of one generation
@@ -62,12 +63,12 @@ export const updateIP = (req: Request, res: Response): void => {
     ("00" + date.getSeconds()).slice(-2);
 
   // Grants access to all fields for members with permission
-  if (res.locals.permissions.includes(15)) {
+  if (doesPermissionsInclude(res.locals.permissions, [15])) {
     database
       .query(
         `UPDATE internesprojekt
-  SET  generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
-  WHERE internesProjektID = ?`,
+          SET  generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
+          WHERE internesProjektID = ?`,
         [
           req.body.generationID,
           req.body.projektname,
