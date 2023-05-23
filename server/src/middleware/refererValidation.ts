@@ -10,6 +10,11 @@ const refererValidationMiddleware = (req: Request, res: Response, next: NextFunc
   if (!referer === null || referer === undefined) {
     return res.status(400).send("Referer header is missing");
   }
+  /*
+   * Check if the referer header starts with the origin
+   * If the referer header does not start with the origin,
+   * this means that the request was sent from an untrusted source
+   */
   if (!referer.startsWith(process.env.ORIGIN)) {
     return res.status(400).send("Referer header is invalid");
   }
