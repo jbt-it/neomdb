@@ -3,7 +3,7 @@ import fs = require("fs");
 import * as globalTypes from "../global/globalTypes";
 
 /**
- * Keys for the jason web token
+ * Keys for the json web token
  */
 const JWTKeys = {
   public: fs.readFileSync(process.env.JWT_PUBLIC),
@@ -11,7 +11,7 @@ const JWTKeys = {
 };
 
 /**
- * Options for the jason web token signing
+ * Options for the json web token signing
  */
 const JWTSignOptions: jwt.SignOptions = {
   expiresIn: 60 * 60 * 10, // Expires in 10 hours
@@ -19,7 +19,7 @@ const JWTSignOptions: jwt.SignOptions = {
 };
 
 /**
- * Options for the jason web token verification
+ * Options for the json web token verification
  */
 const JWTVerifyOptions: jwt.VerifyOptions = {
   algorithms: ["RS256"],
