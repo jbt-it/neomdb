@@ -6,9 +6,9 @@ import dotenv = require("dotenv");
 import cors = require("cors");
 import cookieParser = require("cookie-parser");
 
-import authRoutes = require("./global/auth/authRoutes");
-import membersRoutes = require("./members/membersRoutes");
-import traineesRoutes = require("./trainees/traineesRoutes");
+import authRoutes from "./global/auth/authRoutes";
+import membersRoutes from "./members/membersRoutes";
+import traineesRoutes from "./trainees/traineesRoutes";
 
 dotenv.config();
 const app = express();
