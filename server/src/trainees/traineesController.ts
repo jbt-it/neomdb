@@ -89,26 +89,28 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
  */
 export const setVotingDeadline = async (req: Request, res: Response) => {
   // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [req.params.id]); 
+  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [
+    req.params.id,
+  ]);
   // Check if req.params.id is null or empty
   if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
     database
-    .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
-      req.body.votingStart,
-      req.body.votingEnd,
-      req.params.id,
-    ])
-    .then((result) => {
-      res.status(201).send("Updated Trainee Voting Deadline");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send("Query Error");
-    });
-   }  else {
-    res.status(500).send("Generation does not exist");
-    return; 
-   }
+      .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
+        req.body.votingStart,
+        req.body.votingEnd,
+        req.params.id,
+      ])
+      .then((result) => {
+        res.status(201).send("Updated Trainee Voting Deadline");
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send("Query Error");
+      });
+  } else {
+    res.status(404).send("Generation does not exist");
+    return;
+  }
 };
 
 /**
@@ -122,30 +124,54 @@ export const setVotingDeadline = async (req: Request, res: Response) => {
  */
 export const setTraineeAssignment = async (req: Request, res: Response) => {
   // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [req.params.id]); 
+  const resultFirstQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [
+    req.params.id,
+  ]);
   // Check if req.params.id is null or empty
   if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
-    database
-    .query(
-      `UPDATE mitglied SET wahl_internesprojekt = ?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
-      [
-        req.body.internesprojektID,
-        req.body.internesprojektID,
-        req.body.mentorID,
-        req.body.mentorID,
-        req.body.ressortID,
-        req.body.ressortID,
-        req.params.id,
-      ]
-    )
-    .then((result) => {
-      res.status(201).send("Updated Trainee Assignment");
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+    // Check if internesprojektID, mentorID and ressortID are not NULL
+    if (
+      !Number.isNaN(req.body.internesprojektID) &&
+      !Number.isNaN(req.body.mentorID) &&
+      !Number.isNaN(req.body.ressortID)
+    ) {
+      // Check if internesprojektID, mentorID and ressortID exists in database
+      const resultSecondQuery = await database.query(
+        `SELECT internesprojektID AS IDs FROM internesprojekt WHERE internesprojektID =? UNION 
+        SELECT mitglied_mitgliedID FROM generation_has_mentor WHERE mitglied_mitgliedID =? UNION 
+        SELECT ressortID FROM ressort WHERE ressortID =?`,
+        [req.body.internesprojektID, req.body.mentorID, req.body.ressortID]
+      );
+      if (Array.isArray(resultSecondQuery) && resultSecondQuery.length != 0) {
+        database
+          .query(
+            `UPDATE mitglied SET wahl_internesprojekt =?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
+            [
+              req.body.internesprojektID,
+              req.body.internesprojektID,
+              req.body.mentorID,
+              req.body.mentorID,
+              req.body.ressortID,
+              req.body.ressortID,
+              req.params.id,
+            ]
+          )
+          .then((result) => {
+            res.status(201).send("Updated Trainee Assignment");
+          })
+          .catch((err) => {
+            res.status(500).send("Query Error");
+          });
+      } else {
+        res.status(404).send("Internesprojekt, Mentor or Ressort does not exist");
+        return;
+      }
+    } else {
+      res.status(422).send("Request is semantically incorrect");
+      return;
+    }
   } else {
-    res.status(500).send("Member does not exist");
+    res.status(404).send("Member does not exist");
     return;
   }
 };
@@ -159,23 +185,35 @@ export const setTraineeAssignment = async (req: Request, res: Response) => {
  */
 export const addMentor = async (req: Request, res: Response) => {
   // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [req.params.id]); 
+  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [
+    req.params.id,
+  ]);
   // Check if req.params.id is null or empty
   if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
-    database
-    .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
-      req.params.member_id,
-      req.params.id,
-    ])
-    .then((result) => {
-      res.status(201).send("Added new mentor");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send("Query Error");
-    });
+    // Check if req.params.member_id is null
+    if (!Number.isNaN(req.params.member_id)) {
+      // Search for req.params.member_id to check if it already exists
+      const resultSecondQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [
+        req.params.member_id,
+      ]);
+      database
+        .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
+          req.params.member_id,
+          req.params.id,
+        ])
+        .then((result) => {
+          res.status(201).send("Added new mentor");
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).send("Query Error");
+        });
+    } else {
+      res.status(422).send("Request is semantically incorrect");
+      return;
+    }
   } else {
-    res.status(500).send("Generation does not exist");
+    res.status(404).send("Generation does not exist");
     return;
   }
 };
