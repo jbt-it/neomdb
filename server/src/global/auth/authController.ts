@@ -62,7 +62,7 @@ export const login = (req: Request, res: Response): void => {
             `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
-          WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
+          WHERE mitglied_has_evposten.mitglied_mitgliedID = ? AND mitglied_has_evposten.von <= NOW() AND mitglied_has_evposten.bis >= NOW();
         `,
             [result[0].mitgliedID]
           )
