@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwtUtils";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
+import database = require("../database");
 
 /**
  * Checks if memberID equals ressource id or member has specified permission
@@ -71,71 +72,34 @@ export const restrictRoutesToRoles = (roles: number[]) => {
  * @param req Request object
  * @param res Response object
  * @param next Next function
- * @returns 403 if user is not permitted to use the following routes
+ * @returns 403 if user is not permitted to access the department
  */
 export const checkDepartmentAccess = (req: Request, res: Response, next: NextFunction) => {
   const { roles } = verifyJWT(req.cookies.token);
   const departmentID = Number(req.params.id);
   let isMemberAuthorized = false;
 
-  // Map departmentID to roleID
-  switch (departmentID) {
-    case 1: {
-      if (doesRolesHaveSomeOf(roles, [1])) {
-        // 1V
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    case 2: {
-      if (doesRolesHaveSomeOf(roles, [2])) {
-        // RL Qualitätsmanagement
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    case 3: {
-      if (doesRolesHaveSomeOf(roles, [3])) {
-        // RL F&R
-        isMemberAuthorized;
-      }
-      break;
-    }
-    case 4: {
-      if (doesRolesHaveSomeOf(roles, [44])) {
-        // RL Firmenkontakte
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    case 5: {
-      if (doesRolesHaveSomeOf(roles, [10])) {
-        // RL Mitglieder
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    case 6: {
-      if (doesRolesHaveSomeOf(roles, [14])) {
-        // RL Marketing
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    case 7: {
-      if (doesRolesHaveSomeOf(roles, [8])) {
-        // RL IT
-        isMemberAuthorized = true;
-      }
-      break;
-    }
-    default: {
-      isMemberAuthorized = false;
-      break;
+  // Construct sql string
+  let sql = "";
+  for (let i = 0; i < roles.length; i++) {
+    if (i === 0) {
+      sql += `SELECT * FROM evposten WHERE evpostenID = ${roles[i]} `;
+    } else {
+      sql += `OR evpostenID = ${roles[i]} `;
     }
   }
-  if (!isMemberAuthorized) {
-    return res.status(403).send("Authorization failed: You are not permitted to do this");
-  }
-  next();
+  // Retrieve directors (with the ids of roles from the jwt) from database
+  database.query(sql, []).then((result: any) => {
+    // Check if director has the right departmentID
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].ressortID === departmentID) {
+        isMemberAuthorized = true;
+        break;
+      }
+    }
+    if (!isMemberAuthorized) {
+      return res.status(403).send("Authorization failed: You are not permitted to do this");
+    }
+    next();
+  });
 };
