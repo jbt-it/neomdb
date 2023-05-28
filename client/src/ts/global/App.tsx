@@ -53,9 +53,10 @@ const App: React.FunctionComponent = () => {
           const userID = res.data.mitgliedID;
           const userName = res.data.name;
           const permissions = res.data.permissions;
+          const roles = res.data.roles;
           dispatchAuth({
             type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions },
+            payload: { userID, userName, permissions, roles },
           });
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
