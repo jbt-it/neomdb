@@ -59,7 +59,7 @@ export const login = (req: Request, res: Response): void => {
         // Selects permissions belonging to a possible role of the member
         database
           .query(
-            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
@@ -68,9 +68,15 @@ export const login = (req: Request, res: Response): void => {
           )
           .then((directorPermissionsResult: globalTypes.Permission[]) => {
             let permissions = [];
-            // Adds role permissions to the permissions array
+            let roles = [];
+            // Adds role permissions to the permissions array and adds directorID to the roles array
             if (directorPermissionsResult.length !== 0) {
-              permissions = directorPermissionsResult;
+              directorPermissionsResult.forEach((permission) => {
+                permissions.push({ permissionID: permission.permissionID, canDelegate: permission.canDelegate });
+                if (!roles.includes(permission.directorID)) {
+                  roles.push(permission.directorID);
+                }
+              });
             }
 
             // Adds normal permissions to the permissions array
@@ -91,6 +97,7 @@ export const login = (req: Request, res: Response): void => {
                     mitgliedID: result[0].mitgliedID,
                     name: result[0].name,
                     permissions,
+                    roles,
                   };
                   const token = generateJWT(payload);
                   res.cookie("token", token, cookieOptions).status(200).json(payload);
@@ -102,12 +109,12 @@ export const login = (req: Request, res: Response): void => {
                 res.status(401).send("Username or password wrong");
               });
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err);
             res.status(500).send("Query Error");
           });
       })
       .catch((err) => {
-        console.log(err);
         res.status(500).send("Query Error");
       });
   }
