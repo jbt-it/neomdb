@@ -9,6 +9,7 @@ import { NavLink } from "react-router-dom";
 import InfoCard from "../global/components/InfoCard";
 import DepartmentDialog from "../global/components/DepartmentDialog";
 import { DepartmentDetails, DepartmentMember, Director } from "./membersTypes";
+import { showErrorMessage } from "../utils/toastUtils";
 
 /**
  * Function which proivdes the styles of the DepartmentOverview
@@ -51,7 +52,6 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const [members, setMembers] = useState<DepartmentMember[]>([]);
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [directors, setDirectors] = useState<Director[]>([]);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
   const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
   const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
   const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
@@ -78,7 +78,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
         }
       })
       .catch(() => {
-        setErrorOpen(errorOpen + 1);
+        showErrorMessage("Fehler beim Laden der Ressorts");
       });
 
     // Clean-up function
@@ -105,7 +105,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
         }
       })
       .catch(() => {
-        setErrorOpen(errorOpen + 1);
+        showErrorMessage("Fehler beim Laden der Ressortmitglieder");
       });
 
     // Clean-up function
@@ -132,7 +132,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
         }
       })
       .catch(() => {
-        setErrorOpen(errorOpen + 1);
+        showErrorMessage("Fehler beim Laden der Ressortleitungen");
       });
 
     // Clean-up function
