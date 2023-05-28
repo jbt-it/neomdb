@@ -290,11 +290,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       []
     )
     .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Members not found");
-      } else {
-        res.status(200).json(result);
-      }
+      res.status(200).json(result);
     })
     .catch(() => {
       res.status(500).send("Query Error");
