@@ -1,5 +1,5 @@
 /*
- * Dialog component for displaysing input fields for changing department infos
+ * Dialog component for displaying input fields for changing department infos
  */
 import {
   Button,
@@ -18,6 +18,8 @@ import api from "../../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { AuthContext } from "../AuthContext";
 import { authReducerActionType } from "../globalTypes";
+import { AxiosError } from "axios";
+import { AxiosResponse } from "axios";
 
 /**
  * Function which proivdes the styles of the dialog department component
@@ -68,21 +70,23 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
   /**
    * Saves the changed links of the department
    */
-  const saveData = () => {
+  const saveData = (event: React.SyntheticEvent) => {
+    event.preventDefault(); // Prevents the page from reloading
+
     // Given department object with changed wiki, goal and organisation links
     const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
     api
       .patch(`/users/departments/${editedDepartment.ressortID}`, editedDepartment)
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         if (res.status === 200) {
           showSuccessMessage("Aktualisierung erfolgreich!");
           onClose();
         }
       })
-      .catch((err) => {
-        if (err.response.status === 401) {
+      .catch((err: AxiosError) => {
+        if (err.response?.status === 401) {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response.status === 500) {
+        } else if (err.response?.status === 500) {
           showErrorMessage("Aktualisierung ist fehlgeschlagen!");
         }
       });
