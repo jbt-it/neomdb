@@ -1,7 +1,7 @@
 /*
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button, Grid, createStyles, makeStyles, Typography, Theme } from "@material-ui/core";
 import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
@@ -10,6 +10,8 @@ import InfoCard from "../global/components/InfoCard";
 import DepartmentDialog from "../global/components/DepartmentDialog";
 import { DepartmentDetails, DepartmentMember, Director } from "./membersTypes";
 import { showErrorMessage } from "../utils/toastUtils";
+import { AuthContext } from "../global/AuthContext";
+import { doesRolesHaveSomeOf } from "../utils/authUtils";
 
 /**
  * Function which proivdes the styles of the DepartmentOverview
@@ -49,6 +51,8 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
+  const { auth } = useContext(AuthContext);
+
   const [members, setMembers] = useState<DepartmentMember[]>([]);
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [directors, setDirectors] = useState<Director[]>([]);
@@ -150,46 +154,9 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @param departmentID The id of the department from which all members should be
    */
   const getMembersOfDeparment = (departmentID: number) => {
-    switch (departmentID) {
-      case 1: {
-        return members.filter((member) => {
-          return member.ressort === 1;
-        });
-      }
-      case 2: {
-        return members.filter((member) => {
-          return member.ressort === 2;
-        });
-      }
-      case 3: {
-        return members.filter((member) => {
-          return member.ressort === 3;
-        });
-      }
-      case 4: {
-        return members.filter((member) => {
-          return member.ressort === 4;
-        });
-      }
-      case 5: {
-        return members.filter((member) => {
-          return member.ressort === 5;
-        });
-      }
-      case 7: {
-        return members.filter((member) => {
-          return member.ressort === 7;
-        });
-      }
-      case 8: {
-        return members.filter((member) => {
-          return member.ressort === 8;
-        });
-      }
-      default: {
-        return [];
-      }
-    }
+    return members.filter((member) => {
+      return member.ressort === departmentID;
+    });
   };
 
   /**
@@ -197,46 +164,24 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @param departmentID The id of the department from which the director should be
    */
   const getDirectorOfDepartment = (departmentID: number) => {
-    switch (departmentID) {
-      case 1: {
-        return directors.filter((director) => {
-          return director.ressortID === 1;
-        });
-      }
-      case 2: {
-        return directors.filter((director) => {
-          return director.ressortID === 2;
-        });
-      }
-      case 3: {
-        return directors.filter((director) => {
-          return director.ressortID === 3;
-        });
-      }
-      case 4: {
-        return directors.filter((director) => {
-          return director.ressortID === 4;
-        });
-      }
-      case 5: {
-        return directors.filter((director) => {
-          return director.ressortID === 5;
-        });
-      }
-      case 7: {
-        return directors.filter((director) => {
-          return director.ressortID === 7;
-        });
-      }
-      case 8: {
-        return directors.filter((director) => {
-          return director.ressortID === 8;
-        });
-      }
-      default: {
-        return [];
-      }
+    return directors.filter((director) => {
+      return director.ressortID === departmentID;
+    })[0];
+  };
+
+  /**
+   * Checks if the current user is the director of the given department
+   * @param departmentID The id of the department which should be checked
+   * @returns true if the current user is the director of the given department
+   * @returns false if the current user is not the director of the given department
+   * @returns false if the director of the given department is undefined
+   */
+  const isDepartmentEditable = (departmentID: number) => {
+    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.evpostenID;
+    if (directorIDofDepartment === undefined) {
+      return false;
     }
+    return doesRolesHaveSomeOf(auth.roles, [directorIDofDepartment]);
   };
 
   /**
@@ -350,6 +295,33 @@ const DepartmentOverview: React.FunctionComponent = () => {
     }
   };
 
+  /**
+   * Renders the director of the given department
+   * @param department The department for which the director should be rendered
+   * @param director The director of the given department
+   * @returns The rendered director information
+   * @returns null if the director is undefined
+   */
+  const renderDirector = (department: DepartmentDetails, director: Director) => {
+    return (
+      <div>
+        <Typography variant="h6">
+          <strong>Ressortleitung:</strong>
+        </Typography>
+        {director ? (
+          <div key={`director-${department.bezeichnung}`}>
+            <h3>
+              <NavLink
+                className={classes.navLink}
+                to={`/gesamtuebersicht/${director.mitgliedID}`}
+              >{`${director.vorname} ${director.nachname}`}</NavLink>
+            </h3>
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="content-page">
@@ -357,7 +329,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
           <div key={department.kuerzel}>
             <InfoCard
               title={department.bezeichnung}
-              isEditable={true}
+              isEditable={isDepartmentEditable(department.ressortID)}
               handleEdit={(event) => handleDialogOpen(event, department.kuerzel)}
               defaultExpanded={false}
               isExpandable={false}
@@ -383,21 +355,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
                 </Button>
               </div>
               <br></br>
-              <div>
-                <Typography variant="h6">
-                  <strong>Ressortleitung:</strong>
-                </Typography>
-                {getDirectorOfDepartment(department.ressortID).map((director, dirIndex) => (
-                  <div key={`director-${dirIndex}`}>
-                    <h3>
-                      <NavLink
-                        className={classes.navLink}
-                        to={`/gesamtuebersicht/${director.mitgliedID}`}
-                      >{`${director.vorname} ${director.nachname}`}</NavLink>
-                    </h3>
-                  </div>
-                ))}
-              </div>
+              {renderDirector(department, getDirectorOfDepartment(department.ressortID))}
               <br></br>
               <div>
                 <Typography variant="h6">
