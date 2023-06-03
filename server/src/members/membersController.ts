@@ -303,7 +303,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitgliedID, vorname, nachname, evpostenID, ressort as ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+      `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
       FROM mitglied, mitglied_has_evposten, evposten
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []

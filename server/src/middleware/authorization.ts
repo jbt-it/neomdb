@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwtUtils";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
+import * as membersTypes from "../members/membersTypes";
 import database = require("../database");
 
 /**
@@ -83,16 +84,18 @@ export const checkDepartmentAccess = (req: Request, res: Response, next: NextFun
   let sql = "";
   for (let i = 0; i < roles.length; i++) {
     if (i === 0) {
-      sql += `SELECT * FROM evposten WHERE evpostenID = ${roles[i]} `;
+      sql += `SELECT ressortID FROM evposten WHERE evpostenID = ${roles[i]} `;
     } else {
-      sql += `OR evpostenID = ${roles[i]} `;
+      sql += `OR evpostenID = ${roles[i]}`;
     }
   }
+  sql += ` AND ressortID IS NOT NULL;`;
+
   // Retrieve directors (with the ids of roles from the jwt) from database
-  database.query(sql, []).then((result: any) => {
+  database.query(sql, []).then((results: membersTypes.GetDirectorsDepartmentQueryResult[]) => {
     // Check if director has the right departmentID
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].ressortID === departmentID) {
+    for (let i = 0; i < results.length; i++) {
+      if (results[i].ressortID === departmentID) {
         isMemberAuthorized = true;
         break;
       }
