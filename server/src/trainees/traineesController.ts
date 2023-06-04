@@ -88,29 +88,26 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
  * @param res status code and message
  */
 export const setVotingDeadline = async (req: Request, res: Response) => {
-  // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [
-    req.params.id,
-  ]);
-  // Check if req.params.id is null or empty
-  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
-    database
-      .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
-        req.body.votingStart,
-        req.body.votingEnd,
-        req.params.id,
-      ])
-      .then((result) => {
-        res.status(201).send("Updated Trainee Voting Deadline");
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send("Query Error");
-      });
-  } else {
-    res.status(404).send("Generation does not exist");
+  // Check if ID of generation is in database
+  const idChecks = checkForIDs([req.params.id], ["generationID"], ["generation"]);
+  // If ID is not in database return status error code and error message
+  if ((await idChecks).state > 0) {
+    res.status((await idChecks).state).send((await idChecks).errorMessage);
     return;
   }
+  database
+    .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
+      req.body.votingStart,
+      req.body.votingEnd,
+      req.params.id,
+    ])
+    .then((result) => {
+      res.status(201).send("Updated Trainee Voting Deadline");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Query Error");
+    });
 };
 
 /**
@@ -123,57 +120,36 @@ export const setVotingDeadline = async (req: Request, res: Response) => {
  * @param res status code and message
  */
 export const setTraineeAssignment = async (req: Request, res: Response) => {
-  // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [
-    req.params.id,
-  ]);
-  // Check if req.params.id is null or empty
-  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
-    // Check if internesprojektID, mentorID and ressortID are not NULL
-    if (
-      !Number.isNaN(req.body.internesprojektID) &&
-      !Number.isNaN(req.body.mentorID) &&
-      !Number.isNaN(req.body.ressortID)
-    ) {
-      // Check if internesprojektID, mentorID and ressortID exists in database
-      const resultSecondQuery = await database.query(
-        `SELECT internesprojektID AS IDs FROM internesprojekt WHERE internesprojektID =? UNION 
-        SELECT mitglied_mitgliedID FROM generation_has_mentor WHERE mitglied_mitgliedID =? UNION 
-        SELECT ressortID FROM ressort WHERE ressortID =?`,
-        [req.body.internesprojektID, req.body.mentorID, req.body.ressortID]
-      );
-      if (Array.isArray(resultSecondQuery) && resultSecondQuery.length != 0) {
-        database
-          .query(
-            `UPDATE mitglied SET wahl_internesprojekt =?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
-            [
-              req.body.internesprojektID,
-              req.body.internesprojektID,
-              req.body.mentorID,
-              req.body.mentorID,
-              req.body.ressortID,
-              req.body.ressortID,
-              req.params.id,
-            ]
-          )
-          .then((result) => {
-            res.status(201).send("Updated Trainee Assignment");
-          })
-          .catch((err) => {
-            res.status(500).send("Query Error");
-          });
-      } else {
-        res.status(404).send("Internesprojekt, Mentor or Ressort does not exist");
-        return;
-      }
-    } else {
-      res.status(422).send("Request is semantically incorrect");
-      return;
-    }
-  } else {
-    res.status(404).send("Member does not exist");
+  // Check if given IDs are in database
+  const idChecks = checkForIDs(
+    [req.params.id, req.body.internesprojektID, req.body.mentorID, req.body.ressortID],
+    ["mitgliedID", "internesprojektID", "mitglied_mitgliedID", "ressortID"],
+    ["mitglied", "internesprojekt", "generation_has_mentor", "ressort"]
+  );
+  // If one ID is not in database return status error code and error message
+  if ((await idChecks).state > 0) {
+    res.status((await idChecks).state).send((await idChecks).errorMessage);
     return;
   }
+  database
+    .query(
+      `UPDATE mitglied SET wahl_internesprojekt =?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
+      [
+        req.body.internesprojektID,
+        req.body.internesprojektID,
+        req.body.mentorID,
+        req.body.mentorID,
+        req.body.ressortID,
+        req.body.ressortID,
+        req.params.id,
+      ]
+    )
+    .then((result) => {
+      res.status(201).send("Updated Trainee Assignment");
+    })
+    .catch((err) => {
+      res.status(500).send("Query Error");
+    });
 };
 
 /**
@@ -184,38 +160,30 @@ export const setTraineeAssignment = async (req: Request, res: Response) => {
  * @param res status code and message
  */
 export const addMentor = async (req: Request, res: Response) => {
-  // Search for req.params.id to check if it already exists
-  const resultFirstQuery = await database.query(`SELECT generationID FROM generation WHERE generationID = ?`, [
-    req.params.id,
-  ]);
-  // Check if req.params.id is null or empty
-  if (Array.isArray(resultFirstQuery) && resultFirstQuery.length != 0) {
-    // Check if req.params.member_id is null
-    if (!Number.isNaN(req.params.member_id)) {
-      // Search for req.params.member_id to check if it already exists
-      const resultSecondQuery = await database.query(`SELECT mitgliedID FROM mitglied WHERE mitgliedID = ?`, [
-        req.params.member_id,
-      ]);
-      database
-        .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
-          req.params.member_id,
-          req.params.id,
-        ])
-        .then((result) => {
-          res.status(201).send("Added new mentor");
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).send("Query Error");
-        });
-    } else {
-      res.status(422).send("Request is semantically incorrect");
-      return;
-    }
-  } else {
-    res.status(404).send("Generation does not exist");
+  // Check if given IDs are in database
+  const idChecks = checkForIDs(
+    [req.params.id, req.params.member_id],
+    ["generationID", "mitgliedID"],
+    ["generation", "mitglied"]
+  );
+  // If one ID is not in database return status error code and error message
+  if ((await idChecks).state > 0) {
+    res.status((await idChecks).state).send((await idChecks).errorMessage);
     return;
   }
+  database
+    .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
+      req.params.member_id,
+      req.params.id,
+    ])
+    .then((result) => {
+      res.status(201).send("Added new mentor");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Query Error");
+    });
+  return;
 };
 
 /**
@@ -259,4 +227,38 @@ export const getInternalProjectsOfGeneration = (req: Request, res: Response): vo
     .catch((err) => {
       res.status(500).send("Query Error");
     });
+};
+
+/**
+ * Checks if the given ids are present in the database
+ * @param {Array<string>} ids ids that need to be checked
+ * @param {Array<string>} idNames id's corresponding column names in database
+ * @param {Array<string>} tables id's corresponding tabel names in database
+ * @returns {Promise<{ state: number; errorMessage: string }>} status code and error message when an error was found. If no error occured return { state: 0, errorMessage: "success" }
+ */
+const checkForIDs = async (
+  ids: Array<string>,
+  idNames: Array<string>,
+  tables: Array<string>
+): Promise<{ state: number; errorMessage: string }> => {
+  // Iterate over all inputs
+  for (let index = 0; index < ids.length; index++) {
+    // Get current slice
+    const id = ids[index];
+    const table = tables[index];
+    const idName = idNames[index];
+    // Check if id is null or empty
+    if (id) {
+      // Query database to check if id exits
+      const resultQuery = await database.query(`SELECT ${idName} FROM ${table} WHERE ${idName} = ${id}`, []);
+      if (Array.isArray(resultQuery) && resultQuery.length !== 0) {
+        // id is present in the database, do nothing
+      } else {
+        return { state: 404, errorMessage: `ID of ${idName} does not exist` };
+      }
+    } else {
+      return { state: 422, errorMessage: `ID of ${idName} is null or empty` };
+    }
+  }
+  return { state: 0, errorMessage: "success" };
 };
