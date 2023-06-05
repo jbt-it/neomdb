@@ -180,7 +180,6 @@ export const addMentor = async (req: Request, res: Response) => {
       res.status(201).send("Added new mentor");
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send("Query Error");
     });
   return;
@@ -243,21 +242,20 @@ const checkForIDs = async (
 ): Promise<{ state: number; errorMessage: string }> => {
   // Iterate over all inputs
   for (let index = 0; index < ids.length; index++) {
-    // Get current slice
-    const id = ids[index];
-    const table = tables[index];
-    const idName = idNames[index];
     // Check if id is null or empty
-    if (id) {
+    if (ids[index]) {
       // Query database to check if id exits
-      const resultQuery = await database.query(`SELECT ${idName} FROM ${table} WHERE ${idName} = ${id}`, []);
+      const resultQuery = await database.query(
+        `SELECT ${idNames[index]} FROM ${tables[index]} WHERE ${idNames[index]} = ${ids[index]}`,
+        []
+      );
       if (Array.isArray(resultQuery) && resultQuery.length !== 0) {
         // id is present in the database, do nothing
       } else {
-        return { state: 404, errorMessage: `ID of ${idName} does not exist` };
+        return { state: 404, errorMessage: `ID of ${idNames[index]} does not exist` };
       }
     } else {
-      return { state: 422, errorMessage: `ID of ${idName} is null or empty` };
+      return { state: 422, errorMessage: `ID of ${idNames[index]} is null or empty` };
     }
   }
   return { state: 0, errorMessage: "success" };
