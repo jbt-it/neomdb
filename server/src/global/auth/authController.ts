@@ -8,6 +8,7 @@ import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
 import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
+import nodemailer = require("nodemailer");
 
 /**
  * Options for the cookie
@@ -175,7 +176,7 @@ export const retrieveUserData = (req: Request, res: Response) => {
  */
 export const sendPasswordResetLink = (req: Request, res: Response): void => {
   const date = new Date();
-  const name = req.body.email.split("@");
+  const name = String(req.body.email).split("@")[0];
   // Create a token
   const plaintextToken = req.body.email.concat(date.getTime());
   // Create a hash from the token
