@@ -168,6 +168,91 @@ export const retrieveUserData = (req: Request, res: Response) => {
 };
 
 /**
+ * An email is sent with an password reset link and a key in the url to the user
+ * The key used in the link is saved in the databse for the later verification
+ * @param req email
+ * @param res 200 if process is available, 500 else
+ */
+export const sendPasswordResetLink = (req: Request, res: Response): void => {
+  const date = new Date();
+  const name = req.body.email.split("@");
+  // Create a token
+  const plaintextToken = req.body.email.concat(date.getTime());
+  // Create a hash from the token
+  bcrypt.genSalt(10, (_err, salt) => {
+    bcrypt.hash(plaintextToken, salt, (_, hash) => {
+      // Check if email is valid
+      database
+        .query(
+          `SELECT jbt_email
+          FROM mitglied
+          WHERE mitglied.name = ?`,
+          [name]
+        )
+        .then((result: authTypes.GetEmailToVerifyValidity[]) => {
+          if (result.length === 1) {
+            // Delete old entrys, if any exist
+            database
+              .query(
+                `DELETE FROM passwort_reset
+                WHERE mitglied_jbt_email = ?`,
+                [req.body.email]
+              )
+              .then(() => {
+                // Insert the values into the passwort_reset table
+                database
+                  .query(
+                    `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
+                    VALUES (?, ?, ?)`,
+                    [req.body.email, salt, hash]
+                  )
+                  .then(() => {
+                    // Send email with correct URL to usermail
+                    const transport = nodemailer.createTransport({
+                      host: "studentische-beratung.de",
+                      port: 465,
+                      auth: {
+                        user: "mdbpasswortreset@studentische-beratung.de", // Email
+                        pass: "pQam721?", // PW
+                      },
+                    }); // Setup e-mail data with unicode symbols
+                    const mailOptions = {
+                      from: '"JBT MDB SUPPORT" <foo@studentische-beratung.de>', // TODO actual sender address
+                      to: req.body.email, // List of receivers
+                      subject: "Passwort reset link for the account belonging to this mail", // Subject line
+                      text:
+                        "Hello " +
+                        name +
+                        ",\n\n" +
+                        "There was a request to change your password for the MDB! \n\n" +
+                        "If you did not make this request then please ignore this email. \n\n" +
+                        "Otherwise, please use this url to change your password: \n\n" +
+                        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+                        hash +
+                        "\n\n" +
+                        "Regards your IT ressort", // Plaintext body
+                    };
+                    res.status(200).send();
+                  })
+                  .catch(() => {
+                    res.status(500).send("Internal Error");
+                  });
+              })
+              .catch(() => {
+                res.status(500).send("Internal Error");
+              });
+          } else {
+            res.status(200).send();
+          }
+        })
+        .catch(() => {
+          res.status(500).send("Internal Error");
+        });
+    });
+  });
+};
+
+/**
  * Loggs the user out by removing the jwt from the cookie
  */
 export const logout = (req: Request, res: Response) => {
