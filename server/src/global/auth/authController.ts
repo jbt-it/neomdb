@@ -261,20 +261,31 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
  * @param res 200 if process is available, 500 else
  */
 export const resetPasswordWithKey = (req: Request, res: Response): void => {
-  const name = req.body.email.split("@");
+  const name = String(req.body.email).split("@")[0];
   // Get current date
   const today = new Date();
-  const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  const date =
+    today.getFullYear() +
+    "-" +
+    (today.getMonth() + 1) +
+    "-" +
+    today.getDate() +
+    " " +
+    today.getHours() +
+    ":" +
+    today.getMinutes() +
+    ":" +
+    today.getSeconds();
   // Check if a valid email and token are safed in the table
   database
     .query(
-      `SELECT mitglied_jbt_email, DATEDIFF(day, datum, ?), token
-    FROM passwort_reset
+      `SELECT mitglied_jbt_email, DATEDIFF(datum, ?) AS datediff, token FROM passwort_reset
     WHERE mitglied_jbt_email = ?
     AND token = ?`,
       [date, req.body.email, req.body.key]
     )
     .then((result: authTypes.GetEmailDateTokenToVerifyValidity[]) => {
+      console.log(result[0].datediff);
       if (result.length !== 0) {
         // Check if the entry is older then five days
         if (result[0].datediff < 5) {
@@ -285,16 +296,16 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
               database
                 .query(
                   `UPDATE mitglied
-            SET passwordHash = ?
-            WHERE mitglied.name = ?`,
-                  [hash, name]
+                SET passwort = ?, passwordHash = ?
+                WHERE mitglied.name = ?`,
+                  [req.body.newPassword, hash, name] //TODO: dont save new passwort as plaintext
                 )
                 .then(() => {
                   // Delete used entry
                   database
                     .query(
                       `DELETE FROM passwort_reset
-                WHERE mitglied_jbt_email = ?`,
+                      WHERE mitglied_jbt_email = ?`,
                       [req.body.email]
                     )
                     .then(() => {
@@ -321,7 +332,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
       }
     })
     .catch(() => {
-      res.status(500).send("Internal Error");
+      res.status(200).send();
     });
 };
 
