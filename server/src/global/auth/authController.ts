@@ -183,6 +183,7 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
   bcrypt.genSalt(10, (_err, salt) => {
     bcrypt.hash(plaintextToken, salt, (_, hash) => {
       // Check if email is valid
+      sleepRandomly(300, 400);
       database
         .query(
           `SELECT jbt_email
