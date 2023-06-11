@@ -253,6 +253,78 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
 };
 
 /**
+ * The user can set a new password by entering their mailadress and a new password
+ * The mail and the key in the url are then checked to se if it is a valid pair
+ * If the pair is valid the new password is stored
+ * @param req email, key, new password
+ * @param res 200 if process is available, 500 else
+ */
+export const resetPasswordWithKey = (req: Request, res: Response): void => {
+  const name = req.body.email.split("@");
+  // Get current date
+  const today = new Date();
+  const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  // Check if a valid email and token are safed in the table
+  database
+    .query(
+      `SELECT mitglied_jbt_email, DATEDIFF(day, datum, ?), token
+    FROM passwort_reset
+    WHERE mitglied_jbt_email = ?
+    AND token = ?`,
+      [date, req.body.email, req.body.key]
+    )
+    .then((result: membersTypes.GetEmailDateTokenToVerifyValidity[]) => {
+      if (result.length !== 0) {
+        // Check if the entry is older then five days
+        if (result[0].datediff < 5) {
+          bcrypt
+            .hash(req.body.newPassword, 10)
+            .then((hash) => {
+              // Store hash in your password DB
+              database
+                .query(
+                  `UPDATE mitglied
+            SET passwordHash = ?
+            WHERE mitglied.name = ?`,
+                  [hash, name]
+                )
+                .then(() => {
+                  // Delete used entry
+                  database
+                    .query(
+                      `DELETE FROM passwort_reset
+                WHERE mitglied_jbt_email = ?`,
+                      [req.body.email]
+                    )
+                    .then(() => {
+                      res.status(200).send();
+                    })
+                    .catch(() => {
+                      res.status(500).send("Internal Error");
+                    });
+                })
+                .catch(() => {
+                  res.status(500).send("Internal Error");
+                });
+            })
+            .catch(() => {
+              res.status(500).send("Internal Error");
+            });
+        } else {
+          // User got the correct result since the date was to to old
+          res.status(200).send();
+        }
+      } else {
+        // User got the correct result since the email or token was invalid
+        res.status(200).send();
+      }
+    })
+    .catch(() => {
+      res.status(500).send("Internal Error");
+    });
+};
+
+/**
  * Loggs the user out by removing the jwt from the cookie
  */
 export const logout = (req: Request, res: Response) => {
