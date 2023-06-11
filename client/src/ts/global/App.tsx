@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
-import ForgotPassword from "../members/ForgotPassword";
+import ForgotPassword from "./ForgotPassword";
 import ResetForgotPassword from "../members/ResetForgotPassword";
 
 /**
