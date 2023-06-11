@@ -17,7 +17,7 @@ import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 import ForgotPassword from "./ForgotPassword";
-import ResetForgotPassword from "../members/ResetForgotPassword";
+import ResetForgotPassword from "./ResetForgotPassword";
 
 /**
  * Interfaces for the location state of react-router-dom
