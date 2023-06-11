@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
+import TraineeSection from "../members/TraineeSectios";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -160,7 +161,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
         <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
         <PrivateRoute exact path="/geburtstage" component={Dashboard} />
-        <PrivateRoute exact path="/traineebereich" component={Dashboard} />
+        <PrivateRoute exact path="/traineebereich" component={TraineeSection} />
         <PrivateRoute exact path="/kuratoren" component={Dashboard} />
         <PrivateRoute exact path="/projekte" component={Dashboard} />
         <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
