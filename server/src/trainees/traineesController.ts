@@ -4,6 +4,7 @@
 import { Request, Response } from "express";
 import database = require("../database");
 import * as traineeTypes from "./traineesTypes";
+import { checkForSQLKeywords } from "../utils/stringUtils";
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
@@ -89,14 +90,14 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
  */
 export const setVotingDeadline = async (req: Request, res: Response) => {
   // Check if ID of generation is in database
-  const idChecks = checkForIDs([req.params.id], ["generationID"], ["generation"]);
+  const idChecks = await checkForIDs([req.params.id], ["generationID"], ["generation"]);
   // If ID is not in database return status error code and error message
-  if ((await idChecks).state > 0) {
-    res.status((await idChecks).state).send((await idChecks).errorMessage);
+  if (idChecks.state > 0) {
+    res.status(idChecks.state).send(idChecks.errorMessage);
     return;
   }
   database
-    .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID=?`, [
+    .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID= ? `, [
       req.body.votingStart,
       req.body.votingEnd,
       req.params.id,
@@ -105,7 +106,6 @@ export const setVotingDeadline = async (req: Request, res: Response) => {
       res.status(201).send("Updated Trainee Voting Deadline");
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send("Query Error");
     });
 };
@@ -242,16 +242,18 @@ const checkForIDs = async (
 ): Promise<{ state: number; errorMessage: string }> => {
   // Iterate over all inputs
   for (let index = 0; index < ids.length; index++) {
+    // Check if given names vor table und colum contain any SQL keywords
+    if (checkForSQLKeywords(tables[index]) || checkForSQLKeywords(idNames[index])) {
+      throw Error("No SQL statements allowed in String!");
+    }
     // Check if id is null or empty
     if (ids[index]) {
       // Query database to check if id exits
       const resultQuery = await database.query(
-        `SELECT ${idNames[index]} FROM ${tables[index]} WHERE ${idNames[index]} = ${ids[index]}`,
-        []
+        `SELECT ${idNames[index]} FROM ${tables[index]} WHERE ${idNames[index]} = ?;`,
+        [ids[index]]
       );
-      if (Array.isArray(resultQuery) && resultQuery.length !== 0) {
-        // id is present in the database, do nothing
-      } else {
+      if (!Array.isArray(resultQuery) || resultQuery.length === 0) {
         return { state: 404, errorMessage: `ID of ${idNames[index]} does not exist` };
       }
     } else {
