@@ -334,7 +334,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
       }
     })
     .catch(() => {
-      res.status(200).send();
+      res.status(500).send();
     });
 };
 
