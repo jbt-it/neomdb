@@ -274,7 +274,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
     AND token = ?`,
       [date, req.body.email, req.body.key]
     )
-    .then((result: membersTypes.GetEmailDateTokenToVerifyValidity[]) => {
+    .then((result: authTypes.GetEmailDateTokenToVerifyValidity[]) => {
       if (result.length !== 0) {
         // Check if the entry is older then five days
         if (result[0].datediff < 5) {
