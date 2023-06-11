@@ -16,6 +16,8 @@ import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
+import ForgotPassword from "../members/ForgotPassword";
+import ResetForgotPassword from "../members/ResetForgotPassword";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -173,6 +175,8 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/kvp" component={Dashboard} />
         <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
+        <Route exact path="/passwort-vergessen" component={ForgotPassword} />
+        <Route exact path="/passwort-vergessen-zuruecksetzten/:key" component={ResetForgotPassword} />
         <LoginRoute exact path="/login" component={Login} />
         <PrivateRoute path="*" component={NotFound} />
       </Switch>
