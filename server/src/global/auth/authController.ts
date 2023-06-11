@@ -278,6 +278,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
     ":" +
     today.getSeconds();
   // Check if a valid email and token are safed in the table
+  sleepRandomly(300, 400);
   database
     .query(
       `SELECT mitglied_jbt_email, DATEDIFF(datum, ?) AS datediff, token FROM passwort_reset
