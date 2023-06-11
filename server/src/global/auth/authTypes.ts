@@ -27,3 +27,19 @@ export type UserDataQueryResult = {
 export type DirectorPermissionsQueryResult = {
   permissions: string;
 };
+
+/**
+ * Returns the email, to verify if it exists
+ */
+export type GetEmailToVerifyValidity = {
+  email: string;
+};
+
+/**
+ * Returns the email, to verify if it exists
+ */
+export type GetEmailDateTokenToVerifyValidity = {
+  email: string;
+  datediff: number;
+  token: string;
+};
