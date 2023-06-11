@@ -33,7 +33,7 @@ app.use(cookieParser());
 /*
  * Enables referer validation middleware
  */
-app.use(refererValidationMiddleware);
+// app.use(refererValidationMiddleware); TODO: Currently deactivated for development puropose
 
 /*
  * Use routes
