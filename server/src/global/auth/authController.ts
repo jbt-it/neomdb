@@ -4,7 +4,7 @@
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
 import bcrypt = require("bcryptjs");
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, CookieOptions } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
@@ -27,7 +27,7 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
 /**
  * Options for the cookie
  */
-const cookieOptions = {
+const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
   sameSite: "none", // Cookie can only be sent to the same site
