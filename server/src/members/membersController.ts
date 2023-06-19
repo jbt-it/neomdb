@@ -333,7 +333,7 @@ export const createMember = async (req: Request, res: Response) => {
   // New user name if the name already exists
   let newUserName = "";
   if (req.body.name) {
-    // Search fot req.body.name to check if it already exists
+    // Search for req.body.name to check if it already exists
     const resultFirstQuery = await database.query(`SELECT name FROM mitglied WHERE name = ?`, [req.body.name]);
     // Check if req.body.name already exists
     if (Array.isArray(resultFirstQuery) && resultFirstQuery.length === 0) {

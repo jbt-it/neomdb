@@ -2,10 +2,11 @@
  * Definition of the API routes and invocation of the correct handler function
  */
 import express = require("express");
-const router = express.Router();
-
-import * as authController from "../global/auth/authController";
+import authenticationMiddleware from "../middleware/authentication";
+import { restrictRoutes, restrictRoutesSelfOrPermission } from "../middleware/authorization";
 import * as membersController from "./membersController";
+
+const router = express.Router();
 
 /**
  * Holds all permission IDs
@@ -16,7 +17,7 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 /**
  * =======>>> ALL routes after this point are accessible for logged in users only <<<=======
  */
-router.use(authController.protectRoutes);
+router.use(authenticationMiddleware);
 
 //  =======>>> Get routes <<<=======
 router.get("/", membersController.retrieveMemberList);
@@ -28,31 +29,28 @@ router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);
 router.get(
   "/permissions",
-  authController.restrictRoutes(ALL_PERMISSIONS, false),
+
+  restrictRoutes(ALL_PERMISSIONS, false),
   membersController.retrievePermissions
 );
 router.get(
   "/permissions-of-members",
-  authController.restrictRoutes(ALL_PERMISSIONS, false),
+  restrictRoutes(ALL_PERMISSIONS, false),
   membersController.retrievePermissionsOfMembers
 );
 router.get("/:id", membersController.retrieveMember);
 router.get("/:id/permissions", membersController.retrievePermissionsByMemberId);
 
 //  =======>>> Post routes <<<=======
-router.post("/", authController.restrictRoutes([1]), membersController.createMember);
-router.post("/permissions", authController.restrictRoutes(ALL_PERMISSIONS, false), membersController.createPermission);
+router.post("/", restrictRoutes([1]), membersController.createMember);
+router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.createPermission);
 
 //  =======>>> Patch routes <<<=======
 router.patch("/change-password", membersController.changePassword);
-router.patch("/:id", authController.restrictRoutesSelfOrPermission([1]), membersController.updateMember);
+router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 //  =======>>> Delete routes <<<=======
-router.delete(
-  "/permissions",
-  authController.restrictRoutes(ALL_PERMISSIONS, false),
-  membersController.deletePermission
-);
-router.delete("/:id", authController.restrictRoutes([1], false), membersController.deleteMember);
+router.delete("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.deletePermission);
+router.delete("/:id", restrictRoutes([1], false), membersController.deleteMember);
 
 export default router;

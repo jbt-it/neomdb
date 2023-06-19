@@ -4,24 +4,40 @@
 import express = require("express");
 const router = express.Router();
 
-import * as authController from "../global/auth/authController";
 import * as traineesController from "./traineesController";
+import authenticationMiddleware from "../middleware/authentication";
+import { restrictRoutes } from "../middleware/authorization";
 
 /**
  * =======>>> ALL routes after this point are accessible for logged in users only <<<=======
  */
-router.use(authController.protectRoutes);
+router.use(authenticationMiddleware);
 
 //  =======>>> Get routes <<<=======
 
 // Get a specific internal project
 router.get("/ip/:id", traineesController.retrieveIP);
-// Get all internal projects of one generation
-router.get("/:generation-id/ip/", traineesController.retrieveAllIPsByGeneration);
 // Get team mails
 router.get("/ip/:id/mails", traineesController.retrieveTeamMails);
 
 //  =======>>> Patch routes <<<=======
 router.patch("/ip/:id", traineesController.updateIP);
+
+
+//  =======>>> Get routes <<<=======
+router.get("/generations/:id/trainee-choices", restrictRoutes([14], false), traineesController.retrieveTraineeChoice);
+router.get("/generations/trainee-generations", restrictRoutes([14], false), traineesController.retrieveGenerations);
+router.get("/generations/:id/mentors", restrictRoutes([14], false), traineesController.getMentorsOfGeneration);
+router.get(
+  "/generations/:id/internal-projects",
+  restrictRoutes([14], false),
+  traineesController.getInternalProjectsOfGeneration
+);
+//  =======>>> Post routes <<<=======
+router.post("/generations/:id/add-mentor/:member_id", restrictRoutes([14], false), traineesController.addMentor);
+//  =======>>> Patch routes <<<=======
+router.patch("/generations/:id/set-deadline", restrictRoutes([14], false), traineesController.setVotingDeadline);
+router.patch("/:id/assignment", restrictRoutes([14], false), traineesController.setTraineeAssignment);
+//  =======>>> Delete routes <<<=======
 
 export default router;
