@@ -102,11 +102,13 @@ export const login = (req: Request, res: Response): void => {
                 res.status(401).send("Username or password wrong");
               });
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err);
             res.status(500).send("Query Error");
           });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         res.status(500).send("Query Error");
       });
   }

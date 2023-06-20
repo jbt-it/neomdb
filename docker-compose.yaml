@@ -1,0 +1,52 @@
+version: "3"
+
+networks:
+  mynetwork:
+    driver: bridge
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - mynetwork
+
+  database:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: passw0rd
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8081:80
+    links:
+      - database:db
+    networks:
+      - mynetwork
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 3030:3030
+    depends_on:
+      - database
+    networks:
+      - mynetwork
+    environment:
+      - DATABASE_HOST_PROD=database
+      - DATABASE_PORT_PROD=3306
+
+volumes:
+  mysql:

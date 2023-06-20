@@ -7,7 +7,9 @@ import mysql = require("mysql");
  * Config for the MySQL database
  */
 const databaseConfig = {
-  host: process.env.DB_HOST,
+  // host: process.env.DB_HOST_PROD,
+  host: process.env.DATABASE_HOST_PROD || process.env.DB_HOST_DEV,
+  port: parseInt(process.env.DB_PORT),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
