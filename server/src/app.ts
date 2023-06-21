@@ -18,6 +18,21 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+if (process.env.IS_PRODUCTION) {
+  // This trusts all requests coming from a proxy (in our case nginx)
+  // TODO: Check if this is really needed and if it is, check there are no security issues
+  app.set("trust proxy", 1);
+  // This ensures that all requests are made via https, in theory this is not needed because
+  // nginx already handles this
+  app.use((req, res, next) => {
+    console.log(req.header("x-forwarded-proto"));
+    if (req.header("x-forwarded-proto") !== "https") {
+      console.log("https"); // TODO: Add error handling
+    }
+    next();
+  });
+}
+
 /*
  * Enable CORS middleware for all incoming requests
  */
@@ -31,7 +46,7 @@ app.use(cookieParser());
 /*
  * Enables referer validation middleware
  */
-app.use(refererValidationMiddleware);
+// app.use(refererValidationMiddleware);
 
 /*
  * Use routes

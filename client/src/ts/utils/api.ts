@@ -4,7 +4,8 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "https://localhost:3030",
+  // TODO: baseURL: "https://localhost:3030/api/",
+  baseURL: "https://localhost/api/",
   responseType: "json",
   withCredentials: true,
 });

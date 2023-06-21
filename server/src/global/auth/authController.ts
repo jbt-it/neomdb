@@ -6,7 +6,6 @@ import { CookieOptions, Request, Response } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
 import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 
 /**
@@ -15,7 +14,8 @@ import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: "none", // Cookie can be sent to every site
+  sameSite: process.env.IS_PRODUCTION ? "strict" : "none", // In development cookie can be sent to every site
+  // sameSite: "lax", // In development cookie can be sent to every site
 };
 
 /**

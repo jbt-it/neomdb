@@ -1,7 +1,7 @@
 version: "3"
 
 networks:
-  mynetwork:
+  neomdb_network:
     driver: bridge
 
 services:
@@ -12,7 +12,32 @@ services:
     ports:
       - 3000:3000
     networks:
-      - mynetwork
+      - neomdb_network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./server/dev_certs:/etc/nginx/ssl
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - server
+      - client
+    networks:
+      - neomdb_network
+  #nginx:
+  #  image: nginx:stable-alpine
+  #  volumes:
+  #    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #  ports:
+  #    - 80:80
+  #  depends_on:
+  #    - client
+  #    - server
+  #  networks:
+  #    - neomdb_network
 
   database:
     image: mysql
@@ -23,7 +48,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     networks:
-      - mynetwork
+      - neomdb_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -32,7 +57,7 @@ services:
     links:
       - database:db
     networks:
-      - mynetwork
+      - neomdb_network
 
   server:
     build:
@@ -43,8 +68,9 @@ services:
     depends_on:
       - database
     networks:
-      - mynetwork
+      - neomdb_network
     environment:
+      - IS_PRODUCTION=true
       - DATABASE_HOST_PROD=database
       - DATABASE_PORT_PROD=3306
 

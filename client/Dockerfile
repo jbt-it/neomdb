@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install serve
+RUN npm install -g serve
+
 # Copy the rest of the client code
 COPY . .
 
@@ -20,4 +23,5 @@ ENV SKIP_PREFLIGHT_CHECK=true
 RUN npm run build
 
 # Set the command to run the client
-CMD [ "npm", "start" ]
+# CMD [ "npm", "start" ]
+CMD [ "serve", "-s", "build" ]
