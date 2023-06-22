@@ -287,35 +287,37 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
       [date, req.body.email, req.body.key]
     )
     .then((result: authTypes.GetEmailDateTokenToVerifyValidityQueryResult[]) => {
-      console.log(result[0].datediff);
-      if (result.length !== 0) {
-        // Check if the entry is older then five days
-        if (result[0].datediff < 5) {
-          bcrypt
-            .hash(req.body.newPassword, 10)
-            .then((hash) => {
-              // Store hash in your password DB
+      // Check if the email and token are valid
+      if (result.length == 0) {
+        res.status(200).send();
+        return;
+      }
+      // Check if the entry is older then five days
+      if (result[0].datediff >= 5) {
+        res.status(200).send();
+        return;
+      }
+      bcrypt
+        .hash(req.body.newPassword, 10)
+        .then((hash) => {
+          // Store hash in your password DB
+          database
+            .query(
+              `UPDATE mitglied
+            SET passwort = ?, passwordHash = ?
+            WHERE mitglied.name = ?`,
+              [req.body.newPassword, hash, name] //TODO: dont save new passwort as plaintext
+            )
+            .then(() => {
+              // Delete used entry
               database
                 .query(
-                  `UPDATE mitglied
-                SET passwort = ?, passwordHash = ?
-                WHERE mitglied.name = ?`,
-                  [req.body.newPassword, hash, name] //TODO: dont save new passwort as plaintext
+                  `DELETE FROM passwort_reset
+                  WHERE mitglied_jbt_email = ?`,
+                  [req.body.email]
                 )
                 .then(() => {
-                  // Delete used entry
-                  database
-                    .query(
-                      `DELETE FROM passwort_reset
-                      WHERE mitglied_jbt_email = ?`,
-                      [req.body.email]
-                    )
-                    .then(() => {
-                      res.status(200).send();
-                    })
-                    .catch(() => {
-                      res.status(500).send("Internal Error");
-                    });
+                  res.status(200).send();
                 })
                 .catch(() => {
                   res.status(500).send("Internal Error");
@@ -324,14 +326,10 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
             .catch(() => {
               res.status(500).send("Internal Error");
             });
-        } else {
-          // User got the correct result since the date was to to old
-          res.status(200).send();
-        }
-      } else {
-        // User got the correct result since the email or token was invalid
-        res.status(200).send();
-      }
+        })
+        .catch(() => {
+          res.status(500).send("Internal Error");
+        });
     })
     .catch(() => {
       res.status(500).send();
