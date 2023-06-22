@@ -191,7 +191,7 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
           WHERE mitglied.name = ?`,
           [name]
         )
-        .then((result: authTypes.GetEmailToVerifyValidity[]) => {
+        .then((result: authTypes.GetEmailToVerifyValidityQueryResult[]) => {
           if (result.length === 1) {
             // Delete old entrys, if any exist
             database
@@ -286,7 +286,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
     AND token = ?`,
       [date, req.body.email, req.body.key]
     )
-    .then((result: authTypes.GetEmailDateTokenToVerifyValidity[]) => {
+    .then((result: authTypes.GetEmailDateTokenToVerifyValidityQueryResult[]) => {
       console.log(result[0].datediff);
       if (result.length !== 0) {
         // Check if the entry is older then five days

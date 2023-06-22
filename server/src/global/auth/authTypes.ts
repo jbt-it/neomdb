@@ -29,16 +29,16 @@ export type DirectorPermissionsQueryResult = {
 };
 
 /**
- * Returns the email, to verify if it exists
+ * Type of query result to get member email and check email existence
  */
-export type GetEmailToVerifyValidity = {
+export type GetEmailToVerifyValidityQueryResult = {
   email: string;
 };
 
 /**
- * Returns the email, to verify if it exists
+ * Type of query results to get email, date, and token to check if the combination is valid for passwort reset
  */
-export type GetEmailDateTokenToVerifyValidity = {
+export type GetEmailDateTokenToVerifyValidityQueryResult = {
   email: string;
   datediff: number;
   token: string;
