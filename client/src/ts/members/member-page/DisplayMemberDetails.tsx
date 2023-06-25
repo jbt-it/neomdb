@@ -31,6 +31,8 @@ import {
   transformStringToSQLString,
 } from "../../utils/dateUtils";
 import * as membersTypes from "../membersTypes";
+import * as globalTypes from "../../global/globalTypes";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -177,6 +179,7 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 interface DisplayMemberDetailsProps {
   members: membersTypes.Member[];
+  listOfPermissions: globalTypes.Permission[];
   departments: membersTypes.Department[];
   listOfLanguages: membersTypes.Language[];
   listOfEDVSkills: membersTypes.EDVSkill[];
@@ -198,7 +201,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   // Filter of languages for the autocomplete component
   const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
-  const permissionList: number[] = [];
   const { members } = props;
   const { departments } = props;
   const { listOfLanguages } = props;
@@ -683,7 +685,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {
                   /* When the user is owner or has the permission to
                       manage all members they can edit this section */
-                  props.isOwner || permissionList.includes(1) ? (
+                  props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
                     <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -800,7 +802,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {
                   /* When the user has the permission to
                     manage all members they can edit this section */
-                  permissionList.includes(1) ? (
+                  doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
                     <IconButton>
                       <Edit fontSize="inherit" />
                     </IconButton>
@@ -925,7 +927,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Renders the category for payment informations
    */
   const renderPaymentInformation: VoidFunction = () => {
-    if (props.isOwner || permissionList.includes(6)) {
+    if (props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [6])) {
       return (
         <Grid item xs={12} sm={12}>
           <ExpansionPanel>
@@ -1150,7 +1152,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   className={classes.fullWidth}
                   color="primary"
                   required
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="jbt-email-field"
                   label="JBT-E-Mail"
                   variant="outlined"
@@ -1273,7 +1275,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <Autocomplete
                   id="mentor-select"
                   options={members}
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   onChange={(event, newMentor) => {
                     if (newMentor) {
                       setMentorState({
@@ -1293,7 +1295,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="passive-member-field"
                   label="Passives Mitglied seit"
                   variant="outlined"
@@ -1307,7 +1309,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="alumni-field"
                   label="Alumna*Alumnus seit"
                   variant="outlined"
@@ -1321,7 +1323,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="senior-field"
                   label="Senior seit"
                   variant="outlined"
@@ -1335,7 +1337,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="member-field"
                   label="Aktives Mitglied seit"
                   variant="outlined"
@@ -1349,7 +1351,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
-                  disabled={!permissionList.includes(1)}
+                  disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="trainee-field"
                   label="Trainee seit"
                   variant="outlined"
@@ -1775,6 +1777,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         onClose={handlePaymentInfoDialogClose}
         fullWidth
         maxWidth="lg"
+        keepMounted
         aria-labelledby="payment-dialog-title"
       >
         <DialogTitle id="payment-dialog-title">Zahlungsinformationen</DialogTitle>

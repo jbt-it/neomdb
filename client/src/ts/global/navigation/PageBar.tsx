@@ -146,7 +146,7 @@ const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => 
         <IconButton onClick={handleButtonClick} size="small">
           <MoreVert />
         </IconButton>
-        <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleOptionsClose}>
+        <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleOptionsClose}>
           {props.pageOptions?.map((option, key) => {
             return (
               <MenuItem

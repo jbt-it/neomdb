@@ -1,12 +1,7 @@
 // The AuthContext provides a state, which indicates whether the user is authenticated or not
 
 import React, { createContext, useReducer } from "react";
-import {
-  Auth,
-  AuthContextType,
-  authReducerAction,
-  authReducerActionType,
-} from "../global/globalTypes";
+import { Auth, AuthContextType, authReducerAction, authReducerActionType } from "../global/globalTypes";
 
 /**
  * The initial state of the auth object
@@ -32,7 +27,7 @@ export const AuthContext = createContext<AuthContextType>({
  *
  * @param props
  */
-export const AuthProvider = (props: { children?: any }) => {
+export const AuthProvider = (props: { children?: React.ReactNode }) => {
   /**
    * The reducer function for the auth object
    * It manages how the auth object can be changed
@@ -71,9 +66,5 @@ export const AuthProvider = (props: { children?: any }) => {
     permissions: [],
   });
 
-  return (
-    <AuthContext.Provider value={{ auth, dispatchAuth }}>
-      {props.children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ auth, dispatchAuth }}>{props.children}</AuthContext.Provider>;
 };
