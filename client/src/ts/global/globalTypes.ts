@@ -3,10 +3,10 @@
  */
 export type AuthContextType = {
   auth: Auth;
-  dispatchAuth: Function;
+  dispatchAuth: React.Dispatch<authReducerAction>;
 };
 
-type Permission = {
+export type Permission = {
   permissionID: number;
   canDelegate: boolean;
 };

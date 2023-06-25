@@ -8,7 +8,7 @@ import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../global/AuthContext";
 import PageBar from "../../global/navigation/PageBar";
-import CustomSnackbar from "../../global/CustomSnackbar";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import * as membersTypes from "../membersTypes";
 import { authReducerActionType } from "../../global/globalTypes";
 
@@ -22,8 +22,6 @@ interface RouterMatch {
 const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
-  const [successOpen, setSuccessOpen] = useState<number>(0);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
@@ -50,8 +48,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -78,8 +77,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -106,8 +106,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -134,8 +135,9 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -157,14 +159,14 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setSuccessOpen(0);
             setMembersDetails(res.data[0]);
           }
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -186,16 +188,17 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setSuccessOpen(successOpen + 1);
+            showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
             getMemberDetails();
           }
-        } else if (res.status === 500) {
-          setErrorOpen(errorOpen + 1);
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
       });
 
     // Clean-up function
@@ -214,7 +217,6 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
-  useEffect(() => setSuccessOpen(0), []);
   useEffect(getMemberDetails, [props.match.params.id, dispatchAuth]);
 
   return (
@@ -223,6 +225,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         {memberDetails ? (
           <DisplayMemberDetails
             members={members}
+            listOfPermissions={auth.permissions}
             departments={departments}
             listOfLanguages={languages}
             listOfEDVSkills={edvSkills}
@@ -234,15 +237,6 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         ) : null}
       </div>
       <PageBar pageTitle="Profilseite" />
-      {successOpen ? (
-        <CustomSnackbar
-          snackbarMessage="Aktualisierung des Profils war erfolgreich!"
-          snackProps={{ variant: "success" }}
-        />
-      ) : null}
-      {errorOpen ? (
-        <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} />
-      ) : null}
     </div>
   );
 };

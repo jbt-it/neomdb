@@ -1,110 +1,21 @@
 /**
  * Definition of the functions required for authentification and authorization
  */
-import jwt = require("jsonwebtoken");
-import fs = require("fs");
 import bcrypt = require("bcryptjs");
-import { Request, Response, NextFunction } from "express";
+import { CookieOptions, Request, Response } from "express";
 import database = require("../../database");
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-
-const JWTKeys = {
-  public: fs.readFileSync(process.env.JWT_PUBLIC),
-  private: fs.readFileSync(process.env.JWT_PRIVATE),
-};
-
-const JWTSignOptions: jwt.SignOptions = {
-  expiresIn: 60 * 60 * 10, // Expires in 10 hours
-  algorithm: "RS256",
-};
-
-const JWTVerifyOptions: jwt.VerifyOptions = {
-  algorithms: ["RS256"],
-};
+import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
+import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 
 /**
  * Options for the cookie
  */
-const cookieOptions = {
+const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: true, // Cookie can only be sent to the same site
-};
-
-/**
- * Generates JWT based on query results for the login process
- * @param payload object containing non sensitive user data
- */
-export const generateJWT = (payload: globalTypes.JWTPayload): string => {
-  return jwt.sign(payload, JWTKeys.private, JWTSignOptions);
-};
-
-/**
- * Verifies recived JWT from the user and returnes decoded payload or false
- * @param token JWT sent with the users request
- */
-export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
-  try {
-    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as globalTypes.JWTPayload;
-  } catch (err) {
-    return null;
-  }
-};
-
-/**
- * Verifies JWT and protects following routes from unauthorised access
- */
-export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  if (req.cookies) {
-    const jwtData = verifyJWT(req.cookies.token);
-    if (jwtData !== null) {
-      res.locals.memberID = jwtData.mitgliedID;
-      res.locals.permissions = jwtData.permissions;
-      next();
-    } else {
-      return res.status(401).send("Authentication failed: Please log in");
-    }
-  } else {
-    return res.status(401).send("Authentication failed: Please log in");
-  }
-};
-
-/**
- * Checks if memberID equals ressource id or member has specified permission
- * to grant access to ressource
- */
-export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const jwtData = verifyJWT(req.cookies.token);
-    if (
-      Number(req.params.id) === jwtData.mitgliedID ||
-      permissions.every((element) => jwtData.permissions.some((permission) => permission.permissionID === element))
-    ) {
-      res.locals.memberID = jwtData.mitgliedID;
-      res.locals.permissions = jwtData.permissions;
-      next();
-    } else {
-      return res.status(403).send("Authorization failed: You are not permitted to do this");
-    }
-  };
-};
-
-/**
- * Checks if user has the right permissions to use the following routes
- * Every permission in the permissions array needs to be included in the permissions
- * of the received jwt
- * @param permissions Array of permissions which are allowed to use following routes
- */
-export const restrictRoutes = (permissions: number[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
-    if (permissions.every((element) => jwtDataPermissions.some((permission) => permission.permissionID === element))) {
-      next();
-    } else {
-      return res.status(403).send("Authorization failed: You are not permitted to do this");
-    }
-  };
+  sameSite: "none", // Cookie can be sent to every site
 };
 
 /**
@@ -155,7 +66,7 @@ export const login = (req: Request, res: Response): void => {
         `,
             [result[0].mitgliedID]
           )
-          .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+          .then((directorPermissionsResult: globalTypes.Permission[]) => {
             let permissions = [];
             // Adds role permissions to the permissions array
             if (directorPermissionsResult.length !== 0) {
@@ -187,15 +98,15 @@ export const login = (req: Request, res: Response): void => {
                   res.status(401).send("Username or password wrong");
                 }
               })
-              .catch((err) => {
+              .catch(() => {
                 res.status(401).send("Username or password wrong");
               });
           })
-          .catch((err) => {
+          .catch(() => {
             res.status(500).send("Query Error");
           });
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).send("Query Error");
       });
   }
@@ -227,7 +138,7 @@ export const retrieveUserData = (req: Request, res: Response) => {
         `,
           [jwtData.mitgliedID]
         )
-        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
+        .then((directorPermissionsResult: globalTypes.Permission[]) => {
           let permissions = [];
 
           // Adds role permissions to the permissions array
@@ -247,11 +158,11 @@ export const retrieveUserData = (req: Request, res: Response) => {
           }
           res.status(200).json({ ...result[0], permissions });
         })
-        .catch((error) => {
+        .catch(() => {
           res.status(500).send("Query Error");
         });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };
