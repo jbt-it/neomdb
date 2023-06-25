@@ -5,14 +5,11 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
-import authRoutes = require("./global/auth/authRoutes");
-import membersRoutes = require("./members/membersRoutes");
-import traineesRoutes = require("./trainees/traineesRoutes");
-
 import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
 import authRoutes from "./global/auth/authRoutes";
 import membersRoutes from "./members/membersRoutes";
+import traineesRoutes from "./trainees/traineesRoutes";
 
 dotenv.config();
 const app = express();
