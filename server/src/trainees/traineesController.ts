@@ -68,13 +68,9 @@ export const retrieveAllIPs = (req: Request, res: Response): void => {
       []
     )
     .then((result: traineesTypes.GetAllIPsQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("IPs not found");
-      } else {
-        result.sort();
-        res.status(200).json(result);
+        res.status(200).json(result); //IPs are unsorted
       }
-    })
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });
@@ -84,19 +80,16 @@ export const retrieveAllIPs = (req: Request, res: Response): void => {
   Retrieve a list of all Trainees with their respective IPs
   Group all Trainees into their corresponding generations
 */
-export const retrieveAllTrainees = (req: Request, res: Response): void => {
+export const retrieveAllTraineesWithIPs = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitglied.mitgliedID, mitglied.vorname, mitglied.nachname, mitglied.generation, internesprojekt.internesprojektID, internesprojekt.projektname, internesprojekt.kuerzel, internesprojekt.kickoff, internesprojekt.AngebotBeiEV, internesprojekt.ZPbeiEV, internesprojekt.ZPgehalten, internesprojekt.APbeiEV, internesprojekt.APgehalten, internesprojekt.DLbeiEV
+      `SELECT mitglied.generation, mitglied.mitgliedID, mitglied.vorname, mitglied.nachname, internesprojekt.internesprojektID, internesprojekt.projektname, internesprojekt.kuerzel, internesprojekt.kickoff, internesprojekt.AngebotBeiEV, internesprojekt.ZPbeiEV, internesprojekt.ZPgehalten, internesprojekt.APbeiEV, internesprojekt.APgehalten, internesprojekt.DLbeiEV
       FROM mitglied
       LEFT JOIN internesprojekt ON mitglied.generation = internesprojekt.generation 
       ORDER BY generation`,
       []
     )
-    .then((result: traineesTypes.retrieveAllTraineesQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Trainees not found");
-      } else {
+    .then((result: traineesTypes.retrieveAllTraineesWithIPsQueryResult[]) => {
         let groupedGenerations = {};
 
         for (let i = 0; i < result.length; i++) {
@@ -113,7 +106,7 @@ export const retrieveAllTrainees = (req: Request, res: Response): void => {
         }
         res.status(200).json(groupedGenerations);
       }
-    })
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });

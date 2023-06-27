@@ -48,10 +48,19 @@ export type GetAllIPsQueryResult = {
 /**
  * Type of query results of trainee generations retrieval.
  */
-export type retrieveAllTraineesQueryResult = {
+export type retrieveAllTraineesWithIPsQueryResult = {
   generation: number;
   mitgliedID: number;
   vorname: string;
   nachname: string;
-  internesprojekt: string;
+  internesprojektID: number;
+  projektname: string;
+  kuerzel: string;
+  kickoff: Date;
+  AngebotBeiEV: boolean;
+  ZPbeiEV: boolean;
+  ZPgehalten: boolean;
+  APbeiEV: boolean;
+  APgehalten: boolean;
+  DLbeiEV: boolean;
 };
