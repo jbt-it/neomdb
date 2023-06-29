@@ -211,11 +211,11 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
                   .then(() => {
                     // Send email with correct URL to usermail
                     const transport = nodemailer.createTransport({
-                      host: "studentische-beratung.de",
-                      port: 465,
+                      host: process.env.MAIL_HOST,
+                      port: process.env.MAIL_PORT,
                       auth: {
-                        user: "mdbpasswortreset@studentische-beratung.de", // Email
-                        pass: "pQam721?", // PW
+                        user: process.env.MAIL_USER, // Email
+                        pass: process.env.MAIL_PASSWORD, // PW
                       },
                     }); // Setup e-mail data with unicode symbols
                     const mailOptions = {
