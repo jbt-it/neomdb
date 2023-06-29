@@ -11,6 +11,7 @@ const initialState = {
   userID: null,
   userName: null,
   permissions: [],
+  roles: [],
 };
 /*
  * Represents the context for Authentication
@@ -43,6 +44,7 @@ export const AuthProvider = (props: { children?: React.ReactNode }) => {
           userID: action.payload.userID,
           userName: action.payload.userName,
           permissions: action.payload.permissions,
+          roles: action.payload.roles,
         };
       }
       case authReducerActionType.deauthenticate: {
@@ -51,6 +53,7 @@ export const AuthProvider = (props: { children?: React.ReactNode }) => {
           userID: null,
           userName: null,
           permissions: [],
+          roles: [],
         };
       }
       default: {
@@ -64,6 +67,7 @@ export const AuthProvider = (props: { children?: React.ReactNode }) => {
     userID: null,
     userName: null,
     permissions: [],
+    roles: [],
   });
 
   return <AuthContext.Provider value={{ auth, dispatchAuth }}>{props.children}</AuthContext.Provider>;

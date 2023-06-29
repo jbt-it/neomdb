@@ -290,11 +290,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       []
     )
     .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Members not found");
-      } else {
-        res.status(200).json(result);
-      }
+      res.status(200).json(result);
     })
     .catch(() => {
       res.status(500).send("Query Error");
@@ -307,7 +303,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitgliedID, vorname, nachname, evpostenID, ressort as ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+      `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
       FROM mitglied, mitglied_has_evposten, evposten
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []
@@ -676,6 +672,24 @@ export const retrieveDepartments = (req: Request, res: Response): void => {
       } else {
         res.status(200).json(result);
       }
+    })
+    .catch(() => {
+      res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * Updates the department infos with the given id
+ */
+export const updateDepartmentInfo = (req: Request, res: Response): void => {
+  database
+    .query(`UPDATE ressort SET linkOrganigramm = ?, linkZielvorstellung = ?  WHERE ressortID = ?`, [
+      req.body.linkOrganigramm,
+      req.body.linkZielvorstellung,
+      req.params.id,
+    ])
+    .then(() => {
+      res.status(200).send("Department Update succesful");
     })
     .catch(() => {
       res.status(500).send("Query Error");

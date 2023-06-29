@@ -6,10 +6,10 @@ import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Collapse, Typography } from "@material-ui/core";
 import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, ExitToApp, TrendingUp } from "@material-ui/icons";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import JBTLogoBlack from "../../../images/jbt-logo-black.png";
-import { AuthContext } from "../AuthContext";
-import api from "../../utils/api";
-import { authReducerActionType } from "../globalTypes";
+import JBTLogoBlack from "../../../../images/jbt-logo-black.png";
+import { AuthContext } from "../../AuthContext";
+import api from "../../../utils/api";
+import { authReducerActionType } from "../../globalTypes";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
