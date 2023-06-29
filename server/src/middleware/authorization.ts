@@ -70,7 +70,7 @@ export const restrictRoutesToRoles = (roles: number[]) => {
 
 /**
  * Checks if user has the right roles to manipulate the department with the given id (provided in the request as a parameter)
- * @param req Request object
+ * @param req Request object (auth token; department id)
  * @param res Response object
  * @param next Next function
  * @returns 403 if user is not permitted to access the department
