@@ -405,12 +405,12 @@ export const createMember = async (req: Request, res: Response) => {
             req.body.geschlecht,
             hash,
             getRandomString(16),
-            1, // Status of member is at default "trainee"
+            1, // Default status of member is "trainee"
             req.body.generation,
             req.body.traineeSeit,
             req.body.email,
             jbtMail,
-            8, // Department is at default "Ohne Ressort"
+            8, // Default department "Ohne Ressort"
           ]
         )
         .then(() => {
@@ -764,7 +764,7 @@ export const updateMemberStatus = (req: Request, res: Response): void => {
 
   // Get status that was changed
   // Trainee, aktives Mitglied, Senior, Alumnus, passives Mitglied, ausgetretenes Mitglied
-  let statusChangeDate: string = "";
+  let statusChangeDate = "";
   switch (req.body.mitgliedstatus) {
     case "Trainee":
       statusChangeDate = "trainee_seit = ? ";
