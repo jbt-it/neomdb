@@ -132,6 +132,8 @@ const TraineeSection = () => {
     };
   };
 
+  // Preparation for API call for internal projects inc. current dummy data
+
   const getInternalProject: VoidFunction = () => {
     let mounted = true;
     //  api
