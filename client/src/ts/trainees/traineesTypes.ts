@@ -11,3 +11,13 @@ export type Trainee = {
   nachname: string;
   traineeGeneration: number;
 };
+
+export type InternalProject = {
+  internalprojectID: number;
+  name: string;
+  Kickoff: string;
+  Angebot: boolean;
+  ZP: string;
+  AP: string;
+  Dokumentationsleitfaden: boolean;
+};

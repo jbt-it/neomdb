@@ -21,27 +21,8 @@ import {
 import React, { useState, useContext, useEffect } from "react";
 import api from "../utils/api";
 import { NavLink } from "react-router-dom";
-import { Trainee } from "./traineesTypes";
+import { Trainee, InternalProject } from "./traineesTypes";
 import { showErrorMessage } from "../utils/toastUtils";
-
-// function to create DummyData
-function createData(
-  ID: number,
-  name: string,
-  Kickoff: string,
-  Angebot: boolean,
-  ZP: string,
-  AP: string,
-  Dokumentationsleitfaden: boolean
-) {
-  return { ID, name, Kickoff, Angebot, ZP, AP, Dokumentationsleitfaden };
-}
-// Dummy Data for the current internal projects. API needs to be created, once the backend is finished
-const rows = [
-  createData(1, "Controllingsystem für den BDSU", "03.06.2023", true, "", "", false),
-  createData(2, "Imagefilm", "18.05.2023", true, "", "", false),
-  createData(3, "Spendenakquise für HeyAlter", "12.05.2023", true, "", "", false),
-];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -110,6 +91,7 @@ const Item = styled(Paper)(({ theme }) => ({}));
 const TraineeSection = () => {
   const classes = useStyles();
 
+  const [IP, setInternalProject] = useState<InternalProject[]>([]);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
 
   const getTrainee: VoidFunction = () => {
@@ -150,7 +132,61 @@ const TraineeSection = () => {
     };
   };
 
+  const getInternalProject: VoidFunction = () => {
+    let mounted = true;
+    //  api
+    //    .get("(IP/", {
+    //      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    //    })
+    //    .then((res) => {
+    //      if (res.status === 200) {
+    //        if (mounted) {
+    //          setInternalProject(res.data);
+    //        }
+    //      }
+    //    })
+    //    .catch((error) => {
+    //      //TODO: Error handling
+    //    });
+
+    const DummyData: InternalProject[] = [
+      {
+        internalprojectID: 1,
+        name: "Controllingsystem für den BDSU",
+        Kickoff: "03.06.2023",
+        Angebot: true,
+        ZP: "",
+        AP: "",
+        Dokumentationsleitfaden: false,
+      },
+      {
+        internalprojectID: 2,
+        name: "Imagefilm",
+        Kickoff: "18.05.2023",
+        Angebot: true,
+        ZP: "",
+        AP: "",
+        Dokumentationsleitfaden: false,
+      },
+      {
+        internalprojectID: 3,
+        name: "Spendenakquise für HeyAlter",
+        Kickoff: "12.05.2023",
+        Angebot: true,
+        ZP: "",
+        AP: "",
+        Dokumentationsleitfaden: false,
+      },
+    ];
+    setInternalProject(DummyData);
+
+    return () => {
+      mounted = false;
+    };
+  };
+
   useEffect(() => getTrainee(), []);
+  useEffect(() => getInternalProject(), []);
 
   // Creation of table with all the information about the internal project and the grid
   // with all the names of the trainee generation
@@ -176,21 +212,27 @@ const TraineeSection = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell align="left">{row.name}</TableCell>
-                  <TableCell align="right">{row.Kickoff}</TableCell>
+              {IP.map((IP) => (
+                <TableRow key={IP.name}>
+                  <TableCell align="left">
+                    <NavLink
+                      className="navLink" //link to members page
+                      to={`/internes-projekt/${IP.internalprojectID}`}
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >{`${IP.name}`}</NavLink>
+                  </TableCell>
+                  <TableCell align="right">{IP.Kickoff}</TableCell>
                   <TableCell align="right">
-                    {row.Angebot ? (
+                    {IP.Angebot ? (
                       <FormControlLabel control={<Checkbox defaultChecked />} label="" />
                     ) : (
                       <FormControlLabel disabled control={<Checkbox />} label="" />
                     )}
                   </TableCell>
-                  <TableCell align="right">{row.ZP}</TableCell>
-                  <TableCell align="right">{row.AP}</TableCell>
+                  <TableCell align="right">{IP.ZP}</TableCell>
+                  <TableCell align="right">{IP.AP}</TableCell>
                   <TableCell align="right">
-                    {row.Dokumentationsleitfaden ? (
+                    {IP.Dokumentationsleitfaden ? (
                       <FormControlLabel control={<Checkbox defaultChecked />} label="" />
                     ) : (
                       <FormControlLabel disabled control={<Checkbox />} label="" />
@@ -220,6 +262,7 @@ const TraineeSection = () => {
                         <NavLink
                           className="navLink" //link to members page
                           to={`/gesamtuebersicht/${trainee.memberID}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
                         >{`${trainee.vorname} ${trainee.nachname}`}</NavLink>
                       </Item>
                     </Grid>
