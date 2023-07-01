@@ -1,6 +1,31 @@
 /**
- * Definition of used types within the tainee module
+ * Definition of used types within the trainees module
  */
+
+
+/**
+ * Type of query results of internal project retrieval
+ */
+export type GetInternalProjectType = {
+  internesProjektID: number;
+  generation: number;
+  projektname: string;
+  kuerzel: string;
+  kickoff: string;
+  AngebotBeiEV: boolean;
+  ZPBeiEV: boolean;
+  ZPGehalten: boolean;
+  APBeiEV: boolean;
+  APGehlaten: boolean;
+  DLBeiEV: boolean;
+};
+
+/**
+ * Type of query results of trainee mail 
+ */
+export type GetIPMailType = {
+  jbt_email: string;
+}
 
 /**
  * Type of query results of trainee choices

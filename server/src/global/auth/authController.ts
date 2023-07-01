@@ -3,10 +3,10 @@
  */
 import bcrypt = require("bcryptjs");
 import { CookieOptions, Request, Response } from "express";
-import database = require("../../database");
+import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
+import database = require("../../database");
 import { createUserDataPayload } from "../../utils/authUtils";
 
 /**
