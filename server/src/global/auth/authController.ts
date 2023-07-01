@@ -8,6 +8,8 @@ import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
 import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 import { createUserDataPayload } from "../../utils/authUtils";
+import { QueryResult } from "databaseTypes";
+import { RowDataPacket } from "mysql2";
 
 /**
  * Options for the cookie
@@ -48,45 +50,63 @@ export const login = (req: Request, res: Response): void => {
         GROUP BY mitgliedID, name`,
         [req.body.username]
       )
-      .then((result: authTypes.UserDataQueryResult[]) => {
-        if (result.length === 0) {
-          // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
-          sleepRandomly(50, 110);
-          res.status(401).send("Username or password wrong");
-          return;
-        }
+      .then(
+        (
+          result: QueryResult
+          // authTypes.UserDataQueryResllt[]
+        ) => {
+          let member = null;
+          if (Array.isArray(result)) {
+            member = result[0] as authTypes.UserDataQueryResult;
+          }
+          if (result.length === 0) {
+            // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
+            sleepRandomly(50, 110);
+            res.status(401).send("Username or password wrong");
+            return;
+          }
 
-        // Selects permissions belonging to a possible role of the member
-        database
-          .query(
-            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
+          // Selects permissions belonging to a possible role of the member
+          database
+            .query(
+              `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ? AND mitglied_has_evposten.von <= NOW() AND mitglied_has_evposten.bis >= NOW();
         `,
-            [result[0].mitgliedID]
-          )
-          .then((directorPermissionsResult: globalTypes.Permission[]) => {
-            bcrypt
-              .compare(req.body.password, result[0].passwordHash)
-              .then((match) => {
-                if (match) {
-                  const payload = createUserDataPayload(result[0], directorPermissionsResult);
-                  const token = generateJWT(payload);
-                  res.cookie("token", token, cookieOptions).status(200).json(payload);
-                } else {
-                  res.status(401).send("Username or password wrong");
+              [member.mitgliedID]
+            )
+            .then(
+              (
+                directorPermissionsResult: QueryResult
+                //globalTypes.Permission[]
+              ) => {
+                let directorPermissions = null;
+                if (Array.isArray(directorPermissionsResult)) {
+                  directorPermissions = directorPermissionsResult as globalTypes.Permission[];
                 }
-              })
-              .catch(() => {
-                res.status(401).send("Username or password wrong");
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-            res.status(500).send("Query Error");
-          });
-      })
+                bcrypt
+                  .compare(req.body.password, member.passwordHash)
+                  .then((match) => {
+                    if (match) {
+                      const payload = createUserDataPayload(member, directorPermissions);
+                      const token = generateJWT(payload);
+                      res.cookie("token", token, cookieOptions).status(200).json(payload);
+                    } else {
+                      res.status(401).send("Username or password wrong");
+                    }
+                  })
+                  .catch(() => {
+                    res.status(401).send("Username or password wrong");
+                  });
+              }
+            )
+            .catch((err) => {
+              console.log(err);
+              res.status(500).send("Query Error");
+            });
+        }
+      )
       .catch((err) => {
         res.status(500).send("Query Error");
       });
@@ -108,25 +128,43 @@ export const retrieveUserData = (req: Request, res: Response) => {
       GROUP BY mitgliedID, name`,
       [jwtData.mitgliedID]
     )
-    .then((result: authTypes.UserDataQueryResult[]) => {
-      // Selects permissions belonging to a possible role of the member
-      database
-        .query(
-          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
+    .then(
+      (
+        result: QueryResult
+        // authTypes.UserDataQueryResult[]
+      ) => {
+        let member = null;
+        if (Array.isArray(result)) {
+          member = result[0] as authTypes.UserDataQueryResult;
+        }
+        // Selects permissions belonging to a possible role of the member
+        database
+          .query(
+            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
         `,
-          [jwtData.mitgliedID]
-        )
-        .then((directorPermissionsResult: globalTypes.Permission[]) => {
-          const payload = createUserDataPayload(result[0], directorPermissionsResult);
-          res.status(200).json(payload);
-        })
-        .catch(() => {
-          res.status(500).send("Query Error");
-        });
-    })
+            [jwtData.mitgliedID]
+          )
+          .then(
+            (
+              directorPermissionsResult: QueryResult
+              // globalTypes.Permission[]
+            ) => {
+              let directorPermissions = null;
+              if (Array.isArray(directorPermissionsResult)) {
+                directorPermissions = directorPermissionsResult as globalTypes.Permission[];
+              }
+              const payload = createUserDataPayload(member, directorPermissions);
+              res.status(200).json(payload);
+            }
+          )
+          .catch(() => {
+            res.status(500).send("Query Error");
+          });
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
