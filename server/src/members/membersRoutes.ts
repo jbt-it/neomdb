@@ -3,7 +3,12 @@
  */
 import express = require("express");
 import authenticationMiddleware from "../middleware/authentication";
-import { restrictRoutes, restrictRoutesSelfOrPermission } from "../middleware/authorization";
+import {
+  checkDepartmentAccess,
+  restrictRoutes,
+  restrictRoutesSelfOrPermission,
+  restrictRoutesToRoles,
+} from "../middleware/authorization";
 import * as membersController from "./membersController";
 
 const router = express.Router();
@@ -47,6 +52,7 @@ router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersContr
 
 //  =======>>> Patch routes <<<=======
 router.patch("/change-password", membersController.changePassword);
+router.patch("/departments/:id", checkDepartmentAccess, membersController.updateDepartmentInfo);
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 //  =======>>> Delete routes <<<=======

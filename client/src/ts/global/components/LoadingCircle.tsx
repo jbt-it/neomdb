@@ -3,7 +3,7 @@
  */
 import { Avatar, createStyles, makeStyles, Typography } from "@material-ui/core";
 import React from "react";
-import Lenni from "../../images/lenni.jpeg";
+import Lenni from "../../../images/lenni.jpeg";
 
 /**
  * Function which proivdes the styles of the LoadingCircle
