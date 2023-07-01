@@ -27,12 +27,7 @@ router.get("/department-members", membersController.retrieveDepartmentMembers);
 router.get("/directors", membersController.retrieveDirectors);
 router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);
-router.get(
-  "/permissions",
-
-  restrictRoutes(ALL_PERMISSIONS, false),
-  membersController.retrievePermissions
-);
+router.get("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.retrievePermissions);
 router.get(
   "/permissions-of-members",
   restrictRoutes(ALL_PERMISSIONS, false),

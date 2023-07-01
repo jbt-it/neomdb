@@ -8,6 +8,8 @@ import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude } from "../../utils/authUtils";
 import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
+import { QueryResult } from "databaseTypes";
+import { RowDataPacket } from "mysql2";
 
 /**
  * Options for the cookie
@@ -48,64 +50,78 @@ export const login = (req: Request, res: Response): void => {
         GROUP BY mitgliedID, name`,
         [req.body.username]
       )
-      .then((result: authTypes.LoginQueryResult[]) => {
-        if (result.length === 0) {
-          // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
-          sleepRandomly(50, 110);
-          res.status(401).send("Username or password wrong");
-          return;
-        }
+      .then(
+        (
+          result: QueryResult
+          // authTypes.LoginQueryResult[]
+        ) => {
+          let member = null;
+          if (Array.isArray(result)) {
+            member = result[0] as authTypes.LoginQueryResult;
+          }
+          if (result.length === 0) {
+            // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
+            sleepRandomly(50, 110);
+            res.status(401).send("Username or password wrong");
+            return;
+          }
 
-        // Selects permissions belonging to a possible role of the member
-        database
-          .query(
-            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+          // Selects permissions belonging to a possible role of the member
+          database
+            .query(
+              `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
         `,
-            [result[0].mitgliedID]
-          )
-          .then((directorPermissionsResult: globalTypes.Permission[]) => {
-            let permissions = [];
-            // Adds role permissions to the permissions array
-            if (directorPermissionsResult.length !== 0) {
-              permissions = directorPermissionsResult;
-            }
-
-            // Adds normal permissions to the permissions array
-            if (result[0].permissions) {
-              result[0].permissions
-                .split(",")
-                .map(Number)
-                .map((perm) => {
-                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                  permissions.push({ permissionID: perm, canDelegate: 0 });
-                });
-            }
-            bcrypt
-              .compare(req.body.password, result[0].passwordHash)
-              .then((match) => {
-                if (match) {
-                  const payload: globalTypes.JWTPayload = {
-                    mitgliedID: result[0].mitgliedID,
-                    name: result[0].name,
-                    permissions,
-                  };
-                  const token = generateJWT(payload);
-                  res.cookie("token", token, cookieOptions).status(200).json(payload);
-                } else {
-                  res.status(401).send("Username or password wrong");
+              [member.mitgliedID]
+            )
+            .then(
+              (
+                directorPermissionsResult: QueryResult
+                //  globalTypes.Permission[]
+              ) => {
+                let permissions = [];
+                // Adds role permissions to the permissions array
+                if (directorPermissionsResult.length !== 0) {
+                  permissions = directorPermissionsResult;
                 }
-              })
-              .catch(() => {
-                res.status(401).send("Username or password wrong");
-              });
-          })
-          .catch(() => {
-            res.status(500).send("Query Error");
-          });
-      })
+
+                // Adds normal permissions to the permissions array
+                if (member.permissions) {
+                  member.permissions
+                    .split(",")
+                    .map(Number)
+                    .map((perm) => {
+                      // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                      permissions.push({ permissionID: perm, canDelegate: 0 });
+                    });
+                }
+                bcrypt
+                  .compare(req.body.password, member.passwordHash)
+                  .then((match) => {
+                    if (match) {
+                      const payload: globalTypes.JWTPayload = {
+                        mitgliedID: member.mitgliedID,
+                        name: member.name,
+                        permissions,
+                      };
+                      const token = generateJWT(payload);
+                      res.cookie("token", token, cookieOptions).status(200).json(payload);
+                    } else {
+                      res.status(401).send("Username or password wrong");
+                    }
+                  })
+                  .catch(() => {
+                    res.status(401).send("Username or password wrong");
+                  });
+              }
+            )
+            .catch(() => {
+              res.status(500).send("Query Error");
+            });
+        }
+      )
       .catch(() => {
         res.status(500).send("Query Error");
       });
@@ -127,41 +143,55 @@ export const retrieveUserData = (req: Request, res: Response) => {
       GROUP BY mitgliedID, name`,
       [jwtData.mitgliedID]
     )
-    .then((result: authTypes.UserDataQueryResult[]) => {
-      // Selects permissions belonging to a possible role of the member
-      database
-        .query(
-          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+    .then(
+      (
+        result: QueryResult
+        // authTypes.UserDataQueryResult[]
+      ) => {
+        let member = null;
+        if (Array.isArray(result)) {
+          member = result[0] as authTypes.UserDataQueryResult;
+        }
+        // Selects permissions belonging to a possible role of the member
+        database
+          .query(
+            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
         `,
-          [jwtData.mitgliedID]
-        )
-        .then((directorPermissionsResult: globalTypes.Permission[]) => {
-          let permissions = [];
+            [jwtData.mitgliedID]
+          )
+          .then(
+            (
+              directorPermissionsResult: QueryResult
+              // globalTypes.Permission[]
+            ) => {
+              let permissions = [];
 
-          // Adds role permissions to the permissions array
-          if (directorPermissionsResult.length !== 0) {
-            permissions = directorPermissionsResult;
-          }
+              // Adds role permissions to the permissions array
+              if (directorPermissionsResult.length !== 0) {
+                permissions = directorPermissionsResult;
+              }
 
-          // Adds normal permissions to the permissions array
-          if (result[0].permissions) {
-            result[0].permissions
-              .split(",")
-              .map(Number)
-              .map((perm) => {
-                // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                permissions.push({ permissionID: perm, canDelegate: 0 });
-              });
-          }
-          res.status(200).json({ ...result[0], permissions });
-        })
-        .catch(() => {
-          res.status(500).send("Query Error");
-        });
-    })
+              // Adds normal permissions to the permissions array
+              if (member.permissions) {
+                member.permissions
+                  .split(",")
+                  .map(Number)
+                  .map((perm) => {
+                    // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                    permissions.push({ permissionID: perm, canDelegate: 0 });
+                  });
+              }
+              res.status(200).json({ ...member, permissions });
+            }
+          )
+          .catch(() => {
+            res.status(500).send("Query Error");
+          });
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });

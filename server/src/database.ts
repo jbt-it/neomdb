@@ -1,6 +1,7 @@
 /**
  * Wrapper for the MySQL connections
  */
+import { QueryResult } from "databaseTypes";
 import mysql = require("mysql2");
 
 /**
@@ -23,27 +24,13 @@ const pool: mysql.Pool = mysql.createPool(databaseConfig);
  * @param args Array with query arguments
  */
 export const query = (sql: string, args: (string | number)[]) => {
-  return new Promise<
-    mysql.RowDataPacket[][] | mysql.RowDataPacket[] | mysql.OkPacket | mysql.OkPacket[] | mysql.ResultSetHeader
-  >((resolve, reject) => {
-    pool.query(
-      sql,
-      args,
-      (
-        queryError: any,
-        result:
-          | mysql.RowDataPacket[][]
-          | mysql.RowDataPacket[]
-          | mysql.OkPacket
-          | mysql.OkPacket[]
-          | mysql.ResultSetHeader
-      ) => {
-        if (queryError) {
-          return reject(queryError);
-        }
-        return resolve(result);
+  return new Promise<QueryResult>((resolve, reject) => {
+    pool.query(sql, args, (queryError: any, result: QueryResult) => {
+      if (queryError) {
+        return reject(queryError);
       }
-    );
+      return resolve(result);
+    });
   });
 };
 
@@ -57,35 +44,21 @@ export const query = (sql: string, args: (string | number)[]) => {
  * @returns A promise
  */
 export const connectionQuery = (connection: mysql.PoolConnection, sql: string, args: (string | number)[]) => {
-  return new Promise<
-    mysql.RowDataPacket[][] | mysql.RowDataPacket[] | mysql.OkPacket | mysql.OkPacket[] | mysql.ResultSetHeader
-  >((resolve, reject) => {
-    connection.query(
-      sql,
-      args,
-      (
-        queryError: any,
-        result:
-          | mysql.RowDataPacket[][]
-          | mysql.RowDataPacket[]
-          | mysql.OkPacket
-          | mysql.OkPacket[]
-          | mysql.ResultSetHeader
-      ) => {
-        if (queryError) {
-          // If the query fails a rollback is automatically initiated
-          rollback(connection)
-            .then(() => {
-              return reject(queryError);
-            })
-            .catch((err) => {
-              return reject(`Error initiating rollback: ${err}`);
-            });
-        } else {
-          return resolve(result);
-        }
+  return new Promise<QueryResult>((resolve, reject) => {
+    connection.query(sql, args, (queryError: any, result: QueryResult) => {
+      if (queryError) {
+        // If the query fails a rollback is automatically initiated
+        rollback(connection)
+          .then(() => {
+            return reject(queryError);
+          })
+          .catch((err) => {
+            return reject(`Error initiating rollback: ${err}`);
+          });
+      } else {
+        return resolve(result);
       }
-    );
+    });
   });
 };
 
