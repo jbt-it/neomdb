@@ -130,18 +130,18 @@ const TraineeSection = () => {
     //    });
 
     const dummyData: Trainee[] = [
-      { memberID: 8880, vorname: "Philip", nachname: "Schmidt", traineeGeneration: 2023 },
-      { memberID: 8883, vorname: "Florin", nachname: "Bayer", traineeGeneration: 2023 },
-      { memberID: 8890, vorname: "Patrick", nachname: "Dittus", traineeGeneration: 2023 },
-      { memberID: 8881, vorname: "Rufus-Antonius", nachname: "Hergel", traineeGeneration: 2023 },
-      { memberID: 8891, vorname: "Philipp", nachname: "Kiriakidis", traineeGeneration: 2023 },
-      { memberID: 8885, vorname: "Maximilian", nachname: "Klasen", traineeGeneration: 2023 },
-      { memberID: 8886, vorname: "Julia", nachname: "Lange", traineeGeneration: 2023 },
-      { memberID: 8884, vorname: "Finn", nachname: "Michel", traineeGeneration: 2023 },
-      { memberID: 8889, vorname: "Marie-Claire", nachname: "Schnur", traineeGeneration: 2023 },
-      { memberID: 8882, vorname: "Kim", nachname: "Siller", traineeGeneration: 2023 },
-      { memberID: 8887, vorname: "Moritz", nachname: "Taeger", traineeGeneration: 2023 },
-      { memberID: 8888, vorname: "Joshua", nachname: "Welsch", traineeGeneration: 2023 },
+      { memberID: 9001, vorname: "Jeffrey", nachname: "Corn", traineeGeneration: 2023 },
+      { memberID: 9002, vorname: "Jard", nachname: "Kemp", traineeGeneration: 2023 },
+      { memberID: 9003, vorname: "Jimmie", nachname: "O'Brien", traineeGeneration: 2023 },
+      { memberID: 9004, vorname: "Kellan", nachname: "Mclaughin", traineeGeneration: 2023 },
+      { memberID: 9005, vorname: "Talha", nachname: "Driscoll", traineeGeneration: 2023 },
+      { memberID: 9006, vorname: "Miruna", nachname: "Decker", traineeGeneration: 2023 },
+      { memberID: 9007, vorname: "Jorja", nachname: "Bautista", traineeGeneration: 2023 },
+      { memberID: 9008, vorname: "Radhika", nachname: "Norton", traineeGeneration: 2023 },
+      { memberID: 9009, vorname: "Mariana", nachname: "McDonald", traineeGeneration: 2023 },
+      { memberID: 9010, vorname: "Emily", nachname: "Johnson", traineeGeneration: 2023 },
+      { memberID: 9011, vorname: "Liam", nachname: "Davis", traineeGeneration: 2023 },
+      { memberID: 9012, vorname: "Sophia", nachname: "Martinez", traineeGeneration: 2023 },
     ];
     setTrainees(dummyData);
 
