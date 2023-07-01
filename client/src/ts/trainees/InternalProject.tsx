@@ -2,14 +2,21 @@
  * Component for resetting the password by the user without the help of a admin, when logged in
  *
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Grid, IconButton, Dialog, DialogTitle, DialogContent, TextField } from "@material-ui/core";
+import { Typography, IconButton } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import * as traineesTypes from "./traineesTypes";
+import { InternalProjectInformationDialog } from "./InternalProjectInformationDialog";
+import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
+import { InternalProjectDetail } from "./InternalProjectDetail";
+import { AuthContext } from "../global/AuthContext";
+import api from "../utils/api";
+import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
+import { authReducerActionType } from "../global/globalTypes";
 
 /**
  * Function which provides the styles
@@ -115,6 +122,23 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
 ) => {
   const classes = useStyles();
 
+  const { auth, dispatchAuth } = useContext(AuthContext);
+
+  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
+
+  const [name, setName] = useState<string>("");
+  const [kuerzel, setKuerzel] = useState<string>("");
+  const [traineegeneration, setTraineegeneration] = useState<string>("");
+  const [kickoff, setKickoff] = useState<string>("");
+  const [angebotAbgegeben, setAngebotAbgegeben] = useState<string>("");
+  const [apDatum, setApDatum] = useState<string>("");
+  const [apAbgegeben, setApAbgegeben] = useState<string>("");
+  const [zpDatum, setZpDatum] = useState<string>("");
+  const [zpAbgegeben, setZpAbgegeben] = useState<string>("");
+  const [dlAbgegeben, setDlAbgegeben] = useState<string>("");
+  const [projektmitglieder, setProjektmitglieder] = useState<string>("");
+  const [qualitaetsmanager, setQualitaetsmanager] = useState<string>("");
+
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   /**
    * Handles the click on the edit button of the internal project information section
@@ -132,27 +156,11 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
     setInternalProjectInfoDialogOpen(false);
   };
-
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
-
-  const [name, setName] = useState<string>();
-  const [kuerzel, setKuerzel] = useState<string>();
-  const [traineegeneration, setTraineegeneration] = useState<string>();
-  const [kickoff, setKickoff] = useState<string>();
-  const [angebotAbgegeben, setAngebotAbgegeben] = useState<string>();
-  const [apDatum, setApDatum] = useState<string>();
-  const [apAbgegeben, setApAbgegeben] = useState<string>();
-  const [zpDatum, setZpDatum] = useState<string>();
-  const [zpAbgegeben, setZpAbgegeben] = useState<string>();
-  const [dlAbgegeben, setDlAbgegeben] = useState<string>();
-  const [projektmitglieder, setProjektmitglieder] = useState<string>();
-  const [qualitaetsmanager, setQualitaetsmanager] = useState<string>();
-
   /**
    * Retrieves dummy member details
    */
   const getInternalProjectDetails: VoidFunction = () => {
-    setInternalProjectDetails({
+    const ip = {
       id: 5,
       name: "Analoges Bootcamp",
       kuerzel: "DB",
@@ -166,219 +174,72 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       dlAbgegeben: "Nein",
       projektmitglieder: "Marko Müller, Ada Lovelace",
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
-    });
+    };
+    setInternalProjectDetails(ip);
+
+    setName(ip?.name);
+    setKuerzel(ip?.kuerzel);
+    setTraineegeneration(ip?.traineegeneration);
+    setKickoff(ip?.kickoff);
+    setAngebotAbgegeben(ip?.angebotAbgegeben);
+    setApDatum(ip?.apDatum);
+    setApAbgegeben(ip?.apAbgegeben);
+    setZpDatum(ip?.zpDatum);
+    setZpAbgegeben(ip?.zpAbgegeben);
+    setDlAbgegeben(ip?.dlAbgegeben);
+    setProjektmitglieder(ip?.projektmitglieder);
+    setQualitaetsmanager(ip?.qualitaetsmanager);
   };
 
   useEffect(getInternalProjectDetails, []);
 
-  /**
-   * Renders the dialog for changing the internal project informations
-   */
-  const renderInternalProjectInformationDialog: VoidFunction = () => {
-    return (
-      <Dialog
-        open={internalProjectInfoDialogOpen}
-        onClose={handleInternalProjectInfoDialogClose}
-        fullWidth
-        maxWidth="lg"
-        aria-labelledby="general-dialog-title"
-      >
-        <DialogTitle id="general-dialog-title">Internes Projekt</DialogTitle>
-        <DialogContent>
-          <form autoComplete="off">
-            <Grid container spacing={2}>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  required
-                  color="primary"
-                  disabled={!true}
-                  id="name-field"
-                  label="Name"
-                  variant="outlined"
-                  value={name}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  required
-                  color="primary"
-                  disabled={!true}
-                  id="kuerzel-field"
-                  label="Kürzel"
-                  variant="outlined"
-                  value={kuerzel}
-                  onChange={(event) => {
-                    setKuerzel(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  required
-                  disabled={!true}
-                  id="traineegeneration-field"
-                  label="Traineegeneration"
-                  variant="outlined"
-                  value={traineegeneration}
-                  onChange={(event) => {
-                    setTraineegeneration(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="kickoff-field"
-                  label="Kickoff-Termin"
-                  variant="outlined"
-                  value={kickoff}
-                  onChange={(event) => {
-                    setKickoff(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="angebot-abgegeben-field"
-                  label="Angebot abgegeben"
-                  variant="outlined"
-                  value={angebotAbgegeben}
-                  onChange={(event) => {
-                    setAngebotAbgegeben(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="ap-abgegeben-field"
-                  label="AP abgegeben"
-                  variant="outlined"
-                  value={apAbgegeben}
-                  onChange={(event) => {
-                    setApAbgegeben(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="ap-datum-field"
-                  label="AP Datum"
-                  variant="outlined"
-                  value={apDatum}
-                  onChange={(event) => {
-                    setApDatum(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="zp-abgegeben-field"
-                  label="ZP abgegeben"
-                  variant="outlined"
-                  value={zpAbgegeben}
-                  onChange={(event) => {
-                    setZpAbgegeben(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} lg={6}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="zp-datum-field"
-                  label="ZP Datum"
-                  variant="outlined"
-                  value={zpDatum}
-                  onChange={(event) => {
-                    setZpDatum(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="dl-abgegeben-field"
-                  label="DL abgegeben"
-                  variant="outlined"
-                  value={dlAbgegeben}
-                  onChange={(event) => {
-                    setDlAbgegeben(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="projektmitglieder-field"
-                  label="Projektmitglieder"
-                  variant="outlined"
-                  value={projektmitglieder}
-                  onChange={(event) => {
-                    setProjektmitglieder(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TextField
-                  className={classes.fullWidth}
-                  color="primary"
-                  disabled={!true}
-                  id="qualitaetsmanager-field"
-                  label="Qualitätsmanager"
-                  variant="outlined"
-                  value={qualitaetsmanager}
-                  onChange={(event) => {
-                    setQualitaetsmanager(event.target.value);
-                  }}
-                />
-              </Grid>
+  const updateInternalProjectDetails = () => {
+    const data = {
+      name,
+      kuerzel,
+      traineegeneration,
+      kickoff,
+      angebotAbgegeben,
+      apAbgegeben,
+      apDatum,
+      zpDatum,
+      projektmitglieder,
+      dlAbgegeben,
+      zpAbgegeben,
+      qualitaetsmanager,
+    };
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    console.log(data);
+    /*
+    *
+    * Here will be the api call for storing the changed data in the database, currently the api call for the members page is here as a placeholder since the required function is not implemented yet
+    * 
+    api
+      .patch(`/users/${props.match.params.id}`, data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res: any) => {
+        if (res.status === 200) {
+          if (mounted) {
+            showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
+            getInternalProjectDetails();
+          }
+        }
+      })
+      .catch((err: any) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
+      });
+      */
 
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <hr />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button
-                  className={classes.cancelButton}
-                  variant="contained"
-                  onClick={handleInternalProjectInfoDialogClose}
-                >
-                  Abbrechen
-                </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
-                  Änderungen speichern
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        </DialogContent>
-      </Dialog>
-    );
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
   };
 
   /**
@@ -386,7 +247,35 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    */
   return (
     <div>
-      {renderInternalProjectInformationDialog()}
+      <InternalProjectInformationDialog
+        name={name}
+        kuerzel={kuerzel}
+        traineegeneration={traineegeneration}
+        kickoff={kickoff}
+        angebotAbgegeben={angebotAbgegeben}
+        apAbgegeben={apAbgegeben}
+        apDatum={apDatum}
+        zpDatum={zpDatum}
+        projektmitglieder={projektmitglieder}
+        dlAbgegeben={dlAbgegeben}
+        zpAbgegeben={zpAbgegeben}
+        qualitaetsmanager={qualitaetsmanager}
+        internalProjectInfoDialogOpen={internalProjectInfoDialogOpen}
+        handleInternalProjectInfoDialogClose={handleInternalProjectInfoDialogClose}
+        setName={setName}
+        setKuerzel={setKuerzel}
+        setTraineegeneration={setTraineegeneration}
+        setKickoff={setKickoff}
+        setAngebotAbgegeben={setAngebotAbgegeben}
+        setApDatum={setApDatum}
+        setApAbgegeben={setApAbgegeben}
+        setZpDatum={setZpDatum}
+        setZpAbgegeben={setZpAbgegeben}
+        setDlAbgegeben={setDlAbgegeben}
+        setProjektmitglieder={setProjektmitglieder}
+        setQualitaetsmanager={setQualitaetsmanager}
+        updateInternalProjectDetails={updateInternalProjectDetails}
+      />
 
       <div className="content-page">
         <Paper className={classes.paper}>
@@ -397,7 +286,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               </Typography>
             </div>
             <div>
-              {true ? (
+              {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
                 <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
                   <Edit fontSize="inherit" />
                 </IconButton>
@@ -406,54 +295,17 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
           </div>
           <br></br>
           <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Name:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.name}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Kürzel:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.kuerzel}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Traineegeneration:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.traineegeneration}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Kick-Off:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.kickoff}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Angebot abgegeben:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.angebotAbgegeben}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>AP abgegeben:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.apAbgegeben}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>AP Datum:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.apDatum}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>ZP abgegeben:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.zpAbgegeben}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>ZP Datum:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.zpDatum}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>DL abgegeben:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.dlAbgegeben}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Projektmitglieder:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.projektmitglieder}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Qualitätsmanager:</Typography>
-              <Typography className={classes.categoryLine}>{internalProjectDetails?.qualitaetsmanager}</Typography>
-            </div>
+            <InternalProjectDetail name={"Name"} value={name} />
+            <InternalProjectDetail name={"Kürzel"} value={kuerzel} />
+            <InternalProjectDetail name={"Traineegeneration"} value={traineegeneration} />
+            <InternalProjectDetail name={"Kick-Off"} value={kickoff} />
+            <InternalProjectDetail name={"Angebot abgegeben"} value={angebotAbgegeben} />
+            <InternalProjectDetail name={"AP abgegeben"} value={apAbgegeben} />
+            <InternalProjectDetail name={"AP Datum"} value={apDatum} />
+            <InternalProjectDetail name={"ZP abgegeben"} value={zpAbgegeben} />
+            <InternalProjectDetail name={"DL abgegeben"} value={dlAbgegeben} />
+            <InternalProjectDetail name={"Projektmitglieder"} value={projektmitglieder} />
+            <InternalProjectDetail name={"Qualitätsmanager"} value={qualitaetsmanager} />
           </div>
           <br></br>
           <div className={classes.categoryHeader}>
