@@ -22,9 +22,11 @@ import {
   Button,
 } from "@material-ui/core";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
-import PageBar from "../global/navigation/PageBar";
-import CustomSnackbar from "../global/CustomSnackbar";
+import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
+import { showSuccessMessage, showErrorMessage } from "../utils/toastUtils";
+import { transfromDateToSQLDate } from "../utils/dateUtils";
+import { replaceSpecialCharacters } from "../utils/stringUtils";
 
 /**
  * Function which proivdes the styles of the MemberManagement
@@ -56,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: "center",
       fontWeight: "bold",
     },
-    filterContainer: {
+    paperContainer: {
       marginBottom: "10px",
     },
     filters: {
@@ -168,7 +170,7 @@ interface Member {
 }
 
 /**
- * Depicts a table with all members and a filter section to filter the members
+ * Options to create a new member and to change the status of members
  */
 const MemberManagement: React.FunctionComponent = () => {
   const classes = useStyles();
@@ -182,11 +184,7 @@ const MemberManagement: React.FunctionComponent = () => {
   const [nameSort, setNameSort] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-  const [mentor, setMentor] = useState<string>("");
-  const [traineeGeneration, setTraineeGeneration] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [successOpen, setSuccessOpen] = useState<number>(0);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
 
   // Retrieves the members
   const getMembers: VoidFunction = () => {
@@ -203,8 +201,8 @@ const MemberManagement: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        showErrorMessage("Laden der Benutzer fehlgeschlagen");
       });
 
     // Clean-up function
@@ -368,37 +366,80 @@ const MemberManagement: React.FunctionComponent = () => {
   };
 
   /**
-   * Changes the status of the member
+   * Changes the status of the member specified with the id
+   * @param id The id of the member
+   * @param status The status
    */
   const changeMemberStatus = (id: number, status: string) => {
-    // TODO: prompt user to confirm status change
-
-    let payload = {
+    const payload = {
       mitgliedstatus: status,
     };
 
     api
-      .patch("/users/memberstatus/" + id, payload, {
+      .patch("/users/" + id + "/status", payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           getMembers();
-          setSuccessOpen(successOpen + 1);
-          setSuccessOpen(0);
+          showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
         } else {
-          setErrorOpen(errorOpen + 1);
-          setErrorOpen(0);
+          showErrorMessage("Mitgliedsstatus Änderung fehlgeschlagen");
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        showErrorMessage(error.message);
+      });
   };
 
   /**
-   * Adds the specified member
+   * Creates a new member
    */
   const addMember = () => {
-    // TODO: Add member into database
+    if (firstName.trim().length <= 0) {
+      showErrorMessage("Der Vorname darf nicht leer sein");
+      return;
+    }
+    if (lastName.trim().length <= 0) {
+      showErrorMessage("Der Nachname darf nicht leer sein");
+      return;
+    }
+    if (email.trim().length <= 0) {
+      showErrorMessage("Die E-Mail darf nicht leer sein");
+      return;
+    }
+
+    const password = Math.random().toString(36).slice(2, 11);
+    const firstNameSanitized = replaceSpecialCharacters(firstName.trim().replace(" ", "-")).toLowerCase();
+    const lastNameSanitized = replaceSpecialCharacters(lastName.trim().replace(" ", "-")).toLowerCase();
+    const payload = {
+      name: firstNameSanitized + "." + lastNameSanitized,
+      password: password,
+      vorname: firstName.trim(),
+      nachname: lastName.trim(),
+      geburtsdatum: null,
+      handy: null,
+      geschlecht: null,
+      generation: null,
+      traineeSeit: transfromDateToSQLDate(new Date()),
+      email: email,
+    };
+
+    api
+      .post("users/", payload, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 201) {
+          getMembers();
+          showSuccessMessage("Mitglied erfolgreich hinzugefügt");
+        } else {
+          showErrorMessage("Mitglied konnte nicht hinzugefügt werden");
+        }
+      })
+      .catch((error) => {
+        showErrorMessage(error.message);
+      });
   };
 
   /**
@@ -418,22 +459,6 @@ const MemberManagement: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event of the mentor field
-   * @param event
-   */
-  const handleMentor = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setMentor(event.target.value);
-  };
-
-  /**
-   * Handles the change event of the trainee generation field
-   * @param event
-   */
-  const handleTraineeGeneration = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setTraineeGeneration(event.target.value);
-  };
-
-  /**
    * Handles the change event of the email field
    * @param event
    */
@@ -441,7 +466,59 @@ const MemberManagement: React.FunctionComponent = () => {
     setEmail(event.target.value);
   };
 
-  // The additional filters
+  /**
+   * The add member form
+   */
+  const addMemberForm = (
+    <Paper className={classes.paperContainer}>
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography variant="h5" className={classes.paperHeaderText}>
+            Neues Mitglied hinzufügen
+          </Typography>
+          <Divider className={classes.paperHeaderDivider} />
+        </Grid>
+        <Grid item container xs={12} sm={12} md={12} lg={12}>
+          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+            <TextField
+              label="Vorname"
+              className={classes.inputField}
+              color="primary"
+              onChange={handleFirstName}
+              value={firstName}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+            <TextField
+              label="Nachname"
+              className={classes.inputField}
+              color="primary"
+              onChange={handleLastName}
+              value={lastName}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+            <TextField
+              label="Private E-Mail-Adresse"
+              className={classes.inputField}
+              color="primary"
+              onChange={handleEmail}
+              value={email}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Button variant="outlined" color="primary" className={classes.inputButton} onClick={addMember}>
+            Benutzer anlegen
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+
+  /**
+   * The additional filters
+   */
   const additionalFilters = (
     <div>
       <Grid item xs={6} sm={3} className={classes.statusFilterAdditional}>
@@ -495,202 +572,145 @@ const MemberManagement: React.FunctionComponent = () => {
     </div>
   );
 
-  return (
-    <div>
-      <div className="content-page">
-        <Paper className={classes.filterContainer}>
-          <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Neues Mitglied hinzufügen
-                </Typography>
-                <Divider className={classes.paperHeaderDivider} />
-              </Grid>
-              <Grid container xs={12} sm={12} md={6} lg={6}>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Vorname"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleFirstName}
-                    value={firstName}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Nachname"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleLastName}
-                    value={lastName}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Private E-Mail-Adresse"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleEmail}
-                    value={email}
-                  />
-                </Grid>
-              </Grid>
+  /**
+   * The change status filter
+   */
+  const changeStatusFilter = (
+    <Paper className={classes.paperContainer}>
+      <form className={classes.filters} noValidate autoComplete="off">
+        <Grid container>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="h5" className={classes.paperHeaderText}>
+              Status eines Mitglieds ändern
+            </Typography>
+            <Divider className={classes.paperHeaderDivider} />
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <TextField
+              label="Name/Mail/..."
+              className={classes.filterElement}
+              color="primary"
+              onChange={handleSearchInput}
+            />
+          </Grid>
+          <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+            <TextField
+              label="Status"
+              className={classes.filterElement}
+              color="primary"
+              onChange={handleStatusChange}
+              value={statusFilter}
+              select
+            >
+              <MenuItem value={""}>-</MenuItem>
+              <MenuItem value={"Trainee"}>Trainee</MenuItem>
+              <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+              <MenuItem value={"Senior"}>Senior</MenuItem>
+              <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+              <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
+            <TextField
+              label="Ressort"
+              className={classes.filterElement}
+              color="primary"
+              onChange={handleRessortChange}
+              value={ressortFilter}
+              select
+            >
+              <MenuItem value={""}>-</MenuItem>
+              <MenuItem value={"NET"}>NET</MenuItem>
+              <MenuItem value={"QM"}>QM</MenuItem>
+              <MenuItem value={"F&R"}>F&R</MenuItem>
+              <MenuItem value={"FK"}>FK</MenuItem>
+              <MenuItem value={"MIT"}>MIT</MenuItem>
+              <MenuItem value={"MAR"}>MAR</MenuItem>
+              <MenuItem value={"IT"}>IT</MenuItem>
+            </TextField>
+          </Grid>
+        </Grid>
+        <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+          {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+        </IconButton>
+      </form>
+      {additionalFiltersState ? additionalFilters : null}
+      <div className={classes.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</div>
+    </Paper>
+  );
 
-              <Grid container xs={12} sm={12} md={6} lg={6}>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Mentor"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleMentor}
-                    value={mentor}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={6} className={classes.inputContainer}>
-                  <TextField
-                    label="Trainee Generation"
-                    className={classes.inputField}
-                    color="primary"
-                    onChange={handleTraineeGeneration}
-                    value={traineeGeneration}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12} sm={12}>
-                <Button variant="outlined" color="primary" className={classes.inputButton} onClick={addMember}>
-                  Benutzer anlegen
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} sm={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Status eines Mitglieds ändern
-                </Typography>
-                <Divider className={classes.paperHeaderDivider} />
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  label="Name/Mail/..."
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleSearchInput}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+  /**
+   * The change status table
+   */
+  const changeStatusTable = (
+    <TableContainer component={Paper} className={classes.tableContainer}>
+      <Table stickyHeader aria-label="sticky table">
+        <TableHead>
+          <TableRow>
+            <TableCell className={classes.tableHeadCell}>
+              <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+                <Typography variant="h6">Name</Typography>
+                {getNameSortIcon()}
+              </div>
+            </TableCell>
+            <TableCell className={classes.tableHeadCell}>
+              <Typography variant="h6">Handy</Typography>
+            </TableCell>
+            <TableCell className={classes.tableHeadCell}>
+              <Typography variant="h6">Mail</Typography>
+            </TableCell>
+            <TableCell className={classes.tableHeadCell}>
+              <Typography variant="h6">Status</Typography>
+            </TableCell>
+            <TableCell className={classes.tableHeadCell}>
+              <Typography variant="h6">Ressort</Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {getFilteredAndSortedMembers().map((member, index) => (
+            <TableRow hover key={index}>
+              <TableCell component="th" scope="row">
+                {`${member.vorname} ${member.nachname}`}
+              </TableCell>
+              <TableCell>{member.handy}</TableCell>
+              <TableCell>{member.jbt_email}</TableCell>
+              <TableCell>
                 <TextField
                   label="Status"
                   className={classes.filterElement}
                   color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
+                  onChange={(event) => {
+                    changeMemberStatus(member.mitgliedID, event.target.value);
+                  }}
+                  value={member.mitgliedstatus}
                   select
                 >
-                  <MenuItem value={""}>-</MenuItem>
                   <MenuItem value={"Trainee"}>Trainee</MenuItem>
                   <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
                   <MenuItem value={"Senior"}>Senior</MenuItem>
-                  <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
                   <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
-                <TextField
-                  label="Ressort"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleRessortChange}
-                  value={ressortFilter}
-                  select
-                >
-                  <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"NET"}>NET</MenuItem>
-                  <MenuItem value={"QM"}>QM</MenuItem>
-                  <MenuItem value={"F&R"}>F&R</MenuItem>
-                  <MenuItem value={"FK"}>FK</MenuItem>
-                  <MenuItem value={"MIT"}>MIT</MenuItem>
-                  <MenuItem value={"MAR"}>MAR</MenuItem>
-                  <MenuItem value={"IT"}>IT</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-            <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
-              {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-            </IconButton>
-          </form>
-          {additionalFiltersState ? additionalFilters : null}
-          <div className={classes.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</div>
-        </Paper>
-        <TableContainer component={Paper} className={classes.tableContainer}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableHeadCell}>
-                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
-                    <Typography variant="h6">Name</Typography>
-                    {getNameSortIcon()}
-                  </div>
-                </TableCell>
-                <TableCell className={classes.tableHeadCell}>
-                  <Typography variant="h6">Handy</Typography>
-                </TableCell>
-                <TableCell className={classes.tableHeadCell}>
-                  <Typography variant="h6">Mail</Typography>
-                </TableCell>
-                <TableCell className={classes.tableHeadCell}>
-                  <Typography variant="h6">Status</Typography>
-                </TableCell>
-                <TableCell className={classes.tableHeadCell}>
-                  <Typography variant="h6">Ressort</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {getFilteredAndSortedMembers().map((member, index) => (
-                <TableRow hover key={index}>
-                  <TableCell component="th" scope="row">
-                    {`${member.vorname} ${member.nachname}`}
-                  </TableCell>
-                  <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.jbt_email}</TableCell>
-                  <TableCell>
-                    <TextField
-                      label="Status"
-                      className={classes.filterElement}
-                      color="primary"
-                      onChange={(event) => {
-                        changeMemberStatus(member.mitgliedID, event.target.value);
-                      }}
-                      value={member.mitgliedstatus}
-                      select
-                    >
-                      <MenuItem value={"Trainee"}>Trainee</MenuItem>
-                      <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-                      <MenuItem value={"Senior"}>Senior</MenuItem>
-                      <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
 
-                      <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-                      <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
-                    </TextField>
-                  </TableCell>
-                  <TableCell>{member.ressort}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+                  <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
+                </TextField>
+              </TableCell>
+              <TableCell>{member.ressort}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
+  return (
+    <div>
+      <div className="content-page">
+        {addMemberForm}
+        {changeStatusFilter}
+        {changeStatusTable}
       </div>
       <PageBar pageTitle="Mitgliederübersicht" />
-      {successOpen ? (
-        <CustomSnackbar
-          snackbarMessage="Aktualisierung des Profils war erfolgreich!"
-          snackProps={{ variant: "success" }}
-        />
-      ) : null}
-      {errorOpen ? (
-        <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} />
-      ) : null}
     </div>
   );
 };
