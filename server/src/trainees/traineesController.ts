@@ -120,8 +120,10 @@ export const retrieveTeamMails = (req: Request, res: Response) => {
   database
     .query(
       `SELECT jbt_email
-      FROM mitglied, internesprojekt
-      WHERE internesProjektID = ? AND internesProjektID = mitglied.internesprojekt`,
+      FROM mitglied
+      INNER JOIN internesprojekt
+      ON mitglied.internesprojekt = internesprojekt.internesprojektID
+      WHERE internesProjektID = ?`,
       [req.params.id]
     )
     .then((result: traineesTypes.GetIPMailType[]) => {
