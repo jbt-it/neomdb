@@ -129,6 +129,13 @@ export type GetDirectorsQueryResult = {
 };
 
 /**
+ * Type of query results of director's department retrieval.
+ */
+export type GetDirectorsDepartmentQueryResult = {
+  ressortID: number;
+};
+
+/**
  * Type of query results of permissions retrieval
  */
 export type GetPermissionsQueryResult = {
