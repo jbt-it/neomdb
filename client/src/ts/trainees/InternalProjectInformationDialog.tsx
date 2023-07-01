@@ -1,8 +1,6 @@
-import React from "react";
-import { Grid, Dialog, DialogTitle, DialogContent, TextField } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import * as traineesTypes from "./traineesTypes";
+import React from "react";
 
 interface DetailProps {
   name: string;
@@ -154,6 +152,12 @@ export const InternalProjectInformationDialog: React.FC<DetailProps> = ({
     updateInternalProjectDetails();
     handleInternalProjectInfoDialogClose();
   };
+
+  /*
+   * TODO: Change TextField zu DatePicker after upgrading Material UI
+   * Check if date is stored correctly in database after api is connected
+   * Generally check TextFields, check if Fields are written in the correct format e.g. Traineegeneration or the "AP abgegeben" fields as they are boolean
+   **/
 
   return (
     <Dialog

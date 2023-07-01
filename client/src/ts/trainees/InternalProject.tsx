@@ -214,6 +214,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     /*
     *
     * Here will be the api call for storing the changed data in the database, currently the api call for the members page is here as a placeholder since the required function is not implemented yet
+    * Check if data is stored correctly in database after api is implemented
     * 
     api
       .patch(`/users/${props.match.params.id}`, data, {
