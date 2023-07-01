@@ -3,28 +3,18 @@
  */
 
 /**
- * Type of query results of the login
- */
-export type LoginQueryResult = {
-  mitgliedID: number;
-  name: string;
-  passwordHash: string;
-  permissions: string;
-};
-
-/**
  * Type of query results of the user data retrieval
  */
 export type UserDataQueryResult = {
-  mitliedID: number;
+  mitgliedID: number;
   name: string;
+  passwordHash?: string;
   permissions: string;
 };
 
 /**
- * Type of query results of the director permissions retrieval
+ * Type of query results of the permission retrieval
  */
 export type DirectorPermissionsQueryResult = {
-  permissionID: number;
-  canDelegate: boolean;
+  permissions: string;
 };

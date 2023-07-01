@@ -6,10 +6,10 @@ import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Collapse, Typography } from "@material-ui/core";
 import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, ExitToApp, TrendingUp } from "@material-ui/icons";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import JBTLogoBlack from "../../../images/jbt-logo-black.png";
-import { AuthContext } from "../AuthContext";
-import api from "../../utils/api";
-import { authReducerActionType } from "../globalTypes";
+import JBTLogoBlack from "../../../../images/jbt-logo-black.png";
+import { AuthContext } from "../../AuthContext";
+import api from "../../../utils/api";
+import { authReducerActionType } from "../../globalTypes";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
@@ -82,7 +82,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles the click event on the different extendable list items
    * @param value topic of the extendable list item
    */
-  const handleCollpaseClick = (value: string) => (event: React.MouseEvent) => {
+  const handleCollpaseClick = (value: string) => () => {
     switch (value) {
       case "Mitglieder": {
         setMemberOpen(!memberOpen);
@@ -109,7 +109,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles the click Event of the nav links
    * @param value topic of the nav link
    */
-  const handleNavLinkClick = (pathname: string) => (event: React.MouseEvent) => {
+  const handleNavLinkClick = (pathname: string) => () => {
     setMemberOpen(false);
     setToolsOpen(false);
     setMyFunctionsOpen(false);
@@ -120,7 +120,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    * Handles click on logout link
    */
   const handleLogout: VoidFunction = () => {
-    api.post("/auth/logout").then((result) => {
+    api.post("/auth/logout").then(() => {
       history.push("/login");
       dispatchAuth({ type: authReducerActionType.deauthenticate });
     });
@@ -139,7 +139,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
           activeNavLink === "/vorstand" ||
           activeNavLink === "/geburtstage" ||
           activeNavLink === "/traineebereich" ||
-          activeNavLink === "/kuratoren"
+          activeNavLink === "/kuratoren" ||
+          activeNavLink === "/berechtigungen"
         ) {
           return classes.drawerListItemActive;
         }
@@ -232,6 +233,24 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
             </NavLink>
             <NavLink
               exact
+              to="/ressorts"
+              className={classes.listItemNavText}
+              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              onClick={handleNavLinkClick(pathname)}
+            >
+              <ListItem button onClick={props.drawer(false)}>
+                <ListItemText className={classes.subListItem} primary="Ressorts" />
+              </ListItem>
+            </NavLink>
+            <NavLink
+              exact
+              to="/vorstand"
+              className={classes.listItemNavText}
+              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              onClick={handleNavLinkClick(pathname)}
+            ></NavLink>
+            <NavLink
+              exact
               to="/ewigervorstand"
               className={classes.listItemNavText}
               activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
@@ -274,6 +293,19 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
                 <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
             </NavLink>
+            {auth.permissions.length > 0 ? (
+              <NavLink
+                exact
+                to="/berechtigungen"
+                className={classes.listItemNavText}
+                activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+                onClick={handleNavLinkClick(pathname)}
+              >
+                <ListItem button onClick={props.drawer(false)}>
+                  <ListItemText className={classes.subListItem} primary="Berechtigungen" />
+                </ListItem>
+              </NavLink>
+            ) : null}
           </List>
         </Collapse>
         <NavLink

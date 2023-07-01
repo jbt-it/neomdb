@@ -8,6 +8,7 @@
 export type Permission = {
   permissionID: number;
   canDelegate: boolean;
+  directorID?: number;
 };
 
 /**
@@ -17,6 +18,7 @@ export type JWTPayload = {
   mitgliedID: number;
   name: string;
   permissions: Permission[];
+  roles: number[];
 };
 
 /**

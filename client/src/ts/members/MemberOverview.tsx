@@ -21,7 +21,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
-import PageBar from "../global/navigation/PageBar";
+import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
 import { useContext } from "react";
@@ -166,13 +166,12 @@ const MemberOverview: React.FunctionComponent = () => {
           if (mounted) {
             setMembers(res.data);
           }
-        } else if (res.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       })
-      .catch((error) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(error);
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -187,9 +186,7 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the search filter input
    * @param event
    */
-  const handleSearchInput = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchFilter(event.target.value);
   };
 
@@ -197,9 +194,7 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the status filter input
    * @param event
    */
-  const handleStatusChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setStatusFilter(event.target.value);
   };
 
@@ -207,9 +202,7 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the ressort filter input
    * @param event
    */
-  const handleRessortChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleRessortChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setRessortFilter(event.target.value);
   };
 
@@ -217,9 +210,7 @@ const MemberOverview: React.FunctionComponent = () => {
    * Handles the change event on the sort input
    * @param event
    */
-  const handleSortOptionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleSortOptionChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSortOption(event.target.value);
   };
 
@@ -391,12 +382,8 @@ const MemberOverview: React.FunctionComponent = () => {
         label="Sortieren nach..."
       >
         <MenuItem value={""}>-</MenuItem>
-        <MenuItem value={"lastchange ASC"}>
-          Zuletzt Aktualisiert (aufsteigend)
-        </MenuItem>
-        <MenuItem value={"lastchange DESC"}>
-          Zuletzt Aktualisiert (absteigend)
-        </MenuItem>
+        <MenuItem value={"lastchange ASC"}>Zuletzt Aktualisiert (aufsteigend)</MenuItem>
+        <MenuItem value={"lastchange DESC"}>Zuletzt Aktualisiert (absteigend)</MenuItem>
       </TextField>
     </div>
   );
@@ -426,13 +413,9 @@ const MemberOverview: React.FunctionComponent = () => {
                 >
                   <MenuItem value={""}>-</MenuItem>
                   <MenuItem value={"Trainee"}>Trainee</MenuItem>
-                  <MenuItem value={"aktives Mitglied"}>
-                    aktives Mitglied
-                  </MenuItem>
+                  <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
                   <MenuItem value={"Senior"}>Senior</MenuItem>
-                  <MenuItem value={"passives Mitglied"}>
-                    passives Mitglied
-                  </MenuItem>
+                  <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
                   <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
                 </TextField>
               </Grid>
@@ -456,32 +439,19 @@ const MemberOverview: React.FunctionComponent = () => {
                 </TextField>
               </Grid>
             </Grid>
-            <IconButton
-              aria-label="more filter options"
-              className={classes.filterBtn}
-              onClick={toggleFilters}
-            >
-              {additionalFiltersState ? (
-                <ExpandLess fontSize="inherit" />
-              ) : (
-                <ExpandMore fontSize="inherit" />
-              )}
+            <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+              {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
             </IconButton>
           </form>
           {additionalFiltersState ? additionalFilters : null}
-          <div className={classes.amountOfEntries}>
-            {`${getFilteredAndSortedMembers().length} Einträge`}
-          </div>
+          <div className={classes.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</div>
         </Paper>
         <TableContainer component={Paper} className={classes.tableContainer}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell className={classes.tableHeadCell}>
-                  <div
-                    className={classes.tableHeadSortBtn}
-                    onClick={toggleNameSort}
-                  >
+                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
                     Name
                     {getNameSortIcon()}
                   </div>

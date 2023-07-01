@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Textfield from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import PageBar from "../global/navigation/PageBar";
+import PageBar from "../global/components/navigation/PageBar";
 
 /**
  * Function that allows the user to change the password when logged in, by posting the new password to the backend
@@ -45,8 +45,7 @@ const ChangePassword: React.FunctionComponent = () => {
   const { auth } = useContext(AuthContext);
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
-  const [newPasswordValidation, setNewPasswordValidation] =
-    useState<string>("");
+  const [newPasswordValidation, setNewPasswordValidation] = useState<string>("");
   const [failedOldPassword, setFailedoldPassword] = useState<boolean>(false);
   const [postSuccesful, setPostSuccesful] = useState<boolean>(true);
   const [resResponse200, setResResponse200] = useState<boolean>(false);
@@ -56,10 +55,7 @@ const ChangePassword: React.FunctionComponent = () => {
    * Handles the API call and cleans state thereafter
    */
   const postPassword = () => {
-    if (
-      newPassword === newPasswordValidation &&
-      checkNewPassword(newPassword)
-    ) {
+    if (newPassword === newPasswordValidation && checkNewPassword(newPassword)) {
       setPostSuccesful(true);
       // Data package
       const data = {
@@ -85,8 +81,7 @@ const ChangePassword: React.FunctionComponent = () => {
             return [{ status: res.status }];
           }
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(() => {
           setFailedoldPassword(true);
         });
     } else {
@@ -247,8 +242,8 @@ const ChangePassword: React.FunctionComponent = () => {
       <div className="content-page">
         <Paper className={classes.paper}>
           <p>
-            Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl,
-            einen kleinen- und einen großen Buchstaben enthalten
+            Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen
+            Buchstaben enthalten
           </p>
         </Paper>
         <Paper className={classes.paper}>

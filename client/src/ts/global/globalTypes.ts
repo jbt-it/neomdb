@@ -3,10 +3,10 @@
  */
 export type AuthContextType = {
   auth: Auth;
-  dispatchAuth: Function;
+  dispatchAuth: React.Dispatch<authReducerAction>;
 };
 
-type Permission = {
+export type Permission = {
   permissionID: number;
   canDelegate: boolean;
 };
@@ -19,6 +19,7 @@ export type Auth = {
   userID: number | null;
   userName: string | null;
   permissions: Permission[];
+  roles: number[];
 };
 
 /**
@@ -44,6 +45,7 @@ export type authReducerAction =
         userID: number;
         userName: string;
         permissions: Permission[];
+        roles: number[];
       };
     }
   | {

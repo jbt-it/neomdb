@@ -1,110 +1,21 @@
 /**
  * Definition of the functions required for authentification and authorization
  */
-import jwt = require("jsonwebtoken");
-import fs = require("fs");
 import bcrypt = require("bcryptjs");
-import { Request, Response, NextFunction } from "express";
-import database = require("../../database");
+import { CookieOptions, Request, Response } from "express";
+import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-
-const JWTKeys = {
-  public: fs.readFileSync(process.env.JWT_PUBLIC),
-  private: fs.readFileSync(process.env.JWT_PRIVATE),
-};
-
-const JWTSignOptions: jwt.SignOptions = {
-  expiresIn: 60 * 60 * 10, // Expires in 10 hours
-  algorithm: "RS256",
-};
-
-const JWTVerifyOptions: jwt.VerifyOptions = {
-  algorithms: ["RS256"],
-};
+import database = require("../../database");
+import { createUserDataPayload } from "../../utils/authUtils";
 
 /**
  * Options for the cookie
  */
-const cookieOptions = {
+const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: true, // Cookie can only be sent to the same site
-};
-
-/**
- * Generates JWT based on query results for the login process
- * @param payload object containing non sensitive user data
- */
-export const generateJWT = (payload: globalTypes.JWTPayload): string => {
-  return jwt.sign(payload, JWTKeys.private, JWTSignOptions);
-};
-
-/**
- * Verifies recived JWT from the user and returnes decoded payload or false
- * @param token JWT sent with the users request
- */
-export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
-  try {
-    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as globalTypes.JWTPayload;
-  } catch (err) {
-    return null;
-  }
-};
-
-/**
- * Verifies JWT and protects following routes from unauthorised access
- */
-export const protectRoutes = (req: Request, res: Response, next: NextFunction) => {
-  if (req.cookies) {
-    const jwtData = verifyJWT(req.cookies.token);
-    if (jwtData !== null) {
-      res.locals.memberID = jwtData.mitgliedID;
-      res.locals.permissions = jwtData.permissions;
-      next();
-    } else {
-      return res.status(401).send("Authentication failed: Please log in");
-    }
-  } else {
-    return res.status(401).send("Authentication failed: Please log in");
-  }
-};
-
-/**
- * Checks if memberID equals ressource id or member has specified permission
- * to grant access to ressource
- */
-export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const jwtData = verifyJWT(req.cookies.token);
-    if (
-      Number(req.params.id) === jwtData.mitgliedID ||
-      permissions.every((element) => jwtData.permissions.some((permission) => permission.permissionID === element))
-    ) {
-      res.locals.memberID = jwtData.mitgliedID;
-      res.locals.permissions = jwtData.permissions;
-      next();
-    } else {
-      return res.status(403).send("Authorization failed: You are not permitted to do this");
-    }
-  };
-};
-
-/**
- * Checks if user has the right permissions to use the following routes
- * Every permission in the permissions array needs to be included in the permissions
- * of the received jwt
- * @param permissions Array of permissions which are allowed to use following routes
- */
-export const restrictRoutes = (permissions: number[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const jwtDataPermissions = verifyJWT(req.cookies.token).permissions;
-    if (permissions.every((element) => jwtDataPermissions.some((permission) => permission.permissionID === element))) {
-      next();
-    } else {
-      return res.status(403).send("Authorization failed: You are not permitted to do this");
-    }
-  };
+  sameSite: "none", // Cookie can be sent to every site
 };
 
 /**
@@ -137,7 +48,7 @@ export const login = (req: Request, res: Response): void => {
         GROUP BY mitgliedID, name`,
         [req.body.username]
       )
-      .then((result: authTypes.LoginQueryResult[]) => {
+      .then((result: authTypes.UserDataQueryResult[]) => {
         if (result.length === 0) {
           // Sleeping randomly between 50 and 100 miliseconds to prevent username prediction
           sleepRandomly(50, 110);
@@ -148,50 +59,31 @@ export const login = (req: Request, res: Response): void => {
         // Selects permissions belonging to a possible role of the member
         database
           .query(
-            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
-          WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
+          WHERE mitglied_has_evposten.mitglied_mitgliedID = ? AND mitglied_has_evposten.von <= NOW() AND mitglied_has_evposten.bis >= NOW();
         `,
             [result[0].mitgliedID]
           )
-          .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
-            let permissions = [];
-            // Adds role permissions to the permissions array
-            if (directorPermissionsResult.length !== 0) {
-              permissions = directorPermissionsResult;
-            }
-
-            // Adds normal permissions to the permissions array
-            if (result[0].permissions) {
-              result[0].permissions
-                .split(",")
-                .map(Number)
-                .map((perm) => {
-                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                  permissions.push({ permissionID: perm, canDelegate: 0 });
-                });
-            }
+          .then((directorPermissionsResult: globalTypes.Permission[]) => {
             bcrypt
               .compare(req.body.password, result[0].passwordHash)
               .then((match) => {
                 if (match) {
-                  const payload: globalTypes.JWTPayload = {
-                    mitgliedID: result[0].mitgliedID,
-                    name: result[0].name,
-                    permissions,
-                  };
+                  const payload = createUserDataPayload(result[0], directorPermissionsResult);
                   const token = generateJWT(payload);
                   res.cookie("token", token, cookieOptions).status(200).json(payload);
                 } else {
                   res.status(401).send("Username or password wrong");
                 }
               })
-              .catch((err) => {
+              .catch(() => {
                 res.status(401).send("Username or password wrong");
               });
           })
           .catch((err) => {
+            console.log(err);
             res.status(500).send("Query Error");
           });
       })
@@ -220,38 +112,22 @@ export const retrieveUserData = (req: Request, res: Response) => {
       // Selects permissions belonging to a possible role of the member
       database
         .query(
-          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
         `,
           [jwtData.mitgliedID]
         )
-        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
-          let permissions = [];
-
-          // Adds role permissions to the permissions array
-          if (directorPermissionsResult.length !== 0) {
-            permissions = directorPermissionsResult;
-          }
-
-          // Adds normal permissions to the permissions array
-          if (result[0].permissions) {
-            result[0].permissions
-              .split(",")
-              .map(Number)
-              .map((perm) => {
-                // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                permissions.push({ permissionID: perm, canDelegate: 0 });
-              });
-          }
-          res.status(200).json({ ...result[0], permissions });
+        .then((directorPermissionsResult: globalTypes.Permission[]) => {
+          const payload = createUserDataPayload(result[0], directorPermissionsResult);
+          res.status(200).json(payload);
         })
-        .catch((error) => {
+        .catch(() => {
           res.status(500).send("Query Error");
         });
     })
-    .catch((error) => {
+    .catch(() => {
       res.status(500).send("Query Error");
     });
 };

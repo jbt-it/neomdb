@@ -2,38 +2,15 @@
  * The MemberPage-Component displays details of a member and can be edited by the owner of this page
  */
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { AuthContext } from "../../global/AuthContext";
-import PageBar from "../../global/navigation/PageBar";
-import CustomSnackbar from "../../global/CustomSnackbar";
+import PageBar from "../../global/components/navigation/PageBar";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import * as membersTypes from "../membersTypes";
 import { authReducerActionType } from "../../global/globalTypes";
-
-/**
- * Function which proivdes the styles of the MemberPage
- */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    memberPageRoot: {
-      flexGrow: 1,
-      padding: "5px",
-      marginTop: "58px",
-      marginBottom: "45px",
-      [theme.breakpoints.up("md")]: {
-        marginTop: "65px",
-        marginLeft: "287px",
-        marginRight: "7px",
-      },
-      [theme.breakpoints.up("sm")]: {
-        marginTop: "65px",
-      },
-    },
-  })
-);
 
 /**
  * Interface for the match parameter of the router
@@ -45,9 +22,6 @@ interface RouterMatch {
 const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
-  const classes = useStyles();
-  const [successOpen, setSuccessOpen] = useState<number>(0);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
@@ -59,7 +33,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   /**
    * Retrieves all members
    */
-  const getMembers: VoidFunction = () => {
+  const getMembers: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -74,20 +48,21 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
     return () => {
       mounted = false;
     };
-  };
+  }, [dispatchAuth]);
 
   /**
    * Retrieves all departments
    */
-  const getDepartments: VoidFunction = () => {
+  const getDepartments: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -102,20 +77,21 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
     return () => {
       mounted = false;
     };
-  };
+  }, [dispatchAuth]);
 
   /**
    * Retrieves all languages
    */
-  const getLanguages: VoidFunction = () => {
+  const getLanguages: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -130,20 +106,21 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
     return () => {
       mounted = false;
     };
-  };
+  }, []);
 
   /**
    * Retrieves all edv skills
    */
-  const getEdvSkills: VoidFunction = () => {
+  const getEdvSkills: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -158,15 +135,16 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
     return () => {
       mounted = false;
     };
-  };
+  }, []);
 
   /**
    * Retrieves the member details
@@ -181,14 +159,14 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setSuccessOpen(0);
             setMembersDetails(res.data[0]);
           }
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
 
     // Clean-up function
@@ -210,16 +188,17 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setSuccessOpen(successOpen + 1);
+            showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
             getMemberDetails();
           }
-        } else if (res.status === 500) {
-          setErrorOpen(errorOpen + 1);
         }
       })
       .catch((err) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
-        console.log(err);
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
       });
 
     // Clean-up function
@@ -234,19 +213,19 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       setIsOwner(auth.userID === parseInt(props.match.params.id, 10)),
     [props.match.params.id, auth.userID]
   );
-  useEffect(() => getMembers(), []);
-  useEffect(() => getDepartments(), []);
-  useEffect(() => getLanguages(), []);
-  useEffect(() => getEdvSkills(), []);
-  useEffect(() => setSuccessOpen(0), []);
+  useEffect(() => getMembers(), [getMembers]);
+  useEffect(() => getDepartments(), [getDepartments]);
+  useEffect(() => getLanguages(), [getLanguages]);
+  useEffect(() => getEdvSkills(), [getEdvSkills]);
   useEffect(getMemberDetails, [props.match.params.id, dispatchAuth]);
 
   return (
     <div>
-      <div className={classes.memberPageRoot}>
+      <div className="content-page">
         {memberDetails ? (
           <DisplayMemberDetails
             members={members}
+            listOfPermissions={auth.permissions}
             departments={departments}
             listOfLanguages={languages}
             listOfEDVSkills={edvSkills}
@@ -258,15 +237,6 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
         ) : null}
       </div>
       <PageBar pageTitle="Profilseite" />
-      {successOpen ? (
-        <CustomSnackbar
-          snackbarMessage="Aktualisierung des Profils war erfolgreich!"
-          snackProps={{ variant: "success" }}
-        />
-      ) : null}
-      {errorOpen ? (
-        <CustomSnackbar snackbarMessage="Aktualisierung ist fehlgeschlagen!" snackProps={{ variant: "error" }} />
-      ) : null}
     </div>
   );
 };

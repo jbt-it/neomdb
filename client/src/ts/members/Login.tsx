@@ -86,9 +86,10 @@ const Login: React.FunctionComponent = () => {
           const userID = res.data.mitgliedID;
           const userName = res.data.name;
           const permissions = res.data.permissions;
+          const roles = res.data.roles;
           dispatchAuth({
             type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions },
+            payload: { userID, userName, permissions, roles },
           });
           history.push("/");
         } else {
@@ -96,8 +97,7 @@ const Login: React.FunctionComponent = () => {
           setFailedLogin(true);
         }
       })
-      .catch((error) => {
-        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      .catch(() => {
         setFailedLogin(true);
       });
     setPassword("");
@@ -160,10 +160,10 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <div className="login">
-      <Grid container spacing={0} alignItems="center" justify="center">
+      <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={10} sm={8} md={6} lg={4}>
           <Paper className={classes.paper}>
-            <img className={classes.logo} src={logo} />
+            <img className={classes.logo} src={logo} alt="JBT-Logo" />
             <h1>Login</h1>
             <form
               className={classes.login}
