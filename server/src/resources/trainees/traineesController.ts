@@ -1,10 +1,42 @@
 /**
- * Definition of the handler functions for the trainee module
+ * Definition of the handler functions for the trainees module
  */
 import { Request, Response } from "express";
-import database = require("../../database");
-import * as traineeTypes from "./traineesTypes";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
+import database = require("../../database");
+
+import { doesPermissionsInclude } from "../../utils/authUtils";
+import * as traineesTypes from "./traineesTypes";
+import { QueryResult } from "databaseTypes";
+
+/**
+ * Retrieves a single internal project
+ */
+export const retrieveIP = (req: Request, res: Response): void => {
+  database
+    .query(
+      `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
+      FROM internesprojekt
+      WHERE internesProjektID = ?`,
+      [req.params.id]
+    )
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetInternalProjectType[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("IP not found");
+        } else {
+          res.status(200).json(result);
+        }
+      }
+    )
+    .catch((err) => {
+      res.status(500).send("Query Error");
+      console.log(err);
+    });
+};
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation
@@ -25,15 +57,102 @@ export const retrieveTraineeChoice = (req: Request, res: Response): void => {
       WHERE  generation.generationID = ?`,
       [req.params.id]
     )
-    .then((result: traineeTypes.GetTraineeChoiceResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetTraineeChoiceResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });
 };
 
 /**
+ * Updates an internal project
+ */
+export const updateIP = (req: Request, res: Response): void => {
+  const date: Date = new Date();
+
+  // Format date yyyy-mm-dd hh:mm:ss
+  const lastChangeTime =
+    date.getFullYear() +
+    "-" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("00" + date.getDate()).slice(-2) +
+    " " +
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2);
+
+  // Grants access to all fields for members with permission
+  if (doesPermissionsInclude(res.locals.permissions, [15])) {
+    database
+      .query(
+        `UPDATE internesprojekt
+          SET  generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
+          WHERE internesProjektID = ?`,
+        [
+          req.body.generationID,
+          req.body.projektname,
+          req.body.kuerzel,
+          req.body.kickoff,
+          req.body.AngebotBeiEV,
+          req.body.ZPBeiEV,
+          req.body.ZPGehalten,
+          req.body.APBeiEV,
+          req.body.APGehalten,
+          req.body.DLBeiEV,
+          req.params.id,
+        ]
+      )
+      .then((result) => {
+        res.status(200).send("IP Update Successful");
+      })
+      .catch((err) => {
+        res.status(500).send("Query Error: Updating IP failed");
+      });
+  } else {
+    res.status(403).send("Authorization failed: You are not permitted to do this");
+  }
+};
+
+/**
+ * Retrieves the mails for the specified internal projects
+ */
+export const retrieveTeamMails = (req: Request, res: Response) => {
+  database
+    .query(
+      `SELECT jbt_email
+      FROM mitglied
+      INNER JOIN internesprojekt
+      ON mitglied.internesprojekt = internesprojekt.internesprojektID
+      WHERE internesProjektID = ?`,
+      [req.params.id]
+    )
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetIPMailType[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("Email not found");
+        } else {
+          res.status(200).json(result);
+        }
+      }
+    )
+    .catch((err) => {
+      res.status(500).send("Query Error");
+      console.log(err);
+    });
+};
+/*
  * Gets letter of motivation form trainees of given generation
  * @param {Request} req request object
  * @param {number} req.body.generationID
@@ -50,9 +169,14 @@ export const retrieveTraineeMotivation = (req: Request, res: Response): void => 
       WHERE generation.generationID = ?`,
       [req.body.generationID]
     )
-    .then((result: traineeTypes.GetTraineeMotivationResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetTraineeMotivationResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });
@@ -72,9 +196,14 @@ export const retrieveGenerations = (req: Request, res: Response): void => {
       FROM generation`,
       []
     )
-    .then((result: traineeTypes.GetGenerationsResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetGenerationsResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });
@@ -201,9 +330,14 @@ export const getMentorsOfGeneration = (req: Request, res: Response): void => {
     WHERE generation_has_mentor.generation_generationID = ?`,
       [req.params.id]
     )
-    .then((result: traineeTypes.GetMentorsOfGenerationResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        //  traineesTypes.GetMentorsOfGenerationResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });
@@ -220,9 +354,14 @@ export const getInternalProjectsOfGeneration = (req: Request, res: Response): vo
     .query(`SELECT internesprojektID, generation, projektname, kuerzel FROM internesprojekt WHERE generation=?`, [
       req.params.id,
     ])
-    .then((result: traineeTypes.GetInternalProjectOfGenerationResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // traineesTypes.GetInternalProjectOfGenerationResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch((err) => {
       res.status(500).send("Query Error");
     });

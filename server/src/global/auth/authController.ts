@@ -2,10 +2,10 @@
  * Definition of the functions required for authentification and authorization
  */
 import { CookieOptions, Request, Response } from "express";
-import database = require("../../database");
+import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 import * as globalTypes from "./../globalTypes";
 import * as authTypes from "./authTypes";
-import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
+import database = require("../../database");
 import { createUserDataPayload } from "../../utils/authUtils";
 import { QueryResult } from "databaseTypes";
 import { loginUser } from "./authServices";
