@@ -2,13 +2,13 @@
  * Definition of the API routes and invocation of the correct handler function
  */
 import express = require("express");
-import authenticationMiddleware from "../middleware/authentication";
+import authenticationMiddleware from "../../middleware/authentication";
 import {
   checkDepartmentAccess,
   restrictRoutes,
   restrictRoutesSelfOrPermission,
   restrictRoutesToRoles,
-} from "../middleware/authorization";
+} from "../../middleware/authorization";
 import * as membersController from "./membersController";
 
 const router = express.Router();

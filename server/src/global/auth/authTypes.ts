@@ -5,11 +5,16 @@
 /**
  * Type of query results of the user data retrieval
  */
-export type UserDataQueryResult = {
+export type UserAuthenticationDto = {
   mitgliedID: number;
   name: string;
   passwordHash?: string;
   permissions: string;
+};
+
+export type UserLoginDto = {
+  username: string;
+  password: string;
 };
 
 /**

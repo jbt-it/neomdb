@@ -5,8 +5,8 @@ import express = require("express");
 const router = express.Router();
 
 import * as traineeController from "./traineesController";
-import authenticationMiddleware from "../middleware/authentication";
-import { restrictRoutes } from "../middleware/authorization";
+import authenticationMiddleware from "../../middleware/authentication";
+import { restrictRoutes } from "../../middleware/authorization";
 
 /**
  * =======>>> ALL routes after this point are accessible for logged in users only <<<=======

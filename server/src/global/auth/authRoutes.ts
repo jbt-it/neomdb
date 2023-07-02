@@ -7,7 +7,17 @@ import * as authController from "./authController";
 
 const router = express.Router();
 
-router.post("/login", authController.login);
+const catchAsync = (fn: Function) => {
+  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.log("catchAsync");
+    fn(req, res).catch((error: Error) => {
+      console.log("Error :>");
+      next(error);
+    });
+  };
+};
+
+router.post("/login", catchAsync(authController.login));
 
 /**
  * =======>>> ALL routes after this point are accessible for loged in users only <<<=======

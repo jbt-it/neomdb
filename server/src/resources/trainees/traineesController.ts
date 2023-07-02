@@ -2,9 +2,9 @@
  * Definition of the handler functions for the trainee module
  */
 import { Request, Response } from "express";
-import database = require("../database");
+import database = require("../../database");
 import * as traineeTypes from "./traineesTypes";
-import { checkForSQLKeywords } from "../utils/stringUtils";
+import { checkForSQLKeywords } from "../../utils/stringUtils";
 
 /**
  * Retrieves choices of mentor, internal project and department of all trainees of given generation

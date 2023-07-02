@@ -55,7 +55,7 @@ export const doesRolesHaveSomeOf = (memberRoles: number[], roles: number[]) => {
  * @returns The payload for the user data
  */
 export const createUserDataPayload = (
-  result: authTypes.UserDataQueryResult,
+  result: authTypes.UserAuthenticationDto,
   directorPermissionsResult: globalTypes.Permission[]
 ) => {
   let permissions = [];

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwtUtils";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
-import * as membersTypes from "../members/membersTypes";
+import * as membersTypes from "../resources/members/membersTypes";
 import database = require("../database");
 
 /**

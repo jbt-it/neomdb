@@ -3,12 +3,12 @@
  */
 import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
-import database = require("../database");
-import { getRandomString } from "../utils/stringUtils";
+import database = require("../../database");
+import { getRandomString } from "../../utils/stringUtils";
 import * as membersTypes from "./membersTypes";
 import { PoolConnection } from "mysql2";
-import * as authTypes from "./../global/auth/authTypes";
-import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
+import * as authTypes from "../../global/auth/authTypes";
+import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { QueryResult } from "databaseTypes";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
@@ -1236,7 +1236,7 @@ export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
         }
         let member = null;
         if (Array.isArray(result)) {
-          member = result[0] as authTypes.UserDataQueryResult;
+          member = result[0] as authTypes.UserAuthenticationDto;
         }
         // Selects permissions belonging to a possible role of the member
         database
