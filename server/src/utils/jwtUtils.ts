@@ -28,6 +28,7 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
 /**
  * Generates JWT based on query results for the login process
  * @param payload object containing non sensitive user data
+ * @returns the signed JWT
  */
 export const generateJWT = (payload: globalTypes.JWTPayload): string => {
   return jwt.sign(payload, JWTKeys.private, JWTSignOptions);
@@ -36,6 +37,7 @@ export const generateJWT = (payload: globalTypes.JWTPayload): string => {
 /**
  * Verifies recived JWT from the user and returnes decoded payload or false
  * @param token JWT sent with the users request
+ * @returns decoded payload, false if token is invalid or null if an error occured
  */
 export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
   try {

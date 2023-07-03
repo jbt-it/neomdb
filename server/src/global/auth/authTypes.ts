@@ -1,18 +1,22 @@
-/**
+/*
  * Definition of used types within the auth module
  */
 
 /**
- * Type of query results of the user data retrieval
+ * Type for the user of the application
+ * A user is a member abstracted to the details needed for authentication
  */
-export type UserAuthenticationDto = {
+export type User = {
   mitgliedID: number;
   name: string;
   passwordHash?: string;
   permissions: string;
 };
 
-export type UserLoginDto = {
+/**
+ * Type for the request to login a user
+ */
+export type UserLoginRequest = {
   username: string;
   password: string;
 };

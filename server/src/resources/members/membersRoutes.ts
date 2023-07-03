@@ -3,12 +3,7 @@
  */
 import express = require("express");
 import authenticationMiddleware from "../../middleware/authentication";
-import {
-  checkDepartmentAccess,
-  restrictRoutes,
-  restrictRoutesSelfOrPermission,
-  restrictRoutesToRoles,
-} from "../../middleware/authorization";
+import { checkDepartmentAccess, restrictRoutes, restrictRoutesSelfOrPermission } from "../../middleware/authorization";
 import * as membersController from "./membersController";
 
 const router = express.Router();

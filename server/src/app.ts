@@ -5,12 +5,11 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
-import refererValidationMiddleware from "./middleware/refererValidation";
-import corsMiddleware from "./middleware/cors";
 import authRoutes from "./global/auth/authRoutes";
+import corsMiddleware from "./middleware/cors";
+import errorHandler from "./middleware/errorHandling";
 import membersRoutes from "./resources/members/membersRoutes";
 import traineesRoutes from "./resources/trainees/traineesRoutes";
-import { NotFoundError, UnautherizedError } from "types/Errors";
 
 dotenv.config();
 const app = express();
@@ -46,26 +45,6 @@ app.use("/trainees", traineesRoutes);
 /*
  * Centralized Error handling
  */
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.log("Error handler");
-  switch (err.name) {
-    case "UnauthorizedError":
-      console.error(err);
-      res.status(401).send(err.message);
-      break;
-    case "NotFoundError":
-      console.error(err);
-      res.status(404).send(err.message);
-      break;
-    case "UnauthenticatedError":
-      console.error(err);
-      res.status(401).send(err.message);
-      break;
-    default:
-      console.error(err);
-      res.status(500).send(err.message);
-      break;
-  }
-});
+app.use(errorHandler);
 
 export default app;

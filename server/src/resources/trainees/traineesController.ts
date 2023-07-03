@@ -5,9 +5,8 @@ import { Request, Response } from "express";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
 import database = require("../../database");
 
+import { QueryResult } from "types/databaseTypes";
 import { doesPermissionsInclude } from "../../utils/authUtils";
-import * as traineesTypes from "./traineesTypes";
-import { QueryResult } from "databaseTypes";
 
 /**
  * Retrieves a single internal project

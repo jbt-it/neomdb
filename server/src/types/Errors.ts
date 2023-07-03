@@ -1,3 +1,10 @@
+/*
+ * Contains custom error types thrown by the application
+ */
+
+/**
+ * Error thrown when a resource is not found
+ */
 export class NotFoundError extends Error {
   constructor(message?: string) {
     super(message);
@@ -5,6 +12,9 @@ export class NotFoundError extends Error {
   }
 }
 
+/**
+ * Error thrown when the user is not authorized to access a resources
+ */
 export class UnautherizedError extends Error {
   constructor(message?: string) {
     super(message);
@@ -12,6 +22,9 @@ export class UnautherizedError extends Error {
   }
 }
 
+/**
+ * Error thrown when the user is not authenticated
+ */
 export class UnauthenticatedError extends Error {
   constructor(message?: string) {
     super(message);
@@ -19,6 +32,9 @@ export class UnauthenticatedError extends Error {
   }
 }
 
+/**
+ * Error thrown when a query fails
+ */
 export class QueryError extends Error {
   constructor(message?: string) {
     super(message);

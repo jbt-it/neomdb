@@ -9,7 +9,7 @@ import * as membersTypes from "./membersTypes";
 import { PoolConnection } from "mysql2";
 import * as authTypes from "../../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
-import { QueryResult } from "databaseTypes";
+import { QueryResult } from "types/databaseTypes";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
@@ -1236,7 +1236,7 @@ export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
         }
         let member = null;
         if (Array.isArray(result)) {
-          member = result[0] as authTypes.UserAuthenticationDto;
+          member = result[0] as authTypes.User;
         }
         // Selects permissions belonging to a possible role of the member
         database

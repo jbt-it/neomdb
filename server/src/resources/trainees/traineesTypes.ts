@@ -2,7 +2,6 @@
  * Definition of used types within the trainees module
  */
 
-
 /**
  * Type of query results of internal project retrieval
  */
@@ -21,11 +20,11 @@ export type GetInternalProjectType = {
 };
 
 /**
- * Type of query results of trainee mail 
+ * Type of query results of trainee mail
  */
 export type GetIPMailType = {
   jbt_email: string;
-}
+};
 
 /**
  * Type of query results of trainee choices

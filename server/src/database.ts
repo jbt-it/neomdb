@@ -1,7 +1,7 @@
 /**
  * Wrapper for the MySQL connections
  */
-import { QueryResult } from "databaseTypes";
+import { QueryResult } from "types/databaseTypes";
 import mysql = require("mysql2");
 
 /**

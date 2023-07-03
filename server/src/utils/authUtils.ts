@@ -54,12 +54,9 @@ export const doesRolesHaveSomeOf = (memberRoles: number[], roles: number[]) => {
  * @param directorPermissionsResult The result of the director permissions query
  * @returns The payload for the user data
  */
-export const createUserDataPayload = (
-  result: authTypes.UserAuthenticationDto,
-  directorPermissionsResult: globalTypes.Permission[]
-) => {
-  let permissions = [];
-  let roles = [];
+export const createUserDataPayload = (result: authTypes.User, directorPermissionsResult: Permission[]) => {
+  const permissions = [];
+  const roles = [];
   // Adds role permissions to the permissions array and adds directorID to the roles array
   if (directorPermissionsResult.length !== 0) {
     directorPermissionsResult.forEach((permission) => {
