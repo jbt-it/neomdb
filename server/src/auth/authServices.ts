@@ -1,15 +1,14 @@
-import { JWTPayload, Permission } from "../globalTypes";
 import {
   getDepartmentsByRoles,
   getDirectorPermissionsByMemberID,
   getUserByName,
   updateUserPassword,
 } from "../resources/members/membersRepository";
+import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
 import { NotFoundError, UnauthenticatedError } from "../types/errors";
-import { User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
-import bcrypt = require("bcryptjs");
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
+import bcrypt = require("bcryptjs");
 
 /**
  * Logs a user in

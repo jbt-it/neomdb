@@ -1,6 +1,6 @@
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
-import * as globalTypes from "../global/globalTypes";
+import { JWTPayload } from "../types/authTypes";
 
 /**
  * Keys for the json web token
@@ -30,7 +30,7 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
  * @param payload object containing non sensitive user data
  * @returns the signed JWT
  */
-export const generateJWT = (payload: globalTypes.JWTPayload): string => {
+export const generateJWT = (payload: JWTPayload): string => {
   return jwt.sign(payload, JWTKeys.private, JWTSignOptions);
 };
 
@@ -39,9 +39,9 @@ export const generateJWT = (payload: globalTypes.JWTPayload): string => {
  * @param token JWT sent with the users request
  * @returns decoded payload, false if token is invalid or null if an error occured
  */
-export const verifyJWT = (token: string): null | globalTypes.JWTPayload => {
+export const verifyJWT = (token: string): null | JWTPayload => {
   try {
-    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as globalTypes.JWTPayload;
+    return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as JWTPayload;
   } catch (err) {
     return null;
   }
