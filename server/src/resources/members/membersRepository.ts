@@ -1,3 +1,4 @@
+import { DepartmentPartialID } from "types/membersTypes";
 import { query } from "../../database";
 import { Permission, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
@@ -68,5 +69,37 @@ export const updateUserPassword = async (userName: string, userID: number, newPa
     );
   } catch (error) {
     throw new QueryError(`Error updating password of member with name ${userName}`);
+  }
+};
+
+/**
+ * Retrieves all departments of a list of roles
+ * @throws QueryError if the query fails
+ * @returns The department ids of the roles or null if no departments were found
+ */
+export const getDepartmentsByRoles = async (roles: number[]): Promise<DepartmentPartialID[]> => {
+  try {
+    if (roles.length === 0) {
+      return null;
+    }
+
+    let sql = "";
+    // Iterate over roles and construct sql string to retrieve departments ids
+    for (let i = 0; i < roles.length; i++) {
+      if (i === 0) {
+        sql += `SELECT ressortID FROM evposten WHERE (evpostenID = ${roles[i]} `;
+      } else {
+        sql += `OR evpostenID = ${roles[i]}`;
+      }
+    }
+    sql += `) AND ressortID IS NOT NULL;`;
+    const departments = await query(sql, []);
+    if (Array.isArray(departments)) {
+      return departments as DepartmentPartialID[];
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving department ids`);
   }
 };

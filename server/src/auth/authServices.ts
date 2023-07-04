@@ -1,5 +1,6 @@
 import { JWTPayload, Permission } from "../globalTypes";
 import {
+  getDepartmentsByRoles,
   getDirectorPermissionsByMemberID,
   getUserByName,
   updateUserPassword,
@@ -80,4 +81,23 @@ export const changeUserPassword = async (userChangePasswordRequest: UserChangePa
   const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
 
   await updateUserPassword(userChangePasswordRequest.userName, userChangePasswordRequest.userID, newPasswordHash);
+};
+
+/**
+ * Checks if a user is authorized for a department by checking every role of the user
+ * @param roles Array of roles of the user
+ */
+export const isUserAuthorizedForDepartment = async (roles: number[], departmentID: number): Promise<boolean> => {
+  const departments = await getDepartmentsByRoles(roles);
+
+  if (departments === null) {
+    return false;
+  }
+
+  for (let i = 0; i < departments.length; i++) {
+    if (departments[i].ressortID === departmentID) {
+      return true;
+    }
+  }
+  return false;
 };

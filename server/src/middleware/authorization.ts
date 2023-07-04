@@ -1,8 +1,8 @@
+import { isUserAuthorizedForDepartment } from "../auth/authServices";
 import { NextFunction, Request, Response } from "express";
-import { verifyJWT } from "../utils/jwtUtils";
+import { UnautherizedError } from "../types/errors";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
-import * as membersTypes from "../resources/members/membersTypes";
-import database = require("../database");
+import { verifyJWT } from "../utils/jwtUtils";
 
 /**
  * Checks if memberID equals ressource id or member has specified permission
@@ -62,6 +62,7 @@ export const restrictRoutesToRoles = (roles: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtData = verifyJWT(req.cookies.token);
     if (!doesRolesHaveSomeOf(jwtData.roles, roles)) {
+      throw new UnautherizedError("Authorization failed: You are not permitted to do this");
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
     next();
@@ -75,34 +76,18 @@ export const restrictRoutesToRoles = (roles: number[]) => {
  * @param next Next function
  * @returns 403 if user is not permitted to access the department
  */
-export const checkDepartmentAccess = (req: Request, res: Response, next: NextFunction) => {
+export const checkDepartmentAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { roles } = verifyJWT(req.cookies.token);
   const departmentID = Number(req.params.id);
-  let isMemberAuthorized = false;
 
-  // Construct sql string
-  let sql = "";
-  for (let i = 0; i < roles.length; i++) {
-    if (i === 0) {
-      sql += `SELECT ressortID FROM evposten WHERE evpostenID = ${roles[i]} `;
-    } else {
-      sql += `OR evpostenID = ${roles[i]}`;
-    }
-  }
-  sql += ` AND ressortID IS NOT NULL;`;
-
-  // Retrieve directors (with the ids of roles from the jwt) from database
-  database.query(sql, []).then((results: membersTypes.GetDirectorsDepartmentQueryResult[]) => {
-    // Check if director has the right departmentID
-    for (let i = 0; i < results.length; i++) {
-      if (results[i].ressortID === departmentID) {
-        isMemberAuthorized = true;
-        break;
-      }
-    }
-    if (!isMemberAuthorized) {
+  try {
+    const isUserAuthorized = await isUserAuthorizedForDepartment(roles, departmentID);
+    if (!isUserAuthorized) {
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
-    next();
-  });
+  } catch (error) {
+    throw new UnautherizedError("Authorization failed: You are not permitted to do this");
+  }
+
+  next();
 };
