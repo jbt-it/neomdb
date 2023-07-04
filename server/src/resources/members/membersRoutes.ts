@@ -41,7 +41,6 @@ router.post("/", restrictRoutes([1]), membersController.createMember);
 router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.createPermission);
 
 //  =======>>> Patch routes <<<=======
-router.patch("/change-password", membersController.changePassword);
 router.patch("/departments/:id", checkDepartmentAccess, membersController.updateDepartmentInfo);
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 

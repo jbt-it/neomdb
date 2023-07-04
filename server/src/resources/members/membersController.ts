@@ -7,70 +7,13 @@ import database = require("../../database");
 import { getRandomString } from "../../utils/stringUtils";
 import * as membersTypes from "./membersTypes";
 import { PoolConnection } from "mysql2";
-import * as authTypes from "../../global/auth/authTypes";
+import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { QueryResult } from "types/databaseTypes";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
 // import { createNCUser } from "../utils/nextcloud";
-
-/**
- * User can change his password knowing his old one
- * Updates the passwordHash in the database
- * Returns a 200 only when the update was succesfull
- */
-export const changePassword = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT passwordHash
-      FROM mitglied
-      WHERE mitglied.name = ?`,
-      [req.body.userName]
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetPasswordForValidation[]
-      ) => {
-        if (result.length === 0) {
-          res.status(204).send("User does not exist");
-        }
-        const member = result[0] as membersTypes.GetPasswordForValidation;
-        bcrypt.compare(req.body.oldPassword, member.passwordHash).then((match) => {
-          if (match) {
-            bcrypt
-              .hash(req.body.newPassword, 10)
-              .then((hash) => {
-                // Store hash in your password DB
-                database
-                  .query(
-                    `UPDATE mitglied
-                  SET passwordHash = ?
-                  WHERE mitglied.name = ?
-                  AND mitglied.mitgliedID = ?`,
-                    [hash, req.body.userName, req.body.userID]
-                  )
-                  .then(() => {
-                    res.status(200).send("The new password has been saved");
-                  })
-                  .catch(() => {
-                    res.status(500).send("Update query Error");
-                  });
-              })
-              .catch(() => {
-                res.status(500).send("Internal Error");
-              });
-          } else {
-            res.status(401).send("The old password was not correct");
-          }
-        });
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
-};
 
 /**
  * Retrieves an overview of all registered members

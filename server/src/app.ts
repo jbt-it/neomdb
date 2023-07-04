@@ -5,7 +5,7 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
-import authRoutes from "./global/auth/authRoutes";
+import authRoutes from "./auth/authRoutes";
 import corsMiddleware from "./middleware/cors";
 import errorHandler from "./middleware/errorHandling";
 import membersRoutes from "./resources/members/membersRoutes";

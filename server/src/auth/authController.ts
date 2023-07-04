@@ -2,9 +2,9 @@
  * Definition of the functions required for authentification and authorization
  */
 import { CookieOptions, Request, Response } from "express";
-import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
-import { getUserData, loginUser } from "./authServices";
-import * as authTypes from "./authTypes";
+import * as authTypes from "../types/authTypes";
+import { generateJWT, verifyJWT } from "../utils/jwtUtils";
+import { changeUserPassword, getUserData, loginUser } from "./authServices";
 
 /**
  * Options for the cookie
@@ -19,7 +19,8 @@ const cookieOptions: CookieOptions = {
  * Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions
  */
 export const login = async (req: Request, res: Response): Promise<Response> => {
-  const payload = await loginUser(req.body as authTypes.UserLoginRequest);
+  const userLoginRequest = req.body as authTypes.UserLoginRequest;
+  const payload = await loginUser(userLoginRequest);
   const token = generateJWT(payload);
   return res.cookie("token", token, cookieOptions).status(200).json(payload);
 };
@@ -31,6 +32,15 @@ export const retrieveUserData = async (req: Request, res: Response): Promise<Res
   const jwtData = verifyJWT(req.cookies.token);
   const payload = await getUserData(jwtData.name);
   return res.status(200).json(payload);
+};
+
+/**
+ * Updates the passwordHash in the database if the old password is correct
+ */
+export const changePassword = async (req: Request, res: Response): Promise<Response> => {
+  const userChangePasswordRequest = req.body as authTypes.UserChangePasswordRequest;
+  await changeUserPassword(userChangePasswordRequest);
+  return res.status(200).send("The new password has been saved");
 };
 
 /**

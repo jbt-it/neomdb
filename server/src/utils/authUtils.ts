@@ -1,6 +1,6 @@
 // File for providing authenticaion based util functions
 import { Permission } from "../global/globalTypes";
-import * as authTypes from "../global/auth/authTypes";
+import * as authTypes from "../types/authTypes";
 import * as globalTypes from "../global/globalTypes";
 
 /**
