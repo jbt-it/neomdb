@@ -1,4 +1,4 @@
-import { isUserAuthorizedForDepartment } from "../auth/authServices";
+import { isUserAuthorizedForDepartment } from "../auth/authService";
 import { NextFunction, Request, Response } from "express";
 import { UnautherizedError } from "../types/errors";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";

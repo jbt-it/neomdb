@@ -4,7 +4,7 @@
 import { CookieOptions, Request, Response } from "express";
 import * as authTypes from "../types/authTypes";
 import { generateJWT, verifyJWT } from "../utils/jwtUtils";
-import { changeUserPassword, getUserData, loginUser } from "./authServices";
+import { changeUserPassword, getUserData, loginUser } from "./authService";
 
 /**
  * Options for the cookie
