@@ -3,13 +3,13 @@
  */
 import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
-import database = require("../../database");
-import { getRandomString } from "../../utils/stringUtils";
-import * as membersTypes from "./membersTypes";
 import { PoolConnection } from "mysql2";
+import { QueryResult } from "types/databaseTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
-import { QueryResult } from "types/databaseTypes";
+import { getRandomString } from "../../utils/stringUtils";
+import { getMemberList } from "./membersService";
+import database = require("../../database");
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
@@ -18,27 +18,9 @@ import { QueryResult } from "types/databaseTypes";
 /**
  * Retrieves an overview of all registered members
  */
-export const retrieveMemberList = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
-      FROM mitglied
-      INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
-      INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
-      ORDER BY nachname DESC`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetMembersQueryResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveMemberList = async (req: Request, res: Response): Promise<void> => {
+  const memberList = await getMemberList();
+  res.status(200).json(memberList);
 };
 
 /**

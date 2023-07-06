@@ -1,4 +1,4 @@
-import { DepartmentPartialID } from "types/membersTypes";
+import { DepartmentPartialID, MemberPartial } from "types/membersTypes";
 import { query } from "../../database";
 import { Permission, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
@@ -101,5 +101,31 @@ export const getDepartmentsByRoles = async (roles: number[]): Promise<Department
     return null;
   } catch (error) {
     throw new QueryError(`Error retrieving department ids`);
+  }
+};
+
+/**
+ * Retrieves all members as a list
+ * @throws QueryError if the query fails
+ * @returns A list of members
+ */
+export const getMembers = async () => {
+  try {
+    const membersQueryResult = await query(
+      `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
+      FROM mitglied
+      INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
+      INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+      ORDER BY nachname DESC`,
+      []
+    );
+    if (Array.isArray(membersQueryResult)) {
+      const members = membersQueryResult as MemberPartial[];
+      return members;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving members`);
   }
 };
