@@ -2,6 +2,7 @@ import { query } from "../../database";
 import { Permission, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
 import {
+  DepartmentMember,
   DepartmentPartialID,
   EdvSkill,
   Language,
@@ -18,6 +19,10 @@ import {
  */
 export const getUserByName = async (name: string): Promise<User> => {
   try {
+    /*
+     * This database call searches for all members which are trainees, active members or seniors
+     * and their assigned departments if they are not currently a director
+     */
     const userQueryResult = await query(
       `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
         FROM mitglied
@@ -82,6 +87,7 @@ export const updateUserPassword = async (userName: string, userID: number, newPa
 
 /**
  * Retrieves all departments of a list of roles
+ * @param roles The ids of the roles
  * @throws QueryError if the query fails
  * @returns The department ids of the roles or null if no departments were found
  */
@@ -142,6 +148,7 @@ export const getMembers = async () => {
  * Retrieves a member by its id
  * @param memberID The id of the member
  * @param withFinancialData If the member should be retrieved with his financial data
+ * @throws QueryError if the query fails
  * @returns The member or null if no member was found
  */
 export const getMemberByID = async (memberID: number, withFinancialData: boolean) => {
@@ -176,6 +183,7 @@ export const getMemberByID = async (memberID: number, withFinancialData: boolean
 /**
  * Retrieves the languages of a member
  * @param memberID The id of the member
+ * @throws QueryError if the query fails
  * @returns A list of languages
  */
 export const getLanguagesByMemberID = async (memberID: number) => {
@@ -187,19 +195,20 @@ export const getLanguagesByMemberID = async (memberID: number) => {
       [memberID]
     );
     if (Array.isArray(languagesQueryResult)) {
-      const languages = languagesQueryResult as Language[]; // TODO
+      const languages = languagesQueryResult as Language[];
       return languages;
     }
 
     return null;
   } catch (error) {
-    throw new QueryError(`Error retrieving members`);
+    throw new QueryError(`Error retrieving languages of member with id ${memberID}`);
   }
 };
 
 /**
  * Retrieves the edv skills of a member
  * @param memberID The id of the member
+ * @throws QueryError if the query fails
  * @returns A list of edv skills
  */
 export const getEdvSkillsByMemberID = async (memberID: number) => {
@@ -211,19 +220,20 @@ export const getEdvSkillsByMemberID = async (memberID: number) => {
       [memberID]
     );
     if (Array.isArray(edvSkillsQueryResult)) {
-      const edvSkills = edvSkillsQueryResult as EdvSkill[]; // TODO
+      const edvSkills = edvSkillsQueryResult as EdvSkill[];
       return edvSkills;
     }
 
     return null;
   } catch (error) {
-    throw new QueryError(`Error retrieving members`);
+    throw new QueryError(`Error retrieving edv skills of member with id ${memberID}`);
   }
 };
 
 /**
  * Retrieves the mentor of a member
  * @param memberID The id of the member
+ * @throws QueryError if the query fails
  * @returns The mentor of the member or null if no mentor was found
  */
 export const getMentorByMemberID = async (memberID: number) => {
@@ -238,19 +248,20 @@ export const getMentorByMemberID = async (memberID: number) => {
       [memberID]
     );
     if (Array.isArray(mentorQueryResult) && mentorQueryResult.length !== 0) {
-      const mentor = mentorQueryResult[0] as Mentor; // TODO
+      const mentor = mentorQueryResult[0] as Mentor;
       return mentor;
     }
 
     return null;
   } catch (error) {
-    throw new QueryError(`Error retrieving members`);
+    throw new QueryError(`Error retrieving mentor of member with id ${memberID}`);
   }
 };
 
 /**
  * Retrieves the mentees of a member
  * @param memberID The id of the member
+ * @throws QueryError if the query fails
  * @returns A list of mentees
  */
 export const getMenteesByMemberID = async (memberID: number) => {
@@ -262,12 +273,43 @@ export const getMenteesByMemberID = async (memberID: number) => {
       [memberID]
     );
     if (Array.isArray(menteesQueryResult)) {
-      const mentee = menteesQueryResult as Mentee[]; // TODO
+      const mentee = menteesQueryResult as Mentee[];
       return mentee;
     }
 
     return null;
   } catch (error) {
-    throw new QueryError(`Error retrieving members`);
+    throw new QueryError(`Error retrieving mentees`);
+  }
+};
+
+/**
+ * Retrieves all members grouped by departments
+ * It does not retrieve directors of the departments, only the members
+ * @throws QueryError if the query fails
+ * @returns A list of members grouped by departments without directors
+ */
+export const getMembersGroupedByDepartment = async () => {
+  try {
+    const membersofDepartmentsQueryResult = await query(
+      `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
+      FROM mitglied, ressort
+      WHERE ressort = ressortID AND mitgliedstatus <= 3
+      AND NOT EXISTS (
+        SELECT mitglied_mitgliedID
+        FROM mitglied_has_evposten
+        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
+        )
+      ORDER BY ressortID`,
+      []
+    );
+    if (Array.isArray(membersofDepartmentsQueryResult)) {
+      const departmentMembers = membersofDepartmentsQueryResult as DepartmentMember[];
+      return departmentMembers;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving all members grouped by departments`);
   }
 };

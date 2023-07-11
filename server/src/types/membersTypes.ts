@@ -154,6 +154,14 @@ export type Mentee = {
   nachname: string;
 };
 
+export type DepartmentMember = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  ressort: string;
+  bezeichnung: string;
+};
+
 /**
  * Type of the partial department with just the id
  */

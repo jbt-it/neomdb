@@ -9,7 +9,7 @@ import { MemberDto } from "types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
-import { getMember, getMemberList } from "./membersService";
+import { getMember, getMemberList, getMembersOfDepartments } from "./membersService";
 import database = require("../../database");
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
@@ -32,6 +32,9 @@ export const retrieveMember = async (req: Request, res: Response): Promise<Respo
   const memberID = Number(req.params.id);
   const permissions = res.locals.permissions;
   let userCanViewFinancialData = false;
+
+  // Only if the user is the member to retrieve or they have the correct permissions
+  // the financial data is retrieved as well
   if (memberID === res.locals.memberID || doesPermissionsInclude(permissions, [6])) {
     userCanViewFinancialData = true;
   }
@@ -42,39 +45,10 @@ export const retrieveMember = async (req: Request, res: Response): Promise<Respo
 /**
  * Retrieves all members of a department (this does not invclude the director of a department)
  */
-export const retrieveDepartmentMembers = (req: Request, res: Response): void => {
-  /*
-   * This database call searches for all members which are trainees, active members or seniors
-   * and their assigned departments if they are not currently a director
-   */
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
-      FROM mitglied, ressort
-      WHERE ressort = ressortID AND mitgliedstatus <= 3
-      AND NOT EXISTS (
-        SELECT mitglied_mitgliedID
-        FROM mitglied_has_evposten
-        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
-        )
-      ORDER BY ressortID`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetDepartmentMembersQueryResult[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Members not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveMembersOfDepartments = async (req: Request, res: Response): Promise<Response> => {
+  const membersOfDepartments = await getMembersOfDepartments();
+
+  return res.status(200).json(membersOfDepartments);
 };
 
 /**

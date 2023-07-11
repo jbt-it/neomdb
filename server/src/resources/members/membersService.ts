@@ -5,6 +5,7 @@ import {
   getLanguagesByMemberID,
   getMemberByID,
   getMembers,
+  getMembersGroupedByDepartment,
   getMenteesByMemberID,
   getMentorByMemberID,
 } from "./membersRepository";
@@ -42,4 +43,13 @@ export const getMember = async (memberID: number, withFinancialData: boolean) =>
     edvkenntnisse: edvSkills,
   };
   return memberDto;
+};
+
+/**
+ * Retrieves a list of all members grouped by their department
+ */
+export const getMembersOfDepartments = async () => {
+  const membersOfDepartments = await getMembersGroupedByDepartment();
+
+  return membersOfDepartments;
 };
