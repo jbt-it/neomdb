@@ -2,7 +2,7 @@ import fs = require("fs");
 import { PoolConnection } from "mysql2";
 import dotenv = require("dotenv");
 dotenv.config();
-import { commit, connectionQuery, startTransaction } from "../database"; // import your database module
+import { commit, connectionQuery, startTransaction } from "../database";
 
 /**
  * Reads the SQL commands from a file
