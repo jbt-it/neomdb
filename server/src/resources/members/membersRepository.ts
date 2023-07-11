@@ -1,7 +1,15 @@
-import { DepartmentPartialID, MemberPartial } from "types/membersTypes";
 import { query } from "../../database";
 import { Permission, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
+import {
+  DepartmentPartialID,
+  EdvSkill,
+  Language,
+  Member,
+  MemberPartial,
+  Mentee,
+  Mentor,
+} from "../../types/membersTypes";
 
 /**
  * Retrieves a user by its username
@@ -122,6 +130,140 @@ export const getMembers = async () => {
     if (Array.isArray(membersQueryResult)) {
       const members = membersQueryResult as MemberPartial[];
       return members;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving members`);
+  }
+};
+
+/**
+ * Retrieves a member by its id
+ * @param memberID The id of the member
+ * @param withFinancialData If the member should be retrieved with his financial data
+ * @returns The member or null if no member was found
+ */
+export const getMemberByID = async (memberID: number, withFinancialData: boolean) => {
+  try {
+    let sql = `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
+        mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
+        trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit, passiv_seit,
+        ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber, strasse1, plz1, ort1,
+        tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule, studiengang,
+        studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL, canQM,
+        lastchange, fuehrerschein, ersthelferausbildung`;
+    if (withFinancialData) {
+      // if the member should be retrieved with his financial data add these to the select statement
+      sql += `, kontoinhaber, iban, bic`;
+    }
+    sql += ` FROM mitglied
+        INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
+        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+        WHERE mitgliedID = ?`;
+    const memberQueryResult = await query(sql, [memberID]);
+    if (Array.isArray(memberQueryResult) && memberQueryResult.length !== 0) {
+      const member = memberQueryResult[0] as Member;
+      return member;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving member with id ${memberID}`);
+  }
+};
+
+/**
+ * Retrieves the languages of a member
+ * @param memberID The id of the member
+ * @returns A list of languages
+ */
+export const getLanguagesByMemberID = async (memberID: number) => {
+  try {
+    const languagesQueryResult = await query(
+      `SELECT wert, niveau
+      FROM sprachen
+      WHERE mitglied_mitgliedID = ?`,
+      [memberID]
+    );
+    if (Array.isArray(languagesQueryResult)) {
+      const languages = languagesQueryResult as Language[]; // TODO
+      return languages;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving members`);
+  }
+};
+
+/**
+ * Retrieves the edv skills of a member
+ * @param memberID The id of the member
+ * @returns A list of edv skills
+ */
+export const getEdvSkillsByMemberID = async (memberID: number) => {
+  try {
+    const edvSkillsQueryResult = await query(
+      `SELECT wert, niveau
+        FROM edvkenntnisse
+        WHERE mitglied_mitgliedID = ?`,
+      [memberID]
+    );
+    if (Array.isArray(edvSkillsQueryResult)) {
+      const edvSkills = edvSkillsQueryResult as EdvSkill[]; // TODO
+      return edvSkills;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving members`);
+  }
+};
+
+/**
+ * Retrieves the mentor of a member
+ * @param memberID The id of the member
+ * @returns The mentor of the member or null if no mentor was found
+ */
+export const getMentorByMemberID = async (memberID: number) => {
+  try {
+    const mentorQueryResult = await query(
+      `SELECT mitgliedID, vorname, nachname
+          FROM mitglied
+          WHERE mitgliedID =
+          (SELECT mentor
+          FROM mitglied
+          WHERE mitgliedID = ?)`,
+      [memberID]
+    );
+    if (Array.isArray(mentorQueryResult) && mentorQueryResult.length !== 0) {
+      const mentor = mentorQueryResult[0] as Mentor; // TODO
+      return mentor;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving members`);
+  }
+};
+
+/**
+ * Retrieves the mentees of a member
+ * @param memberID The id of the member
+ * @returns A list of mentees
+ */
+export const getMenteesByMemberID = async (memberID: number) => {
+  try {
+    const menteesQueryResult = await query(
+      `SELECT mitgliedID, vorname, nachname
+          FROM mitglied
+          WHERE mentor = ?`,
+      [memberID]
+    );
+    if (Array.isArray(menteesQueryResult)) {
+      const mentee = menteesQueryResult as Mentee[]; // TODO
+      return mentee;
     }
 
     return null;

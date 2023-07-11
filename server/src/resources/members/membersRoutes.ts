@@ -4,6 +4,7 @@
 import express = require("express");
 import authenticationMiddleware from "../../middleware/authentication";
 import { checkDepartmentAccess, restrictRoutes, restrictRoutesSelfOrPermission } from "../../middleware/authorization";
+import { catchAsync } from "../../middleware/errorHandling";
 import * as membersController from "./membersController";
 
 const router = express.Router();
@@ -20,7 +21,7 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 router.use(authenticationMiddleware);
 
 //  =======>>> Get routes <<<=======
-router.get("/", membersController.retrieveMemberList);
+router.get("/", catchAsync(membersController.retrieveMemberList));
 router.get("/current-directors", membersController.retrieveCurrentDirectors);
 router.get("/departments", membersController.retrieveDepartments);
 router.get("/department-members", membersController.retrieveDepartmentMembers);
@@ -33,7 +34,7 @@ router.get(
   restrictRoutes(ALL_PERMISSIONS, false),
   membersController.retrievePermissionsOfMembers
 );
-router.get("/:id", membersController.retrieveMember);
+router.get("/:id", catchAsync(membersController.retrieveMember));
 router.get("/:id/permissions", membersController.retrievePermissionsByMemberId);
 
 //  =======>>> Post routes <<<=======

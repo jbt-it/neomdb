@@ -5,10 +5,11 @@ import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import { PoolConnection } from "mysql2";
 import { QueryResult } from "types/databaseTypes";
+import { MemberDto } from "types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
-import { getMemberList } from "./membersService";
+import { getMember, getMemberList } from "./membersService";
 import database = require("../../database");
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
@@ -18,241 +19,24 @@ import database = require("../../database");
 /**
  * Retrieves an overview of all registered members
  */
-export const retrieveMemberList = async (req: Request, res: Response): Promise<void> => {
+export const retrieveMemberList = async (req: Request, res: Response): Promise<Response> => {
   const memberList = await getMemberList();
-  res.status(200).json(memberList);
+  return res.status(200).json(memberList);
 };
 
 /**
  * Retrieves a member specified by id
  * Returns financial data iff member has permission or is himself
  */
-export const retrieveMember = (req: Request, res: Response): void => {
-  if (Number(req.params.id) === res.locals.memberID || doesPermissionsInclude(res.locals.permissions, [6])) {
-    database
-      .query(
-        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
-        mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
-        trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit, passiv_seit,
-        ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber, strasse1, plz1, ort1,
-        tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule, studiengang,
-        studienbeginn, studienende, vertiefungen, ausbildung, kontoinhaber, iban, bic,
-        engagement, canPL, canQM, lastchange, fuehrerschein, ersthelferausbildung
-        FROM mitglied
-        INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
-        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
-        WHERE mitgliedID = ?`,
-        [req.params.id]
-      )
-      .then(
-        (
-          result: QueryResult
-          // membersTypes.GetMemberQueryResult[]
-        ) => {
-          if (result.length === 0) {
-            res.status(404).send("User not found");
-          } else {
-            database
-              .query(
-                `SELECT wert, niveau
-              FROM sprachen
-              WHERE mitglied_mitgliedID = ?`,
-                [req.params.id]
-              )
-              .then(
-                (
-                  resultLang: QueryResult
-                  // membersTypes.GetLanguageOfMemberQueryResult[]
-                ) => {
-                  database
-                    .query(
-                      `SELECT mitgliedID, vorname, nachname
-                  FROM mitglied
-                  WHERE mentor = ?`,
-                      [req.params.id]
-                    )
-                    .then(
-                      (
-                        resultMentees: QueryResult
-                        // membersTypes.GetMenteeOfMemberQueryResult[]
-                      ) => {
-                        database
-                          .query(
-                            `SELECT mitgliedID, vorname, nachname
-                      FROM mitglied
-                      WHERE mitgliedID =
-                      (SELECT mentor
-                      FROM mitglied
-                      WHERE mitgliedID = ?)`,
-                            [req.params.id]
-                          )
-                          .then(
-                            (
-                              resultMentor: QueryResult
-                              // membersTypes.GetMentorOfMemberQueryResult[]
-                            ) => {
-                              database
-                                .query(
-                                  `SELECT wert, niveau
-                        FROM edvkenntnisse
-                        WHERE mitglied_mitgliedID = ?`,
-                                  [req.params.id]
-                                )
-                                .then(
-                                  (
-                                    resultEDV: QueryResult
-                                    // membersTypes.GetEDVSkillsOfMemberQueryResult
-                                  ) => {
-                                    // Combine the four different query results
-                                    const member = [
-                                      {
-                                        ...result[0],
-                                        mentor: resultMentor[0],
-                                        mentees: resultMentees,
-                                        sprachen: resultLang,
-                                        edvkenntnisse: resultEDV,
-                                      },
-                                    ];
-                                    res.status(200).json(member);
-                                  }
-                                )
-                                .catch(() => {
-                                  res.status(500).send("Query Error: Retrieving EDV Skills");
-                                });
-                            }
-                          )
-                          .catch(() => {
-                            res.status(500).send("Query Error: Retrieving Mentor");
-                          });
-                      }
-                    )
-                    .catch(() => {
-                      res.status(500).send("Query Error: Retrieving Mentees");
-                    });
-                }
-              )
-              .catch(() => {
-                res.status(500).send("Query Error: Retrieving Languages");
-              });
-          }
-        }
-      )
-      .catch(() => {
-        res.status(500).send("Query Error: Retrieving Member");
-      });
-  } else {
-    database
-      .query(
-        `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
-        mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
-        mentor, trainee_seit, mitglied_seit, alumnus_seit, senior_seit, aktiv_seit,
-        passiv_seit, ausgetreten_seit, ressort.bezeichnung AS ressort, arbeitgeber,
-        strasse1, plz1, ort1, tel1, email1, strasse2, plz2, ort2, tel2, email2, hochschule,
-        studiengang, studienbeginn, studienende, vertiefungen, ausbildung, engagement, canPL,
-        canQM, lastchange, fuehrerschein, ersthelferausbildung
-        FROM mitglied
-        INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
-        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
-        WHERE mitgliedID = ?`,
-        [req.params.id]
-      )
-      .then(
-        (
-          result: QueryResult
-          // membersTypes.GetMemberQueryResult[]
-        ) => {
-          if (result.length === 0) {
-            res.status(404).send("User not found");
-          } else {
-            database
-              .query(
-                `SELECT wert, niveau
-              FROM sprachen
-              WHERE mitglied_mitgliedID = ?`,
-                [req.params.id]
-              )
-              .then(
-                (
-                  resultLang: QueryResult
-                  // membersTypes.GetLanguageOfMemberQueryResult[]
-                ) => {
-                  database
-                    .query(
-                      `SELECT mitgliedID, vorname, nachname
-                  FROM mitglied
-                  WHERE mentor = ?`,
-                      [req.params.id]
-                    )
-                    .then(
-                      (
-                        resultMentees: QueryResult
-                        // membersTypes.GetMenteeOfMemberQueryResult[]
-                      ) => {
-                        database
-                          .query(
-                            `SELECT mitgliedID, vorname, nachname
-                      FROM mitglied
-                      WHERE mitgliedID =
-                      (SELECT mentor
-                      FROM mitglied
-                      WHERE mitgliedID = ?)`,
-                            [req.params.id]
-                          )
-                          .then(
-                            (
-                              resultMentor: QueryResult
-                              // membersTypes.GetMentorOfMemberQueryResult[]
-                            ) => {
-                              database
-                                .query(
-                                  `SELECT wert, niveau
-                          FROM edvkenntnisse
-                          WHERE mitglied_mitgliedID = ?`,
-                                  [req.params.id]
-                                )
-                                .then(
-                                  (
-                                    resultEDV: QueryResult
-                                    // membersTypes.GetEDVSkillsOfMemberQueryResult
-                                  ) => {
-                                    // Combine the four different query results
-                                    const member = [
-                                      {
-                                        ...result[0],
-                                        mentor: resultMentor[0],
-                                        mentees: resultMentees,
-                                        sprachen: resultLang,
-                                        edvkenntnisse: resultEDV,
-                                      },
-                                    ];
-                                    res.status(200).json(member);
-                                  }
-                                )
-                                .catch(() => {
-                                  res.status(500).send("Query Error: Retrieving EDV Skills");
-                                });
-                            }
-                          )
-                          .catch(() => {
-                            res.status(500).send("Query Error: Retrieving Mentor");
-                          });
-                      }
-                    )
-                    .catch(() => {
-                      res.status(500).send("Query Error: Retrieving Mentees");
-                    });
-                }
-              )
-              .catch(() => {
-                res.status(500).send("Query Error: Retrieving Languages");
-              });
-          }
-        }
-      )
-      .catch(() => {
-        res.status(500).send("Query Error: Retrieving Member");
-      });
+export const retrieveMember = async (req: Request, res: Response): Promise<Response> => {
+  const memberID = Number(req.params.id);
+  const permissions = res.locals.permissions;
+  let userCanViewFinancialData = false;
+  if (memberID === res.locals.memberID || doesPermissionsInclude(permissions, [6])) {
+    userCanViewFinancialData = true;
   }
+  const memberDto: MemberDto = await getMember(memberID, userCanViewFinancialData);
+  return res.status(200).json(memberDto);
 };
 
 /**
