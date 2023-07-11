@@ -16,7 +16,7 @@ import { Menu, Search } from "@material-ui/icons";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
 import { createStyles, alpha, Theme, makeStyles } from "@material-ui/core/styles";
-import JBTLogoWhite from "../../../images/jbt-logo-white.png";
+import JBTLogoWhite from "../../../../images/jbt-logo-white.png";
 
 /**
  * Function which proivdes the styles of the Nav

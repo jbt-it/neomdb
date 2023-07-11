@@ -7,7 +7,7 @@ import { RouteComponentProps } from "react-router-dom";
 import api from "../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../global/AuthContext";
-import PageBar from "../../global/navigation/PageBar";
+import PageBar from "../../global/components/navigation/PageBar";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import * as membersTypes from "../membersTypes";
 import { authReducerActionType } from "../../global/globalTypes";
