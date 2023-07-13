@@ -8,7 +8,7 @@ import {
   Director,
   EdvSkill,
   Language,
-  LanguageValue,
+  Value,
   Member,
   MemberPartial,
   Mentee,
@@ -427,13 +427,36 @@ class MembersRepository {
         []
       );
       if (Array.isArray(languagesQueryResult)) {
-        const languages = languagesQueryResult as LanguageValue[];
+        const languages = languagesQueryResult as Value[];
         return languages;
       }
 
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving languages`);
+    }
+  };
+
+  /**
+   * Retrieves all edv skill values
+   * @throws QueryError if the query fails
+   * @returns A list of all edv skill values
+   */
+  getEdvSkillValues = async () => {
+    try {
+      const edvSkillsQueryResult = await query(
+        `SELECT DISTINCT wert
+        FROM edvkenntnisse`,
+        []
+      );
+      if (Array.isArray(edvSkillsQueryResult)) {
+        const edvSkills = edvSkillsQueryResult as Value[];
+        return edvSkills;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving edv skills`);
     }
   };
 }

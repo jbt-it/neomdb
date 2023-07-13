@@ -103,6 +103,15 @@ class MembersService {
 
     return languageValues;
   };
+
+  /**
+   * Retrieves all edv skill values
+   */
+  getEdvSkillValues = async () => {
+    const edvSkillValues = await this.membersRepository.getEdvSkillValues();
+
+    return edvSkillValues;
+  };
 }
 
 export default MembersService;

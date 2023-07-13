@@ -412,28 +412,10 @@ export const retrieveLanguages = async (req: Request, res: Response): Promise<Re
 /**
  * Retrieves the edv skills
  */
-export const retrieveEDVSkills = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT DISTINCT wert
-      FROM edvkenntnisse`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // string[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("EDV Skills not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveEDVSkills = async (req: Request, res: Response): Promise<Response> => {
+  const edvSkills = await membersService.getEdvSkillValues();
+
+  return res.status(200).json(edvSkills);
 };
 
 /**
