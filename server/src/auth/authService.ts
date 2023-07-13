@@ -81,7 +81,7 @@ class AuthService {
 
     const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
 
-    await this.membersRepository.updateUserPassword(
+    await this.membersRepository.updateUserPasswordByUserNameAndUserID(
       userChangePasswordRequest.userName,
       userChangePasswordRequest.userID,
       newPasswordHash

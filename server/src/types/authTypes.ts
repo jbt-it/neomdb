@@ -29,7 +29,7 @@ export type DirectorPermissionsQueryResult = {
 };
 
 /**
- * Type for the request to change the password of a user
+ * Type of the request to change the password of a user
  */
 export type UserChangePasswordRequest = {
   userID: number;

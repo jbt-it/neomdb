@@ -1,4 +1,13 @@
-import { EdvSkill, Language, Member, MemberDto, MemberPartial, Mentee, Mentor } from "types/membersTypes";
+import {
+  EdvSkill,
+  Language,
+  Member,
+  MemberDto,
+  MemberPartial,
+  Mentee,
+  Mentor,
+  UpdateDepartmentRequest,
+} from "types/membersTypes";
 import { NotFoundError } from "../../types/errors";
 import MembersRepository from "./membersRepository";
 
@@ -16,6 +25,7 @@ class MembersService {
 
   /**
    * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
+   * @throws NotFoundError if no member was found
    */
   getMember = async (memberID: number, withFinancialData: boolean) => {
     const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
@@ -65,6 +75,24 @@ class MembersService {
     const departments = await this.membersRepository.getDepartments();
 
     return departments;
+  };
+
+  /**
+   * Updates the department with the given id
+   * @throws NotFoundError if no department was found
+   */
+  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentRequest) => {
+    const department = await this.membersRepository.getDepartmentByID(departmentID);
+
+    if (department === null) {
+      throw new NotFoundError(`Department with id ${departmentID} not found`);
+    }
+
+    await this.membersRepository.updateDepartmentByID(
+      departmentID,
+      updateDepartmentRequest.linkOrganigramm,
+      updateDepartmentRequest.linkZielvorstellung
+    );
   };
 }
 

@@ -5,7 +5,7 @@ import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import { PoolConnection } from "mysql2";
 import { QueryResult } from "types/databaseTypes";
-import { MemberDto } from "types/membersTypes";
+import { MemberDto, UpdateDepartmentRequest } from "types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
@@ -392,19 +392,12 @@ export const retrieveDepartments = async (req: Request, res: Response): Promise<
 /**
  * Updates the department infos with the given id
  */
-export const updateDepartmentInfo = (req: Request, res: Response): void => {
-  database
-    .query(`UPDATE ressort SET linkOrganigramm = ?, linkZielvorstellung = ?  WHERE ressortID = ?`, [
-      req.body.linkOrganigramm,
-      req.body.linkZielvorstellung,
-      req.params.id,
-    ])
-    .then(() => {
-      res.status(200).send("Department Update succesful");
-    })
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const updateDepartmentInfo = async (req: Request, res: Response): Promise<Response> => {
+  const departmentID = Number(req.params.id);
+  const updateDepartmentRequest = req.body as UpdateDepartmentRequest;
+  await membersService.updateDepartment(departmentID, updateDepartmentRequest);
+
+  return res.status(200).send("Department updated");
 };
 
 /**

@@ -74,7 +74,11 @@ class MembersRepository {
    * Updates the passwordHash of a user
    * @throws QueryError if the query fails
    */
-  updateUserPassword = async (userName: string, userID: number, newPasswordHash: string): Promise<void> => {
+  updateUserPasswordByUserNameAndUserID = async (
+    userName: string,
+    userID: number,
+    newPasswordHash: string
+  ): Promise<void> => {
     try {
       await query(
         `UPDATE mitglied
@@ -363,6 +367,49 @@ class MembersRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving departments`);
+    }
+  };
+
+  /**
+   * Retrieves a department by its id
+   * @param departmentID The id of the department
+   * @throws QueryError if the query fails
+   */
+  getDepartmentByID = async (departmentID: number) => {
+    try {
+      const departmentQueryResult = await query(
+        `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
+          FROM ressort
+          WHERE ressortID = ?`,
+        [departmentID]
+      );
+      if (Array.isArray(departmentQueryResult) && departmentQueryResult.length !== 0) {
+        const department = departmentQueryResult[0] as Department;
+        return department;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving department with id ${departmentID}`);
+    }
+  };
+
+  /**
+   * Retrieves a department by its id
+   * @param departmentID The id of the department
+   * @param linkOrganisation The link to the organisation chart of the department
+   * @param linkGoal The link to the goal of the department
+   * @throws QueryError if the query fails
+   */
+  updateDepartmentByID = async (departmentID: number, linkOrganisation: string, linkGoal: string) => {
+    try {
+      await query(`UPDATE ressort SET linkOrganigramm = ?, linkZielvorstellung = ?  WHERE ressortID = ?`, [
+        linkOrganisation,
+        linkGoal,
+        departmentID,
+      ]);
+    } catch (error) {
+      throw new QueryError(`Error updating department with id ${departmentID}`);
     }
   };
 }

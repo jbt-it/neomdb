@@ -173,6 +173,14 @@ export type DepartmentPartialID = {
 };
 
 /**
+ * Type of the request to update a department
+ */
+export type UpdateDepartmentRequest = {
+  linkZielvorstellung: string;
+  linkOrganigramm: string;
+};
+
+/**
  * Type of the department
  */
 export type Department = {

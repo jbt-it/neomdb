@@ -48,7 +48,7 @@ export const changePassword = async (req: Request, res: Response): Promise<Respo
 /**
  * Loggs the user out by removing the jwt from the cookie
  */
-export const logout = (req: Request, res: Response) => {
+export const logout = (req: Request, res: Response): Response => {
   const token = null;
-  res.cookie("token", token, cookieOptions).status(200).send("Logout succesful!");
+  return res.cookie("token", token, cookieOptions).status(200).send("Logout succesful!");
 };

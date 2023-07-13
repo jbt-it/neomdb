@@ -42,7 +42,7 @@ router.post("/", restrictRoutes([1]), membersController.createMember);
 router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.createPermission);
 
 //  =======>>> Patch routes <<<=======
-router.patch("/departments/:id", checkDepartmentAccess, membersController.updateDepartmentInfo);
+router.patch("/departments/:id", checkDepartmentAccess, catchAsync(membersController.updateDepartmentInfo));
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 //  =======>>> Delete routes <<<=======
