@@ -1,65 +1,62 @@
 import { EdvSkill, Language, Member, MemberDto, MemberPartial, Mentee, Mentor } from "types/membersTypes";
 import { NotFoundError } from "../../types/errors";
-import {
-  getDirectors,
-  getEdvSkillsByMemberID,
-  getLanguagesByMemberID,
-  getMemberByID,
-  getMembers,
-  getMembersGroupedByDepartment,
-  getMenteesByMemberID,
-  getMentorByMemberID,
-} from "./membersRepository";
+import MembersRepository from "./membersRepository";
 
-/**
- * Retrieves a list of all members
- */
-export const getMemberList = async () => {
-  const memberList: MemberPartial[] = await getMembers();
+class MembersService {
+  membersRepository = new MembersRepository();
 
-  return memberList;
-};
+  /**
+   * Retrieves a list of all members
+   */
+  getMemberList = async () => {
+    const memberList: MemberPartial[] = await this.membersRepository.getMembers();
 
-/**
- * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
- */
-export const getMember = async (memberID: number, withFinancialData: boolean) => {
-  const member: Member = await getMemberByID(memberID, withFinancialData);
-
-  if (member === null) {
-    throw new NotFoundError(`Member with id ${memberID} not found`);
-  }
-
-  const languages: Language[] = await getLanguagesByMemberID(memberID);
-  const edvSkills: EdvSkill[] = await getEdvSkillsByMemberID(memberID);
-  const mentor: Mentor = await getMentorByMemberID(memberID);
-  const mentees: Mentee[] = await getMenteesByMemberID(memberID);
-
-  // Combine the four parts for the complete member dto
-  const memberDto: MemberDto = {
-    ...member,
-    mentor,
-    mentees,
-    sprachen: languages,
-    edvkenntnisse: edvSkills,
+    return memberList;
   };
-  return memberDto;
-};
 
-/**
- * Retrieves a list of all members grouped by their department
- */
-export const getMembersOfDepartments = async () => {
-  const membersOfDepartments = await getMembersGroupedByDepartment();
+  /**
+   * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
+   */
+  getMember = async (memberID: number, withFinancialData: boolean) => {
+    const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
 
-  return membersOfDepartments;
-};
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} not found`);
+    }
 
-/**
- * Retrieves all directors or only the current directors if `onlyCurrent` is true
- */
-export const getAllDirectors = async (onlyCurrent: boolean) => {
-  const directors = await getDirectors(onlyCurrent);
+    const languages: Language[] = await this.membersRepository.getLanguagesByMemberID(memberID);
+    const edvSkills: EdvSkill[] = await this.membersRepository.getEdvSkillsByMemberID(memberID);
+    const mentor: Mentor = await this.membersRepository.getMentorByMemberID(memberID);
+    const mentees: Mentee[] = await this.membersRepository.getMenteesByMemberID(memberID);
 
-  return directors;
-};
+    // Combine the four parts for the complete member dto
+    const memberDto: MemberDto = {
+      ...member,
+      mentor,
+      mentees,
+      sprachen: languages,
+      edvkenntnisse: edvSkills,
+    };
+    return memberDto;
+  };
+
+  /**
+   * Retrieves a list of all members grouped by their department
+   */
+  getMembersOfDepartments = async () => {
+    const membersOfDepartments = await this.membersRepository.getMembersGroupedByDepartment();
+
+    return membersOfDepartments;
+  };
+
+  /**
+   * Retrieves all directors or only the current directors if `onlyCurrent` is true
+   */
+  getAllDirectors = async (onlyCurrent: boolean) => {
+    const directors = await this.membersRepository.getDirectors(onlyCurrent);
+
+    return directors;
+  };
+}
+
+export default MembersService;

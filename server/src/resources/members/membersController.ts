@@ -9,18 +9,19 @@ import { MemberDto } from "types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
-import { getAllDirectors, getMember, getMemberList, getMembersOfDepartments } from "./membersService";
 import database = require("../../database");
+import MembersService from "./membersService";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
 // import { createNCUser } from "../utils/nextcloud";
 
+const membersService = new MembersService();
 /**
  * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = async (req: Request, res: Response): Promise<Response> => {
-  const memberList = await getMemberList();
+  const memberList = await membersService.getMemberList();
   return res.status(200).json(memberList);
 };
 
@@ -38,7 +39,7 @@ export const retrieveMember = async (req: Request, res: Response): Promise<Respo
   if (memberID === res.locals.memberID || doesPermissionsInclude(permissions, [6])) {
     userCanViewFinancialData = true;
   }
-  const memberDto: MemberDto = await getMember(memberID, userCanViewFinancialData);
+  const memberDto: MemberDto = await membersService.getMember(memberID, userCanViewFinancialData);
   return res.status(200).json(memberDto);
 };
 
@@ -46,7 +47,7 @@ export const retrieveMember = async (req: Request, res: Response): Promise<Respo
  * Retrieves all members of a department (this does not invclude the director of a department)
  */
 export const retrieveMembersOfDepartments = async (req: Request, res: Response): Promise<Response> => {
-  const membersOfDepartments = await getMembersOfDepartments();
+  const membersOfDepartments = await membersService.getMembersOfDepartments();
 
   return res.status(200).json(membersOfDepartments);
 };
@@ -57,7 +58,7 @@ export const retrieveMembersOfDepartments = async (req: Request, res: Response):
 export const retrieveDirectors = async (req: Request, res: Response): Promise<Response> => {
   // Query parameter to specify if only the current directors should be retrieved
   const current = req.query.current === "true";
-  const directors = await getAllDirectors(current);
+  const directors = await membersService.getAllDirectors(current);
 
   return res.status(200).json(directors);
 };

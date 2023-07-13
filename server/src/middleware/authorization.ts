@@ -1,6 +1,5 @@
-import { isUserAuthorizedForDepartment } from "../auth/authService";
 import { NextFunction, Request, Response } from "express";
-import { UnautherizedError } from "../types/errors";
+import AuthService, { isUserAuthorizedForDepartment } from "../auth/authService";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
 import { verifyJWT } from "../utils/jwtUtils";
 
@@ -62,13 +61,13 @@ export const restrictRoutesToRoles = (roles: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtData = verifyJWT(req.cookies.token);
     if (!doesRolesHaveSomeOf(jwtData.roles, roles)) {
-      throw new UnautherizedError("Authorization failed: You are not permitted to do this");
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
     next();
   };
 };
 
+const authService = new AuthService();
 /**
  * Checks if user has the right roles to manipulate the department with the given id (provided in the request as a parameter)
  * @param req Request object (auth token; department id)
@@ -81,12 +80,12 @@ export const checkDepartmentAccess = async (req: Request, res: Response, next: N
   const departmentID = Number(req.params.id);
 
   try {
-    const isUserAuthorized = await isUserAuthorizedForDepartment(roles, departmentID);
+    const isUserAuthorized = await authService.isUserAuthorizedForDepartment(roles, departmentID);
     if (!isUserAuthorized) {
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
   } catch (error) {
-    throw new UnautherizedError("Authorization failed: You are not permitted to do this");
+    return res.status(403).send("Authorization failed: You are not permitted to do this");
   }
 
   next();
