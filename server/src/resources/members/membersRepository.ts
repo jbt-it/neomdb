@@ -8,6 +8,7 @@ import {
   Director,
   EdvSkill,
   Language,
+  LanguageValue,
   Member,
   MemberPartial,
   Mentee,
@@ -410,6 +411,29 @@ class MembersRepository {
       ]);
     } catch (error) {
       throw new QueryError(`Error updating department with id ${departmentID}`);
+    }
+  };
+
+  /**
+   * Retrieves all language values
+   * @throws QueryError if the query fails
+   * @returns A list of all language values
+   */
+  getLanguageValues = async () => {
+    try {
+      const languagesQueryResult = await query(
+        `SELECT DISTINCT wert
+      FROM sprachen`,
+        []
+      );
+      if (Array.isArray(languagesQueryResult)) {
+        const languages = languagesQueryResult as LanguageValue[];
+        return languages;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving languages`);
     }
   };
 }

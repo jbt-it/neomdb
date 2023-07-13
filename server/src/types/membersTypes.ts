@@ -129,6 +129,13 @@ export type Language = {
 };
 
 /**
+ * Type of the language value
+ */
+export type LanguageValue = {
+  wert: string;
+};
+
+/**
  * Type of the edv skill of a member
  */
 export type EdvSkill = {

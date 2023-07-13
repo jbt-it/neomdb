@@ -401,30 +401,12 @@ export const updateDepartmentInfo = async (req: Request, res: Response): Promise
 };
 
 /**
- * Retrieves the languages
+ * Retrieves the language values
  */
-export const retrieveLanguages = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT DISTINCT wert
-      FROM sprachen`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // string[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Languages not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveLanguages = async (req: Request, res: Response): Promise<Response> => {
+  const langauges = await membersService.getLanguageValues();
+
+  return res.status(200).json(langauges);
 };
 
 /**

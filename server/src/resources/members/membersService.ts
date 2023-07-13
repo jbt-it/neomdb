@@ -94,6 +94,15 @@ class MembersService {
       updateDepartmentRequest.linkZielvorstellung
     );
   };
+
+  /**
+   * Retrieves all language values
+   */
+  getLanguageValues = async () => {
+    const languageValues = await this.membersRepository.getLanguageValues();
+
+    return languageValues;
+  };
 }
 
 export default MembersService;
