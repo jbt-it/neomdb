@@ -58,7 +58,7 @@ export const retrieveMembersOfDepartments = async (req: Request, res: Response):
 export const retrieveDirectors = async (req: Request, res: Response): Promise<Response> => {
   // Query parameter to specify if only the current directors should be retrieved
   const current = req.query.current === "true";
-  const directors = await membersService.getAllDirectors(current);
+  const directors = await membersService.getDirectors(current);
 
   return res.status(200).json(directors);
 };
@@ -383,29 +383,10 @@ export const createMember = async (req: Request, res: Response) => {
 /**
  * Retrieves the departments
  */
-export const retrieveDepartments = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
-      FROM ressort
-      WHERE bezeichnung != "Ohne Ressort"`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetDepartmentsQueryResult[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Departments not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveDepartments = async (req: Request, res: Response): Promise<Response> => {
+  const departments = await membersService.getDepartments();
+
+  return res.status(200).json(departments);
 };
 
 /**

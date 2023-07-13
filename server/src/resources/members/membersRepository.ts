@@ -2,6 +2,7 @@ import { query } from "../../database";
 import { Permission, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
 import {
+  Department,
   DepartmentMember,
   DepartmentPartialID,
   Director,
@@ -339,6 +340,29 @@ class MembersRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving directors`);
+    }
+  };
+
+  /**
+   * Retrieves all departments
+   * @throws QueryError if the query fails
+   */
+  getDepartments = async () => {
+    try {
+      const departmentsQueryResult = await query(
+        `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
+      FROM ressort
+      WHERE bezeichnung != "Ohne Ressort"`,
+        []
+      );
+      if (Array.isArray(departmentsQueryResult)) {
+        const departments = departmentsQueryResult as Department[];
+        return departments;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving departments`);
     }
   };
 }

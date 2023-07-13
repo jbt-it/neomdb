@@ -173,6 +173,18 @@ export type DepartmentPartialID = {
 };
 
 /**
+ * Type of the department
+ */
+export type Department = {
+  ressortID: number;
+  bezeichnung: string;
+  kuerzel: string;
+  jbt_email: string;
+  linkZielvorstellung: string;
+  linkOrganigramm: string;
+};
+
+/**
  * Type of the director (partial member with department and role information)
  */
 export type Director = {

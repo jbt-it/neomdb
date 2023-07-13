@@ -24,7 +24,7 @@ router.use(authenticationMiddleware);
 router.get("/", catchAsync(membersController.retrieveMemberList));
 
 router.get("/directors", catchAsync(membersController.retrieveDirectors));
-router.get("/departments", membersController.retrieveDepartments);
+router.get("/departments", catchAsync(membersController.retrieveDepartments));
 router.get("/department-members", catchAsync(membersController.retrieveMembersOfDepartments));
 router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);

@@ -52,10 +52,19 @@ class MembersService {
   /**
    * Retrieves all directors or only the current directors if `onlyCurrent` is true
    */
-  getAllDirectors = async (onlyCurrent: boolean) => {
+  getDirectors = async (onlyCurrent: boolean) => {
     const directors = await this.membersRepository.getDirectors(onlyCurrent);
 
     return directors;
+  };
+
+  /**
+   * Retrieves all departments
+   */
+  getDepartments = async () => {
+    const departments = await this.membersRepository.getDepartments();
+
+    return departments;
   };
 }
 
