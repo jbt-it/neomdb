@@ -1,5 +1,5 @@
 /*
- * Contains custom error types thrown by the application
+ * Contains custom error classes hrown by the application
  */
 
 /**

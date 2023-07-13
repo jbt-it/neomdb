@@ -1,6 +1,7 @@
 import { EdvSkill, Language, Member, MemberDto, MemberPartial, Mentee, Mentor } from "types/membersTypes";
 import { NotFoundError } from "../../types/errors";
 import {
+  getDirectors,
   getEdvSkillsByMemberID,
   getLanguagesByMemberID,
   getMemberByID,
@@ -52,4 +53,13 @@ export const getMembersOfDepartments = async () => {
   const membersOfDepartments = await getMembersGroupedByDepartment();
 
   return membersOfDepartments;
+};
+
+/**
+ * Retrieves all directors or only the current directors if `onlyCurrent` is true
+ */
+export const getAllDirectors = async (onlyCurrent: boolean) => {
+  const directors = await getDirectors(onlyCurrent);
+
+  return directors;
 };

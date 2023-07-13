@@ -9,7 +9,7 @@ import { MemberDto } from "types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
-import { getMember, getMemberList, getMembersOfDepartments } from "./membersService";
+import { getAllDirectors, getMember, getMemberList, getMembersOfDepartments } from "./membersService";
 import database = require("../../database");
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
@@ -52,31 +52,14 @@ export const retrieveMembersOfDepartments = async (req: Request, res: Response):
 };
 
 /**
- * Retrieves all current directors
+ * Retrieves all current directors (if query parameter `current` is true) or all directors
  */
-export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
-      FROM mitglied, mitglied_has_evposten, evposten
-      WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetCurrentDirectorsQueryResult[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Directors not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveDirectors = async (req: Request, res: Response): Promise<Response> => {
+  // Query parameter to specify if only the current directors should be retrieved
+  const current = req.query.current === "true";
+  const directors = await getAllDirectors(current);
+
+  return res.status(200).json(directors);
 };
 
 /**
@@ -393,34 +376,6 @@ export const createMember = async (req: Request, res: Response) => {
         queryErrorMsg: err,
       };
       res.status(500).json(statusOverview);
-    });
-};
-
-/**
- * Retrieves the history of directors
- */
-export const retrieveDirectors = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis
-      FROM mitglied, mitglied_has_evposten, evposten
-      WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        //  membersTypes.GetDirectorsQueryResult[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Directors not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
     });
 };
 

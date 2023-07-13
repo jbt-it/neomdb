@@ -22,10 +22,10 @@ router.use(authenticationMiddleware);
 
 //  =======>>> Get routes <<<=======
 router.get("/", catchAsync(membersController.retrieveMemberList));
-router.get("/current-directors", membersController.retrieveCurrentDirectors);
+
+router.get("/directors", catchAsync(membersController.retrieveDirectors));
 router.get("/departments", membersController.retrieveDepartments);
 router.get("/department-members", catchAsync(membersController.retrieveMembersOfDepartments));
-router.get("/directors", membersController.retrieveDirectors);
 router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);
 router.get("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.retrievePermissions);

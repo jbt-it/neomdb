@@ -4,6 +4,7 @@ import { QueryError } from "../../types/errors";
 import {
   DepartmentMember,
   DepartmentPartialID,
+  Director,
   EdvSkill,
   Language,
   Member,
@@ -311,5 +312,31 @@ export const getMembersGroupedByDepartment = async () => {
     return null;
   } catch (error) {
     throw new QueryError(`Error retrieving all members grouped by departments`);
+  }
+};
+
+/**
+ * Retrieves all directors
+ * @param onlyCurrent Only retrieve current directors if true
+ * @returns All (current) directors
+ */
+export const getDirectors = async (onlyCurrent: boolean) => {
+  try {
+    let sql = `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID,
+        geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+        FROM mitglied, mitglied_has_evposten, evposten
+        WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID`;
+    if (onlyCurrent) {
+      sql += " AND von < DATE(NOW()) AND DATE(NOW()) < bis ";
+    }
+    const directorsQueryResult = await query(sql, []);
+    if (Array.isArray(directorsQueryResult)) {
+      const directors = directorsQueryResult as Director[];
+      return directors;
+    }
+
+    return null;
+  } catch (error) {
+    throw new QueryError(`Error retrieving directors`);
   }
 };
