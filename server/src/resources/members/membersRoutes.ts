@@ -28,25 +28,33 @@ router.get("/departments", catchAsync(membersController.retrieveDepartments));
 router.get("/department-members", catchAsync(membersController.retrieveMembersOfDepartments));
 router.get("/edv-skills", catchAsync(membersController.retrieveEDVSkills));
 router.get("/languages", catchAsync(membersController.retrieveLanguages));
-router.get("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.retrievePermissions);
+router.get("/permissions", restrictRoutes(ALL_PERMISSIONS, false), catchAsync(membersController.retrievePermissions));
 router.get(
-  "/permissions-of-members",
+  "/permission-assignments",
   restrictRoutes(ALL_PERMISSIONS, false),
-  membersController.retrievePermissionsOfMembers
+  catchAsync(membersController.retrievePermissionAssignments)
 );
 router.get("/:id", catchAsync(membersController.retrieveMember));
-router.get("/:id/permissions", membersController.retrievePermissionsByMemberId);
+router.get("/:id/permissions", catchAsync(membersController.retrievePermissionsByMemberId));
 
 //  =======>>> Post routes <<<=======
 router.post("/", restrictRoutes([1]), membersController.createMember);
-router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.createPermission);
+router.post(
+  "/permissions",
+  restrictRoutes(ALL_PERMISSIONS, false),
+  catchAsync(membersController.assignPermissionToMember)
+);
 
 //  =======>>> Patch routes <<<=======
 router.patch("/departments/:id", checkDepartmentAccess, catchAsync(membersController.updateDepartmentInfo));
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
 
 //  =======>>> Delete routes <<<=======
-router.delete("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.deletePermission);
+router.delete(
+  "/permissions",
+  restrictRoutes(ALL_PERMISSIONS, false),
+  catchAsync(membersController.unassignPermissionFromMember)
+);
 router.delete("/:id", restrictRoutes([1], false), membersController.deleteMember);
 
 export default router;

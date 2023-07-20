@@ -1,5 +1,5 @@
 import { query } from "../../database";
-import { Permission, User } from "../../types/authTypes";
+import { Permission, PermissionAssignment, User } from "../../types/authTypes";
 import { QueryError } from "../../types/errors";
 import {
   Department,
@@ -43,6 +43,36 @@ class MembersRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving user data with username ${name}`);
+    }
+  };
+
+  /**
+   * Retrieves a user by its user id
+   * @throws QueryError if the query fails
+   * @returns The user with permissions or null if no user was found
+   */
+  getUserByID = async (userID: number): Promise<User> => {
+    try {
+      /*
+       * This database call searches for all members which are trainees, active members or seniors
+       * and their assigned departments if they are not currently a director
+       */
+      const userQueryResult = await query(
+        `SELECT mitgliedID, name, passwordHash, GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
+      FROM mitglied
+        LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
+        WHERE mitglied.mitgliedID = ?
+        GROUP BY mitgliedID, name`,
+        [userID]
+      );
+      if (Array.isArray(userQueryResult) && userQueryResult.length !== 0) {
+        const user = userQueryResult[0] as User;
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving user data with id ${userID}`);
     }
   };
 
@@ -131,7 +161,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of members
    */
-  getMembers = async () => {
+  getMembers = async (): Promise<MemberPartial[]> => {
     try {
       const membersQueryResult = await query(
         `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
@@ -159,7 +189,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns The member or null if no member was found
    */
-  getMemberByID = async (memberID: number, withFinancialData: boolean) => {
+  getMemberByID = async (memberID: number, withFinancialData: boolean): Promise<Member> => {
     try {
       let sql = `SELECT mitgliedID, vorname, nachname, mitglied.jbt_email, geschlecht, geburtsdatum, handy,
         mitgliedstatus.bezeichnung AS mitgliedstatus, generation, internesprojekt,
@@ -194,7 +224,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of languages
    */
-  getLanguagesByMemberID = async (memberID: number) => {
+  getLanguagesByMemberID = async (memberID: number): Promise<Language[]> => {
     try {
       const languagesQueryResult = await query(
         `SELECT wert, niveau
@@ -219,7 +249,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of edv skills
    */
-  getEdvSkillsByMemberID = async (memberID: number) => {
+  getEdvSkillsByMemberID = async (memberID: number): Promise<EdvSkill[]> => {
     try {
       const edvSkillsQueryResult = await query(
         `SELECT wert, niveau
@@ -244,7 +274,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns The mentor of the member or null if no mentor was found
    */
-  getMentorByMemberID = async (memberID: number) => {
+  getMentorByMemberID = async (memberID: number): Promise<Mentor> => {
     try {
       const mentorQueryResult = await query(
         `SELECT mitgliedID, vorname, nachname
@@ -272,7 +302,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of mentees
    */
-  getMenteesByMemberID = async (memberID: number) => {
+  getMenteesByMemberID = async (memberID: number): Promise<Mentee[]> => {
     try {
       const menteesQueryResult = await query(
         `SELECT mitgliedID, vorname, nachname
@@ -297,7 +327,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of members grouped by departments without directors
    */
-  getMembersGroupedByDepartment = async () => {
+  getMembersGroupedByDepartment = async (): Promise<DepartmentMember[]> => {
     try {
       const membersofDepartmentsQueryResult = await query(
         `SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
@@ -327,7 +357,7 @@ class MembersRepository {
    * @param onlyCurrent Only retrieve current directors if true
    * @returns All (current) directors
    */
-  getDirectors = async (onlyCurrent: boolean) => {
+  getDirectors = async (onlyCurrent: boolean): Promise<Director[]> => {
     try {
       let sql = `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID,
     geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
@@ -352,7 +382,7 @@ class MembersRepository {
    * Retrieves all departments
    * @throws QueryError if the query fails
    */
-  getDepartments = async () => {
+  getDepartments = async (): Promise<Department[]> => {
     try {
       const departmentsQueryResult = await query(
         `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
@@ -376,7 +406,7 @@ class MembersRepository {
    * @param departmentID The id of the department
    * @throws QueryError if the query fails
    */
-  getDepartmentByID = async (departmentID: number) => {
+  getDepartmentByID = async (departmentID: number): Promise<Department> => {
     try {
       const departmentQueryResult = await query(
         `SELECT ressortID, bezeichnung, kuerzel, jbt_email, linkZielvorstellung, linkOrganigramm
@@ -402,7 +432,7 @@ class MembersRepository {
    * @param linkGoal The link to the goal of the department
    * @throws QueryError if the query fails
    */
-  updateDepartmentByID = async (departmentID: number, linkOrganisation: string, linkGoal: string) => {
+  updateDepartmentByID = async (departmentID: number, linkOrganisation: string, linkGoal: string): Promise<void> => {
     try {
       await query(`UPDATE ressort SET linkOrganigramm = ?, linkZielvorstellung = ?  WHERE ressortID = ?`, [
         linkOrganisation,
@@ -419,7 +449,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of all language values
    */
-  getLanguageValues = async () => {
+  getLanguageValues = async (): Promise<Value[]> => {
     try {
       const languagesQueryResult = await query(
         `SELECT DISTINCT wert
@@ -442,7 +472,7 @@ class MembersRepository {
    * @throws QueryError if the query fails
    * @returns A list of all edv skill values
    */
-  getEdvSkillValues = async () => {
+  getEdvSkillValues = async (): Promise<Value[]> => {
     try {
       const edvSkillsQueryResult = await query(
         `SELECT DISTINCT wert
@@ -457,6 +487,115 @@ class MembersRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving edv skills`);
+    }
+  };
+
+  /**
+   * Retrieves a permission with the given `permissionID`
+   * @throws QueryError if the query fails
+   * @returns The permission or null if no permission was found
+   */
+  getPermissionByID = async (permissionID: number): Promise<Permission> => {
+    try {
+      const permissionQueryResult = await query(
+        `SELECT berechtigungID, canDelegate, evposten_evpostenID AS directorID
+      FROM berechtigung
+      WHERE berechtigungID = ?`,
+        [permissionID]
+      );
+      if (Array.isArray(permissionQueryResult) && permissionQueryResult.length !== 0) {
+        const permission = permissionQueryResult[0] as Permission;
+        return permission;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving permission with id ${permissionID}`);
+    }
+  };
+
+  /**
+   * Retrieves all permissions
+   * @throws QueryError if the query fails
+   * @returns A list of all permissions
+   */
+  getPermissions = async (): Promise<Permission[]> => {
+    try {
+      const permissionsQueryResult = await query(`SELECT * FROM berechtigung`, []);
+      if (Array.isArray(permissionsQueryResult)) {
+        const permissions = permissionsQueryResult as Permission[];
+        return permissions;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving permissions`);
+    }
+  };
+
+  /**
+   * Retrieves all permission assignments of members and directors
+   * @throws QueryError if the query fails
+   * @returns A list of all permission assignments
+   */
+  getPermissionAssignments = async (): Promise<PermissionAssignment[]> => {
+    try {
+      // Evposten gets memberID of -1 to fill NULL
+      const permissionAssignmentsQueryResult = await query(
+        `SELECT kuerzel AS name, berechtigung_berechtigungID AS permission, canDelegate, -1 AS memberID
+      FROM evposten
+      INNER JOIN evposten_has_berechtigung ON evposten.evpostenID = evposten_has_berechtigung.evposten_evpostenID
+      UNION
+      SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate, mitglied.mitgliedID AS memberID
+      FROM mitglied
+      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+        []
+      );
+      if (Array.isArray(permissionAssignmentsQueryResult)) {
+        const permissionAssignments = permissionAssignmentsQueryResult as PermissionAssignment[];
+        return permissionAssignments;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error retrieving permission assignments`);
+    }
+  };
+
+  /**
+   * Adds a permission with the given `permissionID` to a member with the given `memberID`
+   * @throws QueryError if the query fails
+   */
+  addPermissionToMember = async (memberID: number, permissionID: number): Promise<void> => {
+    try {
+      await query(
+        `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
+      VALUES (?, ?)`,
+        [memberID, permissionID]
+      );
+    } catch (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        throw new QueryError(`Permission with id ${permissionID} already assigned to member with id ${memberID}`);
+      }
+      throw new QueryError(`Error adding permission with id ${permissionID} to member with id ${memberID}`);
+    }
+  };
+
+  /**
+   * Deletes a permission with the given `permissionID` from a member with the given `memberID`
+   * @throws QueryError if the query fails
+   * @returns The number of affected rows
+   */
+  deletePermissionFromMember = async (memberID: number, permissionID: number): Promise<void> => {
+    try {
+      await query(
+        `DELETE
+          FROM mitglied_has_berechtigung
+          WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
+        [memberID, permissionID]
+      );
+    } catch (error) {
+      throw new QueryError(`Error deleting permission with id ${permissionID} from member with id ${memberID}`);
     }
   };
 }

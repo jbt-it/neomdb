@@ -5,12 +5,13 @@ import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import { PoolConnection } from "mysql2";
 import { QueryResult } from "types/databaseTypes";
-import { MemberDto, UpdateDepartmentRequest } from "types/membersTypes";
+import { MemberDto, UpdateDepartmentRequest } from "../../types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import database = require("../../database");
 import MembersService from "./membersService";
+import { UnautherizedError } from "../../types/errors";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
@@ -741,182 +742,69 @@ export const deleteMember = (req: Request, res: Response): void => {
 };
 
 /**
- * Retrieves all directors and members with their permission and name
+ * Retrieves all directors and members permission assignments
  */
-export const retrievePermissionsOfMembers = (req: Request, res: Response): void => {
-  // Evposten gets memberID of -1 to fill NULL
-  database
-    .query(
-      `SELECT kuerzel AS name, berechtigung_berechtigungID AS permission, canDelegate, -1 AS memberID
-    FROM evposten
-    INNER JOIN evposten_has_berechtigung ON evposten.evpostenID = evposten_has_berechtigung.evposten_evpostenID
-    UNION
-    SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate, mitglied.mitgliedID AS memberID
-    FROM mitglied
-    LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetPermissionsQueryResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error: Getting permissions failed");
-    });
+export const retrievePermissionAssignments = async (req: Request, res: Response): Promise<Response> => {
+  const permissionAssignments = await membersService.getPermissionAssignments();
+
+  return res.status(200).json(permissionAssignments);
 };
 
 /**
  * Retrieves name, description and ID of all permissions
  */
-export const retrievePermissions = (req: Request, res: Response): void => {
-  database
-    .query(`SELECT * FROM berechtigung`, [])
-    .then(
-      (
-        result: QueryResult
-        // membersTypes.GetPermissionsQueryResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error: Getting permissions failed");
-    });
+export const retrievePermissions = async (req: Request, res: Response): Promise<Response> => {
+  const permissions = await membersService.getPermissions();
+
+  return res.status(200).json(permissions);
 };
 
 /**
  * Retrieves a list of all permissions of the member with the given ID
  */
-export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
-  database
-    .query(
-      `SELECT GROUP_CONCAT(mitglied_has_berechtigung.berechtigung_berechtigungID) AS permissions
-      FROM mitglied
-      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID
-      WHERE mitgliedID = ?
-      GROUP BY mitgliedID`,
-      [req.params.id]
-    )
-    .then(
-      (
-        result: QueryResult
-        // authTypes.UserDataQueryResult[]
-      ) => {
-        // If the result is empty, no member with the given id exists
-        if (result.length === 0) {
-          res.status(404).send(`Member with id "${req.params.id}" does not exist`);
-          return;
-        }
-        let member = null;
-        if (Array.isArray(result)) {
-          member = result[0] as authTypes.User;
-        }
-        // Selects permissions belonging to a possible role of the member
-        database
-          .query(
-            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
-          FROM mitglied_has_evposten
-          LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
-          WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
-        `,
-            [req.params.id]
-          )
-          .then(
-            (
-              directorPermissionsResult: QueryResult
-              // authTypes.DirectorPermissionsQueryResult[]
-            ) => {
-              let permissions = [];
+export const retrievePermissionsByMemberId = async (req: Request, res: Response): Promise<Response> => {
+  const memberID = Number(req.params.id);
+  const permissions = await membersService.getPermissionsByMemberID(memberID);
 
-              // Adds role permissions to the permissions array
-              if (directorPermissionsResult.length > 0) {
-                permissions = directorPermissionsResult;
-              }
-
-              if (result.length > 0) {
-                // Adds normal permissions to the permissions array
-                if (member.permissions) {
-                  member.permissions
-                    .split(",")
-                    .map(Number)
-                    .map((perm) => {
-                      // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                      permissions.push({ permissionID: perm, canDelegate: 0 });
-                    });
-                }
-              }
-              res.status(200).json({ ...result[0], permissions });
-            }
-          )
-          .catch(() => {
-            res.status(500).send("Query Error");
-          });
-      }
-    )
-    .catch(() => {
-      res.status(500).send("Query Error");
-    });
+  return res.status(200).json(permissions);
 };
 
 /**
  * Create new permission
  */
-export const createPermission = (req: Request, res: Response): void => {
+export const assignPermissionToMember = async (req: Request, res: Response): Promise<Response> => {
+  const { memberID, permissionID } = req.body;
+
   // Checks if the member is allowed to delegate the permission
   if (
-    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
-    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
+    !doesPermissionsInclude(res.locals.permissions, [permissionID]) ||
+    !canPermissionBeDelegated(res.locals.permissions, permissionID)
   ) {
-    res.status(403).send("Permission cannot be delegated!");
-    return;
+    throw new UnautherizedError("Permission cannot be delegated!");
   }
 
-  database
-    .query(
-      `INSERT INTO mitglied_has_berechtigung (mitglied_mitgliedID, berechtigung_berechtigungID)
-      VALUES (?, ?)`,
-      [req.body.memberID, req.body.permissionID]
-    )
-    .then(() => {
-      res.status(201).send({
-        message: "Permission created",
-        mitgliedID: req.body.memberID,
-        berechtigungID: req.body.permissionID,
-      });
-    })
-    .catch(() => {
-      res.status(500).send("Database Error: Creating Permission failed");
-    });
+  await membersService.addPermissionToMember(memberID, permissionID);
+
+  return res.status(201).send({
+    message: "Permission created",
+    mitgliedID: req.body.memberID,
+    berechtigungID: req.body.permissionID,
+  });
 };
 
 /**
- * Delete issued permission
+ * Delete issued permission from member
  */
-export const deletePermission = (req: Request, res: Response): void => {
+export const unassignPermissionFromMember = async (req: Request, res: Response): Promise<Response> => {
+  const { memberID, permissionID } = req.body;
   // Checks if the member is allowed to delete the permission
   if (
-    !doesPermissionsInclude(res.locals.permissions, [req.body.permissionID]) ||
-    !canPermissionBeDelegated(res.locals.permissions, req.body.permissionID)
+    !doesPermissionsInclude(res.locals.permissions, [permissionID]) ||
+    !canPermissionBeDelegated(res.locals.permissions, permissionID)
   ) {
-    res.status(403).send("Permission cannot be deleted!");
-    return;
+    throw new UnautherizedError("Permission cannot be deleted!");
   }
 
-  database
-    .query(
-      `DELETE
-      FROM mitglied_has_berechtigung
-      WHERE mitglied_mitgliedID = ? AND berechtigung_berechtigungID = ?`,
-      [req.body.memberID, req.body.permissionID]
-    )
-    .then(() => {
-      res.status(200).send("Permission deleted");
-    })
-    .catch(() => {
-      res.status(500).send("Database Error: Deleting Permission failed");
-    });
+  await membersService.deletePermissionFromMember(memberID, permissionID);
+  return res.status(200).send("Permission deleted");
 };

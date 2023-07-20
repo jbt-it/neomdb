@@ -69,7 +69,6 @@ export const createUserDataPayload = (result: User, directorPermissionsResult: P
   // Adds normal permissions to the permissions array
   if (result.permissions) {
     result.permissions
-
       .split(",")
       .map(Number)
       .map((perm) => {

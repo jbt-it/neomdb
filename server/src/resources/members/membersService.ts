@@ -10,6 +10,8 @@ import {
 } from "types/membersTypes";
 import { NotFoundError } from "../../types/errors";
 import MembersRepository from "./membersRepository";
+import { Permission, User } from "../../types/authTypes";
+import { createUserDataPayload } from "../../utils/authUtils";
 
 class MembersService {
   membersRepository = new MembersRepository();
@@ -111,6 +113,72 @@ class MembersService {
     const edvSkillValues = await this.membersRepository.getEdvSkillValues();
 
     return edvSkillValues;
+  };
+
+  /**
+   * Retrieves all permissions
+   */
+  getPermissions = async () => {
+    const permissions = await this.membersRepository.getPermissions();
+
+    return permissions;
+  };
+
+  /**
+   * Retrieves all permission assignments
+   */
+  getPermissionAssignments = async () => {
+    const permissionAssignments = await this.membersRepository.getPermissionAssignments();
+
+    return permissionAssignments;
+  };
+
+  /**
+   * Retrieves permissions of a member with the given `memberID`
+   */
+  getPermissionsByMemberID = async (memberID: number) => {
+    const user: User = await this.membersRepository.getUserByID(memberID);
+
+    if (user === null) {
+      throw new NotFoundError(`No member found with id ${memberID}`);
+    }
+
+    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(memberID);
+
+    const payload = createUserDataPayload(user, directorPermissions);
+    const permissions = { permissions: payload.permissions };
+
+    return permissions;
+  };
+
+  /**
+   * Adds a permission to a member
+   * @throws NotFoundError if the member or the permission does not exist
+   */
+  addPermissionToMember = async (memberID: number, permissionID: number) => {
+    const memberQuery = this.membersRepository.getMemberByID(memberID, false);
+    const permissionQuery = this.membersRepository.getDepartmentByID(permissionID);
+    // Executing both queries concurrently
+    const results = await Promise.all([memberQuery, permissionQuery]);
+
+    const member = results[0];
+    const permission = results[1];
+
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+    if (permission === null) {
+      throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
+    }
+
+    await this.membersRepository.addPermissionToMember(memberID, permissionID);
+  };
+
+  /**
+   * Retrieves all permissions of a member
+   */
+  deletePermissionFromMember = async (memberID: number, permissionID: number) => {
+    await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
   };
 }
 

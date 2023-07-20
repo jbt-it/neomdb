@@ -21,7 +21,7 @@ import { AuthContext } from "../global/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 
 /**
- * Interface of route get permissions-of-members
+ * Interface of route get permission-assignments
  */
 interface MemberPermissions {
   name: string;
@@ -150,11 +150,11 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Retrieves the permissions of all members
    */
-  const getPermissionsOfMembers: VoidFunction = () => {
+  const getPermissionAssignments: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/permissions-of-members", {
+      .get("/users/permission-assignments", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -260,7 +260,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
   };
 
   useEffect(() => getPermissions(), []);
-  useEffect(() => getPermissionsOfMembers(), []);
+  useEffect(() => getPermissionAssignments(), []);
 
   return (
     <div>

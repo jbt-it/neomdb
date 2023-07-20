@@ -48,6 +48,16 @@ export type Permission = {
 };
 
 /**
+ * Type of the permission assignment (permission of a member or a director)
+ */
+export type PermissionAssignment = {
+  name: string;
+  mitgliedID: number;
+  permissionID: number;
+  canDelegate: boolean;
+};
+
+/**
  * Type of the payload if the jason web token
  */
 export type JWTPayload = {
