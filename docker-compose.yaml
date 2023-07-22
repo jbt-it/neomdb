@@ -9,8 +9,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    ports:
-      - 3000:3000
     networks:
       - neomdb_network
 
@@ -41,8 +39,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - database
-    ports:
-      - 3030:3030
     networks:
       - neomdb_network
     environment:
