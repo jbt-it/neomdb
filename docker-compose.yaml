@@ -14,30 +14,6 @@ services:
     networks:
       - neomdb_network
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./server/dev_certs:/etc/nginx/ssl
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - server
-      - client
-    networks:
-      - neomdb_network
-  #nginx:
-  #  image: nginx:stable-alpine
-  #  volumes:
-  #    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-  #  ports:
-  #    - 80:80
-  #  depends_on:
-  #    - client
-  #    - server
-  #  networks:
-  #    - neomdb_network
 
   database:
     image: mysql
@@ -63,16 +39,28 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - 3030:3030
     depends_on:
       - database
+    ports:
+      - 3030:3030
     networks:
       - neomdb_network
     environment:
       - IS_PRODUCTION=true
       - DATABASE_HOST_PROD=database
       - DATABASE_PORT_PROD=3306
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 9000:80
+    depends_on:
+      - client
+      - server
+    networks:
+      - neomdb_network
 
 volumes:
   mysql:
