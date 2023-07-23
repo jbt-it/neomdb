@@ -479,8 +479,8 @@ INSERT INTO `mitglied_has_eventww` (`event_eventID`, `mitglied_mitgliedID`, `anr
 --
 
 INSERT INTO `mitglied_has_evposten` (`mitglied_mitgliedID`, `evposten_evpostenID`, `von`, `bis`) VALUES
-(8222, 10, '2008-04-01', '2009-04-01'),
-(8324, 1, '2011-10-10', '2012-12-01');
+(8222, 10, '2008-04-01', '2030-04-01'),
+(8324, 1, '2011-10-10', '2030-12-01');
 
 
 --
