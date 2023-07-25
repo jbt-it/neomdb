@@ -16,12 +16,8 @@ RUN npm install -g serve
 # Copy the rest of the client code
 COPY . .
 
-# Disable Prettier during Docker build // TODO: Remove this line when the issue is fixed
-ENV SKIP_PREFLIGHT_CHECK=true
-
 # Build the client app
 RUN npm run build
 
 # Set the command to run the client
-# CMD [ "npm", "start" ]
 CMD [ "serve", "-s", "build" ]
