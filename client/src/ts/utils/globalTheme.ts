@@ -1,7 +1,7 @@
 /**
  * Contains the global styling of the components
  */
-import { createTheme } from "@material-ui/core/styles";
+import { createTheme } from "@mui/material/styles";
 
 // Global theme
 export default createTheme({
