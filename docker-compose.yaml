@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 networks:
   neomdb_network:
@@ -11,18 +11,19 @@ services:
       dockerfile: Dockerfile
     networks:
       - neomdb_network
-
+    environment:
+      REACT_APP_API_LOCATION: "${API_LOCATION}"
 
   database:
     image: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: passw0rd
-    ports:
-      - 3306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
       - neomdb_network
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    secrets:
+      - db_root_password
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -42,21 +43,31 @@ services:
     networks:
       - neomdb_network
     environment:
-      - IS_PRODUCTION=true
-      - DATABASE_HOST_PROD=database
-      - DATABASE_PORT_PROD=3306
+      IS_PRODUCTION: "true"
+      ORIGIN_PROD: "${ORIGIN_PROD}"
+      DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
+      DB_HOST_PROD: "${DB_HOST_PROD}"
+      DB_PORT_PROD: "${DB_PORT_PROD}"
+    secrets:
+      - db_neomdb_password
 
   nginx:
     image: nginx:latest
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 9000:80
     depends_on:
       - client
       - server
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - neomdb_network
+
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+  db_neomdb_password:
+    file: ./secrets/db_neomdb_password.txt
 
 volumes:
   mysql:
