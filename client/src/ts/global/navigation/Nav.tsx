@@ -16,7 +16,6 @@ import { Menu, Search } from "@material-ui/icons";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
 import { createStyles, alpha, Theme, makeStyles } from "@material-ui/core/styles";
-import JBTLogoWhite from "../../../images/jbt-logo-white.png";
 
 /**
  * Function which proivdes the styles of the Nav
@@ -138,7 +137,6 @@ const Nav: React.FunctionComponent = () => {
             <Menu />
           </IconButton>
           <div className={classes.barContent}>
-            <img src={JBTLogoWhite} alt="JBT Logo" className={classes.jbtLogo} />
             <Typography className={classes.title} variant="h6" noWrap>
               JBT neoMDB
             </Typography>
