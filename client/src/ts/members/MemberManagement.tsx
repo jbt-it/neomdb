@@ -268,9 +268,10 @@ const MemberManagement: React.FunctionComponent = () => {
     // Filters by search input
     filteredMembers = filteredMembers.filter((member) => {
       return (
-        member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        member.nachname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        member.handy.toLowerCase().includes(searchFilter.toLowerCase())
+        searchFilter === null ||
+        (member.vorname !== null && member.vorname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.nachname !== null && member.nachname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.handy !== null && member.handy.includes(searchFilter))
       );
     });
 
