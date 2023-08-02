@@ -1,5 +1,7 @@
 // File for providing authenticaion based util functions
-import { Permission } from "global/globalTypes";
+import { Permission } from "../global/globalTypes";
+import * as authTypes from "../global/auth/authTypes";
+import * as globalTypes from "../global/globalTypes";
 
 /**
  * Checks if a list of permissions of a member include a list of permission IDs
@@ -34,4 +36,56 @@ export const canPermissionBeDelegated = (memberPermissions: Permission[], permis
   return memberPermissions.some(
     (permission) => permission.permissionID === permissionToBeDelegated && permission.canDelegate
   );
+};
+
+/**
+ * Checks if a list of roles of a member has some of the item in the list of role IDs
+ * @param memberRoles The array of roles of the member
+ * @param roles The array of role IDs the `memberRoles` should include at least one
+ * @returns true if at least one of the `roles` are included in `memberRoles`
+ */
+export const doesRolesHaveSomeOf = (memberRoles: number[], roles: number[]) => {
+  return roles.some((element) => memberRoles.includes(element));
+};
+
+/**
+ * Creates the payload for the user data
+ * @param result The result of the login query
+ * @param directorPermissionsResult The result of the director permissions query
+ * @returns The payload for the user data
+ */
+export const createUserDataPayload = (
+  result: authTypes.UserDataQueryResult,
+  directorPermissionsResult: globalTypes.Permission[]
+) => {
+  let permissions = [];
+  let roles = [];
+  // Adds role permissions to the permissions array and adds directorID to the roles array
+  if (directorPermissionsResult.length !== 0) {
+    directorPermissionsResult.forEach((permission) => {
+      permissions.push({ permissionID: permission.permissionID, canDelegate: permission.canDelegate });
+      if (!roles.includes(permission.directorID)) {
+        roles.push(permission.directorID);
+      }
+    });
+  }
+
+  // Adds normal permissions to the permissions array
+  if (result.permissions) {
+    result.permissions
+
+      .split(",")
+      .map(Number)
+      .map((perm) => {
+        // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+        permissions.push({ permissionID: perm, canDelegate: 0 });
+      });
+  }
+  const payload: globalTypes.JWTPayload = {
+    mitgliedID: result.mitgliedID,
+    name: result.name,
+    permissions,
+    roles,
+  };
+  return payload;
 };

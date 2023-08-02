@@ -1,11 +1,17 @@
 /*
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, { useState, useEffect } from "react";
-import { Button, Paper, Grid, createStyles, Theme, makeStyles } from "@material-ui/core";
-import PageBar from "../global/navigation/PageBar";
+import React, { useState, useEffect, useContext } from "react";
+import { Button, Grid, createStyles, makeStyles, Typography, Theme } from "@material-ui/core";
+import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { NavLink } from "react-router-dom";
+import InfoCard from "../global/components/InfoCard";
+import DepartmentDialog from "../global/components/DepartmentDialog";
+import { DepartmentDetails, DepartmentMember, Director } from "./membersTypes";
+import { showErrorMessage } from "../utils/toastUtils";
+import { AuthContext } from "../global/AuthContext";
+import { doesRolesHaveSomeOf } from "../utils/authUtils";
 
 /**
  * Function which proivdes the styles of the DepartmentOverview
@@ -15,24 +21,12 @@ const useStyles = makeStyles((theme: Theme) =>
     spacing: {
       margin: "10px",
     },
-    paper: {
-      paddingLeft: "30px",
-      paddingTop: "5px",
-      marginBottom: "25px",
-      minHeight: "200px",
-    },
-    textFieldGroup: {
-      display: "flex",
-      flexDirection: "row",
-      marginRight: "10px",
-      paddingRight: "10px",
-    },
     buttonGroup: {
       display: "flex",
     },
     button: {
       border: "0",
-      backgroundColor: "#F6891F",
+      backgroundColor: theme.palette.primary.main,
       color: "white",
       "&:hover": {
         color: "black",
@@ -41,63 +35,15 @@ const useStyles = makeStyles((theme: Theme) =>
     memberArea: {
       marginTop: -20,
     },
-    header: {
-      display: "flex",
-      flexDirection: "row",
-    },
-    image: {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "flex-end",
-      maxWidth: "200px",
-      marginLeft: "auto",
-      marginRight: "10%",
-    },
-    img: {
-      margin: "auto",
-      display: "block",
-      maxWidth: "100%",
-      maxHeight: "100%",
-    },
     navLink: {
       textDecoration: "none",
-      color: "red",
+      color: theme.palette.secondary.main,
+      "&:hover": {
+        color: theme.palette.primary.main,
+      },
     },
   })
 );
-
-/**
- * Interface for the member object
- */
-interface Member {
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-  ressort: number;
-  bezeichnung: string;
-}
-/**
- * Interface for the department object
- */
-interface Department {
-  ressortID: number;
-  bezeichnung: string;
-  kuerzel: string;
-  jbt_email: string;
-  linkZielvorstellung: string;
-  linkOrganigramm: string;
-}
-
-/**
- * Interface for the directors
- */
-interface Director {
-  evpostenID: number;
-  ressortID: number;
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-}
 
 /**
  * Displays cards for every department
@@ -105,10 +51,18 @@ interface Director {
  */
 const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const { auth } = useContext(AuthContext);
+
+  const [members, setMembers] = useState<DepartmentMember[]>([]);
+  const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [directors, setDirectors] = useState<Director[]>([]);
-  const [errorOpen, setErrorOpen] = useState<number>(0);
+  const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
+  const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
+  const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
+  const [dialogMITOpen, setDialogMITOpen] = useState<boolean>(false);
+  const [dialogFKOpen, setDialogFKOpen] = useState<boolean>(false);
+  const [dialogMAROpen, setDialogMAROpen] = useState<boolean>(false);
+  const [dialogITOpen, setDialogITOpen] = useState<boolean>(false);
 
   /**
    * Retrieves the departments
@@ -127,8 +81,8 @@ const DepartmentOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
-        setErrorOpen(errorOpen + 1);
+      .catch(() => {
+        showErrorMessage("Fehler beim Laden der Ressorts");
       });
 
     // Clean-up function
@@ -154,8 +108,8 @@ const DepartmentOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
-        setErrorOpen(errorOpen + 1);
+      .catch(() => {
+        showErrorMessage("Fehler beim Laden der Ressortmitglieder");
       });
 
     // Clean-up function
@@ -181,8 +135,8 @@ const DepartmentOverview: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
-        setErrorOpen(errorOpen + 1);
+      .catch(() => {
+        showErrorMessage("Fehler beim Laden der Ressortleitungen");
       });
 
     // Clean-up function
@@ -200,46 +154,9 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @param departmentID The id of the department from which all members should be
    */
   const getMembersOfDeparment = (departmentID: number) => {
-    switch (departmentID) {
-      case 1: {
-        return members.filter((member) => {
-          return member.ressort === 1;
-        });
-      }
-      case 2: {
-        return members.filter((member) => {
-          return member.ressort === 2;
-        });
-      }
-      case 3: {
-        return members.filter((member) => {
-          return member.ressort === 3;
-        });
-      }
-      case 4: {
-        return members.filter((member) => {
-          return member.ressort === 4;
-        });
-      }
-      case 5: {
-        return members.filter((member) => {
-          return member.ressort === 5;
-        });
-      }
-      case 7: {
-        return members.filter((member) => {
-          return member.ressort === 7;
-        });
-      }
-      case 8: {
-        return members.filter((member) => {
-          return member.ressort === 8;
-        });
-      }
-      default: {
-        return [];
-      }
-    }
+    return members.filter((member) => {
+      return member.ressort === departmentID;
+    });
   };
 
   /**
@@ -247,107 +164,230 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @param departmentID The id of the department from which the director should be
    */
   const getDirectorOfDepartment = (departmentID: number) => {
-    switch (departmentID) {
-      case 1: {
-        return directors.filter((director) => {
-          return director.ressortID === 1;
-        });
+    return directors.filter((director) => {
+      return director.ressortID === departmentID;
+    })[0];
+  };
+
+  /**
+   * Checks if the current user is the director of the given department
+   * @param departmentID The id of the department which should be checked
+   * @returns true if the current user is the director of the given department
+   * @returns false if the current user is not the director of the given department
+   * @returns false if the director of the given department is undefined
+   */
+  const isDepartmentEditable = (departmentID: number) => {
+    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.evpostenID;
+    if (directorIDofDepartment === undefined) {
+      return false;
+    }
+    return doesRolesHaveSomeOf(auth.roles, [directorIDofDepartment]);
+  };
+
+  /**
+   * Handles the click on the edit button of the department info card
+   * @param event MouseEvent
+   * @param departmentAlias The alias of the department
+   */
+  const handleDialogOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, departmentAlias: string) => {
+    event.stopPropagation();
+    switch (departmentAlias) {
+      case "NET": {
+        setDialogNETOpen(true);
+        break;
       }
-      case 2: {
-        return directors.filter((director) => {
-          return director.ressortID === 2;
-        });
+      case "F&R": {
+        setDialogFROpen(true);
+        break;
       }
-      case 3: {
-        return directors.filter((director) => {
-          return director.ressortID === 3;
-        });
+      case "QM": {
+        setDialogQMOpen(true);
+        break;
       }
-      case 4: {
-        return directors.filter((director) => {
-          return director.ressortID === 4;
-        });
+      case "MIT": {
+        setDialogMITOpen(true);
+        break;
       }
-      case 5: {
-        return directors.filter((director) => {
-          return director.ressortID === 5;
-        });
+      case "FK": {
+        setDialogFKOpen(true);
+        break;
       }
-      case 7: {
-        return directors.filter((director) => {
-          return director.ressortID === 7;
-        });
+      case "MAR": {
+        setDialogMAROpen(true);
+        break;
       }
-      case 8: {
-        return directors.filter((director) => {
-          return director.ressortID === 8;
-        });
-      }
-      default: {
-        return [];
+      case "IT": {
+        setDialogITOpen(true);
+        break;
       }
     }
+  };
+
+  /**
+   * Returns the state of the dialog of the department with the given alias
+   * @param departmentAlias The alias of the department for which the corresponding dialog state should be returned
+   * @returns The corresponding dialog state
+   */
+  const getDialogState = (departmentAlias: string): boolean => {
+    switch (departmentAlias) {
+      case "NET": {
+        return dialogNETOpen;
+      }
+      case "F&R": {
+        return dialogFROpen;
+      }
+      case "QM": {
+        return dialogQMOpen;
+      }
+      case "MIT": {
+        return dialogMITOpen;
+      }
+      case "FK": {
+        return dialogFKOpen;
+      }
+      case "MAR": {
+        return dialogMAROpen;
+      }
+      case "IT": {
+        return dialogITOpen;
+      }
+      default: {
+        return false;
+      }
+    }
+  };
+
+  /**
+   * Returns the state change function of the dialog of the department with the given alias
+   * @param departmentAlias The alias of the department for which the corresponding dialog state change function should be returned
+   * @returns The corresponding dialog state change function
+   */
+  const getDialogStateChangeFunction = (departmentAlias: string) => {
+    switch (departmentAlias) {
+      case "NET": {
+        setDialogNETOpen(false);
+        break;
+      }
+      case "F&R": {
+        setDialogFROpen(false);
+        break;
+      }
+      case "QM": {
+        setDialogQMOpen(false);
+        break;
+      }
+      case "MIT": {
+        setDialogMITOpen(false);
+        break;
+      }
+      case "FK": {
+        setDialogFKOpen(false);
+        break;
+      }
+      case "MAR": {
+        setDialogMAROpen(false);
+        break;
+      }
+      case "IT": {
+        setDialogITOpen(false);
+        break;
+      }
+    }
+  };
+
+  /**
+   * Renders the director of the given department
+   * @param department The department for which the director should be rendered
+   * @param director The director of the given department
+   * @returns The rendered director information
+   * @returns null if the director is undefined
+   */
+  const renderDirector = (department: DepartmentDetails, director: Director) => {
+    return (
+      <div>
+        <Typography variant="h6">
+          <strong>Ressortleitung:</strong>
+        </Typography>
+        {director ? (
+          <div key={`director-${department.bezeichnung}`}>
+            <h3>
+              <NavLink
+                className={classes.navLink}
+                to={`/gesamtuebersicht/${director.mitgliedID}`}
+              >{`${director.vorname} ${director.nachname}`}</NavLink>
+            </h3>
+          </div>
+        ) : null}
+      </div>
+    );
   };
 
   return (
     <div>
       <div className="content-page">
         {departments.map((department, index) => (
-          <Paper key={`department-${index}`} elevation={7} className={classes.paper}>
-            <div className={classes.header}>
-              <h1>{department.bezeichnung}</h1>
-            </div>
-            <div className={classes.buttonGroup}>
-              <Button className={classes.button} variant="contained">
-                Zum Wiki-Artikel
-              </Button>
-              <div className={classes.spacing}></div>
-              <Button
-                className={classes.button}
-                variant="contained"
-                href={department.linkZielvorstellung}
-                target="_blank"
-              >
-                Zu den Zielen
-              </Button>
-              <div className={classes.spacing}></div>
-              <Button className={classes.button} variant="contained" href={department.linkOrganigramm} target="_blank">
-                Zur Organisation
-              </Button>
-            </div>
-            <div>
-              <h2>Ressortleitung:</h2>
-              {getDirectorOfDepartment(department.ressortID).map((director, dirIndex) => (
-                <div key={`director-${dirIndex}`}>
-                  <h3>
-                    <NavLink
-                      className="navLink"
-                      to={`/gesamtuebersicht/${director.mitgliedID}`}
-                    >{`${director.vorname} ${director.nachname}`}</NavLink>
-                  </h3>
-                </div>
-              ))}
-            </div>
-            <div>
-              <h2>Mitglieder:</h2>
-              <Grid container spacing={1} className={classes.memberArea}>
-                {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
-                  <Grid item key={`member-${membIndex}`}>
-                    <h3>
-                      <NavLink
-                        className="navLink"
-                        to={`/gesamtuebersicht/${member.mitgliedID}`}
-                      >{`${member.vorname} ${member.nachname}`}</NavLink>
-                    </h3>
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
-          </Paper>
+          <div key={department.kuerzel}>
+            <InfoCard
+              title={department.bezeichnung}
+              isEditable={isDepartmentEditable(department.ressortID)}
+              handleEdit={(event) => handleDialogOpen(event, department.kuerzel)}
+              defaultExpanded={false}
+              isExpandable={false}
+              key={index}
+            >
+              <div className={classes.buttonGroup}>
+                <Button
+                  className={classes.button}
+                  variant="contained"
+                  href={department.linkZielvorstellung}
+                  target="_blank"
+                >
+                  Zu den Zielen
+                </Button>
+                <div className={classes.spacing}></div>
+                <Button
+                  className={classes.button}
+                  variant="contained"
+                  href={department.linkOrganigramm}
+                  target="_blank"
+                >
+                  Zur Organisation
+                </Button>
+              </div>
+              <br></br>
+              {renderDirector(department, getDirectorOfDepartment(department.ressortID))}
+              <br></br>
+              <div>
+                <Typography variant="h6">
+                  <strong>Mitglieder:</strong>
+                </Typography>
+                <Grid container spacing={1} className={classes.memberArea}>
+                  {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
+                    <Grid item key={`member-${membIndex}`}>
+                      <h3>
+                        <NavLink
+                          className={classes.navLink}
+                          to={`/gesamtuebersicht/${member.mitgliedID}`}
+                        >{`${member.vorname} ${member.nachname}`}</NavLink>
+                      </h3>
+                    </Grid>
+                  ))}
+                </Grid>
+              </div>
+            </InfoCard>
+            <DepartmentDialog
+              title={department.bezeichnung}
+              isOpen={getDialogState(department.kuerzel)}
+              onClose={() => getDialogStateChangeFunction(department.kuerzel)}
+              department={department}
+            />
+            <br></br>
+          </div>
         ))}
       </div>
       <PageBar pageTitle="Ressorts" />
     </div>
   );
 };
+
 export default DepartmentOverview;
