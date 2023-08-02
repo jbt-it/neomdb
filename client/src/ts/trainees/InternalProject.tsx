@@ -182,6 +182,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
     };
 
+    setInternalProjectDetails(ip);
     setName(ip?.name);
     setKuerzel(ip?.kuerzel);
     setTraineegeneration(ip?.traineegeneration);
@@ -248,11 +249,12 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     };
   };
 
-  /**
-   * Returns the interface
+  /*
+   * Returns the internal project details if the retrieval of the internal project was successful (internalProjectDetails is not null or undefined)
    */
-  return (
+  return internalProjectDetails ? (
     <div>
+      {/* TODO: The default values (meaning the values sent from the backend) should also be given to the dialog, because canceling the editing should probably reset the states - low priority*/}
       <InternalProjectInformationDialog
         name={name}
         kuerzel={kuerzel}
@@ -300,17 +302,17 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
             </div>
           </div>
           <div className={classes.category}>
-            <Detail name={"Name"} value={name} />
-            <Detail name={"Kürzel"} value={kuerzel} />
-            <Detail name={"Traineegeneration"} value={traineegeneration} />
-            <Detail name={"Kick-Off"} value={kickoff} />
-            <Detail name={"Angebot abgegeben"} value={angebotAbgegeben} />
-            <Detail name={"AP abgegeben"} value={apAbgegeben} />
-            <Detail name={"AP Datum"} value={apDatum} />
-            <Detail name={"ZP abgegeben"} value={zpAbgegeben} />
-            <Detail name={"DL abgegeben"} value={dlAbgegeben} />
-            <Detail name={"Projektmitglieder"} value={projektmitglieder} />
-            <Detail name={"Qualitätsmanager"} value={qualitaetsmanager} />
+            <Detail name={"Name"} value={internalProjectDetails.name} />
+            <Detail name={"Kürzel"} value={internalProjectDetails.kuerzel} />
+            <Detail name={"Traineegeneration"} value={internalProjectDetails.traineegeneration} />
+            <Detail name={"Kick-Off"} value={internalProjectDetails.kickoff} />
+            <Detail name={"Angebot abgegeben"} value={internalProjectDetails.angebotAbgegeben} />
+            <Detail name={"AP abgegeben"} value={internalProjectDetails.apAbgegeben} />
+            <Detail name={"AP Datum"} value={internalProjectDetails.apDatum} />
+            <Detail name={"ZP abgegeben"} value={internalProjectDetails.zpAbgegeben} />
+            <Detail name={"DL abgegeben"} value={internalProjectDetails.dlAbgegeben} />
+            <Detail name={"Projektmitglieder"} value={internalProjectDetails.projektmitglieder} />
+            <Detail name={"Qualitätsmanager"} value={internalProjectDetails.qualitaetsmanager} />
           </div>
           <div className={classes.categoryHeader}>
             <div>
@@ -327,7 +329,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         </Paper>
       </div>
     </div>
-  );
+  ) : null; // TODO: Instead of returning null, a loading spinner should be displayed
 };
 
 export default InternalProject;
