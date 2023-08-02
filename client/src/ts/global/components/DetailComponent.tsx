@@ -7,7 +7,10 @@ interface DetailProps {
   value: string;
 }
 
-export const InternalProjectDetail: React.FC<DetailProps> = ({ name, value }) => {
+/**
+ * Renders a value with its corresponding name
+ */
+export const Detail: React.FC<DetailProps> = ({ name, value }) => {
   const useStyles = makeStyles((theme) => ({
     submit: {
       margin: theme.spacing(3, 0, 1),

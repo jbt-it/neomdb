@@ -32,6 +32,9 @@ interface DetailProps {
   updateInternalProjectDetails: () => () => void;
 }
 
+/**
+ * Renders the internal project information dialog
+ */
 export const InternalProjectInformationDialog: React.FC<DetailProps> = ({
   name,
   kuerzel,

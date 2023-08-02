@@ -12,7 +12,7 @@ import { Edit } from "@material-ui/icons";
 import * as traineesTypes from "./traineesTypes";
 import { InternalProjectInformationDialog } from "./InternalProjectInformationDialog";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
-import { InternalProjectDetail } from "./InternalProjectDetail";
+import { Detail } from "../global/components/DetailComponent";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
@@ -122,8 +122,9 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
 ) => {
   const classes = useStyles();
 
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
 
+  // internalProjectDetails will be used later when the API call is implemented
   const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
 
   const [name, setName] = useState<string>("");
@@ -160,6 +161,11 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    * Retrieves dummy member details
    */
   const getInternalProjectDetails: VoidFunction = () => {
+    /* TO-DO: Implement API call to retrieve internal project details
+     *  setInternalProjectDetails(ip);
+     *  setName(InternalProjectDetails?.name);
+     */
+
     const ip = {
       id: 5,
       name: "Analoges Bootcamp",
@@ -175,7 +181,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       projektmitglieder: "Marko Müller, Ada Lovelace",
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
     };
-    setInternalProjectDetails(ip);
 
     setName(ip?.name);
     setKuerzel(ip?.kuerzel);
@@ -294,21 +299,19 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               ) : null}
             </div>
           </div>
-          <br></br>
           <div className={classes.category}>
-            <InternalProjectDetail name={"Name"} value={name} />
-            <InternalProjectDetail name={"Kürzel"} value={kuerzel} />
-            <InternalProjectDetail name={"Traineegeneration"} value={traineegeneration} />
-            <InternalProjectDetail name={"Kick-Off"} value={kickoff} />
-            <InternalProjectDetail name={"Angebot abgegeben"} value={angebotAbgegeben} />
-            <InternalProjectDetail name={"AP abgegeben"} value={apAbgegeben} />
-            <InternalProjectDetail name={"AP Datum"} value={apDatum} />
-            <InternalProjectDetail name={"ZP abgegeben"} value={zpAbgegeben} />
-            <InternalProjectDetail name={"DL abgegeben"} value={dlAbgegeben} />
-            <InternalProjectDetail name={"Projektmitglieder"} value={projektmitglieder} />
-            <InternalProjectDetail name={"Qualitätsmanager"} value={qualitaetsmanager} />
+            <Detail name={"Name"} value={name} />
+            <Detail name={"Kürzel"} value={kuerzel} />
+            <Detail name={"Traineegeneration"} value={traineegeneration} />
+            <Detail name={"Kick-Off"} value={kickoff} />
+            <Detail name={"Angebot abgegeben"} value={angebotAbgegeben} />
+            <Detail name={"AP abgegeben"} value={apAbgegeben} />
+            <Detail name={"AP Datum"} value={apDatum} />
+            <Detail name={"ZP abgegeben"} value={zpAbgegeben} />
+            <Detail name={"DL abgegeben"} value={dlAbgegeben} />
+            <Detail name={"Projektmitglieder"} value={projektmitglieder} />
+            <Detail name={"Qualitätsmanager"} value={qualitaetsmanager} />
           </div>
-          <br></br>
           <div className={classes.categoryHeader}>
             <div>
               <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
