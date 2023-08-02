@@ -13,7 +13,7 @@ services:
       context: ../client
       dockerfile: Dockerfile
       args:
-        - REACT_APP_ENV=testing
+        - REACT_APP_ENV=testing # Is used to indicate to react, that it should use the env variables regarding testing
     networks:
       - neomdb_network
 
