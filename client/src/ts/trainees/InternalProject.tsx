@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, IconButton } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Block, Edit, Fullscreen } from "@material-ui/icons";
 import * as traineesTypes from "./traineesTypes";
 import { InternalProjectInformationDialog } from "./InternalProjectInformationDialog";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
@@ -17,6 +17,8 @@ import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 import { authReducerActionType } from "../global/globalTypes";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Container from "@material-ui/core/Container";
 
 /**
  * Function which provides the styles
@@ -125,7 +127,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const { auth } = useContext(AuthContext);
 
   // internalProjectDetails will be used later when the API call is implemented
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
+  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType | null>(null);
 
   const [name, setName] = useState<string>("");
   const [kuerzel, setKuerzel] = useState<string>("");
@@ -166,7 +168,8 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
      *  setName(InternalProjectDetails?.name);
      */
 
-    const ip = {
+    const ip = undefined;
+    /* {
       id: 5,
       name: "Analoges Bootcamp",
       kuerzel: "DB",
@@ -180,9 +183,10 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       dlAbgegeben: "Nein",
       projektmitglieder: "Marko Müller, Ada Lovelace",
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
-    };
+    };*/
 
-    setInternalProjectDetails(ip);
+    //setInternalProjectDetails(ip);
+    /*
     setName(ip?.name);
     setKuerzel(ip?.kuerzel);
     setTraineegeneration(ip?.traineegeneration);
@@ -195,6 +199,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setDlAbgegeben(ip?.dlAbgegeben);
     setProjektmitglieder(ip?.projektmitglieder);
     setQualitaetsmanager(ip?.qualitaetsmanager);
+    */
   };
 
   useEffect(getInternalProjectDetails, []);
@@ -252,6 +257,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   /*
    * Returns the internal project details if the retrieval of the internal project was successful (internalProjectDetails is not null or undefined)
    */
+  console.log(internalProjectDetails);
   return internalProjectDetails ? (
     <div>
       {/* TODO: The default values (meaning the values sent from the backend) should also be given to the dialog, because canceling the editing should probably reset the states - low priority*/}
@@ -329,7 +335,13 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         </Paper>
       </div>
     </div>
-  ) : null; // TODO: Instead of returning null, a loading spinner should be displayed
+  ) : (
+    <div className={"content-page"}>
+      <Container>
+        <CircularProgress />
+      </Container>
+    </div>
+  ); // TODO: Instead of returning null, a centered loading spinner should be displayed
 };
 
 export default InternalProject;
