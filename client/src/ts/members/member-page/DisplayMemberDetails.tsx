@@ -8,9 +8,6 @@ import { Autocomplete, createFilterOptions } from "@material-ui/lab";
 import {
   Grid,
   Typography,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
   IconButton,
   Dialog,
   DialogTitle,
@@ -22,7 +19,7 @@ import {
   Select,
   MenuItem,
 } from "@material-ui/core";
-import { ExpandLess, ExpandMore, Edit, AddCircleOutline, Clear } from "@material-ui/icons";
+import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import {
@@ -33,6 +30,7 @@ import {
 import * as membersTypes from "../membersTypes";
 import * as globalTypes from "../../global/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import InfoCard from "../../global/components/InfoCard";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -542,7 +540,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the club information section
    * @param event MouseEvent
    */
-  const handleClubInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleClubInfoDialogOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setClubInfoDialogOpen(true);
   };
@@ -559,7 +557,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the study information section
    * @param event MouseEvent
    */
-  const handleStudyInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleStudyInfoDialogOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setStudyInfoDialogOpen(true);
   };
@@ -576,7 +574,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the payment information section
    * @param event MouseEvent
    */
-  const handlePaymentInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handlePaymentInfoDialogOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setPaymentInfoDialogOpen(true);
   };
@@ -593,7 +591,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * Handles the click on the edit button of the qualification information section
    * @param event MouseEvent
    */
-  const handleQualificationInfoDialogOpen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleQualificationInfoDialogOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
     setQualificationInfoDialogOpen(true);
   };
@@ -673,62 +671,48 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderGeneralInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel defaultExpanded={true}>
-          <ExpansionPanelSummary aria-controls="general-information-of-a-member" id="general-information">
-            <div className={classes.categoryHeader}>
-              <div>
-                <Typography variant="h6">
-                  <strong>Allgemeine Angaben</strong>
-                </Typography>
-              </div>
-              <div>
-                {
-                  /* When the user is owner or has the permission to
-                      manage all members they can edit this section */
-                  props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
-                    <IconButton onClick={(event) => handleGeneralInfoDialogOpen(event)}>
-                      <Edit fontSize="inherit" />
-                    </IconButton>
-                  ) : null
-                }
-              </div>
+        <InfoCard
+          title={"Allgemeine Angaben"}
+          isExpandable={true}
+          defaultExpanded={true}
+          /* When the user is owner or has the permission to
+            manage all members they can edit this section */
+          isEditable={props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
+          handleEdit={handleGeneralInfoDialogOpen}
+        >
+          <div className={classes.category}>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>
+                {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
+              </Typography>
             </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>
-                  {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
-                </Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.handy}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.jbt_email}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.strasse1}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.plz1}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{"PLATZHALTER"}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.arbeitgeber}</Typography>
-              </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.handy}</Typography>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.jbt_email}</Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.strasse1}</Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.plz1}</Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{"PLATZHALTER"}</Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.arbeitgeber}</Typography>
+            </div>
+          </div>
+        </InfoCard>
       </Grid>
     );
   };
@@ -790,75 +774,56 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderClubInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel defaultExpanded={true}>
-          <ExpansionPanelSummary aria-controls="club-information-of-a-member" id="club-information">
-            <div className={classes.categoryHeader}>
-              <div>
-                <Typography variant="h6">
-                  <strong>Verein</strong>
-                </Typography>
-              </div>
-              <div onClick={(event) => handleClubInfoDialogOpen(event)}>
-                {
-                  /* When the user has the permission to
-                    manage all members they can edit this section */
-                  doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) ? (
-                    <IconButton>
-                      <Edit fontSize="inherit" />
-                    </IconButton>
-                  ) : null
-                }
-              </div>
-            </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+        <InfoCard
+          title={"Verein"}
+          isExpandable={true}
+          defaultExpanded={true}
+          /* When the has the permission to
+            manage all members they can edit this section */
+          isEditable={doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
+          handleEdit={handleClubInfoDialogOpen}
+        >
+          <div className={classes.category}>
             <div className={classes.category}>
-              <div className={classes.category}>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
-                  <Typography className={classes.categoryLine}>{memberDetails.ressort}</Typography>
-                </div>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
-                  {memberDetails.mentor && memberDetails.mentor.vorname && memberDetails.mentor.nachname ? (
-                    <NavLink
-                      to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`}
-                      className={classes.categoryLine}
-                    >
-                      {`${memberDetails.mentor.vorname} ${memberDetails.mentor.nachname}`}
-                    </NavLink>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>Mentees:</Typography>
-                  <div className={classes.categoryItemList}>
-                    {menteeList.map((mentee) => {
-                      return (
-                        <Typography className={classes.categoryLine}>
-                          {`${mentee.vorname} ${mentee.nachname}`}
-                        </Typography>
-                      );
-                    })}
-                  </div>
-                </div>
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.ressort}</Typography>
               </div>
-              <div>
-                <div>
-                  <div className={classes.subCategoryHeader}>
-                    <Typography>Werdegang</Typography>
-                    <IconButton aria-label="expand career" onClick={toggleCareerState}>
-                      {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-                    </IconButton>
-                  </div>
-                  <hr />
-                  {careerOpen ? renderCareerItems() : null}
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
+                {memberDetails.mentor && memberDetails.mentor.vorname && memberDetails.mentor.nachname ? (
+                  <NavLink to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`} className={classes.categoryLine}>
+                    {`${memberDetails.mentor.vorname} ${memberDetails.mentor.nachname}`}
+                  </NavLink>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>Mentees:</Typography>
+                <div className={classes.categoryItemList}>
+                  {menteeList.map((mentee) => {
+                    return (
+                      <Typography className={classes.categoryLine}>{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                    );
+                  })}
                 </div>
               </div>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+            <div>
+              <div>
+                <div className={classes.subCategoryHeader}>
+                  <Typography>Werdegang</Typography>
+                  <IconButton aria-label="expand career" onClick={toggleCareerState}>
+                    {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+                  </IconButton>
+                </div>
+                <hr />
+                {careerOpen ? renderCareerItems() : null}
+              </div>
+            </div>
+          </div>
+        </InfoCard>
       </Grid>
     );
   };
@@ -869,56 +834,41 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderStudyInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel defaultExpanded={true}>
-          <ExpansionPanelSummary aria-controls="study-information-of-a-member" id="study-information">
-            <div className={classes.categoryHeader}>
-              <div>
-                <Typography variant="h6">
-                  <strong>Studium</strong>
-                </Typography>
-              </div>
-              <div onClick={(event) => handleStudyInfoDialogOpen(event)}>
-                {
-                  /* When the user is owner or has the permission to
-                    manage all members they can edit this section */
-                  props.isOwner ? (
-                    <IconButton>
-                      <Edit fontSize="inherit" />
-                    </IconButton>
-                  ) : null
-                }
-              </div>
+        <InfoCard
+          title={"Studium"}
+          isExpandable={true}
+          defaultExpanded={true}
+          /* When the user is owner they can edit this section */
+          isEditable={props.isOwner}
+          handleEdit={handleStudyInfoDialogOpen}
+        >
+          <div className={classes.category}>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.hochschule}</Typography>
             </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.hochschule}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.studiengang}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>
-                  {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
-                </Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>
-                  {transformSQLStringToGermanDate(memberDetails.studienende)}
-                </Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.vertiefungen}</Typography>
-              </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.studiengang}</Typography>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>
+                {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
+              </Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>
+                {transformSQLStringToGermanDate(memberDetails.studienende)}
+              </Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.vertiefungen}</Typography>
+            </div>
+          </div>
+        </InfoCard>
       </Grid>
     );
   };
@@ -930,44 +880,29 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     if (props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [6])) {
       return (
         <Grid item xs={12} sm={12}>
-          <ExpansionPanel>
-            <ExpansionPanelSummary aria-controls="payment-information-of-a-member" id="payment-information">
-              <div className={classes.categoryHeader}>
-                <div>
-                  <Typography variant="h6">
-                    <strong>Zahlungsinformationen</strong>
-                  </Typography>
-                </div>
-                <div onClick={(event) => handlePaymentInfoDialogOpen(event)}>
-                  {
-                    /* When the user is owner or has the permission to manage all
-                      members they can edit this section */
-                    props.isOwner ? (
-                      <IconButton>
-                        <Edit fontSize="inherit" />
-                      </IconButton>
-                    ) : null
-                  }
-                </div>
+          <InfoCard
+            title={"Zahlungsinformationen"}
+            isExpandable={true}
+            defaultExpanded={false}
+            /* When the user is owner they can edit this section */
+            isEditable={props.isOwner}
+            handleEdit={handlePaymentInfoDialogOpen}
+          >
+            <div className={classes.category}>
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.kontoinhaber}</Typography>
               </div>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <div className={classes.category}>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
-                  <Typography className={classes.categoryLine}>{memberDetails.kontoinhaber}</Typography>
-                </div>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
-                  <Typography className={classes.categoryLine}>{memberDetails.iban}</Typography>
-                </div>
-                <div className={classes.categoryItem}>
-                  <Typography className={classes.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
-                  <Typography className={classes.categoryLine}>{memberDetails.bic}</Typography>
-                </div>
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.iban}</Typography>
               </div>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+              <div className={classes.categoryItem}>
+                <Typography className={classes.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.bic}</Typography>
+              </div>
+            </div>
+          </InfoCard>
         </Grid>
       );
     } else {
@@ -981,60 +916,45 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderQualificationInformation: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel defaultExpanded={true}>
-          <ExpansionPanelSummary aria-controls="qualifications-information-of-a-member" id="qualifications-information">
-            <div className={classes.categoryHeader}>
-              <div>
-                <Typography variant="h6">
-                  <strong>Qualifikationen</strong>
-                </Typography>
-              </div>
-              <div onClick={(event) => handleQualificationInfoDialogOpen(event)}>
-                {
-                  /* When the user is owner or has the permission to manage all
-                    members they can edit this section */
-                  props.isOwner ? (
-                    <IconButton>
-                      <Edit fontSize="inherit" />
-                    </IconButton>
-                  ) : null
-                }
+        <InfoCard
+          title={"Qualifikationen"}
+          isExpandable={true}
+          defaultExpanded={true}
+          /* When the user is owner they can edit this section */
+          isEditable={props.isOwner}
+          handleEdit={handleQualificationInfoDialogOpen}
+        >
+          <div className={classes.category}>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.ausbildung}</Typography>
+            </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>Sprachen:</Typography>
+              <div className={classes.categoryItemList}>
+                {memberDetails.sprachen.map((language) => {
+                  return (
+                    <Typography className={classes.categoryLine}>
+                      {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
+                    </Typography>
+                  );
+                })}
               </div>
             </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.ausbildung}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Sprachen:</Typography>
-                <div className={classes.categoryItemList}>
-                  {memberDetails.sprachen.map((language) => {
-                    return (
-                      <Typography className={classes.categoryLine}>
-                        {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
-                      </Typography>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
-                <div className={classes.categoryItemList}>
-                  {memberDetails.edvkenntnisse.map((edv) => {
-                    return (
-                      <Typography className={classes.categoryLine}>
-                        {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
-                      </Typography>
-                    );
-                  })}
-                </div>
+            <div className={classes.categoryItem}>
+              <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
+              <div className={classes.categoryItemList}>
+                {memberDetails.edvkenntnisse.map((edv) => {
+                  return (
+                    <Typography className={classes.categoryLine}>
+                      {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
+                    </Typography>
+                  );
+                })}
               </div>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </div>
+        </InfoCard>
       </Grid>
     );
   };
@@ -1045,28 +965,19 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderProjectList: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel>
-          <ExpansionPanelSummary aria-controls="project-list-of-member" id="project-list">
+        <InfoCard title={"Projekte (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
+          <div className={classes.category}>
             <div>
-              <Typography variant="h6">
-                <strong>Projekte (# Anzahl)</strong>
+              <Typography className={classes.categoryItem}>
+                <strong>{"Name des Projekts"}</strong>
               </Typography>
+              <Typography className={classes.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
+              <Typography className={classes.categoryItem}>{`Rolle: ${""}`}</Typography>
+              <Typography className={classes.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
             </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <div className={classes.category}>
-              <div>
-                <Typography className={classes.categoryItem}>
-                  <strong>{"Name des Projekts"}</strong>
-                </Typography>
-                <Typography className={classes.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
-                <Typography className={classes.categoryItem}>{`Rolle: ${""}`}</Typography>
-                <Typography className={classes.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
-              </div>
-              <hr />
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+            <hr />
+          </div>
+        </InfoCard>
       </Grid>
     );
   };
@@ -1077,25 +988,16 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderWorkshopList: VoidFunction = () => {
     return (
       <Grid item xs={12} sm={12}>
-        <ExpansionPanel>
-          <ExpansionPanelSummary aria-controls="workshop-list-of-member" id="workshop-list">
-            <div>
-              <Typography variant="h6">
-                <strong>Workshops (# Anzahl)</strong>
-              </Typography>
+        <InfoCard title={"Workshops (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
+          <div className={classes.category}>
+            <div className={classes.workshopItem}>
+              <Typography>{`${"DATUM"}`}</Typography>
+              <Typography>{`${"ART DES WS"}`}</Typography>
+              <Typography>{`${"NAME"}`}</Typography>
+              <Typography>{`${"GEHALTEN"}`}</Typography>
             </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <div className={classes.category}>
-              <div className={classes.workshopItem}>
-                <Typography>{`${"DATUM"}`}</Typography>
-                <Typography>{`${"ART DES WS"}`}</Typography>
-                <Typography>{`${"NAME"}`}</Typography>
-                <Typography>{`${"GEHALTEN"}`}</Typography>
-              </div>
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </div>
+        </InfoCard>
       </Grid>
     );
   };

@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Textfield from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import PageBar from "../global/navigation/PageBar";
+import PageBar from "../global/components/navigation/PageBar";
 
 /**
  * Function that allows the user to change the password when logged in, by posting the new password to the backend
