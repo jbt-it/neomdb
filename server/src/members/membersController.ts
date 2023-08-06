@@ -781,7 +781,7 @@ export const updateMemberStatus = (req: Request, res: Response): void => {
     case "passives Mitglied":
       statusChangeDate = "passiv_seit = ? ";
       break;
-    case "ausgetretenes Mitglied":
+    case "Ausgetretene":
       statusChangeDate = "ausgetreten_seit = ? ";
       break;
     default:
