@@ -481,12 +481,12 @@ export const createMember = async (req: Request, res: Response) => {
             req.body.geschlecht,
             hash,
             getRandomString(16),
-            1, // Status of member is at default "trainee"
+            1, // Default status of member is "trainee"
             req.body.generation,
             req.body.traineeSeit,
             req.body.email,
             jbtMail,
-            8, // Department is at default "Ohne Ressort"
+            8, // Default department "Ohne Ressort"
           ]
         )
         .then(() => {
@@ -838,6 +838,71 @@ export const retrieveEDVSkills = (req: Request, res: Response): void => {
     )
     .catch(() => {
       res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * Updates the status of an existing member
+ * Update can be done by members with certain permission
+ * Update can be done by member himself with an additional permission
+ */
+export const updateMemberStatus = (req: Request, res: Response): void => {
+  const date: Date = new Date();
+
+  // Format date yyyy-mm-dd hh:mm:ss
+  const lastChangeTime =
+    date.getFullYear() +
+    "-" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "-" +
+    ("00" + date.getDate()).slice(-2) +
+    " " +
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2);
+
+  // Get status that was changed
+  // Trainee, aktives Mitglied, Senior, Alumnus, passives Mitglied, ausgetretenes Mitglied
+  let statusChangeDate = "";
+  switch (req.body.mitgliedstatus) {
+    case "Trainee":
+      statusChangeDate = "trainee_seit = ? ";
+      break;
+    case "aktives Mitglied":
+      statusChangeDate = "aktiv_seit = ? ";
+      break;
+    case "Senior":
+      statusChangeDate = "senior_seit = ? ";
+      break;
+    case "Alumnus":
+      statusChangeDate = "alumnus_seit = ? ";
+      break;
+    case "passives Mitglied":
+      statusChangeDate = "passiv_seit = ? ";
+      break;
+    case "Ausgetretene":
+      statusChangeDate = "ausgetreten_seit = ? ";
+      break;
+    default:
+      break;
+  }
+
+  database
+    .query(
+      `UPDATE mitglied
+        SET mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?), lastchange = ?, ` +
+        statusChangeDate +
+        `WHERE mitgliedID = ?`,
+      [req.body.mitgliedstatus, lastChangeTime, lastChangeTime, req.params.id]
+    )
+    .then((result) => {
+      res.status(200).send("Profile Update Successful");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Query Error: Updating Profile failed");
     });
 };
 
