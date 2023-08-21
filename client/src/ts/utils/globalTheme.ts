@@ -5,6 +5,13 @@ import { createTheme } from "@mui/material/styles";
 
 // Global theme
 export default createTheme({
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        variant: "standard",
+      },
+    },
+  },
   palette: {
     primary: {
       // Ci-orange as hex
