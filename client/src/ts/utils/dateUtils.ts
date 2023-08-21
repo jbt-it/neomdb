@@ -34,6 +34,15 @@ export const transformGermanDateToSQLString = (germanDate: string) => {
 };
 
 /**
+ * Transforms the date to an sql date string
+ * @param date The date to transform
+ * @returns The date as an sql string
+ */
+export const transfromDateToSQLDate = (date: Date) => {
+  return date.toISOString().slice(0, 19).replace("T", " ");
+};
+
+/**
  * Transforms a date in string format to a sql date in string format
  * @param dateString A date in string format
  * @returns The date as a sql date in string format
@@ -47,5 +56,7 @@ export const transformStringToSQLString = (dateString: string | null) => {
   if (isNaN(date.getTime())) {
     return null;
   }
-  return date.getFullYear() + "-" + ("00" + (date.getMonth() + 1)).slice(-2) + "-" + ("00" + date.getDate()).slice(-2);
+  //return date.getFullYear() + "-" + ("00" + (date.getMonth() + 1)).slice(-2) + "-" + ("00" + date.getDate()).slice(-2);
+
+  return transfromDateToSQLDate(date);
 };
