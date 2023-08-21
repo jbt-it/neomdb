@@ -1,7 +1,7 @@
 /**
  * Wrapper for the MySQL connections
  */
-import { QueryResult } from "types/databaseTypes";
+import { QueryResult, TransactionTask } from "types/databaseTypes";
 import mysql = require("mysql2");
 
 /**
@@ -22,16 +22,125 @@ const pool: mysql.Pool = mysql.createPool(databaseConfig);
  * returns promise
  * @param sql Query string
  * @param args Array with query arguments
+ * @param connection (optional) The connection to the database (used for transactions)
  */
-export const query = (sql: string, args: (string | number)[]) => {
+export const query = (sql: string, args: (string | number | boolean)[], connection?: mysql.PoolConnection) => {
+  const executor = connection || pool;
   return new Promise<QueryResult>((resolve, reject) => {
-    pool.query(sql, args, (queryError: any, result: QueryResult) => {
+    executor.query(sql, args, (queryError: any, result: QueryResult) => {
       if (queryError) {
         return reject(queryError);
       }
       return resolve(result);
     });
   });
+};
+
+/**
+ * Acquires connection from pool and returns promise
+ *
+ * Only use this function if you need to execute multiple queries in a transaction
+ */
+export const getConnection = (): Promise<mysql.PoolConnection> => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if (err) reject(err);
+      else resolve(connection);
+    });
+  });
+};
+
+/**
+ * Begins a transaction
+ * @param connection The connection to the database
+ */
+export const beginTransaction = (connection: mysql.PoolConnection): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    connection.beginTransaction((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+};
+
+/**
+ * Commits a transaction
+ * @param connection The connection to the database
+ */
+export const commit = (connection: mysql.PoolConnection): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    connection.commit((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+};
+
+/**
+ * Rolls back a transaction
+ * @param connection The connection to the database
+ */
+export const rollback = (connection: mysql.PoolConnection): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    connection.rollback(() => {
+      resolve();
+    });
+  });
+};
+
+/**
+ * Executes a sequence of repository functions (tasks) within a single transaction
+ * If any of the tasks fails, the entire transaction is rolled back
+ * If all tasks succeed, the transaction is committed
+ *
+ * @param {TransactionTask[]} tasks - An array of tasks to be executed in sequence
+ * Each task object contains the function to be executed and its corresponding arguments
+ *
+ * @returns {Promise<any[]>} - Resolves with an array of results from each executed function
+ *
+ * @throws Will throw an error if one of the tasks fails or if there are issues with the transaction
+ *
+ * @example
+ *
+ * ```typescript
+ * // Using the function in a service:
+ * try {
+ *   const results = await executeInSequenceInTransaction([
+ *     {
+ *       func: this.membersRepository.updateDepartmentByID.bind(this.membersRepository),
+ *       args: [departmentID, linkOrganigramm, linkZielvorstellung]
+ *     },
+ *     {
+ *       func: this.membersRepository.someOtherFunction.bind(this.membersRepository),
+ *       args: [otherArg1, otherArg2]
+ *     }
+ *   ]);
+ *
+ *   console.log(results); // Array of results from the executed functions.
+ * } catch (error) {
+ *   console.error('Transaction failed:', error);
+ * }
+ * ```
+ */
+export const executeInTransaction = async (tasks: TransactionTask[]): Promise<any[]> => {
+  const connection = await getConnection();
+  try {
+    await beginTransaction(connection);
+
+    const results: any[] = [];
+    for (const task of tasks) {
+      results.push(await task.func(...task.args, connection));
+    }
+
+    await commit(connection);
+
+    return results;
+  } catch (error) {
+    await rollback(connection);
+    throw error;
+  } finally {
+    connection.release();
+  }
 };
 
 /**
@@ -44,6 +153,7 @@ export const query = (sql: string, args: (string | number)[]) => {
  * @returns A promise
  */
 export const connectionQuery = (connection: mysql.PoolConnection, sql: string, args: (string | number)[]) => {
+  // TODO: Remove this function!
   return new Promise<QueryResult>((resolve, reject) => {
     connection.query(sql, args, (queryError: any, result: QueryResult) => {
       if (queryError) {
@@ -63,99 +173,27 @@ export const connectionQuery = (connection: mysql.PoolConnection, sql: string, a
 };
 
 /**
- * Retrieves a connection from the pool and starts a transaction
- * @returns A promise
- */
-export const startTransaction = () => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((error, connection) => {
-      if (error) {
-        return reject(error);
-      }
-      connection.beginTransaction((err) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(connection);
-      });
-    });
-  });
-};
-
-/**
- * Ends the connection to the database
- *
- * ! Should only be used in combination with startTransaction
- * @param connection The connection to the database
- */
-export const endConnection = (connection: mysql.PoolConnection) => {
-  connection.destroy();
-};
-
-/**
- * Commits all database actions of this connection and ends the transaction
- *
- * ! Should only be used in combination with startTransaction
- * @param connection The connection to the database
- * @returns A promise
- */
-export const commit = (connection: mysql.PoolConnection) => {
-  return new Promise((resolve, reject) => {
-    connection.commit((err) => {
-      if (err) {
-        return reject(err);
-      }
-      endConnection(connection);
-      return resolve([]);
-    });
-  });
-};
-
-/**
- * Makes a rollback, undoing all database actions of this connection and ends the transaction
- *
- * ! Should only be used in combination with startTransaction
- * @param connection The connection to the database
- * @returns A promise
- */
-const rollback = (connection: mysql.PoolConnection) => {
-  return new Promise((resolve, reject) => {
-    connection.rollback((err) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve([]);
-    });
-  });
-};
-
-/**
  * Creates a list of promises
  * @param queryList A list of queries
- * @param connection (optinal) The connection for creating promises executing connectionQuery
+ * @param connection The connection for creating promises executing connectionQuery
  * @returns A list of promises
  */
-const createPromises = (queryList: string[], connection?: mysql.PoolConnection) => {
+const createPromises = (queryList: string[], connection: mysql.PoolConnection) => {
   const promises = [];
-  if (connection) {
-    queryList.map((singleQuery) => {
-      promises.push(connectionQuery(connection, singleQuery, []));
-    });
-  } else {
-    queryList.map((singleQuery) => {
-      promises.push(query(singleQuery, []));
-    });
-  }
+  queryList.map((singleQuery) => {
+    promises.push(query(singleQuery, [], connection));
+  });
   return promises;
 };
 
 /**
  * Executes multiple queries by iterating through them
  * Should only be used in combination with startTransaction
+ * @param connection The connection to the database (required!)
  * @param queries Array with query strings
  * @returns Promise
  */
-export const executeMultipleConnectionQueries = (connection: mysql.PoolConnection, queries: string[]) => {
+export const executeMultipleQueries = (queries: string[], connection: mysql.PoolConnection) => {
   const promises = createPromises(queries, connection);
   return Promise.all(promises);
 };
