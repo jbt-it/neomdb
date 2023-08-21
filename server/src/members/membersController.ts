@@ -6,9 +6,10 @@ import { Request, Response } from "express";
 import database = require("../database");
 import { getRandomString } from "../utils/stringUtils";
 import * as membersTypes from "./membersTypes";
-import { PoolConnection } from "mysql";
+import { PoolConnection } from "mysql2";
 import * as authTypes from "./../global/auth/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../utils/authUtils";
+import { QueryResult } from "databaseTypes";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
@@ -27,39 +28,45 @@ export const changePassword = (req: Request, res: Response): void => {
       WHERE mitglied.name = ?`,
       [req.body.userName]
     )
-    .then((result: membersTypes.GetPasswordForValidation[]) => {
-      if (result.length === 0) {
-        res.status(204).send("User does not exist");
-      }
-      bcrypt.compare(req.body.oldPassword, result[0].passwordHash).then((match) => {
-        if (match) {
-          bcrypt
-            .hash(req.body.newPassword, 10)
-            .then((hash) => {
-              // Store hash in your password DB
-              database
-                .query(
-                  `UPDATE mitglied
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetPasswordForValidation[]
+      ) => {
+        if (result.length === 0) {
+          res.status(204).send("User does not exist");
+        }
+        const member = result[0] as membersTypes.GetPasswordForValidation;
+        bcrypt.compare(req.body.oldPassword, member.passwordHash).then((match) => {
+          if (match) {
+            bcrypt
+              .hash(req.body.newPassword, 10)
+              .then((hash) => {
+                // Store hash in your password DB
+                database
+                  .query(
+                    `UPDATE mitglied
                   SET passwordHash = ?
                   WHERE mitglied.name = ?
                   AND mitglied.mitgliedID = ?`,
-                  [hash, req.body.userName, req.body.userID]
-                )
-                .then(() => {
-                  res.status(200).send("The new password has been saved");
-                })
-                .catch(() => {
-                  res.status(500).send("Update query Error");
-                });
-            })
-            .catch(() => {
-              res.status(500).send("Internal Error");
-            });
-        } else {
-          res.status(401).send("The old password was not correct");
-        }
-      });
-    })
+                    [hash, req.body.userName, req.body.userID]
+                  )
+                  .then(() => {
+                    res.status(200).send("The new password has been saved");
+                  })
+                  .catch(() => {
+                    res.status(500).send("Update query Error");
+                  });
+              })
+              .catch(() => {
+                res.status(500).send("Internal Error");
+              });
+          } else {
+            res.status(401).send("The old password was not correct");
+          }
+        });
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -78,9 +85,14 @@ export const retrieveMemberList = (req: Request, res: Response): void => {
       ORDER BY nachname DESC`,
       []
     )
-    .then((result: membersTypes.GetMembersQueryResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetMembersQueryResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -107,74 +119,99 @@ export const retrieveMember = (req: Request, res: Response): void => {
         WHERE mitgliedID = ?`,
         [req.params.id]
       )
-      .then((result: membersTypes.GetMemberQueryResult[]) => {
-        if (result.length === 0) {
-          res.status(404).send("User not found");
-        } else {
-          database
-            .query(
-              `SELECT wert, niveau
+      .then(
+        (
+          result: QueryResult
+          // membersTypes.GetMemberQueryResult[]
+        ) => {
+          if (result.length === 0) {
+            res.status(404).send("User not found");
+          } else {
+            database
+              .query(
+                `SELECT wert, niveau
               FROM sprachen
               WHERE mitglied_mitgliedID = ?`,
-              [req.params.id]
-            )
-            .then((resultLang: membersTypes.GetLanguageOfMemberQueryResult[]) => {
-              database
-                .query(
-                  `SELECT mitgliedID, vorname, nachname
-                  FROM mitglied
-                  WHERE mentor = ?`,
-                  [req.params.id]
-                )
-                .then((resultMentees: membersTypes.GetMenteeOfMemberQueryResult[]) => {
+                [req.params.id]
+              )
+              .then(
+                (
+                  resultLang: QueryResult
+                  // membersTypes.GetLanguageOfMemberQueryResult[]
+                ) => {
                   database
                     .query(
                       `SELECT mitgliedID, vorname, nachname
+                  FROM mitglied
+                  WHERE mentor = ?`,
+                      [req.params.id]
+                    )
+                    .then(
+                      (
+                        resultMentees: QueryResult
+                        // membersTypes.GetMenteeOfMemberQueryResult[]
+                      ) => {
+                        database
+                          .query(
+                            `SELECT mitgliedID, vorname, nachname
                       FROM mitglied
                       WHERE mitgliedID =
                       (SELECT mentor
                       FROM mitglied
                       WHERE mitgliedID = ?)`,
-                      [req.params.id]
-                    )
-                    .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
-                      database
-                        .query(
-                          `SELECT wert, niveau
+                            [req.params.id]
+                          )
+                          .then(
+                            (
+                              resultMentor: QueryResult
+                              // membersTypes.GetMentorOfMemberQueryResult[]
+                            ) => {
+                              database
+                                .query(
+                                  `SELECT wert, niveau
                         FROM edvkenntnisse
                         WHERE mitglied_mitgliedID = ?`,
-                          [req.params.id]
-                        )
-                        .then((resultEDV: membersTypes.GetEDVSkillsOfMemberQueryResult) => {
-                          // Combine the four different query results
-                          const member = [
-                            {
-                              ...result[0],
-                              mentor: resultMentor[0],
-                              mentees: resultMentees,
-                              sprachen: resultLang,
-                              edvkenntnisse: resultEDV,
-                            },
-                          ];
-                          res.status(200).json(member);
-                        })
-                        .catch(() => {
-                          res.status(500).send("Query Error: Retrieving EDV Skills");
-                        });
-                    })
+                                  [req.params.id]
+                                )
+                                .then(
+                                  (
+                                    resultEDV: QueryResult
+                                    // membersTypes.GetEDVSkillsOfMemberQueryResult
+                                  ) => {
+                                    // Combine the four different query results
+                                    const member = [
+                                      {
+                                        ...result[0],
+                                        mentor: resultMentor[0],
+                                        mentees: resultMentees,
+                                        sprachen: resultLang,
+                                        edvkenntnisse: resultEDV,
+                                      },
+                                    ];
+                                    res.status(200).json(member);
+                                  }
+                                )
+                                .catch(() => {
+                                  res.status(500).send("Query Error: Retrieving EDV Skills");
+                                });
+                            }
+                          )
+                          .catch(() => {
+                            res.status(500).send("Query Error: Retrieving Mentor");
+                          });
+                      }
+                    )
                     .catch(() => {
-                      res.status(500).send("Query Error: Retrieving Mentor");
+                      res.status(500).send("Query Error: Retrieving Mentees");
                     });
-                })
-                .catch(() => {
-                  res.status(500).send("Query Error: Retrieving Mentees");
-                });
-            })
-            .catch(() => {
-              res.status(500).send("Query Error: Retrieving Languages");
-            });
+                }
+              )
+              .catch(() => {
+                res.status(500).send("Query Error: Retrieving Languages");
+              });
+          }
         }
-      })
+      )
       .catch(() => {
         res.status(500).send("Query Error: Retrieving Member");
       });
@@ -194,74 +231,99 @@ export const retrieveMember = (req: Request, res: Response): void => {
         WHERE mitgliedID = ?`,
         [req.params.id]
       )
-      .then((result: membersTypes.GetMemberQueryResult[]) => {
-        if (result.length === 0) {
-          res.status(404).send("User not found");
-        } else {
-          database
-            .query(
-              `SELECT wert, niveau
+      .then(
+        (
+          result: QueryResult
+          // membersTypes.GetMemberQueryResult[]
+        ) => {
+          if (result.length === 0) {
+            res.status(404).send("User not found");
+          } else {
+            database
+              .query(
+                `SELECT wert, niveau
               FROM sprachen
               WHERE mitglied_mitgliedID = ?`,
-              [req.params.id]
-            )
-            .then((resultLang: membersTypes.GetLanguageOfMemberQueryResult[]) => {
-              database
-                .query(
-                  `SELECT mitgliedID, vorname, nachname
-                  FROM mitglied
-                  WHERE mentor = ?`,
-                  [req.params.id]
-                )
-                .then((resultMentees: membersTypes.GetMenteeOfMemberQueryResult[]) => {
+                [req.params.id]
+              )
+              .then(
+                (
+                  resultLang: QueryResult
+                  // membersTypes.GetLanguageOfMemberQueryResult[]
+                ) => {
                   database
                     .query(
                       `SELECT mitgliedID, vorname, nachname
+                  FROM mitglied
+                  WHERE mentor = ?`,
+                      [req.params.id]
+                    )
+                    .then(
+                      (
+                        resultMentees: QueryResult
+                        // membersTypes.GetMenteeOfMemberQueryResult[]
+                      ) => {
+                        database
+                          .query(
+                            `SELECT mitgliedID, vorname, nachname
                       FROM mitglied
                       WHERE mitgliedID =
                       (SELECT mentor
                       FROM mitglied
                       WHERE mitgliedID = ?)`,
-                      [req.params.id]
-                    )
-                    .then((resultMentor: membersTypes.GetMentorOfMemberQueryResult[]) => {
-                      database
-                        .query(
-                          `SELECT wert, niveau
+                            [req.params.id]
+                          )
+                          .then(
+                            (
+                              resultMentor: QueryResult
+                              // membersTypes.GetMentorOfMemberQueryResult[]
+                            ) => {
+                              database
+                                .query(
+                                  `SELECT wert, niveau
                           FROM edvkenntnisse
                           WHERE mitglied_mitgliedID = ?`,
-                          [req.params.id]
-                        )
-                        .then((resultEDV: membersTypes.GetEDVSkillsOfMemberQueryResult) => {
-                          // Combine the four different query results
-                          const member = [
-                            {
-                              ...result[0],
-                              mentor: resultMentor[0],
-                              mentees: resultMentees,
-                              sprachen: resultLang,
-                              edvkenntnisse: resultEDV,
-                            },
-                          ];
-                          res.status(200).json(member);
-                        })
-                        .catch(() => {
-                          res.status(500).send("Query Error: Retrieving EDV Skills");
-                        });
-                    })
+                                  [req.params.id]
+                                )
+                                .then(
+                                  (
+                                    resultEDV: QueryResult
+                                    // membersTypes.GetEDVSkillsOfMemberQueryResult
+                                  ) => {
+                                    // Combine the four different query results
+                                    const member = [
+                                      {
+                                        ...result[0],
+                                        mentor: resultMentor[0],
+                                        mentees: resultMentees,
+                                        sprachen: resultLang,
+                                        edvkenntnisse: resultEDV,
+                                      },
+                                    ];
+                                    res.status(200).json(member);
+                                  }
+                                )
+                                .catch(() => {
+                                  res.status(500).send("Query Error: Retrieving EDV Skills");
+                                });
+                            }
+                          )
+                          .catch(() => {
+                            res.status(500).send("Query Error: Retrieving Mentor");
+                          });
+                      }
+                    )
                     .catch(() => {
-                      res.status(500).send("Query Error: Retrieving Mentor");
+                      res.status(500).send("Query Error: Retrieving Mentees");
                     });
-                })
-                .catch(() => {
-                  res.status(500).send("Query Error: Retrieving Mentees");
-                });
-            })
-            .catch(() => {
-              res.status(500).send("Query Error: Retrieving Languages");
-            });
+                }
+              )
+              .catch(() => {
+                res.status(500).send("Query Error: Retrieving Languages");
+              });
+          }
         }
-      })
+      )
       .catch(() => {
         res.status(500).send("Query Error: Retrieving Member");
       });
@@ -289,9 +351,18 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
       ORDER BY ressortID`,
       []
     )
-    .then((result: membersTypes.GetDepartmentMembersQueryResult[]) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetDepartmentMembersQueryResult[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send([]);
+        } else {
+          res.status(200).json(result);
+        }
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -308,13 +379,18 @@ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []
     )
-    .then((result: membersTypes.GetCurrentDirectorsQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Directors not found");
-      } else {
-        res.status(200).json(result);
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetCurrentDirectorsQueryResult[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("Directors not found");
+        } else {
+          res.status(200).json(result);
+        }
       }
-    })
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -473,13 +549,18 @@ export const createMember = async (req: Request, res: Response) => {
           //                   };
           database
             .query("SELECT name, mitgliedID, jbt_email FROM mitglied WHERE name = ?", [newUserName])
-            .then((result: membersTypes.GetMemberIdentificationQueryResult[]) => {
-              if (result.length === 0) {
-                res.status(500).send(`Error creating member with name: ${newUserName}`);
-                return;
+            .then(
+              (
+                result: QueryResult
+                // membersTypes.GetMemberIdentificationQueryResult[]
+              ) => {
+                if (result.length === 0) {
+                  res.status(500).send(`Error creating member with name: ${newUserName}`);
+                  return;
+                }
+                res.status(201).json({ statusOverview, newUser: result[0] });
               }
-              res.status(201).json({ statusOverview, newUser: result[0] });
-            })
+            )
             .catch(() => {
               res.status(500).send(`Error creating member with name: ${newUserName}`);
             });
@@ -643,13 +724,18 @@ export const retrieveDirectors = (req: Request, res: Response): void => {
       WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `,
       []
     )
-    .then((result: membersTypes.GetDirectorsQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Directors not found");
-      } else {
-        res.status(200).json(result);
+    .then(
+      (
+        result: QueryResult
+        //  membersTypes.GetDirectorsQueryResult[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("Directors not found");
+        } else {
+          res.status(200).json(result);
+        }
       }
-    })
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -666,13 +752,18 @@ export const retrieveDepartments = (req: Request, res: Response): void => {
       WHERE bezeichnung != "Ohne Ressort"`,
       []
     )
-    .then((result: membersTypes.GetDepartmentsQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Departments not found");
-      } else {
-        res.status(200).json(result);
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetDepartmentsQueryResult[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("Departments not found");
+        } else {
+          res.status(200).json(result);
+        }
       }
-    })
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -706,13 +797,18 @@ export const retrieveLanguages = (req: Request, res: Response): void => {
       FROM sprachen`,
       []
     )
-    .then((result: string[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Languages not found");
-      } else {
-        res.status(200).json(result);
+    .then(
+      (
+        result: QueryResult
+        // string[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("Languages not found");
+        } else {
+          res.status(200).json(result);
+        }
       }
-    })
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -728,13 +824,18 @@ export const retrieveEDVSkills = (req: Request, res: Response): void => {
       FROM edvkenntnisse`,
       []
     )
-    .then((result: string[]) => {
-      if (result.length === 0) {
-        res.status(404).send("EDV Skills not found");
-      } else {
-        res.status(200).json(result);
+    .then(
+      (
+        result: QueryResult
+        // string[]
+      ) => {
+        if (result.length === 0) {
+          res.status(404).send("EDV Skills not found");
+        } else {
+          res.status(200).json(result);
+        }
       }
-    })
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
@@ -1078,9 +1179,14 @@ export const retrievePermissionsOfMembers = (req: Request, res: Response): void 
     LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
       []
     )
-    .then((result: membersTypes.GetPermissionsQueryResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetPermissionsQueryResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error: Getting permissions failed");
     });
@@ -1092,9 +1198,14 @@ export const retrievePermissionsOfMembers = (req: Request, res: Response): void 
 export const retrievePermissions = (req: Request, res: Response): void => {
   database
     .query(`SELECT * FROM berechtigung`, [])
-    .then((result: membersTypes.GetPermissionsQueryResult) => {
-      res.status(200).json(result);
-    })
+    .then(
+      (
+        result: QueryResult
+        // membersTypes.GetPermissionsQueryResult
+      ) => {
+        res.status(200).json(result);
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error: Getting permissions failed");
     });
@@ -1113,48 +1224,62 @@ export const retrievePermissionsByMemberId = (req: Request, res: Response) => {
       GROUP BY mitgliedID`,
       [req.params.id]
     )
-    .then((result: authTypes.UserDataQueryResult[]) => {
-      // If the result is empty, no member with the given id exists
-      if (result.length === 0) {
-        res.status(404).send(`Member with id "${req.params.id}" does not exist`);
-        return;
-      }
-      // Selects permissions belonging to a possible role of the member
-      database
-        .query(
-          `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
+    .then(
+      (
+        result: QueryResult
+        // authTypes.UserDataQueryResult[]
+      ) => {
+        // If the result is empty, no member with the given id exists
+        if (result.length === 0) {
+          res.status(404).send(`Member with id "${req.params.id}" does not exist`);
+          return;
+        }
+        let member = null;
+        if (Array.isArray(result)) {
+          member = result[0] as authTypes.UserDataQueryResult;
+        }
+        // Selects permissions belonging to a possible role of the member
+        database
+          .query(
+            `SELECT berechtigung_berechtigungID AS permissionID, canDelegate
           FROM mitglied_has_evposten
           LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
           WHERE mitglied_has_evposten.mitglied_mitgliedID = ?;
         `,
-          [req.params.id]
-        )
-        .then((directorPermissionsResult: authTypes.DirectorPermissionsQueryResult[]) => {
-          let permissions = [];
+            [req.params.id]
+          )
+          .then(
+            (
+              directorPermissionsResult: QueryResult
+              // authTypes.DirectorPermissionsQueryResult[]
+            ) => {
+              let permissions = [];
 
-          // Adds role permissions to the permissions array
-          if (directorPermissionsResult.length > 0) {
-            permissions = directorPermissionsResult;
-          }
+              // Adds role permissions to the permissions array
+              if (directorPermissionsResult.length > 0) {
+                permissions = directorPermissionsResult;
+              }
 
-          if (result.length > 0) {
-            // Adds normal permissions to the permissions array
-            if (result[0].permissions) {
-              result[0].permissions
-                .split(",")
-                .map(Number)
-                .map((perm) => {
-                  // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-                  permissions.push({ permissionID: perm, canDelegate: 0 });
-                });
+              if (result.length > 0) {
+                // Adds normal permissions to the permissions array
+                if (member.permissions) {
+                  member.permissions
+                    .split(",")
+                    .map(Number)
+                    .map((perm) => {
+                      // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+                      permissions.push({ permissionID: perm, canDelegate: 0 });
+                    });
+                }
+              }
+              res.status(200).json({ ...result[0], permissions });
             }
-          }
-          res.status(200).json({ ...result[0], permissions });
-        })
-        .catch(() => {
-          res.status(500).send("Query Error");
-        });
-    })
+          )
+          .catch(() => {
+            res.status(500).send("Query Error");
+          });
+      }
+    )
     .catch(() => {
       res.status(500).send("Query Error");
     });
