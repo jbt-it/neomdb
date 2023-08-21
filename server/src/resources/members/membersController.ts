@@ -5,13 +5,13 @@ import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
 import { PoolConnection } from "mysql2";
 import { QueryResult } from "types/databaseTypes";
-import { MemberDto, UpdateDepartmentRequest } from "../../types/membersTypes";
+import { MemberDetails, UpdateDepartmentRequest } from "../../types/membersTypes";
 import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import database = require("../../database");
 import MembersService from "./membersService";
-import { UnautherizedError } from "../../types/errors";
+import { UnauthorizedError } from "../../types/errors";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
@@ -30,7 +30,7 @@ export const retrieveMemberList = async (req: Request, res: Response): Promise<R
  * Retrieves a member specified by id
  * Returns financial data iff member has permission or is himself
  */
-export const retrieveMember = async (req: Request, res: Response): Promise<Response> => {
+export const retrieveMemberDetails = async (req: Request, res: Response): Promise<Response> => {
   const memberID = Number(req.params.id);
   const permissions = res.locals.permissions;
   let userCanViewFinancialData = false;
@@ -40,8 +40,8 @@ export const retrieveMember = async (req: Request, res: Response): Promise<Respo
   if (memberID === res.locals.memberID || doesPermissionsInclude(permissions, [6])) {
     userCanViewFinancialData = true;
   }
-  const memberDto: MemberDto = await membersService.getMember(memberID, userCanViewFinancialData);
-  return res.status(200).json(memberDto);
+  const memberDetailsDto: MemberDetails = await membersService.getMemberDetails(memberID, userCanViewFinancialData);
+  return res.status(200).json(memberDetailsDto);
 };
 
 /**
@@ -405,9 +405,9 @@ export const updateDepartmentInfo = async (req: Request, res: Response): Promise
  * Retrieves the language values
  */
 export const retrieveLanguages = async (req: Request, res: Response): Promise<Response> => {
-  const langauges = await membersService.getLanguageValues();
+  const languages = await membersService.getLanguageValues();
 
-  return res.status(200).json(langauges);
+  return res.status(200).json(languages);
 };
 
 /**
@@ -420,309 +420,34 @@ export const retrieveEDVSkills = async (req: Request, res: Response): Promise<Re
 };
 
 /**
- * Updates an existing member
+ * Updates the information of an existing member
  * Update of critical fields can be done by member with certain permission
  * Update of critical and non critical fields can be done by member himself with additional permission
  */
-export const updateMember = (req: Request, res: Response): void => {
-  const date: Date = new Date();
-
-  // Format date yyyy-mm-dd hh:mm:ss
-  const lastChangeTime =
-    date.getFullYear() +
-    "-" +
-    ("00" + (date.getMonth() + 1)).slice(-2) +
-    "-" +
-    ("00" + date.getDate()).slice(-2) +
-    " " +
-    ("00" + date.getHours()).slice(-2) +
-    ":" +
-    ("00" + date.getMinutes()).slice(-2) +
-    ":" +
-    ("00" + date.getSeconds()).slice(-2);
-
-  const mentorID = req.body.mentor ? req.body.mentor.mitgliedID : null;
+export const updateMemberDetails = async (req: Request, res: Response): Promise<Response> => {
+  const memberID = Number(req.params.id);
+  const { mentor, sprachen: languages, edvkenntnisse: edvSkills, ...member } = req.body as MemberDetails;
 
   // Grants access to all fields if member is himself and has additional permission
-  if (Number(req.params.id) === res.locals.memberID && doesPermissionsInclude(res.locals.permissions, [1])) {
-    database
-      .startTransaction()
-      .then((connection: PoolConnection) => {
-        database
-          .connectionQuery(
-            connection,
-            `UPDATE mitglied
-            SET handy = ?, mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?),
-            generation = ?, internesprojekt = ?, mentor = ?, trainee_seit = ?, mitglied_seit = ?, alumnus_seit = ?,
-            senior_seit = ?, aktiv_seit = ?, passiv_seit = ?, ausgetreten_seit = ?,
-            ressort = (SELECT ressortID FROM ressort WHERE bezeichnung = ?), arbeitgeber = ?, strasse1 = ?,
-            plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?, plz2 = ?, ort2 = ?, tel2 = ?,
-            email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?, studienende = ?, vertiefungen = ?, ausbildung = ?,
-            kontoinhaber = ?, iban = ?, bic = ?, engagement = ?, canPL = ?, canQM = ?, lastchange = ?,
-            fuehrerschein = ?, ersthelferausbildung = ?
-            WHERE mitgliedID = ?`,
-            [
-              req.body.handy,
-              req.body.mitgliedstatus,
-              req.body.generation,
-              req.body.internesprojekt,
-              mentorID,
-              req.body.trainee_seit,
-              req.body.mitglied_seit,
-              req.body.alumnus_seit,
-              req.body.senior_seit,
-              req.body.aktiv_seit,
-              req.body.passiv_seit,
-              req.body.ausgetreten_seit,
-              req.body.ressort,
-              req.body.arbeitgeber,
-              req.body.strasse1,
-              req.body.plz1,
-              req.body.ort1,
-              req.body.tel1,
-              req.body.email1,
-              req.body.strasse2,
-              req.body.plz2,
-              req.body.ort2,
-              req.body.tel2,
-              req.body.email2,
-              req.body.hochschule,
-              req.body.studiengang,
-              req.body.studienbeginn,
-              req.body.studienende,
-              req.body.vertiefungen,
-              req.body.ausbildung,
-              req.body.kontoinhaber,
-              req.body.iban,
-              req.body.bic,
-              req.body.engagement,
-              req.body.canPL,
-              req.body.canQM,
-              lastChangeTime,
-              req.body.fuehrerschein,
-              req.body.ersthelferausbildung,
-              req.params.id,
-            ]
-          )
-          .then(() => {
-            // Delete the exisitng entries of languages of the specific member
-            database
-              .connectionQuery(connection, `DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
-              .then(() => {
-                // To save/update the different languages of the member sql strings are saved into an array
-                const langQueries = [];
-
-                // To save/update the different languages of the member sql strings are saved into an array
-                req.body.sprachen.map((language) => {
-                  langQueries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
-                    VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
-                    ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
-                });
-                database
-                  .executeMultipleConnectionQueries(connection, langQueries)
-                  .then(() => {
-                    // Delete the existing entries of edv skills of the specific member
-                    database
-                      .connectionQuery(connection, `DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [
-                        req.params.id,
-                      ])
-                      .then(() => {
-                        // To save/update the different edv skills of the member sql strings are saved into an array
-                        const edvQueries = [];
-
-                        // To save/update the different edv skills of the member sql strings are saved into an array
-                        req.body.edvkenntnisse.map((edv) => {
-                          edvQueries.push(`INSERT INTO edvkenntnisse (mitglied_mitgliedID, wert, niveau)
-                            VALUES (${req.params.id}, '${edv.wert}', ${edv.niveau})
-                            ON DUPLICATE KEY UPDATE niveau = ${edv.niveau};`);
-                        });
-                        database
-                          .executeMultipleConnectionQueries(connection, edvQueries)
-                          .then(() => {
-                            database
-                              .commit(connection)
-                              .then(() => {
-                                res.status(200).send("Profile Update Successful");
-                              })
-                              .catch(() => {
-                                res.status(500).send("Query Error: Commiting failed");
-                              });
-                          })
-                          .catch(() => {
-                            res.status(500).send("Query Error: Updating EDV Skills failed");
-                          });
-                      })
-                      .catch(() => {
-                        res.status(500).send("Query Error: Deleting EDV Skills failed");
-                      });
-                  })
-                  .catch(() => {
-                    res.status(500).send("Query Error: Updating Languages failed");
-                  });
-              })
-              .catch(() => {
-                res.status(500).send("Query Error: Deleting Languages failed");
-              });
-          })
-          .catch(() => {
-            res.status(500).send("Query Error: Updating Profile failed");
-          });
-      })
-      .catch(() => {
-        res.status(500).send("Query Error: Starting Transaction failed");
-      });
+  if (memberID === res.locals.memberID && doesPermissionsInclude(res.locals.permissions, [1])) {
+    await membersService.updateMemberDetails(memberID, member, mentor, languages, edvSkills, true, true);
+    return res.status(200).send("Member updated");
   }
 
   // Grants access to non critical fields to the member himself
-  else if (Number(req.params.id) === res.locals.memberID) {
-    database
-      .startTransaction()
-      .then((connection: PoolConnection) => {
-        database
-          .connectionQuery(
-            connection,
-            `UPDATE mitglied
-            SET handy = ?, arbeitgeber = ?, strasse1 = ?, plz1 = ?, ort1 = ?, tel1 = ?, email1 = ?, strasse2 = ?,
-            plz2 = ?, ort2 = ?, tel2 = ?, email2 = ?, hochschule = ?, studiengang = ?, studienbeginn = ?,
-            studienende = ?, vertiefungen = ?, ausbildung = ?, kontoinhaber = ?, iban = ?, bic = ?, lastchange = ?, fuehrerschein = ?,
-            ersthelferausbildung = ?
-            WHERE mitgliedID = ?`,
-            [
-              req.body.handy,
-              req.body.arbeitgeber,
-              req.body.strasse1,
-              req.body.plz1,
-              req.body.ort1,
-              req.body.tel1,
-              req.body.email1,
-              req.body.strasse2,
-              req.body.plz2,
-              req.body.ort2,
-              req.body.tel2,
-              req.body.email2,
-              req.body.hochschule,
-              req.body.studiengang,
-              req.body.studienbeginn,
-              req.body.studienende,
-              req.body.vertiefungen,
-              req.body.ausbildung,
-              req.body.kontoinhaber,
-              req.body.iban,
-              req.body.bic,
-              lastChangeTime,
-              req.body.fuehrerschein,
-              req.body.ersthelferausbildung,
-              req.params.id,
-            ]
-          )
-          .then(() => {
-            // Delete the exisitng entries of languages of the specific member
-            database
-              .connectionQuery(connection, `DELETE FROM sprachen WHERE mitglied_mitgliedID = ?`, [req.params.id])
-              .then(() => {
-                // To save/update the different languages of the member sql strings are saved into an array
-                const langQueries = [];
-
-                // To save/update the different languages of the member sql strings are saved into an array
-                req.body.sprachen.map((language) => {
-                  langQueries.push(`INSERT INTO sprachen (mitglied_mitgliedID, wert, niveau)
-                    VALUES (${req.params.id}, '${language.wert}', ${language.niveau})
-                    ON DUPLICATE KEY UPDATE niveau = ${language.niveau};`);
-                });
-                database
-                  .executeMultipleConnectionQueries(connection, langQueries)
-                  .then(() => {
-                    // Delete the existing entries of edv skills of the specific member
-                    database
-                      .connectionQuery(connection, `DELETE FROM edvkenntnisse WHERE mitglied_mitgliedID = ?`, [
-                        req.params.id,
-                      ])
-                      .then(() => {
-                        // To save/update the different edv skills of the member sql strings are saved into an array
-                        const edvQueries = [];
-
-                        // To save/update the different edv skills of the member sql strings are saved into an array
-                        req.body.edvkenntnisse.map((edv) => {
-                          edvQueries.push(`INSERT INTO edvkenntnisse (mitglied_mitgliedID, wert, niveau)
-                            VALUES (${req.params.id}, '${edv.wert}', ${edv.niveau})
-                            ON DUPLICATE KEY UPDATE niveau = ${edv.niveau};`);
-                        });
-                        database
-                          .executeMultipleConnectionQueries(connection, edvQueries)
-                          .then(() => {
-                            database
-                              .commit(connection)
-                              .then(() => {
-                                res.status(200).send("Profile Update Successful");
-                              })
-                              .catch(() => {
-                                res.status(500).send("Query Error: Commiting failed");
-                              });
-                          })
-                          .catch(() => {
-                            res.status(500).send("Query Error: Updating EDV Skills failed");
-                          });
-                      })
-                      .catch(() => {
-                        res.status(500).send("Query Error: Deleting EDV Skills failed");
-                      });
-                  })
-                  .catch(() => {
-                    res.status(500).send("Query Error: Updating Languages failed");
-                  });
-              })
-              .catch(() => {
-                res.status(500).send("Query Error: Deleting Languages failed");
-              });
-          })
-          .catch(() => {
-            res.status(500).send("Query Error: Updating Profile failed");
-          });
-      })
-      .catch(() => {
-        res.status(500).send("Query Error: Starting Transaction failed");
-      });
+  if (memberID === res.locals.memberID) {
+    await membersService.updateMemberDetails(memberID, member, mentor, languages, edvSkills, false, true);
+    return res.status(200).send("Member updated");
   }
 
   // Grants access to critical fields for members with permission
-  else if (doesPermissionsInclude(res.locals.permissions, [1])) {
-    database
-      .query(
-        `UPDATE mitglied
-        SET mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?), generation = ?, internesprojekt = ?, mentor = ?,
-        trainee_seit = ?, mitglied_seit = ?, alumnus_seit = ?, senior_seit = ?,
-        aktiv_seit = ?, passiv_seit = ?, ausgetreten_seit = ?,
-        ressort = (SELECT ressortID FROM ressort WHERE bezeichnung = ?), engagement = ?,
-        canPL = ?, canQM = ?
-        WHERE mitgliedID = ?`,
-        [
-          req.body.mitgliedstatus,
-          req.body.generation,
-          req.body.internesprojekt,
-          mentorID,
-          req.body.trainee_seit,
-          req.body.mitglied_seit,
-          req.body.alumnus_seit,
-          req.body.senior_seit,
-          req.body.aktiv_seit,
-          req.body.passiv_seit,
-          req.body.ausgetreten_seit,
-          req.body.ressort,
-          req.body.engagement,
-          req.body.canPL,
-          req.body.canQM,
-          req.params.id,
-        ]
-      )
-      .then(() => {
-        res.status(200).send("Profile Update Successful");
-      })
-      .catch(() => {
-        res.status(500).send("Query Error: Updating Profile failed");
-      });
-  } else {
-    res.status(403).send("Authorization failed: You are not permitted to do this");
+  if (doesPermissionsInclude(res.locals.permissions, [1])) {
+    await membersService.updateMemberDetails(memberID, member, mentor, languages, edvSkills, true, false);
+    return res.status(200).send("Member updated");
   }
+
+  // If none of the above is true, the member is not allowed to update the member
+  return res.status(403).send("Authorization failed: You are not permitted to do this");
 };
 
 /**
@@ -780,7 +505,7 @@ export const assignPermissionToMember = async (req: Request, res: Response): Pro
     !doesPermissionsInclude(res.locals.permissions, [permissionID]) ||
     !canPermissionBeDelegated(res.locals.permissions, permissionID)
   ) {
-    throw new UnautherizedError("Permission cannot be delegated!");
+    throw new UnauthorizedError("Permission cannot be delegated!");
   }
 
   await membersService.addPermissionToMember(memberID, permissionID);
@@ -802,7 +527,7 @@ export const unassignPermissionFromMember = async (req: Request, res: Response):
     !doesPermissionsInclude(res.locals.permissions, [permissionID]) ||
     !canPermissionBeDelegated(res.locals.permissions, permissionID)
   ) {
-    throw new UnautherizedError("Permission cannot be deleted!");
+    throw new UnauthorizedError("Permission cannot be deleted!");
   }
 
   await membersService.deletePermissionFromMember(memberID, permissionID);

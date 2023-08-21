@@ -25,7 +25,6 @@ export type Member = {
   mitgliedstatus: string;
   generation: string | null;
   internesprojekt: string | null;
-  mentor: string | null;
   trainee_seit: string | null;
   mitglied_seit: string | null;
   alumnus_seit: string | null;
@@ -64,10 +63,9 @@ export type Member = {
 };
 
 /**
- * Dto type of the member
- * This type is used to send the member with additional data (languages, mentor, mentee, edvskills) to the client
+ * Type of member with additional data (languages, mentor, mentee, edvskills)
  */
-export type MemberDto = {
+export type MemberDetails = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
@@ -148,8 +146,8 @@ export type EdvSkill = {
  */
 export type Mentor = {
   mitgliedID: number;
-  vorname: string;
-  nachname: string;
+  vorname?: string;
+  nachname?: string;
 };
 
 /**

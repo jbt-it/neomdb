@@ -20,6 +20,9 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
  */
 router.use(authenticationMiddleware);
 
+// TODO: Do not merge before the following TODOs are done
+// - 404 should be returned if a route does not exist
+
 //  =======>>> Get routes <<<=======
 router.get("/", catchAsync(membersController.retrieveMemberList));
 
@@ -34,7 +37,7 @@ router.get(
   restrictRoutes(ALL_PERMISSIONS, false),
   catchAsync(membersController.retrievePermissionAssignments)
 );
-router.get("/:id", catchAsync(membersController.retrieveMember));
+router.get("/:id", catchAsync(membersController.retrieveMemberDetails));
 router.get("/:id/permissions", catchAsync(membersController.retrievePermissionsByMemberId));
 
 //  =======>>> Post routes <<<=======
@@ -47,7 +50,7 @@ router.post(
 
 //  =======>>> Patch routes <<<=======
 router.patch("/departments/:id", checkDepartmentAccess, catchAsync(membersController.updateDepartmentInfo));
-router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
+router.patch("/:id", restrictRoutesSelfOrPermission([1]), catchAsync(membersController.updateMemberDetails));
 
 //  =======>>> Delete routes <<<=======
 router.delete(

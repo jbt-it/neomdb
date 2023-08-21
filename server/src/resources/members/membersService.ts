@@ -2,7 +2,7 @@ import {
   EdvSkill,
   Language,
   Member,
-  MemberDto,
+  MemberDetails,
   MemberPartial,
   Mentee,
   Mentor,
@@ -12,9 +12,24 @@ import { NotFoundError } from "../../types/errors";
 import MembersRepository from "./membersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
+import formatDate from "../../utils/dateUtils";
+import { executeInTransaction } from "../../database";
 
+/**
+ * Provides methods to execute member related service functionalities
+ */
 class MembersService {
   membersRepository = new MembersRepository();
+
+  /**
+   * Creates a timestamp with the current date and time for the `lastChange` field
+   */
+  createLastChangeTimestamp = () => {
+    const date: Date = new Date();
+    const formattedDate = formatDate(date);
+
+    return formattedDate;
+  };
 
   /**
    * Retrieves a list of all members
@@ -29,7 +44,7 @@ class MembersService {
    * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
    * @throws NotFoundError if no member was found
    */
-  getMember = async (memberID: number, withFinancialData: boolean) => {
+  getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
     const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
 
     if (member === null) {
@@ -42,7 +57,7 @@ class MembersService {
     const mentees: Mentee[] = await this.membersRepository.getMenteesByMemberID(memberID);
 
     // Combine the four parts for the complete member dto
-    const memberDto: MemberDto = {
+    const memberDto: MemberDetails = {
       ...member,
       mentor,
       mentees,
@@ -179,6 +194,72 @@ class MembersService {
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
     await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
+  };
+
+  /**
+   * Updates details of the member with the given `memberID`
+   * @param memberID The id of the member
+   * @param updatedMember The updated member data
+   * @param mentor The updated mentor data
+   * @param updatedLanguages The updated languages
+   * @param updatedEdvSkills The updated edv skills
+   * @param updateCritical Whether to update critical data
+   * @param updatePersonal Whether to update personal data
+   * @throws NotFoundError if the member does not exist
+   */
+  updateMemberDetails = async (
+    memberID: number,
+    updatedMember: Member,
+    mentor: Mentor,
+    updatedLanguages: Language[],
+    updatedEdvSkills: EdvSkill[],
+    updateCritical: boolean,
+    updatePersonal: boolean
+  ) => {
+    // Check if member exists
+    const member = this.membersRepository.getMemberByID(memberID, false);
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+    // Check if potential new mentor exists (if set)
+    if (mentor.mitgliedID !== null) {
+      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
+      if (mentorInDB === null) {
+        throw new NotFoundError(`Mentor with id ${mentor.mitgliedID} does not exist`);
+      }
+    }
+
+    // Create timestamp for last change
+    const updatedLastChange = this.createLastChangeTimestamp();
+
+    // Fill tasks to be executed in transaction
+    const tasks = [];
+    if (updateCritical) {
+      // Add update tasks for critical data
+      tasks.push({
+        func: this.membersRepository.updateMemberCriticalDataByID,
+        args: [memberID, updatedMember, mentor],
+      });
+    }
+    if (updatePersonal) {
+      // Add update tasks for personal data
+      tasks.push({
+        func: this.membersRepository.updateMemberPersonalDataByID,
+        args: [memberID, updatedMember, updatedLastChange],
+      });
+      // Add update tasks for languages and edv skills
+      tasks.push({
+        func: this.membersRepository.updateMemberLanguagesByID,
+        args: [memberID, updatedLanguages],
+      });
+      tasks.push({
+        func: this.membersRepository.updateMemberEdvSkillsByID,
+        args: [memberID, updatedEdvSkills],
+      });
+    }
+
+    // Execute all tasks in transaction
+    await executeInTransaction(tasks);
   };
 }
 
