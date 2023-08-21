@@ -8,7 +8,7 @@ import * as authController from "./authController";
 const router = express.Router();
 
 router.post("/login", authController.login);
-router.patch("/forgot-password", authController.sendPasswordResetLink);
+router.post("/forgot-password", authController.sendPasswordResetLink);
 router.patch("/reset-forgot-password", authController.resetPasswordWithKey);
 
 /**

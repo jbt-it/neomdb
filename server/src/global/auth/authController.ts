@@ -174,6 +174,11 @@ export const retrieveUserData = (req: Request, res: Response) => {
  * @param req email
  * @param res 200 if process is available, 500 else
  */
+
+/**
+ * TODO: implement nodemailer to be able to send mails with microsoft exchange 365
+ * put nodemailer transporter in a new file
+ */
 export const sendPasswordResetLink = (req: Request, res: Response): void => {
   const date = new Date();
   const name = String(req.body.email).split("@")[0];
@@ -289,12 +294,24 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
     .then((result: authTypes.GetEmailDateTokenToVerifyValidityQueryResult[]) => {
       // Check if the email and token are valid
       if (result.length == 0) {
-        res.status(200).send();
+        res.status(404).send();
         return;
       }
-      // Check if the entry is older then five days
-      if (result[0].datediff >= 5) {
-        res.status(200).send();
+      // Check if the entry is older than five days
+      if (result[0].datediff <= -6) {
+        database
+          .query(
+            `DELETE FROM passwort_reset
+                  WHERE mitglied_jbt_email = ?`,
+            [req.body.email]
+          )
+          .then(() => {
+            res.status(422).send("Token expired");
+          })
+          .catch((e) => {
+            console.log(e);
+            res.status(500).send("Internal Error");
+          });
         return;
       }
       bcrypt
@@ -309,7 +326,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
               [req.body.newPassword, hash, name] //TODO: dont save new passwort as plaintext
             )
             .then(() => {
-              // Delete used entry
+              // Delete used entry from the passwort_reset table
               database
                 .query(
                   `DELETE FROM passwort_reset
