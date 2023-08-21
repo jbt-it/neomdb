@@ -15,7 +15,7 @@ export class NotFoundError extends Error {
 /**
  * Error thrown when the user is not authorized to access a resources
  */
-export class UnautherizedError extends Error {
+export class UnauthorizedError extends Error {
   constructor(message?: string) {
     super(message);
     this.name = "UnauthorizedError";

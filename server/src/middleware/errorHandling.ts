@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "../types/errors";
 import { RouteFunction } from "types/expressTypes";
 
 /**
@@ -9,13 +10,13 @@ import { RouteFunction } from "types/expressTypes";
  */
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   switch (err.name) {
-    case "UnauthenticatedError":
+    case UnauthenticatedError.name:
       res.status(401).send(err.message);
       break;
-    case "UnauthorizedError":
+    case UnauthorizedError.name:
       res.status(403).send(err.message);
       break;
-    case "NotFoundError":
+    case NotFoundError.name:
       res.status(404).send(err.message);
       break;
     default:
