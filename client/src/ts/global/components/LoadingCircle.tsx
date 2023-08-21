@@ -1,7 +1,7 @@
 /*
  * Component for rendering a loading circle
  */
-import { Avatar, Typography, Container, Box, Stack } from "@mui/material";
+import { Avatar, Typography, Box, Stack } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
 import Lenni from "../../../images/lenni.jpeg";
