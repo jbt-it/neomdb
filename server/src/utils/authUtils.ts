@@ -58,8 +58,8 @@ export const createUserDataPayload = (
   result: authTypes.UserDataQueryResult,
   directorPermissionsResult: globalTypes.Permission[]
 ) => {
-  let permissions = [];
-  let roles = [];
+  const permissions = [];
+  const roles = [];
   // Adds role permissions to the permissions array and adds directorID to the roles array
   if (directorPermissionsResult.length !== 0) {
     directorPermissionsResult.forEach((permission) => {
