@@ -119,6 +119,44 @@ export type MemberDetails = {
 };
 
 /**
+ * Type of the request to create a member
+ */
+export type CreateMemberRequest = {
+  vorname: string;
+  nachname: string;
+  name: string;
+  geburtsdatum: string;
+  password: string;
+  handy: string;
+  geschlecht: string;
+  generation: string;
+  traineeSeit: string;
+  email: string;
+};
+
+/**
+ * Type of the new member object used for the creation of a member
+ */
+export type NewMember = {
+  vorname: string;
+  nachname: string;
+  geburtsdatum: string;
+  handy: string;
+  geschlecht: string;
+  generation: string;
+  traineeSeit: string;
+  email: string;
+};
+
+/**
+ * Type of the response after creating a member
+ */
+export type CreateMemberResponse = {
+  memberID: number;
+  statusOverview: StatusOverview;
+};
+
+/**
  * Type of the language of a member
  */
 export type Language = {
@@ -210,4 +248,20 @@ export type Director = {
   bezeichnung_weiblich: string;
   bezeichnung_maennlich: string;
   kuerzel: string;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
 };

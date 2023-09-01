@@ -98,20 +98,20 @@ export const rollback = (connection: mysql.PoolConnection): Promise<void> => {
  *
  * @returns {Promise<any[]>} - Resolves with an array of results from each executed function
  *
- * @throws Will throw an error if one of the tasks fails or if there are issues with the transaction
+ * @throws Error if one of the tasks fails or if there are issues with the transaction
  *
  * @example
  *
  * ```typescript
  * // Using the function in a service:
  * try {
- *   const results = await executeInSequenceInTransaction([
+ *   const results = await executeInTransaction([
  *     {
- *       func: this.membersRepository.updateDepartmentByID.bind(this.membersRepository),
+ *       func: this.membersRepository.updateDepartmentByID(this.membersRepository),
  *       args: [departmentID, linkOrganigramm, linkZielvorstellung]
  *     },
  *     {
- *       func: this.membersRepository.someOtherFunction.bind(this.membersRepository),
+ *       func: this.membersRepository.someOtherFunction(this.membersRepository),
  *       args: [otherArg1, otherArg2]
  *     }
  *   ]);

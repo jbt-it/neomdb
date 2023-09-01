@@ -13,8 +13,10 @@ import {
   MemberPartial,
   Mentee,
   Mentor,
+  NewMember,
   Value,
 } from "../../types/membersTypes";
+import { Connection } from "mysql2/typings/mysql/lib/Connection";
 
 class MembersRepository {
   // ---------------------------- USER ---------------------------- \\
@@ -258,6 +260,60 @@ class MembersRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error retrieving all members grouped by departments`);
+    }
+  };
+
+  /**
+   * Creates a new member
+   * @param newMember The new member object
+   * @param newUserName The new username of the member
+   * @param passwordHash The password hash of the member
+   * @param statusID The id of the status of the member
+   * @param icalToken The ical token (not supported anymore)
+   * @param jbtMail The jbt mail of the member
+   * @param departmentID The id of the department of the member
+   * @throws QueryError if the query fails
+   * @returns The id of the new member or null if the member could not be created
+   */
+  createMember = async (
+    newMember: NewMember,
+    newUserName: string,
+    passwordHash: string,
+    statusID: number,
+    icalToken: string,
+    jbtMail: string,
+    departmentID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<number> => {
+    try {
+      const queryResult = await query(
+        `INSERT INTO mitglied (vorname, nachname, geburtsdatum, handy, name, geschlecht, passwordHash, icalToken, mitgliedstatus, generation, trainee_seit, email2, jbt_email, ressort)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          newMember.vorname,
+          newMember.nachname,
+          newMember.geburtsdatum,
+          newMember.handy,
+          newUserName,
+          newMember.geschlecht,
+          passwordHash,
+          icalToken,
+          statusID,
+          newMember.generation,
+          newMember.traineeSeit,
+          newMember.email,
+          jbtMail,
+          departmentID,
+        ],
+        connection
+      );
+      if (queryResult.affectedRows > 0) {
+        return queryResult.insertId;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error creating new member with username ${newUserName} and jbtMail ${jbtMail}`);
     }
   };
 

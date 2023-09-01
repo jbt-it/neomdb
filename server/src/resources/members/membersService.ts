@@ -1,4 +1,5 @@
 import {
+  CreateMemberRequest,
   EdvSkill,
   Language,
   Member,
@@ -6,14 +7,18 @@ import {
   MemberPartial,
   Mentee,
   Mentor,
+  NewMember,
+  StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
-import { NotFoundError } from "../../types/errors";
+import { NotFoundError, QueryError } from "../../types/errors";
 import MembersRepository from "./membersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import formatDate from "../../utils/dateUtils";
 import { executeInTransaction } from "../../database";
+import bcrypt = require("bcryptjs");
+import { getRandomString } from "../../utils/stringUtils";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -194,6 +199,121 @@ class MembersService {
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
     await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
+  };
+
+  /**
+   * Creates the jbtMail and username of a member
+   * If the name already exists, a number is added to the name
+   * @param memberName The name of the member given by the user in the request
+   * @returns The new username and jbtMail
+   */
+  createJBTMailAndNameOfMember = async (memberName: string) => {
+    let jbtMail = "";
+    // New user name if the name already exists
+    let newUserName = "";
+
+    // Search for memberName to check if it already exists
+    const resultFirstQuery = await this.membersRepository.getUserByName(memberName);
+    // Check if memberName already exists
+    if (resultFirstQuery === null) {
+      newUserName = memberName;
+    }
+
+    // Counter for the number of "duplicates" in the database
+    let duplicateCounter = 1;
+    // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
+    while (newUserName === "") {
+      const result = await this.membersRepository.getUserByName(memberName + duplicateCounter);
+      // Check if the member with the new name already exists
+      if (result === null) {
+        newUserName = memberName + duplicateCounter;
+      }
+      duplicateCounter++;
+    }
+    jbtMail = `${newUserName}@studentische-beratung.de`;
+
+    return { newUserName, jbtMail };
+  };
+
+  // TODO: Add comment
+  createWikiAccount = async (jbtMail: string, newUserName: string, hash: string) => {
+    // TODO: Implment and test
+    // createMWUser(req.body.name, hash, jbtMail);
+    //               .then((mwResult: membersTypes.MWApiResult) => {
+    //                 if (mwResult.status === "PASS") {
+    //                   // Set the status of the mediawiki
+    //                   statusOverview = {
+    //                     ...statusOverview,
+    //                     wikiStatus: "success",
+    //                   };
+    //                 } else {
+    //                   statusOverview = {
+    //                     ...statusOverview,
+    //                     wikiErrorMsg: mwResult.message,
+    //                   };
+    //                 }
+    //                 res.status(500).json(statusOverview);
+    //               })
+    //               .catch((err) => {
+    //                 statusOverview = {
+    //                   ...statusOverview,
+    //                   wikiErrorMsg: err,
+    //                 };
+    //                 res.status(500).json(statusOverview);
+    //               });
+    //           });
+    //       })
+  };
+
+  /**
+   * Creates new accounts for a member
+   */
+  createAccountsOfMember = async (newMemberRequest: CreateMemberRequest, statusOverview: StatusOverview) => {
+    // Create jbtMail and newUserName
+    const { newUserName, jbtMail } = await this.createJBTMailAndNameOfMember(newMemberRequest.name);
+
+    let memberID = null;
+    // Create member in database
+    try {
+      const { password: newPassword, ...newMember } = newMemberRequest;
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+      const departmentID = 8; // Default department "Ohne Ressort"
+      const statusID = 1; // Default status of member is "trainee"
+      memberID = await this.membersRepository.createMember(
+        newMember as NewMember,
+        newUserName,
+        passwordHash,
+        statusID,
+        getRandomString(16),
+        jbtMail,
+        departmentID
+      );
+      statusOverview.querySuccesful = true;
+
+      // TODO: Add mail account creation
+      // Throws a specific error if the mail account creation fails that is catched below
+
+      // TODO: Add mail account to mailing list
+      // Throws a specific error if the adding of the mail to the list fails that is catched below
+
+      // TODO: Add nextcloud account creation (deprecated)
+      // Throws a specific error if the nextcloud account creation fails that is catched below
+
+      // TODO: Add mediawiki account creation
+      // Throws a specific error if the mediawiki account creation fails that is catched below#
+      // TODO: this.createWikiAccount(jbtMail, newUserName, passwordHash);
+    } catch (error) {
+      /* Errors are handled centrally in the error handler middleware by default (immediately sends an error response)
+       * but this is a special case, because the user should be sent the status overview (for transparency)
+       * therefore errors must be catched here and handled differently
+       */
+      if (error instanceof QueryError) {
+        // Creation of member in database failed
+        statusOverview.querySuccesful = false;
+        statusOverview.queryErrorMsg = error.message;
+      }
+    }
+    return { memberID, statusOverview };
   };
 
   /**
