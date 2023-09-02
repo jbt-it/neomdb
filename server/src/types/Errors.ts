@@ -33,6 +33,17 @@ export class UnauthenticatedError extends Error {
 }
 
 /**
+ * Error thrown when a request (e.g. the data send in the body) is unprocessable
+ * (syntctically correct but semantically wrong)
+ */
+export class UnprocessableEntityError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "UnprocessableEntityError";
+  }
+}
+
+/**
  * Error thrown when a query fails
  */
 export class QueryError extends Error {

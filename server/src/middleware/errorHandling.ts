@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "../types/errors";
+import { NotFoundError, UnauthenticatedError, UnauthorizedError, UnprocessableEntityError } from "../types/errors";
 import { RouteFunction } from "types/expressTypes";
 
 /**
@@ -18,6 +18,9 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
       break;
     case NotFoundError.name:
       res.status(404).send(err.message);
+      break;
+    case UnprocessableEntityError.name:
+      res.status(422).send(err.message);
       break;
     default:
       res.status(500).send(err.message);
