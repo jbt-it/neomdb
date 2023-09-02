@@ -1,7 +1,7 @@
 import mysql = require("mysql2");
 import { executeMultipleQueries, query } from "../../database";
 import { Permission, PermissionAssignment, User } from "../../types/authTypes";
-import { QueryError } from "../../types/errors";
+import { QueryError, UnprocessableEntityError } from "../../types/errors";
 import {
   Department,
   DepartmentMember,
@@ -16,7 +16,7 @@ import {
   NewMember,
   Value,
 } from "../../types/membersTypes";
-import { Connection } from "mysql2/typings/mysql/lib/Connection";
+import getStatusChangeDate from "../../utils/repositoryUtils";
 
 class MembersRepository {
   // ---------------------------- USER ---------------------------- \\
@@ -418,6 +418,34 @@ class MembersRepository {
       );
     } catch (error) {
       throw new QueryError(`Error updating personal data of member with id ${memberID}`);
+    }
+  };
+
+  /**
+   * Updates the status of a member
+   * @param memberID The id of the member to update
+   * @param lastChangeTime The last change time
+   * @param newStatus The new status of the member
+   * @throws UnprocessableEntityError if the status is not valid
+   * @throws QueryError if the query fails
+   */
+  updateMemberStatusByID = async (memberID: number, lastChangeTime: string, newStatus: string) => {
+    // Retrieves the attribute of the status change date to update (e.g. "trainee_seit")
+    const statusChangeDate = getStatusChangeDate(newStatus);
+    if (statusChangeDate === null) {
+      throw new UnprocessableEntityError(`Status ${newStatus} is not valid`);
+    }
+
+    try {
+      await query(
+        `UPDATE mitglied
+          SET mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?),
+          lastchange = ?, ${statusChangeDate} = ?
+          WHERE mitgliedID = ?`,
+        [newStatus, lastChangeTime, lastChangeTime, memberID]
+      );
+    } catch (error) {
+      throw new QueryError(`Error updating status ${newStatus} of member with id ${memberID}`);
     }
   };
 

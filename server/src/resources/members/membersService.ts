@@ -381,6 +381,21 @@ class MembersService {
     // Execute all tasks in transaction
     await executeInTransaction(tasks);
   };
+
+  /**
+   * Updates the status of a member
+   * @throws NotFoundError if the member does not exist
+   */
+  updateMemberStatus = async (memberID: number, status: string) => {
+    // Check if member exists
+    const member = this.membersRepository.getMemberByID(memberID, false);
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+
+    const lastChangeTime = this.createLastChangeTimestamp();
+    await this.membersRepository.updateMemberStatusByID(memberID, lastChangeTime, status);
+  };
 }
 
 export default MembersService;

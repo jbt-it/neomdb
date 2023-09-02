@@ -51,7 +51,7 @@ router.post(
 //  =======>>> Patch routes <<<=======
 router.patch("/departments/:id", checkDepartmentAccess, catchAsync(membersController.updateDepartmentInfo));
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), catchAsync(membersController.updateMemberDetails));
-router.patch("/:id/status", restrictRoutes([1]), membersController.updateMemberStatus);
+router.patch("/:id/status", restrictRoutes([1]), catchAsync(membersController.updateMemberStatus));
 
 //  =======>>> Delete routes <<<=======
 router.delete(
