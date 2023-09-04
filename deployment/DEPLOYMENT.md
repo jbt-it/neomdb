@@ -20,7 +20,7 @@ For demonstration purposes the first versions of the neoMDB application uses its
 
 In the docker compose file(s) in `/deployment` a mysql container and a PhpMyAdmin container are run.
 
-!IMPORTANT: Do not forget to add a database and user to the mysql container when deploying (see normal Setup).
+!IMPORTANT: Do not forget to add a database and user to the mysql container when deploying (see normal Setup - but remebmer, to use the user password specified in `secrets/db_neomdb_password`).
 The database can be accessed via phpmyadmin over `db-neomdb.studentische-beratung.de`.
 
 ## NGINX
@@ -73,7 +73,7 @@ The Dockerfile of the server is used to build the neomdb server container. It cr
 
 ## Process
 
-**Important Note**: The `[demo]` in the following commands stands for the optional value of "demo". In the future not every deployment is a demo. Later normal releases are without the demo tag.
+**Important Note**: The `[-demo]` in the following commands stands for the optional value of "demo". In the future not every deployment is a demo. Later normal releases are without the demo tag.
 The X.Y.Z are placeholder for the version of the image. X is increased after every major update (new module). Y is increased for a smaller adjustment and Z is increased when the version conatins a patch (bug fix).
 
 _Example_: Adding a new module (e.g. CRM) increases e.g. X=2 to X=3, adding a new page or adding a new logo increases e.g Y=1 to Y=2 and deploying a bug fix increases e.g. Z=4 to Z=5.
