@@ -1,8 +1,9 @@
 /**
  * Wrapper for the MySQL connections
  */
-import mysql = require("mysql");
+import mysql = require("mysql2");
 import fs = require("fs");
+import { QueryResult } from "databaseTypes";
 
 let dbPassword = null;
 try {
@@ -39,8 +40,8 @@ const pool: mysql.Pool = mysql.createPool(databaseConfig);
  * @param args Array with query arguments
  */
 export const query = (sql: string, args: (string | number)[]) => {
-  return new Promise((resolve, reject) => {
-    pool.query(sql, args, (queryError: mysql.MysqlError, result: (string | number)[]) => {
+  return new Promise<QueryResult>((resolve, reject) => {
+    pool.query(sql, args, (queryError: any, result: QueryResult) => {
       if (queryError) {
         return reject(queryError);
       }
@@ -59,8 +60,8 @@ export const query = (sql: string, args: (string | number)[]) => {
  * @returns A promise
  */
 export const connectionQuery = (connection: mysql.PoolConnection, sql: string, args: (string | number)[]) => {
-  return new Promise((resolve, reject) => {
-    connection.query(sql, args, (queryError: mysql.MysqlError, result: (string | number)[]) => {
+  return new Promise<QueryResult>((resolve, reject) => {
+    connection.query(sql, args, (queryError: any, result: QueryResult) => {
       if (queryError) {
         // If the query fails a rollback is automatically initiated
         rollback(connection)
