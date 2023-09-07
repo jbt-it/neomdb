@@ -205,22 +205,6 @@ export const updateMemberDetails = async (req: Request, res: Response): Promise<
 };
 
 /**
- * Change member status to left association (ausgetreten)
- */
-export const deleteMember = (req: Request, res: Response): void => {
-  // Checks if the member is allowed to delete the permission
-
-  database
-    .query("UPDATE mitglied SET mitgliedstatus=6 WHERE mitgliedID=?", [req.params.id])
-    .then((result) => {
-      res.status(200).send("Member status set to left association");
-    })
-    .catch((err) => {
-      res.status(500).send("Database Error: Changing member status failed");
-    });
-};
-
-/**
  * Retrieves all directors and members permission assignments
  */
 export const retrievePermissionAssignments = async (req: Request, res: Response): Promise<Response> => {
