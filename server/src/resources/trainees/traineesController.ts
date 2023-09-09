@@ -2,38 +2,24 @@
  * Definition of the handler functions for the members module
  */
 import { Request, Response } from "express";
-import { QueryResult } from "types/databaseTypes";
+import { QueryResult } from "../../types/databaseTypes";
 import { doesPermissionsInclude } from "../../utils/authUtils";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
 import database = require("../../database");
+import TraineesService from "./TraineesService";
+import { InternalProject } from "types/traineesTypes";
+import { UnauthorizedError } from "../../types/errors";
+
+const traineesService = new TraineesService();
 
 /**
  * Retrieves a single internal project
  */
-export const retrieveIP = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
-      FROM internesprojekt
-      WHERE internesProjektID = ?`,
-      [req.params.id]
-    )
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetInternalProjectType[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("IP not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-      console.log(err);
-    });
+export const retrieveIP = async (req: Request, res: Response): Promise<Response> => {
+  const ipID = parseInt(req.params.id);
+  const ip = await traineesService.getIPByID(ipID);
+
+  return res.status(200).json(ip);
 };
 
 /**
@@ -42,114 +28,40 @@ export const retrieveIP = (req: Request, res: Response): void => {
  * @param {number} req.params.id ID of generation
  * @param res member ID, first and last name and choices
  */
-export const retrieveTraineeChoice = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname,
-      wahl_mentor, wahl_mentor1, wahl_mentor2, wahl_mentor3,
-      wahl_internesprojekt, wahl_internesprojekt1, wahl_internesprojekt2, wahl_internesprojekt3,
-      wahl_ressort, wahl_ressort1, wahl_ressort2, wahl_ressort3
-      FROM  mitglied
-      INNER JOIN generation
-      ON mitglied.generation = generation.generationID
-      WHERE  generation.generationID = ?`,
-      [req.params.id]
-    )
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetTraineeChoiceResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveTraineeChoices = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const choices = await traineesService.getTraineeChoicesByGenerationID(generationID);
+
+  return res.status(200).json(choices);
 };
 
 /**
  * Updates an internal project
  */
-export const updateIP = (req: Request, res: Response): void => {
-  const date: Date = new Date();
+export const updateIP = async (req: Request, res: Response): Promise<Response> => {
+  const ipID = parseInt(req.params.id);
+  const updatedIp = req.body as InternalProject;
 
-  // Format date yyyy-mm-dd hh:mm:ss
-  const lastChangeTime =
-    date.getFullYear() +
-    "-" +
-    ("00" + (date.getMonth() + 1)).slice(-2) +
-    "-" +
-    ("00" + date.getDate()).slice(-2) +
-    " " +
-    ("00" + date.getHours()).slice(-2) +
-    ":" +
-    ("00" + date.getMinutes()).slice(-2) +
-    ":" +
-    ("00" + date.getSeconds()).slice(-2);
-
-  // Grants access to all fields for members with permission
+  // Check if user has permission to update an internal project
   if (doesPermissionsInclude(res.locals.permissions, [15])) {
-    database
-      .query(
-        `UPDATE internesprojekt
-          SET  generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
-          WHERE internesProjektID = ?`,
-        [
-          req.body.generationID,
-          req.body.projektname,
-          req.body.kuerzel,
-          req.body.kickoff,
-          req.body.AngebotBeiEV,
-          req.body.ZPBeiEV,
-          req.body.ZPGehalten,
-          req.body.APBeiEV,
-          req.body.APGehalten,
-          req.body.DLBeiEV,
-          req.params.id,
-        ]
-      )
-      .then((result) => {
-        res.status(200).send("IP Update Successful");
-      })
-      .catch((err) => {
-        res.status(500).send("Query Error: Updating IP failed");
-      });
-  } else {
-    res.status(403).send("Authorization failed: You are not permitted to do this");
+    throw new UnauthorizedError("You are not allowed to update an internal project");
   }
+
+  await traineesService.updateIPByID(ipID, updatedIp);
+
+  return res.status(200).send("Updated IP");
 };
 
 /**
  * Retrieves the mails for the specified internal projects
  */
-export const retrieveTeamMails = (req: Request, res: Response) => {
-  database
-    .query(
-      `SELECT jbt_email
-      FROM mitglied
-      INNER JOIN internesprojekt
-      ON mitglied.internesprojekt = internesprojekt.internesprojektID
-      WHERE internesProjektID = ?`,
-      [req.params.id]
-    )
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetIPMailType[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Email not found");
-        } else {
-          res.status(200).json(result);
-        }
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-      console.log(err);
-    });
+export const retrieveTeamMails = async (req: Request, res: Response): Promise<Response> => {
+  const ipID = parseInt(req.params.id);
+  const mails = await traineesService.getTraineeMailsByIpID(ipID);
+
+  return res.status(200).json(mails);
 };
+
 /*
  * Gets letter of motivation form trainees of given generation
  * @param {Request} req request object

@@ -7,6 +7,7 @@ const router = express.Router();
 import authenticationMiddleware from "../../middleware/authentication";
 import { restrictRoutes } from "../../middleware/authorization";
 import * as traineesController from "./traineesController";
+import { catchAsync } from "../../middleware/errorHandling";
 
 /**
  * =======>>> ALL routes after this point are accessible for logged in users only <<<=======
@@ -16,14 +17,18 @@ router.use(authenticationMiddleware);
 //  =======>>> Get routes <<<=======
 
 // Get a specific internal project
-router.get("/ip/:id", traineesController.retrieveIP);
+router.get("/ip/:id", catchAsync(traineesController.retrieveIP));
 // Get team mails
-router.get("/ip/:id/mails", traineesController.retrieveTeamMails);
+router.get("/ip/:id/mails", catchAsync(traineesController.retrieveTeamMails));
 router.get("/", traineesController.retrieveCurrentTrainees);
 router.get("/current-ips", traineesController.retrieveCurrentIPs);
 router.get("/all-ips", traineesController.retrieveAllIPs);
 router.get("/all-trainees", traineesController.retrieveAllTraineesWithIPs);
-router.get("/generations/:id/trainee-choices", restrictRoutes([14], false), traineesController.retrieveTraineeChoice);
+router.get(
+  "/generations/:id/trainee-choices",
+  restrictRoutes([14], false),
+  catchAsync(traineesController.retrieveTraineeChoices)
+);
 router.get("/generations/trainee-generations", restrictRoutes([14], false), traineesController.retrieveGenerations);
 router.get("/generations/:id/mentors", restrictRoutes([14], false), traineesController.getMentorsOfGeneration);
 router.get(
@@ -33,7 +38,7 @@ router.get(
 );
 
 //  =======>>> Patch routes <<<=======
-router.patch("/ip/:id", traineesController.updateIP);
+router.put("/ip/:id", catchAsync(traineesController.updateIP));
 router.patch("/generations/:id/set-deadline", restrictRoutes([14], false), traineesController.setVotingDeadline);
 router.patch("/:id/assignment", restrictRoutes([14], false), traineesController.setTraineeAssignment);
 

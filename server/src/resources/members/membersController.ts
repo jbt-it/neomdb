@@ -1,10 +1,7 @@
 /**
  * Definition of the handler functions for the members module
  */
-import bcrypt = require("bcryptjs");
 import { Request, Response } from "express";
-import { PoolConnection } from "mysql2";
-import { QueryResult } from "types/databaseTypes";
 import {
   CreateMemberRequest,
   CreateMemberResponse,
@@ -12,11 +9,8 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
 } from "../../types/membersTypes";
-import * as authTypes from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
-import { getRandomString } from "../../utils/stringUtils";
-import database = require("../../database");
-import MembersService from "./membersService";
+import MembersService from "./MembersService";
 import { UnauthorizedError } from "../../types/errors";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
@@ -24,6 +18,7 @@ import { UnauthorizedError } from "../../types/errors";
 // import { createNCUser } from "../utils/nextcloud";
 
 const membersService = new MembersService();
+
 /**
  * Retrieves an overview of all registered members
  */

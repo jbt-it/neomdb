@@ -12,7 +12,7 @@ import {
   UpdateDepartmentRequest,
 } from "types/membersTypes";
 import { NotFoundError, QueryError } from "../../types/errors";
-import MembersRepository from "./membersRepository";
+import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import formatDate from "../../utils/dateUtils";

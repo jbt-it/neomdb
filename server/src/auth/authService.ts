@@ -1,4 +1,4 @@
-import MembersRepository from "../resources/members/membersRepository";
+import MembersRepository from "../resources/members/MembersRepository";
 import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
 import { NotFoundError, UnauthenticatedError } from "../types/errors";
 import { createUserDataPayload } from "../utils/authUtils";
