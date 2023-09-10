@@ -1,6 +1,6 @@
 import { query } from "../../database";
 import { QueryError } from "../../types/errors";
-import { Generation, InternalProject, JBTMail, TraineeChoice } from "../../types/traineesTypes";
+import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
 import mysql = require("mysql2");
 
 class TraineesRepository {
@@ -140,6 +140,37 @@ class TraineesRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error while retrieving mails of trainees of IP with id ${id}`);
+    }
+  };
+
+  /**
+   * Get the motivations of all trainees of a generation
+   * @param generationID id of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineeMotivationsByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<TraineeMotivation[]> => {
+    try {
+      const motivationsQueryResult = await query(
+        `SELECT mitgliedID, wahl_internesprojekt1_motivation, wahl_internesprojekt2_motivation,
+      wahl_internesprojekt3_motivation
+      FROM mitglied
+      INNER JOIN generation
+      ON mitglied.generation = generation.generationID
+      WHERE generation.generationID = ?`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(motivationsQueryResult)) {
+        const motivations = motivationsQueryResult as TraineeMotivation[];
+        return motivations;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving motivations of generation with id ${generationID}`);
     }
   };
 }

@@ -23,6 +23,7 @@ router.get("/ip/:id/mails", catchAsync(traineesController.retrieveTeamMails));
 router.get("/", traineesController.retrieveCurrentTrainees);
 router.get("/current-ips", traineesController.retrieveCurrentIPs);
 router.get("/all-ips", traineesController.retrieveAllIPs);
+router.get("/generations/:id/motivation", catchAsync(traineesController.retrieveTraineeMotivation));
 router.get("/all-trainees", traineesController.retrieveAllTraineesWithIPs);
 router.get(
   "/generations/:id/trainee-choices",

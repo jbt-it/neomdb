@@ -68,28 +68,11 @@ export const retrieveTeamMails = async (req: Request, res: Response): Promise<Re
  * @param {number} req.body.generationID
  * @param res member ID and 3 motivation texts
  */
-export const retrieveTraineeMotivation = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, wahl_internesprojekt1_motivation, wahl_internesprojekt2_motivation,
-      wahl_internesprojekt3_motivation
-      FROM mitglied
-      INNER JOIN generation
-      ON mitglied.generation = generation.generationID
-      WHERE generation.generationID = ?`,
-      [req.body.generationID]
-    )
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetTraineeMotivationResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveTraineeMotivation = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const motivation = await traineesService.getTraineeMotivationsByGenerationID(generationID);
+
+  return res.status(200).json(motivation);
 };
 
 /**

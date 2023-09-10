@@ -58,3 +58,23 @@ export type TraineeChoice = {
 export type JBTMail = {
   email: string;
 };
+
+/**
+ * Type of the trainee motivation written by a trainee to explain the choice of an internal project
+ */
+export type TraineeMotivation = {
+  mitgliedID: number;
+  wahl_internesprojekt1_motivation: string;
+  wahl_internesprojekt2_motivation: string;
+  wahl_internesprojekt3_motivation: string;
+};
+
+/**
+ * Type of a trainee (partial member)
+ */
+export type Trainee = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  generation: number;
+};
