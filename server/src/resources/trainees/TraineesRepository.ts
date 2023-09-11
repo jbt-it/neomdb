@@ -226,6 +226,32 @@ class TraineesRepository {
       throw new QueryError(`Error while retrieving mentors of generation with id ${generationID}`);
     }
   };
+
+  /**
+   * Updates the voting deadline of a generation
+   * @param generationID id of the generation
+   * @param votingStart start of the voting period
+   * @param votingEnd end of the voting period
+   * @throws QueryError if the query fails
+   */
+  updateVotingDeadline = async (
+    generationID: number,
+    votingStart: string,
+    votingEnd: string,
+    connection?: mysql.PoolConnection
+  ) => {
+    try {
+      await query(
+        `UPDATE generation
+          SET wahl_start= ?, wahl_ende= ?
+          WHERE generationID = ?`,
+        [votingStart, votingEnd, generationID],
+        connection
+      );
+    } catch (error) {
+      throw new QueryError(`Error while updating voting deadline of generation with id ${generationID}`);
+    }
+  };
 }
 
 export default TraineesRepository;

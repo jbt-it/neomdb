@@ -44,7 +44,11 @@ router.get(
 
 //  =======>>> Patch routes <<<=======
 router.put("/ip/:id", catchAsync(traineesController.updateIP));
-router.patch("/generations/:id/set-deadline", restrictRoutes([14], false), traineesController.setVotingDeadline);
+router.post(
+  "/generations/:id/set-deadline",
+  restrictRoutes([14], false),
+  catchAsync(traineesController.setVotingDeadline)
+);
 router.patch("/:id/assignment", restrictRoutes([14], false), traineesController.setTraineeAssignment);
 
 //  =======>>> Post routes <<<=======

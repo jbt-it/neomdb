@@ -94,26 +94,19 @@ export const retrieveGenerations = async (req: Request, res: Response): Promise<
  * @param {number} req.params.id ID of generation
  * @param res status code and message
  */
-export const setVotingDeadline = async (req: Request, res: Response) => {
-  // Check if ID of generation is in database
-  const idChecks = await checkForIDs([req.params.id], ["generationID"], ["generation"]);
-  // If ID is not in database return status error code and error message
-  if (idChecks.state > 0) {
-    res.status(idChecks.state).send(idChecks.errorMessage);
-    return;
+export const setVotingDeadline = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const votingStart = req.body.votingStart;
+  const votingEnd = req.body.votingEnd;
+
+  // Check if user has permission to set voting deadline
+  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
+    throw new UnauthorizedError("You are not allowed to set the voting deadline");
   }
-  database
-    .query(`UPDATE generation SET wahl_start= ?, wahl_ende= ?  WHERE generationID= ? `, [
-      req.body.votingStart,
-      req.body.votingEnd,
-      req.params.id,
-    ])
-    .then((result) => {
-      res.status(201).send("Updated Trainee Voting Deadline");
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+
+  await traineesService.updateVotingDeadline(generationID, votingStart, votingEnd);
+
+  return res.status(200).send("Updated voting deadline");
 };
 
 /**

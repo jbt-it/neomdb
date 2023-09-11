@@ -100,6 +100,19 @@ class TraineesService {
 
     return mentors;
   };
+
+  /**
+   * Updates the voting deadline of a generation
+   */
+  updateVotingDeadline = async (generationID: number, votingStart: string, votingEnd: string): Promise<void> => {
+    const generation = await this.traineesRepository.getGenerationByID(generationID);
+
+    if (generation === null) {
+      throw new NotFoundError(`Generation with id ${generationID} not found`);
+    }
+
+    await this.traineesRepository.updateVotingDeadline(generationID, votingStart, votingEnd);
+  };
 }
 
 export default TraineesService;
