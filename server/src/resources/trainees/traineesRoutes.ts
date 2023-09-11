@@ -49,7 +49,7 @@ router.post(
   restrictRoutes([14], false),
   catchAsync(traineesController.setVotingDeadline)
 );
-router.patch("/:id/assignment", restrictRoutes([14], false), traineesController.setTraineeAssignment);
+router.patch("/:id/assignment", restrictRoutes([14], false), catchAsync(traineesController.setTraineeAssignment));
 
 //  =======>>> Post routes <<<=======
 router.post("/generations/:id/add-mentor/:member_id", restrictRoutes([14], false), traineesController.addMentor);

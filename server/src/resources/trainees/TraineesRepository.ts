@@ -3,6 +3,7 @@ import { query } from "../../database";
 import { QueryError } from "../../types/errors";
 import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
 import mysql = require("mysql2");
+import { TraineeAssignment } from "./traineesTypes";
 
 class TraineesRepository {
   /**
@@ -60,7 +61,10 @@ class TraineesRepository {
    * @param generationID id of the generation
    * @throws QueryError if the query fails
    */
-  getTraineeChoicesByGenerationID = async (generationID: number, connection?: mysql.PoolConnection): Promise<any> => {
+  getTraineeChoicesByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<TraineeChoice[]> => {
     try {
       const choicesQueryResult = await query(
         `SELECT mitgliedID, vorname, nachname,
@@ -239,7 +243,7 @@ class TraineesRepository {
     votingStart: string,
     votingEnd: string,
     connection?: mysql.PoolConnection
-  ) => {
+  ): Promise<void> => {
     try {
       await query(
         `UPDATE generation
@@ -250,6 +254,38 @@ class TraineesRepository {
       );
     } catch (error) {
       throw new QueryError(`Error while updating voting deadline of generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * Update the assignment of a trainee
+   * @param traineeID id of the trainee
+   * @param ipID id of the internal project
+   * @param mentorID id of the mentor
+   * @param departmentID id of the department
+   * @throws QueryError if the query fails
+   */
+  updateAssignmentByMemberID = async (
+    memberID: number,
+    traineeAssignment: TraineeAssignment,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    try {
+      query(
+        `UPDATE mitglied SET wahl_internesprojekt =?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
+        [
+          traineeAssignment.ipID,
+          traineeAssignment.ipID,
+          traineeAssignment.mentorID,
+          traineeAssignment.mentorID,
+          traineeAssignment.departmentID,
+          traineeAssignment.departmentID,
+          memberID,
+        ],
+        connection
+      );
+    } catch (error) {
+      throw new QueryError(`Error while updating trainee assignment`);
     }
   };
 }

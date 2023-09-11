@@ -9,6 +9,7 @@ import database = require("../../database");
 import TraineesService from "./TraineesService";
 import { InternalProject } from "types/traineesTypes";
 import { UnauthorizedError } from "../../types/errors";
+import { TraineeAssignment } from "./traineesTypes";
 
 const traineesService = new TraineesService();
 
@@ -96,8 +97,8 @@ export const retrieveGenerations = async (req: Request, res: Response): Promise<
  */
 export const setVotingDeadline = async (req: Request, res: Response): Promise<Response> => {
   const generationID = parseInt(req.params.id);
-  const votingStart = req.body.votingStart;
-  const votingEnd = req.body.votingEnd;
+  const votingStart = req.body.votingStart as string; // TODO: Date
+  const votingEnd = req.body.votingEnd as string; // TODO: Date
 
   // Check if user has permission to set voting deadline
   if (!doesPermissionsInclude(res.locals.permissions, [14])) {
@@ -118,37 +119,18 @@ export const setVotingDeadline = async (req: Request, res: Response): Promise<Re
  * @param {number} req.params.id ID of member
  * @param res status code and message
  */
-export const setTraineeAssignment = async (req: Request, res: Response) => {
-  // Check if given IDs are in database
-  const idChecks = checkForIDs(
-    [req.params.id, req.body.internesprojektID, req.body.mentorID, req.body.ressortID],
-    ["mitgliedID", "internesprojektID", "mitglied_mitgliedID", "ressortID"],
-    ["mitglied", "internesprojekt", "generation_has_mentor", "ressort"]
-  );
-  // If one ID is not in database return status error code and error message
-  if ((await idChecks).state > 0) {
-    res.status((await idChecks).state).send((await idChecks).errorMessage);
-    return;
+export const setTraineeAssignment = async (req: Request, res: Response): Promise<Response> => {
+  const memberID = parseInt(req.params.id);
+  const assignment = req.body as TraineeAssignment;
+
+  // Check if user has permission to set trainee assignment
+  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
+    throw new UnauthorizedError("You are not allowed to set the trainee assignment");
   }
-  database
-    .query(
-      `UPDATE mitglied SET wahl_internesprojekt =?, internesprojekt=? ,wahl_mentor=?, mentor=?, wahl_ressort=?, ressort=? WHERE mitgliedID=?`,
-      [
-        req.body.internesprojektID,
-        req.body.internesprojektID,
-        req.body.mentorID,
-        req.body.mentorID,
-        req.body.ressortID,
-        req.body.ressortID,
-        req.params.id,
-      ]
-    )
-    .then((result) => {
-      res.status(201).send("Updated Trainee Assignment");
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+
+  await traineesService.updateAssignmentByMemberID(memberID, assignment);
+
+  return res.status(200).send("Updated trainee assignment");
 };
 
 /**

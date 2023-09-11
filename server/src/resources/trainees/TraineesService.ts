@@ -1,13 +1,17 @@
 import { NotFoundError } from "../../types/errors";
 import TraineesRepository from "./TraineesRepository";
-import { Generation, InternalProject, JBTMail, TraineeMotivation } from "../../types/traineesTypes";
-import { Mentor } from "types/membersTypes";
+import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
+import { Mentor } from "../../types/membersTypes";
+import { TraineeAssignment } from "./traineesTypes";
+import MembersRepository from "../members/MembersRepository";
 
 class TraineesService {
   traineesRepository = new TraineesRepository();
+  memberRepository = new MembersRepository();
 
   /**
    * Get an internal project by its id
+   * @throws NotFoundError if the internal project does not exist
    */
   getIPByID = async (id: number): Promise<InternalProject> => {
     const ip = await this.traineesRepository.getIPByID(id);
@@ -21,8 +25,9 @@ class TraineesService {
 
   /**
    * Get the choices of all trainees of a generation
+   * @throws NotFoundError if the generation does not exist
    */
-  getTraineeChoicesByGenerationID = async (generationID: number): Promise<any> => {
+  getTraineeChoicesByGenerationID = async (generationID: number): Promise<TraineeChoice[]> => {
     const generation = await this.traineesRepository.getGenerationByID(generationID);
 
     if (generation === null) {
@@ -36,6 +41,7 @@ class TraineesService {
 
   /**
    * Update an internal project by its id
+   * @throws NotFoundError if the internal project does not exist
    */
   updateIPByID = async (id: number, updatedIp: InternalProject): Promise<void> => {
     const ip = await this.traineesRepository.getIPByID(id);
@@ -49,6 +55,7 @@ class TraineesService {
 
   /**
    * Get the mails of all trainees of an internal project
+   * @throws NotFoundError if the internal project does not exist
    */
   getTraineeMailsByIpID = async (id: number): Promise<JBTMail[]> => {
     const ip = await this.traineesRepository.getIPByID(id);
@@ -64,6 +71,7 @@ class TraineesService {
 
   /**
    * Get the motivation of all trainees of a generation
+   * @throws NotFoundError if the generation does not exist
    */
   getTraineeMotivationsByGenerationID = async (generationID: number): Promise<TraineeMotivation[]> => {
     const generation = await this.traineesRepository.getGenerationByID(generationID);
@@ -88,6 +96,7 @@ class TraineesService {
 
   /**
    * Get all mentors of a generation
+   * @throws NotFoundError if the generation does not exist
    */
   getMentorsByGenerationID = async (generationID: number): Promise<Mentor[]> => {
     const generation = await this.traineesRepository.getGenerationByID(generationID);
@@ -103,6 +112,7 @@ class TraineesService {
 
   /**
    * Updates the voting deadline of a generation
+   * @throws NotFoundError if the generation does not exist
    */
   updateVotingDeadline = async (generationID: number, votingStart: string, votingEnd: string): Promise<void> => {
     const generation = await this.traineesRepository.getGenerationByID(generationID);
@@ -112,6 +122,38 @@ class TraineesService {
     }
 
     await this.traineesRepository.updateVotingDeadline(generationID, votingStart, votingEnd);
+  };
+
+  /**
+   * Updates the assignment of a trainee
+   * @throws NotFoundError if the member, mentor, internal project or department does not exist
+   */
+  updateAssignmentByMemberID = async (memberID: number, assignment: TraineeAssignment): Promise<void> => {
+    // Check if the member (trainee) exists
+    const member = await this.memberRepository.getMemberByID(memberID, false);
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} not found`);
+    }
+
+    // Check if the mentor exists
+    const mentor = await this.memberRepository.getMemberByID(assignment.mentorID, false);
+    if (mentor === null) {
+      throw new NotFoundError(`Mentor with id ${assignment.mentorID} not found`);
+    }
+
+    // Check if the internal project exists
+    const ip = await this.traineesRepository.getIPByID(assignment.ipID);
+    if (ip === null) {
+      throw new NotFoundError(`IP with id ${assignment.ipID} not found`);
+    }
+
+    // Check if the department exists
+    const department = await this.memberRepository.getDepartmentByID(assignment.departmentID);
+    if (department === null) {
+      throw new NotFoundError(`Department with id ${assignment.departmentID} not found`);
+    }
+
+    await this.traineesRepository.updateAssignmentByMemberID(memberID, assignment);
   };
 }
 
