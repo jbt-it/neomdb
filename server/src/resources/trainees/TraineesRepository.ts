@@ -173,6 +173,31 @@ class TraineesRepository {
       throw new QueryError(`Error while retrieving motivations of generation with id ${generationID}`);
     }
   };
+
+  /**
+   * Get all generations
+   * @throws QueryError if the query fails
+   */
+  getGenerations = async (connection?: mysql.PoolConnection): Promise<Generation[]> => {
+    try {
+      const generationsQueryResult = await query(
+        `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
+      auswahlWETermin, infoabendBesucher,
+      tuercode, wahl_start, wahl_ende
+      FROM generation`,
+        [],
+        connection
+      );
+      if (Array.isArray(generationsQueryResult)) {
+        const generations = generationsQueryResult as Generation[];
+        return generations;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving generations`);
+    }
+  };
 }
 
 export default TraineesRepository;

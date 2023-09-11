@@ -80,26 +80,10 @@ export const retrieveTraineeMotivation = async (req: Request, res: Response): Pr
  * @param {Request} req empty request object
  * @param res generationID, short name and deadlines
  */
-export const retrieveGenerations = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
-      auswahlWETermin, infoabendBesucher,
-      tuercode, wahl_start, wahl_ende
-      FROM generation`,
-      []
-    )
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetGenerationsResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveGenerations = async (req: Request, res: Response): Promise<Response> => {
+  const generations = await traineesService.getGenerations();
+
+  return res.status(200).json(generations);
 };
 
 /**

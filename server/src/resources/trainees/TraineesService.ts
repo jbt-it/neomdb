@@ -1,6 +1,6 @@
 import { NotFoundError } from "../../types/errors";
 import TraineesRepository from "./TraineesRepository";
-import { InternalProject, JBTMail, TraineeMotivation } from "../../types/traineesTypes";
+import { Generation, InternalProject, JBTMail, TraineeMotivation } from "../../types/traineesTypes";
 
 class TraineesService {
   traineesRepository = new TraineesRepository();
@@ -74,6 +74,15 @@ class TraineesService {
     const motivation = await this.traineesRepository.getTraineeMotivationsByGenerationID(generationID);
 
     return motivation;
+  };
+
+  /**
+   * Get all generations
+   */
+  getGenerations = async (): Promise<Generation[]> => {
+    const generations = await this.traineesRepository.getGenerations();
+
+    return generations;
   };
 }
 

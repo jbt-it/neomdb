@@ -30,7 +30,7 @@ router.get(
   restrictRoutes([14], false),
   catchAsync(traineesController.retrieveTraineeChoices)
 );
-router.get("/generations/trainee-generations", restrictRoutes([14], false), traineesController.retrieveGenerations);
+router.get("/generations", restrictRoutes([14], false), catchAsync(traineesController.retrieveGenerations));
 router.get("/generations/:id/mentors", restrictRoutes([14], false), traineesController.getMentorsOfGeneration);
 router.get(
   "/generations/:id/internal-projects",
