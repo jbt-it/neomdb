@@ -21,6 +21,7 @@ const ALL_PERMISSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 router.use(authenticationMiddleware);
 
 // TODO: Do not merge before the following TODOs are done
+// - use checkID
 // - 404 should be returned if a route does not exist
 
 //  =======>>> Get routes <<<=======

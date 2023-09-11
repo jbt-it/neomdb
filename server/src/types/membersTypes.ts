@@ -186,6 +186,7 @@ export type Mentor = {
   mitgliedID: number;
   vorname?: string;
   nachname?: string;
+  generationID?: number;
 };
 
 /**

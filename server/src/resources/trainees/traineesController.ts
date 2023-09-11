@@ -197,27 +197,11 @@ export const addMentor = async (req: Request, res: Response) => {
  * @param {number} req.params.id ID of generation
  * @param res status code and message
  */
-export const getMentorsOfGeneration = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname, generation_generationID
-    FROM mitglied
-    INNER JOIN generation_has_mentor
-    ON generation_has_mentor.mitglied_mitgliedID = mitglied.mitgliedID
-    WHERE generation_has_mentor.generation_generationID = ?`,
-      [req.params.id]
-    )
-    .then(
-      (
-        result: QueryResult
-        //  traineesTypes.GetMentorsOfGenerationResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const getMentorsOfGeneration = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const mentors = await traineesService.getMentorsByGenerationID(generationID);
+
+  return res.status(200).json(mentors);
 };
 
 /**

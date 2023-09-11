@@ -1,3 +1,4 @@
+import { Mentor } from "types/membersTypes";
 import { query } from "../../database";
 import { QueryError } from "../../types/errors";
 import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
@@ -196,6 +197,33 @@ class TraineesRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error while retrieving generations`);
+    }
+  };
+
+  /**
+   * Get all mentors of a generation
+   * @param generationID id of the generation
+   * @throws QueryError if the query fails
+   */
+  getMentorsByGenerationID = async (generationID: number, connection?: mysql.PoolConnection): Promise<Mentor[]> => {
+    try {
+      const mentorsQueryResult = await query(
+        `SELECT mitgliedID, vorname, nachname, generation_generationID as generationID
+          FROM mitglied
+          INNER JOIN generation_has_mentor
+          ON generation_has_mentor.mitglied_mitgliedID = mitglied.mitgliedID
+          WHERE generation_has_mentor.generation_generationID = ?`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(mentorsQueryResult)) {
+        const mentors = mentorsQueryResult as Mentor[];
+        return mentors;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving mentors of generation with id ${generationID}`);
     }
   };
 }
