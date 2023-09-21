@@ -25,8 +25,9 @@ const useStyles = makeStyles((theme: Theme) =>
     // Header divider of a paper marking a section of a page
     paperHeaderDivider: {
       marginLeft: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-      width: "100%",
+      marginRight: theme.spacing(1),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
     paperContainer: {
       marginBottom: "10px",
@@ -315,11 +316,11 @@ const TraineePreferences: React.FunctionComponent = () => {
             className={classes.motivationalText}
             fullWidth
             multiline
-            rows={12}
             onChange={handleFirstIPMotivationChange}
             value={ipMotivationFirst}
           ></TextField>
         </Grid>
+        <Divider className={classes.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="2. Präferenz"
@@ -339,11 +340,11 @@ const TraineePreferences: React.FunctionComponent = () => {
             className={classes.motivationalText}
             fullWidth
             multiline
-            rows={12}
             onChange={handleSecondIPMotivationChange}
             value={ipMotivationSecond}
           ></TextField>
         </Grid>
+        <Divider className={classes.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="3. Präferenz"
@@ -363,11 +364,12 @@ const TraineePreferences: React.FunctionComponent = () => {
             className={classes.motivationalText}
             fullWidth
             multiline
-            rows={12}
+            rows={10}
             onChange={handleThirdIPMotivationChange}
             value={ipMotivationThird}
           ></TextField>
         </Grid>
+        <Divider className={classes.paperHeaderDivider} />
       </div>
     );
   };
