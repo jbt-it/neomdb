@@ -155,6 +155,26 @@ class TraineesService {
 
     await this.traineesRepository.updateAssignmentByMemberID(memberID, assignment);
   };
+
+  /**
+   * Adds a mentor to a generation
+   * @throws NotFoundError if the generation or mentor does not exist
+   */
+  addMentorToGeneration = async (generationID: number, mentorID: number): Promise<void> => {
+    const generation = await this.traineesRepository.getGenerationByID(generationID);
+
+    if (generation === null) {
+      throw new NotFoundError(`Generation with id ${generationID} not found`);
+    }
+
+    const mentor = await this.memberRepository.getMemberByID(mentorID, false);
+
+    if (mentor === null) {
+      throw new NotFoundError(`Mentor with id ${mentorID} not found`);
+    }
+
+    await this.traineesRepository.addMentorToGeneration(generationID, mentorID);
+  };
 }
 
 export default TraineesService;

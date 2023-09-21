@@ -140,30 +140,18 @@ export const setTraineeAssignment = async (req: Request, res: Response): Promise
  * @param {number} req.params.id ID of generation
  * @param res status code and message
  */
-export const addMentor = async (req: Request, res: Response) => {
-  // Check if given IDs are in database
-  const idChecks = checkForIDs(
-    [req.params.id, req.params.member_id],
-    ["generationID", "mitgliedID"],
-    ["generation", "mitglied"]
-  );
-  // If one ID is not in database return status error code and error message
-  if ((await idChecks).state > 0) {
-    res.status((await idChecks).state).send((await idChecks).errorMessage);
-    return;
+export const addMentor = async (req: Request, res: Response): Promise<Response> => {
+  const memberID = parseInt(req.params.member_id);
+  const generationID = parseInt(req.params.id);
+
+  // Check if user has permission to add a mentor
+  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
+    throw new UnauthorizedError("You are not allowed to add a mentor");
   }
-  database
-    .query(`INSERT INTO generation_has_mentor (mitglied_mitgliedID, generation_generationID) VALUES (?, ?)`, [
-      req.params.member_id,
-      req.params.id,
-    ])
-    .then((result) => {
-      res.status(201).send("Added new mentor");
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
-  return;
+
+  await traineesService.addMentorToGeneration(generationID, memberID);
+
+  return res.status(200).send("Added mentor");
 };
 
 /**

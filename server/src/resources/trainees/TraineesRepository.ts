@@ -288,6 +288,31 @@ class TraineesRepository {
       throw new QueryError(`Error while updating trainee assignment`);
     }
   };
+
+  /**
+   * Adds a mentor to a generation
+   * @param generationID id of the generation
+   * @param mentorID id of the mentor
+   * @throws QueryError if the query fails
+   */
+  addMentorToGeneration = async (
+    generationID: number,
+    mentorID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    try {
+      await query(
+        `INSERT INTO generation_has_mentor (generation_generationID, mitglied_mitgliedID) VALUES (?, ?)`,
+        [generationID, mentorID],
+        connection
+      );
+    } catch (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        throw new QueryError(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}`);
+      }
+      throw new QueryError(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}`);
+    }
+  };
 }
 
 export default TraineesRepository;

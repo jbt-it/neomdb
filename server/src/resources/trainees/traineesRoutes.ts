@@ -52,7 +52,11 @@ router.post(
 router.patch("/:id/assignment", restrictRoutes([14], false), catchAsync(traineesController.setTraineeAssignment));
 
 //  =======>>> Post routes <<<=======
-router.post("/generations/:id/add-mentor/:member_id", restrictRoutes([14], false), traineesController.addMentor);
+router.post(
+  "/generations/:id/add-mentor/:member_id",
+  restrictRoutes([14], false),
+  catchAsync(traineesController.addMentor)
+);
 
 //  =======>>> Delete routes <<<=======
 
