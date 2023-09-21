@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./components/LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
-import TraineePreferences from "./trainees/TraineePreferences";
+import TraineePreferences from "../trainees/TraineePreferences";
 
 /**
  * Interfaces for the location state of react-router-dom

@@ -3,10 +3,10 @@
  */
 import React, { useState, useEffect } from "react";
 import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button } from "@mui/material";
-import PageBar from "../components/navigation/PageBar";
-import api from "../../utils/api";
+import PageBar from "../global/components/navigation/PageBar";
+import api from "../utils/api";
 import { makeStyles, createStyles } from "@mui/styles";
-import { showErrorMessage } from "../../utils/toastUtils";
+import { showErrorMessage } from "../utils/toastUtils";
 
 /**
  * Function which proivdes the styles of the TraineePreferences
@@ -92,6 +92,150 @@ const TraineePreferences: React.FunctionComponent = () => {
   const ips = ["IP 1", "IP 2", "IP 3", "IP 4"];
 
   /**
+   * Handles the change event on the first departement preference
+   * @param event
+   */
+  const handleRessortFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ressortSecond !== event.target.value && ressortThird !== event.target.value)) {
+      setRessortFirst(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the second departement preference
+   * @param event
+   */
+  const handleRessortSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortThird !== event.target.value)) {
+      setRessortSecond(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the second departement preference
+   * @param event
+   */
+  const handleRessortThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortSecond !== event.target.value)) {
+      setRessortThird(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the first internal project preference
+   * @param event
+   */
+  const handleIPFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ipSecond !== event.target.value && ipThird !== event.target.value)) {
+      setIPFirst(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the second internal project preference
+   * @param event
+   */
+  const handleIPSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ipFirst !== event.target.value && ipThird !== event.target.value)) {
+      setIPSecond(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the third internal project preference
+   * @param event
+   */
+  const handleIPThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (ipFirst !== event.target.value && ipSecond !== event.target.value)) {
+      setIPThird(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the first departement preference
+   * @param event
+   */
+  const handleMentorFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (mentorSecond !== event.target.value && mentorThird !== event.target.value)) {
+      setMentorFirst(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the second departement preference
+   * @param event
+   */
+  const handleMentorSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorThird !== event.target.value)) {
+      setMentorSecond(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the second departement preference
+   * @param event
+   */
+  const handleMentorThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorSecond !== event.target.value)) {
+      setMentorThird(event.target.value);
+    } else {
+      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    }
+  };
+
+  /**
+   * Handles the change event on the first internal project motviational text
+   * @param event
+   */
+  const handleFirstIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setIPMotivationFirst(event.target.value);
+  };
+
+  /**
+   * Handles the change event on the first internal project motviational text
+   * @param event
+   */
+  const handleSecondIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setIPMotivationSecond(event.target.value);
+  };
+
+  /**
+   * Handles the change event on the first internal project motviational text
+   * @param event
+   */
+  const handleThirdIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setIPMotivationThird(event.target.value);
+  };
+
+  /**
+   * Renders the different selection possibilities for the departement
+   * @returns A map of jsx elements
+   */
+  const renderRessortItems = () => {
+    const res = [...ressorts];
+    res.unshift("-");
+    return res.map((ressort) => {
+      return <MenuItem value={ressort}>{ressort}</MenuItem>;
+    });
+  };
+
+  /**
    * Render the ressort selection jsx element
    * @returns A jsx element
    */
@@ -136,51 +280,15 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Renders the different selection possibilities for the departement
+   * Renders the different selection possibilities for the mentor
    * @returns A map of jsx elements
    */
-  const renderRessortItems = () => {
-    const res = [...ressorts];
-    res.unshift("-");
-    return res.map((ressort) => {
-      return <MenuItem value={ressort}>{ressort}</MenuItem>;
+  const renderMentorItems = () => {
+    const men = [...mentors];
+    men.unshift("-");
+    return men.map((mentor) => {
+      return <MenuItem value={mentor}>{mentor}</MenuItem>;
     });
-  };
-
-  /**
-   * Handles the change event on the first departement preference
-   * @param event
-   */
-  const handleRessortFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortSecond !== event.target.value && ressortThird !== event.target.value)) {
-      setRessortFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the second departement preference
-   * @param event
-   */
-  const handleRessortSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortThird !== event.target.value)) {
-      setRessortSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the second departement preference
-   * @param event
-   */
-  const handleRessortThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortSecond !== event.target.value)) {
-      setRessortThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
   };
 
   /**
@@ -225,54 +333,6 @@ const TraineePreferences: React.FunctionComponent = () => {
         </TextField>
       </div>
     );
-  };
-
-  /**
-   * Renders the different selection possibilities for the mentor
-   * @returns A map of jsx elements
-   */
-  const renderMentorItems = () => {
-    const men = [...mentors];
-    men.unshift("-");
-    return men.map((mentor) => {
-      return <MenuItem value={mentor}>{mentor}</MenuItem>;
-    });
-  };
-
-  /**
-   * Handles the change event on the first departement preference
-   * @param event
-   */
-  const handleMentorFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorSecond !== event.target.value && mentorThird !== event.target.value)) {
-      setMentorFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the second departement preference
-   * @param event
-   */
-  const handleMentorSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorThird !== event.target.value)) {
-      setMentorSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the second departement preference
-   * @param event
-   */
-  const handleMentorThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorSecond !== event.target.value)) {
-      setMentorThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
   };
 
   /**
@@ -374,66 +434,6 @@ const TraineePreferences: React.FunctionComponent = () => {
         <Divider className={classes.paperHeaderDivider} />
       </div>
     );
-  };
-
-  /**
-   * Handles the change event on the first internal project preference
-   * @param event
-   */
-  const handleIPFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipSecond !== event.target.value && ipThird !== event.target.value)) {
-      setIPFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the second internal project preference
-   * @param event
-   */
-  const handleIPSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipFirst !== event.target.value && ipThird !== event.target.value)) {
-      setIPSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the third internal project preference
-   * @param event
-   */
-  const handleIPThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipFirst !== event.target.value && ipSecond !== event.target.value)) {
-      setIPThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
-    }
-  };
-
-  /**
-   * Handles the change event on the first internal project motviational text
-   * @param event
-   */
-  const handleFirstIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationFirst(event.target.value);
-  };
-
-  /**
-   * Handles the change event on the first internal project motviational text
-   * @param event
-   */
-  const handleSecondIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationSecond(event.target.value);
-  };
-
-  /**
-   * Handles the change event on the first internal project motviational text
-   * @param event
-   */
-  const handleThirdIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationThird(event.target.value);
   };
 
   return (
