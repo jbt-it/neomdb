@@ -710,7 +710,7 @@ const MemberManagement: React.FunctionComponent = () => {
         {changeStatusFilter}
         {changeStatusTable}
       </div>
-      <PageBar pageTitle="Mitgliederübersicht" />
+      <PageBar pageTitle="Mitgliedermanagement" />
     </div>
   );
 };
