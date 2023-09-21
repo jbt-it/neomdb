@@ -316,6 +316,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             className={classes.motivationalText}
             fullWidth
             multiline
+            rows={10}
             onChange={handleFirstIPMotivationChange}
             value={ipMotivationFirst}
           ></TextField>
@@ -340,6 +341,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             className={classes.motivationalText}
             fullWidth
             multiline
+            rows={10}
             onChange={handleSecondIPMotivationChange}
             value={ipMotivationSecond}
           ></TextField>
