@@ -175,6 +175,22 @@ class TraineesService {
 
     await this.traineesRepository.addMentorToGeneration(generationID, mentorID);
   };
+
+  /**
+   * Get all internal projects of a generation
+   * @throws NotFoundError if the generation does not exist
+   */
+  getInternalProjectsByGenerationID = async (generationID: number): Promise<InternalProject[]> => {
+    const generation = await this.traineesRepository.getGenerationByID(generationID);
+
+    if (generation === null) {
+      throw new NotFoundError(`Generation with id ${generationID} not found`);
+    }
+
+    const ips = await this.traineesRepository.getInternalProjectsByGenerationID(generationID);
+
+    return ips;
+  };
 }
 
 export default TraineesService;

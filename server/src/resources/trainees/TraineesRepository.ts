@@ -293,7 +293,7 @@ class TraineesRepository {
    * Adds a mentor to a generation
    * @param generationID id of the generation
    * @param mentorID id of the mentor
-   * @throws QueryError if the query fails
+   * @throws QueryError if the query fails or the mentor is already assigned to the generation
    */
   addMentorToGeneration = async (
     generationID: number,
@@ -311,6 +311,34 @@ class TraineesRepository {
         throw new QueryError(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}`);
       }
       throw new QueryError(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * Get all internal projects of a generation
+   * @param generationID id of the generation
+   * @throws QueryError if the query fails
+   */
+  getInternalProjectsByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<InternalProject[]> => {
+    try {
+      const ipsQueryResult = await query(
+        `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
+      FROM internesprojekt
+      WHERE generation = ?`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(ipsQueryResult)) {
+        const ips = ipsQueryResult as InternalProject[];
+        return ips;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
     }
   };
 }

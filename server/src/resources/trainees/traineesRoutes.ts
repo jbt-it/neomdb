@@ -39,11 +39,11 @@ router.get(
 router.get(
   "/generations/:id/internal-projects",
   restrictRoutes([14], false),
-  traineesController.getInternalProjectsOfGeneration
+  catchAsync(traineesController.getInternalProjectsOfGeneration)
 );
 
 //  =======>>> Patch routes <<<=======
-router.put("/ip/:id", catchAsync(traineesController.updateIP));
+router.put("/ip/:id", restrictRoutes([15], false), catchAsync(traineesController.updateIP));
 router.post(
   "/generations/:id/set-deadline",
   restrictRoutes([14], false),

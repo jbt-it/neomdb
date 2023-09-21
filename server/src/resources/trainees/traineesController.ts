@@ -2,13 +2,10 @@
  * Definition of the handler functions for the members module
  */
 import { Request, Response } from "express";
-import { QueryResult } from "../../types/databaseTypes";
-import { doesPermissionsInclude } from "../../utils/authUtils";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
 import database = require("../../database");
 import TraineesService from "./TraineesService";
 import { InternalProject } from "types/traineesTypes";
-import { UnauthorizedError } from "../../types/errors";
 import { TraineeAssignment } from "./traineesTypes";
 
 const traineesService = new TraineesService();
@@ -42,11 +39,6 @@ export const retrieveTraineeChoices = async (req: Request, res: Response): Promi
 export const updateIP = async (req: Request, res: Response): Promise<Response> => {
   const ipID = parseInt(req.params.id);
   const updatedIp = req.body as InternalProject;
-
-  // Check if user has permission to update an internal project
-  if (doesPermissionsInclude(res.locals.permissions, [15])) {
-    throw new UnauthorizedError("You are not allowed to update an internal project");
-  }
 
   await traineesService.updateIPByID(ipID, updatedIp);
 
@@ -100,11 +92,6 @@ export const setVotingDeadline = async (req: Request, res: Response): Promise<Re
   const votingStart = req.body.votingStart as string; // TODO: Date
   const votingEnd = req.body.votingEnd as string; // TODO: Date
 
-  // Check if user has permission to set voting deadline
-  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
-    throw new UnauthorizedError("You are not allowed to set the voting deadline");
-  }
-
   await traineesService.updateVotingDeadline(generationID, votingStart, votingEnd);
 
   return res.status(200).send("Updated voting deadline");
@@ -123,11 +110,6 @@ export const setTraineeAssignment = async (req: Request, res: Response): Promise
   const memberID = parseInt(req.params.id);
   const assignment = req.body as TraineeAssignment;
 
-  // Check if user has permission to set trainee assignment
-  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
-    throw new UnauthorizedError("You are not allowed to set the trainee assignment");
-  }
-
   await traineesService.updateAssignmentByMemberID(memberID, assignment);
 
   return res.status(200).send("Updated trainee assignment");
@@ -143,11 +125,6 @@ export const setTraineeAssignment = async (req: Request, res: Response): Promise
 export const addMentor = async (req: Request, res: Response): Promise<Response> => {
   const memberID = parseInt(req.params.member_id);
   const generationID = parseInt(req.params.id);
-
-  // Check if user has permission to add a mentor
-  if (!doesPermissionsInclude(res.locals.permissions, [14])) {
-    throw new UnauthorizedError("You are not allowed to add a mentor");
-  }
 
   await traineesService.addMentorToGeneration(generationID, memberID);
 
@@ -173,22 +150,11 @@ export const getMentorsOfGeneration = async (req: Request, res: Response): Promi
  * @param {number} req.params.id ID of Generation
  * @param res ID, generation, name and short name
  */
-export const getInternalProjectsOfGeneration = (req: Request, res: Response): void => {
-  database
-    .query(`SELECT internesprojektID, generation, projektname, kuerzel FROM internesprojekt WHERE generation=?`, [
-      req.params.id,
-    ])
-    .then(
-      (
-        result: QueryResult
-        // traineesTypes.GetInternalProjectOfGenerationResult
-      ) => {
-        res.status(200).json(result);
-      }
-    )
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const getInternalProjectsOfGeneration = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const internalProjects = await traineesService.getInternalProjectsByGenerationID(generationID);
+
+  return res.status(200).json(internalProjects);
 };
 
 /**
