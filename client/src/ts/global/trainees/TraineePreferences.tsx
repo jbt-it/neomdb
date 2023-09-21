@@ -413,7 +413,7 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleSecondIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationFirst(event.target.value);
+    setIPMotivationSecond(event.target.value);
   };
 
   /**
@@ -421,7 +421,7 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleThirdIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationFirst(event.target.value);
+    setIPMotivationThird(event.target.value);
   };
 
   /**
