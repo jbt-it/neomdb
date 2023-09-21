@@ -195,68 +195,28 @@ const checkForIDs = async (
 /**
  * Retrieves all current trainees
  */
-export const retrieveCurrentTrainees = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitgliedID, vorname, nachname
-        FROM mitglied
-        WHERE mitgliedstatus = 1 AND mitglied.generation = (SELECT max(generation) from internesprojekt)
-        ORDER BY nachname`,
-      []
-    )
-    .then((result: traineesTypes.GetCurrentTraineesQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("Trainees not found");
-      } else {
-        res.status(200).json(result);
-      }
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveCurrentTrainees = async (req: Request, res: Response): Promise<Response> => {
+  const trainees = await traineesService.getTrainees(true);
+
+  return res.status(200).json(trainees);
 };
 
 /*
   Retrieves all current IPs
   */
-export const retrieveCurrentIPs = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT internesprojektID, projektname, kickoff, AngebotBeiEV, ZPbeiEV, APgehalten
-      FROM internesprojekt
-      WHERE generation = (SELECT max(generation) from internesprojekt)
-      ORDER BY internesprojektID`,
-      []
-    )
-    .then((result: traineesTypes.GetCurrentTraineesQueryResult[]) => {
-      if (result.length === 0) {
-        res.status(404).send("IPs not found");
-      } else {
-        res.status(200).json(result);
-      }
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveCurrentIPs = async (req: Request, res: Response): Promise<Response> => {
+  const ips = await traineesService.getInternalProjects(true);
+
+  return res.status(200).json(ips);
 };
 
 /*
   Retrieve all IPs
 */
-export const retrieveAllIPs = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT *
-      FROM internesprojekt 
-      ORDER BY generation`,
-      []
-    )
-    .then((result: traineesTypes.GetAllIPsQueryResult[]) => {
-      res.status(200).json(result); //IPs are unsorted
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
+export const retrieveAllIPs = async (req: Request, res: Response): Promise<Response> => {
+  const ips = await traineesService.getInternalProjects(false);
+
+  return res.status(200).json(ips);
 };
 
 /*

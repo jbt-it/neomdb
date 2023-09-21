@@ -1,6 +1,13 @@
 import { NotFoundError } from "../../types/errors";
 import TraineesRepository from "./TraineesRepository";
-import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
+import {
+  Generation,
+  InternalProject,
+  JBTMail,
+  Trainee,
+  TraineeChoice,
+  TraineeMotivation,
+} from "../../types/traineesTypes";
 import { Mentor } from "../../types/membersTypes";
 import { TraineeAssignment } from "./traineesTypes";
 import MembersRepository from "../members/MembersRepository";
@@ -188,6 +195,26 @@ class TraineesService {
     }
 
     const ips = await this.traineesRepository.getInternalProjectsByGenerationID(generationID);
+
+    return ips;
+  };
+
+  /**
+   * Get all trainees
+   * @param onöyCurrent if true, only the current trainees are returned
+   */
+  getTrainees = async (onöyCurrent: boolean): Promise<Trainee[]> => {
+    const trainees = await this.traineesRepository.getTrainees(onöyCurrent);
+
+    return trainees;
+  };
+
+  /**
+   * Get all internal projects
+   * @param onlyCurrent if true, only the current internal projects are returned
+   */
+  getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProject[]> => {
+    const ips = await this.traineesRepository.getInternalProjects(onlyCurrent);
 
     return ips;
   };

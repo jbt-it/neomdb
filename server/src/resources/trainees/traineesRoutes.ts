@@ -21,8 +21,8 @@ router.get("/ip/:id", catchAsync(traineesController.retrieveIP));
 // Get team mails
 router.get("/ip/:id/mails", catchAsync(traineesController.retrieveTeamMails));
 router.get("/", traineesController.retrieveCurrentTrainees);
-router.get("/current-ips", traineesController.retrieveCurrentIPs);
-router.get("/all-ips", traineesController.retrieveAllIPs);
+router.get("/ips/current", catchAsync(traineesController.retrieveCurrentIPs));
+router.get("/ips/all", catchAsync(traineesController.retrieveAllIPs));
 router.get("/generations/:id/motivation", catchAsync(traineesController.retrieveTraineeMotivation));
 router.get("/all-trainees", traineesController.retrieveAllTraineesWithIPs);
 router.get(

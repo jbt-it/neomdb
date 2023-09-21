@@ -1,7 +1,14 @@
 import { Mentor } from "types/membersTypes";
 import { query } from "../../database";
 import { QueryError } from "../../types/errors";
-import { Generation, InternalProject, JBTMail, TraineeChoice, TraineeMotivation } from "../../types/traineesTypes";
+import {
+  Generation,
+  InternalProject,
+  JBTMail,
+  Trainee,
+  TraineeChoice,
+  TraineeMotivation,
+} from "../../types/traineesTypes";
 import mysql = require("mysql2");
 import { TraineeAssignment } from "./traineesTypes";
 
@@ -339,6 +346,57 @@ class TraineesRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * Get all trainees
+   * @param onlyCurrent if true, only the current trainees are returned
+   * @throws QueryError if the query fails
+   */
+  getTrainees = async (onlyCurrent: boolean, connection?: mysql.PoolConnection): Promise<Trainee[]> => {
+    try {
+      let sql = `SELECT mitgliedID, vorname, nachname, generation
+        FROM mitglied
+        WHERE mitgliedstatus = 1 `;
+      if (onlyCurrent) {
+        sql += " AND mitglied.generation = (SELECT max(generation) from internesprojekt) ";
+      }
+      sql += `ORDER BY nachname`;
+      const queryResult = await query(sql, [], connection);
+      if (Array.isArray(queryResult)) {
+        const trainees = queryResult as Trainee[];
+        return trainees;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving trainees`);
+    }
+  };
+
+  /**
+   * Get all internal projects
+   * @param onlyCurrent if true, only the current internal projects are returned
+   * @throws QueryError if the query fails
+   */
+  getInternalProjects = async (onlyCurrent: boolean, connection?: mysql.PoolConnection): Promise<InternalProject[]> => {
+    try {
+      let sql = `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
+        FROM internesprojekt `;
+      if (onlyCurrent) {
+        sql += " WHERE generation = (SELECT max(generation) from internesprojekt) ";
+      }
+      sql += `ORDER BY generation`;
+      const queryResult = await query(sql, [], connection);
+      if (Array.isArray(queryResult)) {
+        const ips = queryResult as InternalProject[];
+        return ips;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving internal projects`);
     }
   };
 }
