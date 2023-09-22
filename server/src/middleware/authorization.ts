@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import AuthService from "../auth/authService";
+import AuthService from "../auth/AuthService";
 import { doesPermissionsHaveSomeOf, doesPermissionsInclude, doesRolesHaveSomeOf } from "../utils/authUtils";
 import { verifyJWT } from "../utils/jwtUtils";
 

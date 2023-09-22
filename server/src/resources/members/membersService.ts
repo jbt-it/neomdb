@@ -15,7 +15,7 @@ import { NotFoundError, QueryError } from "../../types/errors";
 import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
-import formatDate from "../../utils/dateUtils";
+import formatDate, { createCurrentTimestamp } from "../../utils/dateUtils";
 import { executeInTransaction } from "../../database";
 import bcrypt = require("bcryptjs");
 import { getRandomString } from "../../utils/stringUtils";
@@ -25,16 +25,6 @@ import { getRandomString } from "../../utils/stringUtils";
  */
 class MembersService {
   membersRepository = new MembersRepository();
-
-  /**
-   * Creates a timestamp with the current date and time for the `lastChange` field
-   */
-  createLastChangeTimestamp = () => {
-    const date: Date = new Date();
-    const formattedDate = formatDate(date);
-
-    return formattedDate;
-  };
 
   /**
    * Retrieves a list of all members
@@ -350,7 +340,7 @@ class MembersService {
     }
 
     // Create timestamp for last change
-    const updatedLastChange = this.createLastChangeTimestamp();
+    const updatedLastChange = createCurrentTimestamp();
 
     // Fill tasks to be executed in transaction
     const tasks = [];
@@ -393,7 +383,7 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
 
-    const lastChangeTime = this.createLastChangeTimestamp();
+    const lastChangeTime = createCurrentTimestamp();
     await this.membersRepository.updateMemberStatusByID(memberID, lastChangeTime, status);
   };
 }

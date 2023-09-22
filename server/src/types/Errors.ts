@@ -52,3 +52,13 @@ export class QueryError extends Error {
     this.name = "QueryError";
   }
 }
+
+/**
+ * Error thrown when a token is expired
+ */
+export class ExpiredTokenError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "ExpiredTokenError";
+  }
+}

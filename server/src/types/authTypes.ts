@@ -77,3 +77,12 @@ export type SignedJWTPayload = {
   iat: number;
   exp: number;
 };
+
+/**
+ * Type of the password reset entry
+ */
+export type PasswordResetEntry = {
+  mitglied_jbt_email: string;
+  datediff: number;
+  token: string;
+};

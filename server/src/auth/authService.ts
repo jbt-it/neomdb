@@ -1,11 +1,14 @@
+import { createCurrentTimestamp } from "utils/dateUtils";
 import MembersRepository from "../resources/members/MembersRepository";
 import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
-import { NotFoundError, UnauthenticatedError } from "../types/errors";
+import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/errors";
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
+import AuthRepository from "./AuthRepository";
 import bcrypt = require("bcryptjs");
 
 class AuthService {
+  authRepository = new AuthRepository();
   membersRepository = new MembersRepository();
 
   /**
@@ -18,7 +21,7 @@ class AuthService {
       throw new UnauthenticatedError("Credentials incomplete");
     }
 
-    const user: User = await this.membersRepository.getUserByName(userLogin.username);
+    const user: User = await this.authRepository.getUserByName(userLogin.username);
 
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
@@ -45,7 +48,7 @@ class AuthService {
    * @throws NotFoundError if no user was found
    */
   getUserData = async (username: string): Promise<JWTPayload> => {
-    const user: User = await this.membersRepository.getUserByName(username);
+    const user: User = await this.authRepository.getUserByName(username);
 
     if (user === null) {
       throw new NotFoundError(`No user found with name ${username}`);
@@ -67,7 +70,7 @@ class AuthService {
    */
   changeUserPassword = async (userChangePasswordRequest: UserChangePasswordRequest): Promise<void> => {
     // const userPassword = await getUserPasswordByName(userChangePasswordRequest.userName);
-    const user = await this.membersRepository.getUserByName(userChangePasswordRequest.userName);
+    const user = await this.authRepository.getUserByName(userChangePasswordRequest.userName);
 
     if (user === null) {
       throw new UnauthenticatedError("User does not exist");
@@ -81,11 +84,64 @@ class AuthService {
 
     const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
 
-    await this.membersRepository.updateUserPasswordByUserNameAndUserID(
+    await this.authRepository.updateUserPasswordByUserNameAndUserID(
       userChangePasswordRequest.userName,
       userChangePasswordRequest.userID,
       newPasswordHash
     );
+  };
+
+  /**
+   * Creates a password reset entry and returns the hash
+   * @param email The email of the password reset entry
+   */
+  createPasswordResetToken = async (name: string, email: string): Promise<string> => {
+    const date = new Date();
+
+    const user = await this.authRepository.getUserByName(name);
+
+    if (user === null) {
+      // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
+      sleepRandomly(300, 400);
+      throw new NotFoundError(`No user found with name ${name}`);
+    }
+
+    // Create a token
+    const plaintextToken = email.concat(date.getTime().toString());
+
+    // Create a hash from the token
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(plaintextToken, salt);
+
+    // Delete old entrys, if any exist
+    await this.authRepository.deletePasswordResetEntriesByEmail(email);
+
+    return hash;
+  };
+
+  resetPasswordWithToken = async (name: string, email: string, token: string, newPassword: string): Promise<void> => {
+    // Get current date
+    const date = createCurrentTimestamp();
+
+    const passwordResetEntry = await this.authRepository.getPasswordReserEntryByEmailAndToken(date, email, token);
+
+    if (passwordResetEntry === null) {
+      throw new NotFoundError(`No password reset entry found with email ${email} and token ${token}`);
+    }
+
+    // Check if the entry is older than five days
+    if (passwordResetEntry.datediff <= -6) {
+      await this.authRepository.deletePasswordResetEntriesByEmail(email);
+      throw new ExpiredTokenError("Token already expired");
+    }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    await this.authRepository.updateUserPasswordByUserNameAndUserID(
+      name,
+      passwordResetEntry.mitgliedID,
+      newPasswordHash
+    );
+    await this.authRepository.deletePasswordResetEntriesByEmail(email);
   };
 
   /**

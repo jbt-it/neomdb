@@ -20,4 +20,14 @@ const formatDate = (date: Date) => {
   return formattedDate;
 };
 
+/**
+ * Creates a timestamp with the current date and time for the `lastChange` field
+ */
+export const createCurrentTimestamp = () => {
+  const date: Date = new Date();
+  const formattedDate = formatDate(date);
+
+  return formattedDate;
+};
+
 export default formatDate;
