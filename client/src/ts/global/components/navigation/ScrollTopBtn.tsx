@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { Zoom, Fab, useScrollTrigger } from "@material-ui/core";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
+import { Zoom, Fab, useScrollTrigger, Theme } from "@mui/material";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { createStyles, makeStyles } from "@mui/styles";
 
 /**
  * Function which proivdes the styles of the ScrollTopBtn

@@ -2,7 +2,8 @@
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Grid, createStyles, makeStyles, Typography, Theme } from "@material-ui/core";
+import { Button, Grid, Typography, Theme } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
 import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { NavLink } from "react-router-dom";

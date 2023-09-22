@@ -15,18 +15,17 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  createStyles,
   Theme,
-  makeStyles,
   Typography,
   Button,
-} from "@material-ui/core";
-import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
+} from "@mui/material";
+import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { showSuccessMessage, showErrorMessage } from "../utils/toastUtils";
 import { transfromDateToSQLDate } from "../utils/dateUtils";
 import { replaceSpecialCharacters } from "../utils/stringUtils";
+import { makeStyles, createStyles } from "@mui/styles";
 
 /**
  * Function which proivdes the styles of the MemberManagement
@@ -681,7 +680,7 @@ const MemberManagement: React.FunctionComponent = () => {
                   label="Status"
                   className={classes.filterElement}
                   color="primary"
-                  onChange={(event) => {
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     changeMemberStatus(member.mitgliedID, event.target.value);
                   }}
                   value={member.mitgliedstatus}
@@ -711,7 +710,7 @@ const MemberManagement: React.FunctionComponent = () => {
         {changeStatusFilter}
         {changeStatusTable}
       </div>
-      <PageBar pageTitle="Mitgliederübersicht" />
+      <PageBar pageTitle="Mitgliedermanagement" />
     </div>
   );
 };

@@ -14,6 +14,8 @@ router.post("/login", catchAsync(authController.login));
  * =======>>> ALL routes after this point are accessible for loged in users only <<<=======
  */
 router.use(authenticationMiddleware);
+router.post("/forgot-password", authController.sendPasswordResetLink);
+router.patch("/reset-forgot-password", authController.resetPasswordWithKey);
 router.patch("/change-password", catchAsync(authController.changePassword));
 router.get("/user-data", catchAsync(authController.retrieveUserData));
 router.post("/logout", authController.logout);

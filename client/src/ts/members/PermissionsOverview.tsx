@@ -3,20 +3,10 @@
  */
 
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Paper,
-  Grid,
-  createStyles,
-  Theme,
-  makeStyles,
-  Typography,
-  Divider,
-  Box,
-  TextField,
-  Chip,
-} from "@material-ui/core";
+import { Paper, Grid, Theme, Typography, Divider, Box, TextField, Chip } from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 import api from "../utils/api";
-import Autocomplete, { AutocompleteChangeDetails } from "@material-ui/lab/Autocomplete";
+import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../global/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 
@@ -301,7 +291,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                             filterSelectedOptions
                             id="tags-standard"
                             color="primary"
-                            getOptionSelected={(option, value) => {
+                            isOptionEqualToValue={(option, value) => {
                               // Compare member ID of entities if not director else name
                               if (value.memberID !== -1) {
                                 return option.memberID === value.memberID;
