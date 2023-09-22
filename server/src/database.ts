@@ -144,35 +144,6 @@ export const executeInTransaction = async (tasks: TransactionTask[]): Promise<an
 };
 
 /**
- * Executes query with the given connection
- *
- * ! Should only be used in combination with startTransaction
- * @param connection The connection to the database
- * @param sql Query string
- * @param args Array with query arguments
- * @returns A promise
- */
-export const connectionQuery = (connection: mysql.PoolConnection, sql: string, args: (string | number)[]) => {
-  // TODO: Remove this function!
-  return new Promise<QueryResult>((resolve, reject) => {
-    connection.query(sql, args, (queryError: any, result: QueryResult) => {
-      if (queryError) {
-        // If the query fails a rollback is automatically initiated
-        rollback(connection)
-          .then(() => {
-            return reject(queryError);
-          })
-          .catch((err) => {
-            return reject(`Error initiating rollback: ${err}`);
-          });
-      } else {
-        return resolve(result);
-      }
-    });
-  });
-};
-
-/**
  * Creates a list of promises
  * @param queryList A list of queries
  * @param connection The connection for creating promises executing connectionQuery
@@ -196,4 +167,70 @@ const createPromises = (queryList: string[], connection: mysql.PoolConnection) =
 export const executeMultipleQueries = (queries: string[], connection: mysql.PoolConnection) => {
   const promises = createPromises(queries, connection);
   return Promise.all(promises);
+};
+
+// ------------------ DEPRECATED ------------------ \\
+
+/**
+ * Retrieves a connection from the pool and starts a transaction
+ * @deprecated Use getConnection and beginTransaction instead - This is only used for the db scripts
+ * @returns A promise
+ */
+export const startTransaction = () => {
+  // TODO: Remove this function!
+  return new Promise((resolve, reject) => {
+    pool.getConnection((error, connection) => {
+      if (error) {
+        return reject(error);
+      }
+      connection.beginTransaction((err) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(connection);
+      });
+    });
+  });
+};
+
+/**
+ * Ends the connection to the database
+ *
+ * ! Should only be used in combination with startTransaction
+ * @param connection The connection to the database
+ * @deprecated This is only used for the db scripts
+ */
+export const endConnection = (connection: mysql.PoolConnection) => {
+  // TODO: Remove this function!
+  connection.destroy();
+};
+
+/**
+ * Executes query with the given connection
+ *
+ * ! Should only be used in combination with startTransaction
+ * @param connection The connection to the database
+ * @param sql Query string
+ * @param args Array with query arguments
+ * @returns A promise
+ * @deprecated This is only used for the db scripts
+ */
+export const connectionQuery = (connection: mysql.PoolConnection, sql: string, args: (string | number)[]) => {
+  // TODO: Remove this function!
+  return new Promise<QueryResult>((resolve, reject) => {
+    connection.query(sql, args, (queryError: any, result: QueryResult) => {
+      if (queryError) {
+        // If the query fails a rollback is automatically initiated
+        rollback(connection)
+          .then(() => {
+            return reject(queryError);
+          })
+          .catch((err) => {
+            return reject(`Error initiating rollback: ${err}`);
+          });
+      } else {
+        return resolve(result);
+      }
+    });
+  });
 };
