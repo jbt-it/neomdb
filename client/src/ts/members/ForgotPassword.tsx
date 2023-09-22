@@ -2,12 +2,9 @@
  * Component for resetting the password by the user without the help of a admin, bofore logging in
  */
 import React, { useState, useContext } from "react";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import { Paper, Grid, Button, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import logo from "../../images/jbt-logo-black.png";
-import Button from "@material-ui/core/Button";
-import Textfield from "@material-ui/core/TextField";
 import api from "../utils/api";
 
 /**
@@ -32,8 +29,7 @@ const ForgotPassword: React.FunctionComponent = () => {
       flexDirection: "column",
       alignItems: "center",
     },
-    inputfield: {
-    },
+    inputfield: {},
     submit: {
       margin: theme.spacing(3, 0, 1),
       color: "white",
@@ -68,16 +64,13 @@ const ForgotPassword: React.FunctionComponent = () => {
    * Send the email to the backend
    */
   const sendEmailWithLink = () => {
-
+    console.log("sendEmailWithLink");
     const data = {
-      email
+      email,
     };
-    api.patch("/users/forgot-password", data
-    )
-      .then((res) => {
-        if (res.status === 200)
-          setSubmitBoolean(true);
-      });
+    api.post("/auth/forgot-password", data).then((res) => {
+      if (res.status === 200) setSubmitBoolean(true);
+    });
   };
 
   /**
@@ -93,7 +86,7 @@ const ForgotPassword: React.FunctionComponent = () => {
    */
   const invalidEmailWarning = () => {
     if (email !== "" && !emailRegexTest(email)) {
-      return "This is not an Email";
+      return "Bitte gib eine gültige E-Mail an";
     } else {
       return "";
     }
@@ -106,7 +99,7 @@ const ForgotPassword: React.FunctionComponent = () => {
     if (submitBoolean) {
       return (
         <Paper className={classes.paper}>
-          If you gave your correct email, you should recieve a new password
+          Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.
         </Paper>
       );
     } else {
@@ -116,19 +109,31 @@ const ForgotPassword: React.FunctionComponent = () => {
 
   return (
     <div className="forgotPassword">
-      <Grid container spacing={0} alignItems="center" justify="center">
+      <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={10} sm={8} md={6} lg={4}>
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo} />
-            <h1>Forgot Password</h1>
-            <form id="emailForm" onSubmit={event => { sendEmailWithLink(); }}>
-              <Textfield className={classes.inputfield} id="email" label="Email" type="text" value={email}
-                onChange={event => { setEmail(event.target.value); }} fullWidth />
-              <p className={classes.warningText}>
-                {invalidEmailWarning()}
-              </p>
+            <h1>Password vergessen</h1>
+            <form
+              id="emailForm"
+              onSubmit={(event) => {
+                sendEmailWithLink();
+              }}
+            >
+              <TextField
+                className={classes.inputfield}
+                id="email"
+                label="E-Mail"
+                type="text"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                }}
+                fullWidth
+              />
+              <p className={classes.warningText}>{invalidEmailWarning()}</p>
               <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                Send Password
+                Passwort anfordern
               </Button>
             </form>
           </Paper>

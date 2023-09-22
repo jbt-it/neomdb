@@ -73,27 +73,6 @@ export const changePassword = (req: Request, res: Response): void => {
 };
 
 /**
- * An email is sent with an password reset link and a key in the url to the user
- * The key used in the link is saved in the databse for the later verification
- * @param req email
- * @param res 200 if process is available, 404 else
- */
-export const sendPasswordResetLink = (req: Request, res:Response): void => {
-  res.status(200).send("not implemented");
-};
-
-/**
- * The user can set a new password by entering their mailadress and a new password
- * The mail and the key in the url are then checked to se if it is a valid pair
- * If the pair is valid the new password is stored
- * @param req email, key, new password
- * @param res 200 if process is available, 404 else
- */
- export const resetPasswordWithKey = (req: Request, res:Response): void => {
-  res.status(200).send("not implemented");
-};
-
-/**
  * Retrieves an overview of all registered members
  */
 export const retrieveMemberList = (req: Request, res: Response): void => {
