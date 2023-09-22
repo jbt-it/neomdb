@@ -3,18 +3,9 @@
  * a help button (optional) and page-specific options (optional)
  */
 import React from "react";
-import {
-  Typography,
-  makeStyles,
-  Theme,
-  createStyles,
-  IconButton,
-  Menu,
-  MenuItem,
-  Modal,
-  Paper,
-} from "@material-ui/core";
-import { HelpOutline, MoreVert } from "@material-ui/icons";
+import { Typography, Theme, IconButton, Menu, MenuItem, Modal, Paper } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
+import { HelpOutline, MoreVert } from "@mui/icons-material";
 
 /**
  * Function which proivdes the styles of the PageBar
@@ -45,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       top: "20%",
       bottom: "20%",
       width: "50%",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         width: "90%",
       },
       display: "flex",

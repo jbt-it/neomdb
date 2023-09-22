@@ -1,17 +1,10 @@
 /*
  * The InfoCard component displays a card with header, edit button and information
  */
-import { createStyles, makeStyles } from "@material-ui/styles";
+import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
-import {
-  Card,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Card, Accordion, AccordionDetails, AccordionSummary, IconButton, Typography } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 
 /**
  * Function which proivdes the styles of the InfoCard component
@@ -71,7 +64,7 @@ const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) 
   const renderEditButton = () => {
     if (isEditable && handleEdit !== undefined) {
       return (
-        <IconButton onClick={(event) => handleEdit(event)}>
+        <IconButton onClick={(event) => handleEdit(event)} size="large">
           <Edit fontSize="inherit" />
         </IconButton>
       );
@@ -80,8 +73,8 @@ const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) 
   };
 
   return isExpandable ? (
-    <ExpansionPanel defaultExpanded={defaultExpanded}>
-      <ExpansionPanelSummary aria-controls="" id="">
+    <Accordion defaultExpanded={defaultExpanded}>
+      <AccordionSummary aria-controls="" id="">
         <div className={classes.panelHeader}>
           <div>
             <Typography variant="h5">
@@ -90,9 +83,9 @@ const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) 
           </div>
           <div>{renderEditButton()}</div>
         </div>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>{children}</ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionSummary>
+      <AccordionDetails>{children}</AccordionDetails>
+    </Accordion>
   ) : (
     <Card elevation={3} className={classes.card}>
       <div className={classes.cardHeader}>
