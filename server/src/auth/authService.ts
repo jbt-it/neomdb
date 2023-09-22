@@ -1,4 +1,4 @@
-import { createCurrentTimestamp } from "utils/dateUtils";
+import { createCurrentTimestamp } from "../utils/dateUtils";
 import MembersRepository from "../resources/members/MembersRepository";
 import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
 import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/errors";

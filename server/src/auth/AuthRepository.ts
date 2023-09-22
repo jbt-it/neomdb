@@ -1,6 +1,6 @@
-import { query } from "database";
-import { PasswordResetEntry, User } from "types/authTypes";
-import { QueryError } from "types/errors";
+import { query } from "../database";
+import { PasswordResetEntry, User } from "../types/authTypes";
+import { QueryError } from "../types/errors";
 import mysql = require("mysql2");
 
 class AuthRepository {
