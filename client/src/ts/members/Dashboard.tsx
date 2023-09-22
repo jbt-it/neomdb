@@ -9,12 +9,11 @@ import {
   Grid,
   IconButton,
   Typography,
-  makeStyles,
-  createStyles,
   Theme,
-} from "@material-ui/core";
-import { AddCircleOutline, Clear } from "@material-ui/icons";
-import { Autocomplete } from "@material-ui/lab";
+} from "@mui/material";
+import { AddCircleOutline, Clear } from "@mui/icons-material";
+import { Autocomplete } from "@mui/lab";
+import { makeStyles, createStyles } from "@mui/styles";
 import React, { useState } from "react";
 
 /**
