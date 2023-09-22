@@ -3,45 +3,49 @@
  * a help button (optional) and page-specific options (optional)
  */
 import React from "react";
-import { Typography, makeStyles, Theme, createStyles, IconButton, Menu, MenuItem, Modal, Paper } from "@material-ui/core";
-import { HelpOutline, MoreVert } from "@material-ui/icons";
+import { Typography, Theme, IconButton, Menu, MenuItem, Modal, Paper } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
+import { HelpOutline, MoreVert } from "@mui/icons-material";
 
 /**
  * Function which proivdes the styles of the PageBar
  */
-const useStyles = makeStyles((theme:Theme) => createStyles({
-  pageBar: {
-    position: "fixed",
-    bottom: theme.spacing(0),
-    width: "100%",
-    backgroundColor: theme.palette.secondary.main,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "8px",
-    zIndex: 10,
-    [theme.breakpoints.up("md")]:{
-      marginLeft: "280px",
-      paddingRight: "280px",
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    pageBar: {
+      position: "fixed",
+      bottom: theme.spacing(0),
+      width: "100%",
+      backgroundColor: theme.palette.secondary.main,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "8px",
+      zIndex: 10,
+      [theme.breakpoints.up("md")]: {
+        marginLeft: "280px",
+        paddingRight: "280px",
+      },
     },
-  },
-  pageBarOptions: {
-    display: "flex",
-  },
-  helpModal: {
-    position: "absolute",
-    margin: "auto",
-    top: "20%", bottom: "20%",
-    width: "50%",
-    [theme.breakpoints.down("md")]:{
-      width: "90%",
+    pageBarOptions: {
+      display: "flex",
     },
-    display: "flex",
-    justifyContent: "center",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  }
-}));
+    helpModal: {
+      position: "absolute",
+      margin: "auto",
+      top: "20%",
+      bottom: "20%",
+      width: "50%",
+      [theme.breakpoints.down("xl")]: {
+        width: "90%",
+      },
+      display: "flex",
+      justifyContent: "center",
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+  })
+);
 
 /**
  * Interface for the option-item of page-specific options
@@ -87,24 +91,21 @@ const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => 
   /**
    * Renders the help paper
    */
-  const renderHelp = () => {  
+  const renderHelp = () => {
     return (
       <div>
         <IconButton onClick={handleHelpOpen} size="small">
-          <HelpOutline/>
+          <HelpOutline />
         </IconButton>
-        <Modal
-          open={helpOpen}
-          onClose={handleHelpClose}
-        >
-          <div style={{display: "flex", alignContent: "center", justifyContent: "center"}}>
+        <Modal open={helpOpen} onClose={handleHelpClose}>
+          <div style={{ display: "flex", alignContent: "center", justifyContent: "center" }}>
             <Paper className={classes.helpModal}>
               <Typography>{props.helpText}</Typography>
             </Paper>
           </div>
         </Modal>
       </div>
-      );
+    );
   };
 
   /**
@@ -122,7 +123,7 @@ const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => 
     setAnchorEl(null);
   };
 
-  const handleMenuClick = (option:Option) => {
+  const handleMenuClick = (option: Option) => {
     option.optionFunciton();
     handleOptionsClose();
   };
@@ -134,20 +135,23 @@ const PageBar: React.FunctionComponent<PageBarProps> = (props: PageBarProps) => 
     return (
       <div>
         <IconButton onClick={handleButtonClick} size="small">
-          <MoreVert/>
+          <MoreVert />
         </IconButton>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleOptionsClose}
-        >
+        <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleOptionsClose}>
           {props.pageOptions?.map((option, key) => {
-          return (<MenuItem key={key} onClick={() => {handleMenuClick(option);}}>{option.optionName}</MenuItem>);
+            return (
+              <MenuItem
+                key={key}
+                onClick={() => {
+                  handleMenuClick(option);
+                }}
+              >
+                {option.optionName}
+              </MenuItem>
+            );
           })}
         </Menu>
-    </div>
+      </div>
     );
   };
 

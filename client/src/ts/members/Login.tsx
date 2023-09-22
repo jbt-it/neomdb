@@ -6,23 +6,20 @@ import { useHistory, NavLink } from "react-router-dom";
 
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Textfield from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
+import { Paper, Grid, Button, TextField, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import logo from "../../images/jbt-logo-black.png";
-import Link from "@material-ui/core/Link";
+import Link from "@mui/material/Link";
+import { authReducerActionType } from "../global/globalTypes";
 
 const Login: React.FunctionComponent = () => {
   const history = useHistory();
-  const [authenticated, setAuthenticated,
-        userID, setUserID, userName, setUserName] = useContext(AuthContext);
+  const { dispatchAuth } = useContext(AuthContext);
 
   /**
    * Styles
    */
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles((theme: Theme) => ({
     paper: {
       marginTop: theme.spacing(8),
       paddingBottom: theme.spacing(3),
@@ -42,8 +39,7 @@ const Login: React.FunctionComponent = () => {
       flexDirection: "column",
       alignItems: "center",
     },
-    inputfield: {
-    },
+    inputfield: {},
     submit: {
       margin: theme.spacing(3, 0, 1),
       color: "white",
@@ -77,43 +73,68 @@ const Login: React.FunctionComponent = () => {
    */
   const login = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    api.post("/users/login", {
-      username,
-      password
-    })
-    .then((res) => {
-      if (res.status === 200){
-        localStorage.setItem("token", res.data.token);
-        setAuthenticated(true);
-        setUserID(JSON.parse(atob(res.data.token.split(".")[1])).mitgliedID);
-        setUserName(JSON.parse(atob(res.data.token.split(".")[1])).name);
-        history.push("/");
-      } else {
+    api
+      .post("/auth/login", {
+        username,
+        password,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          const userID = res.data.mitgliedID;
+          const userName = res.data.name;
+          const permissions = res.data.permissions;
+          const roles = res.data.roles;
+          dispatchAuth({
+            type: authReducerActionType.authenticate,
+            payload: { userID, userName, permissions, roles },
+          });
+          history.push("/");
+        } else {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+          setFailedLogin(true);
+        }
+      })
+      .catch(() => {
         setFailedLogin(true);
-      }
-    })
-    .catch((error) => {
-      setFailedLogin(true);
-    });
+      });
     setPassword("");
   };
 
-  /*
+  /**
    * Gets the password correct state of the password field, depending on if a previous login attempt failed
    */
   const getPasswordField: VoidFunction = () => {
     if (failedLogin) {
       return (
-        <Textfield error className={classes.inputfield} id="password" label="Passwort" type="password"
-          helperText="Passwort oder Benutzername sind nicht korrekt" value={password}
-          onChange = {event => {setPassword(event.target.value);}}
-          onKeyUp={handleKeyUp} fullWidth />
+        <TextField
+          error
+          className={classes.inputfield}
+          id="password"
+          label="Passwort"
+          type="password"
+          helperText="Passwort oder Benutzername sind nicht korrekt"
+          value={password}
+          onChange={(event) => {
+            setPassword(event.target.value);
+          }}
+          onKeyUp={handleKeyUp}
+          fullWidth
+        />
       );
     }
     return (
-      <Textfield className={classes.inputfield} id="password" label="Passwort" type="password" value={password}
-        onChange = {event => {setPassword(event.target.value);}}
-        onKeyUp={handleKeyUp} fullWidth />
+      <TextField
+        className={classes.inputfield}
+        id="password"
+        label="Passwort"
+        type="password"
+        value={password}
+        onChange={(event) => {
+          setPassword(event.target.value);
+        }}
+        onKeyUp={handleKeyUp}
+        fullWidth
+      />
     );
   };
 
@@ -136,18 +157,33 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <div className="login">
-      <Grid container spacing={0} alignItems="center" justify="center">
+      <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={10} sm={8} md={6} lg={4}>
           <Paper className={classes.paper}>
-            <img className={classes.logo} src={logo}/>
+            <img className={classes.logo} src={logo} alt="JBT-Logo" />
             <h1>Login</h1>
-            <form className={classes.login} id="loginform" onSubmit={event => {login(event);}}>
-              <Textfield className={classes.inputfield} id="username" label="Benutzername" type="text" value={username}
-                onChange = {event => {setUsername(event.target.value);}}
-                onKeyUp={handleKeyUp} fullWidth />
+            <form
+              className={classes.login}
+              id="loginform"
+              onSubmit={(event) => {
+                login(event);
+              }}
+            >
+              <TextField
+                className={classes.inputfield}
+                id="username"
+                label="Benutzername"
+                type="text"
+                value={username}
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                }}
+                onKeyUp={handleKeyUp}
+                fullWidth
+              />
               {getPasswordField()}
               <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                      Login
+                Login
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
