@@ -2,14 +2,33 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Collapse, Typography } from "@material-ui/core";
-import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, ExitToApp, TrendingUp } from "@material-ui/icons";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import JBTLogoBlack from "../../../images/jbt-logo-black.png";
-import { AuthContext } from "../AuthContext";
-import api from "../../utils/api";
-import { authReducerActionType } from "../globalTypes";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import {
+  Avatar,
+  List,
+  Divider,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+  Typography,
+  Theme,
+} from "@mui/material";
+import {
+  Dashboard,
+  PeopleAlt,
+  Event,
+  Build,
+  MoreHoriz,
+  EmojiObjects,
+  ExitToApp,
+  TrendingUp,
+} from "@mui/icons-material";
+import { makeStyles, createStyles } from "@mui/styles";
+import JBTLogoBlack from "../../../../images/jbt-logo-black.png";
+import { AuthContext } from "../../AuthContext";
+import api from "../../../utils/api";
+import { authReducerActionType } from "../../globalTypes";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
@@ -20,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "280px",
     },
     avatarSection: {
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         marginLeft: theme.spacing(),
         padding: theme.spacing(),
       },

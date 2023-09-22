@@ -52,6 +52,29 @@ export type Department = {
 };
 
 /**
+ * Type of the department details
+ */
+export type DepartmentDetails = {
+  ressortID: number;
+  bezeichnung: string;
+  kuerzel: string;
+  jbt_email: string;
+  linkZielvorstellung: string;
+  linkOrganigramm: string;
+};
+
+/**
+ * Type of the directors
+ */
+export type Director = {
+  evpostenID: number;
+  ressortID: number;
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+};
+
+/**
  * Type of a mentor
  */
 export type Mentor = {
@@ -81,6 +104,17 @@ export type Member = {
   ressort: string;
   mitgliedstatus: string;
   lastchange: string;
+};
+
+/**
+ * Type of the department member
+ */
+export type DepartmentMember = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  ressort: number;
+  bezeichnung: string;
 };
 
 /**

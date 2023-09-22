@@ -9,6 +9,7 @@ import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
 import authRoutes from "./global/auth/authRoutes";
 import membersRoutes from "./members/membersRoutes";
+import traineesRoutes from "./trainees/traineesRoutes";
 
 dotenv.config();
 const app = express();
@@ -32,12 +33,13 @@ app.use(cookieParser());
 /*
  * Enables referer validation middleware
  */
-app.use(refererValidationMiddleware);
+// app.use(refererValidationMiddleware); TODO: Currently deactivated for development puropose
 
 /*
  * Use routes
  */
 app.use("/auth", authRoutes);
 app.use("/users", membersRoutes);
+app.use("/trainees", traineesRoutes);
 
 export default app;

@@ -11,12 +11,14 @@ import {
   CssBaseline,
   Drawer,
   Hidden,
-} from "@material-ui/core";
-import { Menu, Search } from "@material-ui/icons";
+  Theme,
+  alpha,
+} from "@mui/material";
+import { Menu, Search } from "@mui/icons-material";
 import MenuDrawer from "./MenuDrawer";
 import ScrollTopBtn from "./ScrollTopBtn";
-import { createStyles, alpha, Theme, makeStyles } from "@material-ui/core/styles";
-import JBTLogoWhite from "../../../images/jbt-logo-white.png";
+import { createStyles, makeStyles } from "@mui/styles";
+import JBTLogoWhite from "../../../../images/jbt-logo-white.png";
 
 /**
  * Function which proivdes the styles of the Nav
@@ -86,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     searchInputInput: {
       padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
       transition: theme.transitions.create("width"),
       width: "100%",
       [theme.breakpoints.up("sm")]: {
@@ -134,7 +136,13 @@ const Nav: React.FunctionComponent = () => {
       <CssBaseline />
       <AppBar position="fixed" className={classes.bar}>
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} aria-label="open drawer" onClick={toggleDrawer(true)}>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            aria-label="open drawer"
+            onClick={toggleDrawer(true)}
+            size="large"
+          >
             <Menu />
           </IconButton>
           <div className={classes.barContent}>
@@ -172,7 +180,7 @@ const Nav: React.FunctionComponent = () => {
             <MenuDrawer drawer={toggleDrawer} />
           </SwipeableDrawer>
         </Hidden>
-        <Hidden smDown implementation="css">
+        <Hidden xlDown implementation="css">
           <Drawer variant="permanent" open>
             <MenuDrawer drawer={toggleDrawer} />
           </Drawer>

@@ -16,12 +16,11 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  createStyles,
   Theme,
-  makeStyles,
-} from "@material-ui/core";
-import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
-import PageBar from "../global/navigation/PageBar";
+} from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
+import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
+import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
 import { useContext } from "react";
@@ -47,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "flex",
         alignItems: "flex-end",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         display: "flex",
         alignItems: "center",
       },
@@ -57,11 +56,11 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: "7px",
         width: "155px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         margin: "7px",
         width: "120px",
       },
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down("lg")]: {
         margin: "7px",
         width: "120px",
       },
@@ -71,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: "7px",
         width: "165px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         margin: "7px",
         width: "100px",
       },
@@ -83,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: "5px",
         marginLeft: "50px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         marginTop: "15px",
         marginBottom: "7px",
         marginRight: "5px",
@@ -439,7 +438,12 @@ const MemberOverview: React.FunctionComponent = () => {
                 </TextField>
               </Grid>
             </Grid>
-            <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+            <IconButton
+              aria-label="more filter options"
+              className={classes.filterBtn}
+              onClick={toggleFilters}
+              size="large"
+            >
               {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
             </IconButton>
           </form>

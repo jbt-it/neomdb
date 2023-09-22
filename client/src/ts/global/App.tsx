@@ -4,8 +4,9 @@ import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
 import MemberOverview from "../members/MemberOverview";
+import MemberManagement from "../members/MemberManagement";
 import Login from "../members/Login";
-import Nav from "./navigation/Nav";
+import Nav from "./components/navigation/Nav";
 import NotFound from "./NotFound";
 import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
@@ -14,7 +15,7 @@ import ChangePassword from "../members/ChangePassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
-import LoadingCircle from "./LoadingCircle";
+import LoadingCircle from "./components/LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 
 /**
@@ -53,9 +54,10 @@ const App: React.FunctionComponent = () => {
           const userID = res.data.mitgliedID;
           const userName = res.data.name;
           const permissions = res.data.permissions;
+          const roles = res.data.roles;
           dispatchAuth({
             type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions },
+            payload: { userID, userName, permissions, roles },
           });
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
@@ -170,6 +172,7 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
         <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
+        <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
         <PrivateRoute exact path="/kvp" component={Dashboard} />
         <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />

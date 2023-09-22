@@ -5,11 +5,10 @@
 import React, { useState, useContext } from "react";
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Textfield from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-import PageBar from "../global/navigation/PageBar";
+import { Paper, Button, Theme } from "@mui/material";
+import Textfield from "@mui/material/TextField";
+import { makeStyles } from "@mui/styles";
+import PageBar from "../global/components/navigation/PageBar";
 
 /**
  * Function that allows the user to change the password when logged in, by posting the new password to the backend
@@ -19,7 +18,7 @@ const ChangePassword: React.FunctionComponent = () => {
   /**
    * Function which proivdes the styles of the MenuDrawer
    */
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles((theme: Theme) => ({
     inputfield: {},
     submit: {
       margin: theme.spacing(3, 0, 1),
