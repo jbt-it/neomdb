@@ -6,13 +6,10 @@ import { useHistory } from "react-router-dom";
 
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Textfield from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
+import { Paper, Grid, Button, TextField, Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import logo from "../../images/jbt-logo-black.png";
-import Link from "@material-ui/core/Link";
+import Link from "@mui/material/Link";
 import { authReducerActionType } from "../global/globalTypes";
 
 const Login: React.FunctionComponent = () => {
@@ -22,7 +19,7 @@ const Login: React.FunctionComponent = () => {
   /**
    * Styles
    */
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles((theme: Theme) => ({
     paper: {
       marginTop: theme.spacing(8),
       paddingBottom: theme.spacing(3),
@@ -109,7 +106,7 @@ const Login: React.FunctionComponent = () => {
   const getPasswordField: VoidFunction = () => {
     if (failedLogin) {
       return (
-        <Textfield
+        <TextField
           error
           className={classes.inputfield}
           id="password"
@@ -126,7 +123,7 @@ const Login: React.FunctionComponent = () => {
       );
     }
     return (
-      <Textfield
+      <TextField
         className={classes.inputfield}
         id="password"
         label="Passwort"
@@ -172,7 +169,7 @@ const Login: React.FunctionComponent = () => {
                 login(event);
               }}
             >
-              <Textfield
+              <TextField
                 className={classes.inputfield}
                 id="username"
                 label="Benutzername"
