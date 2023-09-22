@@ -6,6 +6,7 @@ import { QueryResult } from "databaseTypes";
 import { CookieOptions, Request, Response } from "express";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
+import nodemailer = require("nodemailer");
 import * as authTypes from "./authTypes";
 import database = require("../../database");
 
@@ -173,6 +174,191 @@ export const retrieveUserData = (req: Request, res: Response) => {
     )
     .catch(() => {
       res.status(500).send("Query Error");
+    });
+};
+
+/**
+ * An email is sent with an password reset link and a key in the url to the user
+ * The key used in the link is saved in the databse for the later verification
+ * @param req email
+ * @param res 200 if process is available, 500 else
+ */
+
+/**
+ * TODO: implement nodemailer to be able to send mails with microsoft exchange 365
+ * put nodemailer transporter in a new file
+ */
+export const sendPasswordResetLink = (req: Request, res: Response): void => {
+  const date = new Date();
+  const name = String(req.body.email).split("@")[0];
+  // Create a token
+  const plaintextToken = req.body.email.concat(date.getTime());
+  // Create a hash from the token
+  bcrypt.genSalt(10, (_err, salt) => {
+    bcrypt.hash(plaintextToken, salt, (_, hash) => {
+      // Check if email is valid
+      sleepRandomly(300, 400);
+      database
+        .query(
+          `SELECT jbt_email
+          FROM mitglied
+          WHERE mitglied.name = ?`,
+          [name]
+        )
+        .then((result: authTypes.GetEmailToVerifyValidityQueryResult[]) => {
+          if (result.length === 1) {
+            // Delete old entrys, if any exist
+            database
+              .query(
+                `DELETE FROM passwort_reset
+                WHERE mitglied_jbt_email = ?`,
+                [req.body.email]
+              )
+              .then(() => {
+                // Insert the values into the passwort_reset table
+                database
+                  .query(
+                    `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
+                    VALUES (?, ?, ?)`,
+                    [req.body.email, salt, hash]
+                  )
+                  .then(() => {
+                    // Send email with correct URL to usermail
+                    const transport = nodemailer.createTransport({
+                      host: process.env.MAIL_HOST,
+                      port: process.env.MAIL_PORT,
+                      auth: {
+                        user: process.env.MAIL_USER, // Email
+                        pass: process.env.MAIL_PASSWORD, // PW
+                      },
+                    }); // Setup e-mail data with unicode symbols
+                    const mailOptions = {
+                      from: '"JBT MDB SUPPORT" <foo@studentische-beratung.de>', // TODO actual sender address
+                      to: req.body.email, // List of receivers
+                      subject: "Passwort reset link for the account belonging to this mail", // Subject line
+                      text:
+                        "Hello " +
+                        name +
+                        ",\n\n" +
+                        "There was a request to change your password for the MDB! \n\n" +
+                        "If you did not make this request then please ignore this email. \n\n" +
+                        "Otherwise, please use this url to change your password: \n\n" +
+                        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+                        hash +
+                        "\n\n" +
+                        "Regards your IT ressort", // Plaintext body
+                    };
+                    res.status(200).send();
+                  })
+                  .catch(() => {
+                    res.status(500).send("Internal Error");
+                  });
+              })
+              .catch(() => {
+                res.status(500).send("Internal Error");
+              });
+          } else {
+            res.status(200).send();
+          }
+        })
+        .catch(() => {
+          res.status(500).send("Internal Error");
+        });
+    });
+  });
+};
+
+/**
+ * The user can set a new password by entering their mailadress and a new password
+ * The mail and the key in the url are then checked to se if it is a valid pair
+ * If the pair is valid the new password is stored
+ * @param req email, key, new password
+ * @param res 200 if process is available, 500 else
+ */
+export const resetPasswordWithKey = (req: Request, res: Response): void => {
+  const name = String(req.body.email).split("@")[0];
+  // Get current date
+  const today = new Date();
+  const date =
+    today.getFullYear() +
+    "-" +
+    (today.getMonth() + 1) +
+    "-" +
+    today.getDate() +
+    " " +
+    today.getHours() +
+    ":" +
+    today.getMinutes() +
+    ":" +
+    today.getSeconds();
+  // Check if a valid email and token are safed in the table
+  sleepRandomly(300, 400);
+  database
+    .query(
+      `SELECT mitglied_jbt_email, DATEDIFF(datum, ?) AS datediff, token FROM passwort_reset
+    WHERE mitglied_jbt_email = ?
+    AND token = ?`,
+      [date, req.body.email, req.body.key]
+    )
+    .then((result: authTypes.GetEmailDateTokenToVerifyValidityQueryResult[]) => {
+      // Check if the email and token are valid
+      if (result.length == 0) {
+        res.status(404).send();
+        return;
+      }
+      // Check if the entry is older than five days
+      if (result[0].datediff <= -6) {
+        database
+          .query(
+            `DELETE FROM passwort_reset
+                  WHERE mitglied_jbt_email = ?`,
+            [req.body.email]
+          )
+          .then(() => {
+            res.status(422).send("Token expired");
+          })
+          .catch((e) => {
+            console.log(e);
+            res.status(500).send("Internal Error");
+          });
+        return;
+      }
+      bcrypt
+        .hash(req.body.newPassword, 10)
+        .then((hash) => {
+          // Store hash in your password DB
+          database
+            .query(
+              `UPDATE mitglied
+            SET passwort = ?, passwordHash = ?
+            WHERE mitglied.name = ?`,
+              [req.body.newPassword, hash, name] //TODO: dont save new passwort as plaintext
+            )
+            .then(() => {
+              // Delete used entry from the passwort_reset table
+              database
+                .query(
+                  `DELETE FROM passwort_reset
+                  WHERE mitglied_jbt_email = ?`,
+                  [req.body.email]
+                )
+                .then(() => {
+                  res.status(200).send();
+                })
+                .catch(() => {
+                  res.status(500).send("Internal Error");
+                });
+            })
+            .catch(() => {
+              res.status(500).send("Internal Error");
+            });
+        })
+        .catch(() => {
+          res.status(500).send("Internal Error");
+        });
+    })
+    .catch(() => {
+      res.status(500).send();
     });
 };
 
