@@ -15,7 +15,7 @@ import { NotFoundError, QueryError } from "../../types/errors";
 import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
-import formatDate, { createCurrentTimestamp } from "../../utils/dateUtils";
+import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { executeInTransaction } from "../../database";
 import bcrypt = require("bcryptjs");
 import { getRandomString } from "../../utils/stringUtils";
