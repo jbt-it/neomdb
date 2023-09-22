@@ -20,6 +20,7 @@ import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./components/LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 import TraineePreferences from "../trainees/TraineePreferences";
+import AssignTrainees from "../trainees/AssignTrainees";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -176,7 +177,8 @@ const App: React.FunctionComponent = () => {
         <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
         <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
-        <PrivateRoute exact path="/traineepreferenzen" component={TraineePreferences} />
+        <PrivateRoute exact path="/traineepraeferenzen" component={TraineePreferences} />
+        <PrivateRoute exact path="/traineezuteilung" component={AssignTrainees} />
         <PrivateRoute exact path="/kvp" component={Dashboard} />
         <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
