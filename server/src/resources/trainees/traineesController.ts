@@ -218,38 +218,3 @@ export const retrieveAllIPs = async (req: Request, res: Response): Promise<Respo
 
   return res.status(200).json(ips);
 };
-
-/*
-  Retrieve a list of all Trainees with their respective IPs
-  Group all Trainees into their corresponding generations
-*/
-export const retrieveAllTraineesWithIPs = (req: Request, res: Response): void => {
-  database
-    .query(
-      `SELECT mitglied.generation, mitglied.mitgliedID, mitglied.vorname, mitglied.nachname, internesprojekt.internesprojektID, internesprojekt.projektname, internesprojekt.kuerzel, internesprojekt.kickoff, internesprojekt.AngebotBeiEV, internesprojekt.ZPbeiEV, internesprojekt.ZPgehalten, internesprojekt.APbeiEV, internesprojekt.APgehalten, internesprojekt.DLbeiEV
-      FROM mitglied
-      LEFT JOIN internesprojekt ON mitglied.generation = internesprojekt.generation 
-      ORDER BY generation`,
-      []
-    )
-    .then((result: traineesTypes.retrieveAllTraineesWithIPsQueryResult[]) => {
-      let groupedGenerations = {};
-
-      for (let i = 0; i < result.length; i++) {
-        let obj = result[i];
-        let generation = obj.generation;
-
-        // Create Array for current generation if none exists yet
-        if (!groupedGenerations[generation]) {
-          groupedGenerations[generation] = [];
-        }
-
-        // Add object to respective generation
-        groupedGenerations[generation].push(obj);
-      }
-      res.status(200).json(groupedGenerations);
-    })
-    .catch((err) => {
-      res.status(500).send("Query Error");
-    });
-};

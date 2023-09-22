@@ -24,7 +24,6 @@ router.get("/", traineesController.retrieveCurrentTrainees);
 router.get("/ips/current", catchAsync(traineesController.retrieveCurrentIPs));
 router.get("/ips/all", catchAsync(traineesController.retrieveAllIPs));
 router.get("/generations/:id/motivation", catchAsync(traineesController.retrieveTraineeMotivation));
-router.get("/all-trainees", traineesController.retrieveAllTraineesWithIPs);
 router.get(
   "/generations/:id/trainee-choices",
   restrictRoutes([14], false),
