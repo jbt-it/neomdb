@@ -12,6 +12,8 @@ import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
+import ForgotPassword from "../members/ForgotPassword";
+import ResetForgotPassword from "../members/ResetForgotPassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
@@ -181,6 +183,8 @@ const App: React.FunctionComponent = () => {
         <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
         <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
         <LoginRoute exact path="/login" component={Login} />
+        <Route exact path="/passwort-vergessen" component={ForgotPassword} />
+        <Route exact path="/passwort-vergessen-zuruecksetzten/:key" component={ResetForgotPassword} />
         <PrivateRoute path="*" component={NotFound} />
       </Switch>
     </HashRouter>
