@@ -11,6 +11,7 @@ import {
 } from "../middleware/authorization";
 import * as membersController from "./membersController";
 
+//router.post("/login", membersController.login);
 const router = express.Router();
 
 /**
@@ -32,12 +33,7 @@ router.get("/department-members", membersController.retrieveDepartmentMembers);
 router.get("/directors", membersController.retrieveDirectors);
 router.get("/edv-skills", membersController.retrieveEDVSkills);
 router.get("/languages", membersController.retrieveLanguages);
-router.get(
-  "/permissions",
-
-  restrictRoutes(ALL_PERMISSIONS, false),
-  membersController.retrievePermissions
-);
+router.get("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.retrievePermissions);
 router.get(
   "/permissions-of-members",
   restrictRoutes(ALL_PERMISSIONS, false),
@@ -54,6 +50,7 @@ router.post("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersContr
 router.patch("/change-password", membersController.changePassword);
 router.patch("/departments/:id", checkDepartmentAccess, membersController.updateDepartmentInfo);
 router.patch("/:id", restrictRoutesSelfOrPermission([1]), membersController.updateMember);
+router.patch("/:id/status", restrictRoutes([1]), membersController.updateMemberStatus);
 
 //  =======>>> Delete routes <<<=======
 router.delete("/permissions", restrictRoutes(ALL_PERMISSIONS, false), membersController.deletePermission);

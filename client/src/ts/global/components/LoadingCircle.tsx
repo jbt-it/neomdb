@@ -1,7 +1,8 @@
 /*
  * Component for rendering a loading circle
  */
-import { Avatar, createStyles, makeStyles, Typography } from "@material-ui/core";
+import { Avatar, Typography, Box, Stack } from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
 import Lenni from "../../../images/lenni.jpeg";
 
@@ -10,13 +11,22 @@ import Lenni from "../../../images/lenni.jpeg";
  */
 const useStyles = makeStyles(() =>
   createStyles({
-    root: {
-      width: 180,
-      height: 180,
-    },
     center: {
       marginTop: 20,
       textAlign: "center",
+    },
+    rotating: {
+      width: 180,
+      height: 180,
+      animation: "spin 4s linear infinite",
+    },
+    loading: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      minWidth: "100%",
+      maxWidth: "100%",
+      marginTop: "10%",
     },
   })
 );
@@ -28,12 +38,22 @@ const useStyles = makeStyles(() =>
 const LoadingCircle = () => {
   const classes = useStyles();
   return (
-    <div>
-      <Avatar className={`rotate ${classes.root}`} src={Lenni} />
+    <Stack className={classes.loading}>
+      <Box>
+        <Avatar className={classes.rotating} src={Lenni} />
+        <style>
+          {`
+            @keyframes spin {
+                 0% { transform: rotate(360deg); }
+                 100% { transform: rotate(0deg); }
+            }
+        `}
+        </style>
+      </Box>
       <div className={classes.center}>
         <Typography variant="h4">Lade neoMDB...</Typography>
       </div>
-    </div>
+    </Stack>
   );
 };
 

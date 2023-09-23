@@ -1,17 +1,8 @@
 /*
  * Dialog component for displaying input fields for changing department infos
  */
-import {
-  Button,
-  createStyles,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  makeStyles,
-  TextField,
-  Theme,
-} from "@material-ui/core";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, Theme } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
 import React, { memo, useContext, useState } from "react";
 import { DepartmentDetails } from "../../members/membersTypes";
 import api from "../../utils/api";
