@@ -12,28 +12,18 @@ import {
   TableRow,
   Theme,
   Typography,
-  createStyles,
-  makeStyles,
   Box,
   Grid,
   styled,
   Button,
-} from "@material-ui/core";
-import React, { useState, useContext, useEffect } from "react";
-import api from "../utils/api";
+} from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import * as traineeTypes from "./traineesTypes";
-import { showErrorMessage } from "../utils/toastUtils";
-import { authReducerActionType } from "../global/globalTypes";
-import { AuthContextType } from "../global/globalTypes";
-import { AuthContext } from "../global/AuthContext";
 import * as membersTypes from "../members/membersTypes";
 import * as globalTypes from "../global/globalTypes";
-import InfoCard from "../global/components/InfoCard";
-import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
-import TraineeSection from "./TraineeSection";
 import PageBar from "../global/components/navigation/PageBar";
-import { AddCircle } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

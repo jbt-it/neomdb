@@ -9,7 +9,8 @@ import api from "../utils/api";
 import * as traineeTypes from "./traineesTypes";
 import { authReducerActionType } from "../global/globalTypes";
 import { showErrorMessage } from "../utils/toastUtils";
-import { Grid, TextField, Theme, createStyles, makeStyles, MenuItem } from "@material-ui/core";
+import { Grid, TextField, Theme, MenuItem } from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,6 +76,7 @@ const TraineeSection: VoidFunction = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
+            //const to add generation value to trainee, because api call currently doesn't get generation
             const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 11 }));
             setTrainees(traineesTmp);
           }

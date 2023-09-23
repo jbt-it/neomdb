@@ -11,16 +11,15 @@ import {
   TableHead,
   TableRow,
   Theme,
-  createStyles,
-  makeStyles,
   Button,
-} from "@material-ui/core";
+} from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import * as traineeTypes from "./traineesTypes";
 import * as memberTypes from "../members/membersTypes";
 import * as globalTypes from "../global/globalTypes";
-import { AddCircle } from "@material-ui/icons";
+import { AddCircle } from "@mui/icons-material";
 import PageBar from "../global/components/navigation/PageBar";
 import InfoCard from "../global/components/InfoCard";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
