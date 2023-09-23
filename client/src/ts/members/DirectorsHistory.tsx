@@ -4,6 +4,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  Link,
+  Typography,
   Paper,
   Table,
   TableBody,
@@ -22,7 +24,6 @@ import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { transformSQLStringToGermanDate } from "../utils/dateUtils";
 import { showErrorMessage } from "../utils/toastUtils";
-import { NavLink } from "react-router-dom";
 
 /**
  * Function which proivdes the styles of the DirectorHistory
@@ -95,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tableHeadCell: {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.secondary,
+      color: theme.palette.primary.contrastText,
     },
     tableHeadSortBtn: {
       display: "flex",
@@ -320,9 +321,13 @@ const DirectorsHistory: React.FunctionComponent = () => {
               {getFilteredandSortedDirectors().map((director, index) => (
                 <TableRow hover key={index}>
                   <TableCell component="th" scope="row">
-                    <NavLink
-                      to={`/gesamtuebersicht/${director.mitgliedID}`}
-                    >{`${director.vorname} ${director.nachname}`}</NavLink>
+                    <Typography color="secondary">
+                      <Link
+                        color="textPrimary"
+                        underline="hover"
+                        href={`#/gesamtuebersicht/${director.mitgliedID}`}
+                      >{`${director.vorname}.${director.nachname}`}</Link>
+                    </Typography>
                   </TableCell>
                   <TableCell>{director.kuerzel}</TableCell>
                   <TableCell>{transformSQLStringToGermanDate(director.von)}</TableCell>
