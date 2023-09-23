@@ -266,3 +266,36 @@ export type StatusOverview = {
   wikiSuccesful: boolean;
   wikiErrorMsg: string;
 };
+
+/**
+ * Type of plesk api call result
+ */
+export type PleskApiResult = {
+  // TODO: Move to own file if used
+  code: number;
+  stdout: string;
+  stderr: string;
+};
+
+/**
+ * Type of nextcloud api call result
+ */
+export type NCApiResult = {
+  // TODO: Move to own file if used
+  status: string;
+  statuscode: number;
+  message: string;
+  totalitems: number;
+  itemsperpage: number;
+};
+
+/**
+ * Type of mediawiki api call result
+ */
+export type MWApiResult = {
+  // TODO: Move to own file if used
+  status: string;
+  message: string;
+  messagecode: string;
+  canpreservestate: boolean;
+};
