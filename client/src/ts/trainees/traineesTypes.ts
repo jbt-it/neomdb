@@ -12,7 +12,7 @@ export type IpInfoType = {
   traineegeneration: string;
   kickoff: string;
   angebotAbgegeben: string;
-  apDatum: string;
+  apDatum: any;
   apAbgegeben: string;
   zpDatum: string;
   zpAbgegeben: string;

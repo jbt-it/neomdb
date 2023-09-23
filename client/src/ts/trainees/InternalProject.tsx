@@ -4,7 +4,7 @@
  */
 import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Button, Paper, Typography, IconButton } from "@mui/material";
+import { Button, Dialog, Paper, Typography, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Edit } from "@mui/icons-material";
 import * as traineesTypes from "./traineesTypes";
@@ -15,6 +15,8 @@ import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 import { authReducerActionType } from "../global/globalTypes";
+import FieldSection, { Field } from "../global/components/FieldSection";
+import dayjs from "dayjs";
 
 /**
  * Function which provides the styles
@@ -123,14 +125,28 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const { auth } = useContext(AuthContext);
 
   // internalProjectDetails will be used later when the API call is implemented
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>();
+  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>({
+    id: 0,
+    name: "",
+    kuerzel: "",
+    traineegeneration: "",
+    kickoff: "",
+    angebotAbgegeben: "",
+    apDatum: new Date(),
+    apAbgegeben: "",
+    zpDatum: "",
+    zpAbgegeben: "",
+    dlAbgegeben: "",
+    projektmitglieder: "",
+    qualitaetsmanager: "",
+  });
 
   const [name, setName] = useState<string>("");
   const [kuerzel, setKuerzel] = useState<string>("");
   const [traineegeneration, setTraineegeneration] = useState<string>("");
   const [kickoff, setKickoff] = useState<string>("");
   const [angebotAbgegeben, setAngebotAbgegeben] = useState<string>("");
-  const [apDatum, setApDatum] = useState<string>("");
+  const [apDatum, setApDatum] = useState<Date>();
   const [apAbgegeben, setApAbgegeben] = useState<string>("");
   const [zpDatum, setZpDatum] = useState<string>("");
   const [zpAbgegeben, setZpAbgegeben] = useState<string>("");
@@ -171,7 +187,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       traineegeneration: "22/WS",
       kickoff: "01.01.2020",
       angebotAbgegeben: "Ja",
-      apDatum: "01.01.2022",
+      apDatum: new Date("2022-03-25"),
       apAbgegeben: "Ja",
       zpDatum: "01.01.2020",
       zpAbgegeben: "Ja",
@@ -179,6 +195,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       projektmitglieder: "Marko Müller, Ada Lovelace",
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
     };
+    console.log("apDatum: " + apDatum);
 
     setInternalProjectDetails(ip);
     setName(ip?.name);
@@ -247,13 +264,79 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     };
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInternalProjectDetails({
+      ...internalProjectDetails,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const onChangeApDatum = (value: unknown) => {
+    setApDatum(value as Date);
+  };
+
+  const InternalProjectDialogFields: Array<Field> = [
+    {
+      label: "Name",
+      state: name,
+      width: "half",
+      onChangeCallback: onChangeName,
+      type: "Text",
+    },
+    { label: "Kürzel", state: kuerzel, width: "half", onChangeCallback: handleChange, type: "Text" },
+    {
+      label: "Traineegeneration",
+      state: traineegeneration,
+      width: "half",
+      onChangeCallback: handleChange,
+      type: "Text",
+    },
+
+    { label: "Kickoff", state: kickoff, width: "half", onChangeCallback: handleChange, type: "Text" },
+    {
+      label: "Angebot abgegeben",
+      state: angebotAbgegeben,
+      width: "half",
+      onChangeCallback: handleChange,
+      type: "Text",
+    },
+    { label: "AP abgegeben", state: apAbgegeben, width: "half", onChangeCallback: handleChange, type: "Text" },
+    {
+      label: "AP Datum",
+      state: dayjs(apDatum),
+      width: "half",
+      onChangeCallback: onChangeApDatum,
+      type: "Date",
+    },
+    { label: "ZP Datum", state: zpDatum, width: "half", onChangeCallback: handleChange, type: "Text" },
+    { label: "DL abgegeben", state: dlAbgegeben, width: "half", onChangeCallback: handleChange, type: "Text" },
+    {
+      label: "Projektmitglieder",
+      state: projektmitglieder,
+      width: "half",
+      onChangeCallback: handleChange,
+      type: "Text",
+    },
+    {
+      label: "Qualitätsmanager",
+      state: qualitaetsmanager,
+      width: "half",
+      onChangeCallback: handleChange,
+      type: "Text",
+    },
+  ];
+
   /*
    * Returns the internal project details if the retrieval of the internal project was successful (internalProjectDetails is not null or undefined)
    */
   return internalProjectDetails ? (
     <div>
       {/* TODO: The default values (meaning the values sent from the backend) should also be given to the dialog, because canceling the editing should probably reset the states - low priority*/}
-      <InternalProjectInformationDialog
+      {/* <InternalProjectInformationDialog
         name={name}
         kuerzel={kuerzel}
         traineegeneration={traineegeneration}
@@ -281,7 +364,17 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         setProjektmitglieder={setProjektmitglieder}
         setQualitaetsmanager={setQualitaetsmanager}
         updateInternalProjectDetails={updateInternalProjectDetails}
-      />
+      /> */}
+      <Dialog
+        className={"content-page"}
+        open={internalProjectInfoDialogOpen}
+        onClose={handleInternalProjectInfoDialogClose}
+        fullWidth
+        maxWidth="lg"
+        aria-labelledby="general-dialog-title"
+      >
+        <FieldSection title={"InternalProjectDialogSection"} fields={InternalProjectDialogFields}></FieldSection>
+      </Dialog>
 
       <div className="content-page">
         <Paper className={classes.paper}>
@@ -306,7 +399,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
             <Detail name={"Kick-Off"} value={internalProjectDetails.kickoff} />
             <Detail name={"Angebot abgegeben"} value={internalProjectDetails.angebotAbgegeben} />
             <Detail name={"AP abgegeben"} value={internalProjectDetails.apAbgegeben} />
-            <Detail name={"AP Datum"} value={internalProjectDetails.apDatum} />
+            {/* <Detail name={"AP Datum"} value={internalProjectDetails.apDatum} /> */}
             <Detail name={"ZP abgegeben"} value={internalProjectDetails.zpAbgegeben} />
             <Detail name={"DL abgegeben"} value={internalProjectDetails.dlAbgegeben} />
             <Detail name={"Projektmitglieder"} value={internalProjectDetails.projektmitglieder} />
