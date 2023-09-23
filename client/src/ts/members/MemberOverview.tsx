@@ -16,11 +16,12 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  createStyles,
   Theme,
-  makeStyles,
-} from "@material-ui/core";
-import { UnfoldMore, ExpandLess, ExpandMore } from "@material-ui/icons";
+  Typography,
+  Link,
+} from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
+import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import PageBar from "../global/components/navigation/PageBar";
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "flex",
         alignItems: "flex-end",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         display: "flex",
         alignItems: "center",
       },
@@ -57,11 +58,11 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: "7px",
         width: "155px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         margin: "7px",
         width: "120px",
       },
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down("lg")]: {
         margin: "7px",
         width: "120px",
       },
@@ -71,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: "7px",
         width: "165px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         margin: "7px",
         width: "100px",
       },
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: "5px",
         marginLeft: "50px",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         marginTop: "15px",
         marginBottom: "7px",
         marginRight: "5px",
@@ -99,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tableHeadCell: {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.secondary,
+      color: theme.palette.primary.contrastText,
     },
     tableHeadSortBtn: {
       display: "flex",
@@ -439,7 +440,12 @@ const MemberOverview: React.FunctionComponent = () => {
                 </TextField>
               </Grid>
             </Grid>
-            <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+            <IconButton
+              aria-label="more filter options"
+              className={classes.filterBtn}
+              onClick={toggleFilters}
+              size="large"
+            >
               {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
             </IconButton>
           </form>
@@ -466,9 +472,13 @@ const MemberOverview: React.FunctionComponent = () => {
               {getFilteredAndSortedMembers().map((member, index) => (
                 <TableRow hover key={index}>
                   <TableCell component="th" scope="row">
-                    <NavLink
-                      to={`/gesamtuebersicht/${member.mitgliedID}`}
-                    >{`${member.vorname} ${member.nachname}`}</NavLink>
+                    <Typography color="secondary">
+                      <Link
+                        color="textPrimary"
+                        underline="hover"
+                        href={`#/gesamtuebersicht/${member.mitgliedID}`}
+                      >{`${member.vorname}.${member.nachname}`}</Link>
+                    </Typography>
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
                   <TableCell>{member.jbt_email}</TableCell>

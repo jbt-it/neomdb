@@ -3,8 +3,7 @@
  */
 
 import React, { useReducer, useState } from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import { Autocomplete, createFilterOptions } from "@material-ui/lab";
+import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Typography,
@@ -18,8 +17,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@material-ui/core";
-import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@material-ui/icons";
+  createFilterOptions,
+  Autocomplete,
+  Theme,
+} from "@mui/material";
+import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../images/jbt-logo-black.png";
 import {
@@ -111,13 +113,13 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("md")]: {
         width: "30%",
       },
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("xl")]: {
         width: "50%",
       },
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down("lg")]: {
         width: "60%",
       },
-      [theme.breakpoints.down("xs")]: {
+      [theme.breakpoints.down("md")]: {
         width: "100%",
       },
     },
@@ -814,7 +816,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div>
                 <div className={classes.subCategoryHeader}>
                   <Typography>Werdegang</Typography>
-                  <IconButton aria-label="expand career" onClick={toggleCareerState}>
+                  <IconButton aria-label="expand career" onClick={toggleCareerState} size="large">
                     {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
                   </IconButton>
                 </div>
@@ -1508,6 +1510,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                   payload: { lang: language },
                                 })
                               }
+                              size="large"
                             >
                               <Clear />
                             </IconButton>
@@ -1525,6 +1528,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             type: membersTypes.languagesReducerActionType.addEmptyLanguage,
                           })
                         }
+                        size="large"
                       >
                         <AddCircleOutline />
                       </IconButton>
@@ -1623,6 +1627,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                   payload: { edvSkill: edv },
                                 })
                               }
+                              size="large"
                             >
                               <Clear />
                             </IconButton>
@@ -1640,6 +1645,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             type: membersTypes.edvSkillsReducerActionType.addEmptyEdvSkill,
                           });
                         }}
+                        size="large"
                       >
                         <AddCircleOutline />
                       </IconButton>
