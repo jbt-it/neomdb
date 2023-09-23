@@ -5,11 +5,11 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
-import refererValidationMiddleware from "./middleware/refererValidation";
+import authRoutes from "./auth/authRoutes";
 import corsMiddleware from "./middleware/cors";
-import authRoutes from "./global/auth/authRoutes";
-import membersRoutes from "./members/membersRoutes";
-import traineesRoutes from "./trainees/traineesRoutes";
+import errorHandler from "./middleware/errorHandling";
+import membersRoutes from "./resources/members/membersRoutes";
+import traineesRoutes from "./resources/trainees/traineesRoutes";
 
 dotenv.config();
 const app = express();
@@ -41,5 +41,10 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/users", membersRoutes);
 app.use("/trainees", traineesRoutes);
+
+/*
+ * Centralized Error handling
+ */
+app.use(errorHandler);
 
 export default app;

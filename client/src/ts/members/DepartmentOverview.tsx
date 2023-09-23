@@ -126,7 +126,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/current-directors", {
+      .get("/users/directors?current=true", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
