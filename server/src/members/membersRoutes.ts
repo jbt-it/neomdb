@@ -11,6 +11,7 @@ import {
 } from "../middleware/authorization";
 import * as membersController from "./membersController";
 
+//router.post("/login", membersController.login);
 const router = express.Router();
 
 /**

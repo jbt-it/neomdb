@@ -12,6 +12,8 @@ import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
+import ForgotPassword from "../members/ForgotPassword";
+import ResetForgotPassword from "../members/ResetForgotPassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
@@ -21,6 +23,7 @@ import TraineePreferences from "../trainees/TraineePreferences";
 import FieldSectionTest from "./FieldSectionTest";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import AssignTrainees from "../trainees/AssignTrainees";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -178,12 +181,15 @@ const App: React.FunctionComponent = () => {
           <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
           <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
           <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
-          <PrivateRoute exact path="/traineepreferenzen" component={TraineePreferences} />
+          <PrivateRoute exact path="/traineepraeferenzen" component={TraineePreferences} />
+          <PrivateRoute exact path="/traineezuteilung" component={AssignTrainees} />
           <PrivateRoute exact path="/modularesformulartest" component={FieldSectionTest} />
           <PrivateRoute exact path="/kvp" component={Dashboard} />
-          <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
           <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
+          <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
           <LoginRoute exact path="/login" component={Login} />
+          <Route exact path="/passwort-vergessen" component={ForgotPassword} />
+          <Route exact path="/passwort-vergessen-zuruecksetzten/:key" component={ResetForgotPassword} />
           <PrivateRoute path="*" component={NotFound} />
         </Switch>
       </HashRouter>
