@@ -111,8 +111,8 @@ class AuthService {
     // Delete old entrys, if any exist
     await this.authRepository.deletePasswordResetEntriesByEmail(email);
 
-                    // Insert the values into the passwort_reset table
-    await this.authRepository.createPasswordResetEntry(email,"salt", token);
+    // Insert the values into the passwort_reset table
+    await this.authRepository.createPasswordResetEntry(email, "salt", token);
 
     return token;
   };
@@ -147,11 +147,7 @@ class AuthService {
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    await this.authRepository.updateUserPasswordByUserNameAndUserID(
-      name,
-      user.mitgliedID,
-      newPasswordHash
-    );
+    await this.authRepository.updateUserPasswordByUserNameAndUserID(name, user.mitgliedID, newPasswordHash);
     await this.authRepository.deletePasswordResetEntriesByEmail(email);
   };
 
