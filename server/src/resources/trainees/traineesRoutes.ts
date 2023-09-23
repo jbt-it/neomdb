@@ -23,7 +23,11 @@ router.get("/ip/:id/mails", catchAsync(traineesController.retrieveTeamMails));
 router.get("/", traineesController.retrieveCurrentTrainees);
 router.get("/ips/current", catchAsync(traineesController.retrieveCurrentIPs));
 router.get("/ips/all", catchAsync(traineesController.retrieveAllIPs));
-router.get("/generations/:id/motivation", catchAsync(traineesController.retrieveTraineeMotivation));
+router.get(
+  "/generations/:id/motivation",
+  restrictRoutes([14], false),
+  catchAsync(traineesController.retrieveTraineeMotivation)
+);
 router.get(
   "/generations/:id/trainee-choices",
   restrictRoutes([14], false),
