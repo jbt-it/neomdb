@@ -10,11 +10,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Theme,
   Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Box,
+  Grid,
+  IconButton,
+  Typography,
+  Theme,
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-import React from "react";
 import { NavLink } from "react-router-dom";
 import * as traineeTypes from "./traineesTypes";
 import * as memberTypes from "../members/membersTypes";
@@ -23,9 +31,23 @@ import { AddCircle } from "@mui/icons-material";
 import PageBar from "../global/components/navigation/PageBar";
 import InfoCard from "../global/components/InfoCard";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
+import { AddCircleOutline, Clear } from "@mui/icons-material";
+import { Autocomplete } from "@mui/lab";
+import React, { useState } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    dialogListItem: {
+      display: "flex",
+      alignContent: "center",
+    },
+    addListItemBtn: {
+      display: "flex",
+      alignContent: "center",
+    },
+    fullWidth: {
+      width: "100%",
+    },
     tableHeader: {
       backgroundColor: "#f6891f",
       color: "white",
@@ -63,10 +85,36 @@ interface TraineeProps {
   generation: memberTypes.Member[];
   generationFilter: number;
 }
+interface UserOption {
+  id: number;
+  name: string;
+}
+//TODO: This array consists of dummy data. It needs to be changed once backend connection is established
+//For the "users" trainees need to be retrieved
+//For the "qms" active members need to be retrieved
+const options: UserOption[] = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Charlie" },
+  { id: 4, name: "Shitting Toothpaste" },
+];
 
 const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: TraineeProps) => {
+  const [open, setOpen] = React.useState(false);
+  const [users, setUsers] = useState<UserOption[]>([]);
+  const [qms, setQMs] = useState<UserOption[]>([]);
   const classes = useStyles();
   const { internalProjects, trainees, generationFilter } = props;
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setQMs([]);
+    setUsers([]);
+  };
 
   //Function to filter the members based on the wanted generation
 
@@ -93,9 +141,219 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
           <Table style={{ minWidth: 400 }} aria-label="customized table">
             <TableHead>
               <TableRow className={classes.tableTop}>
-                <Button variant="outlined" startIcon={<AddCircle />}>
+                <Button variant="outlined" startIcon={<AddCircle />} onClick={handleClickOpen}>
                   Internes Projekt Hinzufügen
                 </Button>
+                <Dialog open={open} onClose={handleClose}>
+                  <DialogTitle>Informationen zum internen Projekt</DialogTitle>
+                  <DialogContent>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Grid container spacing={1} justifyContent="center">
+                        <Grid
+                          item
+                          xs={12}
+                          md={3.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <Typography>Name:</Typography>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={8.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <TextField fullWidth id="name" variant="outlined" size="small" />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={3.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <Typography>Kürzel:</Typography>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={8.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <TextField fullWidth id="kuerzel" variant="outlined" size="small" />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={3.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <Typography>Traineegeneration:</Typography>
+                        </Grid>
+                        {/* TODO: Once a backend connection is established, this text field needs to show the current Traineegeneration*/}
+                        <Grid
+                          item
+                          xs={12}
+                          md={8.5}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                        >
+                          <TextField
+                            fullWidth
+                            disabled
+                            id="traineegeneration"
+                            variant="outlined"
+                            size="small"
+                            defaultValue="Sommersemester 2023"
+                          />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
+                          <Typography>Projektmitglieder:</Typography>
+                        </Grid>
+
+                        <Grid container spacing={1}>
+                          {users.map((user, index) => (
+                            <Grid
+                              item
+                              container
+                              spacing={1}
+                              xs={11}
+                              sm={8}
+                              md={6}
+                              lg={10}
+                              className={classes.dialogListItem}
+                              key={index}
+                            >
+                              <Grid item xs={5} style={{ marginTop: "10px" }}>
+                                <Autocomplete
+                                  value={user}
+                                  onChange={(event, newValue: UserOption | null) => {
+                                    if (newValue) {
+                                      const newUsers = [...users];
+                                      newUsers[index] = newValue;
+                                      setUsers(newUsers);
+                                    }
+                                  }}
+                                  id={`members-${index}`}
+                                  options={options.filter((option) => !users.includes(option))}
+                                  getOptionLabel={(option: UserOption) => option.name}
+                                  className={classes.fullWidth}
+                                  renderInput={(params) => (
+                                    <TextField {...params} label="Name" variant="outlined" size="small" />
+                                  )}
+                                />
+                              </Grid>
+
+                              <Grid item xs={2} style={{ marginTop: "10px" }}>
+                                <IconButton
+                                  aria-label="delete"
+                                  color="primary"
+                                  onClick={() => {
+                                    const newUsers = [...users];
+                                    newUsers.splice(index, 1);
+                                    setUsers(newUsers);
+                                  }}
+                                >
+                                  <Clear />
+                                </IconButton>
+                              </Grid>
+                            </Grid>
+                          ))}
+
+                          <Grid item xs={12} sm={12} md={12} lg={12} className={classes.addListItemBtn}>
+                            <IconButton
+                              aria-label="add"
+                              color="primary"
+                              disabled={users.some((user) => user.name === "")}
+                              onClick={() => {
+                                setUsers((prev) => [...prev, { id: 0, name: "" }]);
+                              }}
+                            >
+                              <AddCircleOutline />
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
+                          <Typography>QMs:</Typography>
+                        </Grid>
+
+                        <Grid container spacing={1}>
+                          {qms.map((qm, index) => (
+                            <Grid
+                              item
+                              container
+                              spacing={1}
+                              xs={11}
+                              sm={8}
+                              md={6}
+                              lg={10}
+                              className={classes.dialogListItem}
+                              key={index}
+                            >
+                              <Grid item xs={5} style={{ marginTop: "10px" }}>
+                                <Autocomplete
+                                  value={qm}
+                                  onChange={(event, newValue: UserOption | null) => {
+                                    if (newValue) {
+                                      const newQMs = [...qms];
+                                      newQMs[index] = newValue;
+                                      setQMs(newQMs);
+                                    }
+                                  }}
+                                  id={`members-${index}`}
+                                  options={options.filter((option) => !qms.includes(option))}
+                                  getOptionLabel={(option: UserOption) => option.name}
+                                  className={classes.fullWidth}
+                                  renderInput={(params) => (
+                                    <TextField {...params} label="Name" variant="outlined" size="small" />
+                                  )}
+                                />
+                              </Grid>
+
+                              <Grid item xs={2} style={{ marginTop: "10px" }}>
+                                <IconButton
+                                  aria-label="delete"
+                                  color="primary"
+                                  onClick={() => {
+                                    const newQMs = [...qms];
+                                    newQMs.splice(index, 1);
+                                    setQMs(newQMs);
+                                  }}
+                                >
+                                  <Clear />
+                                </IconButton>
+                              </Grid>
+                            </Grid>
+                          ))}
+
+                          <Grid item xs={12} sm={12} md={12} lg={12} className={classes.addListItemBtn}>
+                            <IconButton
+                              aria-label="add"
+                              color="primary"
+                              disabled={qms.some((qm) => qm.name === "")}
+                              onClick={() => {
+                                setQMs((prev) => [...prev, { id: 0, name: "" }]);
+                              }}
+                            >
+                              <AddCircleOutline />
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Abbrechen</Button>
+                    {/* TODO: Once a backend connection is established, this button needs to save the IP data into the according page*/}
+                    <Button onClick={handleClose}>Speichern</Button>
+                  </DialogActions>
+                </Dialog>
               </TableRow>
               <br></br>
               <TableRow>
