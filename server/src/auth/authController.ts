@@ -85,7 +85,7 @@ export const sendPasswordResetLink = async (req: Request, res: Response): Promis
     tls: {
       rejectUnauthorized: false,
     },
-  }); 
+  });
   // Setup e-mail data with unicode symbols
   const mailOptions = {
     from: '"JBT MDB SUPPORT" <mdb@studentische-beratung.de>', // TODO actual sender address
@@ -123,10 +123,10 @@ export const sendPasswordResetLink = async (req: Request, res: Response): Promis
  * If the pair is valid the new password is stored
  */
 export const resetPasswordWithKey = async (req: Request, res: Response): Promise<Response> => {
-  const { email, token, newPassword } = req.body;
+  const { email, key, newPassword } = req.body;
   const name = String(email).split("@")[0];
 
-  await authService.resetPasswordWithToken(name, email, token, newPassword);
+  await authService.resetPasswordWithToken(name, email, key, newPassword);
 
   return res.status(200).send("Password reset succesful");
 };
