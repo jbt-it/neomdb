@@ -42,6 +42,13 @@ export const retrieveUserData = async (req: Request, res: Response): Promise<Res
  */
 export const changePassword = async (req: Request, res: Response): Promise<Response> => {
   const userChangePasswordRequest = req.body as authTypes.UserChangePasswordRequest;
+
+  // Check if the user is the same as the one in the token
+  const jwtData = verifyJWT(req.cookies.token);
+  if (jwtData.name !== userChangePasswordRequest.userName) {
+    return res.status(401).send("You are not allowed to change the password of another user");
+  }
+
   await authService.changeUserPassword(userChangePasswordRequest);
   return res.status(200).send("The new password has been saved");
 };

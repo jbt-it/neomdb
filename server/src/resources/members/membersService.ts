@@ -19,12 +19,14 @@ import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { executeInTransaction } from "../../database";
 import bcrypt = require("bcryptjs");
 import { getRandomString } from "../../utils/stringUtils";
+import AuthRepository from "../../auth/AuthRepository";
 
 /**
  * Provides methods to execute member related service functionalities
  */
 class MembersService {
   membersRepository = new MembersRepository();
+  authRepository = new AuthRepository();
 
   /**
    * Retrieves a list of all members
@@ -147,7 +149,7 @@ class MembersService {
    * Retrieves permissions of a member with the given `memberID`
    */
   getPermissionsByMemberID = async (memberID: number) => {
-    const user: User = await this.membersRepository.getUserByID(memberID);
+    const user: User = await this.authRepository.getUserByID(memberID);
 
     if (user === null) {
       throw new NotFoundError(`No member found with id ${memberID}`);
@@ -203,7 +205,7 @@ class MembersService {
     let newUserName = "";
 
     // Search for memberName to check if it already exists
-    const resultFirstQuery = await this.membersRepository.getUserByName(memberName);
+    const resultFirstQuery = await this.authRepository.getUserByName(memberName);
     // Check if memberName already exists
     if (resultFirstQuery === null) {
       newUserName = memberName;
@@ -213,7 +215,7 @@ class MembersService {
     let duplicateCounter = 1;
     // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
     while (newUserName === "") {
-      const result = await this.membersRepository.getUserByName(memberName + duplicateCounter);
+      const result = await this.authRepository.getUserByName(memberName + duplicateCounter);
       // Check if the member with the new name already exists
       if (result === null) {
         newUserName = memberName + duplicateCounter;

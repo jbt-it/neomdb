@@ -716,7 +716,7 @@ class MembersRepository {
       UNION
       SELECT CONCAT(vorname,' ' , nachname) AS name, berechtigung_berechtigungID AS permission, 0 AS canDelegate, mitglied.mitgliedID AS memberID
       FROM mitglied
-      LEFT JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
+      JOIN mitglied_has_berechtigung ON mitglied.mitgliedID = mitglied_has_berechtigung.mitglied_mitgliedID`,
         [],
         connection
       );
