@@ -10,6 +10,7 @@ import {
   Typography,
   MenuItem,
   RadioGroup,
+  Checkbox,
   FormControlLabel,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -155,13 +156,17 @@ const FieldSection = (props: Props) => {
         );
       } else if (field.type === "Checkbox") {
         fieldElement = (
-          <TextField
+          <FormControlLabel
             className={`${classes.fieldItem} ${classes.checkboxField}`}
-            key={index}
+            control={
+              <Checkbox
+                key={index}
+                color="primary"
+                value={field.state}
+                onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+              />
+            }
             label={field.label}
-            color="primary"
-            value={field.state}
-            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
       }
