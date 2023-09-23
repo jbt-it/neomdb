@@ -144,6 +144,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                 <Button variant="outlined" startIcon={<AddCircle />} onClick={handleClickOpen}>
                   Internes Projekt Hinzufügen
                 </Button>
+                {/* TODO: Only show this button, when the current generation is selected*/}
                 <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>Informationen zum internen Projekt</DialogTitle>
                   <DialogContent>
@@ -547,11 +548,14 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                       label=""
                     />
                   </TableCell>
-                  <TableCell align="center">
-                    <Button variant="outlined" startIcon={<AddCircle />}>
-                      aufnehmen
-                    </Button>
-                  </TableCell>
+                  {doesPermissionsHaveSomeOf(props.listOfPermissions, [18]) && (
+                    <TableCell align="center">
+                      <Button variant="outlined" startIcon={<AddCircle />}>
+                        aufnehmen
+                      </Button>
+                      {/* TODO: Once a backend connection is established, this button should only be usable when all boxes are ticked*/}
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
