@@ -4,11 +4,9 @@
  */
 import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-import { Typography, IconButton } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Button, Paper, Typography, IconButton } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Edit } from "@mui/icons-material";
 import * as traineesTypes from "./traineesTypes";
 import { InternalProjectInformationDialog } from "./InternalProjectInformationDialog";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
