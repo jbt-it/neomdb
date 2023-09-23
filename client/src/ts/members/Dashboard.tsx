@@ -75,24 +75,54 @@ const Dashboard: React.FunctionComponent = () => {
           <DialogTitle>Informationen zum internen Projekt</DialogTitle>
           <DialogContent>
             <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={3}>
-                  <p>Name:</p>
+              <Grid container spacing={1} justifyContent="center">
+                <Grid
+                  item
+                  xs={12}
+                  md={3.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
+                  <Typography>Name:</Typography>
                 </Grid>
-                <Grid item xs={12} md={9}>
+                <Grid
+                  item
+                  xs={12}
+                  md={8.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
                   <TextField fullWidth id="name" variant="outlined" size="small" />
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <p>Kürzel:</p>
+                <Grid
+                  item
+                  xs={12}
+                  md={3.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
+                  <Typography>Kürzel:</Typography>
                 </Grid>
-                <Grid item xs={12} md={9}>
+                <Grid
+                  item
+                  xs={12}
+                  md={8.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
                   <TextField fullWidth id="kuerzel" variant="outlined" size="small" />
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <p>Traineegeneration:</p>
+                <Grid
+                  item
+                  xs={12}
+                  md={3.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
+                  <Typography>Traineegeneration:</Typography>
                 </Grid>
                 {/* TODO: Once a backend connection is established, this text field needs to show the current Traineegeneration*/}
-                <Grid item xs={12} md={9}>
+                <Grid
+                  item
+                  xs={12}
+                  md={8.5}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}
+                >
                   <TextField
                     fullWidth
                     disabled
@@ -106,7 +136,7 @@ const Dashboard: React.FunctionComponent = () => {
             </Box>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={12} md={12} lg={12}>
+                <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
                   <Typography>Projektmitglieder:</Typography>
                 </Grid>
 
@@ -123,7 +153,7 @@ const Dashboard: React.FunctionComponent = () => {
                       className={classes.dialogListItem}
                       key={index}
                     >
-                      <Grid item xs={5}>
+                      <Grid item xs={5} style={{ marginTop: "10px" }}>
                         <Autocomplete
                           value={user}
                           onChange={(event, newValue: UserOption | null) => {
@@ -143,7 +173,7 @@ const Dashboard: React.FunctionComponent = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={2}>
+                      <Grid item xs={2} style={{ marginTop: "10px" }}>
                         <IconButton
                           aria-label="delete"
                           color="primary"
@@ -176,7 +206,7 @@ const Dashboard: React.FunctionComponent = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={12} md={12} lg={12}>
+                <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
                   <Typography>QMs:</Typography>
                 </Grid>
 
@@ -193,7 +223,7 @@ const Dashboard: React.FunctionComponent = () => {
                       className={classes.dialogListItem}
                       key={index}
                     >
-                      <Grid item xs={5}>
+                      <Grid item xs={5} style={{ marginTop: "10px" }}>
                         <Autocomplete
                           value={qm}
                           onChange={(event, newValue: UserOption | null) => {
@@ -213,7 +243,7 @@ const Dashboard: React.FunctionComponent = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={2}>
+                      <Grid item xs={2} style={{ marginTop: "10px" }}>
                         <IconButton
                           aria-label="delete"
                           color="primary"
