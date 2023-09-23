@@ -17,6 +17,8 @@ import {
   IconButton,
   Grid,
   Theme,
+  Typography,
+  Link,
 } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
@@ -98,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tableHeadCell: {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.secondary,
+      color: theme.palette.primary.contrastText,
     },
     tableHeadSortBtn: {
       display: "flex",
@@ -470,9 +472,13 @@ const MemberOverview: React.FunctionComponent = () => {
               {getFilteredAndSortedMembers().map((member, index) => (
                 <TableRow hover key={index}>
                   <TableCell component="th" scope="row">
-                    <NavLink
-                      to={`/gesamtuebersicht/${member.mitgliedID}`}
-                    >{`${member.vorname} ${member.nachname}`}</NavLink>
+                    <Typography color="secondary">
+                      <Link
+                        color="textPrimary"
+                        underline="hover"
+                        href={`#/gesamtuebersicht/${member.mitgliedID}`}
+                      >{`${member.vorname}.${member.nachname}`}</Link>
+                    </Typography>
                   </TableCell>
                   <TableCell>{member.handy}</TableCell>
                   <TableCell>{member.jbt_email}</TableCell>
