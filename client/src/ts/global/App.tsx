@@ -12,12 +12,18 @@ import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
 import ChangePassword from "../members/ChangePassword";
+import ForgotPassword from "../members/ForgotPassword";
+import ResetForgotPassword from "../members/ResetForgotPassword";
 import DirectorsHistory from "../members/DirectorsHistory";
 import { useEffect } from "react";
 import { authReducerActionType } from "./globalTypes";
 import LoadingCircle from "./components/LoadingCircle";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 import TraineePreferences from "../trainees/TraineePreferences";
+import FieldSectionTest from "./FieldSectionTest";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import AssignTrainees from "../trainees/AssignTrainees";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -151,37 +157,43 @@ const App: React.FunctionComponent = () => {
   });
 
   return (
-    <HashRouter>
-      {
-        // Renders the Nav componenent if the user is authenticated
-        auth.authenticated ? <Nav /> : null
-      }
-      <Switch>
-        <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
-        <PrivateRoute exact path="/" component={Dashboard} />
-        <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
-        <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
-        <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
-        <PrivateRoute exact path="/geburtstage" component={Dashboard} />
-        <PrivateRoute exact path="/traineebereich" component={Dashboard} />
-        <PrivateRoute exact path="/kuratoren" component={Dashboard} />
-        <PrivateRoute exact path="/projekte" component={Dashboard} />
-        <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
-        <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
-        <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
-        <PrivateRoute exact path="/raumreservierung" component={Dashboard} />
-        <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
-        <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
-        <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
-        <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
-        <PrivateRoute exact path="/traineepreferenzen" component={TraineePreferences} />
-        <PrivateRoute exact path="/kvp" component={Dashboard} />
-        <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
-        <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
-        <LoginRoute exact path="/login" component={Login} />
-        <PrivateRoute path="*" component={NotFound} />
-      </Switch>
-    </HashRouter>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <HashRouter>
+        {
+          // Renders the Nav componenent if the user is authenticated
+          auth.authenticated ? <Nav /> : null
+        }
+        <Switch>
+          <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
+          <PrivateRoute exact path="/" component={Dashboard} />
+          <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
+          <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
+          <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
+          <PrivateRoute exact path="/geburtstage" component={Dashboard} />
+          <PrivateRoute exact path="/traineebereich" component={Dashboard} />
+          <PrivateRoute exact path="/kuratoren" component={Dashboard} />
+          <PrivateRoute exact path="/projekte" component={Dashboard} />
+          <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
+          <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
+          <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
+          <PrivateRoute exact path="/raumreservierung" component={Dashboard} />
+          <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
+          <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
+          <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
+          <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
+          <PrivateRoute exact path="/traineepraeferenzen" component={TraineePreferences} />
+          <PrivateRoute exact path="/traineezuteilung" component={AssignTrainees} />
+          <PrivateRoute exact path="/modularesformulartest" component={FieldSectionTest} />
+          <PrivateRoute exact path="/kvp" component={Dashboard} />
+          <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
+          <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
+          <LoginRoute exact path="/login" component={Login} />
+          <Route exact path="/passwort-vergessen" component={ForgotPassword} />
+          <Route exact path="/passwort-vergessen-zuruecksetzten/:key" component={ResetForgotPassword} />
+          <PrivateRoute path="*" component={NotFound} />
+        </Switch>
+      </HashRouter>
+    </LocalizationProvider>
   );
 };
 
