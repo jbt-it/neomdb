@@ -351,19 +351,17 @@ class TraineesRepository {
 
   /**
    * Get all trainees
-   * @param onlyCurrent if true, only the current trainees are returned
    * @throws QueryError if the query fails
    */
-  getTrainees = async (onlyCurrent: boolean, connection?: mysql.PoolConnection): Promise<Trainee[]> => {
+  getTrainees = async (connection?: mysql.PoolConnection): Promise<Trainee[]> => {
     try {
-      let sql = `SELECT mitgliedID, vorname, nachname, generation
+      const queryResult = await query(
+        `SELECT mitgliedID, vorname, nachname, generation
         FROM mitglied
-        WHERE mitgliedstatus = 1 `;
-      if (onlyCurrent) {
-        sql += " AND mitglied.generation = (SELECT max(generation) from internesprojekt) ";
-      }
-      sql += `ORDER BY nachname`;
-      const queryResult = await query(sql, [], connection);
+        WHERE mitgliedstatus = 1 AND mitglied.generation = (SELECT max(generation) from internesprojekt) ORDER BY nachname`,
+        [],
+        connection
+      );
       if (Array.isArray(queryResult)) {
         const trainees = queryResult as Trainee[];
         return trainees;

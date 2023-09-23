@@ -196,7 +196,7 @@ const checkForIDs = async (
  * Retrieves all current trainees
  */
 export const retrieveCurrentTrainees = async (req: Request, res: Response): Promise<Response> => {
-  const trainees = await traineesService.getTrainees(true);
+  const trainees = await traineesService.getTrainees();
 
   return res.status(200).json(trainees);
 };

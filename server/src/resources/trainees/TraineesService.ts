@@ -203,8 +203,8 @@ class TraineesService {
    * Get all trainees
    * @param onöyCurrent if true, only the current trainees are returned
    */
-  getTrainees = async (onöyCurrent: boolean): Promise<Trainee[]> => {
-    const trainees = await this.traineesRepository.getTrainees(onöyCurrent);
+  getTrainees = async (): Promise<Trainee[]> => {
+    const trainees = await this.traineesRepository.getTrainees();
 
     return trainees;
   };
