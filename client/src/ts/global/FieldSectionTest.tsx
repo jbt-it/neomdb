@@ -2,9 +2,8 @@
  * Component that handles the not found error
  */
 import React, { useState } from "react";
-import { Button, Theme, CardActions, CardContent, Typography } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
-import Card from "@mui/material/Card";
 import FieldSection, { Field } from "./components/FieldSection";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -16,60 +15,71 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const FieldSectionTest: React.FunctionComponent = () => {
-  const classes = useStyles();
+  const [text, setText] = useState<string>("");
+  const [textBig, setTextBig] = useState<string>("");
+  const [date, setDate] = useState<Date>();
+  const [checkbox, setCheckbox] = useState<boolean>(false);
+  const [radioButton, setRadioButton] = useState<string>("");
+  const [dropdown, setDropdown] = useState<string>("");
 
-  const [checkbox1, setCheckbox1] = useState<string>("");
-  const [radioButton1, setRadioButton1] = useState<string>("");
-  const [dropdown1, setDropdown1] = useState<string>("");
+  const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+  };
+
+  const onChangeTextBig = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTextBig(event.target.value);
+  };
+
+  const onChangeDate = (value: unknown) => {
+    setDate(value as Date);
+  };
 
   const onChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckbox1(event.target.value);
+    setCheckbox(event.target.checked);
   };
 
   const onChangeRadioButton = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRadioButton1(event.target.value);
+    setRadioButton(event.target.value);
   };
 
   const onChangeDropdown = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDropdown1(event.target.value);
+    setDropdown(event.target.value);
   };
 
   const fields: Array<Field> = [
     {
-      label: "Test1",
-      state: checkbox1,
-      onChangeCallback: onChangeCheckbox,
-      type: "Checkbox",
+      label: "Text",
+      state: text,
+      width: "half",
+      onChangeCallback: onChangeText,
+      type: "Text",
     },
     {
-      label: "Test1",
-      state: checkbox1,
-      onChangeCallback: onChangeCheckbox,
-      type: "Checkbox",
+      label: "TextBig",
+      state: textBig,
+      onChangeCallback: onChangeTextBig,
+      type: "TextBig",
+      rows: 4,
     },
     {
-      label: "Test1",
-      state: checkbox1,
-      onChangeCallback: onChangeCheckbox,
-      type: "Checkbox",
+      label: "Date",
+      state: date,
+      onChangeCallback: onChangeDate,
+      type: "Date",
     },
     {
-      label: "Test1",
-      state: checkbox1,
-      onChangeCallback: onChangeCheckbox,
-      type: "Checkbox",
-    },
-    {
-      label: "Test1",
-      state: checkbox1,
+      label: "Checkbox",
+      state: checkbox,
+      width: "half",
       onChangeCallback: onChangeCheckbox,
       type: "Checkbox",
     },
     {
       label: "RadioButton",
-      state: radioButton1,
+      state: radioButton,
       onChangeCallback: onChangeRadioButton,
       type: "RadioButton",
+      width: "half",
       values: [
         { label: "op 1", value: 1 },
         { label: "op 2", value: 2 },
@@ -79,9 +89,10 @@ const FieldSectionTest: React.FunctionComponent = () => {
     },
     {
       label: "Dropdown",
-      state: dropdown1,
+      state: dropdown,
       onChangeCallback: onChangeDropdown,
       type: "Dropdown",
+      width: "full",
       values: [
         { label: "op 1", value: 1 },
         { label: "op 2", value: 2 },

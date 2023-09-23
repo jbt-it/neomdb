@@ -1,18 +1,42 @@
 import React from "react";
 import { makeStyles, createStyles } from "@mui/styles";
-import { Box, Radio, Paper, TextField, Theme, Typography, MenuItem, RadioGroup, FormControlLabel } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Radio,
+  Paper,
+  TextField,
+  Theme,
+  Typography,
+  MenuItem,
+  RadioGroup,
+  FormControlLabel,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
 
 type Field = {
   label: string;
   state: unknown;
-  onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+  width?: "half" | "full";
 } & (
   | {
       type: "RadioButton" | "Dropdown";
+      onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       values: Array<{ label: string; value: any }>;
     }
   | {
-      type: "Text" | "TextBig" | "Date" | "Checkbox";
+      type: "TextBig";
+      onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+      rows: number;
+    }
+  | {
+      type: "Date";
+      onChangeCallback: ((value: unknown, context: PickerChangeHandlerContext<DateValidationError>) => void) | null;
+    }
+  | {
+      type: "Text" | "Checkbox";
+      onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
     }
 );
 interface Props {
@@ -35,18 +59,22 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
     },
     fieldItem: {
+      flexGrow: 1,
       marginTop: theme.spacing(1),
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
     },
-    textField: { minWidth: "500px" },
-    textBigField: { minWidth: "500px" },
-    dateField: { minWidth: "500px" },
-    dropdownField: { minWidth: "500px" },
+    textField: {},
+    textBigField: {},
+    dateField: {},
+    dropdownField: {},
     radioButtonField: {
       display: "flex",
       flexDirection: "row",
       flexGrow: 1,
+    },
+    gridItem: {
+      display: "flex",
     },
     radioButtonItem: {
       flexGrow: 1,
@@ -60,8 +88,9 @@ const FieldSection = (props: Props) => {
 
   const renderFields = (fields: Field[]) => {
     return fields.map((field: Field, index: number) => {
+      let fieldElement: React.JSX.Element = <div></div>;
       if (field.type === "Dropdown") {
-        return (
+        fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             key={index}
@@ -77,7 +106,7 @@ const FieldSection = (props: Props) => {
           </TextField>
         );
       } else if (field.type === "RadioButton") {
-        return (
+        fieldElement = (
           <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
             {field.values.map((value) => {
               return (
@@ -92,7 +121,7 @@ const FieldSection = (props: Props) => {
           </RadioGroup>
         );
       } else if (field.type === "Text") {
-        return (
+        fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.textField}`}
             key={index}
@@ -103,29 +132,29 @@ const FieldSection = (props: Props) => {
           />
         );
       } else if (field.type === "TextBig") {
-        return (
+        fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.textBigField}`}
             key={index}
             label={field.label}
             color="primary"
             value={field.state}
+            multiline
+            rows={field.rows}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
       } else if (field.type === "Date") {
-        return (
-          <TextField
+        fieldElement = (
+          <DatePicker
             className={`${classes.fieldItem} ${classes.dateField}`}
-            key={index}
             label={field.label}
-            color="primary"
             value={field.state}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
       } else if (field.type === "Checkbox") {
-        return (
+        fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.checkboxField}`}
             key={index}
@@ -136,6 +165,25 @@ const FieldSection = (props: Props) => {
           />
         );
       }
+
+      let fieldContainer: React.JSX.Element;
+      if (field.width === "half") {
+        fieldContainer = (
+          <Grid item xs={6} className={classes.gridItem}>
+            {fieldElement}
+          </Grid>
+        );
+      } else if (field.width === "full") {
+        fieldContainer = (
+          <Grid item xs={12} className={classes.gridItem}>
+            {fieldElement}
+          </Grid>
+        );
+      } else {
+        fieldContainer = fieldElement;
+      }
+
+      return fieldContainer;
     });
   };
 
@@ -144,7 +192,7 @@ const FieldSection = (props: Props) => {
       <Typography variant="h5" className={classes.fieldSectionTitle}>
         {props.title}
       </Typography>
-      {renderFields(props.fields)}
+      <Grid container>{renderFields(props.fields)}</Grid>
     </Paper>
   );
 };
