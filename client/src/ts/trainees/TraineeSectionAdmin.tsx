@@ -190,7 +190,6 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                         >
                           <Typography>Traineegeneration:</Typography>
                         </Grid>
-                        {/* TODO: Once a backend connection is established, this text field needs to show the current Traineegeneration*/}
                         <Grid
                           item
                           xs={12}
