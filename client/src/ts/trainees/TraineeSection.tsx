@@ -1,6 +1,6 @@
 import TraineeSectionAdmin from "./TraineeSectionAdmin";
 import TraineeSectionMember from "./TraineeSectionMember";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 import * as membersTypes from "../members/membersTypes";
 import { useState, useContext } from "react";
@@ -61,8 +61,9 @@ const TraineeSection: VoidFunction = () => {
   const [trainees, setTrainees] = useState<traineeTypes.Trainee[]>([]);
   const [IP, setInternalProject] = useState<traineeTypes.InternalProject[]>([]);
   const [hasPermission, setListOfPermissions] = useState<boolean>(false);
-  const [Traineegeneration, setTraineeGeneration] = useState<membersTypes.Member[]>([]);
+  const [Traineegeneration, setTraineeGeneration] = useState<traineeTypes.Trainee[]>([]);
   const [GenerationFilter, setGenerationFilter] = useState<string>("");
+  const [members, setMembers] = useState<membersTypes.Member[]>([]);
 
   //api call to get all information of current and former trainees
 
@@ -92,6 +93,35 @@ const TraineeSection: VoidFunction = () => {
       mounted = false;
     };
   };
+
+  /**
+   * Retrieves all members
+   */
+  const getMembers: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/users`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembers(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
 
   /**
    * Handles the change event on the traineegeneration filter input
@@ -174,6 +204,7 @@ const TraineeSection: VoidFunction = () => {
     };
   };
   useEffect(() => getTrainee(), []);
+  useEffect(() => getMembers(), []);
   useEffect(() => getInternalProject(), []);
   useEffect(() => getPermissions(), []);
   useEffect(() => getTraineegeneration(), []);
@@ -253,8 +284,10 @@ const TraineeSection: VoidFunction = () => {
             listOfPermissions={auth.permissions}
             isOwner={true}
             trainees={getFilteredMembers()}
+            members={members}
             internalProjects={getFilteredInternalProjects()}
             generation={Traineegeneration}
+            currentGeneration={stringvalue}
             generationFilter={numbervalue}
           />
         </div>

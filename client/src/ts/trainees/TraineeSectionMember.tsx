@@ -52,7 +52,7 @@ interface TraineeProps {
   isOwner: boolean;
   internalProjects: traineeTypes.InternalProject[];
   trainees: traineeTypes.Trainee[];
-  generation: membersTypes.Member[];
+  generation: traineeTypes.Trainee[];
   generationFilter: number;
 }
 
