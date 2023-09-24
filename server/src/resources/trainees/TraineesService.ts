@@ -7,9 +7,9 @@ import {
   Trainee,
   TraineeChoice,
   TraineeMotivation,
+  TraineeAssignment,
 } from "../../types/traineesTypes";
 import { Mentor } from "../../types/membersTypes";
-import { TraineeAssignment } from "./traineesTypes";
 import MembersRepository from "../members/MembersRepository";
 
 class TraineesService {
