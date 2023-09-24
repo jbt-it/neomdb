@@ -376,7 +376,7 @@ const MemberManagement: React.FunctionComponent = () => {
     };
 
     api
-      .patch("/users/" + id + "/status", payload, {
+      .patch(`/users/${id}/status`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
