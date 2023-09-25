@@ -42,6 +42,7 @@
     "prod": "npm run build && npm run start",
     "lint": "eslint --ext .ts --ext .tsx ./src",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "rerun-prettier": "npx prettier 'src/**/*.ts' --write .",
     "filldb": "npx ts-node-dev ./src/db-scripts/fillDb.ts",
     "test": "jest --setupFiles dotenv/config"
   }
