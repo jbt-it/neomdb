@@ -3,20 +3,7 @@
  */
 import { QueryResult, TransactionTask } from "types/databaseTypes";
 import mysql = require("mysql2");
-
-// Check if the environment is test
-const isTest = process.env.NODE_ENV === "test";
-
-/**
- * Config for the MySQL database
- */
-const databaseConfig = {
-  host: isTest ? process.env.DB_TEST_HOST : process.env.DB_HOST,
-  user: isTest ? process.env.DB_TEST_USER : process.env.DB_USER,
-  password: isTest ? process.env.DB_TEST_PASSWORD : process.env.DB_PASSWORD,
-  database: isTest ? process.env.DB_TEST_NAME : process.env.DB_NAME,
-  connectionLimit: 50,
-};
+import databaseConfig from "./databaseConfig";
 
 const pool: mysql.Pool = mysql.createPool(databaseConfig);
 
