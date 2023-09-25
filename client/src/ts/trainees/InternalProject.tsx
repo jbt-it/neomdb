@@ -4,11 +4,20 @@
  */
 import React, { useState, useEffect, useContext } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Button, Dialog, Paper, Typography, IconButton } from "@mui/material";
+import {
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  Box,
+  Button,
+  Dialog,
+  Paper,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Edit } from "@mui/icons-material";
 import * as traineesTypes from "./traineesTypes";
-import { InternalProjectInformationDialog } from "./InternalProjectInformationDialog";
 import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
 import { Detail } from "../global/components/DetailComponent";
 import { AuthContext } from "../global/AuthContext";
@@ -16,11 +25,20 @@ import api from "../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 import { authReducerActionType } from "../global/globalTypes";
 import FieldSection, { Field } from "../global/components/FieldSection";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
+import { transformDateToReadableString } from "../utils/dateUtils";
 
 /**
  * Function which provides the styles
  */
+
+const styles = {
+  dialog: {
+    // width: "60%",
+    margin: "auto",
+  },
+};
+
 const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 1),
@@ -75,6 +93,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "right",
   },
 
+  fieldSectionBox: {
+    margin: theme.spacing(1),
+  },
   button: {
     padding: "6px 12px",
     textAlign: "center",
@@ -125,32 +146,18 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const { auth } = useContext(AuthContext);
 
   // internalProjectDetails will be used later when the API call is implemented
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType>({
-    id: 0,
-    name: "",
-    kuerzel: "",
-    traineegeneration: "",
-    kickoff: "",
-    angebotAbgegeben: "",
-    apDatum: new Date(),
-    apAbgegeben: "",
-    zpDatum: "",
-    zpAbgegeben: "",
-    dlAbgegeben: "",
-    projektmitglieder: "",
-    qualitaetsmanager: "",
-  });
+  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType | null>(null);
 
   const [name, setName] = useState<string>("");
   const [kuerzel, setKuerzel] = useState<string>("");
   const [traineegeneration, setTraineegeneration] = useState<string>("");
-  const [kickoff, setKickoff] = useState<string>("");
-  const [angebotAbgegeben, setAngebotAbgegeben] = useState<string>("");
+  const [kickoff, setKickoff] = useState<Date>();
+  const [angebotAbgegeben, setAngebotAbgegeben] = useState<boolean>();
   const [apDatum, setApDatum] = useState<Date>();
-  const [apAbgegeben, setApAbgegeben] = useState<string>("");
-  const [zpDatum, setZpDatum] = useState<string>("");
-  const [zpAbgegeben, setZpAbgegeben] = useState<string>("");
-  const [dlAbgegeben, setDlAbgegeben] = useState<string>("");
+  const [apAbgegeben, setApAbgegeben] = useState<boolean>();
+  const [zpDatum, setZpDatum] = useState<Date>();
+  const [zpAbgegeben, setZpAbgegeben] = useState<boolean>();
+  const [dlAbgegeben, setDlAbgegeben] = useState<boolean>();
   const [projektmitglieder, setProjektmitglieder] = useState<string>("");
   const [qualitaetsmanager, setQualitaetsmanager] = useState<string>("");
 
@@ -167,8 +174,21 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   /**
    * Handles the closing of the internal project information dialog
    * @param event FormEvent
+   * TODO: Default-Werte wiederherstellen
    */
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
+    setName(internalProjectDetails!.name);
+    setKuerzel(internalProjectDetails!.kuerzel);
+    setTraineegeneration(internalProjectDetails!.traineegeneration);
+    setKickoff(internalProjectDetails!.kickoff);
+    setAngebotAbgegeben(internalProjectDetails!.angebotAbgegeben);
+    setApDatum(internalProjectDetails!.apDatum);
+    setApAbgegeben(internalProjectDetails!.apAbgegeben);
+    setZpDatum(internalProjectDetails!.zpDatum);
+    setZpAbgegeben(internalProjectDetails!.zpAbgegeben);
+    setDlAbgegeben(internalProjectDetails!.dlAbgegeben);
+    setProjektmitglieder(internalProjectDetails!.projektmitglieder);
+    setQualitaetsmanager(internalProjectDetails!.qualitaetsmanager);
     setInternalProjectInfoDialogOpen(false);
   };
   /**
@@ -185,13 +205,13 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       name: "Analoges Bootcamp",
       kuerzel: "DB",
       traineegeneration: "22/WS",
-      kickoff: "01.01.2020",
-      angebotAbgegeben: "Ja",
+      kickoff: new Date("2020-01-01"),
+      angebotAbgegeben: false,
       apDatum: new Date("2022-03-25"),
-      apAbgegeben: "Ja",
-      zpDatum: "01.01.2020",
-      zpAbgegeben: "Ja",
-      dlAbgegeben: "Nein",
+      apAbgegeben: false,
+      zpDatum: new Date("2020-01-01"),
+      zpAbgegeben: true,
+      dlAbgegeben: false,
       projektmitglieder: "Marko Müller, Ada Lovelace",
       qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
     };
@@ -264,19 +284,43 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     };
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInternalProjectDetails({
-      ...internalProjectDetails,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
+  const onChangeKuerzel = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKuerzel(event.target.value);
+  };
+
+  const onChangeKickoff = (value: unknown) => {
+    const dateValue = (value as Dayjs).toDate();
+    setKickoff(dateValue);
+  };
+
   const onChangeApDatum = (value: unknown) => {
-    setApDatum(value as Date);
+    const dateValue = (value as Dayjs).toDate();
+    setApDatum(dateValue);
+  };
+
+  const onChangeZpDatum = (value: unknown) => {
+    const dateValue = (value as Dayjs).toDate();
+    setZpDatum(dateValue);
+  };
+
+  const onChangeAngebotAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAngebotAbgegeben(event.target.checked);
+  };
+
+  const onChangeApAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApAbgegeben(event.target.checked);
+  };
+
+  const onChangeZpAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setZpAbgegeben(event.target.checked);
+  };
+
+  const onChangeDlAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDlAbgegeben(event.target.checked);
   };
 
   const InternalProjectDialogFields: Array<Field> = [
@@ -287,45 +331,69 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       onChangeCallback: onChangeName,
       type: "Text",
     },
-    { label: "Kürzel", state: kuerzel, width: "half", onChangeCallback: handleChange, type: "Text" },
+    { label: "Kürzel", state: kuerzel, width: "half", onChangeCallback: onChangeKuerzel, type: "Text" },
     {
       label: "Traineegeneration",
       state: traineegeneration,
-      width: "half",
-      onChangeCallback: handleChange,
+      width: "full",
+      onChangeCallback: onChangeName,
       type: "Text",
     },
-
-    { label: "Kickoff", state: kickoff, width: "half", onChangeCallback: handleChange, type: "Text" },
-    {
-      label: "Angebot abgegeben",
-      state: angebotAbgegeben,
-      width: "half",
-      onChangeCallback: handleChange,
-      type: "Text",
-    },
-    { label: "AP abgegeben", state: apAbgegeben, width: "half", onChangeCallback: handleChange, type: "Text" },
+    { label: "Kickoff", state: dayjs(kickoff), width: "full", onChangeCallback: onChangeKickoff, type: "Date" },
     {
       label: "AP Datum",
       state: dayjs(apDatum),
-      width: "half",
+      width: "full",
       onChangeCallback: onChangeApDatum,
       type: "Date",
     },
-    { label: "ZP Datum", state: zpDatum, width: "half", onChangeCallback: handleChange, type: "Text" },
-    { label: "DL abgegeben", state: dlAbgegeben, width: "half", onChangeCallback: handleChange, type: "Text" },
+    { label: "ZP Datum", state: dayjs(zpDatum), width: "full", onChangeCallback: onChangeZpDatum, type: "Date" },
+  ];
+
+  const FieldDocuments: Array<Field> = [
+    {
+      label: "Angebot abgegeben",
+      state: angebotAbgegeben,
+      width: "full",
+      onChangeCallback: onChangeAngebotAbgegeben,
+      type: "Checkbox",
+    },
+    {
+      label: "AP abgegeben",
+      state: apAbgegeben,
+      width: "full",
+      onChangeCallback: onChangeApAbgegeben,
+      type: "Checkbox",
+    },
+    {
+      label: "ZP abgegeben",
+      state: dlAbgegeben,
+      width: "full",
+      onChangeCallback: onChangeZpAbgegeben,
+      type: "Checkbox",
+    },
+    {
+      label: "DL abgegeben",
+      state: dlAbgegeben,
+      width: "full",
+      onChangeCallback: onChangeDlAbgegeben,
+      type: "Checkbox",
+    },
+  ];
+
+  const InternalProjectMembers: Array<Field> = [
     {
       label: "Projektmitglieder",
       state: projektmitglieder,
-      width: "half",
-      onChangeCallback: handleChange,
+      width: "full",
+      onChangeCallback: onChangeDlAbgegeben,
       type: "Text",
     },
     {
       label: "Qualitätsmanager",
       state: qualitaetsmanager,
-      width: "half",
-      onChangeCallback: handleChange,
+      width: "full",
+      onChangeCallback: onChangeDlAbgegeben,
       type: "Text",
     },
   ];
@@ -335,89 +403,104 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    */
   return internalProjectDetails ? (
     <div>
-      {/* TODO: The default values (meaning the values sent from the backend) should also be given to the dialog, because canceling the editing should probably reset the states - low priority*/}
-      {/* <InternalProjectInformationDialog
-        name={name}
-        kuerzel={kuerzel}
-        traineegeneration={traineegeneration}
-        kickoff={kickoff}
-        angebotAbgegeben={angebotAbgegeben}
-        apAbgegeben={apAbgegeben}
-        apDatum={apDatum}
-        zpDatum={zpDatum}
-        projektmitglieder={projektmitglieder}
-        dlAbgegeben={dlAbgegeben}
-        zpAbgegeben={zpAbgegeben}
-        qualitaetsmanager={qualitaetsmanager}
-        internalProjectInfoDialogOpen={internalProjectInfoDialogOpen}
-        handleInternalProjectInfoDialogClose={handleInternalProjectInfoDialogClose}
-        setName={setName}
-        setKuerzel={setKuerzel}
-        setTraineegeneration={setTraineegeneration}
-        setKickoff={setKickoff}
-        setAngebotAbgegeben={setAngebotAbgegeben}
-        setApDatum={setApDatum}
-        setApAbgegeben={setApAbgegeben}
-        setZpDatum={setZpDatum}
-        setZpAbgegeben={setZpAbgegeben}
-        setDlAbgegeben={setDlAbgegeben}
-        setProjektmitglieder={setProjektmitglieder}
-        setQualitaetsmanager={setQualitaetsmanager}
-        updateInternalProjectDetails={updateInternalProjectDetails}
-      /> */}
       <Dialog
-        className={"content-page"}
+        sx={styles.dialog}
         open={internalProjectInfoDialogOpen}
         onClose={handleInternalProjectInfoDialogClose}
-        fullWidth
-        maxWidth="lg"
         aria-labelledby="general-dialog-title"
       >
-        <FieldSection title={"InternalProjectDialogSection"} fields={InternalProjectDialogFields}></FieldSection>
+        <DialogTitle>Internes Projekt bearbeiten</DialogTitle>
+        <DialogContent dividers={true}>
+          <div className={classes.fieldSectionBox}>
+            <FieldSection title={"Details"} fields={InternalProjectDialogFields}></FieldSection>
+          </div>
+          <div className={classes.fieldSectionBox}>
+            <FieldSection title={"Dokumente"} fields={FieldDocuments}></FieldSection>
+          </div>
+          <div className={classes.fieldSectionBox}>
+            <FieldSection title={"Mitglieder"} fields={InternalProjectMembers}></FieldSection>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          {/* TODO: State bei Abbrechen zurücksetzen */}
+          <Button
+            className={classes.cancelButton}
+            variant="contained"
+            fullWidth
+            color="primary"
+            onClick={handleInternalProjectInfoDialogClose}
+          >
+            Abbrechen
+          </Button>
+          <Button
+            className={classes.submitButton}
+            variant="contained"
+            fullWidth
+            color="primary"
+            onClick={updateInternalProjectDetails}
+          >
+            Speichern
+          </Button>
+        </DialogActions>
       </Dialog>
 
       <div className="content-page">
-        <Paper className={classes.paper}>
-          <div className={classes.categoryHeader}>
-            <div>
-              <Typography variant="h6">
-                <strong>Informationen zum internen Projekt</strong>
-              </Typography>
+        <Box sx={{ margin: "auto" }}>
+          <Paper className={classes.paper}>
+            <div className={classes.categoryHeader}>
+              <div>
+                <Typography variant="h6">
+                  <strong>Informationen zum internen Projekt</strong>
+                </Typography>
+              </div>
+              <div>
+                {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
+                  <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
+                    <Edit fontSize="inherit" />
+                  </IconButton>
+                ) : null}
+              </div>
             </div>
-            <div>
-              {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
-                <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
-                  <Edit fontSize="inherit" />
-                </IconButton>
-              ) : null}
+            <div className={classes.category}>
+              <Box
+                sx={{
+                  display: "grid",
+                  columnGap: 3,
+                  rowGap: 1,
+                  gridTemplateColumns: "repeat(1, 1fr)",
+                }}
+              >
+                <Detail name={"Name"} value={internalProjectDetails.name} />
+                <Detail name={"Kürzel"} value={internalProjectDetails.kuerzel} />
+                <Detail name={"Traineegeneration"} value={traineegeneration} />
+                <Detail
+                  name={"Kick-Off"}
+                  value={
+                    internalProjectDetails.kickoff ? transformDateToReadableString(internalProjectDetails.kickoff) : ""
+                  }
+                />
+                <Detail name={"Angebot abgegeben"} value={internalProjectDetails.angebotAbgegeben ? "Ja" : "Nein"} />
+                <Detail name={"AP abgegeben"} value={internalProjectDetails.apAbgegeben ? "Ja" : "Nein"} />
+                <Detail
+                  name={"AP Datum"}
+                  value={
+                    internalProjectDetails.apDatum ? transformDateToReadableString(internalProjectDetails.apDatum) : ""
+                  }
+                />
+                <Detail
+                  name={"ZP Datum"}
+                  value={
+                    internalProjectDetails.zpDatum ? transformDateToReadableString(internalProjectDetails.zpDatum) : ""
+                  }
+                />
+                <Detail name={"ZP abgegeben"} value={internalProjectDetails.zpAbgegeben ? "Ja" : "Nein"} />
+                <Detail name={"DL abgegeben"} value={internalProjectDetails.dlAbgegeben ? "Ja" : "Nein"} />
+                <Detail name={"Projektmitglieder"} value={internalProjectDetails.projektmitglieder} />
+                <Detail name={"Qualitätsmanager"} value={internalProjectDetails.qualitaetsmanager} />
+              </Box>
             </div>
-          </div>
-          <div className={classes.category}>
-            <Detail name={"Name"} value={internalProjectDetails.name} />
-            <Detail name={"Kürzel"} value={internalProjectDetails.kuerzel} />
-            <Detail name={"Traineegeneration"} value={internalProjectDetails.traineegeneration} />
-            <Detail name={"Kick-Off"} value={internalProjectDetails.kickoff} />
-            <Detail name={"Angebot abgegeben"} value={internalProjectDetails.angebotAbgegeben} />
-            <Detail name={"AP abgegeben"} value={internalProjectDetails.apAbgegeben} />
-            {/* <Detail name={"AP Datum"} value={internalProjectDetails.apDatum} /> */}
-            <Detail name={"ZP abgegeben"} value={internalProjectDetails.zpAbgegeben} />
-            <Detail name={"DL abgegeben"} value={internalProjectDetails.dlAbgegeben} />
-            <Detail name={"Projektmitglieder"} value={internalProjectDetails.projektmitglieder} />
-            <Detail name={"Qualitätsmanager"} value={internalProjectDetails.qualitaetsmanager} />
-          </div>
-          <div className={classes.categoryHeader}>
-            <div>
-              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                E-Mail an alle Projektmitglieder
-              </Button>
-            </div>
-            <div>
-              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                E-Mail an alle Projektmitglieder und QMs
-              </Button>
-            </div>
-          </div>
-        </Paper>
+          </Paper>
+        </Box>
       </div>
     </div>
   ) : null; // TODO: Instead of returning null, a loading spinner should be displayed

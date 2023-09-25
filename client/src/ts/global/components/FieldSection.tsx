@@ -162,7 +162,7 @@ const FieldSection = (props: Props) => {
               <Checkbox
                 key={index}
                 color="primary"
-                value={field.state}
+                checked={field.state as boolean}
                 onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
               />
             }

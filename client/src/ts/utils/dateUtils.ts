@@ -8,6 +8,11 @@ const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", year: "numeric
 // Local option (formats dates and datetimes into the german format dd.mm.yyyy hh.MM.ss)
 const locales = "de-DE";
 
+export const transformDateToReadableString = (date: Date) => {
+  console.log(date);
+  return date.toLocaleDateString(locales, dateOptions);
+};
+
 /**
  * Transforms a sql date in string format to a german date in string format
  * @param sqlString A sql date in string format
