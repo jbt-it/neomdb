@@ -108,8 +108,8 @@ _Example_: Adding a new module (e.g. CRM) increases e.g. X=2 to X=3, adding a ne
 
     3.3 Run `docker push jbtit/neomdb:server[-demo]X.Y.Z`
 
-4.  Adjust docker-compose file (e.g. adjust tag of client and server image) and deploy it on the server (`/var/ww.vhosts/studentische-beratung.de/neomdb`)
-5.  Log into the server, navigate to `/var/ww.vhosts/studentische-beratung.de/neomdb/deployment` and run `docker compose -f docker-compose.production.yaml --env-file .env.production up -d --build` for production build OR `docker compose -f docker-compose.development.yaml --env-file .env.development up -d --build` for development/demo build
+4.  Adjust docker-compose file (e.g. adjust tag of client and server image) and deploy it on the server (`/var/www/vhosts/studentische-beratung.de/neomdb`)
+5.  Log into the server, navigate to `/var/www/vhosts/studentische-beratung.de/neomdb/deployment` and run `docker compose -f docker-compose.production.yaml --env-file .env.production up -d --build` for production build OR `docker compose -f docker-compose.development.yaml --env-file .env.development up -d --build` for development/demo build
 
 Note: On the server docker uses limited-priviliege access token from docker and not the login credentials to the whole repository.
 

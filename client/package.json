@@ -34,8 +34,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .ts --ext .tsx ./src",
-    "rerun-prettier": "npx prettier --write .",
-    "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+    "rerun-prettier": "npx prettier 'src/**/*.ts' --write .",
+    "format": "prettier --config .prettierrc 'src/**/*.{ts,tsx}' --write"
   },
   "eslintConfig": {
     "extends": "react-app"

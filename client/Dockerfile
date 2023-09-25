@@ -21,6 +21,7 @@ WORKDIR /app
 # Install serve
 RUN npm install -g serve
 COPY --from=intermediate /app ./
+RUN npm run rerun-prettier
 # Remove environment files sucht that only the .env file that we created in the first stage is used
 RUN rm -f .env.development .env.production .env.testing
 # Build the client app
