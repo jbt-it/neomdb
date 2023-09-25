@@ -9,6 +9,7 @@ import { generateJWT, verifyJWT } from "../../utils/jwtUtils";
 import nodemailer = require("nodemailer");
 import * as authTypes from "./authTypes";
 import database = require("../../database");
+import crypto = require("node:crypto");
 
 /**
  * Options for the cookie
@@ -188,83 +189,96 @@ export const retrieveUserData = (req: Request, res: Response) => {
  * TODO: implement nodemailer to be able to send mails with microsoft exchange 365
  * put nodemailer transporter in a new file
  */
-export const sendPasswordResetLink = (req: Request, res: Response): void => {
-  const date = new Date();
+export const sendPasswordResetLink = async (req: Request, res: Response): Promise<void> => {
   const name = String(req.body.email).split("@")[0];
-  // Create a token
-  const plaintextToken = req.body.email.concat(date.getTime());
-  // Create a hash from the token
-  bcrypt.genSalt(10, (_err, salt) => {
-    bcrypt.hash(plaintextToken, salt, (_, hash) => {
-      // Check if email is valid
-      sleepRandomly(300, 400);
-      database
-        .query(
-          `SELECT jbt_email
+  database.query(`SELECT vorname FROM mitglied WHERE mitglied.name = ?`, [name]).then((result: any) => {
+    const vorname = result[0].vorname;
+    // Create a token
+    const token = crypto.randomBytes(64).toString("base64url");
+
+    // Check if email is valid
+    sleepRandomly(300, 400);
+    database
+      .query(
+        `SELECT jbt_email
           FROM mitglied
           WHERE mitglied.name = ?`,
-          [name]
-        )
-        .then((result: authTypes.GetEmailToVerifyValidityQueryResult[]) => {
-          if (result.length === 1) {
-            // Delete old entrys, if any exist
-            database
-              .query(
-                `DELETE FROM passwort_reset
+        [name]
+      )
+      .then((result: authTypes.GetEmailToVerifyValidityQueryResult[]) => {
+        if (result.length === 1) {
+          // Delete old entrys, if any exist
+          database
+            .query(
+              `DELETE FROM passwort_reset
                 WHERE mitglied_jbt_email = ?`,
-                [req.body.email]
-              )
-              .then(() => {
-                // Insert the values into the passwort_reset table
-                database
-                  .query(
-                    `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
+              [req.body.email]
+            )
+            .then(() => {
+              // Insert the values into the passwort_reset table
+              database
+                .query(
+                  `INSERT INTO passwort_reset (mitglied_jbt_email, salt, token)
                     VALUES (?, ?, ?)`,
-                    [req.body.email, salt, hash]
-                  )
-                  .then(() => {
-                    // Send email with correct URL to usermail
-                    const transport = nodemailer.createTransport({
-                      host: process.env.MAIL_HOST,
-                      port: process.env.MAIL_PORT,
-                      auth: {
-                        user: process.env.MAIL_USER, // Email
-                        pass: process.env.MAIL_PASSWORD, // PW
-                      },
-                    }); // Setup e-mail data with unicode symbols
-                    const mailOptions = {
-                      from: '"JBT MDB SUPPORT" <foo@studentische-beratung.de>', // TODO actual sender address
-                      to: req.body.email, // List of receivers
-                      subject: "Passwort reset link for the account belonging to this mail", // Subject line
-                      text:
-                        "Hello " +
-                        name +
-                        ",\n\n" +
-                        "There was a request to change your password for the MDB! \n\n" +
-                        "If you did not make this request then please ignore this email. \n\n" +
-                        "Otherwise, please use this url to change your password: \n\n" +
-                        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
-                        hash +
-                        "\n\n" +
-                        "Regards your IT ressort", // Plaintext body
-                    };
-                    res.status(200).send();
-                  })
-                  .catch(() => {
-                    res.status(500).send("Internal Error");
+                  [req.body.email, "salt", token]
+                )
+                .then(() => {
+                  // Send email with correct URL to usermail
+                  console.log("Send Mail");
+                  const transport = nodemailer.createTransport({
+                    host: process.env.MAIL_HOST,
+                    port: process.env.MAIL_PORT,
+                    secure: false,
+                    auth: {
+                      user: process.env.MAIL_USER, // Email
+                      pass: process.env.MAIL_PASSWORD, // PW
+                    },
+                    tls: {
+                      rejectUnauthorized: false,
+                    },
+                  }); // Setup e-mail data with unicode symbols
+                  const mailOptions = {
+                    from: '"JBT MDB SUPPORT" <mdb@studentische-beratung.de>', // TODO actual sender address
+                    to: req.body.email, // List of receivers
+                    subject: "Passwort zurücksetzen", // Subject line
+                    text:
+                      "Hello " +
+                      vorname +
+                      ",\n\n" +
+                      "Es gab eine Anfrage, dein Passwort für die MDB zu ändern! \n" +
+                      "Falls du diese Anfrage nicht gestellt haben, ignoriere bitte diese E-Mail oder wende dich an das Ressort IT. \n" +
+                      "Andernfalls verwende bitte die folgende URL, um dein Passwort zu ändern: \n\n" +
+                      "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+                      token +
+                      "\n\n" +
+                      "\n\n" +
+                      "Beste Grüße \n\n" +
+                      "Dein Ressort IT",
+                  };
+                  transport.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                      return console.log(error);
+                    }
+                    console.log("Message sent: %s", info.messageId);
+                    // Preview only available when sending through an Ethereal account
+                    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
                   });
-              })
-              .catch(() => {
-                res.status(500).send("Internal Error");
-              });
-          } else {
-            res.status(200).send();
-          }
-        })
-        .catch(() => {
-          res.status(500).send("Internal Error");
-        });
-    });
+                  res.status(200).send();
+                })
+                .catch(() => {
+                  res.status(500).send("Internal Error");
+                });
+            })
+            .catch(() => {
+              res.status(500).send("Internal Error");
+            });
+        } else {
+          res.status(200).send();
+        }
+      })
+      .catch(() => {
+        res.status(500).send("Internal Error");
+      });
   });
 };
 
@@ -276,6 +290,8 @@ export const sendPasswordResetLink = (req: Request, res: Response): void => {
  * @param res 200 if process is available, 500 else
  */
 export const resetPasswordWithKey = (req: Request, res: Response): void => {
+  console.log("resetPasswordWithKey");
+  console.log(req.body);
   const name = String(req.body.email).split("@")[0];
   // Get current date
   const today = new Date();
@@ -303,6 +319,7 @@ export const resetPasswordWithKey = (req: Request, res: Response): void => {
     .then((result: authTypes.GetEmailDateTokenToVerifyValidityQueryResult[]) => {
       // Check if the email and token are valid
       if (result.length == 0) {
+        console.log(result);
         res.status(404).send();
         return;
       }
