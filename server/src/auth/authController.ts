@@ -12,8 +12,8 @@ import nodemailer = require("nodemailer");
  */
 const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
-  secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: "none", // Cookie can be sent to every site
+  secure: process.env.IS_PRODUCTION ? true : false, // Cookie can only be sent to an HTTPS page
+  sameSite: process.env.IS_PRODUCTION ? "strict" : "none", // In development cookie can be sent to every site
 };
 
 const authService = new AuthService();
