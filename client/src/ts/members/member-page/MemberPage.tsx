@@ -159,7 +159,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setMembersDetails(res.data[0]);
+            setMembersDetails(res.data);
           }
         }
       })

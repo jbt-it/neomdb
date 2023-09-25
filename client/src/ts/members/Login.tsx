@@ -9,7 +9,7 @@ import { AuthContext } from "../global/AuthContext";
 import { Paper, Grid, Button, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import logo from "../../images/jbt-logo-black.png";
-import Link from "@mui/material/Link";
+import { Link } from "@mui/material";
 import { authReducerActionType } from "../global/globalTypes";
 
 const Login: React.FunctionComponent = () => {
