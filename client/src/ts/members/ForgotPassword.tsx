@@ -1,7 +1,7 @@
 /**
  * Component for resetting the password by the user without the help of a admin, bofore logging in
  */
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Paper, Grid, Button, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import logo from "../../images/jbt-logo-black.png";
@@ -113,7 +113,7 @@ const ForgotPassword: React.FunctionComponent = () => {
         <Grid item xs={10} sm={8} md={6} lg={4}>
           <Paper className={classes.paper}>
             <img className={classes.logo} src={logo} />
-            <h1>Password vergessen</h1>
+            <h1>Passwort vergessen</h1>
             <form
               id="emailForm"
               onSubmit={(event) => {

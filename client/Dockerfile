@@ -1,6 +1,6 @@
 # ---- First stage: complete build with all files
 # Use Node.js 16 as the base image
-FROM node:16-alpine as intermediate
+FROM node:18-alpine as intermediate
 # Set the working directory
 WORKDIR /app
 # Copy package.json and package-lock.json (if available)
@@ -16,7 +16,7 @@ RUN mv .env.${REACT_APP_ENV} .env
 
 
 # ---- Second stage: run build command and exclude unnecessary environment files
-FROM node:14
+FROM node:18-alpine
 WORKDIR /app
 # Install serve
 RUN npm install -g serve
