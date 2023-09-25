@@ -22,7 +22,7 @@ class AuthTestUtils {
    * @returns The response
    */
   performLogin = async (username: string, password: string) => {
-    const response = await request(this.happ).post("/api/auth/login").send({ username: username, password: password });
+    const response = await request(this.app).post("/api/auth/login").send({ username: username, password: password });
 
     return response;
   };
