@@ -1,12 +1,11 @@
+/*
+ * This component is used to display a section of information fields.
+ */
 import React from "react";
 import { Typography, ListItem, List, ListItemText } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import Grid from "@mui/material/Unstable_Grid2";
-
-/*
- * This component is used to display a section of information fields.
- */
 
 type InformationField = {
   label: string;
@@ -18,7 +17,8 @@ interface Props {
   fields: Array<InformationField>;
 }
 
-/* We render each label:value pair in a grid container with two columns.
+/**
+ * We render each label:value pair in a grid container with two columns.
  * The first column contains the label and the second column contains the value.
  * The type of the field determines how the value is displayed.
  * If the type is "text" the value is displayed as text.
@@ -26,7 +26,6 @@ interface Props {
  *
  * TODO: Add support for Autocomplete fields / check how to display a list of members e.g. project members
  */
-
 const InfoSection = (props: Props) => {
   const renderFields = (fields: InformationField[]) => {
     return fields.map((field: InformationField) => {
