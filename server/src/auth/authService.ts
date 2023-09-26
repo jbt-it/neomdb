@@ -6,6 +6,7 @@ import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import AuthRepository from "./AuthRepository";
 import bcrypt = require("bcryptjs");
+import crypto = require("node:crypto");
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -96,8 +97,6 @@ class AuthService {
    * @param email The email of the password reset entry
    */
   createPasswordResetToken = async (name: string, email: string): Promise<string> => {
-    const date = new Date();
-
     const user = await this.authRepository.getUserByName(name);
 
     if (user === null) {
@@ -106,19 +105,25 @@ class AuthService {
       throw new NotFoundError(`No user found with name ${name}`);
     }
 
-    // Create a token
-    const plaintextToken = email.concat(date.getTime().toString());
-
     // Create a hash from the token
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(plaintextToken, salt);
+    const token = crypto.randomBytes(64).toString("base64url");
 
     // Delete old entrys, if any exist
     await this.authRepository.deletePasswordResetEntriesByEmail(email);
 
-    return hash;
+    // Insert the values into the passwort_reset table
+    await this.authRepository.createPasswordResetEntry(email, "salt", token);
+
+    return token;
   };
 
+  /**
+   * Resets the password of a user with a token
+   * @param name The name of the user
+   * @param email The email of the user
+   * @param token The token of the password reset entry
+   * @param newPassword The new password of the user
+   */
   resetPasswordWithToken = async (name: string, email: string, token: string, newPassword: string): Promise<void> => {
     // Get current date
     const date = createCurrentTimestamp();
@@ -129,6 +134,12 @@ class AuthService {
       throw new NotFoundError(`No password reset entry found with email ${email} and token ${token}`);
     }
 
+    const user = await this.authRepository.getUserByName(name);
+
+    if (user === null) {
+      throw new NotFoundError(`No user found with name ${name}`);
+    }
+
     // Check if the entry is older than five days
     if (passwordResetEntry.datediff <= -6) {
       await this.authRepository.deletePasswordResetEntriesByEmail(email);
@@ -136,11 +147,7 @@ class AuthService {
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    await this.authRepository.updateUserPasswordByUserNameAndUserID(
-      name,
-      passwordResetEntry.mitgliedID,
-      newPasswordHash
-    );
+    await this.authRepository.updateUserPasswordByUserNameAndUserID(name, user.mitgliedID, newPasswordHash);
     await this.authRepository.deletePasswordResetEntriesByEmail(email);
   };
 

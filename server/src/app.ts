@@ -5,11 +5,10 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
-import authRoutes from "./auth/authRoutes";
-import corsMiddleware from "./middleware/cors";
 import errorHandler from "./middleware/errorHandling";
-import membersRoutes from "./resources/members/membersRoutes";
-import traineesRoutes from "./resources/trainees/traineesRoutes";
+// import refererValidationMiddleware from "./middleware/refererValidation";
+import corsMiddleware from "./middleware/cors";
+import routes from "./routes";
 
 dotenv.config();
 const app = express();
@@ -33,14 +32,12 @@ app.use(cookieParser());
 /*
  * Enables referer validation middleware
  */
-// app.use(refererValidationMiddleware); TODO: Currently deactivated for development puropose
+// app.use(refererValidationMiddleware);
 
 /*
  * Use routes
  */
-app.use("/auth", authRoutes);
-app.use("/users", membersRoutes);
-app.use("/trainees", traineesRoutes);
+app.use("/api", routes);
 
 /*
  * Centralized Error handling
