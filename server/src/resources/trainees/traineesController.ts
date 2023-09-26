@@ -218,3 +218,13 @@ export const retrieveAllIPs = async (req: Request, res: Response): Promise<Respo
 
   return res.status(200).json(ips);
 };
+
+/*
+  Retrieve milestones of internal project by generation
+ */
+export const retrieveIPMilestonesAndWorkshopFeedback = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const ips = await traineesService.getIPMilestonesAndWorkshopFeedback(generationID);
+
+  return res.status(200).json(ips);
+};

@@ -8,9 +8,11 @@ import {
   Trainee,
   TraineeChoice,
   TraineeMotivation,
+  TraineeAssignment,
+  InternalProjectAndTrainee,
+  Workshop,
 } from "../../types/traineesTypes";
 import mysql = require("mysql2");
-import { TraineeAssignment } from "./traineesTypes";
 
 class TraineesRepository {
   /**
@@ -395,6 +397,65 @@ class TraineesRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error while retrieving internal projects`);
+    }
+  };
+
+  /**
+   * For all trainees of a given generation get internal project milestones
+   * @param generationID ID of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineeMilestonesfromInternalProjectsByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<InternalProjectAndTrainee[]> => {
+    try {
+      const ipsQueryResult = await query(
+        `SELECT mitglied.mitgliedID, mitglied.vorname, mitglied.nachname, mitglied.generation,mitglied.internesprojekt, internesprojekt.projektname, internesprojekt.kuerzel, internesprojekt.AngebotBeiEV, internesprojekt.ZPbeiEV, internesprojekt.ZPgehalten, internesprojekt.APbeiEV, internesprojekt.APgehalten, internesprojekt.DLbeiEV 
+        FROM mitglied 
+        JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
+        WHERE mitglied.generation = ?`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(ipsQueryResult)) {
+        const ips = ipsQueryResult as InternalProjectAndTrainee[];
+        return ips;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * For all trainees of a given generation get boolen if feedback was given for obligatory workshop
+   * @param generationID ID of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineeWorkshopFeedbackByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<Workshop[]> => {
+    try {
+      const feedbackQueryResult = await query(
+        `SELECT mitglied.mitgliedID, schulungsinstanz.schulungsinstanzID, schulung.schulungsname, mitglied_has_schulungsinstanz.feedbackAbgegeben
+        FROM mitglied JOIN mitglied_has_schulungsinstanz ON mitglied.mitgliedID = mitglied_has_schulungsinstanz.mitglied_mitgliedID
+        JOIN schulungsinstanz ON schulungsinstanz.schulungsinstanzID = mitglied_has_schulungsinstanz.schulungsinstanz_schulungsinstanzID
+        JOIN schulung ON schulung.schulungID = schulungsinstanz.schulung_schulungID
+        WHERE schulung.art="Pflichtworkshop" AND mitglied.generation = ?`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(feedbackQueryResult)) {
+        const feedback = feedbackQueryResult as Workshop[];
+        return feedback;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving Schulungen of generation with id ${generationID}`);
     }
   };
 }

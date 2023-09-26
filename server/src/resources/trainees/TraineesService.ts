@@ -7,9 +7,11 @@ import {
   Trainee,
   TraineeChoice,
   TraineeMotivation,
+  TraineeAssignment,
+  InternalProjectAndTrainee,
+  Workshop,
 } from "../../types/traineesTypes";
 import { Mentor } from "../../types/membersTypes";
-import { TraineeAssignment } from "./traineesTypes";
 import MembersRepository from "../members/MembersRepository";
 
 class TraineesService {
@@ -201,7 +203,6 @@ class TraineesService {
 
   /**
    * Get all trainees
-   * @param onöyCurrent if true, only the current trainees are returned
    */
   getTrainees = async (): Promise<Trainee[]> => {
     const trainees = await this.traineesRepository.getTrainees();
@@ -217,6 +218,18 @@ class TraineesService {
     const ips = await this.traineesRepository.getInternalProjects(onlyCurrent);
 
     return ips;
+  };
+
+  /**
+   * Get trainee internal project milestones and given feedback of obligatory workshop
+   * @param generationID ID of generation
+   */
+  getIPMilestonesAndWorkshopFeedback = async (
+    generationID: number
+  ): Promise<[InternalProjectAndTrainee[], Workshop[]]> => {
+    const ips = await this.traineesRepository.getTraineeMilestonesfromInternalProjectsByGenerationID(generationID);
+    const feedback = await this.traineesRepository.getTraineeWorkshopFeedbackByGenerationID(generationID);
+    return [ips, feedback];
   };
 }
 
