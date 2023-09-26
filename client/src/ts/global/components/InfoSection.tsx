@@ -10,7 +10,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 type InformationField = {
   label: string;
-  value: string | boolean | Array<string>;
+  value: string | boolean | Array<string> | null;
   type?: string;
 };
 
@@ -38,7 +38,7 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid sm={12} md={8}>
-              <Typography>{field.value}</Typography>
+              {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
         );
@@ -57,7 +57,11 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid xs={4}>
-              <List sx={{ listStyleType: "disc", pl: 2, marginTop: -1.5 }}>{listItems}</List>
+              {field.value ? (
+                <List sx={{ listStyleType: "disc", pl: 2, marginTop: -1.5 }}>{listItems}</List>
+              ) : (
+                <Typography>-</Typography>
+              )}
             </Grid>
           </Grid>
         );
@@ -68,8 +72,12 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid xs={8}>
-              {field.value === "true" || field.value === "Ja" || field.value === true ? (
-                <CheckBoxIcon color="primary" />
+              {field.value ? (
+                field.value === "true" || field.value === "Ja" || field.value === true ? (
+                  <CheckBoxIcon color="primary" />
+                ) : (
+                  <CheckBoxOutlineBlankIcon color="primary" />
+                )
               ) : (
                 <CheckBoxOutlineBlankIcon color="primary" />
               )}
@@ -83,7 +91,7 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid sm={12} md={8} sx={{ maxWidth: "600px" }}>
-              <Typography>{field.value}</Typography>
+              {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
         );

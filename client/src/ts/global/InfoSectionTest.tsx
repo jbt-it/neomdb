@@ -11,7 +11,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
     },
     {
       label: "Test Label 2",
-      value: "Test Value 2",
+      value: null,
       type: "text",
     },
     {
@@ -29,7 +29,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
     },
     {
       label: "Test Label 5",
-      value: "Nein",
+      value: null,
       type: "checkbox",
     },
     {
