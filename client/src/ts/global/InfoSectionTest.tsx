@@ -1,24 +1,41 @@
 import React from "react";
-import { Paper, Typography, Theme } from "@mui/material";
+import { Paper, Typography, Container, Box, Card, Divider } from "@mui/material";
 import InfoSection, { InformationField } from "./components/InfoSection";
 
 const InfoSectionTest: React.FunctionComponent = () => {
   const fields: Array<InformationField> = [
     {
       label: "Internesprojekt",
-      value: "Test Value",
+      value: "Test Value 1",
+      type: "text",
     },
     {
       label: "Test Label 2",
       value: "Test Value 2",
+      type: "text",
     },
     {
       label: "Test Label 3",
-      value: "Test Value 3",
+      value: `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+      blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+      neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+      quasi quidem quibusdam.`,
+      type: "multi",
     },
     {
       label: "Test Label 4",
-      value: "Test Value 4",
+      value: true,
+      type: "checkbox",
+    },
+    {
+      label: "Test Label 5",
+      value: "Nein",
+      type: "checkbox",
+    },
+    {
+      label: "Test List",
+      value: ["Item 1", "Item 2", "Item 3"],
+      type: "list",
     },
   ];
 
@@ -29,10 +46,17 @@ const InfoSectionTest: React.FunctionComponent = () => {
           justifyContent: "center",
           display: "flex",
           flexDirection: "column",
+          width: "80%",
+          margin: "auto",
+          marginTop: "20px",
+          padding: "20px",
         }}
       >
         <Typography variant="h5">Info Section Test</Typography>
-        <InfoSection fields={fields} width="full" />
+        <Divider />
+        <Box width={800} margin={"auto"} marginTop={2}>
+          <InfoSection fields={fields} />
+        </Box>
       </Paper>
     </div>
   );
