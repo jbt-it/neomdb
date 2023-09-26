@@ -16,8 +16,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
     },
     {
       label: "Test Label 3",
-      value: `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-      blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+      value: `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
       neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
       quasi quidem quibusdam.`,
       type: "multi",
@@ -54,7 +53,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
       >
         <Typography variant="h5">Info Section Test</Typography>
         <Divider />
-        <Box width={800} margin={"auto"} marginTop={2}>
+        <Box margin={"auto"} marginTop={2}>
           <InfoSection fields={fields} />
         </Box>
       </Paper>

@@ -34,7 +34,7 @@ const InfoSection = (props: Props) => {
       if (field.type === "text") {
         fieldContainer = (
           <Grid container xs={12}>
-            <Grid sm={12} md={4}>
+            <Grid xs={12} sm={4} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid sm={12} md={8}>
@@ -53,10 +53,10 @@ const InfoSection = (props: Props) => {
         // listStyleType: "disc" for circles and "square" for squares
         fieldContainer = (
           <Grid container xs={12}>
-            <Grid xs={4}>
+            <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={14} md={4}>
               {field.value ? (
                 <List sx={{ listStyleType: "disc", pl: 2, marginTop: -1.5 }}>{listItems}</List>
               ) : (
@@ -68,10 +68,10 @@ const InfoSection = (props: Props) => {
       } else if (field.type === "checkbox") {
         fieldContainer = (
           <Grid container xs={12}>
-            <Grid xs={4}>
+            <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={8}>
+            <Grid xs={12} md={4}>
               {field.value ? (
                 field.value === "true" || field.value === "Ja" || field.value === true ? (
                   <CheckBoxIcon color="primary" />
@@ -87,10 +87,10 @@ const InfoSection = (props: Props) => {
       } else {
         fieldContainer = (
           <Grid container xs={12}>
-            <Grid sm={12} md={4}>
+            <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid sm={12} md={8} sx={{ maxWidth: "600px" }}>
+            <Grid xs={12} md={8} sx={{ maxWidth: "600px" }}>
               {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
