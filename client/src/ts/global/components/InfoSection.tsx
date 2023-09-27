@@ -33,10 +33,10 @@ const InfoSection = (props: Props) => {
       if (field.type === "text") {
         fieldContainer = (
           <Grid container xs={12}>
-            <Grid xs={12} sm={4} md={4}>
+            <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid sm={12} md={8}>
+            <Grid xs={12} md={8}>
               {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
@@ -55,7 +55,7 @@ const InfoSection = (props: Props) => {
             <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={14} md={4}>
+            <Grid xs={12} md={4}>
               {field.value ? (
                 <List sx={{ listStyleType: "disc", pl: 2, marginTop: -1.5 }}>{listItems}</List>
               ) : (
