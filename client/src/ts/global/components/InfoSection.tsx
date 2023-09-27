@@ -9,9 +9,20 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 type InformationField = {
   label: string;
-  value: string | boolean | Array<string> | null;
-  type?: string;
-};
+} & (
+  | {
+      type?: "text" | "multi";
+      value: string | null;
+    }
+  | {
+      type?: "checkbox";
+      value: boolean | null;
+    }
+  | {
+      type?: "list";
+      value: Array<string>;
+    }
+);
 
 interface Props {
   fields: Array<InformationField>;
@@ -71,15 +82,7 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid xs={12} md={4}>
-              {field.value ? (
-                field.value === "true" || field.value === "Ja" || field.value === true ? (
-                  <CheckBoxIcon color="primary" />
-                ) : (
-                  <CheckBoxOutlineBlankIcon color="primary" />
-                )
-              ) : (
-                <CheckBoxOutlineBlankIcon color="primary" />
-              )}
+              {field.value ? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}
             </Grid>
           </Grid>
         );
