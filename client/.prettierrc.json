@@ -6,5 +6,5 @@
   "printWidth": 120,
   "arrowParens": "always",
   "parser": "typescript",
-  "endOfLine": "auto"
+  "endOfLine": "lf"
 }
