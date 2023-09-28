@@ -6,6 +6,75 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Permission": {
+				"properties": {
+					"directorID": {
+						"type": "number",
+						"format": "double"
+					},
+					"canDelegate": {
+						"type": "boolean"
+					},
+					"permissionID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"canDelegate",
+					"permissionID"
+				],
+				"type": "object",
+				"description": "Type of the permission"
+			},
+			"JWTPayload": {
+				"properties": {
+					"roles": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/Permission"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"roles",
+					"permissions",
+					"name",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the payload if the jason web token"
+			},
+			"UserLoginRequest": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"username"
+				],
+				"type": "object",
+				"description": "Type for the request to login a user"
+			},
 			"MemberPartial": {
 				"properties": {
 					"lastchange": {
@@ -53,6 +122,36 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JWTPayload"
+								}
+							}
+						}
+					}
+				},
+				"description": "Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserLoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/members": {
 			"get": {
 				"operationId": "GetMembers",
@@ -71,6 +170,7 @@
 						}
 					}
 				},
+				"description": "Get a list of all members",
 				"security": [],
 				"parameters": []
 			}
