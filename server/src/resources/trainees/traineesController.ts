@@ -5,8 +5,7 @@ import { Request, Response } from "express";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
 import database = require("../../database");
 import TraineesService from "./TraineesService";
-import { InternalProject } from "types/traineesTypes";
-import { TraineeAssignment } from "./traineesTypes";
+import { InternalProject, TraineeAssignment } from "types/traineesTypes";
 
 const traineesService = new TraineesService();
 
@@ -215,6 +214,16 @@ export const retrieveCurrentIPs = async (req: Request, res: Response): Promise<R
 */
 export const retrieveAllIPs = async (req: Request, res: Response): Promise<Response> => {
   const ips = await traineesService.getInternalProjects(false);
+
+  return res.status(200).json(ips);
+};
+
+/*
+  Retrieve milestones of internal project by generation
+ */
+export const retrieveIPMilestonesAndWorkshopFeedback = async (req: Request, res: Response): Promise<Response> => {
+  const generationID = parseInt(req.params.id);
+  const ips = await traineesService.getIPMilestonesAndWorkshopFeedback(generationID);
 
   return res.status(200).json(ips);
 };

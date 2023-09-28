@@ -8,9 +8,11 @@ import {
   Trainee,
   TraineeChoice,
   TraineeMotivation,
+  TraineeAssignment,
+  InternalProjectAndTrainee,
+  Workshop,
 } from "../../types/traineesTypes";
 import mysql = require("mysql2");
-import { TraineeAssignment } from "./traineesTypes";
 
 class TraineesRepository {
   /**
@@ -395,6 +397,86 @@ class TraineesRepository {
       return null;
     } catch (error) {
       throw new QueryError(`Error while retrieving internal projects`);
+    }
+  };
+
+  /**
+   * For all trainees of a given generation get internal project milestones
+   * @param generationID ID of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineeMilestonesfromInternalProjectsByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<InternalProjectAndTrainee[]> => {
+    try {
+      const ipsQueryResult = await query(
+        `SELECT 
+        mitglied.mitgliedID, 
+        mitglied.vorname, 
+        mitglied.nachname, 
+        mitglied.generation,
+        mitglied.internesprojekt, 
+        internesprojekt.projektname, 
+        internesprojekt.kuerzel, 
+        CAST(COALESCE(internesprojekt.AngebotBeiEV, 0) AS SIGNED) AS AngebotBeiEV, 
+        CAST(COALESCE(internesprojekt.ZPbeiEV, 0) AS SIGNED) AS ZPbeiEV, 
+        CAST(COALESCE(internesprojekt.ZPgehalten, 0) AS SIGNED) AS ZPgehalten, 
+        CAST(COALESCE(internesprojekt.APbeiEV, 0) AS SIGNED) AS APbeiEV, 
+        CAST(COALESCE(internesprojekt.APgehalten, 0) AS SIGNED) AS APgehalten, 
+        CAST(COALESCE(internesprojekt.DLbeiEV, 0) AS SIGNED) AS DLbeiEV
+    FROM mitglied 
+    JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
+    WHERE mitglied.generation = ?  
+    ORDER BY mitglied.nachname ASC`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(ipsQueryResult)) {
+        const ips = ipsQueryResult as InternalProjectAndTrainee[];
+        return ips;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * For all trainees of a given generation get boolen if feedback was given for obligatory workshop
+   * @param generationID ID of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineeWorkshopFeedbackByGenerationID = async (
+    generationID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<Workshop[]> => {
+    try {
+      const feedbackQueryResult = await query(
+        `SELECT DISTINCT mitglied.mitgliedID, schulung.schulungsname, 
+        MAX(COALESCE(mitglied_has_schulungsinstanz.feedbackAbgegeben, 0)) AS feedbackAbgegeben 
+        FROM mitglied
+          CROSS JOIN schulung
+          LEFT JOIN schulungsinstanz ON schulung.schulungID = schulungsinstanz.schulung_schulungID
+          LEFT JOIN mitglied_has_schulungsinstanz ON mitglied.mitgliedID = mitglied_has_schulungsinstanz.mitglied_mitgliedID
+            AND mitglied_has_schulungsinstanz.typ = 'Teilnehmer'
+            AND mitglied_has_schulungsinstanz.schulungsinstanz_schulungsinstanzID = schulungsinstanz.schulungsinstanzID
+        WHERE mitglied.generation = ?
+          AND schulung.art = 'Pflichtworkshop'
+        GROUP BY mitglied.mitgliedID, schulung.schulungsname
+        ORDER BY schulung.schulungsname ASC`,
+        [generationID],
+        connection
+      );
+      if (Array.isArray(feedbackQueryResult)) {
+        const feedback = feedbackQueryResult as Workshop[];
+        return feedback;
+      }
+
+      return null;
+    } catch (error) {
+      throw new QueryError(`Error while retrieving Schulungen of generation with id ${generationID}`);
     }
   };
 }
