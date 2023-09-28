@@ -1,0 +1,84 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"MemberPartial": {
+				"properties": {
+					"lastchange": {
+						"type": "string"
+					},
+					"ressort": {
+						"type": "string"
+					},
+					"mitgliedstatus": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"handy": {
+						"type": "number",
+						"format": "double"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"lastchange",
+					"ressort",
+					"mitgliedstatus",
+					"jbt_email",
+					"handy",
+					"nachname",
+					"vorname"
+				],
+				"type": "object",
+				"description": "Type of the partial member"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "0.1.0",
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/members": {
+			"get": {
+				"operationId": "GetMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MemberPartial"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

@@ -7,9 +7,11 @@
     "@types/express": "^4.17.2",
     "@types/jsonwebtoken": "^8.3.7",
     "@types/mysql": "^2.15.8",
+    "@types/node": "^20.7.1",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "axios": "^0.21.2",
     "bcryptjs": "^2.4.3",
+    "concurrently": "^8.2.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "csrf": "^3.1.0",
@@ -21,7 +23,8 @@
     "nodemailer": "^6.9.3",
     "nodemon": "^2.0.20",
     "ts-node-dev": "^1.1.7",
-    "typescript": "^3.7.5"
+    "tsoa": "^5.1.1",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "eslint": "^8.26.0",
@@ -30,8 +33,10 @@
     "prettier": "^2.7.1"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node-dev --respawn --transpile-only --poll ./src/server.ts",
+    "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
+    "build": "tsoa spec-and-routes && tsc",
+    "start": "node build/src/server.js",
+    "start-legcy": "ts-node-dev --respawn --transpile-only --poll ./src/server.ts",
     "prod": "npm run build && npm run start",
     "lint": "eslint --ext .ts --ext .tsx ./src",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",

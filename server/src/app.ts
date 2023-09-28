@@ -4,7 +4,7 @@
 import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
-
+import { RegisterRoutes } from "../build/routes";
 import errorHandler from "./middleware/errorHandling";
 // import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
@@ -33,6 +33,11 @@ app.use(cookieParser());
  * Enables referer validation middleware
  */
 // app.use(refererValidationMiddleware);
+
+/*
+ * Routes Setup
+ */
+RegisterRoutes(app);
 
 /*
  * Use routes
