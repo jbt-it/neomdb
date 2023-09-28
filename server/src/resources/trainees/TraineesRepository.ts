@@ -8,9 +8,9 @@ import {
   Trainee,
   TraineeChoice,
   TraineeMotivation,
+  TraineeAssignment,
 } from "../../types/traineesTypes";
 import mysql = require("mysql2");
-import { TraineeAssignment } from "./traineesTypes";
 
 class TraineesRepository {
   /**

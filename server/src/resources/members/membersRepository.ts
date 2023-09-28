@@ -219,8 +219,8 @@ class MembersRepository {
         ],
         connection
       );
-      if (queryResult.affectedRows > 0) {
-        return queryResult.insertId;
+      if ((queryResult as mysql.ResultSetHeader).affectedRows > 0) {
+        return (queryResult as mysql.ResultSetHeader).insertId;
       }
 
       return null;
