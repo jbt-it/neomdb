@@ -1,7 +1,6 @@
 import React from "react";
 import { makeStyles, createStyles } from "@mui/styles";
 import {
-  Box,
   Grid,
   Radio,
   Paper,

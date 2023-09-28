@@ -14,7 +14,7 @@ import { doesPermissionsHaveSomeOf } from "./utils/authUtils";
 
 // component imports
 import Nav from "./components/navigation/Nav";
-import LoadingCircle from "./components/LoadingCircle";
+import LoadingCircle from "./components/general/LoadingCircle";
 
 /*
  * page imports

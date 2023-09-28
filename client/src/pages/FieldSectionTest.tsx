@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { Theme } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
-import FieldSection, { Field } from "../components/FieldSection";
+import FieldSection, { Field } from "../components/general/FieldSection";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

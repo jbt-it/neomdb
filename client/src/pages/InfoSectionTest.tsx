@@ -1,6 +1,6 @@
 import React from "react";
 import { Paper, Typography, Container, Box, Card, Divider } from "@mui/material";
-import InfoSection, { InformationField } from "../components/InfoSection";
+import InfoSection, { InformationField } from "../components/general/InfoSection";
 
 const InfoSectionTest: React.FunctionComponent = () => {
   const fields: Array<InformationField> = [

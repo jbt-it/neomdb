@@ -32,7 +32,7 @@ import {
 import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
-import InfoCard from "../../../components/InfoCard";
+import InfoCard from "../../../components/general/InfoCard";
 
 /**
  * Function which proivdes the styles of the MemberPage

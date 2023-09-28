@@ -4,7 +4,7 @@
 import { Avatar, Typography, Box, Stack } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
-import Lenni from "../assets/lenni.jpeg";
+import Lenni from "../../assets/lenni.jpeg";
 
 /**
  * Function which proivdes the styles of the LoadingCircle
