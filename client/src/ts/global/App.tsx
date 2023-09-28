@@ -24,6 +24,7 @@ import FieldSectionTest from "./FieldSectionTest";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AssignTrainees from "../trainees/AssignTrainees";
+import InfoSectionTest from "./InfoSectionTest";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -184,6 +185,7 @@ const App: React.FunctionComponent = () => {
           <PrivateRoute exact path="/traineepraeferenzen" component={TraineePreferences} />
           <PrivateRoute exact path="/traineezuteilung" component={AssignTrainees} />
           <PrivateRoute exact path="/modularesformulartest" component={FieldSectionTest} />
+          <PrivateRoute exact path="/modularedarstellungtest" component={InfoSectionTest} />
           <PrivateRoute exact path="/kvp" component={Dashboard} />
           <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
           <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
