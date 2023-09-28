@@ -44,6 +44,11 @@ router.get(
   restrictRoutes([14], false),
   catchAsync(traineesController.getInternalProjectsOfGeneration)
 );
+router.get(
+  "/generations/:id/internal-projects-and-workshop-feedback",
+  restrictRoutes([14], false),
+  catchAsync(traineesController.retrieveIPMilestonesAndWorkshopFeedback)
+);
 
 //  =======>>> Patch routes <<<=======
 router.put("/ip/:id", restrictRoutes([15], false), catchAsync(traineesController.updateIP));
