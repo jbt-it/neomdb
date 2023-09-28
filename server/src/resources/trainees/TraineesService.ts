@@ -228,6 +228,13 @@ class TraineesService {
   getIPMilestonesAndWorkshopFeedback = async (
     generationID: number
   ): Promise<(InternalProjectAndTrainee & Workshop)[]> => {
+    // Fetch generation to check if it exists
+    const generation = await this.traineesRepository.getGenerationByID(generationID);
+
+    if (generation === null) {
+      throw new NotFoundError(`Generation with id ${generationID} not found`);
+    }
+
     // Fetch internal project milestones by generation ID
     const ips: InternalProjectAndTrainee[] =
       await this.traineesRepository.getTraineeMilestonesfromInternalProjectsByGenerationID(generationID);
@@ -245,14 +252,12 @@ class TraineesService {
       mapMemberIDToTrainingData.get(mitgliedID)![schulungsname] = feedbackAbgegeben;
     });
 
-    // Combine data from the "ips" array and fill missing values with 0
+    // Combine data from the "ips" array
     const resultArray = ips.map((item) => {
       const { mitgliedID, ...rest } = item;
       const trainingData = mapMemberIDToTrainingData.get(mitgliedID) || {};
       return { mitgliedID, ...rest, ...trainingData } as InternalProjectAndTrainee & Workshop;
     });
-
-    console.log(resultArray);
 
     return resultArray;
   };
