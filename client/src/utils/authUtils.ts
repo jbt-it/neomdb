@@ -1,4 +1,4 @@
-import { Permission } from "../context/auth-context/globalTypes";
+import { Permission } from "../types/globalTypes";
 /**
  * Checks if a list of permissions of a member has some of the item in the list of permission IDs
  *

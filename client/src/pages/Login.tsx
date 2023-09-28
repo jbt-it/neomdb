@@ -9,7 +9,7 @@ import { AuthContext } from "../context/auth-context/AuthContext";
 import { Paper, Grid, Button, TextField, Theme, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
-import { authReducerActionType } from "../context/auth-context/globalTypes";
+import { authReducerActionType } from "../types/globalTypes";
 
 const Login: React.FunctionComponent = () => {
   const history = useHistory();

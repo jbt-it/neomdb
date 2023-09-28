@@ -29,8 +29,8 @@ import {
   transformGermanDateToSQLString,
   transformStringToSQLString,
 } from "../../../utils/dateUtils";
-import * as membersTypes from "../membersTypes";
-import * as globalTypes from "../../../context/auth-context/globalTypes";
+import * as membersTypes from "../../../types/membersTypes";
+import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/InfoCard";
 

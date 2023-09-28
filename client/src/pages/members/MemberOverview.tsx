@@ -26,8 +26,8 @@ import PageBar from "../../components/navigation/PageBar";
 import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { useContext } from "react";
-import * as membersTypes from "./membersTypes";
-import { authReducerActionType } from "../../context/auth-context/globalTypes";
+import * as membersTypes from "../../types/membersTypes";
+import { authReducerActionType } from "../../types/globalTypes";
 
 /**
  * Function which proivdes the styles of the MemberOverview

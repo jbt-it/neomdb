@@ -28,7 +28,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import JBTLogoBlack from "../../assets/jbt-logo-black.png";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import api from "../../utils/api";
-import { authReducerActionType } from "../../context/auth-context/globalTypes";
+import { authReducerActionType } from "../../types/globalTypes";
 
 /**
  * Function which proivdes the styles of the MenuDrawer

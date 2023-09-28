@@ -41,7 +41,7 @@ import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
 
-import { authReducerActionType } from "./context/auth-context/globalTypes";
+import { authReducerActionType } from "./types/globalTypes";
 
 /**
  * Interfaces for the location state of react-router-dom

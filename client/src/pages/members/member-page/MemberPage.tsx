@@ -9,8 +9,8 @@ import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
 import PageBar from "../../../components/navigation/PageBar";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
-import * as membersTypes from "../membersTypes";
-import { authReducerActionType } from "../../../context/auth-context/globalTypes";
+import * as membersTypes from "../../../types/membersTypes";
+import { authReducerActionType } from "../../../types/globalTypes";
 
 /**
  * Interface for the match parameter of the router

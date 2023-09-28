@@ -9,7 +9,7 @@ import api from "../../utils/api";
 import { NavLink } from "react-router-dom";
 import InfoCard from "../../components/InfoCard";
 import DepartmentDialog from "./components/DepartmentDialog";
-import { DepartmentDetails, DepartmentMember, Director } from "./membersTypes";
+import { DepartmentDetails, DepartmentMember, Director } from "../../types/membersTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { doesRolesHaveSomeOf } from "../../utils/authUtils";

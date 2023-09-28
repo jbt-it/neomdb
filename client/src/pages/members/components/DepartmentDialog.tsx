@@ -4,11 +4,11 @@
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, Theme } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import React, { memo, useContext, useState } from "react";
-import { DepartmentDetails } from "../membersTypes";
+import { DepartmentDetails } from "../../../types/membersTypes";
 import api from "../../../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
-import { authReducerActionType } from "../../../context/auth-context/globalTypes";
+import { authReducerActionType } from "../../../types/globalTypes";
 import { AxiosError } from "axios";
 import { AxiosResponse } from "axios";
 
