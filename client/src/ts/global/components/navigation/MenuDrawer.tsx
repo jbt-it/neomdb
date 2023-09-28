@@ -1,7 +1,7 @@
 // The MenuDrawer-Component displays a drawer with navigation-options.
 
 import React, { useState, useEffect, useContext } from "react";
-import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Avatar,
@@ -61,6 +61,10 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "black",
       textDecoration: "none",
     },
+    active: {
+      color: "rgb(246,137,31)",
+      textDecoration: "none",
+    },
     subListItem: {
       marginLeft: theme.spacing(8),
     },
@@ -86,7 +90,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
   const { auth, dispatchAuth } = useContext(AuthContext);
   const classes = useStyles();
   const location = useLocation();
-  const history = useHistory();
+  const history = useNavigate();
 
   useEffect(() => {
     setActiveNavLink(location.pathname);
@@ -140,7 +144,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    */
   const handleLogout: VoidFunction = () => {
     api.post("/auth/logout").then(() => {
-      history.push("/login");
+      history("/login");
       dispatchAuth({ type: authReducerActionType.deauthenticate });
     });
   };
@@ -206,10 +210,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
       <Divider />
       <List>
         <NavLink
-          exact
           to="/"
-          className={classes.listItemNavText}
-          activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
           onClick={handleNavLinkClick(pathname)}
         >
           <ListItem button onClick={props.drawer(false)}>
@@ -229,10 +231,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         <Collapse in={memberOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <NavLink
-              exact
               to="/gesamtuebersicht"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -240,10 +240,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/vorstand"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -251,10 +249,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/ressorts"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -262,17 +258,13 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/vorstand"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             ></NavLink>
             <NavLink
-              exact
               to="/ewigervorstand"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -280,10 +272,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/geburtstage"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -291,10 +281,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/traineebereich"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -302,10 +290,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/kuratoren"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -314,10 +300,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
             </NavLink>
             {auth.permissions.length > 0 ? (
               <NavLink
-                exact
                 to="/berechtigungen"
-                className={classes.listItemNavText}
-                activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+                className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
                 onClick={handleNavLinkClick(pathname)}
               >
                 <ListItem button onClick={props.drawer(false)}>
@@ -328,10 +312,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
           </List>
         </Collapse>
         <NavLink
-          exact
           to="/projekte"
-          className={classes.listItemNavText}
-          activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
           onClick={handleNavLinkClick(pathname)}
         >
           <ListItem button onClick={props.drawer(false)}>
@@ -342,10 +324,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
           </ListItem>
         </NavLink>
         <NavLink
-          exact
           to="/veranstaltungen"
-          className={classes.listItemNavText}
-          activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
           onClick={handleNavLinkClick(pathname)}
         >
           <ListItem button onClick={props.drawer(false)}>
@@ -365,10 +345,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         <Collapse in={toolsOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <NavLink
-              exact
               to="/mm-tracking"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -376,10 +354,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/pl-qm-tool"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -387,10 +363,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/raumreservierung"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -398,10 +372,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/innovationsmanagement"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -420,10 +392,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         <Collapse in={myFunctionsOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <NavLink
-              exact
               to={`/gesamtuebersicht/${auth.userID}`}
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -431,10 +401,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/user-change-password"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -442,10 +410,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
               </ListItem>
             </NavLink>
             <NavLink
-              exact
               to="/meine-funktionen"
-              className={classes.listItemNavText}
-              activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
               onClick={handleNavLinkClick(pathname)}
             >
               <ListItem button onClick={props.drawer(false)}>
@@ -455,10 +421,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
           </List>
         </Collapse>
         <NavLink
-          exact
           to="/weitere-funktionen"
-          className={classes.listItemNavText}
-          activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
           onClick={handleNavLinkClick(pathname)}
         >
           <ListItem button onClick={props.drawer(false)}>
@@ -472,10 +436,8 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
       <Divider />
       <List>
         <NavLink
-          exact
           to="/kvp"
-          className={classes.listItemNavText}
-          activeStyle={{ color: "rgb(246,137,31)", textDecoration: "none" }}
+          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
           onClick={handleNavLinkClick(pathname)}
         >
           <ListItem button onClick={props.drawer(false)}>

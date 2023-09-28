@@ -6,6 +6,7 @@ import globalTheme from "./ts/utils/globalTheme";
 import { AuthProvider } from "./ts/global/AuthContext";
 import "./css/app.css";
 import { Toaster } from "react-hot-toast";
+import { HashRouter } from "react-router-dom";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -16,7 +17,9 @@ ReactDOM.render(
   <AuthProvider>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={globalTheme}>
-        <App />
+        <HashRouter>
+          <App />
+        </HashRouter>
         <Toaster position="bottom-center" reverseOrder={true} />
       </ThemeProvider>
     </StyledEngineProvider>

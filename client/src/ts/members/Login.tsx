@@ -2,7 +2,7 @@
  * Component that handles the login process
  */
 import React, { useState, useContext } from "react";
-import { useHistory, NavLink } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 import api from "../utils/api";
 import { AuthContext } from "../global/AuthContext";
@@ -13,7 +13,7 @@ import { Link } from "@mui/material";
 import { authReducerActionType } from "../global/globalTypes";
 
 const Login: React.FunctionComponent = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const { dispatchAuth } = useContext(AuthContext);
 
   /**
@@ -88,7 +88,7 @@ const Login: React.FunctionComponent = () => {
             type: authReducerActionType.authenticate,
             payload: { userID, userName, permissions, roles },
           });
-          history.push("/");
+          history("/");
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
           setFailedLogin(true);
@@ -187,9 +187,7 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <NavLink exact to="/passwort-vergessen">
-                    Forgot Password?
-                  </NavLink>
+                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
                   <Link id="capswarning" variant="body2" className={classes.warningText}>

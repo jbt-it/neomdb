@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useContext, useState } from "react";
-import { HashRouter, Route, Switch, Redirect, useLocation } from "react-router-dom";
+import { HashRouter, Route, useLocation, Routes, useRoutes } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
@@ -25,6 +25,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AssignTrainees from "../trainees/AssignTrainees";
 import InfoSectionTest from "./InfoSectionTest";
+import LoggedIn from "./LoggedIn";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -79,6 +80,7 @@ const App: React.FunctionComponent = () => {
         setCheckAuthLoading(false);
       });
   }, [dispatchAuth]);
+  /*
 
   // Calls checkAuth on (re)render of routes
   useEffect(() => checkAuth(), [checkAuth]);
@@ -86,7 +88,7 @@ const App: React.FunctionComponent = () => {
   /**
    * Renders the specified component if the user is authenticated otherwise
    * the user gets redirected to the login page
-   */
+   *
   const PrivateRoute = memo(({ component: Component, ...rest }: any) => {
     return checkAuthLoading ? (
       <LoadingCircle />
@@ -107,7 +109,7 @@ const App: React.FunctionComponent = () => {
   /**
    * Renders the login component if the user is not authenticated otherwise
    * the user gets redirected to the dashboard page
-   */
+   *
   const LoginRoute = memo(({ component: Component, ...rest }: any) => {
     const { state } = useLocation<LocationState>();
 
@@ -124,13 +126,13 @@ const App: React.FunctionComponent = () => {
    * @param component The component, that should be displayed
    * @param permissionIDs The array of permissions that should be checked
    * (if the array is empty, any user with permissions can access the given component)
-   */
+   *
   const ProtectedRoute = memo(({ component: Component, permissionIDs, ...rest }: any) => {
     /**
      * Checks if the currently logged in user has the permission numbers specified
      * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
      * @returns true if the user has the given permissions
-     */
+     *
     const checkForPermission = (permissionNumbers: number[]) => {
       if (permissionNumbers.length === 0) {
         // Check if the given permissionNumbers array contains at least one permission id.
@@ -197,6 +199,81 @@ const App: React.FunctionComponent = () => {
       </HashRouter>
     </LocalizationProvider>
   );
+};
+*/
+  const routes = useRoutes([
+    {
+      path: "/",
+      element: (
+        <LoggedIn>
+          <Dashboard />
+        </LoggedIn>
+      ),
+    },
+    {
+      path: "/gesamtuebersicht",
+      children: [
+        {
+          index: true,
+          element: (
+            <LoggedIn>
+              <MemberOverview />
+            </LoggedIn>
+          ),
+        },
+        {
+          path: ":id",
+          element: (
+            <LoggedIn>
+              <MemberProfile />
+            </LoggedIn>
+          ),
+        },
+      ],
+    },
+    { path: "/login", element: <Login /> },
+    { path: "*", element: <NotFound /> },
+  ]);
+
+  return routes;
+  /*
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {
+        // Renders the Nav componenent if the user is authenticated
+        auth.authenticated ? <Nav /> : null
+      }
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <LoggedIn>
+              <Dashboard />
+            </LoggedIn>
+          }
+        />
+        <Route path="/gesamtuebersicht">
+          <Route
+            path=""
+            element={
+              <LoggedIn>
+                <MemberOverview />
+              </LoggedIn>
+            }
+          />
+          <Route
+            path=":id"
+            element={
+              <LoggedIn>
+                <MemberProfile />
+              </LoggedIn>
+            }
+          />
+        </Route>
+
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </LocalizationProvider>
+  );*/
 };
 
 export default App;
