@@ -221,15 +221,40 @@ class TraineesService {
   };
 
   /**
-   * Get trainee internal project milestones and given feedback of obligatory workshop
-   * @param generationID ID of generation
+   * Get trainee internal project milestones and given feedback for obligatory workshops
+   * @param generationID ID of the generation
+   * @returns A promise that resolves to an array containing the combined data
    */
   getIPMilestonesAndWorkshopFeedback = async (
     generationID: number
-  ): Promise<[InternalProjectAndTrainee[], Workshop[]]> => {
-    const ips = await this.traineesRepository.getTraineeMilestonesfromInternalProjectsByGenerationID(generationID);
-    const feedback = await this.traineesRepository.getTraineeWorkshopFeedbackByGenerationID(generationID);
-    return [ips, feedback];
+  ): Promise<(InternalProjectAndTrainee & Workshop)[]> => {
+    // Fetch internal project milestones by generation ID
+    const ips: InternalProjectAndTrainee[] =
+      await this.traineesRepository.getTraineeMilestonesfromInternalProjectsByGenerationID(generationID);
+    // Fetch workshop feedback by generation ID
+    const feedback: Workshop[] = await this.traineesRepository.getTraineeWorkshopFeedbackByGenerationID(generationID);
+    // Create a Map object to group data by member ID
+    const mapMemberIDToTrainingData = new Map<number, Record<string, number>>();
+
+    // Fill the map with data from the "feedback" array
+    feedback.forEach((item) => {
+      const { mitgliedID, schulungsname, feedbackAbgegeben } = item;
+      if (!mapMemberIDToTrainingData.has(mitgliedID)) {
+        mapMemberIDToTrainingData.set(mitgliedID, {});
+      }
+      mapMemberIDToTrainingData.get(mitgliedID)![schulungsname] = feedbackAbgegeben;
+    });
+
+    // Combine data from the "ips" array and fill missing values with 0
+    const resultArray = ips.map((item) => {
+      const { mitgliedID, ...rest } = item;
+      const trainingData = mapMemberIDToTrainingData.get(mitgliedID) || {};
+      return { mitgliedID, ...rest, ...trainingData } as InternalProjectAndTrainee & Workshop;
+    });
+
+    console.log(resultArray);
+
+    return resultArray;
   };
 }
 

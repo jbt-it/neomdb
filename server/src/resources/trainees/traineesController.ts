@@ -5,8 +5,7 @@ import { Request, Response } from "express";
 import { checkForSQLKeywords } from "../../utils/stringUtils";
 import database = require("../../database");
 import TraineesService from "./TraineesService";
-import { InternalProject } from "types/traineesTypes";
-import { TraineeAssignment } from "./traineesTypes";
+import { InternalProject, TraineeAssignment } from "types/traineesTypes";
 
 const traineesService = new TraineesService();
 

@@ -411,10 +411,24 @@ class TraineesRepository {
   ): Promise<InternalProjectAndTrainee[]> => {
     try {
       const ipsQueryResult = await query(
-        `SELECT mitglied.mitgliedID, mitglied.vorname, mitglied.nachname, mitglied.generation,mitglied.internesprojekt, internesprojekt.projektname, internesprojekt.kuerzel, internesprojekt.AngebotBeiEV, internesprojekt.ZPbeiEV, internesprojekt.ZPgehalten, internesprojekt.APbeiEV, internesprojekt.APgehalten, internesprojekt.DLbeiEV 
-        FROM mitglied 
-        JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
-        WHERE mitglied.generation = ?`,
+        `SELECT 
+        mitglied.mitgliedID, 
+        mitglied.vorname, 
+        mitglied.nachname, 
+        mitglied.generation,
+        mitglied.internesprojekt, 
+        internesprojekt.projektname, 
+        internesprojekt.kuerzel, 
+        CAST(COALESCE(internesprojekt.AngebotBeiEV, 0) AS SIGNED) AS AngebotBeiEV, 
+        CAST(COALESCE(internesprojekt.ZPbeiEV, 0) AS SIGNED) AS ZPbeiEV, 
+        CAST(COALESCE(internesprojekt.ZPgehalten, 0) AS SIGNED) AS ZPgehalten, 
+        CAST(COALESCE(internesprojekt.APbeiEV, 0) AS SIGNED) AS APbeiEV, 
+        CAST(COALESCE(internesprojekt.APgehalten, 0) AS SIGNED) AS APgehalten, 
+        CAST(COALESCE(internesprojekt.DLbeiEV, 0) AS SIGNED) AS DLbeiEV
+    FROM mitglied 
+    JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
+    WHERE mitglied.generation = ?  
+    ORDER BY mitglied.nachname ASC`,
         [generationID],
         connection
       );
@@ -440,11 +454,18 @@ class TraineesRepository {
   ): Promise<Workshop[]> => {
     try {
       const feedbackQueryResult = await query(
-        `SELECT mitglied.mitgliedID, schulungsinstanz.schulungsinstanzID, schulung.schulungsname, mitglied_has_schulungsinstanz.feedbackAbgegeben
-        FROM mitglied JOIN mitglied_has_schulungsinstanz ON mitglied.mitgliedID = mitglied_has_schulungsinstanz.mitglied_mitgliedID
-        JOIN schulungsinstanz ON schulungsinstanz.schulungsinstanzID = mitglied_has_schulungsinstanz.schulungsinstanz_schulungsinstanzID
-        JOIN schulung ON schulung.schulungID = schulungsinstanz.schulung_schulungID
-        WHERE schulung.art="Pflichtworkshop" AND mitglied.generation = ?`,
+        `SELECT DISTINCT mitglied.mitgliedID, schulung.schulungsname, 
+        MAX(COALESCE(mitglied_has_schulungsinstanz.feedbackAbgegeben, 0)) AS feedbackAbgegeben 
+        FROM mitglied
+          CROSS JOIN schulung
+          LEFT JOIN schulungsinstanz ON schulung.schulungID = schulungsinstanz.schulung_schulungID
+          LEFT JOIN mitglied_has_schulungsinstanz ON mitglied.mitgliedID = mitglied_has_schulungsinstanz.mitglied_mitgliedID
+            AND mitglied_has_schulungsinstanz.typ = 'Teilnehmer'
+            AND mitglied_has_schulungsinstanz.schulungsinstanz_schulungsinstanzID = schulungsinstanz.schulungsinstanzID
+        WHERE mitglied.generation = ?
+          AND schulung.art = 'Pflichtworkshop'
+        GROUP BY mitglied.mitgliedID, schulung.schulungsname
+        ORDER BY schulung.schulungsname ASC`,
         [generationID],
         connection
       );
