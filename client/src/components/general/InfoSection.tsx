@@ -12,11 +12,11 @@ type InformationField = {
 } & (
   | {
       type?: "text" | "multi";
-      value: string | null;
+      value: string | null | undefined;
     }
   | {
       type?: "checkbox";
-      value: boolean | null;
+      value: boolean | null | undefined;
     }
   | {
       type?: "list";
