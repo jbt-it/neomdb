@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useContext, useState } from "react";
-import { HashRouter, Route, useLocation, Routes, useRoutes } from "react-router-dom";
+import { HashRouter, Route, useLocation, Routes, useRoutes, Outlet } from "react-router-dom";
 import { AuthContext } from "../global/AuthContext";
 import api from "../utils/api";
 import Dashboard from "../members/Dashboard";
@@ -26,6 +26,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AssignTrainees from "../trainees/AssignTrainees";
 import InfoSectionTest from "./InfoSectionTest";
 import LoggedIn from "./LoggedIn";
+import Layout from "./components/Layout";
 
 /**
  * Interfaces for the location state of react-router-dom
@@ -206,29 +207,25 @@ const App: React.FunctionComponent = () => {
       path: "/",
       element: (
         <LoggedIn>
-          <Dashboard />
+          <Layout />
         </LoggedIn>
       ),
-    },
-    {
-      path: "/gesamtuebersicht",
       children: [
         {
-          index: true,
-          element: (
-            <LoggedIn>
-              <MemberOverview />
-            </LoggedIn>
-          ),
+          path: "/gesamtuebersicht",
+          children: [
+            {
+              index: true,
+              element: <MemberOverview />,
+            },
+            {
+              path: ":id",
+              element: <MemberProfile />,
+            },
+          ],
         },
-        {
-          path: ":id",
-          element: (
-            <LoggedIn>
-              <MemberProfile />
-            </LoggedIn>
-          ),
-        },
+        { path: "/modularedarstellungtest", element: <InfoSectionTest /> },
+        { path: "/ressorts", element: <DepartmentOverview /> },
       ],
     },
     { path: "/login", element: <Login /> },

@@ -39,7 +39,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
   ];
 
   return (
-    <div className={"content-page"}>
+    <div>
       <Paper
         sx={{
           justifyContent: "center",
@@ -47,8 +47,6 @@ const InfoSectionTest: React.FunctionComponent = () => {
           flexDirection: "column",
           width: "80%",
           margin: "auto",
-          marginTop: "20px",
-          padding: "20px",
         }}
       >
         <Typography variant="h5">Info Section Test</Typography>
