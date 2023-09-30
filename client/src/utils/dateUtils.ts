@@ -9,7 +9,6 @@ const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", year: "numeric
 const locales = "de-DE";
 
 export const transformDateToReadableString = (date: Date) => {
-  console.log(date);
   return date.toLocaleDateString(locales, dateOptions);
 };
 

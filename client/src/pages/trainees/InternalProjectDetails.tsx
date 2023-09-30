@@ -1,32 +1,24 @@
-/**
- * Component for resetting the password by the user without the help of a admin, when logged in
- *
- */
-import React, { useState, useEffect, useContext } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import {
-  DialogActions,
+  Dialog,
   DialogTitle,
   DialogContent,
-  Box,
+  DialogActions,
   Button,
-  Dialog,
+  styled,
   Paper,
   Typography,
+  Box,
   IconButton,
-  styled,
 } from "@mui/material";
+
 import { makeStyles } from "@mui/styles";
-import { Edit } from "@mui/icons-material";
-import * as traineesTypes from "./traineesTypes";
-import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import api from "../../utils/api";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import FieldSection, { Field } from "../../components/general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { transformDateToReadableString } from "../../utils/dateUtils";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
+import { InternalProjectType } from "./traineesTypes";
+import { Edit } from "@mui/icons-material";
 
 /**
  * Function which provides the styles
@@ -85,41 +77,51 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-/**
- * Interface for the match parameter of the router
- */
-interface RouterMatch {
-  id: string;
+console.log("HERE");
+
+interface InternalProjectDetailsProps {
+  internalProject: InternalProjectType;
+  hasPermission: boolean;
+  updateInternalProjectDetails: (data: InternalProjectType) => void;
 }
 
-/**
- * Function that allows displays internal project details
- * @returns returns the interface for the user
- */
-const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
-  props: RouteComponentProps<RouterMatch>
+const DisplayInternalProjectDetails: React.FunctionComponent<InternalProjectDetailsProps> = (
+  props: InternalProjectDetailsProps
 ) => {
+  console.log("Display Internal Project Details");
   const classes = useStyles();
 
-  const { auth } = useContext(AuthContext);
-
-  // internalProjectDetails will be used later when the API call is implemented
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType | null>(null);
-
+  // States
+  const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectType | null>(null);
   const [name, setName] = useState<string>("");
   const [kuerzel, setKuerzel] = useState<string>("");
   const [traineegeneration, setTraineegeneration] = useState<string>("");
-  const [kickoff, setKickoff] = useState<Date>();
+  const [kickoff, setKickoff] = useState<Date | undefined>();
   const [angebotAbgegeben, setAngebotAbgegeben] = useState<boolean>();
-  const [apDatum, setApDatum] = useState<Date>();
+  const [apDatum, setApDatum] = useState<Date | undefined>();
   const [apAbgegeben, setApAbgegeben] = useState<boolean>();
-  const [zpDatum, setZpDatum] = useState<Date>();
+  const [zpDatum, setZpDatum] = useState<Date | undefined>();
   const [zpAbgegeben, setZpAbgegeben] = useState<boolean>();
   const [dlAbgegeben, setDlAbgegeben] = useState<boolean>();
   const [projektmitglieder, setProjektmitglieder] = useState<string>("");
   const [qualitaetsmanager, setQualitaetsmanager] = useState<string>("");
 
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
+
+  setInternalProjectDetails(props.internalProject);
+  setName(props.internalProject?.name);
+  setKuerzel(props.internalProject?.kuerzel);
+  setTraineegeneration(props.internalProject?.traineegeneration);
+  setKickoff(props.internalProject?.kickoff);
+  setAngebotAbgegeben(props.internalProject?.angebotAbgegeben);
+  setApDatum(props.internalProject?.apDatum);
+  setApAbgegeben(props.internalProject?.apAbgegeben);
+  setZpDatum(props.internalProject?.zpDatum);
+  setZpAbgegeben(props.internalProject?.zpAbgegeben);
+  setDlAbgegeben(props.internalProject?.dlAbgegeben);
+  setProjektmitglieder(props.internalProject?.projektmitglieder);
+  setQualitaetsmanager(props.internalProject?.qualitaetsmanager);
+
   /**
    * Handles the click on the edit button of the internal project information section
    * @param event MouseEvent
@@ -135,64 +137,24 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
    * TODO: Default-Werte wiederherstellen
    */
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
-    setName(internalProjectDetails!.name);
-    setKuerzel(internalProjectDetails!.kuerzel);
-    setTraineegeneration(internalProjectDetails!.traineegeneration);
-    setKickoff(internalProjectDetails!.kickoff);
-    setAngebotAbgegeben(internalProjectDetails!.angebotAbgegeben);
-    setApDatum(internalProjectDetails!.apDatum);
-    setApAbgegeben(internalProjectDetails!.apAbgegeben);
-    setZpDatum(internalProjectDetails!.zpDatum);
-    setZpAbgegeben(internalProjectDetails!.zpAbgegeben);
-    setDlAbgegeben(internalProjectDetails!.dlAbgegeben);
-    setProjektmitglieder(internalProjectDetails!.projektmitglieder);
-    setQualitaetsmanager(internalProjectDetails!.qualitaetsmanager);
+    setName(props.internalProject.name);
+    setKuerzel(props.internalProject.kuerzel);
+    setTraineegeneration(props.internalProject.traineegeneration);
+    setKickoff(props.internalProject.kickoff);
+    setAngebotAbgegeben(props.internalProject.angebotAbgegeben);
+    setApDatum(props.internalProject.apDatum);
+    setApAbgegeben(props.internalProject.apAbgegeben);
+    setZpDatum(props.internalProject.zpDatum);
+    setZpAbgegeben(props.internalProject.zpAbgegeben);
+    setDlAbgegeben(props.internalProject.dlAbgegeben);
+    setProjektmitglieder(props.internalProject.projektmitglieder);
+    setQualitaetsmanager(props.internalProject.qualitaetsmanager);
     setInternalProjectInfoDialogOpen(false);
   };
-  /**
-   * Retrieves dummy member details
-   */
-  const getInternalProjectDetails: VoidFunction = () => {
-    /* TO-DO: Implement API call to retrieve internal project details
-     *  setInternalProjectDetails(ip);
-     *  setName(InternalProjectDetails?.name);
-     */
 
-    const ip = {
-      id: 5,
-      name: "Analoges Bootcamp",
-      kuerzel: "DB",
-      traineegeneration: "22/WS",
-      kickoff: new Date("2020-01-01"),
-      angebotAbgegeben: false,
-      apDatum: new Date("2022-03-25"),
-      apAbgegeben: false,
-      zpDatum: new Date("2020-01-01"),
-      zpAbgegeben: true,
-      dlAbgegeben: false,
-      projektmitglieder: "Marko Müller, Ada Lovelace",
-      qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
-    };
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    setInternalProjectDetails(ip);
-    setName(ip?.name);
-    setKuerzel(ip?.kuerzel);
-    setTraineegeneration(ip?.traineegeneration);
-    setKickoff(ip?.kickoff);
-    setAngebotAbgegeben(ip?.angebotAbgegeben);
-    setApDatum(ip?.apDatum);
-    setApAbgegeben(ip?.apAbgegeben);
-    setZpDatum(ip?.zpDatum);
-    setZpAbgegeben(ip?.zpAbgegeben);
-    setDlAbgegeben(ip?.dlAbgegeben);
-    setProjektmitglieder(ip?.projektmitglieder);
-    setQualitaetsmanager(ip?.qualitaetsmanager);
-  };
-
-  useEffect(getInternalProjectDetails, []);
-
-  const updateInternalProjectDetails = () => {
-    setInternalProjectInfoDialogOpen(false);
     const data = {
       name,
       kuerzel,
@@ -207,41 +169,11 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       zpAbgegeben,
       qualitaetsmanager,
     };
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    console.log(data);
-    /*
-    *
-    * Here will be the api call for storing the changed data in the database, currently the api call for the members page is here as a placeholder since the required function is not implemented yet
-    * Check if data is stored correctly in database after api is implemented
-    * 
-    api
-      .patch(`/users/${props.match.params.id}`, data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res: any) => {
-        if (res.status === 200) {
-          if (mounted) {
-            showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
-            getInternalProjectDetails();
-          }
-        }
-      })
-      .catch((err: any) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
-      */
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
+    //props.updateInternalProjectDetails(data);
+    setInternalProjectInfoDialogOpen(false);
   };
 
+  // functions to change the state in the update dialog
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -281,6 +213,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setDlAbgegeben(event.target.checked);
   };
 
+  // Fields of the update dialog
   const InternalProjectDialogFields: Array<Field> = [
     {
       label: "Name",
@@ -419,10 +352,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     },
   ];
 
-  /*
-   * Returns the internal project details if the retrieval of the internal project was successful (internalProjectDetails is not null or undefined)
-   */
-  return internalProjectDetails ? (
+  return (
     <div>
       <Dialog
         sx={styles.dialog}
@@ -453,15 +383,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
           >
             Abbrechen
           </Button>
-          <Button
-            className={classes.submitButton}
-            variant="contained"
-            fullWidth
-            color="primary"
-            onClick={updateInternalProjectDetails}
-          >
-            Speichern
-          </Button>
+          <Button>Speichern</Button>
         </DialogActions>
       </Dialog>
 
@@ -480,11 +402,11 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
               <Typography variant="h6">
                 <strong>Informationen zum internen Projekt</strong>
               </Typography>
-              {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
-                <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
-                  <Edit fontSize="inherit" />
-                </IconButton>
-              ) : null}
+              {props.hasPermission} ? (
+              <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
+                <Edit fontSize="inherit" />
+              </IconButton>
+              ) : null;
             </Box>
             <Box>
               <InfoSection fields={internalProjectDetailsFields} />
@@ -493,7 +415,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         </Box>
       </div>
     </div>
-  ) : null; // TODO: Instead of returning null, a loading spinner should be displayed
+  );
 };
 
-export default InternalProject;
+export default DisplayInternalProjectDetails;

@@ -124,6 +124,7 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.textField}`}
+            variant="outlined"
             key={index}
             label={field.label}
             color="primary"
