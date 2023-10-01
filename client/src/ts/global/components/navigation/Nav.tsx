@@ -180,7 +180,7 @@ const Nav: React.FunctionComponent = () => {
             <MenuDrawer drawer={toggleDrawer} />
           </SwipeableDrawer>
         </Hidden>
-        <Hidden xlDown implementation="css">
+        <Hidden mdDown implementation="css">
           <Drawer variant="permanent" open>
             <MenuDrawer drawer={toggleDrawer} />
           </Drawer>

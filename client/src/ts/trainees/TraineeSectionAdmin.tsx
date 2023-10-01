@@ -21,9 +21,9 @@ import {
   IconButton,
   Typography,
   Theme,
+  Link,
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-import { NavLink } from "react-router-dom";
 import * as traineeTypes from "./traineesTypes";
 import * as memberTypes from "../members/membersTypes";
 import * as globalTypes from "../global/globalTypes";
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tableHeader: {
       backgroundColor: "#f6891f",
-      color: "white",
+      color: theme.palette.primary.contrastText,
       paddingTop: "15px",
       marginBottom: "40px",
     },
@@ -382,11 +382,12 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
               {internalProjects.map((IP) => (
                 <TableRow key={IP.projektname}>
                   <TableCell align="left">
-                    <NavLink
-                      className="navLink" //link to members page
-                      to={`/IP/${IP.internesprojektID}`}
+                    <Link
+                      color="textprimary" //link to members page
+                      underline="hover"
+                      href={`/IP/${IP.internesprojektID}`}
                       style={{ textDecoration: "none", color: "inherit" }}
-                    >{`${IP.projektname}`}</NavLink>
+                    >{`${IP.projektname}`}</Link>
                   </TableCell>
                   <TableCell align="right">{IP.kickoff}</TableCell>
                   <TableCell align="right">
@@ -472,7 +473,9 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
               {filteredMembers.map((member) => (
                 <TableRow key={member.mitgliedID}>
                   <TableCell align="left">
-                    {member.vorname} {member.nachname}
+                    <Link color="textPrimary" underline="hover" href={`#/gesamtuebersicht/${member.mitgliedID}`}>
+                      {member.vorname} {member.nachname}{" "}
+                    </Link>
                   </TableCell>
                   <TableCell align="center">
                     <FormControlLabel disabled control={<Checkbox defaultChecked={member.AngebotBeiEV} />} label="" />
@@ -562,7 +565,6 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
           </Table>
         </InfoCard>
       </TableContainer>
-      <PageBar pageTitle="Traineebereich" />
     </div>
   );
 };

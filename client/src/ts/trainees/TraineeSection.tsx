@@ -11,6 +11,7 @@ import { authReducerActionType } from "../global/globalTypes";
 import { showErrorMessage } from "../utils/toastUtils";
 import { Grid, TextField, Theme, MenuItem } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
+import PageBar from "../global/components/navigation/PageBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -77,7 +78,7 @@ const TraineeSection: VoidFunction = () => {
         if (res.status === 200) {
           if (mounted) {
             //const to add generation value to trainee, because api call currently doesn't get generation
-            const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 11 }));
+            const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 14 }));
             setTrainees(traineesTmp);
           }
         }
@@ -106,8 +107,8 @@ const TraineeSection: VoidFunction = () => {
   const getInternalProject: VoidFunction = () => {
     let mounted = true;
     api
-      .get("/trainees/generations/15/internal-projects", {
-        //correct Routes need to be imported when available, currently only one generation is being called
+      .get(`/trainees/generations/{$:id}/internal-projects`, {
+        //correct Routes need to be imported when available, currently only one generation is being called, check if new code retreives all IPs
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -154,7 +155,7 @@ const TraineeSection: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/trainees/generations/trainee-generations", {
+      .get("/trainees/generations/:generationID/internal-projects-and-workshop-feedback", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -222,6 +223,7 @@ const TraineeSection: VoidFunction = () => {
     }
     return filteredInternalProjects;
   };
+
   // Functions to change the type of the Generationfilter from string to number
   const stringvalue = GenerationFilter;
   const numbervalue = parseInt(stringvalue, 10);
@@ -229,51 +231,52 @@ const TraineeSection: VoidFunction = () => {
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
   // Code to generate the Traineesection based on the Permissions the User has
-  if (hasPermissionInternalProject) {
-    return (
-      <div>
-        <div className="content-page">
-          <Grid item xs={6} sm={3} className={classes.generationFilterMain}>
-            <TextField
-              label="Traineegeneration"
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleGenerationChange}
-              value={GenerationFilter}
-              select
-            >
-              {dummydata.map((generation) => (
-                <MenuItem key={generation.generationID} value={generation.Bezeichnung}>
-                  {generation.Bezeichnung}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <TraineeSectionAdmin
+  return (
+    <>
+      {" "}
+      {hasPermissionInternalProject ? (
+        <div>
+          <div className="content-page">
+            <Grid item xs={6} sm={3} className={classes.generationFilterMain}>
+              <TextField
+                label="Traineegeneration"
+                className={classes.filterElement}
+                color="primary"
+                onChange={handleGenerationChange}
+                value={GenerationFilter}
+                select
+              >
+                {dummydata.map((generation) => (
+                  <MenuItem key={generation.generationID} value={generation.Bezeichnung}>
+                    {generation.Bezeichnung}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <TraineeSectionAdmin
+              listOfPermissions={auth.permissions}
+              isOwner={true}
+              trainees={getFilteredMembers()}
+              internalProjects={getFilteredInternalProjects()}
+              generation={Traineegeneration}
+              generationFilter={numbervalue}
+            />
+          </div>
+        </div>
+      ) : (
+        <div>
+          <TraineeSectionMember
             listOfPermissions={auth.permissions}
-            isOwner={true}
+            isOwner={false}
             trainees={getFilteredMembers()}
             internalProjects={getFilteredInternalProjects()}
-            generation={Traineegeneration}
-            generationFilter={numbervalue}
+            generation={dummydata}
           />
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <TraineeSectionMember
-          listOfPermissions={auth.permissions}
-          isOwner={false}
-          trainees={getFilteredMembers()}
-          internalProjects={getFilteredInternalProjects()}
-          generation={Traineegeneration}
-          generationFilter={numbervalue}
-        />
-      </div>
-    );
-  }
+      )}
+      <PageBar pageTitle="Traineebereich" />
+    </>
+  );
 };
 
 export default TraineeSection;
