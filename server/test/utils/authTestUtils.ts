@@ -1,7 +1,7 @@
 import * as request from "supertest";
 import { Express } from "express";
-import AuthRepository from "auth/AuthRepository";
-import { createCurrentTimestamp } from "utils/dateUtils";
+import AuthRepository from "../../src/auth/AuthRepository";
+import { createCurrentTimestamp } from "../../src/utils/dateUtils";
 
 /**
  * Utility class for testing the auth routes
