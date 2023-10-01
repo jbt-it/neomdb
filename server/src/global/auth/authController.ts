@@ -17,7 +17,8 @@ import crypto = require("node:crypto");
 const cookieOptions: CookieOptions = {
   httpOnly: true, // Cookie is only accesible via the browser
   secure: true, // Cookie can only be sent to an HTTPS page
-  sameSite: "none", // Cookie can be sent to every site
+  sameSite: process.env.IS_PRODUCTION ? "strict" : "none", // In development cookie can be sent to every site
+  // sameSite: "lax", // In development cookie can be sent to every site
 };
 
 /**
