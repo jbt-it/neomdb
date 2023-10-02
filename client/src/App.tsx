@@ -206,7 +206,7 @@ const App: React.FunctionComponent = () => {
           <PrivateRoute exact path="/modularedarstellungtest" component={InfoSectionTest} />
           <PrivateRoute exact path="/kvp" component={Dashboard} />
           <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
-          <PrivateRoute exact path="/internes-projekt" component={InternalProject} />
+          <PrivateRoute exact path="/internes-projekt/:id" component={InternalProject} />
           <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
           <LoginRoute exact path="/login" component={Login} />
           <Route exact path="/passwort-vergessen" component={ForgotPassword} />

@@ -430,7 +430,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         onClose={handleInternalProjectInfoDialogClose}
         aria-labelledby="general-dialog-title"
       >
-        <DialogTitle>Internes Projekt bearbeiten</DialogTitle>
+        <DialogTitle>{internalProjectDetails.name} bearbeiten</DialogTitle>
         <DialogContent dividers={true}>
           <div className={classes.fieldSectionBox}>
             <FieldSection title={"Details"} fields={InternalProjectDialogFields}></FieldSection>
