@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./ts/global/App";
+import App from "./App";
 import { ThemeProvider, Theme, StyledEngineProvider } from "@mui/material/styles";
-import globalTheme from "./ts/utils/globalTheme";
-import { AuthProvider } from "./ts/global/AuthContext";
+import globalTheme from "./utils/globalTheme";
+import { AuthProvider } from "./context/auth-context/AuthContext";
 import "./css/app.css";
 import { Toaster } from "react-hot-toast";
 import { HashRouter } from "react-router-dom";
