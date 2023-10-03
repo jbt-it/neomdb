@@ -1,4 +1,4 @@
-import { NotFoundError } from "../../types/errors";
+import { NotFoundError } from "../../types/Errors";
 import TraineesRepository from "./TraineesRepository";
 import {
   Generation,

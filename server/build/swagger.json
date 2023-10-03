@@ -113,7 +113,13 @@
 				"description": "Type of the partial member"
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
 	},
 	"info": {
 		"title": "server",
@@ -131,13 +137,26 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/JWTPayload"
+									"properties": {
+										"token": {
+											"type": "string"
+										},
+										"payload": {
+											"$ref": "#/components/schemas/JWTPayload"
+										}
+									},
+									"required": [
+										"token",
+										"payload"
+									],
+									"type": "object"
 								}
 							}
 						}
 					}
 				},
 				"description": "Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions",
+				"summary": "Logs in a user",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -146,10 +165,37 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/UserLoginRequest"
+							},
+							"example": {
+								"username": "w.luft",
+								"password": "s3cre7"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"operationId": "GetUserData",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JWTPayload"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/members": {
@@ -171,7 +217,11 @@
 					}
 				},
 				"description": "Get a list of all members",
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": []
 			}
 		}

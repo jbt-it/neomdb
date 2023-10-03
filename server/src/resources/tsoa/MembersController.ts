@@ -1,5 +1,5 @@
 import MembersService from "../members/MembersService";
-import { Get, Route, Controller } from "tsoa";
+import { Get, Route, Controller, Security, Request } from "tsoa";
 import { MemberPartial } from "../../types/membersTypes";
 
 /**
@@ -14,6 +14,7 @@ export class MembersController extends Controller {
    * Get a list of all members
    */
   @Get("")
+  @Security("jwt")
   public async getMembers(): Promise<MemberPartial[]> {
     const members = await this.membersService.getMemberList();
     return members;

@@ -1,6 +1,6 @@
 import { Mentor } from "types/membersTypes";
 import { query } from "../../database";
-import { QueryError } from "../../types/errors";
+import { QueryError } from "../../types/Errors";
 import {
   Generation,
   InternalProject,

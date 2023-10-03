@@ -1,5 +1,5 @@
 import AuthService from "../../auth/AuthService";
-import { Body, Post, Route, Controller } from "tsoa";
+import { Body, Post, Route, Controller, Request, Get, Security } from "tsoa";
 import { JWTPayload, UserLoginRequest } from "../../types/authTypes";
 import { generateJWT } from "../../utils/jwtUtils";
 import { getCookieOptionsAsString } from "../../auth/cookieConfig";
@@ -14,15 +14,28 @@ export class AuthController extends Controller {
 
   /**
    * Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions
+   * @summary Logs in a user
+   *
+   * @example requestBody {
+   *  "username": "w.luft",
+   *  "password": "s3cre7"
+   * }
    */
   @Post("login")
-  public async login(@Body() requestBody: UserLoginRequest): Promise<JWTPayload> {
+  public async login(@Body() requestBody: UserLoginRequest): Promise<{ payload: JWTPayload; token: string }> {
     const payload = await this.authService.loginUser(requestBody);
     const token = generateJWT(payload);
 
     const cookieOptions = getCookieOptionsAsString();
     this.setHeader("Set-Cookie", `token=${token}; ${cookieOptions}`);
+    this.setHeader("x-auth-token", token);
 
-    return payload;
+    return { payload, token };
+  }
+
+  @Get("me")
+  @Security("jwt")
+  public async getUserData(@Request() request: any): Promise<JWTPayload> {
+    return Promise.resolve(request.user);
   }
 }

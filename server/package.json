@@ -23,6 +23,7 @@
     "mysql2": "^3.4.2",
     "nodemailer": "^6.9.3",
     "nodemon": "^2.0.20",
+    "swagger-ui-express": "^5.0.0",
     "ts-node-dev": "^1.1.7",
     "tsoa": "^5.1.1",
     "typescript": "^5.2.2"
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.5",
     "@types/supertest": "^2.0.12",
+    "@types/swagger-ui-express": "^4.1.4",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
