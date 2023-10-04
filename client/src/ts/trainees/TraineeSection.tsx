@@ -78,7 +78,7 @@ const TraineeSection: VoidFunction = () => {
         if (res.status === 200) {
           if (mounted) {
             //const to add generation value to trainee, because api call currently doesn't get generation
-            const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 14 }));
+            const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 15 }));
             setTrainees(traineesTmp);
           }
         }
