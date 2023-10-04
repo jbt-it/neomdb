@@ -151,7 +151,7 @@ const MemberProfile: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setMembersDetails(res.data[0]);
+            setMembersDetails(res.data);
           }
         }
       })

@@ -5,6 +5,7 @@ import express = require("express");
 import dotenv = require("dotenv");
 import cookieParser = require("cookie-parser");
 
+import errorHandler from "./middleware/errorHandling";
 // import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
 import routes from "./routes";
@@ -37,5 +38,10 @@ app.use(cookieParser());
  * Use routes
  */
 app.use("/api", routes);
+
+/*
+ * Centralized Error handling
+ */
+app.use(errorHandler);
 
 export default app;
