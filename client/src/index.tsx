@@ -22,9 +22,9 @@ ReactDOM.render(
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <HashRouter>
             <App />
+            <Toaster position="bottom-center" reverseOrder={true} />
           </HashRouter>
         </LocalizationProvider>
-        <Toaster position="bottom-center" reverseOrder={true} />
       </ThemeProvider>
     </StyledEngineProvider>
   </AuthProvider>,

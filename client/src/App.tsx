@@ -1,8 +1,10 @@
 // React imports
 import React, { memo, useCallback, useContext, useState } from "react";
-import { HashRouter, Route, Routes, Navigate, useLocation, useRoutes } from "react-router-dom";
+import { HashRouter, Route, Routes, Navigate, useLocation, useRoutes, Outlet } from "react-router-dom";
 import { useEffect } from "react";
-import LoggedIn from "./LoggedIn";
+import PrivateRoutes from "./components/routing/PrivateRoutes";
+import PublicRoutes from "./components/routing/PublicRoutes";
+import ProtectedRoutes from "./components/routing/ProtectedRoutes";
 import Layout from "./components/general/Layout";
 
 // MUI imports
@@ -57,7 +59,6 @@ interface LocationState {
 const App: React.FunctionComponent = () => {
   const [checkAuthLoading, setCheckAuthLoading] = useState(true);
   const { auth, dispatchAuth } = useContext(AuthContext);
-
   /**
    * Checks if the user is (still) authenticated
    * and retrieves the data of the logged in user
@@ -96,36 +97,30 @@ const App: React.FunctionComponent = () => {
   /**
    * Renders the specified component if the user is authenticated otherwise
    * the user gets redirected to the login page
-   *
-  const PrivateRoute = memo(({ component: Component, ...rest }: any) => {
-    return checkAuthLoading ? (
-      <LoadingCircle />
-    ) : (
-      <Route
-        {...rest}
-        render={({ location, ...props }) =>
-          auth.authenticated ? (
-            <Component {...props} />
-          ) : (
-            <Redirect to={{ pathname: "/login", state: { from: location } }} />
-          )
-        }
-      />
-    );
-  });
+   */
+  // const PrivateRoutes = memo(() => {
+  //   const location = useLocation();
+  //   return checkAuthLoading ? (
+  //     <LoadingCircle />
+  //   ) : auth.authenticated ? (
+  //     <Outlet />
+  //   ) : (
+  //     <Navigate to="/login" state={{ from: location }} replace />
+  //   );
+  // });
 
   /**
    * Renders the login component if the user is not authenticated otherwise
    * the user gets redirected to the dashboard page
-   *
-  const LoginRoute = memo(({ component: Component, ...rest }: any) => {
-    const { state } = useLocation<LocationState>();
+   */
+  const LoginRoute: React.FunctionComponent = memo(() => {
+    const { state } = useLocation();
 
     if (auth.authenticated === true) {
-      return <Redirect to={state?.from || "/"} />;
+      return <Navigate to={state?.from || "/"} />;
     }
 
-    return checkAuthLoading ? <LoadingCircle /> : <Route {...rest} render={(props) => <Component {...props} />} />;
+    return checkAuthLoading ? <LoadingCircle /> : <Outlet />;
   });
 
   /**
@@ -134,13 +129,13 @@ const App: React.FunctionComponent = () => {
    * @param component The component, that should be displayed
    * @param permissionIDs The array of permissions that should be checked
    * (if the array is empty, any user with permissions can access the given component)
-   *
+   */
   const ProtectedRoute = memo(({ component: Component, permissionIDs, ...rest }: any) => {
     /**
      * Checks if the currently logged in user has the permission numbers specified
      * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
      * @returns true if the user has the given permissions
-     *
+     */
     const checkForPermission = (permissionNumbers: number[]) => {
       if (permissionNumbers.length === 0) {
         // Check if the given permissionNumbers array contains at least one permission id.
@@ -153,20 +148,13 @@ const App: React.FunctionComponent = () => {
       <LoadingCircle />
     ) : checkAuthLoading ? (
       <LoadingCircle />
+    ) : checkForPermission(permissionIDs) ? (
+      <Outlet />
     ) : (
-      <Route
-        {...rest}
-        render={({ location, ...props }) =>
-          checkForPermission(permissionIDs) ? (
-            <Component {...props} />
-          ) : (
-            <Redirect to={{ pathname: "/", state: { from: location } }} />
-          )
-        }
-      />
+      <Navigate to="/" state={{ from: location }} replace />
     );
   });
-
+  /*
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <HashRouter>
@@ -174,48 +162,84 @@ const App: React.FunctionComponent = () => {
           // Renders the Nav componenent if the user is authenticated
           auth.authenticated ? <Nav /> : null
         }
-        <Switch>
-          <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
-          <PrivateRoute exact path="/" component={Dashboard} />
-          <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
-          <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
-          <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
-          <PrivateRoute exact path="/geburtstage" component={Dashboard} />
-          <PrivateRoute exact path="/traineebereich" component={Dashboard} />
-          <PrivateRoute exact path="/kuratoren" component={Dashboard} />
-          <PrivateRoute exact path="/projekte" component={Dashboard} />
-          <PrivateRoute exact path="/veranstaltungen" component={Dashboard} />
-          <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
-          <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
-          <PrivateRoute exact path="/raumreservierung" component={Dashboard} />
-          <PrivateRoute exact path="/innovationsmanagement" component={Dashboard} />
-          <PrivateRoute exact path="/meine-funktionen" component={Dashboard} />
-          <PrivateRoute exact path="/weitere-funktionen" component={Dashboard} />
-          <PrivateRoute exact path="/mitgliederverwaltung" component={MemberManagement} />
-          <PrivateRoute exact path="/traineepraeferenzen" component={TraineePreferences} />
-          <PrivateRoute exact path="/traineezuteilung" component={AssignTrainees} />
-          <PrivateRoute exact path="/modularesformulartest" component={FieldSectionTest} />
-          <PrivateRoute exact path="/modularedarstellungtest" component={InfoSectionTest} />
-          <PrivateRoute exact path="/kvp" component={Dashboard} />
-          <PrivateRoute exact path="/gesamtuebersicht/:id" component={MemberProfile} />
-          <ProtectedRoute exact path="/berechtigungen" component={PermissionsOverview} permissionIDs={[]} />
-          <LoginRoute exact path="/login" component={Login} />
-          <Route exact path="/passwort-vergessen" component={ForgotPassword} />
-          <Route exact path="/passwort-vergessen-zuruecksetzten/:key" component={ResetForgotPassword} />
-          <PrivateRoute path="*" component={NotFound} />
-        </Switch>
+        <Routes>
+
+          <Route path="/login" element={Login} />
+
+          <Route path="/passwort-vergessen" element={ForgotPassword} />
+          <Route path="/passwort-vergessen-zuruecksetzten/:key" element={ResetForgotPassword} />
+
+
+          <Route element={<PrivateRoutes />}>
+            <Route path="/user-change-password" element={ChangePassword} />
+            <Route path="/" element={Dashboard} />
+            <Route path="/gesamtuebersicht" element={MemberOverview} />
+            <Route path="/ressorts" element={DepartmentOverview} />
+            <Route path="/ewigervorstand" element={DirectorsHistory} />
+            <Route path="/geburtstage" element={Dashboard} />
+            <Route path="/traineebereich" element={Dashboard} />
+            <Route path="/kuratoren" element={Dashboard} />
+            <Route path="/projekte" element={Dashboard} />
+            <Route path="/veranstaltungen" element={Dashboard} />
+            <Route path="/mm-tracking" element={Dashboard} />
+            <Route path="/pl-qm-tool" element={Dashboard} />
+            <Route path="/raumreservierung" element={Dashboard} />
+            <Route path="/innovationsmanagement" element={Dashboard} />
+            <Route path="/meine-funktionen" element={Dashboard} />
+            <Route path="/weitere-funktionen" element={Dashboard} />
+            <Route path="/mitgliederverwaltung" element={MemberManagement} />
+            <Route path="/traineepraeferenzen" element={TraineePreferences} />
+            <Route path="/traineezuteilung" element={AssignTrainees} />
+            <Route path="/modularesformulartest" element={FieldSectionTest} />
+            <Route path="/modularedarstellungtest" element={InfoSectionTest} />
+            <Route path="/kvp" element={Dashboard} />
+            <Route path="/gesamtuebersicht/:id" element={MemberProfile} />
+            <Route path="*" element={NotFound} />
+          </Route>
+
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/berechtigungen" element={PermissionsOverview} permissionIDs={[]} />
+          </Route>
+
+        </Routes>
       </HashRouter>
     </LocalizationProvider>
   );
 };
 */
+
   const routes = useRoutes([
+    {
+      path: "/login",
+      element: (
+        <PublicRoutes>
+          <Login />
+        </PublicRoutes>
+      ),
+    },
+    {
+      path: "/passwort-vergessen",
+      element: (
+        <PublicRoutes>
+          <ForgotPassword />
+        </PublicRoutes>
+      ),
+    },
+    {
+      path: "/passwort-vergessen-zuruecksetzen/:key",
+      element: (
+        <PublicRoutes>
+          <ResetForgotPassword />
+        </PublicRoutes>
+      ),
+    },
     {
       path: "/",
       element: (
-        <LoggedIn>
+        <PrivateRoutes>
           <Layout />
-        </LoggedIn>
+        </PrivateRoutes>
       ),
       children: [
         {
@@ -255,7 +279,14 @@ const App: React.FunctionComponent = () => {
         { path: "user-change-password", element: <ChangePassword /> },
       ],
     },
-    { path: "/login", element: <Login /> },
+    {
+      path: "/berechtigungen",
+      element: (
+        <ProtectedRoutes permissionIDs={[]}>
+          <PermissionsOverview />
+        </ProtectedRoutes>
+      ),
+    },
     { path: "*", element: <NotFound /> },
   ]);
 

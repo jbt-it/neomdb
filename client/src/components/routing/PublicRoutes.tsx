@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useCallback, useState } from "react";
-import { AuthContext } from "./context/auth-context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import api from "./utils/api";
-import { authReducerActionType } from "./types/globalTypes";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import { Navigate, useLocation } from "react-router-dom";
+import api from "../../utils/api";
+import { authReducerActionType } from "../../types/globalTypes";
 
-import LoadingCircle from "./components/general/LoadingCircle";
+import LoadingCircle from "../general/LoadingCircle";
 
-const LoggedIn: React.FunctionComponent = ({ children }) => {
+const PublicRoutes: React.FunctionComponent = ({ children }) => {
   const [checkAuthLoading, setCheckAuthLoading] = useState(true);
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const history = useNavigate();
+  const location = useLocation();
 
   const checkAuth = useCallback(() => {
     // Tries to retrieve the user data
@@ -44,14 +44,14 @@ const LoggedIn: React.FunctionComponent = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  useEffect(() => {
-    console.log("auth:" + auth.authenticated);
-    if (!auth.authenticated) {
-      history("/login");
-    }
-  }, [auth, history]);
-
-  return checkAuthLoading ? <LoadingCircle /> : <>{children}</>;
+  // ToDo: Add possiblility to redirect to the page the user wanted to visit before being redirected to the login page
+  return checkAuthLoading ? (
+    <LoadingCircle />
+  ) : !auth.authenticated ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/" state={{ from: location }} replace />
+  );
 };
 
-export default LoggedIn;
+export default PublicRoutes;

@@ -13,6 +13,7 @@ import {
   Collapse,
   Typography,
   Theme,
+  styled,
 } from "@mui/material";
 import {
   Dashboard,
@@ -57,14 +58,6 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: "bold",
       fontSize: "medium",
     },
-    listItemNavText: {
-      color: "black",
-      textDecoration: "none",
-    },
-    active: {
-      color: "rgb(246,137,31)",
-      textDecoration: "none",
-    },
     subListItem: {
       marginLeft: theme.spacing(8),
     },
@@ -76,6 +69,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+const StyledNavLink = styled(NavLink)(({ theme }) => ({
+  color: "black",
+  textDecoration: "none",
+  "&.active": {
+    color: theme.palette.primary.main,
+    textDecoration: "none",
+  },
+}));
 
 // Interface for the drawer props
 interface DrawerProps {
@@ -209,18 +211,14 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
       </div>
       <Divider />
       <List>
-        <NavLink
-          to="/"
-          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-          onClick={handleNavLinkClick(pathname)}
-        >
+        <StyledNavLink to="/" onClick={handleNavLinkClick(pathname)}>
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
               <Dashboard className={determineListItemClass("/")} />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
-        </NavLink>
+        </StyledNavLink>
         <ListItem button onClick={handleCollpaseClick("Mitglieder")}>
           <ListItemIcon>
             <PeopleAlt className={determineListItemClass("Mitglieder")} />
@@ -230,111 +228,67 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         </ListItem>
         <Collapse in={memberOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <NavLink
-              to="/gesamtuebersicht"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            <StyledNavLink to="/gesamtuebersicht" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Gesamtübersicht" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/vorstand"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/vorstand" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Der Vorstand" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/ressorts"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/ressorts" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Ressorts" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/vorstand"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            ></NavLink>
-            <NavLink
-              to="/ewigervorstand"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/vorstand" onClick={handleNavLinkClick(pathname)}></StyledNavLink>
+            <StyledNavLink to="/ewigervorstand" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Ewiger Vorstand" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/geburtstage"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/geburtstage" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Geburtstage" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/traineebereich"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/traineebereich" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Traineebereich" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/kuratoren"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/kuratoren" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Kuratoren" />
               </ListItem>
-            </NavLink>
+            </StyledNavLink>
             {auth.permissions.length > 0 ? (
-              <NavLink
-                to="/berechtigungen"
-                className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-                onClick={handleNavLinkClick(pathname)}
-              >
+              <StyledNavLink to="/berechtigungen" onClick={handleNavLinkClick(pathname)}>
                 <ListItem button onClick={props.drawer(false)}>
                   <ListItemText className={classes.subListItem} primary="Berechtigungen" />
                 </ListItem>
-              </NavLink>
+              </StyledNavLink>
             ) : null}
           </List>
         </Collapse>
-        <NavLink
-          to="/projekte"
-          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-          onClick={handleNavLinkClick(pathname)}
-        >
+        <StyledNavLink to="/projekte" onClick={handleNavLinkClick(pathname)}>
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
               <TrendingUp className={determineListItemClass("/projekte")} />
             </ListItemIcon>
             <ListItemText primary="Projekte" />
           </ListItem>
-        </NavLink>
-        <NavLink
-          to="/veranstaltungen"
-          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-          onClick={handleNavLinkClick(pathname)}
-        >
+        </StyledNavLink>
+        <StyledNavLink to="/veranstaltungen" onClick={handleNavLinkClick(pathname)}>
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
               <Event className={determineListItemClass("/veranstaltungen")} />
             </ListItemIcon>
             <ListItemText primary="Veranstaltungen" />
           </ListItem>
-        </NavLink>
+        </StyledNavLink>
         <ListItem button onClick={handleCollpaseClick("Tools")}>
           <ListItemIcon>
             <Build className={determineListItemClass("Tools")} />
@@ -344,42 +298,26 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         </ListItem>
         <Collapse in={toolsOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <NavLink
-              to="/mm-tracking"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            <StyledNavLink to="/mm-tracking" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="MM-Tracking" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/pl-qm-tool"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/pl-qm-tool" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="PL-QM-Tool" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/raumreservierung"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/raumreservierung" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Raumreservierung" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/innovationsmanagement"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/innovationsmanagement" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Innovationsmanagement" />
               </ListItem>
-            </NavLink>
+            </StyledNavLink>
           </List>
         </Collapse>
         <ListItem button onClick={handleCollpaseClick("Meine Funktionen")}>
@@ -391,62 +329,42 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
         </ListItem>
         <Collapse in={myFunctionsOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <NavLink
-              to={`/gesamtuebersicht/${auth.userID}`}
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            <StyledNavLink to={`/gesamtuebersicht/${auth.userID}`} onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Meine Seite" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/user-change-password"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/user-change-password" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Passwort ändern" />
               </ListItem>
-            </NavLink>
-            <NavLink
-              to="/meine-funktionen"
-              className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-              onClick={handleNavLinkClick(pathname)}
-            >
+            </StyledNavLink>
+            <StyledNavLink to="/meine-funktionen" onClick={handleNavLinkClick(pathname)}>
               <ListItem button onClick={props.drawer(false)}>
                 <ListItemText className={classes.subListItem} primary="Lines abonieren" />
               </ListItem>
-            </NavLink>
+            </StyledNavLink>
           </List>
         </Collapse>
-        <NavLink
-          to="/weitere-funktionen"
-          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-          onClick={handleNavLinkClick(pathname)}
-        >
+        <StyledNavLink to="/weitere-funktionen" onClick={handleNavLinkClick(pathname)}>
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
               <MoreHoriz className={determineListItemClass("/weitere-funktionen")} />
             </ListItemIcon>
             <ListItemText primary="Weitere Funktionen" />
           </ListItem>
-        </NavLink>
+        </StyledNavLink>
       </List>
       <Divider />
       <List>
-        <NavLink
-          to="/kvp"
-          className={(classes.listItemNavText, ({ isActive }) => (isActive ? classes.active : ""))}
-          onClick={handleNavLinkClick(pathname)}
-        >
+        <StyledNavLink to="/kvp" onClick={handleNavLinkClick(pathname)}>
           <ListItem button onClick={props.drawer(false)}>
             <ListItemIcon>
               <EmojiObjects className={determineListItemClass("/kvp")} />
             </ListItemIcon>
             <ListItemText primary="KVP" />
           </ListItem>
-        </NavLink>
+        </StyledNavLink>
         <ListItem
           button
           onClick={() => {
