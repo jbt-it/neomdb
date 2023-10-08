@@ -1,44 +1,12 @@
-import React, { useContext, useEffect, useCallback, useState, memo } from "react";
+import React, { useContext } from "react";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import api from "../../utils/api";
-import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
-import LoadingCircle from "../general/LoadingCircle";
-
-const ProtectedRoute = memo(({ component: Component, permissionIDs, ...rest }: any) => {
-  const [checkAuthLoading, setCheckAuthLoading] = useState(true);
-  const { auth, dispatchAuth } = useContext(AuthContext);
+const ProtectedRoute = ({ children, permissionIDs }: any) => {
+  const { auth } = useContext(AuthContext);
   const location = useLocation();
 
-  const checkAuth = useCallback(() => {
-    // Tries to retrieve the user data
-    api
-      .get("auth/user-data")
-      .then((res) => {
-        // If the retrieval of the user data is succesfull the user is authenticated
-        if (res.status === 200) {
-          const userID = res.data.mitgliedID;
-          const userName = res.data.name;
-          const permissions = res.data.permissions;
-          const roles = res.data.roles;
-          dispatchAuth({
-            type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions, roles },
-          });
-        } else {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-        setCheckAuthLoading(false);
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-        setCheckAuthLoading(false);
-      });
-  }, [dispatchAuth]);
   /**
    * Checks if the currently logged in user has the permission numbers specified
    * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
@@ -51,18 +19,11 @@ const ProtectedRoute = memo(({ component: Component, permissionIDs, ...rest }: a
     }
     return doesPermissionsHaveSomeOf(auth.permissions, permissionNumbers);
   };
-  // Calls checkAuth on (re)render of routes
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  return checkAuthLoading ? (
-    <LoadingCircle />
-  ) : checkForPermission(permissionIDs) ? (
-    <Outlet />
+  return checkForPermission(permissionIDs) ? (
+    <>{children}</>
   ) : (
-    <Navigate to="/" state={{ from: location }} replace />
+    <Navigate to="/" state={{ from: location }} replace={true} />
   );
-});
+};
 
 export default ProtectedRoute;

@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useCallback, useState } from "react";
-import { AuthContext } from "../../context/auth-context/AuthContext";
+import React, { useEffect, useCallback, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import api from "../../utils/api";
 import { authReducerActionType } from "../../types/globalTypes";
+import { useAuth } from "../../hooks/useAuth";
+import Layout from "../general/Layout";
 
 import LoadingCircle from "../general/LoadingCircle";
 
-const PrivateRoutes: React.FunctionComponent = ({ children }) => {
+const PrivateRoutes: React.FunctionComponent = () => {
   const [checkAuthLoading, setCheckAuthLoading] = useState(true);
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth, dispatchAuth } = useAuth();
   const location = useLocation();
 
   const checkAuth = useCallback(() => {
@@ -44,11 +45,10 @@ const PrivateRoutes: React.FunctionComponent = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  // ToDo: Add possiblility to redirect to the page the user wanted to visit before being redirected to the login page
   return checkAuthLoading ? (
     <LoadingCircle />
   ) : auth.authenticated ? (
-    <>{children}</>
+    <Layout />
   ) : (
     <Navigate to="/login" state={{ from: location }} replace />
   );
