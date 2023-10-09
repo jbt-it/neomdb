@@ -88,3 +88,32 @@ export type TraineeAssignment = {
   mentorID: number;
   departmentID: number;
 };
+
+/**
+ * Type of the milestones during internal project for trainee
+ */
+export type InternalProjectAndTrainee = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  generation: number;
+  internesprojekt: number;
+  projektname: string;
+  kuerzel: string;
+  AngebotBeiEV: string;
+  ZPbeiEV: string;
+  ZPgehalten: string;
+  APbeiEV: string;
+  APgehalten: string;
+  DLbeiEV: string;
+};
+
+/**
+ * Type of the given feedback on obligatory workshop for trainees
+ */
+export type Workshop = {
+  mitgliedID: number;
+  schulungsinstanzID: number;
+  schulungsname: string;
+  feedbackAbgegeben: number;
+};
