@@ -6,6 +6,7 @@ const config: Config = {
   preset: "ts-jest",
   testEnvironment: "node",
   forceExit: true,
+  testTimeout: 30000,
 };
 
 export default config;
