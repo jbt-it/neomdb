@@ -24,7 +24,7 @@ import {
   Link,
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-import * as traineeTypes from "./traineesTypes";
+import * as traineeTypes from "../../types/traineesTypes";
 import * as memberTypes from "../../types/membersTypes";
 import * as globalTypes from "../../types/globalTypes";
 import { AddCircle } from "@mui/icons-material";
@@ -82,22 +82,15 @@ interface TraineeProps {
   isOwner: boolean;
   internalProjects: traineeTypes.InternalProject[];
   trainees: traineeTypes.Trainee[];
-  generation: memberTypes.Member[];
+  members: memberTypes.Member[];
+  generation: traineeTypes.Trainee[];
   generationFilter: number;
+  currentGeneration: string;
 }
 interface UserOption {
   id: number;
   name: string;
 }
-//TODO: This array consists of dummy data. It needs to be changed once backend connection is established
-//For the "users" trainees need to be retrieved
-//For the "qms" active members need to be retrieved
-const options: UserOption[] = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-  { id: 3, name: "Charlie" },
-  { id: 4, name: "Shitting Toothpaste" },
-];
 
 const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: TraineeProps) => {
   const [open, setOpen] = React.useState(false);
@@ -122,6 +115,14 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
     ? trainees.filter((member) => member.generation === generationFilter)
     : trainees;
 
+  const traineeOptions: UserOption[] = filteredMembers.map((member) => ({
+    name: `${member.vorname} ${member.nachname}`,
+    id: member.mitgliedID,
+  }));
+  const qmOptions: UserOption[] = props.members.map((member) => ({
+    name: `${member.vorname} ${member.nachname}`,
+    id: member.mitgliedID,
+  }));
   // Creation of table with all the information about the internal project and the grid
   // with all the names of the trainee generation
 
@@ -144,7 +145,6 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                 <Button variant="outlined" startIcon={<AddCircle />} onClick={handleClickOpen}>
                   Internes Projekt Hinzufügen
                 </Button>
-                {/* TODO: Only show this button, when the current generation is selected*/}
                 <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>Informationen zum internen Projekt</DialogTitle>
                   <DialogContent>
@@ -190,7 +190,6 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                         >
                           <Typography>Traineegeneration:</Typography>
                         </Grid>
-                        {/* TODO: Once a backend connection is established, this text field needs to show the current Traineegeneration*/}
                         <Grid
                           item
                           xs={12}
@@ -203,7 +202,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                             id="traineegeneration"
                             variant="outlined"
                             size="small"
-                            defaultValue="Sommersemester 2023"
+                            defaultValue={props.currentGeneration}
                           />
                         </Grid>
                       </Grid>
@@ -238,7 +237,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                                     }
                                   }}
                                   id={`members-${index}`}
-                                  options={options.filter((option) => !users.includes(option))}
+                                  options={traineeOptions.filter((option) => !users.includes(option))}
                                   getOptionLabel={(option: UserOption) => option.name}
                                   className={classes.fullWidth}
                                   renderInput={(params) => (
@@ -308,7 +307,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                                     }
                                   }}
                                   id={`members-${index}`}
-                                  options={options.filter((option) => !qms.includes(option))}
+                                  options={qmOptions.filter((option) => !qms.includes(option))}
                                   getOptionLabel={(option: UserOption) => option.name}
                                   className={classes.fullWidth}
                                   renderInput={(params) => (
@@ -551,14 +550,11 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                       label=""
                     />
                   </TableCell>
-                  {doesPermissionsHaveSomeOf(props.listOfPermissions, [18]) && (
-                    <TableCell align="center">
-                      <Button variant="outlined" startIcon={<AddCircle />}>
-                        aufnehmen
-                      </Button>
-                      {/* TODO: Once a backend connection is established, this button should only be usable when all boxes are ticked*/}
-                    </TableCell>
-                  )}
+                  <TableCell align="center">
+                    <Button variant="outlined" startIcon={<AddCircle />}>
+                      aufnehmen
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

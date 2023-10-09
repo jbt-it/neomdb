@@ -34,6 +34,7 @@ import DirectorsHistory from "./pages/members/DirectorsHistory";
 // trainee pages
 import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
+import TraineeSection from "./pages/trainees/TraineeSection";
 
 // other pages
 import Login from "./pages/Login";
@@ -42,7 +43,6 @@ import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
 
 import { authReducerActionType } from "./types/globalTypes";
-import TraineeSection from "./pages/trainees/TraineeSection";
 
 /**
  * Interfaces for the location state of react-router-dom

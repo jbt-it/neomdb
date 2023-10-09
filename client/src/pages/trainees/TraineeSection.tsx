@@ -1,10 +1,10 @@
 import TraineeSectionAdmin from "./TraineeSectionAdmin";
 import TraineeSectionMember from "./TraineeSectionMember";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import * as membersTypes from "../../types/membersTypes";
 import { useState, useContext } from "react";
 import api from "../../utils/api";
-import * as traineeTypes from "./traineesTypes";
+import * as traineeTypes from "../../types/traineesTypes";
 import { Grid, TextField, Theme, MenuItem } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
@@ -62,8 +62,9 @@ const TraineeSection: React.FunctionComponent = () => {
   const [trainees, setTrainees] = useState<traineeTypes.Trainee[]>([]);
   const [IP, setInternalProject] = useState<traineeTypes.InternalProject[]>([]);
   const [hasPermission, setListOfPermissions] = useState<boolean>(false);
-  const [Traineegeneration, setTraineeGeneration] = useState<membersTypes.Member[]>([]);
+  const [Traineegeneration, setTraineeGeneration] = useState<traineeTypes.Trainee[]>([]);
   const [GenerationFilter, setGenerationFilter] = useState<string>("");
+  const [members, setMembers] = useState<membersTypes.Member[]>([]);
 
   //api call to get all information of current and former trainees
 
@@ -93,6 +94,35 @@ const TraineeSection: React.FunctionComponent = () => {
       mounted = false;
     };
   };
+
+  /**
+   * Retrieves all members
+   */
+  const getMembers: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/users`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembers(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
 
   /**
    * Handles the change event on the traineegeneration filter input
@@ -175,6 +205,7 @@ const TraineeSection: React.FunctionComponent = () => {
     };
   };
   useEffect(() => getTrainee(), []);
+  useEffect(() => getMembers(), []);
   useEffect(() => getInternalProject(), []);
   useEffect(() => getPermissions(), []);
   useEffect(() => getTraineegeneration(), []);
@@ -260,6 +291,8 @@ const TraineeSection: React.FunctionComponent = () => {
               internalProjects={getFilteredInternalProjects()}
               generation={Traineegeneration}
               generationFilter={numbervalue}
+              members={members}
+              currentGeneration={stringvalue}
             />
           </div>
         </div>
@@ -271,6 +304,7 @@ const TraineeSection: React.FunctionComponent = () => {
             trainees={getFilteredMembers()}
             internalProjects={getFilteredInternalProjects()}
             generation={dummydata}
+            generationFilter={numbervalue}
           />
         </div>
       )}

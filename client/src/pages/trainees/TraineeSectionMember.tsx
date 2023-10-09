@@ -21,7 +21,7 @@ import {
 import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import * as traineeTypes from "./traineesTypes";
+import * as traineeTypes from "../../types/traineesTypes";
 import * as membersTypes from "../../types/membersTypes";
 import * as globalTypes from "../../types/globalTypes";
 import PageBar from "../../components/navigation/PageBar";
@@ -55,6 +55,7 @@ interface TraineeProps {
   internalProjects: traineeTypes.InternalProject[];
   trainees: traineeTypes.Trainee[];
   generation: traineeTypes.Generation[];
+  generationFilter: number;
 }
 
 const TraineeSectionMember: React.FunctionComponent<TraineeProps> = (props: TraineeProps) => {
@@ -166,6 +167,7 @@ const TraineeSectionMember: React.FunctionComponent<TraineeProps> = (props: Trai
           </Table>
         </TableContainer>
       </div>
+      <PageBar pageTitle="Traineebereich" />
     </div>
   );
 };
