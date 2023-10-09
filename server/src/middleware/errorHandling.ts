@@ -5,7 +5,7 @@ import {
   UnauthenticatedError,
   UnauthorizedError,
   UnprocessableEntityError,
-} from "../types/errors";
+} from "../types/Errors";
 import { RouteFunction } from "types/expressTypes";
 
 /**

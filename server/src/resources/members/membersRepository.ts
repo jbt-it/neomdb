@@ -1,7 +1,7 @@
 import mysql = require("mysql2");
 import { executeMultipleQueries, query } from "../../database";
 import { Permission, PermissionAssignment } from "../../types/authTypes";
-import { QueryError, UnprocessableEntityError } from "../../types/errors";
+import { QueryError, UnprocessableEntityError } from "../../types/Errors";
 import {
   Department,
   DepartmentMember,
