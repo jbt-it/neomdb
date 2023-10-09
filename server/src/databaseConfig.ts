@@ -5,13 +5,11 @@ import fs = require("fs");
 
 // Check if the environment is test
 const isTest = process.env.NODE_ENV === "test";
-// Check if the environment is development
-const isDev = process.env.NODE_ENV === "development";
 
 // Read the database password from file if production
 let dbPassword = null;
 try {
-  if (!isTest && !isDev) {
+  if (!isTest && process.env.IS_PRODUCTION) {
     dbPassword = fs.readFileSync(process.env.DB_PASSWORD_PROD_FILE, "utf8");
   }
 } catch (err) {
@@ -21,7 +19,10 @@ try {
 // Parse the database port to int
 let dbPort = null;
 try {
-  dbPort = parseInt(process.env.DB_PORT_PROD) || parseInt(process.env.DB_PORT);
+  if (!isTest && process.env.IS_PRODUCTION) {
+    dbPort = parseInt(process.env.DB_PORT_PROD);
+  }
+  dbPort = parseInt(process.env.DB_PORT);
 } catch (err) {
   console.error(`Error trying to parse database port ${process.env.DB_PORT_PROD} to int: ${err}`);
 }
@@ -67,6 +68,10 @@ const prodDatabaseConfig = {
  * Config for the MySQL database
  * (depending on the environment)
  */
-const databaseConfig = isTest ? testDatabaseConfig : isDev ? devDatabaseConfig : prodDatabaseConfig;
+const databaseConfig = isTest
+  ? testDatabaseConfig
+  : process.env.IS_PRODUCTION === "true"
+  ? prodDatabaseConfig
+  : devDatabaseConfig;
 
 export default databaseConfig;
