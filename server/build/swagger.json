@@ -137,19 +137,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"token": {
-											"type": "string"
-										},
-										"payload": {
-											"$ref": "#/components/schemas/JWTPayload"
-										}
-									},
-									"required": [
-										"token",
-										"payload"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/JWTPayload"
 								}
 							}
 						}
@@ -188,6 +176,22 @@
 								}
 							}
 						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"204": {
+						"description": "No content"
 					}
 				},
 				"security": [

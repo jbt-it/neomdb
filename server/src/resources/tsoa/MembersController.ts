@@ -1,5 +1,5 @@
 import MembersService from "../members/MembersService";
-import { Get, Route, Controller, Security, Request } from "tsoa";
+import { Get, Route, Controller, Security } from "tsoa";
 import { MemberPartial } from "../../types/membersTypes";
 
 /**

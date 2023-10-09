@@ -22,20 +22,34 @@ export class AuthController extends Controller {
    * }
    */
   @Post("login")
-  public async login(@Body() requestBody: UserLoginRequest): Promise<{ payload: JWTPayload; token: string }> {
+  public async login(@Body() requestBody: UserLoginRequest): Promise<JWTPayload> {
     const payload = await this.authService.loginUser(requestBody);
     const token = generateJWT(payload);
 
     const cookieOptions = getCookieOptionsAsString();
     this.setHeader("Set-Cookie", `token=${token}; ${cookieOptions}`);
-    this.setHeader("x-auth-token", token);
 
-    return { payload, token };
+    /*
+     * Only set the x-auth-token header in development because swagger-ui does not support cookies
+     */
+    if (process.env.IS_PRODUCTION !== "true") {
+      this.setHeader("x-auth-token", token);
+    }
+
+    return payload;
   }
 
   @Get("me")
   @Security("jwt")
   public async getUserData(@Request() request: any): Promise<JWTPayload> {
-    return Promise.resolve(request.user);
+    const payload = await this.authService.getUserData(request.user.name);
+    return payload;
+  }
+
+  @Post("logout")
+  @Security("jwt")
+  public logout(): void {
+    const cookieOptions = getCookieOptionsAsString();
+    this.setHeader("Set-Cookie", `token=${null}; ${cookieOptions}`);
   }
 }

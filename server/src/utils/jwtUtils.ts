@@ -1,6 +1,7 @@
 import jwt = require("jsonwebtoken");
 import fs = require("fs");
 import { JWTPayload } from "../types/authTypes";
+import { Request } from "express";
 
 /**
  * Keys for the json web token
@@ -26,6 +27,18 @@ const JWTVerifyOptions: jwt.VerifyOptions = {
 };
 
 /**
+ * Extracts the JWT from the header
+ * @param header the header containing the JWT
+ * @returns the JWT
+ */
+export const extractJWTFromHeader = (header: string): string => {
+  if (header === undefined) {
+    return null;
+  }
+  return header.split(" ")[1];
+};
+
+/**
  * Generates JWT based on query results for the login process
  * @param payload object containing non sensitive user data
  * @returns the signed JWT
@@ -44,5 +57,23 @@ export const verifyJWT = (token: string): null | JWTPayload => {
     return jwt.verify(token, JWTKeys.public, JWTVerifyOptions) as JWTPayload;
   } catch (err) {
     return null;
+  }
+};
+
+/**
+ * Checks if the JWT exists and is valid
+ * @param req The request object containing the JWT in the header or cookie
+ * @param checkHeader Whether to check the header or the cookie for the JWT
+ * (the header is only used in development because swagger-ui does not support cookies)
+ * @returns true if the JWT is valid
+ */
+export const checkForValidJWT = (req: Request, checkHeader: boolean): boolean => {
+  if (checkHeader) {
+    return (
+      (req.headers.authorization && verifyJWT(extractJWTFromHeader(req.headers.authorization)) !== null) ||
+      (req.cookies && req.cookies.token && verifyJWT(req.cookies.token) !== null)
+    );
+  } else {
+    return req.cookies && req.cookies.token && verifyJWT(req.cookies.token) !== null;
   }
 };
