@@ -29,6 +29,7 @@ import { transformDateToReadableString } from "../../utils/dateUtils";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 import MemberSelection from "../../components/general/MemberSelection";
 import { MembersField } from "../../types/membersTypes";
+import LoadingCircle from "../../components/general/LoadingCircle";
 
 /**
  * Function which provides the styles
@@ -142,7 +143,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   /**
    * Handles the closing of the internal project information dialog
    * @param event FormEvent
-   * TODO: Default-Werte wiederherstellen
    */
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
     setName(internalProjectDetails!.name);
@@ -657,7 +657,9 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
         </Box>
       </div>
     </div>
-  ) : null; // TODO: Instead of returning null, a loading spinner should be displayed
+  ) : (
+    <LoadingCircle />
+  );
 };
 
 export default InternalProject;

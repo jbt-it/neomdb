@@ -2,13 +2,24 @@
  * This component is used to display a section of information fields.
  */
 import React from "react";
-import { Typography, ListItem, List, ListItemText, ListItemButton, ListItemAvatar, Avatar } from "@mui/material";
+import { Typography, ListItem, List, ListItemText, ListItemButton, ListItemAvatar, Avatar, Theme } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import Grid from "@mui/material/Unstable_Grid2";
 import { MembersField } from "../../types/membersTypes";
 import { Link } from "react-router-dom";
 import { stringAvatar } from "../../utils/stringUtils";
+import { makeStyles, createStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    avatar: {
+      fontSize: "0.75rem",
+      width: 30,
+      height: 30,
+    },
+  })
+);
 
 type InformationField = {
   label: string;
@@ -45,6 +56,8 @@ interface Props {
  * TODO: Add support for Autocomplete fields / check how to display a list of members e.g. project members
  */
 const InfoSection = (props: Props) => {
+  const classes = useStyles();
+
   const renderFields = (fields: InformationField[]) => {
     return fields.map((field: InformationField) => {
       let fieldContainer: React.JSX.Element;
@@ -101,11 +114,7 @@ const InfoSection = (props: Props) => {
                       sx={{ padding: 0.5, margin: 0 }}
                     >
                       <ListItemAvatar>
-                        <Avatar
-                          alt={item.name}
-                          {...stringAvatar(item.name)}
-                          sx={{ fontSize: "0.75rem", width: 30, height: 30 }}
-                        />
+                        <Avatar alt={item.name} {...stringAvatar(item.name)} className={classes.avatar} />
                       </ListItemAvatar>
                       <ListItemText key={index} primary={item.name} sx={{ marginLeft: -2, color: "black" }} />
                     </ListItem>

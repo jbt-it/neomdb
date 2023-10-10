@@ -43,8 +43,8 @@ const MemberSelection = (props: Props) => {
       {selectedMembers.map((member, index) => (
         <Stack key={index} direction="row" spacing={1} marginTop={2} alignItems="center">
           <Autocomplete
-            autoSelect={true}
-            autoHighlight={true}
+            disablePortal
+            autoSelect
             className={`${classes.fieldItem} `}
             id={`members-${index}`}
             options={allMembers}
