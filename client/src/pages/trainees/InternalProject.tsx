@@ -27,6 +27,8 @@ import FieldSection, { Field } from "../../components/general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { transformDateToReadableString } from "../../utils/dateUtils";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
+import MemberSelection from "../../components/general/MemberSelection";
+import { MembersField } from "../../types/membersTypes";
 
 /**
  * Function which provides the styles
@@ -83,6 +85,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0, 1, 1),
     color: "white",
   },
+  projectMembers: {
+    flexGrow: 1,
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(1),
+  },
 }));
 
 /**
@@ -116,8 +124,10 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
   const [zpDatum, setZpDatum] = useState<Date>();
   const [zpAbgegeben, setZpAbgegeben] = useState<boolean>();
   const [dlAbgegeben, setDlAbgegeben] = useState<boolean>();
-  const [projektmitglieder, setProjektmitglieder] = useState<string>("");
-  const [qualitaetsmanager, setQualitaetsmanager] = useState<string>("");
+  const [projektmitglieder, setProjektmitglieder] = useState<MembersField[]>([]);
+  const [qualitaetsmanager, setQualitaetsmanager] = useState<MembersField[]>([]);
+  const [selectableMembers, setSelectableMembers] = useState<MembersField[]>([]);
+  const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
 
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   /**
@@ -170,8 +180,45 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       zpDatum: new Date("2020-01-01"),
       zpAbgegeben: true,
       dlAbgegeben: false,
-      projektmitglieder: "Marko Müller, Ada Lovelace",
-      qualitaetsmanager: "Nils Weiß, Michael Lang, Max Nagel",
+      projektmitglieder: [
+        {
+          mitgliedID: 8364,
+          name: "Jimmie O'Brien",
+          vorname: "vorname1",
+          nachname: "nachname1",
+          mitgliedstatus: 1,
+        },
+        {
+          mitgliedID: 8320,
+          name: "Radhika Norton",
+          vorname: "vorname2",
+          nachname: "nachname2",
+          mitgliedstatus: 1,
+        },
+        {
+          mitgliedID: 8478,
+          name: "Kellan Mclaughlin",
+          vorname: "vorname3",
+          nachname: "nachname3",
+          mitgliedstatus: 1,
+        },
+      ],
+      qualitaetsmanager: [
+        {
+          mitgliedID: 8338,
+          name: "Mariana Macdonald",
+          vorname: "vorname4",
+          nachname: "nachname4",
+          mitgliedstatus: 3,
+        },
+        {
+          mitgliedID: 8167,
+          name: "Wolfgang U Luft",
+          vorname: "vorname4",
+          nachname: "nachname4",
+          mitgliedstatus: 4,
+        },
+      ],
     };
 
     setInternalProjectDetails(ip);
@@ -189,24 +236,99 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setQualitaetsmanager(ip?.qualitaetsmanager);
   };
 
+  const getSelectableMembers: VoidFunction = () => {
+    //api call for current trainees
+    setSelectableMembers([
+      {
+        mitgliedID: 8364,
+        name: "Jimmie O'Brien",
+        vorname: "vorname1",
+        nachname: "nachname1",
+        mitgliedstatus: 1,
+      },
+      {
+        mitgliedID: 8320,
+        name: "Radhika Norton",
+        vorname: "vorname2",
+        nachname: "nachname2",
+        mitgliedstatus: 1,
+      },
+      {
+        mitgliedID: 8478,
+        name: "Kellan Mclaughlin",
+        vorname: "vorname3",
+        nachname: "nachname3",
+        mitgliedstatus: 1,
+      },
+      {
+        mitgliedID: 8331,
+        name: "Jorja Bautista",
+        vorname: "Jorja",
+        nachname: "Bautista",
+        mitgliedstatus: 1,
+      },
+      { mitgliedID: 8748, name: "Mason Vinson", vorname: "Mason", nachname: "Vinson", mitgliedstatus: 2 },
+      {
+        mitgliedID: 8338,
+        name: "Mariana Macdonald",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 3,
+      },
+      {
+        mitgliedID: 8167,
+        name: "Wolfgang U Luft",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 4,
+      },
+    ]);
+  };
+  const getSelectableQms: VoidFunction = () => {
+    //api call for current trainees
+    setSelectableQMs([
+      {
+        mitgliedID: 8338,
+        name: "Mariana Macdonald",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 3,
+      },
+      {
+        mitgliedID: 8167,
+        name: "Wolfgang U Luft",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 4,
+      },
+      { mitgliedID: 8748, name: "Mason Vinson", vorname: "Mason", nachname: "Vinson", mitgliedstatus: 2 },
+    ]);
+  };
+  useEffect(getSelectableMembers, []);
+  useEffect(getSelectableQms, []);
   useEffect(getInternalProjectDetails, []);
 
   const updateInternalProjectDetails = () => {
     setInternalProjectInfoDialogOpen(false);
-    const data = {
-      name,
-      kuerzel,
-      traineegeneration,
-      kickoff,
-      angebotAbgegeben,
-      apAbgegeben,
-      apDatum,
-      zpDatum,
-      projektmitglieder,
-      dlAbgegeben,
-      zpAbgegeben,
-      qualitaetsmanager,
-    };
+    const data = internalProjectDetails
+      ? {
+          id: internalProjectDetails?.id,
+          name,
+          kuerzel,
+          traineegeneration,
+          kickoff,
+          angebotAbgegeben,
+          apAbgegeben,
+          apDatum,
+          zpDatum,
+          dlAbgegeben,
+          zpAbgegeben,
+          projektmitglieder,
+          qualitaetsmanager,
+        }
+      : null;
+    console.log(data?.projektmitglieder);
+    internalProjectDetails ? setInternalProjectDetails(data) : null;
     // Variable for checking, if the component is mounted
     let mounted = true;
     console.log(data);
@@ -250,6 +372,10 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setKuerzel(event.target.value);
   };
 
+  const onChangeTraineegeneration = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTraineegeneration(event.target.value);
+  };
+
   const onChangeKickoff = (value: unknown) => {
     const dateValue = (value as Dayjs).toDate();
     setKickoff(dateValue);
@@ -281,6 +407,43 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     setDlAbgegeben(event.target.checked);
   };
 
+  const handleMemberSelection = (event: React.SyntheticEvent, value: MembersField | null, reason: string) => {
+    event.persist();
+    const index = Number(event.currentTarget.id.split("-")[1]);
+    if (value !== null) {
+      const updatedMembers = [...projektmitglieder];
+      updatedMembers[index] = value;
+      setProjektmitglieder(updatedMembers);
+    }
+  };
+
+  const addMember = () => {
+    setProjektmitglieder((prev) => [...prev, [] as unknown as MembersField]);
+  };
+
+  const removeMember = (mitgliedID: number) => {
+    const updatedMembers = projektmitglieder.filter((member) => member.mitgliedID !== mitgliedID);
+    setProjektmitglieder(updatedMembers);
+  };
+
+  const handleQMSelection = (event: React.SyntheticEvent, value: MembersField | null, reason: string) => {
+    const index = Number(event.currentTarget.id.split("-")[1]);
+    if (value !== null) {
+      const updatedQMs = [...qualitaetsmanager];
+      updatedQMs[index] = value;
+      setQualitaetsmanager(updatedQMs);
+    }
+  };
+
+  const addQM = () => {
+    setQualitaetsmanager((prev) => [...prev, [] as unknown as MembersField]);
+  };
+
+  const removeQM = (mitgliedID: number) => {
+    const updatedQMs = qualitaetsmanager.filter((member) => member.mitgliedID !== mitgliedID);
+    setQualitaetsmanager(updatedQMs);
+  };
+
   const InternalProjectDialogFields: Array<Field> = [
     {
       label: "Name",
@@ -294,7 +457,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       label: "Traineegeneration",
       state: traineegeneration,
       width: "full",
-      onChangeCallback: onChangeName,
+      onChangeCallback: onChangeTraineegeneration,
       type: "Text",
     },
     { label: "Kickoff", state: dayjs(kickoff), width: "full", onChangeCallback: onChangeKickoff, type: "Date" },
@@ -325,7 +488,7 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     },
     {
       label: "ZP abgegeben",
-      state: dlAbgegeben,
+      state: zpAbgegeben,
       width: "full",
       onChangeCallback: onChangeZpAbgegeben,
       type: "Checkbox",
@@ -336,23 +499,6 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
       width: "full",
       onChangeCallback: onChangeDlAbgegeben,
       type: "Checkbox",
-    },
-  ];
-
-  const InternalProjectMembers: Array<Field> = [
-    {
-      label: "Projektmitglieder",
-      state: projektmitglieder,
-      width: "full",
-      onChangeCallback: onChangeDlAbgegeben,
-      type: "Text",
-    },
-    {
-      label: "Qualitätsmanager",
-      state: qualitaetsmanager,
-      width: "full",
-      onChangeCallback: onChangeDlAbgegeben,
-      type: "Text",
     },
   ];
 
@@ -410,12 +556,12 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
     {
       label: "Projektmitglieder",
       value: internalProjectDetails?.projektmitglieder,
-      type: "text",
+      type: "memberList",
     },
     {
       label: "Qualitätsmanager",
       value: internalProjectDetails?.qualitaetsmanager,
-      type: "text",
+      type: "memberList",
     },
   ];
 
@@ -438,8 +584,26 @@ const InternalProject: React.FunctionComponent<RouteComponentProps<RouterMatch>>
           <div className={classes.fieldSectionBox}>
             <FieldSection title={"Dokumente"} fields={FieldDocuments}></FieldSection>
           </div>
-          <div className={classes.fieldSectionBox}>
-            <FieldSection title={"Mitglieder"} fields={InternalProjectMembers}></FieldSection>
+          <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
+            <Typography variant="subtitle1">Projektmitglieder</Typography>
+            <MemberSelection
+              selectedMembers={projektmitglieder}
+              addMember={addMember}
+              onChangeCallback={handleMemberSelection}
+              removeMember={removeMember}
+              allMembers={selectableMembers}
+              mitgliedstatus={[1]}
+            ></MemberSelection>
+          </div>
+          <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
+            <Typography variant="subtitle1">Qualitätsmanager</Typography>
+            <MemberSelection
+              selectedMembers={qualitaetsmanager}
+              addMember={addQM}
+              removeMember={removeQM}
+              onChangeCallback={handleQMSelection}
+              allMembers={selectableQMs}
+            ></MemberSelection>
           </div>
         </DialogContent>
         <DialogActions>

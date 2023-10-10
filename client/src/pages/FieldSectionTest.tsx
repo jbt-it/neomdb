@@ -1,10 +1,12 @@
 /**
  * Component that handles the not found error
  */
-import React, { useState } from "react";
-import { Theme } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Theme, Typography, Box } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import FieldSection, { Field } from "../components/general/FieldSection";
+import { MembersField } from "../types/membersTypes";
+import MemberSelection from "../components/general/MemberSelection";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +23,48 @@ const FieldSectionTest: React.FunctionComponent = () => {
   const [checkbox, setCheckbox] = useState<boolean>(false);
   const [radioButton, setRadioButton] = useState<string>("");
   const [dropdown, setDropdown] = useState<string>("");
+  const [selectedMembers, setSelectedMembers] = useState<MembersField[]>([]);
+  const [allMembers, setAllMembers] = useState<MembersField[]>([]);
+
+  useEffect(() => {
+    setAllMembers([
+      {
+        mitgliedID: 1,
+        name: "Thomas",
+        vorname: "vorname1",
+        nachname: "nachname1",
+        mitgliedstatus: 1,
+      },
+      {
+        mitgliedID: 2,
+        name: "Norbert",
+        vorname: "vorname2",
+        nachname: "nachname2",
+        mitgliedstatus: 1,
+      },
+      {
+        mitgliedID: 3,
+        name: "Rizzler",
+        vorname: "vorname3",
+        nachname: "nachname3",
+        mitgliedstatus: 2,
+      },
+      {
+        mitgliedID: 4,
+        name: "Meister Proper",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 2,
+      },
+      {
+        mitgliedID: 5,
+        name: "Herbert G",
+        vorname: "vorname4",
+        nachname: "nachname4",
+        mitgliedstatus: 6,
+      },
+    ]);
+  }, []);
 
   const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
@@ -103,8 +147,13 @@ const FieldSectionTest: React.FunctionComponent = () => {
   ];
 
   return (
-    <div className={"content-page"}>
+    <div className={"content-page"} style={{ borderColor: "black" }}>
       <FieldSection title={"Test Section"} fields={fields}></FieldSection>
+      <Box sx={{ maxWidth: 700 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Projektmitglieder
+        </Typography>
+      </Box>
     </div>
   );
 };

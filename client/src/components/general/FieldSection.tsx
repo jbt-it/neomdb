@@ -3,7 +3,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Radio,
-  Paper,
+  Box,
   TextField,
   Theme,
   Typography,
@@ -89,86 +89,93 @@ const FieldSection = (props: Props) => {
   const renderFields = (fields: Field[]) => {
     return fields.map((field: Field, index: number) => {
       let fieldElement: React.JSX.Element = <div></div>;
-      if (field.type === "Dropdown") {
-        fieldElement = (
-          <TextField
-            className={`${classes.fieldItem} ${classes.dropdownField}`}
-            key={index}
-            label={field.label}
-            color="primary"
-            value={field.state}
-            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-            select
-          >
-            {field.values.map((value) => {
-              return <MenuItem value={value.value}>{value.label}</MenuItem>;
-            })}
-          </TextField>
-        );
-      } else if (field.type === "RadioButton") {
-        fieldElement = (
-          <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
-            {field.values.map((value) => {
-              return (
-                <FormControlLabel
-                  className={classes.radioButtonItem}
-                  value={value.value}
-                  control={<Radio />}
-                  label={value.label}
+      switch (field.type) {
+        case "Dropdown":
+          fieldElement = (
+            <TextField
+              className={`${classes.fieldItem} ${classes.dropdownField}`}
+              key={index}
+              label={field.label}
+              color="primary"
+              value={field.state}
+              onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+              select
+            >
+              {field.values.map((value) => {
+                return <MenuItem value={value.value}>{value.label}</MenuItem>;
+              })}
+            </TextField>
+          );
+          break;
+        case "RadioButton":
+          fieldElement = (
+            <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
+              {field.values.map((value) => {
+                return (
+                  <FormControlLabel
+                    className={classes.radioButtonItem}
+                    value={value.value}
+                    control={<Radio />}
+                    label={value.label}
+                  />
+                );
+              })}
+            </RadioGroup>
+          );
+          break;
+        case "Text":
+          fieldElement = (
+            <TextField
+              className={`${classes.fieldItem} ${classes.textField}`}
+              variant="outlined"
+              key={index}
+              label={field.label}
+              color="primary"
+              value={field.state}
+              onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            />
+          );
+          break;
+        case "TextBig":
+          fieldElement = (
+            <TextField
+              className={`${classes.fieldItem} ${classes.textBigField}`}
+              key={index}
+              label={field.label}
+              color="primary"
+              value={field.state}
+              multiline
+              rows={field.rows}
+              onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            />
+          );
+          break;
+        case "Date":
+          fieldElement = (
+            <DatePicker
+              className={`${classes.fieldItem} ${classes.dateField}`}
+              label={field.label}
+              value={field.state}
+              onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            />
+          );
+          break;
+        case "Checkbox":
+          fieldElement = (
+            <FormControlLabel
+              className={`${classes.fieldItem} ${classes.checkboxField}`}
+              control={
+                <Checkbox
+                  key={index}
+                  color="primary"
+                  checked={field.state as boolean}
+                  onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
                 />
-              );
-            })}
-          </RadioGroup>
-        );
-      } else if (field.type === "Text") {
-        fieldElement = (
-          <TextField
-            className={`${classes.fieldItem} ${classes.textField}`}
-            variant="outlined"
-            key={index}
-            label={field.label}
-            color="primary"
-            value={field.state}
-            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-          />
-        );
-      } else if (field.type === "TextBig") {
-        fieldElement = (
-          <TextField
-            className={`${classes.fieldItem} ${classes.textBigField}`}
-            key={index}
-            label={field.label}
-            color="primary"
-            value={field.state}
-            multiline
-            rows={field.rows}
-            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-          />
-        );
-      } else if (field.type === "Date") {
-        fieldElement = (
-          <DatePicker
-            className={`${classes.fieldItem} ${classes.dateField}`}
-            label={field.label}
-            value={field.state}
-            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-          />
-        );
-      } else if (field.type === "Checkbox") {
-        fieldElement = (
-          <FormControlLabel
-            className={`${classes.fieldItem} ${classes.checkboxField}`}
-            control={
-              <Checkbox
-                key={index}
-                color="primary"
-                checked={field.state as boolean}
-                onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-              />
-            }
-            label={field.label}
-          />
-        );
+              }
+              label={field.label}
+            />
+          );
+          break;
       }
 
       let fieldContainer: React.JSX.Element;
@@ -193,12 +200,12 @@ const FieldSection = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.fieldSectionBox}>
+    <Box className={classes.fieldSectionBox}>
       <Typography variant="h5" className={classes.fieldSectionTitle}>
         {props.title}
       </Typography>
       <Grid container>{renderFields(props.fields)}</Grid>
-    </Paper>
+    </Box>
   );
 };
 
