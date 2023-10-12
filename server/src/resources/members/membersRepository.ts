@@ -17,6 +17,7 @@ import {
   Value,
 } from "../../types/membersTypes";
 import getStatusChangeDate from "../../utils/repositoryUtils";
+import logger from "../../logger";
 
 class MembersRepository {
   // ---------------------------- MEMBERS ---------------------------- \\
@@ -44,6 +45,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving members: ${error}`);
       throw new QueryError(`Error retrieving members`);
     }
   };
@@ -84,6 +86,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving member with id ${memberID}: ${error}`);
       throw new QueryError(`Error retrieving member with id ${memberID}`);
     }
   };
@@ -113,6 +116,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving mentor of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error retrieving mentor of member with id ${memberID}`);
     }
   };
@@ -139,7 +143,8 @@ class MembersRepository {
 
       return null;
     } catch (error) {
-      throw new QueryError(`Error retrieving mentees`);
+      logger.error(`Caught error while retrieving mentees of member with id ${memberID}: ${error}`);
+      throw new QueryError(`Error retrieving mentees of member with id ${memberID}`);
     }
   };
 
@@ -171,6 +176,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving all members grouped by departments: ${error}`);
       throw new QueryError(`Error retrieving all members grouped by departments`);
     }
   };
@@ -225,6 +231,9 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(
+        `Caught error while creating new member with username ${newUserName} and jbtMail ${jbtMail}: ${error}`
+      );
       throw new QueryError(`Error creating new member with username ${newUserName} and jbtMail ${jbtMail}`);
     }
   };
@@ -273,6 +282,7 @@ class MembersRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Caught error while updating critical data of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error updating critical data of member with id ${memberID}`);
     }
   };
@@ -329,6 +339,7 @@ class MembersRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Caught error while updating personal data of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error updating personal data of member with id ${memberID}`);
     }
   };
@@ -357,6 +368,7 @@ class MembersRepository {
         [newStatus, lastChangeTime, lastChangeTime, memberID]
       );
     } catch (error) {
+      logger.error(`Caught error while updating status ${newStatus} of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error updating status ${newStatus} of member with id ${memberID}`);
     }
   };
@@ -385,6 +397,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving directors: ${error}`);
       throw new QueryError(`Error retrieving directors`);
     }
   };
@@ -409,6 +422,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving departments: ${error}`);
       throw new QueryError(`Error retrieving departments`);
     }
   };
@@ -434,6 +448,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving department with id ${departmentID}: ${error}`);
       throw new QueryError(`Error retrieving department with id ${departmentID}`);
     }
   };
@@ -458,6 +473,7 @@ class MembersRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Caught error while updating department with id ${departmentID}: ${error}`);
       throw new QueryError(`Error updating department with id ${departmentID}`);
     }
   };
@@ -494,6 +510,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving departments of roles ${roles}: ${error}`);
       throw new QueryError(`Error retrieving department ids`);
     }
   };
@@ -520,6 +537,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving languages: ${error}`);
       throw new QueryError(`Error retrieving languages`);
     }
   };
@@ -546,6 +564,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving languages of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error retrieving languages of member with id ${memberID}`);
     }
   };
@@ -573,6 +592,7 @@ class MembersRepository {
       // 3. Execute all update queries
       await executeMultipleQueries(langQueries, connection);
     } catch (error) {
+      logger.error(`Caught error while updating languages of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error updating languages of member with id ${memberID}`);
     }
   };
@@ -599,6 +619,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving edv skills of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error retrieving edv skills of member with id ${memberID}`);
     }
   };
@@ -623,6 +644,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving edv skills: ${error}`);
       throw new QueryError(`Error retrieving edv skills`);
     }
   };
@@ -650,7 +672,7 @@ class MembersRepository {
       // 3. Execute all update queries
       await executeMultipleQueries(edvSkillsQueries, connection);
     } catch (error) {
-      console.log(error);
+      logger.error(`Caught error while updating edv skills of member with id ${memberID}: ${error}`);
       throw new QueryError(`Error updating edv skills of member with id ${memberID}`);
     }
   };
@@ -678,6 +700,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving permission with id ${permissionID}: ${error}`);
       throw new QueryError(`Error retrieving permission with id ${permissionID}`);
     }
   };
@@ -697,6 +720,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving permissions: ${error}`);
       throw new QueryError(`Error retrieving permissions`);
     }
   };
@@ -727,6 +751,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving permission assignments: ${error}`);
       throw new QueryError(`Error retrieving permission assignments`);
     }
   };
@@ -756,6 +781,7 @@ class MembersRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Caught error while retrieving director permissions for member with id ${memberID}: ${error}`);
       throw new QueryError(`Error retrieving director permissions for member with id ${memberID}`);
     }
   };
@@ -778,8 +804,14 @@ class MembersRepository {
       );
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
+        logger.error(
+          `Caught error while adding permission with id ${permissionID} to member with id ${memberID}: ${error}`
+        );
         throw new QueryError(`Permission with id ${permissionID} already assigned to member with id ${memberID}`);
       }
+      logger.error(
+        `Caught error while adding permission with id ${permissionID} to member with id ${memberID}: ${error}`
+      );
       throw new QueryError(`Error adding permission with id ${permissionID} to member with id ${memberID}`);
     }
   };
@@ -803,6 +835,9 @@ class MembersRepository {
         connection
       );
     } catch (error) {
+      logger.error(
+        `Caught error while deleting permission with id ${permissionID} from member with id ${memberID}: ${error}`
+      );
       throw new QueryError(`Error deleting permission with id ${permissionID} from member with id ${memberID}`);
     }
   };

@@ -8,6 +8,7 @@ import {
 } from "../types/Errors";
 import { RouteFunction } from "types/expressTypes";
 import { ValidateError } from "tsoa";
+import logger from "../logger";
 
 /**
  * Implements the error handler middleware which handles all errors thrown by the application.
@@ -70,42 +71,42 @@ export const routeUnavailableHandler = (req: Request, res: Response) => {
 export const errorHandler = (err: unknown, req: Request, res: Response, next: NextFunction): Response | void => {
   // -------- 404 Errors -------- \\
   if (err instanceof NotFoundError) {
-    console.error(err);
+    logger.warn(`Caught not found error for ${req.path}: ${err}`);
     return res.status(404).json({
       message: err.message,
     });
   }
   // -------- 401 Errors -------- \\
   if (err instanceof UnauthenticatedError) {
-    console.error(err);
+    logger.warn(`Caught unauthenticated error for ${req.path}: ${err}`);
     return res.status(401).json({
       message: err.message,
     });
   }
   // -------- 403 Errors -------- \\
   if (err instanceof UnauthorizedError) {
-    console.error(err);
+    logger.warn(`Caught unauthorized error for ${req.path}: ${err}`);
     return res.status(403).json({
       message: err.message,
     });
   }
   // -------- 422 Errors -------- \\
   if (err instanceof ValidateError) {
-    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+    logger.warn(`Caught Validation Error for ${req.path}:`, err.fields);
     return res.status(422).json({
       message: "Validation Failed",
       details: err?.fields,
     });
   }
   if (err instanceof ExpiredTokenError || err instanceof UnprocessableEntityError) {
-    console.error(err);
+    logger.warn(`Caught expired token or unprocessable entity error for ${req.path}: ${err}`);
     return res.status(422).json({
       message: err.message,
     });
   }
   // -------- 500 Errors -------- \\
   if (err instanceof Error) {
-    console.error(err);
+    logger.error(`Caught unknown error for ${req.path}: ${err}`);
     return res.status(500).json({
       message: "Internal Server Error",
     });

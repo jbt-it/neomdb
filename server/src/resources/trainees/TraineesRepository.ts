@@ -13,6 +13,7 @@ import {
   Workshop,
 } from "../../types/traineesTypes";
 import mysql = require("mysql2");
+import logger from "../../logger";
 
 class TraineesRepository {
   /**
@@ -36,7 +37,8 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
-      throw new QueryError(`Error while retrieving trainee's IP with id ${id}`);
+      logger.error(`Error while retrieving IP with id ${id}: ${error}`);
+      throw new QueryError(`Error while retrieving IP with id ${id}`);
     }
   };
 
@@ -61,6 +63,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving generation with id ${id}: ${error}`);
       throw new QueryError(`Error while retrieving generation with id ${id}`);
     }
   };
@@ -94,6 +97,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving choices of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving choices of generation with id ${generationID}`);
     }
   };
@@ -126,6 +130,7 @@ class TraineesRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error while updating IP with id ${id}: ${error}`);
       throw new QueryError(`Error while updating IP with id ${id}`);
     }
   };
@@ -153,6 +158,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving mails of trainees of IP with id ${id}: ${error}`);
       throw new QueryError(`Error while retrieving mails of trainees of IP with id ${id}`);
     }
   };
@@ -184,6 +190,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving motivations of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving motivations of generation with id ${generationID}`);
     }
   };
@@ -209,6 +216,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving generations: ${error}`);
       throw new QueryError(`Error while retrieving generations`);
     }
   };
@@ -236,6 +244,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving mentors of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving mentors of generation with id ${generationID}`);
     }
   };
@@ -262,6 +271,7 @@ class TraineesRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error while updating voting deadline of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while updating voting deadline of generation with id ${generationID}`);
     }
   };
@@ -294,6 +304,7 @@ class TraineesRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error while updating trainee assignment: ${error}`);
       throw new QueryError(`Error while updating trainee assignment`);
     }
   };
@@ -317,8 +328,10 @@ class TraineesRepository {
       );
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
+        logger.error(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}: ${error}`);
         throw new QueryError(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}`);
       }
+      logger.error(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}`);
     }
   };
@@ -347,6 +360,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving IPs of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
     }
   };
@@ -371,6 +385,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving trainees: ${error}`);
       throw new QueryError(`Error while retrieving trainees`);
     }
   };
@@ -396,6 +411,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving internal projects: ${error}`);
       throw new QueryError(`Error while retrieving internal projects`);
     }
   };
@@ -439,6 +455,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving IPs of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving IPs of generation with id ${generationID}`);
     }
   };
@@ -476,6 +493,7 @@ class TraineesRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error while retrieving feedback of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving Schulungen of generation with id ${generationID}`);
     }
   };

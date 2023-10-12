@@ -2,6 +2,7 @@
  * Wrapper for the MySQL connections
  */
 import fs = require("fs");
+import logger from "./logger";
 
 // Check if the environment is test
 const isTest = process.env.NODE_ENV === "test";
@@ -13,7 +14,7 @@ try {
     dbPassword = fs.readFileSync(process.env.DB_PASSWORD_PROD_FILE, "utf8");
   }
 } catch (err) {
-  console.error(`Error trying to read database password from ${process.env.DB_PASSWORD_PROD_FILE}: ${err}`);
+  logger.error(`Error trying to read database password from ${process.env.DB_PASSWORD_PROD_FILE}: ${err}`);
 }
 
 // Parse the database port to int
@@ -24,7 +25,7 @@ try {
   }
   dbPort = parseInt(process.env.DB_PORT);
 } catch (err) {
-  console.error(`Error trying to parse database port ${process.env.DB_PORT_PROD} to int: ${err}`);
+  logger.error(`Error trying to parse database port ${process.env.DB_PORT_PROD} to int: ${err}`);
 }
 
 /**

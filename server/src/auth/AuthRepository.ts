@@ -2,6 +2,7 @@ import { query } from "../database";
 import { PasswordResetEntry, User } from "../types/authTypes";
 import { QueryError } from "../types/Errors";
 import mysql = require("mysql2");
+import logger from "../logger";
 
 class AuthRepository {
   // ---------------------------- USER ---------------------------- \\
@@ -33,6 +34,7 @@ class AuthRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error retrieving user data with username ${name}: ${error}`);
       throw new QueryError(`Error retrieving user data with username ${name}`);
     }
   };
@@ -64,6 +66,7 @@ class AuthRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error retrieving user data with id ${userID}: ${error}`);
       throw new QueryError(`Error retrieving user data with id ${userID}`);
     }
   };
@@ -88,6 +91,7 @@ class AuthRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error updating password of member with name ${userName}: ${error}`);
       throw new QueryError(`Error updating password of member with name ${userName}`);
     }
   };
@@ -115,6 +119,7 @@ class AuthRepository {
 
       return null;
     } catch (error) {
+      logger.error(`Error retrieving password reset entry with email ${email}: ${error}`);
       throw new QueryError(`Error retrieving password reset entry with email ${email}`);
     }
   };
@@ -133,6 +138,7 @@ class AuthRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error deleting password reset by email ${email}: ${error}`);
       throw new QueryError(`Error deleting password reset by email ${email}`);
     }
   };
@@ -158,6 +164,7 @@ class AuthRepository {
         connection
       );
     } catch (error) {
+      logger.error(`Error creating password reset entry for email ${email}: ${error}`);
       throw new QueryError(`Error creating password reset entry for email ${email}`);
     }
   };
