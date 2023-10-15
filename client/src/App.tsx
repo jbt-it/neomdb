@@ -34,8 +34,6 @@ import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
 
-import LayoutTest from "./components/Test/LayoutTest";
-
 /**
  * This component is responsible for rendering the app.
  * @returns the app component

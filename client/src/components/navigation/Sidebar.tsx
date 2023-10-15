@@ -281,19 +281,14 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
   );
 
   return (
-    <Box
-      sx={{
-        flexShrink: { lg: 0 },
-        width: { lg: navWidth.width },
-      }}
-    >
+    <Box sx={{ flexShrink: { lg: 0 }, width: { lg: navWidth.width } }}>
       {upLg ? (
         <Box
           sx={{
             height: 1,
             position: "fixed",
             width: navWidth.width,
-            borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
+            //borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
           }}
         >
           {renderContent}
