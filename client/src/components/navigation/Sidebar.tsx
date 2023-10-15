@@ -277,8 +277,6 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
       {renderAccount}
 
       {renderMenu}
-
-      <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );
 

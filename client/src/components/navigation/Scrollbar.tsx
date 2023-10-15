@@ -1,7 +1,6 @@
 import React from "react";
 
-import PropTypes from "prop-types";
-import { forwardRef, ReactNode } from "react";
+import { forwardRef, ReactNode, memo } from "react";
 
 import Box from "@mui/material/Box";
 
@@ -44,9 +43,4 @@ const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>(({ children, sx, ..
   );
 });
 
-Scrollbar.propTypes = {
-  children: PropTypes.node,
-  sx: PropTypes.object,
-};
-
-export default Scrollbar;
+export default memo(Scrollbar);
