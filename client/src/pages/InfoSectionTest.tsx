@@ -39,7 +39,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
   ];
 
   return (
-    <div>
+    <Box>
       <Paper
         sx={{
           justifyContent: "center",
@@ -55,7 +55,7 @@ const InfoSectionTest: React.FunctionComponent = () => {
           <InfoSection fields={fields} />
         </Box>
       </Paper>
-    </div>
+    </Box>
   );
 };
 

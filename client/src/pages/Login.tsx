@@ -10,13 +10,10 @@ import { makeStyles } from "@mui/styles";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
 import { useAuth } from "../hooks/useAuth";
-import { useLocation } from "react-router-dom";
 
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { dispatchAuth } = useAuth();
-  const from = location.state?.from?.pathname || "/";
 
   /**
    * Styles
@@ -90,7 +87,7 @@ const Login: React.FunctionComponent = () => {
             type: authReducerActionType.authenticate,
             payload: { userID, userName, permissions, roles },
           });
-          navigate(from, { replace: true });
+          navigate("/");
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
           setFailedLogin(true);

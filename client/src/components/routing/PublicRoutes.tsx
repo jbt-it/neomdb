@@ -1,50 +1,29 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect } from "react";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import api from "../../utils/api";
-import { authReducerActionType } from "../../types/globalTypes";
 import { useAuth } from "../../hooks/useAuth";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 
 import LoadingCircle from "../general/LoadingCircle";
 
+/**
+ * This file contains the PublicRoutes component, which is responsible for rendering the public routes of the application.
+ * The public routes are the routes that require the user to be unauthenticated, the component is a wrapper for the public routes.
+ * It checks if the user is authenticated by using the useCheckAuth hook.
+ * If the user is authenticated, it redirects the user to the home page.
+ * If the user is not authenticated, it renders the requested route.
+ * @example <PublicRoutes><Page /></PublicRoutes>
+ */
 const PublicRoutes: React.FunctionComponent = () => {
-  const [checkAuthLoading, setCheckAuthLoading] = useState(true);
-  const { auth, dispatchAuth } = useAuth();
+  const { checkAuth, isAuthLoading } = useCheckAuth();
+  const { auth } = useAuth();
   const location = useLocation();
-
-  const checkAuth = useCallback(() => {
-    // Tries to retrieve the user data
-    api
-      .get("auth/user-data")
-      .then((res) => {
-        // If the retrieval of the user data is succesfull the user is authenticated
-        if (res.status === 200) {
-          const userID = res.data.mitgliedID;
-          const userName = res.data.name;
-          const permissions = res.data.permissions;
-          const roles = res.data.roles;
-          dispatchAuth({
-            type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions, roles },
-          });
-        } else {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-        setCheckAuthLoading(false);
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-        setCheckAuthLoading(false);
-      });
-  }, [dispatchAuth]);
 
   // Calls checkAuth on (re)render of routes
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  return checkAuthLoading ? (
+  return isAuthLoading ? (
     <LoadingCircle />
   ) : !auth.authenticated ? (
     <Outlet />

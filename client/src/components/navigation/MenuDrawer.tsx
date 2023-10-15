@@ -27,9 +27,9 @@ import {
 } from "@mui/icons-material";
 import { makeStyles, createStyles } from "@mui/styles";
 import JBTLogoBlack from "../../assets/jbt-logo-black.png";
-import { AuthContext } from "../../context/auth-context/AuthContext";
 import api from "../../utils/api";
 import { authReducerActionType } from "../../types/globalTypes";
+import { useAuth } from "../../hooks/useAuth";
 
 /**
  * Function which proivdes the styles of the MenuDrawer
@@ -89,10 +89,10 @@ interface DrawerProps {
  * @param props
  */
 const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth, dispatchAuth } = useAuth();
   const classes = useStyles();
   const location = useLocation();
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setActiveNavLink(location.pathname);
@@ -146,7 +146,7 @@ const MenuDrawer: React.FunctionComponent<DrawerProps> = (props: DrawerProps) =>
    */
   const handleLogout: VoidFunction = () => {
     api.post("/auth/logout").then(() => {
-      history("/login");
+      navigate("/login");
       dispatchAuth({ type: authReducerActionType.deauthenticate });
     });
   };
