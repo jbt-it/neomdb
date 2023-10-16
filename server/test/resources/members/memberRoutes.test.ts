@@ -26,7 +26,6 @@ describe("Test member routes", () => {
 
   describe("POST /permissions", () => {
     test("should return 201 and the new entry in mitglied_has_berechtigung", async () => {
-
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -34,10 +33,9 @@ describe("Test member routes", () => {
       // --- WHEN
 
       const response = await request(app)
-        .post("api/users/permissions")
+        .post("/api/users/permissions")
         .send({ memberID: 8167, permissionID: 8 })
         .set("Cookie", `token=${token}`);
-
 
       // --- THEN
       expect(response.status).toBe(201);
@@ -46,8 +44,5 @@ describe("Test member routes", () => {
       expect(response.body).toHaveProperty("mitgliedID");
       expect(response.body).toHaveProperty("berechtigungID");
     });
-
   });
-
-  
 });
