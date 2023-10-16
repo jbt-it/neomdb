@@ -57,7 +57,7 @@ class AuthTestUtils {
       } catch (error) {
         // Do nothing
       }
-      this.authRepository.createPasswordResetEntry(email, "salt", token);
+      await this.authRepository.createPasswordResetEntry(email, "salt", token);
     } catch (error) {
       throw new Error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
     }
