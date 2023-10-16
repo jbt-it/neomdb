@@ -10,16 +10,15 @@ describe("Test member routes", () => {
   // --------------------------- SETUP AND TEARDOWN --------------------------- \\
   beforeAll(async () => {
     // await initMemberData(); // Executes before the first test
-    await setupMemberData();
+    // await setupMemberData();
   });
 
   beforeEach(async () => {
-    // await setupMemberData(); // Executes before every test
+    await setupMemberData(); // Executes before every test
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await clearMemberData();
-    await setupMemberData(); // Executes after every test
   });
 
   // --------------------------- TESTS --------------------------- \\

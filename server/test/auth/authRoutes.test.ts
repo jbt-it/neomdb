@@ -9,16 +9,22 @@ const authTestUtils = new AuthTestUtils(app);
 describe("Test auth routes", () => {
   // --------------------------- SETUP AND TEARDOWN --------------------------- \\
   beforeAll(async () => {
-    // await initMemberData(); // Executes before the first test
-    await setupMemberData();
+    try {
+      // await setupMemberData();
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   beforeEach(async () => {
-    // await setupMemberData(); // Executes before every test
+    await setupMemberData(); // Executes before every test
+  });
+  afterEach(async () => {
+    await clearMemberData(); // Executes after every test
   });
 
   afterAll(async () => {
-    await clearMemberData(); // Executes after every test
+    // await clearMemberData(); // Executes after every test
   });
 
   // --------------------------- TESTS --------------------------- \\
