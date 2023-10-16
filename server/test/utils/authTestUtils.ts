@@ -1,14 +1,14 @@
 import * as request from "supertest";
 import { Express } from "express";
-import AuthRepository from "auth/AuthRepository";
-import { createCurrentTimestamp } from "utils/dateUtils";
+import AuthRepository from "../../src/auth/AuthRepository";
+import { createCurrentTimestamp } from "../../src/utils/dateUtils";
 
 /**
  * Utility class for testing the auth routes
  */
 class AuthTestUtils {
-  authRepository = null;
-  app = null;
+  authRepository: AuthRepository = null;
+  app: Express.Application = null;
 
   constructor(app: Express) {
     this.app = app;
@@ -22,7 +22,7 @@ class AuthTestUtils {
    * @returns The response
    */
   performLogin = async (username: string, password: string) => {
-    const response = await request(this.app).post("/api/auth/login").send({ username: username, password: password });
+    const response = await request(this.app).post("/api/auth/login").send({ username, password });
 
     return response;
   };
@@ -45,12 +45,22 @@ class AuthTestUtils {
   };
 
   /**
-   * Retrieves the password reset token from the database
-   * @param email The email of the user of the password reset entry
+   * Creates a password reset entry in the database for the given email for testing purposes
+   * @param email The email of the password reset entry
+   * @param token The token of the password reset entry
    */
-  retrievePasswordResetTokenFromDB = async (email: string) => {
-    const date = createCurrentTimestamp();
-    this.authRepository.getPasswordReserEntryByEmailAndToken(date, email, "token");
+  createPasswordResetEntry = async (email: string, token: string) => {
+    try {
+      // Tries to delete the old entry, if any exists
+      try {
+        await this.authRepository.deletePasswordResetEntriesByEmail(email);
+      } catch (error) {
+        // Do nothing
+      }
+      await this.authRepository.createPasswordResetEntry(email, "salt", token);
+    } catch (error) {
+      throw new Error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
+    }
   };
 }
 

@@ -5,20 +5,22 @@ import { commit, connectionQuery, startTransaction } from "../../src/database";
 /**
  * The type of the script
  */
-type ScriptType = "INSERT" | "TRUNCATE";
+type ScriptType = "INSERT" | "TRUNCATE" | "CREATE";
 
 /**
  * Reads the SQL commands from a file
  * @param file The file to read
- * @param commandKeyword The SQL command keyword to split on
+ * @param commandKeywords An array of  SQL command keywords to split on
  * @returns A list of SQL commands
  */
-const readCommands = (file: string, commandKeyword: string) => {
+const readCommands = (file: string, commandKeywords: string[]) => {
   // Read the SQL commands
   const sql = fs.readFileSync(file, "utf8");
 
   // Regex pattern that matches the exact command keyword but ignores the first match
-  const regex = new RegExp(`\\s*(?=\\b${commandKeyword}\\b)`, "gi");
+  const regexStr = commandKeywords.map((keyword) => `\\b${keyword}\\b`).join("|");
+
+  const regex = new RegExp(`\\s*(?=${regexStr})`, "gi");
 
   // Split the commands into separate queries and prepend the command keyword to every command except the first one
   const commands = sql
@@ -35,7 +37,12 @@ const readCommands = (file: string, commandKeyword: string) => {
  */
 export const executeScript = async (script: string, type: ScriptType) => {
   try {
-    const commands = readCommands(script, type);
+    let commands = null;
+    if (type === "CREATE") {
+      commands = readCommands(script, ["CREATE", "ALTER"]);
+    } else {
+      commands = readCommands(script, [type]);
+    }
 
     // Start a transaction
     const connection = (await startTransaction()) as PoolConnection;
