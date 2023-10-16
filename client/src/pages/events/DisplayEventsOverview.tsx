@@ -25,7 +25,6 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 interface Event {
   eventID: number;
   eventName: string;
-  beschreibung: string;
   datum: string;
   ende: string;
   startZeit: string;
@@ -46,7 +45,6 @@ interface TabPanelProps {
 type commonEventType = {
   ID: number;
   name: string;
-  description: string;
   date: Date;
   endDate: Date;
   startTime: Date;
@@ -110,7 +108,6 @@ const DisplayEventsOverview: React.FC = () => {
       currentEvents.push({
         ID: event.eventID,
         name: event.eventName,
-        description: event.beschreibung,
         date: new Date(event.datum),
         endDate: new Date(event.ende),
         startTime: new Date(event.startZeit),
@@ -136,7 +133,6 @@ const DisplayEventsOverview: React.FC = () => {
       currentWorkshops.push({
         ID: event.schulungsinstanzID,
         name: event.schulungsname,
-        description: event.beschreibung,
         date: new Date(event.datum),
         endDate: new Date(event.datum),
         startTime: new Date(event.startzeit),
@@ -161,7 +157,6 @@ const DisplayEventsOverview: React.FC = () => {
       currentEvents.push({
         ID: event.eventID,
         name: event.eventName,
-        description: event.beschreibung,
         date: new Date(event.datum),
         endDate: new Date(event.ende),
         startTime: new Date(event.startZeit),
@@ -292,13 +287,12 @@ const DisplayEventsOverview: React.FC = () => {
    */
   const renderTable = (rows: commonEventType[]) => {
     return (
-      <TableContainer component={Paper} sx={{ width: "97%", margin: "auto" }}>
+      <TableContainer component={Paper} sx={{ margin: "auto" }}>
         <Table size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontWeight: "bold" }}></TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Event</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Beschreibung</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Ende</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Startzeit</TableCell>
@@ -313,13 +307,12 @@ const DisplayEventsOverview: React.FC = () => {
               <TableRow key={row.ID}>
                 <TableCell>{renderEventChip(row.type)}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
                 <TableCell>{row.date.toLocaleString(["de"], { dateStyle: "short" })}</TableCell>
                 <TableCell>
                   {row.endDate > row.date ? row.endDate.toLocaleString(["de"], { dateStyle: "short" }) : "-"}
                 </TableCell>
-                <TableCell>{row.startTime.toLocaleTimeString("de")}</TableCell>
-                <TableCell>{row.endTime.toLocaleTimeString()}</TableCell>
+                <TableCell>{row.startTime.toLocaleTimeString(["de"], { timeStyle: "short" })}</TableCell>
+                <TableCell>{row.endTime.toLocaleTimeString(["de"], { timeStyle: "short" })}</TableCell>
                 <TableCell>{row.location}</TableCell>
                 <TableCell>
                   {row.registrationDeadline
