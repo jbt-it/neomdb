@@ -11,7 +11,7 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
-import { NotFoundError, QueryError } from "../../types/errors";
+import { NotFoundError, QueryError } from "../../types/Errors";
 import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
