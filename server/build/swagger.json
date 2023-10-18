@@ -6,6 +6,43 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"MemberPartial": {
+				"properties": {
+					"lastchange": {
+						"type": "string"
+					},
+					"ressort": {
+						"type": "string"
+					},
+					"mitgliedstatus": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"handy": {
+						"type": "number",
+						"format": "double"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"lastchange",
+					"ressort",
+					"mitgliedstatus",
+					"jbt_email",
+					"handy",
+					"nachname",
+					"vorname"
+				],
+				"type": "object",
+				"description": "Type of the partial member"
+			},
 			"Permission": {
 				"properties": {
 					"directorID": {
@@ -75,42 +112,62 @@
 				"type": "object",
 				"description": "Type for the request to login a user"
 			},
-			"MemberPartial": {
+			"UserChangePasswordRequest": {
 				"properties": {
-					"lastchange": {
+					"newPassword": {
 						"type": "string"
 					},
-					"ressort": {
+					"oldPassword": {
 						"type": "string"
 					},
-					"mitgliedstatus": {
+					"userName": {
 						"type": "string"
 					},
-					"jbt_email": {
-						"type": "string"
-					},
-					"handy": {
+					"userID": {
 						"type": "number",
 						"format": "double"
-					},
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
+					}
+				},
+				"required": [
+					"newPassword",
+					"oldPassword",
+					"userName",
+					"userID"
+				],
+				"type": "object",
+				"description": "Type of the request to change the password of a user"
+			},
+			"UserForgotPasswordRequest": {
+				"properties": {
+					"email": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"lastchange",
-					"ressort",
-					"mitgliedstatus",
-					"jbt_email",
-					"handy",
-					"nachname",
-					"vorname"
+					"email"
 				],
 				"type": "object",
-				"description": "Type of the partial member"
+				"description": "Type of the request to send a password reset link to a user"
+			},
+			"UserResetPasswordRequest": {
+				"properties": {
+					"newPassword": {
+						"type": "string"
+					},
+					"key": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"newPassword",
+					"key",
+					"email"
+				],
+				"type": "object",
+				"description": "Type of the request to reset the password of a user"
 			}
 		},
 		"securitySchemes": {
@@ -128,6 +185,33 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/members": {
+			"get": {
+				"operationId": "GetMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MemberPartial"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a list of all members",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/auth/login": {
 			"post": {
 				"operationId": "Login",
@@ -178,12 +262,104 @@
 						}
 					}
 				},
+				"description": "Sends the user data of the currently logged in user to the client",
+				"summary": "Retrieves own user data",
 				"security": [
 					{
 						"jwt": []
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/auth/change-password": {
+			"patch": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Updates the passwordHash in the database if the old password is correct",
+				"summary": "Changes the users password",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserChangePasswordRequest"
+							},
+							"example": {
+								"userName": "w.luft",
+								"oldPassword": "s3cre7",
+								"newPassword": "s3cre7",
+								"userID": 8167
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/forgot-password": {
+			"post": {
+				"operationId": "SendPasswordResetLink",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "An email is sent with an password reset link and a key in the url to the user\nThe key used in the link is saved in the databse for the later verification",
+				"summary": "Sends a password reset link to the user",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserForgotPasswordRequest"
+							},
+							"example": {
+								"email": "w.luft@studentische-beratung.de"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/reset-forgot-password": {
+			"patch": {
+				"operationId": "ResetPasswordWithKey",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "The user can set a new password by entering their mailadress and a new password\nThe mail and the key in the url are then checked to se if it is a valid pair\nIf the pair is valid the new password is stored",
+				"summary": "Resets the password of a user",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserResetPasswordRequest"
+							},
+							"example": {
+								"email": "w.luft@studentische-beratung.de",
+								"key": "1234567890",
+								"newPassword": "s3cre7"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/logout": {
@@ -194,33 +370,8 @@
 						"description": "No content"
 					}
 				},
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
-			}
-		},
-		"/members": {
-			"get": {
-				"operationId": "GetMembers",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/MemberPartial"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get a list of all members",
+				"description": "Loggs the user out by removing the jwt from the cookie",
+				"summary": "Logs out the user",
 				"security": [
 					{
 						"jwt": []
