@@ -8,7 +8,6 @@ import {
   TableRow,
   Paper,
   Typography,
-  Skeleton,
   Chip,
   Toolbar,
   Button,
@@ -16,25 +15,22 @@ import {
   Tabs,
   Tab,
   Stack,
+  IconButton,
+  Grid,
+  Select,
+  SelectChangeEvent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Card,
 } from "@mui/material";
-import { RemoveCircleOutline, AddCircle, Event } from "@mui/icons-material/";
+import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-
-interface Event {
-  eventID: number;
-  eventName: string;
-  datum: string;
-  ende: string;
-  startZeit: string;
-  endZeit: string;
-  ort: string;
-  anmeldungsfrist: string;
-  ww: boolean;
-  netzwerk: boolean;
-  jbtgoes: boolean;
-}
+import dayjs, { Dayjs } from "dayjs";
+import "dayjs/locale/de";
+import LoadingTable from "../../components/general/LoadingTable";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -45,17 +41,19 @@ interface TabPanelProps {
 type commonEventType = {
   ID: number;
   name: string;
-  date: Date;
-  endDate: Date;
-  startTime: Date;
-  endTime: Date;
+  date: Dayjs;
+  endDate: Dayjs;
+  startTime: Dayjs;
+  endTime: Dayjs;
   location: string;
-  registrationDeadline: Date | null;
+  registrationDeadline: Dayjs | null;
   type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
 };
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
+ * ToDo: filters for events, eg. just show workshops etc.
+ * ToDo: implement show all past events
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -65,11 +63,24 @@ const DisplayEventsOverview: React.FC = () => {
   const [workshops, setWorkshops] = useState<commonEventType[]>([]);
   const [eventsSignedUp, setEventsSignedUp] = useState<commonEventType[]>([]);
   const [tabValue, setTabValue] = React.useState(0);
+  const [displayFiters, setDisplayFilters] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs()); // is the start date from which on events are displayed, is initialized to the current date
+  const [startMonth, setStartMonth] = useState<Dayjs | null>(); // variable that is used for filtering the beginning of the displayed events
+  const [endMonth, setEndMonth] = useState<Dayjs | null>(); // variable that is used for filtering the end of the displayed events
+  const [startMonthFilter, setStartMonthFilter] = useState<string>(""); // start of month filter field
+  const [endMonthFilter, setEndMonthFilter] = useState<string>(""); // end of month filter field
+  const [eventTypeFilter, setEventTypeFilter] = useState<string>("");
 
+  /**
+   * Handles change of the tab value
+   */
   const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
     setTabValue(newTabValue);
   };
 
+  /**
+   * Function that renders the tab panel
+   */
   function CustomTabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
@@ -90,13 +101,6 @@ const DisplayEventsOverview: React.FC = () => {
     );
   }
 
-  function a11yProps(index: number) {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-    };
-  }
-
   const getEvents: VoidFunction = useCallback(() => {
     // api.get("/events").then((response) => {
     //   console.log(response.data);
@@ -108,20 +112,22 @@ const DisplayEventsOverview: React.FC = () => {
       currentEvents.push({
         ID: event.eventID,
         name: event.eventName,
-        date: new Date(event.datum),
-        endDate: new Date(event.ende),
-        startTime: new Date(event.startZeit),
-        endTime: new Date(event.endZeit),
+        date: dayjs(event.datum).locale("de"),
+        endDate: dayjs(event.ende).locale("de"),
+        startTime: dayjs(event.startZeit).locale("de"),
+        endTime: dayjs(event.endZeit).locale("de"),
         location: event.ort,
-        registrationDeadline: new Date(event.anmeldungsfrist),
+        registrationDeadline: event.anmeldungsfrist ? dayjs(event.anmeldungsfrist).locale("de") : null,
         type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
       });
     });
-    setEvents(
-      currentEvents.filter((event) => (event.registrationDeadline ? event.registrationDeadline > new Date() : true))
-    );
+    setEvents(currentEvents.filter((event) => (event.date ? event.date > dayjs() : true)));
   }, [dispatchAuth]);
 
+  /**
+   * Function that sends the request to get all events the user is signed up for to the backend
+   * sets the right type for the fields and sets the state for the workshops
+   */
   const getWorkshops: VoidFunction = useCallback(() => {
     // api.get("/events").then((response) => {
     //   console.log(response.data);
@@ -133,10 +139,10 @@ const DisplayEventsOverview: React.FC = () => {
       currentWorkshops.push({
         ID: event.schulungsinstanzID,
         name: event.schulungsname,
-        date: new Date(event.datum),
-        endDate: new Date(event.datum),
-        startTime: new Date(event.startzeit),
-        endTime: new Date(event.endzeti),
+        date: dayjs(event.datum).locale("de"),
+        endDate: dayjs(event.datum).locale("de"),
+        startTime: dayjs(event.startzeit).locale("de"),
+        endTime: dayjs(event.endzeti).locale("de"),
         location: event.ort,
         registrationDeadline: null,
         type: event.art === "Pflichtschulung" ? "pflichtworkshop" : "workshop",
@@ -146,6 +152,10 @@ const DisplayEventsOverview: React.FC = () => {
     setWorkshops(currentWorkshops);
   }, [dispatchAuth]);
 
+  /**
+   * Function that sends the request to get all events the user is signed up for to the backend
+   * OR MAYBE FILTERS DEPENDING ON THE MEMBER_HAS_EVENT TABLE --> implement in Mock
+   */
   const getEventsSignedUp: VoidFunction = useCallback(() => {
     // api.get("/events/signed-up").then((response) => {
     //   console.log(response.data);
@@ -157,18 +167,21 @@ const DisplayEventsOverview: React.FC = () => {
       currentEvents.push({
         ID: event.eventID,
         name: event.eventName,
-        date: new Date(event.datum),
-        endDate: new Date(event.ende),
-        startTime: new Date(event.startZeit),
-        endTime: new Date(event.endZeit),
+        date: dayjs(event.datum),
+        endDate: dayjs(event.ende),
+        startTime: dayjs(event.startZeit),
+        endTime: dayjs(event.endZeit),
         location: event.ort,
-        registrationDeadline: new Date(event.anmeldungsfrist),
+        registrationDeadline: dayjs(event.anmeldungsfrist),
         type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
       });
     });
     setEventsSignedUp(currentEvents.filter((event) => event.ID === 2 || event.ID === 3));
   }, [dispatchAuth]);
 
+  /**
+   * Function that sends the request to sign out from an event to the backend and removes the event from the list of events the user is signed up for
+   */
   const signOutFromEvent = useCallback(
     (eventID: number) => {
       // api.get("/events/signed-out").then((response) => {
@@ -184,6 +197,9 @@ const DisplayEventsOverview: React.FC = () => {
     [eventsSignedUp]
   );
 
+  /**
+   * Function that sends the request to sign up for an event to the backend and adds the event to the list of events the user is signed up for
+   */
   const signUpForEvent = useCallback(
     (eventID: number) => {
       // api.get("/events/signed-up").then((response) => {
@@ -212,7 +228,7 @@ const DisplayEventsOverview: React.FC = () => {
    * @param eventID the id of the event
    * @returns the button for sign up or sign out from event
    */
-  const renderSignUpButton = (eventID: number) => {
+  const renderSignUpButton = (eventID: number, registrationDeadline: Dayjs | null) => {
     if (eventsSignedUp.some((event) => event.ID === eventID)) {
       return (
         <Chip
@@ -223,6 +239,19 @@ const DisplayEventsOverview: React.FC = () => {
           icon={<RemoveCircleOutline />}
           onClick={() => {
             signOutFromEvent(eventID);
+          }}
+        />
+      );
+    } else if (registrationDeadline || registrationDeadline === null ? dayjs().isAfter(registrationDeadline) : false) {
+      return (
+        <Chip
+          label="Anmelden"
+          color="default"
+          size="small"
+          disabled
+          icon={<AddCircle />}
+          onClick={() => {
+            signUpForEvent(eventID);
           }}
         />
       );
@@ -249,11 +278,75 @@ const DisplayEventsOverview: React.FC = () => {
   const renderNewEventButton = () => {
     if (permissions.length > 0) {
       return (
-        <Button variant="contained" startIcon={<Event />} color="info" sx={{ fontWeight: 600 }}>
-          Neue Veranstaltung
+        <Button variant="outlined" startIcon={<Event />} color="info" sx={{ fontWeight: 600 }}>
+          Neu
         </Button>
       );
     }
+  };
+
+  const [displayAll, setDisplayAll] = useState<boolean>(false);
+
+  /**
+   * Renders the button to show all past events by setting the start date of the list to 01.01.2010
+   * Renders the button to show all current events by setting the start date of the list to the current date
+   * @returns button to show all past events
+   */
+  const renderShowAllButton = () => {
+    if (displayAll) {
+      return (
+        <Button
+          variant="outlined"
+          startIcon={<CalendarMonth />}
+          color="primary"
+          sx={{ fontWeight: 600, ml: 2 }}
+          onClick={() => {
+            setDisplayAll(false);
+            setStartDate(dayjs());
+          }}
+        >
+          Aktuelle
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="outlined"
+          startIcon={<CalendarMonth />}
+          color="primary"
+          sx={{ fontWeight: 600, ml: 2 }}
+          onClick={() => {
+            setDisplayAll(true);
+            setStartDate(dayjs("2010-01-01"));
+          }}
+        >
+          Alle anzeigen
+        </Button>
+      );
+    }
+  };
+
+  /**
+   * Button that provides the option to reset all filters
+   */
+  const renderResetFiltersButton = () => {
+    return (
+      <Button
+        variant="outlined"
+        startIcon={<FilterList />}
+        color="secondary"
+        sx={{ fontWeight: 600, margin: 2 }}
+        onClick={() => {
+          setStartMonthFilter("");
+          setEndMonthFilter("");
+          setStartMonth(null);
+          setEndMonth(null);
+          setEventTypeFilter("");
+        }}
+      >
+        Filter zurücksetzen
+      </Button>
+    );
   };
 
   /**
@@ -264,18 +357,269 @@ const DisplayEventsOverview: React.FC = () => {
     if (type === "pflichtworkshop") {
       return <Chip label="Pflichtworkshop" color="secondary" sx={{ margin: 0.5 }} size="small" />;
     } else if (type === "workshop") {
-      return <Chip label="Workshop" color="primary" sx={{ margin: 0.5 }} size="small" />;
+      return <Chip label="Workshop" sx={{ bgcolor: "#318c6f", color: "#ffffff", margin: 0.5 }} size="small" />;
     }
 
     if (type === "ww") {
       return <Chip label="WW" color="default" sx={{ margin: 0.5 }} size="small" />;
     } else if (type === "netzwerk") {
-      return <Chip label="Netzwerk" color="info" size="small" sx={{ margin: 0.5 }} />;
+      return <Chip label="Netzwerk" size="small" sx={{ bgcolor: "#891ff6", color: "#ffffff", margin: 0.5 }} />;
     } else if (type === "jbtGoes") {
       return <Chip label="JBT goes" color="primary" size="small" sx={{ margin: 0.5 }} />;
     } else {
-      return <Chip label="Sonstige" color="warning" size="small" sx={{ margin: 0.5 }} />;
+      return <Chip label="Sonstige" color="info" size="small" sx={{ margin: 0.5 }} />;
     }
+  };
+
+  /**
+   * Function that sets the start month for the filter
+   * Sets the state of the startMonth variable that is responsible for filtering the displayed events
+   */
+  const onChangeStartMonthFilter = (event: SelectChangeEvent) => {
+    switch (event.target.value) {
+      case "Januar": {
+        setStartMonthFilter("Januar");
+        dayjs().isAfter(dayjs().month(0).endOf("month"))
+          ? setStartMonth(dayjs().month(0).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(0).startOf("month"));
+        break;
+      }
+      case "Februar": {
+        setStartMonthFilter("Februar");
+        dayjs().isAfter(dayjs().month(1).endOf("month"))
+          ? setStartMonth(dayjs().month(1).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(1).startOf("month"));
+        break;
+      }
+      case "März": {
+        setStartMonthFilter("März");
+        dayjs().isAfter(dayjs().month(2).endOf("month"))
+          ? setStartMonth(dayjs().month(2).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(2).startOf("month"));
+        break;
+      }
+      case "April": {
+        setStartMonthFilter("April");
+        dayjs().isAfter(dayjs().month(3).endOf("month"))
+          ? setStartMonth(dayjs().month(3).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(3).startOf("month"));
+        break;
+      }
+      case "Mai": {
+        setStartMonthFilter("Mai");
+        dayjs().isAfter(dayjs().month(4).endOf("month"))
+          ? setStartMonth(dayjs().month(4).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(4).startOf("month"));
+        break;
+      }
+      case "Juni": {
+        setStartMonthFilter("Juni");
+        dayjs().isAfter(dayjs().month(5).endOf("month"))
+          ? setStartMonth(dayjs().month(5).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(5).startOf("month"));
+        break;
+      }
+      case "Juli": {
+        setStartMonthFilter("Juli");
+        dayjs().isAfter(dayjs().month(6).endOf("month"))
+          ? setStartMonth(dayjs().month(6).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(6).startOf("month"));
+        break;
+      }
+      case "August": {
+        setStartMonthFilter("August");
+        dayjs().isAfter(dayjs().month(7).endOf("month"))
+          ? setStartMonth(dayjs().month(7).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(7).startOf("month"));
+        break;
+      }
+      case "September": {
+        setStartMonthFilter("September");
+        dayjs().isAfter(dayjs().month(8).endOf("month"))
+          ? setStartMonth(dayjs().month(8).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(8).startOf("month"));
+        break;
+      }
+      case "Oktober": {
+        setStartMonthFilter("Oktober");
+        dayjs().isAfter(dayjs().month(9).endOf("month"))
+          ? setStartMonth(dayjs().month(9).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(9).startOf("month"));
+        break;
+      }
+      case "November": {
+        setStartMonthFilter("November");
+        dayjs().isAfter(dayjs().month(10).endOf("month"))
+          ? setStartMonth(dayjs().month(10).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(10).startOf("month"));
+        break;
+      }
+      case "Dezember": {
+        setStartMonthFilter("Dezember");
+        dayjs().isAfter(dayjs().month(11).endOf("month"))
+          ? setStartMonth(dayjs().month(11).startOf("month").add(1, "year"))
+          : setStartMonth(dayjs().month(11).startOf("month"));
+        break;
+      }
+    }
+  };
+
+  /**
+   * Function that sets the end month for the filter
+   * Sets the state of the endMonth variable that is responsible for filtering the displayed events
+   */
+  const onChangeEndMonthFilter = (event: SelectChangeEvent) => {
+    switch (event.target.value) {
+      case "Januar": {
+        setEndMonthFilter("Januar");
+        dayjs().isAfter(dayjs().month(0).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(0).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(0).endOf("d"));
+        break;
+      }
+      case "Februar": {
+        setEndMonthFilter("Februar");
+        dayjs().isAfter(dayjs().month(1).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(1).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(1).endOf("d"));
+        break;
+      }
+      case "März": {
+        setEndMonthFilter("März");
+        dayjs().isAfter(dayjs().month(2).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(2).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(2).endOf("d"));
+        break;
+      }
+      case "April": {
+        setEndMonthFilter("April");
+        dayjs().isAfter(dayjs().month(3).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(3).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(3).endOf("d"));
+        break;
+      }
+      case "Mai": {
+        setEndMonthFilter("Mai");
+        dayjs().isAfter(dayjs().month(4).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(4).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(4).endOf("d"));
+        break;
+      }
+      case "Juni": {
+        setEndMonthFilter("Juni");
+        dayjs().isAfter(dayjs().month(5).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(5).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(5).endOf("d"));
+        break;
+      }
+      case "Juli": {
+        setEndMonthFilter("Juli");
+        dayjs().isAfter(dayjs().month(6).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(6).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(6).endOf("d"));
+        break;
+      }
+      case "August": {
+        setEndMonthFilter("August");
+        dayjs().isAfter(dayjs().month(7).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(7).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(7).endOf("d"));
+        break;
+      }
+      case "September": {
+        setEndMonthFilter("September");
+        dayjs().isAfter(dayjs().month(8).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(8).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(8).endOf("d"));
+        break;
+      }
+      case "Oktober": {
+        setEndMonthFilter("Oktober");
+        dayjs().isAfter(dayjs().month(9).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(9).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(9).endOf("d"));
+        break;
+      }
+      case "November": {
+        setEndMonthFilter("November");
+        dayjs().isAfter(dayjs().month(10).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(10).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(10).endOf("d"));
+        break;
+      }
+      case "Dezember": {
+        setEndMonthFilter("Dezember");
+        dayjs().isAfter(dayjs().month(11).endOf("month"))
+          ? setEndMonth(dayjs().endOf("month").month(11).endOf("d").add(1, "year"))
+          : setEndMonth(dayjs().endOf("month").month(11).endOf("d"));
+        break;
+      }
+    }
+  };
+
+  /**
+   * Function that handles the change on the filter field for the event type
+   */
+  const onChangeEventTypeFilter = (event: SelectChangeEvent) => {
+    setEventTypeFilter(event.target.value);
+  };
+
+  /**
+   * renders the filter fields start month and end month that determine the range of events that should be displayed
+   * ToDo: Implement filter for type of events
+   * @returns the filter field
+   */
+  const renderFilters = () => {
+    return (
+      <Stack direction={"row"} alignItems="center">
+        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+          <InputLabel>Von</InputLabel>
+          <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
+            <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+            <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+            <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+            <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+            <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+            <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+            <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+            <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+            <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+            <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+            <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+            <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+          </Select>
+        </FormControl>
+        <Typography> - </Typography>
+        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+          <InputLabel>Bis</InputLabel>
+          <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
+            <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+            <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+            <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+            <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+            <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+            <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+            <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+            <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+            <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+            <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+            <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+            <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 180 }} size="small">
+          <InputLabel>Veranstaltungsart</InputLabel>
+          <Select label="Veranstaltungsart" value={eventTypeFilter} onChange={onChangeEventTypeFilter}>
+            <MenuItem value="jbtGoes">JBT goes</MenuItem>
+            <MenuItem value="ww">Working Weekend</MenuItem>
+            <MenuItem value="netzwerk">Netzwerk</MenuItem>
+            <MenuItem value="workshop">Workshop</MenuItem>
+            <MenuItem value="sonstige">Sonstige</MenuItem>
+          </Select>
+        </FormControl>
+        <Box sx={{ mr: 1, ml: "auto" }}>{renderResetFiltersButton()}</Box>
+      </Stack>
+    );
   };
 
   /**
@@ -286,20 +630,25 @@ const DisplayEventsOverview: React.FC = () => {
    * @returns a table with the given events
    */
   const renderTable = (rows: commonEventType[]) => {
+    rows
+      .sort((a, b) => a.date.get("date") - b.date.get("date"))
+      .sort((a, b) => a.date.get("month") - b.date.get("month"))
+      .sort((a, b) => a.date.get("year") - b.date.get("year"));
+
+    startMonth ? rows.filter((event) => event.date > startMonth) : null;
+    endMonth ? rows.filter((event) => event.date < endMonth) : null;
     return (
       <TableContainer component={Paper} sx={{ margin: "auto" }}>
-        <Table size="small" aria-label="a dense table">
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}></TableCell>
+              <TableCell></TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Event</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Beginn</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Ende</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Startzeit</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Endzeit</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Ort</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Anmeldungsfrist</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -307,19 +656,21 @@ const DisplayEventsOverview: React.FC = () => {
               <TableRow key={row.ID}>
                 <TableCell>{renderEventChip(row.type)}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.date.toLocaleString(["de"], { dateStyle: "short" })}</TableCell>
                 <TableCell>
-                  {row.endDate > row.date ? row.endDate.toLocaleString(["de"], { dateStyle: "short" }) : "-"}
+                  {row.date.format("DD.MM.YYYY")}
+                  {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
                 </TableCell>
-                <TableCell>{row.startTime.toLocaleTimeString(["de"], { timeStyle: "short" })}</TableCell>
-                <TableCell>{row.endTime.toLocaleTimeString(["de"], { timeStyle: "short" })}</TableCell>
+                <TableCell>{row.startTime.format("HH:mm")}</TableCell>
+                <TableCell>{row.endTime.format("HH:mm")}</TableCell>
                 <TableCell>{row.location}</TableCell>
                 <TableCell>
-                  {row.registrationDeadline
-                    ? row.registrationDeadline.toLocaleString(["de"], { dateStyle: "short" })
-                    : null}
+                  <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
+                    {row.registrationDeadline ? row.registrationDeadline.format("DD.MM.YYYY") : <Box />}
+                    <Box ml={0.5}>
+                      {row.registrationDeadline ? renderSignUpButton(row.ID, row.registrationDeadline) : null}
+                    </Box>
+                  </Stack>
                 </TableCell>
-                <TableCell>{renderSignUpButton(row.ID)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -328,24 +679,48 @@ const DisplayEventsOverview: React.FC = () => {
     );
   };
 
+  /**
+   * Returns the content of the actual page
+   */
   return (
     <Box className={"content-page"}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Veranstaltungen
         </Typography>
-        {permissions.length > 0 ? renderNewEventButton() : null}
+        <Box>
+          {permissions.length > 0 ? renderNewEventButton() : null}
+          {renderShowAllButton()}
+        </Box>
       </Toolbar>
       {events.length > 0 ? (
         <Box>
-          <Tabs value={tabValue} onChange={handleTabChange}>
-            <Tab label="Alle Veranstaltungen" {...a11yProps(0)} />
-            <Tab label="Events" {...a11yProps(1)} />
-            <Tab label="Workshops" {...a11yProps(2)} />
-            <Tab label="Meine Veranstaltungen" {...a11yProps(3)} />
-          </Tabs>
+          <Box sx={{ ml: 2 }}>{displayFiters ? renderFilters() : null}</Box>
+          <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
+            <Tabs value={tabValue} onChange={handleTabChange} sx={{ ml: 3 }}>
+              <Tab label="Alle Veranstaltungen" />
+              <Tab label="Events" />
+              <Tab label="Workshops" />
+              <Tab label="Meine Veranstaltungen" />
+            </Tabs>
+            <IconButton
+              sx={{ width: 35, height: 35, mr: 3 }}
+              onClick={() => {
+                setDisplayFilters((prev) => !prev);
+              }}
+            >
+              <FilterList />
+            </IconButton>
+          </Stack>
           <CustomTabPanel value={tabValue} index={0}>
-            {renderTable(events.concat(workshops).sort((a, b) => a.date.getTime() - b.date.getTime()))}
+            {renderTable(
+              events
+                .concat(workshops)
+                .filter((event) => event.date > startDate)
+                .filter((event) => (startMonth ? event.date > startMonth : true))
+                .filter((event) => (endMonth ? event.date < endMonth : true))
+                .filter((event) => (eventTypeFilter ? event.type === eventTypeFilter : true))
+            )}
           </CustomTabPanel>
           <CustomTabPanel value={tabValue} index={1}>
             {renderTable(events)}
@@ -358,21 +733,7 @@ const DisplayEventsOverview: React.FC = () => {
           </CustomTabPanel>
         </Box>
       ) : (
-        <>
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 100 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-          <Skeleton sx={{ width: "97%", margin: "auto", height: 40 }} />
-        </>
+        <LoadingTable />
       )}
     </Box>
   );

@@ -6,6 +6,7 @@ import { useEffect } from "react";
 // MUI imports
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/de";
 
 // utils imports
 import { AuthContext } from "./context/auth-context/AuthContext";
@@ -177,7 +178,7 @@ const App: React.FunctionComponent = () => {
   });
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
       <HashRouter>
         {
           // Renders the Nav componenent if the user is authenticated
