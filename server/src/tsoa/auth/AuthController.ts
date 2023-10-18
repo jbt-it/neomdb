@@ -1,5 +1,5 @@
 import AuthService from "../../auth/AuthService";
-import { Body, Post, Route, Controller, Request, Get, Security, Patch } from "tsoa";
+import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "tsoa";
 import {
   JWTPayload,
   UserChangePasswordRequest,
@@ -16,6 +16,7 @@ import nodemailer = require("nodemailer");
  * Controller for the authentication
  * Provides routes for login, logout, forgot password and change password
  */
+@Tags("Auth")
 @Route("auth")
 export class AuthController extends Controller {
   private authService: AuthService = new AuthService();
