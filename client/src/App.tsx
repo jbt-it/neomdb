@@ -37,6 +37,7 @@ import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
 
 import DisplayEventsOverview from "./pages/events/DisplayEventsOverview";
+import DisplayEventDetails from "./pages/events/DisplayEventDetails";
 
 // other pages
 import Login from "./pages/Login";
@@ -195,6 +196,7 @@ const App: React.FunctionComponent = () => {
           <PrivateRoute exact path="/kuratoren" component={Dashboard} />
           <PrivateRoute exact path="/projekte" component={Dashboard} />
           <PrivateRoute exact path="/veranstaltungen" component={DisplayEventsOverview} />
+          <PrivateRoute exact path="/veranstaltungen/:id" component={DisplayEventDetails} />
           <PrivateRoute exact path="/mm-tracking" component={Dashboard} />
           <PrivateRoute exact path="/pl-qm-tool" component={Dashboard} />
           <PrivateRoute exact path="/raumreservierung" component={Dashboard} />

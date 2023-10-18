@@ -16,13 +16,15 @@ import {
   Tab,
   Stack,
   IconButton,
-  Grid,
   Select,
   SelectChangeEvent,
   FormControl,
   InputLabel,
   MenuItem,
-  Card,
+  Checkbox,
+  ListItemText,
+  Link,
+  Container,
 } from "@mui/material";
 import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
 import { events as mockEvents } from "../../mock/events/events";
@@ -69,7 +71,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [endMonth, setEndMonth] = useState<Dayjs | null>(); // variable that is used for filtering the end of the displayed events
   const [startMonthFilter, setStartMonthFilter] = useState<string>(""); // start of month filter field
   const [endMonthFilter, setEndMonthFilter] = useState<string>(""); // end of month filter field
-  const [eventTypeFilter, setEventTypeFilter] = useState<string>("");
+  const [eventTypeFilter, setEventTypeFilter] = useState<string[]>([]);
 
   /**
    * Handles change of the tab value
@@ -142,7 +144,7 @@ const DisplayEventsOverview: React.FC = () => {
         date: dayjs(event.datum).locale("de"),
         endDate: dayjs(event.datum).locale("de"),
         startTime: dayjs(event.startzeit).locale("de"),
-        endTime: dayjs(event.endzeti).locale("de"),
+        endTime: dayjs(event.endzeit).locale("de"),
         location: event.ort,
         registrationDeadline: null,
         type: event.art === "Pflichtschulung" ? "pflichtworkshop" : "workshop",
@@ -242,7 +244,9 @@ const DisplayEventsOverview: React.FC = () => {
           }}
         />
       );
-    } else if (registrationDeadline || registrationDeadline === null ? dayjs().isAfter(registrationDeadline) : false) {
+    } else if (
+      registrationDeadline || registrationDeadline === null ? dayjs().isAfter(registrationDeadline?.endOf("d")) : false
+    ) {
       return (
         <Chip
           label="Anmelden"
@@ -290,6 +294,7 @@ const DisplayEventsOverview: React.FC = () => {
   /**
    * Renders the button to show all past events by setting the start date of the list to 01.01.2010
    * Renders the button to show all current events by setting the start date of the list to the current date
+   * TODO: Sort so I Button is clicked --> the newst event is on top or else we will have to scroll down every time
    * @returns button to show all past events
    */
   const renderShowAllButton = () => {
@@ -341,7 +346,7 @@ const DisplayEventsOverview: React.FC = () => {
           setEndMonthFilter("");
           setStartMonth(null);
           setEndMonth(null);
-          setEventTypeFilter("");
+          setEventTypeFilter([]);
         }}
       >
         Filter zurücksetzen
@@ -560,8 +565,12 @@ const DisplayEventsOverview: React.FC = () => {
   /**
    * Function that handles the change on the filter field for the event type
    */
-  const onChangeEventTypeFilter = (event: SelectChangeEvent) => {
-    setEventTypeFilter(event.target.value);
+  const onChangeEventTypeFilter = (event: SelectChangeEvent<typeof eventTypeFilter>) => {
+    //setEventTypeFilter(event.target.value);
+    const {
+      target: { value },
+    } = event;
+    setEventTypeFilter(typeof value === "string" ? value.split(",") : value);
   };
 
   /**
@@ -570,6 +579,7 @@ const DisplayEventsOverview: React.FC = () => {
    * @returns the filter field
    */
   const renderFilters = () => {
+    const eventTypes = ["jbtGoes", "ww", "netzwerk", "workshop", "sonstige"];
     return (
       <Stack direction={"row"} alignItems="center">
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -607,14 +617,21 @@ const DisplayEventsOverview: React.FC = () => {
             <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
           </Select>
         </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 180 }} size="small">
+        <FormControl sx={{ ml: 5, minWidth: 180, mr: "auto" }} size="small">
           <InputLabel>Veranstaltungsart</InputLabel>
-          <Select label="Veranstaltungsart" value={eventTypeFilter} onChange={onChangeEventTypeFilter}>
-            <MenuItem value="jbtGoes">JBT goes</MenuItem>
-            <MenuItem value="ww">Working Weekend</MenuItem>
-            <MenuItem value="netzwerk">Netzwerk</MenuItem>
-            <MenuItem value="workshop">Workshop</MenuItem>
-            <MenuItem value="sonstige">Sonstige</MenuItem>
+          <Select
+            label="Veranstaltungsart"
+            multiple
+            value={eventTypeFilter}
+            renderValue={(selected) => selected.join(", ")}
+            onChange={onChangeEventTypeFilter}
+          >
+            {eventTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                <Checkbox checked={eventTypeFilter.indexOf(type) > -1} />
+                <ListItemText primary={type} />
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <Box sx={{ mr: 1, ml: "auto" }}>{renderResetFiltersButton()}</Box>
@@ -655,7 +672,11 @@ const DisplayEventsOverview: React.FC = () => {
             {rows.map((row) => (
               <TableRow key={row.ID}>
                 <TableCell>{renderEventChip(row.type)}</TableCell>
-                <TableCell>{row.name}</TableCell>
+                <TableCell>
+                  <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>
+                    {row.name}
+                  </Link>
+                </TableCell>
                 <TableCell>
                   {row.date.format("DD.MM.YYYY")}
                   {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
@@ -683,7 +704,7 @@ const DisplayEventsOverview: React.FC = () => {
    * Returns the content of the actual page
    */
   return (
-    <Box className={"content-page"}>
+    <Container maxWidth="xl" className={"content-page"}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Veranstaltungen
@@ -719,7 +740,7 @@ const DisplayEventsOverview: React.FC = () => {
                 .filter((event) => event.date > startDate)
                 .filter((event) => (startMonth ? event.date > startMonth : true))
                 .filter((event) => (endMonth ? event.date < endMonth : true))
-                .filter((event) => (eventTypeFilter ? event.type === eventTypeFilter : true))
+                .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
             )}
           </CustomTabPanel>
           <CustomTabPanel value={tabValue} index={1}>
@@ -735,7 +756,7 @@ const DisplayEventsOverview: React.FC = () => {
       ) : (
         <LoadingTable />
       )}
-    </Box>
+    </Container>
   );
 };
 

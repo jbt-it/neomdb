@@ -19,7 +19,7 @@ export const events = [
     beschreibung: "Spooky scary skeletons send shivers down your spine.",
     datum: "2023-10-31T00:00:00.000Z",
     ende: "2023-10-31T00:00:00.000Z",
-    anmeldungsfrist: "2023-10-30T00:00:00.000Z",
+    anmeldungsfrist: "2023-10-18T00:00:00.000Z",
     ort: "Schloss",
     startZeit: "2023-10-31T19:00:00.000Z",
     endZeit: "2023-10-31T23:59:59.000Z",
