@@ -36,7 +36,7 @@ export class AuthController extends Controller {
     const token = generateJWT(payload);
 
     const cookieOptions = getCookieOptionsAsString();
-    this.setHeader("Set-Cookie", `token=${token}; ${cookieOptions}`);
+    this.setHeader("Set-Cookie", `__Secure-token=${token}; ${cookieOptions}`);
 
     /*
      * Only set the x-auth-token header in development because swagger-ui does not support cookies
@@ -159,7 +159,7 @@ export class AuthController extends Controller {
   }
 
   /**
-   * Loggs the user out by removing the jwt from the cookie
+   * Logs the user out by removing the jwt from the cookie
    * @summary Logs out the user
    *
    */
