@@ -48,6 +48,7 @@ type commonEventType = {
   startTime: Dayjs;
   endTime: Dayjs;
   location: string;
+  registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
   type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
 };
@@ -119,7 +120,8 @@ const DisplayEventsOverview: React.FC = () => {
         startTime: dayjs(event.startZeit).locale("de"),
         endTime: dayjs(event.endZeit).locale("de"),
         location: event.ort,
-        registrationDeadline: event.anmeldungsfrist ? dayjs(event.anmeldungsfrist).locale("de") : null,
+        registrationStart: event.anmeldungvon ? dayjs(event.anmeldungvon).locale("de") : null,
+        registrationDeadline: event.anmeldungbis ? dayjs(event.anmeldungbis).locale("de") : null,
         type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
       });
     });
@@ -146,6 +148,7 @@ const DisplayEventsOverview: React.FC = () => {
         startTime: dayjs(event.startzeit).locale("de"),
         endTime: dayjs(event.endzeit).locale("de"),
         location: event.ort,
+        registrationStart: null,
         registrationDeadline: null,
         type: event.art === "Pflichtschulung" ? "pflichtworkshop" : "workshop",
       });
@@ -174,7 +177,8 @@ const DisplayEventsOverview: React.FC = () => {
         startTime: dayjs(event.startZeit),
         endTime: dayjs(event.endZeit),
         location: event.ort,
-        registrationDeadline: dayjs(event.anmeldungsfrist),
+        registrationStart: dayjs(event.anmeldungvon),
+        registrationDeadline: dayjs(event.anmeldungbis),
         type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
       });
     });
@@ -230,7 +234,7 @@ const DisplayEventsOverview: React.FC = () => {
    * @param eventID the id of the event
    * @returns the button for sign up or sign out from event
    */
-  const renderSignUpButton = (eventID: number, registrationDeadline: Dayjs | null) => {
+  const renderSignUpButton = (eventID: number, registrationStart: Dayjs | null, registrationDeadline: Dayjs | null) => {
     if (eventsSignedUp.some((event) => event.ID === eventID)) {
       return (
         <Chip
@@ -245,7 +249,10 @@ const DisplayEventsOverview: React.FC = () => {
         />
       );
     } else if (
-      registrationDeadline || registrationDeadline === null ? dayjs().isAfter(registrationDeadline?.endOf("d")) : false
+      (registrationDeadline || registrationDeadline === null
+        ? dayjs().isAfter(registrationDeadline?.endOf("d"))
+        : false) ||
+      (registrationStart || registrationStart === null ? dayjs().isBefore(registrationStart?.startOf("d")) : false)
     ) {
       return (
         <Chip
@@ -686,9 +693,15 @@ const DisplayEventsOverview: React.FC = () => {
                 <TableCell>{row.location}</TableCell>
                 <TableCell>
                   <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
-                    {row.registrationDeadline ? row.registrationDeadline.format("DD.MM.YYYY") : <Box />}
+                    {row.registrationDeadline && row.registrationStart ? (
+                      row.registrationStart.format("DD.MM.YYYY") + " - " + row.registrationDeadline.format("DD.MM.YYYY")
+                    ) : (
+                      <Box />
+                    )}
                     <Box ml={0.5}>
-                      {row.registrationDeadline ? renderSignUpButton(row.ID, row.registrationDeadline) : null}
+                      {row.registrationDeadline
+                        ? renderSignUpButton(row.ID, row.registrationStart, row.registrationDeadline)
+                        : null}
                     </Box>
                   </Stack>
                 </TableCell>

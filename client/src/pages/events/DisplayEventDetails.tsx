@@ -85,8 +85,8 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
               startTime: dayjs(res.startZeit).locale("de").format("HH:mm").toString(),
               endTime: dayjs(res.endZeit).locale("de").format("HH:mm").toString(),
               location: res.ort,
-              registrationDeadline: res.anmeldungsfrist
-                ? dayjs(res.anmeldungsfrist).locale("de").format("DD.MM.YYYY").toString()
+              registrationDeadline: res.anmeldungbis
+                ? dayjs(res.anmeldungbis).locale("de").format("DD.MM.YYYY").toString()
                 : null,
               type: res.ww ? "ww" : res.netzwerk ? "netzwerk" : res.jbtgoes ? "jbtGoes" : "sonstige",
             })
