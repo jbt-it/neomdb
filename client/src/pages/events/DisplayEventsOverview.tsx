@@ -26,7 +26,7 @@ import {
   Link,
   Container,
 } from "@mui/material";
-import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
+import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth, Add } from "@mui/icons-material/";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -57,7 +57,7 @@ type commonEventType = {
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
  * ToDo: Max Anmeldungsbutton disable if max participants reached
- * TODO: Check use for floating action button
+ * TODO: floating action button --> for mobile site
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -106,6 +106,10 @@ const DisplayEventsOverview: React.FC = () => {
     );
   }
 
+  /**
+   * Function that sends the request to get all events from the backend
+   * sets the right type for the fields and sets the state for the events cosntant
+   */
   const getEvents: VoidFunction = useCallback(() => {
     // api.get("/events").then((response) => {
     //   console.log(response.data);
@@ -131,7 +135,7 @@ const DisplayEventsOverview: React.FC = () => {
   }, [dispatchAuth]);
 
   /**
-   * Function that sends the request to get all events the user is signed up for to the backend
+   * Function that sends the request to get all workshops from to the backend
    * sets the right type for the fields and sets the state for the workshops
    */
   const getWorkshops: VoidFunction = useCallback(() => {
@@ -366,6 +370,25 @@ const DisplayEventsOverview: React.FC = () => {
   };
 
   /**
+   * Function that returns either the start or the end date of a specific month and adds one year if the month is in the past
+   * @param month the month for which the date should be returned
+   * @param type either start or end
+   * @returns the date of the start or end of a month
+   */
+  function getMonthDate(month: number, type: "start" | "end"): Dayjs {
+    const nextYear = dayjs().isAfter(dayjs().month(month).endOf("month"));
+    const date =
+      type === "start"
+        ? nextYear
+          ? dayjs().month(month).startOf("month").add(1, "year")
+          : dayjs().month(month).startOf("month")
+        : nextYear
+        ? dayjs().month(month).endOf("month").endOf("d").add(1, "year")
+        : dayjs().month(month).endOf("month").endOf("d");
+    return date;
+  }
+
+  /**
    * Function that sets the start month for the filter
    * Sets the state of the startMonth variable that is responsible for filtering the displayed events
    */
@@ -373,86 +396,62 @@ const DisplayEventsOverview: React.FC = () => {
     switch (event.target.value) {
       case "Januar": {
         setStartMonthFilter("Januar");
-        dayjs().isAfter(dayjs().month(0).endOf("month"))
-          ? setStartMonth(dayjs().month(0).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(0).startOf("month"));
+        setStartMonth(getMonthDate(0, "start"));
         break;
       }
       case "Februar": {
         setStartMonthFilter("Februar");
-        dayjs().isAfter(dayjs().month(1).endOf("month"))
-          ? setStartMonth(dayjs().month(1).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(1).startOf("month"));
+        setStartMonth(getMonthDate(1, "start"));
         break;
       }
       case "März": {
         setStartMonthFilter("März");
-        dayjs().isAfter(dayjs().month(2).endOf("month"))
-          ? setStartMonth(dayjs().month(2).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(2).startOf("month"));
+        setStartMonth(getMonthDate(2, "start"));
         break;
       }
       case "April": {
         setStartMonthFilter("April");
-        dayjs().isAfter(dayjs().month(3).endOf("month"))
-          ? setStartMonth(dayjs().month(3).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(3).startOf("month"));
+        setStartMonth(getMonthDate(3, "start"));
         break;
       }
       case "Mai": {
         setStartMonthFilter("Mai");
-        dayjs().isAfter(dayjs().month(4).endOf("month"))
-          ? setStartMonth(dayjs().month(4).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(4).startOf("month"));
+        setStartMonth(getMonthDate(4, "start"));
         break;
       }
       case "Juni": {
         setStartMonthFilter("Juni");
-        dayjs().isAfter(dayjs().month(5).endOf("month"))
-          ? setStartMonth(dayjs().month(5).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(5).startOf("month"));
+        setStartMonth(getMonthDate(5, "start"));
         break;
       }
       case "Juli": {
         setStartMonthFilter("Juli");
-        dayjs().isAfter(dayjs().month(6).endOf("month"))
-          ? setStartMonth(dayjs().month(6).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(6).startOf("month"));
+        setStartMonth(getMonthDate(6, "start"));
         break;
       }
       case "August": {
         setStartMonthFilter("August");
-        dayjs().isAfter(dayjs().month(7).endOf("month"))
-          ? setStartMonth(dayjs().month(7).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(7).startOf("month"));
+        setStartMonth(getMonthDate(7, "start"));
         break;
       }
       case "September": {
         setStartMonthFilter("September");
-        dayjs().isAfter(dayjs().month(8).endOf("month"))
-          ? setStartMonth(dayjs().month(8).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(8).startOf("month"));
+        setStartMonth(getMonthDate(8, "start"));
         break;
       }
       case "Oktober": {
         setStartMonthFilter("Oktober");
-        dayjs().isAfter(dayjs().month(9).endOf("month"))
-          ? setStartMonth(dayjs().month(9).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(9).startOf("month"));
+        setStartMonth(getMonthDate(9, "start"));
         break;
       }
       case "November": {
         setStartMonthFilter("November");
-        dayjs().isAfter(dayjs().month(10).endOf("month"))
-          ? setStartMonth(dayjs().month(10).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(10).startOf("month"));
+        setStartMonth(getMonthDate(10, "start"));
         break;
       }
       case "Dezember": {
         setStartMonthFilter("Dezember");
-        dayjs().isAfter(dayjs().month(11).endOf("month"))
-          ? setStartMonth(dayjs().month(11).startOf("month").add(1, "year"))
-          : setStartMonth(dayjs().month(11).startOf("month"));
+        setStartMonth(getMonthDate(11, "start"));
         break;
       }
     }
@@ -466,86 +465,62 @@ const DisplayEventsOverview: React.FC = () => {
     switch (event.target.value) {
       case "Januar": {
         setEndMonthFilter("Januar");
-        dayjs().isAfter(dayjs().month(0).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(0).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(0).endOf("d"));
+        setEndMonth(getMonthDate(0, "end"));
         break;
       }
       case "Februar": {
         setEndMonthFilter("Februar");
-        dayjs().isAfter(dayjs().month(1).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(1).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(1).endOf("d"));
+        setEndMonth(getMonthDate(1, "end"));
         break;
       }
       case "März": {
         setEndMonthFilter("März");
-        dayjs().isAfter(dayjs().month(2).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(2).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(2).endOf("d"));
+        setEndMonth(getMonthDate(2, "end"));
         break;
       }
       case "April": {
         setEndMonthFilter("April");
-        dayjs().isAfter(dayjs().month(3).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(3).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(3).endOf("d"));
+        setEndMonth(getMonthDate(3, "end"));
         break;
       }
       case "Mai": {
         setEndMonthFilter("Mai");
-        dayjs().isAfter(dayjs().month(4).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(4).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(4).endOf("d"));
+        setEndMonth(getMonthDate(4, "end"));
         break;
       }
       case "Juni": {
         setEndMonthFilter("Juni");
-        dayjs().isAfter(dayjs().month(5).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(5).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(5).endOf("d"));
+        setEndMonth(getMonthDate(5, "end"));
         break;
       }
       case "Juli": {
         setEndMonthFilter("Juli");
-        dayjs().isAfter(dayjs().month(6).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(6).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(6).endOf("d"));
+        setEndMonth(getMonthDate(6, "end"));
         break;
       }
       case "August": {
         setEndMonthFilter("August");
-        dayjs().isAfter(dayjs().month(7).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(7).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(7).endOf("d"));
+        setEndMonth(getMonthDate(7, "end"));
         break;
       }
       case "September": {
         setEndMonthFilter("September");
-        dayjs().isAfter(dayjs().month(8).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(8).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(8).endOf("d"));
+        setEndMonth(getMonthDate(8, "end"));
         break;
       }
       case "Oktober": {
         setEndMonthFilter("Oktober");
-        dayjs().isAfter(dayjs().month(9).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(9).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(9).endOf("d"));
+        setEndMonth(getMonthDate(9, "end"));
         break;
       }
       case "November": {
         setEndMonthFilter("November");
-        dayjs().isAfter(dayjs().month(10).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(10).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(10).endOf("d"));
+        setEndMonth(getMonthDate(10, "end"));
         break;
       }
       case "Dezember": {
         setEndMonthFilter("Dezember");
-        dayjs().isAfter(dayjs().month(11).endOf("month"))
-          ? setEndMonth(dayjs().endOf("month").month(11).endOf("d").add(1, "year"))
-          : setEndMonth(dayjs().endOf("month").month(11).endOf("d"));
+        setEndMonth(getMonthDate(11, "end"));
         break;
       }
     }
@@ -660,7 +635,7 @@ const DisplayEventsOverview: React.FC = () => {
             {rows.map((row) => (
               <TableRow key={row.ID}>
                 <TableCell>
-                  <EventChip type={row.type} />
+                  <EventChip type={row.type} size="small" />
                 </TableCell>
                 <TableCell>
                   <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>
@@ -689,7 +664,7 @@ const DisplayEventsOverview: React.FC = () => {
                       <Box />
                     )}
                     <Box ml={0.5}>
-                      {row.registrationDeadline
+                      {row.registrationDeadline && row.endDate > dayjs()
                         ? renderSignUpButton(row.ID, row.registrationStart, row.registrationDeadline)
                         : null}
                     </Box>

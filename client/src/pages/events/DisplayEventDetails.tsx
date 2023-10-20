@@ -221,7 +221,7 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
             </Typography>
             {auth.permissions.length > 0 ? (
               <IconButton sx={{ width: 20, height: 20 }} onClick={() => console.log("TODO: implement delete user")}>
-                <RemoveCircle sx={{ fontSize: 15 }} color="error" />
+                <RemoveCircle sx={{ fontSize: 15, "&:hover": { color: "#d32f2f" } }} />
               </IconButton>
             ) : null}
           </Grid>
@@ -341,13 +341,16 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
     <Container className="content-page" maxWidth="md" sx={{ ml: 3 }}>
       {event ? (
         <>
-          <EventChip type={event ? event.type : "sonstige"} sx={{ ml: 3 }} />
-          <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3 }}>
-            <Typography variant="h5">Termininformationen - {event ? event.name : null}</Typography>
-            <Stack direction={"row"} spacing={2}>
-              {renderDeleteButton()}
-              {renderEditButton()}
-            </Stack>
+          <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3, pb: 1 }}>
+            <Typography fontWeight={"bold"} variant="h5">
+              Termininformationen - {event ? event.name : null}
+            </Typography>
+            {auth.permissions.length > 0 ? (
+              <Stack direction={"row"} spacing={2}>
+                {renderDeleteButton()}
+                {renderEditButton()}
+              </Stack>
+            ) : null}
           </Stack>
           <Paper sx={{ ml: 3 }}>
             <Stack
@@ -356,16 +359,16 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
               sx={{ pt: 2, ml: 3, mr: 3 }}
               alignItems={"center"}
             >
-              <Typography variant="h6" color="primary">
+              <Typography variant="h6" color="primary" fontWeight={"bold"}>
                 Details
               </Typography>
-              {participants.length > 0 ? renderSignUpButton() : null}
+              <EventChip type={event ? event.type : "sonstige"} sx={{ ml: 3 }} size="medium" />
             </Stack>
             {renderDetails()}
             {participants.length > 0 ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
-                <Typography variant="h6" color="primary" sx={{ pt: 2, ml: 3 }}>
+                <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
                   Teilnehmerliste
                 </Typography>
                 <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>{renderParticipants()}</Box>

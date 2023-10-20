@@ -6,7 +6,7 @@ export const events = [
     datum: "2023-07-30T00:00:00.000Z",
     ende: "2023-07-30T00:00:00.000Z",
     anmeldungvon: "2023-07-25T00:00:00.000Z",
-    anmeldungbis: "2023-07-25T00:00:00.000Z",
+    anmeldungbis: "2023-10-25T00:00:00.000Z",
     ort: "Schwarzwald",
     startZeit: "2023-07-30T07:00:00.000Z",
     endZeit: "2023-07-30T07:00:00.000Z",
