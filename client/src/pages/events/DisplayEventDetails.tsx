@@ -28,6 +28,7 @@ import EditEventDialog from "./EditEventDialog";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
+import EventChip from "../../components/event/EventChip";
 
 interface RouterMatch {
   id: string;
@@ -46,18 +47,25 @@ type commonEventType = {
   type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
 };
 
+/**
+ * Renders the page for displaying the details of a given event as well as the participants
+ * TODO: Implement the functionality to add and remove participants
+ * TODO: hide remove button from participants if user is not admin / organizer and generally only display the remove button if hovered over the participant
+ * TODO: Change participants to be a list of clickable members instead of a list of strings
+ * TODO: Check use for floating action button
+ * @param props id in URL
+ * @returns the page to display the details of an event
+ */
 const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
   props: RouteComponentProps<RouterMatch>
 ) => {
-  const { auth, dispatchAuth } = React.useContext(AuthContext);
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const [event, setEvent] = useState<commonEventType | null>();
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
-  //const type = Number(props.id) < 5000 ? "event" : "workshop";
 
   /**
    * Gets the event or workshop from the database
-   * TODO: check if event or workshop
    */
   const getEvent = useCallback(
     (type: string, id: number) => {
@@ -113,15 +121,12 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
     [dispatchAuth]
   );
 
+  //* calls the getEvent function */
   useEffect(() => {
     getEvent("event", Number(props.match.params.id));
   }, [props.match.params.id, getEvent]);
 
-  const handleSignUp = () => {
-    // here should be a api call to sign up or sign off the user
-    setUserIsSignedUp(!userIsSignedUp);
-  };
-
+  //mock participants since backend is not connected yet
   const participants = [
     "Alice",
     "Bob",
@@ -151,6 +156,7 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
     "Zoe",
   ];
 
+  // empty participants for testing
   const participantsLeer: string[] = [];
 
   const displayFields: Array<InformationField> = [
@@ -314,6 +320,11 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
    * Renders sign up button
    */
   const renderSignUpButton = () => {
+    const handleSignUp = () => {
+      // here should be a api call to sign up or sign off the user
+      setUserIsSignedUp(!userIsSignedUp);
+    };
+
     if (userIsSignedUp) {
       return (
         <Chip label="Abmelden" color="error" variant="outlined" icon={<RemoveCircleOutline />} onClick={handleSignUp} />
@@ -323,10 +334,14 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
     }
   };
 
+  /**
+   * Renders the page
+   */
   return (
     <Container className="content-page" maxWidth="md" sx={{ ml: 3 }}>
       {event ? (
         <>
+          <EventChip type={event ? event.type : "sonstige"} sx={{ ml: 3 }} />
           <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3 }}>
             <Typography variant="h5">Termininformationen - {event ? event.name : null}</Typography>
             <Stack direction={"row"} spacing={2}>

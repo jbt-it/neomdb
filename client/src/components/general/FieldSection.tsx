@@ -3,7 +3,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Radio,
-  Paper,
+  Box,
   TextField,
   Theme,
   Typography,
@@ -128,6 +128,7 @@ const FieldSection = (props: Props) => {
             label={field.label}
             color="primary"
             value={field.state}
+            variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
@@ -141,6 +142,7 @@ const FieldSection = (props: Props) => {
             value={field.state}
             multiline
             rows={field.rows}
+            variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
@@ -192,12 +194,12 @@ const FieldSection = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.fieldSectionBox}>
+    <Box className={classes.fieldSectionBox}>
       <Typography variant="h5" className={classes.fieldSectionTitle}>
         {props.title}
       </Typography>
       <Grid container>{renderFields(props.fields)}</Grid>
-    </Paper>
+    </Box>
   );
 };
 

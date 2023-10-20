@@ -33,6 +33,7 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
 import LoadingTable from "../../components/general/LoadingTable";
+import EventChip from "../../components/event/EventChip";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -55,8 +56,8 @@ type commonEventType = {
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
- * ToDo: filters for events, eg. just show workshops etc.
- * ToDo: implement show all past events
+ * ToDo: Max Anmeldungsbutton disable if max participants reached
+ * TODO: Check use for floating action button
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -68,6 +69,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [tabValue, setTabValue] = React.useState(0);
   const [displayFiters, setDisplayFilters] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs()); // is the start date from which on events are displayed, is initialized to the current date
+  const [endDate, setEndDate] = useState<Dayjs | null>(); // is the start date from which on events are displayed, is initialized to the current date
   const [startMonth, setStartMonth] = useState<Dayjs | null>(); // variable that is used for filtering the beginning of the displayed events
   const [endMonth, setEndMonth] = useState<Dayjs | null>(); // variable that is used for filtering the end of the displayed events
   const [startMonthFilter, setStartMonthFilter] = useState<string>(""); // start of month filter field
@@ -125,7 +127,7 @@ const DisplayEventsOverview: React.FC = () => {
         type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
       });
     });
-    setEvents(currentEvents.filter((event) => (event.date ? event.date > dayjs() : true)));
+    setEvents(currentEvents); //.filter((event) => (event.date ? event.date > dayjs() : true)));
   }, [dispatchAuth]);
 
   /**
@@ -315,6 +317,7 @@ const DisplayEventsOverview: React.FC = () => {
           onClick={() => {
             setDisplayAll(false);
             setStartDate(dayjs());
+            setEndDate(null);
           }}
         >
           Aktuelle
@@ -330,9 +333,10 @@ const DisplayEventsOverview: React.FC = () => {
           onClick={() => {
             setDisplayAll(true);
             setStartDate(dayjs("2010-01-01"));
+            setEndDate(dayjs().subtract(1, "day"));
           }}
         >
-          Alle anzeigen
+          Vergangene Events
         </Button>
       );
     }
@@ -359,28 +363,6 @@ const DisplayEventsOverview: React.FC = () => {
         Filter zurücksetzen
       </Button>
     );
-  };
-
-  /**
-   * Renders a chip for the event type
-   * @returns the chip component for the event type
-   */
-  const renderEventChip = (type: string) => {
-    if (type === "pflichtworkshop") {
-      return <Chip label="Pflichtworkshop" color="secondary" sx={{ margin: 0.5 }} size="small" />;
-    } else if (type === "workshop") {
-      return <Chip label="Workshop" sx={{ bgcolor: "#318c6f", color: "#ffffff", margin: 0.5 }} size="small" />;
-    }
-
-    if (type === "ww") {
-      return <Chip label="WW" color="default" sx={{ margin: 0.5 }} size="small" />;
-    } else if (type === "netzwerk") {
-      return <Chip label="Netzwerk" size="small" sx={{ bgcolor: "#891ff6", color: "#ffffff", margin: 0.5 }} />;
-    } else if (type === "jbtGoes") {
-      return <Chip label="JBT goes" color="primary" size="small" sx={{ margin: 0.5 }} />;
-    } else {
-      return <Chip label="Sonstige" color="info" size="small" sx={{ margin: 0.5 }} />;
-    }
   };
 
   /**
@@ -669,8 +651,7 @@ const DisplayEventsOverview: React.FC = () => {
               <TableCell></TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Event</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Beginn</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Ende</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Uhrzeit</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Ort</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Anmeldungsfrist</TableCell>
             </TableRow>
@@ -678,7 +659,9 @@ const DisplayEventsOverview: React.FC = () => {
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.ID}>
-                <TableCell>{renderEventChip(row.type)}</TableCell>
+                <TableCell>
+                  <EventChip type={row.type} />
+                </TableCell>
                 <TableCell>
                   <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>
                     {row.name}
@@ -688,13 +671,20 @@ const DisplayEventsOverview: React.FC = () => {
                   {row.date.format("DD.MM.YYYY")}
                   {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
                 </TableCell>
-                <TableCell>{row.startTime.format("HH:mm")}</TableCell>
-                <TableCell>{row.endTime.format("HH:mm")}</TableCell>
+                <TableCell>
+                  {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
+                </TableCell>
                 <TableCell>{row.location}</TableCell>
                 <TableCell>
                   <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
-                    {row.registrationDeadline && row.registrationStart ? (
-                      row.registrationStart.format("DD.MM.YYYY") + " - " + row.registrationDeadline.format("DD.MM.YYYY")
+                    {row.registrationDeadline ? (
+                      row.registrationStart ? (
+                        row.registrationStart.format("DD.MM.YYYY") +
+                        " - " +
+                        row.registrationDeadline.format("DD.MM.YYYY")
+                      ) : (
+                        row.registrationDeadline.format("DD.MM.YYYY")
+                      )
                     ) : (
                       <Box />
                     )}
@@ -717,7 +707,7 @@ const DisplayEventsOverview: React.FC = () => {
    * Returns the content of the actual page
    */
   return (
-    <Container maxWidth="xl" className={"content-page"}>
+    <Container maxWidth="lg" className={"content-page"}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Veranstaltungen
@@ -750,7 +740,7 @@ const DisplayEventsOverview: React.FC = () => {
             {renderTable(
               events
                 .concat(workshops)
-                .filter((event) => event.date > startDate)
+                .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
                 .filter((event) => (startMonth ? event.date > startMonth : true))
                 .filter((event) => (endMonth ? event.date < endMonth : true))
                 .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))

@@ -16,6 +16,8 @@ function EditEventDialog(props: EditEventDialogProps) {
   const [endDate, setEndDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
+  const [registrationStart, setRegistrationStart] = useState<string>("");
+  const [registrationEnd, setRegistrationEnd] = useState<string>("");
   const [maxParticipants, setMaxParticipants] = useState<string>("");
   const [organizers, setOrganizers] = useState<string>("");
   const [eventType, setEventType] = useState<string>("");
@@ -23,6 +25,42 @@ function EditEventDialog(props: EditEventDialogProps) {
 
   const onChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+
+  const onChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLocation(event.target.value);
+  };
+
+  const onChangeStartDate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(event.target.value);
+  };
+
+  const onChangeEndDate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(event.target.value);
+  };
+
+  const onChangeStartTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStartTime(event.target.value);
+  };
+
+  const onChangeEndTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndTime(event.target.value);
+  };
+
+  const onChangeRegistrationStart = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRegistrationStart(event.target.value);
+  };
+
+  const onChangeRegistrationEnd = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRegistrationEnd(event.target.value);
+  };
+
+  const onChangeMaxParticipants = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxParticipants(event.target.value);
+  };
+
+  const onChangeOrganizers = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOrganizers(event.target.value);
   };
 
   const onChangeDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,49 +96,64 @@ function EditEventDialog(props: EditEventDialogProps) {
       label: "Ort",
       state: location,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeLocation,
       type: "Text",
     },
     {
       label: "Beginn",
       state: startDate,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeStartDate,
       type: "Text",
     },
     {
       label: "Ende",
       state: endDate,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeEndDate,
       type: "Text",
     },
     {
       label: "Startzeit",
       state: startTime,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeStartTime,
       type: "Text",
     },
     {
       label: "Endzeit",
       state: endTime,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeEndTime,
       type: "Text",
     },
     {
       label: "Anmeldung ab",
-      state: startTime,
+      state: registrationStart,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeRegistrationStart,
       type: "Text",
     },
     {
       label: "Anmeldung bis",
-      state: endTime,
+      state: registrationEnd,
       width: "half",
-      onChangeCallback: onChangeTitle,
+      onChangeCallback: onChangeRegistrationEnd,
+      type: "Text",
+    },
+
+    {
+      label: "Teilnehmeranzahl",
+      state: maxParticipants,
+      width: "half",
+      onChangeCallback: onChangeMaxParticipants,
+      type: "Text",
+    },
+    {
+      label: "Organisatoren",
+      state: organizers,
+      width: "half",
+      onChangeCallback: onChangeOrganizers,
       type: "Text",
     },
     {
@@ -110,20 +163,6 @@ function EditEventDialog(props: EditEventDialogProps) {
       onChangeCallback: onChangeDescription,
       type: "TextBig",
       rows: 2,
-    },
-    {
-      label: "Teilnehmeranzahl",
-      state: maxParticipants,
-      width: "half",
-      onChangeCallback: onChangeTitle,
-      type: "Text",
-    },
-    {
-      label: "Organisatoren",
-      state: organizers,
-      width: "half",
-      onChangeCallback: onChangeTitle,
-      type: "Text",
     },
   ];
 
