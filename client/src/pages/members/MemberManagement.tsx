@@ -190,7 +190,7 @@ const MemberManagement: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/", {
+      .get("/members/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -376,7 +376,7 @@ const MemberManagement: React.FunctionComponent = () => {
     };
 
     api
-      .patch(`/users/${id}/status`, payload, {
+      .patch(`/members/${id}/status`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -426,7 +426,7 @@ const MemberManagement: React.FunctionComponent = () => {
     };
 
     api
-      .post("users/", payload, {
+      .post("members/", payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

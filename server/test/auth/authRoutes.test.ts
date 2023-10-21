@@ -74,14 +74,14 @@ describe("Test auth routes", () => {
     });
   });
 
-  describe("GET /user-data", () => {
+  describe("GET /me", () => {
     test("should return 200 and user data for valid token", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const response = await request(app).get("/api/auth/user-data").set("Cookie", `token=${token}`);
+      const response = await request(app).get("/api/auth/me").set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.statusCode).toBe(200);
@@ -93,7 +93,7 @@ describe("Test auth routes", () => {
 
     test("should return 401 for invalid or no token", async () => {
       // --- WHEN
-      const response = await request(app).get("/api/auth/user-data").set("Cookie", "token=invalidToken");
+      const response = await request(app).get("/api/auth/me").set("Cookie", "token=invalidToken");
 
       // --- THEN
       expect(response.statusCode).toBe(401);

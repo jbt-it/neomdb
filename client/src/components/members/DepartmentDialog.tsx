@@ -67,7 +67,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     // Given department object with changed wiki, goal and organisation links
     const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
     api
-      .patch(`/users/departments/${editedDepartment.ressortID}`, editedDepartment)
+      .patch(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
       .then((res: AxiosResponse) => {
         if (res.status === 200) {
           showSuccessMessage("Aktualisierung erfolgreich!");

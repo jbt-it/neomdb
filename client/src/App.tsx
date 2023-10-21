@@ -72,7 +72,7 @@ const App: React.FunctionComponent = () => {
   const checkAuth = useCallback(() => {
     // Tries to retrieve the user data
     api
-      .get("auth/user-data")
+      .get("auth/me")
       .then((res) => {
         // If the retrieval of the user data is succesfull the user is authenticated
         if (res.status === 200) {

@@ -37,7 +37,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users`, {
+      .get(`/members`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -66,7 +66,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users/departments`, {
+      .get(`/members/departments`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -95,7 +95,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users/languages`, {
+      .get(`/members/languages`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -124,7 +124,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users/edv-skills`, {
+      .get(`/members/edv-skills`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -153,7 +153,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users/${props.match.params.id}`, {
+      .get(`/members/${props.match.params.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -182,7 +182,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .patch(`/users/${props.match.params.id}`, data, {
+      .patch(`/members/${props.match.params.id}`, data, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

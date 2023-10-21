@@ -28,7 +28,7 @@ const checkDataFromJWT = (req: express.Request, permissions: string[], checkHead
     if (!checkForValidJWT(req, checkHeader)) {
       reject(new UnauthenticatedError("Authentication failed: Please log in"));
     }
-    const token = req.cookies["__Secure-token"] || extractJWTFromHeader(req.headers.authorization);
+    const token = req.cookies["token"] || extractJWTFromHeader(req.headers.authorization);
     const jwtData = verifyJWT(token);
 
     if (jwtData === null) {

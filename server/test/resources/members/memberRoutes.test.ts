@@ -32,7 +32,7 @@ describe("Test member routes", () => {
       // --- WHEN
 
       const response = await request(app)
-        .post("/api/users/permissions")
+        .post("/api/members/permissions")
         .send({ memberID: 8167, permissionID: 8 })
         .set("Cookie", `token=${token}`);
 

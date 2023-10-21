@@ -4,6 +4,7 @@ import { CookieOptions } from "express-serve-static-core";
  * Options for the cookie
  */
 export const cookieOptions: CookieOptions = {
+  path: "/api", // Cookie is only sent to routes starting with /api
   httpOnly: true, // Cookie is only accesible via the browser
   secure: process.env.IS_PRODUCTION ? true : false, // Cookie can only be sent to an HTTPS page in production
   sameSite: process.env.IS_PRODUCTION ? "strict" : "lax", // In development cookie can be sent to the same domain

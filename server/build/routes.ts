@@ -3,11 +3,11 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../src/tsoa/auth/AuthController';
+import { AuthController } from './../src/auth/AuthController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { MembersController } from './../src/tsoa/resources/members/MembersController';
+import { MembersController } from './../src/resources/members/MembersController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { TraineesController } from './../src/tsoa/resources/trainees/TraineesController';
+import { TraineesController } from './../src/resources/trainees/TraineesController';
 import { expressAuthentication } from './../src/middleware/authenticationTsoa';
 // @ts-ignore - no great way to install types from subpackage
 const promiseAny = require('promise.any');
@@ -191,7 +191,7 @@ export function RegisterRoutes(app: Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.post('/auth/login',
+        app.post('/api/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.login)),
 
@@ -216,7 +216,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/auth/me',
+        app.get('/api/auth/me',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.getUserData)),
@@ -242,7 +242,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/auth/change-password',
+        app.patch('/api/auth/change-password',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.changePassword)),
@@ -269,7 +269,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/auth/forgot-password',
+        app.post('/api/auth/forgot-password',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.sendPasswordResetLink)),
 
@@ -294,7 +294,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/auth/reset-forgot-password',
+        app.patch('/api/auth/reset-forgot-password',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.resetPasswordWithKey)),
 
@@ -319,7 +319,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/auth/logout',
+        app.post('/api/auth/logout',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.logout)),
@@ -344,7 +344,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members',
+        app.get('/api/members',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getMembers)),
@@ -369,7 +369,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/department-members',
+        app.get('/api/members/department-members',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getMembersOfDepartments)),
@@ -394,7 +394,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/directors',
+        app.get('/api/members/directors',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getDirectors)),
@@ -420,7 +420,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/members',
+        app.post('/api/members',
             authenticateMiddleware([{"jwt":["1"]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.creeateMember)),
@@ -446,7 +446,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/members/:id/status',
+        app.patch('/api/members/:id/status',
             authenticateMiddleware([{"jwt":["1"]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.updateMemberStatus)),
@@ -473,7 +473,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/departments',
+        app.get('/api/members/departments',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getDepartments)),
@@ -498,7 +498,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/members/departments/:id',
+        app.put('/api/members/departments/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.updateDepartment)),
@@ -525,7 +525,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/languages',
+        app.get('/api/members/languages',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getLanguages)),
@@ -550,7 +550,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/edv-skills',
+        app.get('/api/members/edv-skills',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getEDVSkills)),
@@ -575,7 +575,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/permission-assignments',
+        app.get('/api/members/permission-assignments',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getPermissionAssignments)),
@@ -601,7 +601,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/permissions',
+        app.get('/api/members/permissions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getPermissions)),
@@ -627,7 +627,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/:id/permissions',
+        app.get('/api/members/:id/permissions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getPermissionsByMemberID)),
@@ -653,7 +653,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/members/permissions',
+        app.post('/api/members/permissions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.assignPermissionToMember)),
@@ -680,7 +680,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/members/permissions',
+        app.delete('/api/members/permissions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.unassignPermissionFromMember)),
@@ -707,7 +707,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/members/:id',
+        app.get('/api/members/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getMember)),
@@ -734,7 +734,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/members/:id',
+        app.patch('/api/members/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
             ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.updateMember)),
@@ -762,7 +762,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees',
+        app.get('/api/trainees',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTrainees)),
@@ -787,7 +787,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/ip/:id',
+        app.get('/api/trainees/ip/:id',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getIP)),
@@ -813,7 +813,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations/:id/trainee-choices',
+        app.get('/api/trainees/generations/:id/trainee-choices',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineeChoicesOfGeneration)),
@@ -839,7 +839,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/trainees/ip/:id',
+        app.put('/api/trainees/ip/:id',
             authenticateMiddleware([{"jwt":["15"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.updateIP)),
@@ -866,7 +866,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/ip/:id/mails',
+        app.get('/api/trainees/ip/:id/mails',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getIPTeamMails)),
@@ -892,7 +892,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations',
+        app.get('/api/trainees/generations',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getGenerations)),
@@ -917,7 +917,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations/:id/motivation',
+        app.get('/api/trainees/generations/:id/motivation',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineeMotivation)),
@@ -943,7 +943,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/trainees/generations/:id/set-deadline',
+        app.post('/api/trainees/generations/:id/set-deadline',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setVotingDeadline)),
@@ -970,7 +970,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/trainees/:id/assignment',
+        app.patch('/api/trainees/:id/assignment',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setTraineeAssignment)),
@@ -997,7 +997,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations/:id/mentors',
+        app.get('/api/trainees/generations/:id/mentors',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getMentorsOfGeneration)),
@@ -1023,7 +1023,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/trainees/generations/:id/add-mentor/:memberID',
+        app.post('/api/trainees/generations/:id/add-mentor/:memberID',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.addMentor)),
@@ -1050,7 +1050,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations/:id/internal-projects',
+        app.get('/api/trainees/generations/:id/internal-projects',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getInternalProjectsOfGeneration)),
@@ -1076,7 +1076,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/ips/current',
+        app.get('/api/trainees/ips/current',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getCurrentIPs)),
@@ -1101,7 +1101,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/ips/all',
+        app.get('/api/trainees/ips/all',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getAllIPs)),
@@ -1126,7 +1126,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/trainees/generations/:id/trainee-progress',
+        app.get('/api/trainees/generations/:id/trainee-progress',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
             ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineeProgress)),
