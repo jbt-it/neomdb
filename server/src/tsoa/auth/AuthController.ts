@@ -1,5 +1,5 @@
 import AuthService from "../../auth/AuthService";
-import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "tsoa";
+import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "@tsoa/runtime";
 import {
   JWTPayload,
   UserChangePasswordRequest,

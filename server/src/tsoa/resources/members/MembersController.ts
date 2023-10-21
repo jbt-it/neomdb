@@ -1,5 +1,4 @@
 import MembersService from "../../../resources/members/MembersService";
-import { Get, Route, Controller, Security, Tags, Request, Path, Query } from "tsoa";
 import {
   AssignPermissionToMemberRequest,
   CreateMemberRequest,
@@ -13,7 +12,22 @@ import {
   UpdateDepartmentRequest,
   Value,
 } from "../../../types/membersTypes";
-import { Body, Delete, Middlewares, Patch, Post, Put } from "@tsoa/runtime";
+import {
+  Body,
+  Delete,
+  Middlewares,
+  Patch,
+  Post,
+  Put,
+  Get,
+  Route,
+  Controller,
+  Security,
+  Tags,
+  Request,
+  Path,
+  Query,
+} from "@tsoa/runtime";
 import { JWTPayload, Permission, PermissionAssignment } from "../../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../../utils/authUtils";
 import { checkDepartmentAccess } from "../../../middleware/authorization";
