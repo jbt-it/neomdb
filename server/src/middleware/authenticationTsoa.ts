@@ -1,5 +1,5 @@
 import * as express from "express";
-import { UnauthenticatedError } from "../types/Errors";
+import { UnauthenticatedError, UnauthorizedError } from "../types/Errors";
 import { checkForValidJWT, extractJWTFromHeader, verifyJWT } from "../utils/jwtUtils";
 import { Permission } from "types/authTypes";
 
@@ -12,7 +12,7 @@ import { Permission } from "types/authTypes";
 const checkPermissions = (jwtPermissions: Permission[], permissions: string[]) => {
   // TODO: Use doesPermissionsHaveSomeOf function from authUtils.ts after refactoring is done
   if (!jwtPermissions.some((permission) => permissions.includes(permission.permissionID.toString()))) {
-    throw new UnauthenticatedError("Authorization failed: Insufficient permissions");
+    throw new UnauthorizedError("Authorization failed: Insufficient permissions");
   }
 };
 
