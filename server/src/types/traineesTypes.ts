@@ -9,9 +9,9 @@ export type InternalProject = {
   kickoff: string;
   AngebotBeiEV: boolean;
   ZPBeiEV: boolean;
-  ZPGehalten: boolean;
+  ZPGehalten: string;
   APBeiEV: boolean;
-  APGehalten: boolean;
+  APGehalten: string;
   DLBeiEV: boolean;
 };
 
@@ -100,12 +100,12 @@ export type InternalProjectAndTrainee = {
   internesprojekt: number;
   projektname: string;
   kuerzel: string;
-  AngebotBeiEV: string;
-  ZPbeiEV: string;
+  AngebotBeiEV: boolean;
+  ZPbeiEV: boolean;
   ZPgehalten: string;
-  APbeiEV: string;
+  APbeiEV: boolean;
   APgehalten: string;
-  DLbeiEV: string;
+  DLbeiEV: boolean;
 };
 
 /**
@@ -117,3 +117,16 @@ export type Workshop = {
   schulungsname: string;
   feedbackAbgegeben: number;
 };
+
+/**
+ * Type of the request to update the voting deadlines of a generation
+ */
+export type UpdateVotingDeadlinesRequest = {
+  votingStart: string; // TODO: Date
+  votingEnd: string; // TODO: Date
+};
+
+/**
+ * Type of the progress of a trainee (consists of internal project, trainee and workshop)
+ */
+export type TraineeProgress = InternalProjectAndTrainee & Workshop;

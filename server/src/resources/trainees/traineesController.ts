@@ -223,7 +223,7 @@ export const retrieveAllIPs = async (req: Request, res: Response): Promise<Respo
  */
 export const retrieveIPMilestonesAndWorkshopFeedback = async (req: Request, res: Response): Promise<Response> => {
   const generationID = parseInt(req.params.id);
-  const ips = await traineesService.getIPMilestonesAndWorkshopFeedback(generationID);
+  const ips = await traineesService.getTraineeProgress(generationID);
 
   return res.status(200).json(ips);
 };

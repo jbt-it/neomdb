@@ -1,6 +1,6 @@
 import { Mentor } from "types/membersTypes";
 import { query } from "../../database";
-import { QueryError } from "../../types/Errors";
+import { ConflictError, QueryError } from "../../types/Errors";
 import {
   Generation,
   InternalProject,
@@ -329,7 +329,7 @@ class TraineesRepository {
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
         logger.error(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}: ${error}`);
-        throw new QueryError(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}`);
+        throw new ConflictError(`Mentor with id ${mentorID} is already assigned to generation with id ${generationID}`);
       }
       logger.error(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while adding mentor with id ${mentorID} to generation with id ${generationID}`);
