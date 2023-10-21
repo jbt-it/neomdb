@@ -87,15 +87,15 @@ interface TraineeProps {
   generationFilter: number;
   currentGeneration: string;
 }
-interface UserOption {
+interface MemberOption {
   id: number;
   name: string;
 }
 
 const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: TraineeProps) => {
   const [open, setOpen] = React.useState(false);
-  const [users, setUsers] = useState<UserOption[]>([]);
-  const [qms, setQMs] = useState<UserOption[]>([]);
+  const [members, setUsers] = useState<MemberOption[]>([]);
+  const [qms, setQMs] = useState<MemberOption[]>([]);
   const classes = useStyles();
   const { internalProjects, trainees, generationFilter } = props;
 
@@ -115,11 +115,11 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
     ? trainees.filter((member) => member.generation === generationFilter)
     : trainees;
 
-  const traineeOptions: UserOption[] = filteredMembers.map((member) => ({
+  const traineeOptions: MemberOption[] = filteredMembers.map((member) => ({
     name: `${member.vorname} ${member.nachname}`,
     id: member.mitgliedID,
   }));
-  const qmOptions: UserOption[] = props.members.map((member) => ({
+  const qmOptions: MemberOption[] = props.members.map((member) => ({
     name: `${member.vorname} ${member.nachname}`,
     id: member.mitgliedID,
   }));
@@ -214,7 +214,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                         </Grid>
 
                         <Grid container spacing={1}>
-                          {users.map((user, index) => (
+                          {members.map((member, index) => (
                             <Grid
                               item
                               container
@@ -228,17 +228,17 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                             >
                               <Grid item xs={5} style={{ marginTop: "10px" }}>
                                 <Autocomplete
-                                  value={user}
-                                  onChange={(event, newValue: UserOption | null) => {
+                                  value={member}
+                                  onChange={(event, newValue: MemberOption | null) => {
                                     if (newValue) {
-                                      const newUsers = [...users];
-                                      newUsers[index] = newValue;
-                                      setUsers(newUsers);
+                                      const newMembers = [...members];
+                                      newMembers[index] = newValue;
+                                      setUsers(newMembers);
                                     }
                                   }}
                                   id={`members-${index}`}
-                                  options={traineeOptions.filter((option) => !users.includes(option))}
-                                  getOptionLabel={(option: UserOption) => option.name}
+                                  options={traineeOptions.filter((option) => !members.includes(option))}
+                                  getOptionLabel={(option: MemberOption) => option.name}
                                   className={classes.fullWidth}
                                   renderInput={(params) => (
                                     <TextField {...params} label="Name" variant="outlined" size="small" />
@@ -251,9 +251,9 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                                   aria-label="delete"
                                   color="primary"
                                   onClick={() => {
-                                    const newUsers = [...users];
-                                    newUsers.splice(index, 1);
-                                    setUsers(newUsers);
+                                    const newMembers = [...members];
+                                    newMembers.splice(index, 1);
+                                    setUsers(newMembers);
                                   }}
                                 >
                                   <Clear />
@@ -266,7 +266,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                             <IconButton
                               aria-label="add"
                               color="primary"
-                              disabled={users.some((user) => user.name === "")}
+                              disabled={members.some((member) => member.name === "")}
                               onClick={() => {
                                 setUsers((prev) => [...prev, { id: 0, name: "" }]);
                               }}
@@ -299,7 +299,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                               <Grid item xs={5} style={{ marginTop: "10px" }}>
                                 <Autocomplete
                                   value={qm}
-                                  onChange={(event, newValue: UserOption | null) => {
+                                  onChange={(event, newValue: MemberOption | null) => {
                                     if (newValue) {
                                       const newQMs = [...qms];
                                       newQMs[index] = newValue;
@@ -308,7 +308,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                                   }}
                                   id={`members-${index}`}
                                   options={qmOptions.filter((option) => !qms.includes(option))}
-                                  getOptionLabel={(option: UserOption) => option.name}
+                                  getOptionLabel={(option: MemberOption) => option.name}
                                   className={classes.fullWidth}
                                   renderInput={(params) => (
                                     <TextField {...params} label="Name" variant="outlined" size="small" />
