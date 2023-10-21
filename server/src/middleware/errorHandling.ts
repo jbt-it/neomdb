@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import {
+  ConflictError,
   ExpiredTokenError,
   NotFoundError,
   UnauthenticatedError,
@@ -92,15 +93,20 @@ export const errorHandler = (err: unknown, req: Request, res: Response, next: Ne
   }
   // -------- 422 Errors -------- \\
   if (err instanceof ValidateError) {
-    logger.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+    logger.warn(`Caught Validation Error for ${req.path}: ${JSON.stringify(err?.fields)}`);
     return res.status(422).json({
       message: "Validation Failed",
-      details: err?.fields,
     });
   }
   if (err instanceof ExpiredTokenError || err instanceof UnprocessableEntityError) {
     logger.warn(`Caught expired token or unprocessable entity error for ${req.path}: ${err}`);
     return res.status(422).json({
+      message: err.message,
+    });
+  }
+  if (err instanceof ConflictError) {
+    logger.warn(`Caught conflict entity error for ${req.path}: ${err}`);
+    return res.status(409).json({
       message: err.message,
     });
   }

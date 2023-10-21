@@ -168,6 +168,613 @@
 				],
 				"type": "object",
 				"description": "Type of the partial member"
+			},
+			"DepartmentMember": {
+				"properties": {
+					"bezeichnung": {
+						"type": "string"
+					},
+					"ressort": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"bezeichnung",
+					"ressort",
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of a member of a department (partial member with department information)"
+			},
+			"Director": {
+				"properties": {
+					"kuerzel": {
+						"type": "string"
+					},
+					"bezeichnung_maennlich": {
+						"type": "string"
+					},
+					"bezeichnung_weiblich": {
+						"type": "string"
+					},
+					"geschlecht": {
+						"type": "string"
+					},
+					"ressortID": {
+						"type": "number",
+						"format": "double"
+					},
+					"evpostenID": {
+						"type": "number",
+						"format": "double"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"kuerzel",
+					"bezeichnung_maennlich",
+					"bezeichnung_weiblich",
+					"geschlecht",
+					"ressortID",
+					"evpostenID",
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the director (partial member with department and role information)"
+			},
+			"StatusOverview": {
+				"properties": {
+					"wikiErrorMsg": {
+						"type": "string"
+					},
+					"wikiSuccesful": {
+						"type": "boolean"
+					},
+					"nextcloudErrorMsg": {
+						"type": "string"
+					},
+					"nextcloudSuccesful": {
+						"type": "boolean"
+					},
+					"mailListErrorMsg": {
+						"type": "string"
+					},
+					"mailListSuccesful": {
+						"type": "boolean"
+					},
+					"mailErrorMsg": {
+						"type": "string"
+					},
+					"mailSuccesful": {
+						"type": "boolean"
+					},
+					"queryErrorMsg": {
+						"type": "string"
+					},
+					"querySuccesful": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"wikiErrorMsg",
+					"wikiSuccesful",
+					"nextcloudErrorMsg",
+					"nextcloudSuccesful",
+					"mailListErrorMsg",
+					"mailListSuccesful",
+					"mailErrorMsg",
+					"mailSuccesful",
+					"queryErrorMsg",
+					"querySuccesful"
+				],
+				"type": "object",
+				"description": "Type of the overview of the status of the different account creation operations"
+			},
+			"CreateMemberResponse": {
+				"properties": {
+					"statusOverview": {
+						"$ref": "#/components/schemas/StatusOverview"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"statusOverview",
+					"memberID"
+				],
+				"type": "object",
+				"description": "Type of the response after creating a member"
+			},
+			"CreateMemberRequest": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"traineeSeit": {
+						"type": "string"
+					},
+					"generation": {
+						"type": "number",
+						"format": "double"
+					},
+					"geschlecht": {
+						"type": "number",
+						"format": "double"
+					},
+					"handy": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"geburtsdatum": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"traineeSeit",
+					"generation",
+					"geschlecht",
+					"handy",
+					"password",
+					"geburtsdatum",
+					"name",
+					"nachname",
+					"vorname"
+				],
+				"type": "object",
+				"description": "Type of the request to create a member"
+			},
+			"Department": {
+				"properties": {
+					"linkOrganigramm": {
+						"type": "string"
+					},
+					"linkZielvorstellung": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"kuerzel": {
+						"type": "string"
+					},
+					"bezeichnung": {
+						"type": "string"
+					},
+					"ressortID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"linkOrganigramm",
+					"linkZielvorstellung",
+					"jbt_email",
+					"kuerzel",
+					"bezeichnung",
+					"ressortID"
+				],
+				"type": "object",
+				"description": "Type of the department"
+			},
+			"UpdateDepartmentRequest": {
+				"properties": {
+					"linkOrganigramm": {
+						"type": "string"
+					},
+					"linkZielvorstellung": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"linkOrganigramm",
+					"linkZielvorstellung"
+				],
+				"type": "object",
+				"description": "Type of the request to update a department"
+			},
+			"Value": {
+				"properties": {
+					"wert": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"wert"
+				],
+				"type": "object",
+				"description": "Value type used for languages and edv skills"
+			},
+			"PermissionAssignment": {
+				"properties": {
+					"canDelegate": {
+						"type": "boolean"
+					},
+					"permissionID": {
+						"type": "number",
+						"format": "double"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"canDelegate",
+					"permissionID",
+					"mitgliedID",
+					"name"
+				],
+				"type": "object",
+				"description": "Type of the permission assignment (permission of a member or a director)"
+			},
+			"AssignPermissionToMemberRequest": {
+				"properties": {
+					"permissionID": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"permissionID",
+					"memberID"
+				],
+				"type": "object"
+			},
+			"Language": {
+				"properties": {
+					"niveau": {
+						"type": "number",
+						"format": "double"
+					},
+					"wert": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"niveau",
+					"wert"
+				],
+				"type": "object",
+				"description": "Type of the language of a member"
+			},
+			"EdvSkill": {
+				"properties": {
+					"niveau": {
+						"type": "number",
+						"format": "double"
+					},
+					"wert": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"niveau",
+					"wert"
+				],
+				"type": "object",
+				"description": "Type of the edv skill of a member"
+			},
+			"Mentee": {
+				"properties": {
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the mentee (partial member)"
+			},
+			"Mentor": {
+				"properties": {
+					"generationID": {
+						"type": "number",
+						"format": "double"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the mentor (partial member)"
+			},
+			"MemberDetails": {
+				"properties": {
+					"mentor": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Mentor"
+							}
+						],
+						"nullable": true
+					},
+					"mentees": {
+						"items": {
+							"$ref": "#/components/schemas/Mentee"
+						},
+						"type": "array"
+					},
+					"edvkenntnisse": {
+						"items": {
+							"$ref": "#/components/schemas/EdvSkill"
+						},
+						"type": "array"
+					},
+					"sprachen": {
+						"items": {
+							"$ref": "#/components/schemas/Language"
+						},
+						"type": "array"
+					},
+					"bic": {
+						"type": "string"
+					},
+					"iban": {
+						"type": "string"
+					},
+					"kontoinhaber": {
+						"type": "string"
+					},
+					"ersthelferausbildung": {
+						"type": "boolean"
+					},
+					"fuehrerschein": {
+						"type": "boolean"
+					},
+					"lastchange": {
+						"type": "string"
+					},
+					"canQM": {
+						"type": "string",
+						"nullable": true
+					},
+					"canPL": {
+						"type": "string",
+						"nullable": true
+					},
+					"engagement": {
+						"type": "string",
+						"nullable": true
+					},
+					"ausbildung": {
+						"type": "string",
+						"nullable": true
+					},
+					"vertiefungen": {
+						"type": "string",
+						"nullable": true
+					},
+					"studienende": {
+						"type": "string",
+						"nullable": true
+					},
+					"studienbeginn": {
+						"type": "string",
+						"nullable": true
+					},
+					"studiengang": {
+						"type": "string"
+					},
+					"hochschule": {
+						"type": "string"
+					},
+					"email2": {
+						"type": "string",
+						"nullable": true
+					},
+					"tel2": {
+						"type": "string",
+						"nullable": true
+					},
+					"ort2": {
+						"type": "string",
+						"nullable": true
+					},
+					"plz2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"strasse2": {
+						"type": "string",
+						"nullable": true
+					},
+					"email1": {
+						"type": "string"
+					},
+					"tel1": {
+						"type": "string",
+						"nullable": true
+					},
+					"ort1": {
+						"type": "string"
+					},
+					"plz1": {
+						"type": "number",
+						"format": "double"
+					},
+					"strasse1": {
+						"type": "string"
+					},
+					"arbeitgeber": {
+						"type": "string",
+						"nullable": true
+					},
+					"ressort": {
+						"type": "string"
+					},
+					"ausgetreten_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"passiv_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"aktiv_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"senior_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"alumnus_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"mitglied_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"trainee_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"internesprojekt": {
+						"type": "string",
+						"nullable": true
+					},
+					"generation": {
+						"type": "string",
+						"nullable": true
+					},
+					"mitgliedstatus": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"handy": {
+						"type": "string"
+					},
+					"geburtsdatum": {
+						"type": "string"
+					},
+					"geschlecht": {
+						"type": "number",
+						"format": "double"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ersthelferausbildung",
+					"fuehrerschein",
+					"lastchange",
+					"canQM",
+					"canPL",
+					"engagement",
+					"ausbildung",
+					"vertiefungen",
+					"studienende",
+					"studienbeginn",
+					"studiengang",
+					"hochschule",
+					"email2",
+					"tel2",
+					"ort2",
+					"plz2",
+					"strasse2",
+					"email1",
+					"tel1",
+					"ort1",
+					"plz1",
+					"strasse1",
+					"arbeitgeber",
+					"ressort",
+					"ausgetreten_seit",
+					"passiv_seit",
+					"aktiv_seit",
+					"senior_seit",
+					"alumnus_seit",
+					"mitglied_seit",
+					"trainee_seit",
+					"internesprojekt",
+					"generation",
+					"mitgliedstatus",
+					"jbt_email",
+					"handy",
+					"geburtsdatum",
+					"geschlecht",
+					"vorname",
+					"nachname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
 			}
 		},
 		"securitySchemes": {
@@ -296,7 +903,7 @@
 						"description": "No content"
 					}
 				},
-				"description": "An email is sent with an password reset link and a key in the url to the user\nThe key used in the link is saved in the databse for the later verification",
+				"description": "An email is sent with an password reset link and a key in the url to the user\r\nThe key used in the link is saved in the databse for the later verification",
 				"summary": "Sends a password reset link to the user",
 				"tags": [
 					"Auth"
@@ -326,7 +933,7 @@
 						"description": "No content"
 					}
 				},
-				"description": "The user can set a new password by entering their mailadress and a new password\nThe mail and the key in the url are then checked to se if it is a valid pair\nIf the pair is valid the new password is stored",
+				"description": "The user can set a new password by entering their mailadress and a new password\r\nThe mail and the key in the url are then checked to se if it is a valid pair\r\nIf the pair is valid the new password is stored",
 				"summary": "Resets the password of a user",
 				"tags": [
 					"Auth"
@@ -358,7 +965,7 @@
 						"description": "No content"
 					}
 				},
-				"description": "Loggs the user out by removing the jwt from the cookie",
+				"description": "Logs the user out by removing the jwt from the cookie",
 				"summary": "Logs out the user",
 				"tags": [
 					"Auth"
@@ -400,6 +1007,651 @@
 					}
 				],
 				"parameters": []
+			},
+			"post": {
+				"operationId": "CreeateMember",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CreateMemberResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Creates a new member in the database and creates accounts\r\nfor the different systems (exchange, mediawiki)",
+				"summary": "Create a new member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The member to create",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMemberRequest",
+								"description": "The member to create"
+							},
+							"example": {
+								"vorname": "Max",
+								"nachname": "Mustermann",
+								"name": "m.mustermann",
+								"geburtsdatum": "1990-01-01",
+								"password": "s3cre7-123",
+								"handy": "0123456789",
+								"geschlecht": 1,
+								"generation": 3,
+								"traineeSeit": "2020-01-01",
+								"email": "m.mustermann@email.de"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/department-members": {
+			"get": {
+				"operationId": "GetMembersOfDepartments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DepartmentMember"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all members of the departments (this does not invclude the director of a department)",
+				"summary": "Get all members of departments",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/directors": {
+			"get": {
+				"operationId": "GetDirectors",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Director"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all current directors (if query parameter `current` is true) or all directors",
+				"summary": "Get directors",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Query parameter to specify if only the current directors should be retrieved",
+						"in": "query",
+						"name": "current",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/members/{id}/status": {
+			"patch": {
+				"operationId": "UpdateMemberStatus",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Updates the status of an existing member\r\nUpdate can be done by members with certain permission\r\nUpdate can be done by member himself with an additional permission",
+				"summary": "Update the status of a member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to update",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The new status of the member",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"mitgliedstatus": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"mitgliedstatus"
+								],
+								"type": "object",
+								"description": "The new status of the member"
+							},
+							"example": {
+								"mitgliedstatus": "aktives Mitglied"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/departments": {
+			"get": {
+				"operationId": "GetDepartments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Department"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all departments",
+				"summary": "Get departments",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/departments/{id}": {
+			"put": {
+				"operationId": "UpdateDepartment",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateDepartmentRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/languages": {
+			"get": {
+				"operationId": "GetLanguages",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Value"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the language values",
+				"summary": "Get languages",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/edv-skills": {
+			"get": {
+				"operationId": "GetEDVSkills",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Value"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the edv skills",
+				"summary": "Get edv skills",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/permission-assignments": {
+			"get": {
+				"operationId": "GetPermissionAssignments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/PermissionAssignment"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all directors and members permission assignments",
+				"summary": "Get permission assignments",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/permissions": {
+			"get": {
+				"operationId": "GetPermissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Permission"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves name, description and ID of all permissions",
+				"summary": "Get permissions",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "AssignPermissionToMember",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Create new permission for member",
+				"summary": "Create permission",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The permission to create",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"description": "The permission to create"
+							},
+							"example": {
+								"memberID": 8167,
+								"permissionID": 8
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "UnassignPermissionFromMember",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete issued permission from member",
+				"summary": "Delete permission",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The permission to delete",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"description": "The permission to delete"
+							},
+							"example": {
+								"memberID": 8167,
+								"permissionID": 8
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/{id}/permissions": {
+			"get": {
+				"operationId": "GetPermissionsByMemberID",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"permissions": {
+											"items": {
+												"$ref": "#/components/schemas/Permission"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"permissions"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves a list of all permissions of the member with the given ID",
+				"summary": "Get permissions by member id",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve the permissions from",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/members/{id}": {
+			"get": {
+				"operationId": "GetMember",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MemberDetails"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves a member specified by id\r\nReturns financial data iff member has permission or is himself",
+				"summary": "Get single member by id",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "UpdateMember",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Updates the information of an existing member. Update of critical fields can be done by member with certain permission.\r\nUpdate of critical and non critical fields can be done by member himself with additional permission",
+				"summary": "Update a member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to update",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The new information of the member",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberDetails",
+								"description": "The new information of the member"
+							},
+							"example": {
+								"mitgliedID": 8111,
+								"vorname": "Brandon-Lee",
+								"nachname": "Frye",
+								"jbt_email": "b.frye@studentische-beratung.de",
+								"geschlecht": 1,
+								"geburtsdatum": "1990-06-05",
+								"handy": "0162/9846320",
+								"mitgliedstatus": "passives Mitglied",
+								"generation": null,
+								"internesprojekt": null,
+								"trainee_seit": "2011-04-30",
+								"mitglied_seit": "2012-11-30",
+								"alumnus_seit": null,
+								"senior_seit": null,
+								"aktiv_seit": "2012-11-30",
+								"passiv_seit": null,
+								"ausgetreten_seit": null,
+								"ressort": "Mitglieder",
+								"arbeitgeber": "Versicherung Deutschland",
+								"strasse1": "Woodsman Ave 61",
+								"plz1": "70364",
+								"ort1": "Stuttgart",
+								"tel1": null,
+								"email1": "brandon-lee@gmx.de",
+								"strasse2": "Budapester Straße 96",
+								"plz2": "56370",
+								"ort2": "Rheinland-Pfalz",
+								"tel2": "07042/984365",
+								"email2": "brandon-lee@gmx.de",
+								"hochschule": "Universität Hohenheim",
+								"studiengang": "Master of Financial Management",
+								"studienbeginn": "2014-09-30T22:00:00.000Z",
+								"studienende": null,
+								"vertiefungen": "Controlling und Unternehmensrechnung",
+								"ausbildung": null,
+								"engagement": null,
+								"canPL": "2013-12-22",
+								"canQM": "2013-12-22",
+								"lastchange": "1899-11-29",
+								"fuehrerschein": false,
+								"ersthelferausbildung": false,
+								"mentor": null,
+								"mentees": [],
+								"sprachen": [
+									{
+										"wert": "Deutsch",
+										"niveau": 5
+									},
+									{
+										"wert": "English",
+										"niveau": 3
+									},
+									{
+										"wert": "Französisch",
+										"niveau": 1
+									}
+								],
+								"edvkenntnisse": [
+									{
+										"wert": "MS-Office",
+										"niveau": 3
+									},
+									{
+										"wert": "PHP",
+										"niveau": 1
+									}
+								]
+							}
+						}
+					}
+				}
 			}
 		}
 	},

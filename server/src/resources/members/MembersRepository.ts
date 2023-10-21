@@ -1,7 +1,7 @@
 import mysql = require("mysql2");
 import { executeMultipleQueries, query } from "../../database";
 import { Permission, PermissionAssignment } from "../../types/authTypes";
-import { QueryError, UnprocessableEntityError } from "../../types/Errors";
+import { ConflictError, QueryError, UnprocessableEntityError } from "../../types/Errors";
 import {
   Department,
   DepartmentMember,
@@ -807,7 +807,7 @@ class MembersRepository {
         logger.error(
           `Caught error while adding permission with id ${permissionID} to member with id ${memberID}: ${error}`
         );
-        throw new QueryError(`Permission with id ${permissionID} already assigned to member with id ${memberID}`);
+        throw new ConflictError(`Permission with id ${permissionID} already assigned to member with id ${memberID}`);
       }
       logger.error(
         `Caught error while adding permission with id ${permissionID} to member with id ${memberID}: ${error}`
