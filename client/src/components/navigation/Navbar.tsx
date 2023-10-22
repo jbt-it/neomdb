@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { AppBar, styled, alpha, Toolbar, Box, IconButton, Typography, InputBase, Avatar, Theme } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Menu, Search } from "@mui/icons-material";
@@ -90,9 +91,9 @@ const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
         </IconButton>
       ) : null}
       {lgUp ? (
-        <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
+        <Box component={Link} to={"/"} sx={{ display: "flex", alignItems: "center", ml: 2, textDecoration: "none" }}>
           <Avatar alt="JBT neoMDB" src={JBTLogoWhite} />
-          <Typography variant="h6" noWrap sx={{ ml: 2 }}>
+          <Typography variant="h6" noWrap sx={{ ml: 2, color: "white" }}>
             neoMDB
           </Typography>
         </Box>

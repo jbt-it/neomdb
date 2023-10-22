@@ -106,8 +106,8 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
           {openItem ? <ExpandLess sx={{ ml: "auto", me: 0 }} /> : <ExpandMore sx={{ ml: "auto", me: 0 }} />}
         </ListItemButton>
         <Collapse in={openItem} timeout="auto" unmountOnExit>
-          <List sx={{ marginLeft: 3, marginTop: -1 }}>
-            {item.children.map((child: NavItemChildProps) =>
+          <List sx={{ marginLeft: 3, marginTop: -1, paddingBottom: 0 }}>
+            {item.children.map((child: NavItemChildProps, index: number) =>
               child.permissions && auth.permissions.length === 0 ? null : (
                 <ListItemButton
                   component={Link}
@@ -130,6 +130,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
                         bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
                       },
                     }),
+                    ...(item.children ? index === item.children.length - 1 && { marginBottom: 0 } : null),
                   }}
                 >
                   <Box component="span">{child.title} </Box>
