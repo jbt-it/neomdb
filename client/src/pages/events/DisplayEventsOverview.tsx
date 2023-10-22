@@ -26,7 +26,7 @@ import {
   Link,
   Container,
 } from "@mui/material";
-import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth, Add } from "@mui/icons-material/";
+import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -51,7 +51,8 @@ type commonEventType = {
   location: string;
   registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
-  type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
+  maximumParticipants?: number | null;
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
 
 /**
@@ -86,25 +87,19 @@ const DisplayEventsOverview: React.FC = () => {
   /**
    * Function that renders the tab panel
    */
-  function CustomTabPanel(props: TabPanelProps) {
+  const CustomTabPanel = (props: TabPanelProps) => {
     const { children, value, index, ...other } = props;
 
     return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
+      <Box hidden={value !== index} id={`tabpanel-${index}`} {...other}>
         {value === index && (
           <Box sx={{ p: 3 }}>
             <Typography>{children}</Typography>
           </Box>
         )}
-      </div>
+      </Box>
     );
-  }
+  };
 
   /**
    * Function that sends the request to get all events from the backend
@@ -128,7 +123,8 @@ const DisplayEventsOverview: React.FC = () => {
         location: event.ort,
         registrationStart: event.anmeldungvon ? dayjs(event.anmeldungvon).locale("de") : null,
         registrationDeadline: event.anmeldungbis ? dayjs(event.anmeldungbis).locale("de") : null,
-        type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
+        maximumParticipants: event.maximaleTeilnehmer,
+        type: event.ww ? "WW" : event.netzwerk ? "Netzwerk" : event.jbtgoes ? "JBT goes" : "Sonstige",
       });
     });
     setEvents(currentEvents); //.filter((event) => (event.date ? event.date > dayjs() : true)));
@@ -154,9 +150,10 @@ const DisplayEventsOverview: React.FC = () => {
         startTime: dayjs(event.startzeit).locale("de"),
         endTime: dayjs(event.endzeit).locale("de"),
         location: event.ort,
-        registrationStart: null,
-        registrationDeadline: null,
-        type: event.art === "Pflichtschulung" ? "pflichtworkshop" : "workshop",
+        registrationStart: event.anmeldungVon ? dayjs(event.anmeldungVon).locale("de") : null,
+        registrationDeadline: event.anmeldungBis ? dayjs(event.anmeldungBis).locale("de") : null,
+        maximumParticipants: event.maximaleTeilnehmerzahl,
+        type: event.art === "Pflichtschulung" ? "Pflichtworkshop" : "Workshop",
       });
     });
 
@@ -185,7 +182,8 @@ const DisplayEventsOverview: React.FC = () => {
         location: event.ort,
         registrationStart: dayjs(event.anmeldungvon),
         registrationDeadline: dayjs(event.anmeldungbis),
-        type: event.ww ? "ww" : event.netzwerk ? "netzwerk" : event.jbtgoes ? "jbtGoes" : "sonstige",
+        maximumParticipants: event.maximaleTeilnehmer,
+        type: event.ww ? "WW" : event.netzwerk ? "Netzwerk" : event.jbtgoes ? "JBT goes" : "Sonstige",
       });
     });
     setEventsSignedUp(currentEvents.filter((event) => event.ID === 2 || event.ID === 3));
@@ -530,7 +528,6 @@ const DisplayEventsOverview: React.FC = () => {
    * Function that handles the change on the filter field for the event type
    */
   const onChangeEventTypeFilter = (event: SelectChangeEvent<typeof eventTypeFilter>) => {
-    //setEventTypeFilter(event.target.value);
     const {
       target: { value },
     } = event;
@@ -543,45 +540,47 @@ const DisplayEventsOverview: React.FC = () => {
    * @returns the filter field
    */
   const renderFilters = () => {
-    const eventTypes = ["jbtGoes", "ww", "netzwerk", "workshop", "sonstige"];
+    const eventTypes = ["JBT goes", "WW", "Netzwerk", "Workshop", "Sonstige"];
     return (
-      <Stack direction={"row"} alignItems="center">
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <InputLabel>Von</InputLabel>
-          <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
-            <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
-            <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
-            <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
-            <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
-            <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
-            <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
-            <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
-            <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
-            <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
-            <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
-            <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
-            <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
-          </Select>
-        </FormControl>
-        <Typography> - </Typography>
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <InputLabel>Bis</InputLabel>
-          <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
-            <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
-            <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
-            <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
-            <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
-            <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
-            <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
-            <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
-            <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
-            <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
-            <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
-            <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
-            <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl sx={{ ml: 5, minWidth: 180, mr: "auto" }} size="small">
+      <Stack direction={{ xs: "column", lg: "row" }} alignItems={{ xs: "flex-start", lg: "center" }}>
+        <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+            <InputLabel>Von</InputLabel>
+            <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
+              <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+              <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+              <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+              <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+              <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+              <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+              <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+              <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+              <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+              <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+              <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+              <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+            </Select>
+          </FormControl>
+          <Typography> - </Typography>
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+            <InputLabel>Bis</InputLabel>
+            <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
+              <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+              <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+              <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+              <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+              <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+              <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+              <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+              <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+              <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+              <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+              <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+              <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <FormControl sx={{ minWidth: 180, xs: { ml: 3 }, lg: { ml: 5, mr: "auto" } }} size="small">
           <InputLabel>Veranstaltungsart</InputLabel>
           <Select
             label="Veranstaltungsart"
@@ -635,7 +634,9 @@ const DisplayEventsOverview: React.FC = () => {
             {rows.map((row) => (
               <TableRow key={row.ID}>
                 <TableCell>
-                  <EventChip type={row.type} size="small" />
+                  <Link href={`#/veranstaltungen/${row.ID}`}>
+                    <EventChip type={row.type} size="small" />
+                  </Link>
                 </TableCell>
                 <TableCell>
                   <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>

@@ -44,7 +44,7 @@ type commonEventType = {
   endTime: string;
   location: string;
   registrationDeadline: string | null;
-  type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
 
 /**
@@ -96,7 +96,7 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
               registrationDeadline: res.anmeldungbis
                 ? dayjs(res.anmeldungbis).locale("de").format("DD.MM.YYYY").toString()
                 : null,
-              type: res.ww ? "ww" : res.netzwerk ? "netzwerk" : res.jbtgoes ? "jbtGoes" : "sonstige",
+              type: res.ww ? "WW" : res.netzwerk ? "Netzwerk" : res.jbtgoes ? "JBT goes" : "Sonstige",
             })
           : null;
       } else if (type === "workshop") {
@@ -112,7 +112,7 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
               endTime: dayjs(res.endzeit).locale("de").format("HH:mm").toString(),
               location: res.ort,
               registrationDeadline: null,
-              type: res.art === "Pflichtschulung" ? "pflichtworkshop" : "workshop",
+              type: res.art === "Pflichtschulung" ? "Pflichtworkshop" : "Workshop",
             })
           : null;
       }
@@ -362,7 +362,7 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
               <Typography variant="h6" color="primary" fontWeight={"bold"}>
                 Details
               </Typography>
-              <EventChip type={event ? event.type : "sonstige"} sx={{ ml: 3 }} size="medium" />
+              <EventChip type={event ? event.type : "Sonstige"} sx={{ ml: 3 }} size="medium" />
             </Stack>
             {renderDetails()}
             {participants.length > 0 ? (

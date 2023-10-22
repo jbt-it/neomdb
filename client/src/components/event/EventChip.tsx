@@ -2,13 +2,13 @@ import React from "react";
 import { Chip, SxProps } from "@mui/material";
 
 interface Props {
-  type: "ww" | "netzwerk" | "jbtGoes" | "sonstige" | "workshop" | "pflichtworkshop";
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   sx?: SxProps;
   size?: "small" | "medium";
 }
 
 function EventChip(props: Props) {
-  if (props.type === "pflichtworkshop") {
+  if (props.type === "Pflichtworkshop") {
     return (
       <Chip
         label="Pflichtworkshop"
@@ -17,7 +17,7 @@ function EventChip(props: Props) {
         sx={{ fontWeight: 600, margin: 0.5, ...props.sx }}
       />
     );
-  } else if (props.type === "workshop") {
+  } else if (props.type === "Workshop") {
     return (
       <Chip
         label="Workshop"
@@ -27,9 +27,9 @@ function EventChip(props: Props) {
     );
   }
 
-  if (props.type === "ww") {
+  if (props.type === "WW") {
     return <Chip label="WW" color="default" sx={{ fontWeight: 600, margin: 0.5, ...props.sx }} size="small" />;
-  } else if (props.type === "netzwerk") {
+  } else if (props.type === "Netzwerk") {
     return (
       <Chip
         label="Netzwerk"
@@ -37,7 +37,7 @@ function EventChip(props: Props) {
         sx={{ bgcolor: "#891ff6", color: "#ffffff", fontWeight: 600, margin: 0.5, ...props.sx }}
       />
     );
-  } else if (props.type === "jbtGoes") {
+  } else if (props.type === "JBT goes") {
     return (
       <Chip label="JBT goes" size={props.size} color="primary" sx={{ fontWeight: 600, margin: 0.5, ...props.sx }} />
     );
