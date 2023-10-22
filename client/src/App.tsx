@@ -34,8 +34,6 @@ import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
 
-import LayoutTest from "./components/Test/LayoutTest";
-
 /**
  * This component is responsible for rendering the app.
  * @returns the app component
@@ -53,6 +51,7 @@ const App: React.FunctionComponent = () => {
           </Route>
           <Route path="/" element={<PrivateRoutes />}>
             <Route index element={<Dashboard />} />
+            <Route path="*" element={<NotFound />} />
             <Route path="gesamtuebersicht">
               <Route index element={<MemberOverview />} />
               <Route path=":id" element={<MemberProfile />} />

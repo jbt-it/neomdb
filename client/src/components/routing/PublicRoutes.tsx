@@ -11,7 +11,10 @@ import LoadingCircle from "../general/LoadingCircle";
  * It checks if the user is authenticated by using the useCheckAuth hook.
  * If the user is authenticated, it redirects the user to the home page.
  * If the user is not authenticated, it renders the requested route.
- * @example <PublicRoutes><Page /></PublicRoutes>
+ * @example
+ * <PublicRoutes>
+ *    <Route path="/login" element={<Login />} />
+ * </PublicRoutes>
  */
 const PublicRoutes: React.FunctionComponent = () => {
   const { checkAuth, isAuthLoading } = useCheckAuth();

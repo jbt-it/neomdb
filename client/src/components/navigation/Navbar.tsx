@@ -4,7 +4,7 @@ import { createStyles, makeStyles } from "@mui/styles";
 import { Menu, Search } from "@mui/icons-material";
 import { useResponsive } from "../../hooks/useResponsive";
 import AccountPopover from "./AccountPopover";
-import JBTLogoBlack from "../../assets/jbt-logo-black.png";
+import JBTLogoWhite from "../../assets/jbt-logo-white.png";
 
 /**
  * Styled-Component for the SearchField
@@ -78,21 +78,21 @@ interface NavbarProps {
  * The Navbar-Component displays the Navbar at the top of the page
  * @param onOpenDrawer Function to open the Drawer
  */
-export default function Navbar({ onOpenDrawer }: NavbarProps): JSX.Element {
+const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
   const classes = useStyles();
   const lgUp = useResponsive("up", "lg");
   const mdup = useResponsive("up", "md");
 
   const renderContent = (
     <>
-      {!lgUp && (
+      {!lgUp ? (
         <IconButton edge="start" aria-label="open drawer" onClick={onOpenDrawer} sx={{ mr: 1 }}>
           <Menu sx={{ color: "white", display: "block" }} />
         </IconButton>
-      )}
+      ) : null}
       {mdup ? (
         <Box sx={{ display: "flex", alignItems: "center", ml: 3 }}>
-          <Avatar alt="JBT neoMDB" src={JBTLogoBlack} />
+          <Avatar alt="JBT neoMDB" src={JBTLogoWhite} />
           <Typography variant="h6" noWrap sx={{ ml: 2 }}>
             JBT neoMDB
           </Typography>
@@ -129,4 +129,6 @@ export default function Navbar({ onOpenDrawer }: NavbarProps): JSX.Element {
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default Navbar;

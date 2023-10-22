@@ -9,7 +9,16 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
  * It checks if the user has the required permission by checking the permissions array of the user.
  * If the user has the required permission, it renders the requested route.
  * If the user does not have the required permission, it redirects the user to the home page.
- * @example <ProtectedRoute permissionIDs={[1, 2, 3]}><Page /></ProtectedRoute>
+ * @example
+ * <Route
+      path="/berechtigungen"
+      element={
+        <ProtectedRoutes permissionIDs={[1, 2, 3]}>
+          <PermissionsOverview />
+        </ProtectedRoutes>
+      }
+    />
+   </Route>
  */
 const ProtectedRoute = ({ children, permissionIDs }: any) => {
   const { auth } = useAuth();

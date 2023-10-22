@@ -1,6 +1,6 @@
 // The AuthContext provides a state, which indicates whether the user is authenticated or not
 
-import React, { createContext, useReducer, useContext } from "react";
+import React, { createContext, useReducer } from "react";
 import { Auth, AuthContextType, authReducerAction, authReducerActionType } from "../../types/globalTypes";
 
 /**

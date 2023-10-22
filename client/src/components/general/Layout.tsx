@@ -11,7 +11,7 @@ import ScrollTopBtn from "../navigation/ScrollTopBtn";
  * The main content is rendered in the middle.
  * @returns the app components
  */
-export default function LayoutTest() {
+const Layout = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
   //render pagebar outside of the main content but instead at the bottom of the page
@@ -53,4 +53,6 @@ export default function LayoutTest() {
       <ScrollTopBtn />
     </>
   );
-}
+};
+
+export default Layout;

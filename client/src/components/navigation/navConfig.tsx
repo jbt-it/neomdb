@@ -13,7 +13,7 @@ interface NavItem {
   }[];
 }
 
-export function getIconByName(name: string) {
+export const getIconByName = (name: string) => {
   switch (name) {
     case "Dashboard":
       return Dashboard;
@@ -32,7 +32,7 @@ export function getIconByName(name: string) {
     default:
       throw new Error(`Invalid icon name: ${name}`);
   }
-}
+};
 
 /**
  * This config provides the navigation structure for the sidebar.
@@ -94,7 +94,7 @@ const navConfig: NavItem[] = [
   },
   {
     title: "Veranstaltungen",
-    path: "/events",
+    path: "/veranstaltungen",
     icon: getIconByName("Event"),
   },
 

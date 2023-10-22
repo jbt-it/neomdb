@@ -17,7 +17,7 @@ interface MenuOption {
  * This component renders the account popover in the navbar
  * it contains links to the profile page, password change page and logout
  */
-export default function AccountPopover() {
+const AccountPopover = () => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
   const { auth, dispatchAuth } = useAuth();
   const navigate = useNavigate();
@@ -122,4 +122,6 @@ export default function AccountPopover() {
       </Popover>
     </>
   );
-}
+};
+
+export default AccountPopover;

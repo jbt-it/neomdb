@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { Box, Stack, SwipeableDrawer, ListItemButton, Avatar, Typography, Collapse, List } from "@mui/material";
+import {
+  Box,
+  Stack,
+  SwipeableDrawer,
+  ListItemButton,
+  Collapse,
+  List,
+  Avatar,
+  Typography,
+  Divider,
+} from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { SvgIconComponent, ExpandLess, ExpandMore, ExitToApp } from "@mui/icons-material";
+import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-import { Permission, authReducerActionType } from "../../types/globalTypes";
-import api from "../../utils/api";
+import { Permission } from "../../types/globalTypes";
 import { useAuth } from "../../hooks/useAuth";
 import { usePathname } from "../../hooks/usePathname";
 import { useResponsive } from "../../hooks/useResponsive";
 
-import JBTLogoBlack from "../../assets/jbt-logo-black.png";
-import Scrollbar from "./Scrollbar";
+import JBTLogo from "../../assets/jbt-logo.svg";
 import navConfig from "./navConfig";
+import Scrollbar from "./Scrollbar";
 
 interface NavItemProps {
   item: {
@@ -48,27 +57,22 @@ interface NavProps {
  * If the item has children, we render a collapse component with a list of children
  * @param item the item to be displayed
  */
-function NavItem({ item }: NavItemProps) {
+const NavItem = ({ item }: NavItemProps) => {
   const [menuItem, setMenuItemOpen] = useState(false);
   const pathname = usePathname();
   const { auth } = useAuth();
 
   const active = item.path === pathname;
 
-  const handleCollpaseClick = (value: string) => () => {
-    switch (value) {
-      case "Mitglieder": {
-        setMenuItemOpen(!menuItem);
-        break;
-      }
-    }
+  const handleCollpaseClick = () => {
+    setMenuItemOpen(!menuItem);
   };
 
   if (item.children !== undefined) {
     return (
       <>
         <ListItemButton
-          onClick={handleCollpaseClick("Mitglieder")}
+          onClick={handleCollpaseClick}
           sx={{
             minHeight: 44,
             borderRadius: 1,
@@ -173,28 +177,16 @@ function NavItem({ item }: NavItemProps) {
       </ListItemButton>
     );
   }
-}
+};
 
 /**
  * The Sidebar-Component displays the sidebar on the left side of the screen
  * We render the account information and the navigation items
  */
-export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) {
-  const { auth, dispatchAuth } = useAuth();
+const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
   const pathname = usePathname();
   const upLg = useResponsive("up", "lg");
-  const navigate = useNavigate();
   const navWidth = { width: 280 };
-
-  /**
-   * Handles click on logout link
-   */
-  const handleLogout: VoidFunction = () => {
-    api.post("/auth/logout").then(() => {
-      navigate("/login");
-      dispatchAuth({ type: authReducerActionType.deauthenticate });
-    });
-  };
 
   useEffect(() => {
     if (openDrawer) {
@@ -203,67 +195,22 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
   }, [pathname]);
 
   /**
-   * Renders the account information with the profile picture, name and roles
-   */
-  const renderAccount = (
-    <Box
-      sx={{
-        mb: 3,
-        mx: 2.5,
-        py: 2,
-        px: 2.5,
-        display: "flex",
-        borderRadius: 1.5,
-        alignItems: "center",
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
-      }}
-    >
-      <Avatar src={JBTLogoBlack} alt="photoURL" />
-      <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{auth.userName ? auth.userName : "Name"}</Typography>
-
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          {auth.roles ? auth.roles : "Rollen"}
-        </Typography>
-      </Box>
-    </Box>
-  );
-
-  /**
    * Renders the navigation items
    * We map over the navConfig and render a NavItem for each item
    * We also render a logout button at the bottom
    */
-  const renderMenu = (
+  const navigationMenu = () => (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
       {navConfig.map((item) => (
         <NavItem key={item.title} item={item} />
       ))}
-      <ListItemButton
-        onClick={() => {
-          handleLogout();
-        }}
-        sx={{
-          minHeight: 44,
-          borderRadius: 1,
-          typography: "body2",
-          color: "text.secondary",
-          textTransform: "capitalize",
-          fontWeight: "fontWeightMedium",
-        }}
-      >
-        <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-          <ExitToApp />
-        </Box>
-        <Box component="span">Logout</Box>
-      </ListItemButton>
     </Stack>
   );
 
   /**
    * Renders the content of the sidebar
    */
-  const renderContent = (
+  const menuContent = (
     <Scrollbar
       sx={{
         height: 1,
@@ -274,9 +221,7 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
         },
       }}
     >
-      {renderAccount}
-
-      {renderMenu}
+      {navigationMenu()}
     </Scrollbar>
   );
 
@@ -290,13 +235,13 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
       {upLg ? (
         <Box
           sx={{
-            height: 1,
             position: "fixed",
             width: navWidth.width,
-            borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
+            height: "88%",
+            overflowY: "auto",
           }}
         >
-          {renderContent}
+          {menuContent}
         </Box>
       ) : (
         <SwipeableDrawer
@@ -309,9 +254,28 @@ export default function Sidebar({ openDrawer, onCloseDrawer, onOpenDrawer }: Nav
             },
           }}
         >
-          <Box sx={{ mt: 1 }}>{renderContent}</Box>
+          <Box
+            sx={{
+              py: 2,
+              px: 2.5,
+              mt: 1,
+              display: "flex",
+              justifyContent: "flex-start",
+              borderRadius: 1.5,
+              alignItems: "center",
+            }}
+          >
+            <Avatar src={JBTLogo} alt="photoURL" />
+            <Typography ml={2} variant="h6" color={"text.secondary"}>
+              neoMDB
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ mt: 1 }}>{menuContent}</Box>
         </SwipeableDrawer>
       )}
     </Box>
   );
-}
+};
+
+export default Sidebar;
