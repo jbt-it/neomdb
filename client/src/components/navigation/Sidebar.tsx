@@ -226,19 +226,13 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
   );
 
   return (
-    <Box
-      sx={{
-        flexShrink: { lg: 0 },
-        width: { lg: navWidth.width },
-      }}
-    >
+    <Box sx={{ flexShrink: { lg: 0 }, width: { lg: navWidth.width } }}>
       {upLg ? (
         <Box
           sx={{
             position: "fixed",
             width: navWidth.width,
-            height: "88%",
-            overflowY: "auto",
+            //borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
           }}
         >
           {menuContent}
