@@ -2,7 +2,7 @@ import * as React from "react";
 import { AppBar, styled, alpha, Toolbar, Box, IconButton, Typography, InputBase, Avatar, Theme } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Menu, Search } from "@mui/icons-material";
-import { useResponsive } from "../../hooks/useResponsive";
+import useResponsive from "../../hooks/useResponsive";
 import AccountPopover from "./AccountPopover";
 import JBTLogoWhite from "../../assets/jbt-logo-white.png";
 
@@ -81,7 +81,6 @@ interface NavbarProps {
 const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
   const classes = useStyles();
   const lgUp = useResponsive("up", "lg");
-  const mdup = useResponsive("up", "md");
 
   const renderContent = (
     <>
@@ -90,11 +89,11 @@ const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
           <Menu sx={{ color: "white", display: "block" }} />
         </IconButton>
       ) : null}
-      {mdup ? (
-        <Box sx={{ display: "flex", alignItems: "center", ml: 3 }}>
+      {lgUp ? (
+        <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
           <Avatar alt="JBT neoMDB" src={JBTLogoWhite} />
           <Typography variant="h6" noWrap sx={{ ml: 2 }}>
-            JBT neoMDB
+            neoMDB
           </Typography>
         </Box>
       ) : null}

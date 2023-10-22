@@ -18,38 +18,34 @@ const Layout = () => {
   return (
     <>
       <Navbar onOpenDrawer={() => setOpenDrawer(true)} />
-      <Grid
-        container
-        spacing={1}
-        direction={"row"}
-        wrap="nowrap"
+      <Box
         sx={{
+          display: "flex",
+          flexDirection: { xs: "column", lg: "row" },
+          height: "100%",
+          width: "100%",
           mt: 9,
         }}
       >
-        <Grid item>
-          <Sidebar
-            openDrawer={openDrawer}
-            onCloseDrawer={() => setOpenDrawer(false)}
-            onOpenDrawer={() => setOpenDrawer(true)}
-          />
-        </Grid>
-        <Grid item xs>
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              minHeight: 1,
-              display: "flex",
-              flexDirection: "column",
-              pl: 1,
-              pr: 3,
-            }}
-          >
-            <Outlet />
-          </Box>
-        </Grid>
-      </Grid>
+        <Sidebar
+          openDrawer={openDrawer}
+          onCloseDrawer={() => setOpenDrawer(false)}
+          onOpenDrawer={() => setOpenDrawer(true)}
+        />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minHeight: 1,
+            display: "flex",
+            flexDirection: "column",
+            pl: { xs: 0, lg: 1 },
+            pr: { xs: 2, lg: 3 },
+          }}
+        >
+          <Outlet />
+        </Box>
+      </Box>
       <ScrollTopBtn />
     </>
   );

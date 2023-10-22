@@ -3,38 +3,42 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 /**
  * This hook is used to make the app responsive
- * @param query - The query to be used
+ * @param size - The size to be used
  * @param start - The start breakpoint
  * @param end - The end breakpoint
  * @returns - The result of the query
  * @description - This hook is used to make the app responsive
  */
 
-export function useResponsive(query: string, start: any, end?: any) {
+const useResponsive = (
+  size: string,
+  start: "xs" | "sm" | "md" | "lg" | "xl",
+  end?: "xs" | "sm" | "md" | "lg" | "xl"
+) => {
   const theme = useTheme();
 
   const mediaUp = useMediaQuery(theme.breakpoints.up(start));
 
   const mediaDown = useMediaQuery(theme.breakpoints.down(start));
 
-  const mediaBetween = useMediaQuery(theme.breakpoints.between(start, end));
+  const mediaBetween = end ? useMediaQuery(theme.breakpoints.between(start, end)) : null;
 
   const mediaOnly = useMediaQuery(theme.breakpoints.only(start));
 
-  if (query === "up") {
+  if (size === "up") {
     return mediaUp;
   }
 
-  if (query === "down") {
+  if (size === "down") {
     return mediaDown;
   }
 
-  if (query === "between") {
+  if (size === "between") {
     return mediaBetween;
   }
 
   return mediaOnly;
-}
+};
 
 // ----------------------------------------------------------------------
 /**
@@ -42,7 +46,7 @@ export function useResponsive(query: string, start: any, end?: any) {
  * @description - This hook is used to make the app responsive
  */
 
-export function useWidth(): string {
+const useWidth = (): string => {
   const theme = useTheme();
 
   const keys = [...theme.breakpoints.keys].reverse();
@@ -54,4 +58,7 @@ export function useWidth(): string {
       return !output && matches ? key : output;
     }, null) || "xs"
   );
-}
+};
+
+export default useResponsive;
+export { useWidth };

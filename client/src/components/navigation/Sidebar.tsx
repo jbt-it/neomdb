@@ -19,12 +19,11 @@ import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 import { Permission } from "../../types/globalTypes";
 import { useAuth } from "../../hooks/useAuth";
-import { usePathname } from "../../hooks/usePathname";
-import { useResponsive } from "../../hooks/useResponsive";
+import usePathname from "../../hooks/usePathname";
+import useResponsive from "../../hooks/useResponsive";
 
 import JBTLogo from "../../assets/jbt-logo.svg";
 import navConfig from "./navConfig";
-import Scrollbar from "./Scrollbar";
 
 interface NavItemProps {
   item: {
@@ -37,6 +36,8 @@ interface NavItemProps {
       permissions?: Permission[];
     }[];
   };
+  openItem?: boolean;
+  setOpenItem?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface NavItemChildProps {
@@ -57,23 +58,31 @@ interface NavProps {
  * If the item has children, we render a collapse component with a list of children
  * @param item the item to be displayed
  */
-const NavItem = ({ item }: NavItemProps) => {
-  const [menuItem, setMenuItemOpen] = useState(false);
+const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
   const { auth } = useAuth();
+  const [activeChild, setActiveChild] = useState(false);
 
-  const active = item.path === pathname;
+  useEffect(() => {
+    if (item.children !== undefined) {
+      setActiveChild(
+        item.children.some((child: NavItemChildProps) => child.path === pathname.slice(0, item.path?.length))
+      );
+    }
+  }, [item.children, pathname]);
 
-  const handleCollpaseClick = () => {
-    setMenuItemOpen(!menuItem);
-  };
+  const active = item.path === pathname || activeChild;
 
-  if (item.children !== undefined) {
+  if (item.children !== undefined && setOpenItem !== undefined) {
+    const handleCollpaseClick = () => {
+      setOpenItem(!openItem);
+    };
     return (
       <>
         <ListItemButton
           onClick={handleCollpaseClick}
           sx={{
+            key: item.title,
             minHeight: 44,
             borderRadius: 1,
             typography: "body2",
@@ -94,15 +103,16 @@ const NavItem = ({ item }: NavItemProps) => {
             <item.icon />
           </Box>
           <Box component="span">{item.title} </Box>
-          {menuItem ? <ExpandLess sx={{ ml: "auto", me: 0 }} /> : <ExpandMore sx={{ ml: "auto", me: 0 }} />}
+          {openItem ? <ExpandLess sx={{ ml: "auto", me: 0 }} /> : <ExpandMore sx={{ ml: "auto", me: 0 }} />}
         </ListItemButton>
-        <Collapse in={menuItem} timeout="auto" unmountOnExit>
+        <Collapse in={openItem} timeout="auto" unmountOnExit>
           <List sx={{ marginLeft: 3, marginTop: -1 }}>
             {item.children.map((child: NavItemChildProps) =>
               child.permissions && auth.permissions.length === 0 ? null : (
                 <ListItemButton
                   component={Link}
                   to={child.path}
+                  key={child.title}
                   sx={{
                     marginLeft: 2.1,
                     marginBottom: 0.5,
@@ -112,7 +122,7 @@ const NavItem = ({ item }: NavItemProps) => {
                     color: "text.secondary",
                     textTransform: "capitalize",
                     fontWeight: "fontWeightMedium",
-                    ...(child.path === pathname && {
+                    ...(child.path === pathname.slice(0, item.path?.length) && {
                       color: "primary.main",
                       fontWeight: "fontWeightSemiBold",
                       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
@@ -135,6 +145,7 @@ const NavItem = ({ item }: NavItemProps) => {
       <ListItemButton
         component={Link}
         to={item.path}
+        key={item.title}
         sx={{
           minHeight: 44,
           borderRadius: 1,
@@ -161,6 +172,7 @@ const NavItem = ({ item }: NavItemProps) => {
   } else {
     return (
       <ListItemButton
+        key={item.title}
         sx={{
           minHeight: 44,
           borderRadius: 1,
@@ -194,49 +206,52 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
     }
   }, [pathname]);
 
+  const [openMitglieder, setOpenMitglieder] = useState(false);
+  const [openTools, setOpenTools] = useState(false);
+
+  const handleOpenMitglieder = () => {
+    setOpenMitglieder(!openMitglieder);
+    if (openTools) {
+      setOpenTools(false);
+    }
+  };
+
+  const handleOpenTools = () => {
+    setOpenTools(!openTools);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+  };
+
   /**
    * Renders the navigation items
    * We map over the navConfig and render a NavItem for each item
    * We also render a logout button at the bottom
    */
-  const navigationMenu = () => (
+  const renderNavigationMenu = () => (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
       {navConfig.map((item) => (
-        <NavItem key={item.title} item={item} />
+        <NavItem
+          key={item.title}
+          item={item}
+          openItem={item.title === "Mitglieder" ? openMitglieder : item.title === "Tools" ? openTools : undefined}
+          setOpenItem={
+            item.title === "Mitglieder" ? handleOpenMitglieder : item.title === "Tools" ? handleOpenTools : undefined
+          }
+        />
       ))}
     </Stack>
   );
 
-  /**
-   * Renders the content of the sidebar
-   */
-  const menuContent = (
-    <Scrollbar
+  return (
+    <Box
       sx={{
-        height: 1,
-        "& .simplebar-content": {
-          height: 1,
-          display: "flex",
-          flexDirection: "column",
-        },
+        flexShrink: { lg: 0 },
+        width: { lg: navWidth.width },
       }}
     >
-      {navigationMenu()}
-    </Scrollbar>
-  );
-
-  return (
-    <Box sx={{ flexShrink: { lg: 0 }, width: { lg: navWidth.width } }}>
       {upLg ? (
-        <Box
-          sx={{
-            position: "fixed",
-            width: navWidth.width,
-            //borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
-          }}
-        >
-          {menuContent}
-        </Box>
+        renderNavigationMenu()
       ) : (
         <SwipeableDrawer
           open={openDrawer}
@@ -265,7 +280,7 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
             </Typography>
           </Box>
           <Divider />
-          <Box sx={{ mt: 1 }}>{menuContent}</Box>
+          <Box sx={{ mt: 1 }}>{renderNavigationMenu()}</Box>
         </SwipeableDrawer>
       )}
     </Box>

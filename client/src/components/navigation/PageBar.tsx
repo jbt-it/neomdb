@@ -22,10 +22,10 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-between",
       padding: "8px",
       zIndex: 10,
-      marginLeft: -15,
+      marginLeft: -10,
       [theme.breakpoints.up("md")]: {
         paddingRight: "280px",
-        marginLeft: -15,
+        marginLeft: -8,
       },
     },
     pageBarOptions: {

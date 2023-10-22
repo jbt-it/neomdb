@@ -48,26 +48,3 @@ body::-webkit-scrollbar {
       transform:rotate(360deg); 
   } 
 }
-
-/*
- * every page needs to have this class at its root in order to 
- * display the content without it getting covered by the navigation
- *
-.content-page {
-  flex-grow: 1;
-  padding: 5px;
-  margin-top: 58px;
-  margin-bottom: 50px;
-}
-@media only screen and (min-width: 960px) {
-  .content-page {
-    margin-top: 65px;
-    margin-left: 7px;
-    margin-right: 7px;
- }
-}
-@media only screen and (min-width: 600px) {
-  .content-page {
-    margin-top: 65px;
- }
-}*/
