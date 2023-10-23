@@ -12,7 +12,7 @@ import {
   InternalProjectAndTrainee,
   Workshop,
 } from "../../types/traineesTypes";
-import mysql = require("mysql2");
+import * as mysql from "mysql2";
 import logger from "../../logger";
 
 class TraineesRepository {

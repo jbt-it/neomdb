@@ -1,7 +1,7 @@
 /**
  * Wrapper for the MySQL connections
  */
-import fs = require("fs");
+import * as fs from "fs";
 import logger from "./logger";
 
 // Check if the environment is test

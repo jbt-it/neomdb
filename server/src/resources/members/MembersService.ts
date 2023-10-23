@@ -17,7 +17,7 @@ import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { executeInTransaction } from "../../database";
-import bcrypt = require("bcryptjs");
+import * as bcrypt from "bcryptjs";
 import { getRandomString } from "../../utils/stringUtils";
 import AuthRepository from "../../auth/AuthRepository";
 

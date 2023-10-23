@@ -2,7 +2,7 @@
  * Wrapper for the MySQL connections
  */
 import { QueryResult, TransactionTask } from "types/databaseTypes";
-import mysql = require("mysql2");
+import * as mysql from "mysql2";
 import databaseConfig from "./databaseConfig";
 
 const pool: mysql.Pool = mysql.createPool(databaseConfig);

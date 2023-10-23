@@ -1,4 +1,4 @@
-import mysql = require("mysql2");
+import * as mysql from "mysql2";
 import { executeMultipleQueries, query } from "../../database";
 import { Permission, PermissionAssignment } from "../../types/authTypes";
 import { ConflictError, QueryError, UnprocessableEntityError } from "../../types/Errors";

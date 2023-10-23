@@ -10,7 +10,7 @@ import {
 import { generateJWT } from "../utils/jwtUtils";
 import { getCookieOptionsAsString } from "./cookieConfig";
 import { UnauthorizedError } from "../types/Errors";
-import nodemailer = require("nodemailer");
+import * as nodemailer from "nodemailer";
 
 /**
  * Controller for the authentication

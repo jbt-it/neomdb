@@ -1,5 +1,5 @@
-import jwt = require("jsonwebtoken");
-import fs = require("fs");
+import * as jwt from "jsonwebtoken";
+import * as fs from "fs";
 import { JWTPayload } from "../types/authTypes";
 import { Request } from "express";
 

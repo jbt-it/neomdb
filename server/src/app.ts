@@ -1,9 +1,9 @@
 /*
  * Configure our API endpoint
  */
-import express = require("express");
-import dotenv = require("dotenv");
-import cookieParser = require("cookie-parser");
+import * as express from "express";
+import * as dotenv from "dotenv";
+import * as cookieParser from "cookie-parser";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import { errorHandler } from "./middleware/errorHandling";

@@ -1,8 +1,8 @@
 /**
  * Start server and connect to external services
  */
-import dotenv = require("dotenv");
-import http = require("http");
+import * as dotenv from "dotenv";
+import * as http from "http";
 dotenv.config();
 
 import app from "./app";
