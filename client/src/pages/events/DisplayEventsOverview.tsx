@@ -10,7 +10,6 @@ import {
   Paper,
   Typography,
   Chip,
-  Toolbar,
   Button,
   Box,
   Tabs,
@@ -30,6 +29,10 @@ import {
   ListItem,
   Divider,
   Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  Switch,
 } from "@mui/material";
 import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
 import { events as mockEvents } from "../../mock/events/events";
@@ -56,14 +59,13 @@ type commonEventType = {
   location: string;
   registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
+  participantsCount?: number | null;
   maximumParticipants?: number | null;
   type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
- * ToDo: Max Anmeldungsbutton disable if max participants reached
- * TODO: floating action button --> for mobile site
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -72,6 +74,11 @@ const DisplayEventsOverview: React.FC = () => {
   const [events, setEvents] = useState<commonEventType[]>([]);
   const [workshops, setWorkshops] = useState<commonEventType[]>([]);
   const [eventsSignedUp, setEventsSignedUp] = useState<commonEventType[]>([]);
+  const [displayedAllEvents, setDisplayedAllEvents] = useState<commonEventType[]>([]);
+  const [displayedEvents, setDisplayedEvents] = useState<commonEventType[]>([]);
+  const [displayedWorkshops, setDisplayedWorkshops] = useState<commonEventType[]>([]);
+  const [displayedEventsSignedUp, setDisplayedEventsSignedUp] = useState<commonEventType[]>([]);
+  const [displayPastEvents, setDisplayPastEvents] = useState<boolean>(false);
   const [tabValue, setTabValue] = React.useState(0);
   const [displayFiters, setDisplayFilters] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs()); // is the start date from which on events are displayed, is initialized to the current date
@@ -81,6 +88,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [startMonthFilter, setStartMonthFilter] = useState<string>(""); // start of month filter field
   const [endMonthFilter, setEndMonthFilter] = useState<string>(""); // end of month filter field
   const [eventTypeFilter, setEventTypeFilter] = useState<string[]>([]);
+  const [displayMonths, setDisplayMonths] = useState<boolean>(false);
 
   const mobile = useMediaQuery("(max-width:600px)");
 
@@ -130,6 +138,7 @@ const DisplayEventsOverview: React.FC = () => {
         location: event.ort,
         registrationStart: event.anmeldungvon ? dayjs(event.anmeldungvon).locale("de") : null,
         registrationDeadline: event.anmeldungbis ? dayjs(event.anmeldungbis).locale("de") : null,
+        participantsCount: event.teilnehmerZahl,
         maximumParticipants: event.maximaleTeilnehmer,
         type: event.ww ? "WW" : event.netzwerk ? "Netzwerk" : event.jbtgoes ? "JBT goes" : "Sonstige",
       });
@@ -159,6 +168,7 @@ const DisplayEventsOverview: React.FC = () => {
         location: event.ort,
         registrationStart: event.anmeldungVon ? dayjs(event.anmeldungVon).locale("de") : null,
         registrationDeadline: event.anmeldungBis ? dayjs(event.anmeldungBis).locale("de") : null,
+        participantsCount: event.teilnehmerZahl,
         maximumParticipants: event.maximaleTeilnehmerzahl,
         type: event.art === "Pflichtschulung" ? "Pflichtworkshop" : "Workshop",
       });
@@ -189,6 +199,7 @@ const DisplayEventsOverview: React.FC = () => {
         location: event.ort,
         registrationStart: dayjs(event.anmeldungvon),
         registrationDeadline: dayjs(event.anmeldungbis),
+        participantsCount: event.teilnehmerZahl,
         maximumParticipants: event.maximaleTeilnehmer,
         type: event.ww ? "WW" : event.netzwerk ? "Netzwerk" : event.jbtgoes ? "JBT goes" : "Sonstige",
       });
@@ -197,14 +208,64 @@ const DisplayEventsOverview: React.FC = () => {
   }, [dispatchAuth]);
 
   /**
+   * Function that applied the filters to the displayed events and workshops
+   */
+  const filterEvents = () => {
+    // applies the filters to the all events tab
+    setDisplayedAllEvents(
+      events
+        .concat(workshops)
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (startMonth ? event.date > startMonth : true))
+        .filter((event) => (endMonth ? event.date < endMonth : true))
+        .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
+    );
+
+    // applies the filters to the events tab
+    setDisplayedEvents(
+      events
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (startMonth ? event.date > startMonth : true))
+        .filter((event) => (endMonth ? event.date < endMonth : true))
+        .filter((event) =>
+          eventTypeFilter.length > 0
+            ? eventTypeFilter.length === 1 && eventTypeFilter.includes("Workshop")
+              ? true
+              : eventTypeFilter.includes(event.type)
+            : true
+        )
+    );
+
+    // applies the filters to the workshops tab
+    setDisplayedWorkshops(
+      workshops
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (startMonth ? event.date > startMonth : true))
+        .filter((event) => (endMonth ? event.date < endMonth : true))
+        .filter((event) =>
+          eventTypeFilter.length > 0 ? (eventTypeFilter.includes("Workshop") ? event.type === "Workshop" : true) : true
+        )
+    );
+
+    // applies the filters to the events signed up tab
+    setDisplayedEventsSignedUp(
+      eventsSignedUp
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (startMonth ? event.date > startMonth : true))
+        .filter((event) => (endMonth ? event.date < endMonth : true))
+        .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
+    );
+  };
+
+  /**
    * Function that sends the request to sign out from an event to the backend and removes the event from the list of events the user is signed up for
    */
   const signOutFromEvent = useCallback(
-    (eventID: number) => {
+    (event: commonEventType) => {
       // api.get("/events/signed-out").then((response) => {
       //   console.log(response.data);
       // });
-      const index = eventsSignedUp.findIndex((event) => event.ID === eventID);
+      const index = eventsSignedUp.findIndex((e) => e.ID === event.ID);
       if (index !== -1) {
         const newEventsSignedUp = [...eventsSignedUp];
         newEventsSignedUp.splice(index, 1);
@@ -218,12 +279,11 @@ const DisplayEventsOverview: React.FC = () => {
    * Function that sends the request to sign up for an event to the backend and adds the event to the list of events the user is signed up for
    */
   const signUpForEvent = useCallback(
-    (eventID: number) => {
+    (event: commonEventType) => {
       // api.get("/events/signed-up").then((response) => {
       //   console.log(response.data);
       // });
-      const newEvent = events.concat(workshops).find((event) => event.ID === eventID) as commonEventType;
-      setEventsSignedUp([...eventsSignedUp, newEvent]);
+      setEventsSignedUp([...eventsSignedUp, event]);
     },
     [events, eventsSignedUp]
   );
@@ -240,13 +300,18 @@ const DisplayEventsOverview: React.FC = () => {
     getWorkshops();
   }, [getWorkshops]);
 
+  useEffect(() => {
+    filterEvents();
+  }, [startDate, endDate, startMonth, endMonth, eventTypeFilter, events, workshops, eventsSignedUp]);
+
   /**
    * Renders button for sign up or sign out from event
-   * @param eventID the id of the event
+   * If the amount of participants is greater of equal the the amount of the maximum participants "Keine Plätze" will be displayed
+   * @param event the event for which the button should be rendered
    * @returns the button for sign up or sign out from event
    */
-  const renderSignUpButton = (eventID: number, registrationStart: Dayjs | null, registrationDeadline: Dayjs | null) => {
-    if (eventsSignedUp.some((event) => event.ID === eventID)) {
+  const renderSignUpButton = (event: commonEventType) => {
+    if (eventsSignedUp.some((e) => e.ID === event.ID)) {
       return (
         <Chip
           label="Abmelden"
@@ -255,15 +320,17 @@ const DisplayEventsOverview: React.FC = () => {
           variant="outlined"
           icon={<RemoveCircleOutline />}
           onClick={() => {
-            signOutFromEvent(eventID);
+            signOutFromEvent(event);
           }}
         />
       );
     } else if (
-      (registrationDeadline || registrationDeadline === null
-        ? dayjs().isAfter(registrationDeadline?.endOf("d"))
+      (event.registrationDeadline || event.registrationDeadline === null
+        ? dayjs().isAfter(event.registrationDeadline?.endOf("d"))
         : false) ||
-      (registrationStart || registrationStart === null ? dayjs().isBefore(registrationStart?.startOf("d")) : false)
+      (event.registrationStart || event.registrationStart === null
+        ? dayjs().isBefore(event.registrationStart?.startOf("d"))
+        : false)
     ) {
       return (
         <Chip
@@ -273,7 +340,23 @@ const DisplayEventsOverview: React.FC = () => {
           disabled
           icon={<AddCircle />}
           onClick={() => {
-            signUpForEvent(eventID);
+            signUpForEvent(event);
+          }}
+        />
+      );
+    } else if (
+      event.maximumParticipants && event.participantsCount
+        ? event.participantsCount >= event.maximumParticipants
+        : false
+    ) {
+      return (
+        <Chip
+          label="Keine Plätze"
+          color="default"
+          size={mobile ? "medium" : "small"}
+          disabled
+          onClick={() => {
+            signUpForEvent(event);
           }}
         />
       );
@@ -285,7 +368,7 @@ const DisplayEventsOverview: React.FC = () => {
           size={mobile ? "medium" : "small"}
           icon={<AddCircle />}
           onClick={() => {
-            signUpForEvent(eventID);
+            signUpForEvent(event);
           }}
         />
       );
@@ -307,16 +390,13 @@ const DisplayEventsOverview: React.FC = () => {
     }
   };
 
-  const [displayAll, setDisplayAll] = useState<boolean>(false);
-
   /**
    * Renders the button to show all past events by setting the start date of the list to 01.01.2010
    * Renders the button to show all current events by setting the start date of the list to the current date
-   * TODO: Sort so I Button is clicked --> the newst event is on top or else we will have to scroll down every time
    * @returns button to show all past events
    */
   const renderShowAllButton = () => {
-    if (displayAll) {
+    if (displayPastEvents) {
       return (
         <Button
           variant="outlined"
@@ -324,12 +404,13 @@ const DisplayEventsOverview: React.FC = () => {
           color="primary"
           sx={{ fontWeight: 600 }}
           onClick={() => {
-            setDisplayAll(false);
+            setDisplayPastEvents(false);
             setStartDate(dayjs());
             setEndDate(null);
           }}
+          size="small"
         >
-          Aktuelle
+          {mobile ? "Aktuelle" : "Aktuelle Veranstaltungen"}
         </Button>
       );
     } else {
@@ -340,12 +421,13 @@ const DisplayEventsOverview: React.FC = () => {
           color="primary"
           sx={{ fontWeight: 600 }}
           onClick={() => {
-            setDisplayAll(true);
+            setDisplayPastEvents(true);
             setStartDate(dayjs("2010-01-01"));
             setEndDate(dayjs().subtract(1, "day"));
           }}
+          size="small"
         >
-          Vergangene Events
+          {mobile ? "Vergangene" : "Vergangene Veranstaltungen"}
         </Button>
       );
     }
@@ -542,8 +624,18 @@ const DisplayEventsOverview: React.FC = () => {
   };
 
   /**
+   * Renders a switch to toggle the months in which the events take place
+   * @returns the switch that determines if the months of the events should be displayed or not
+   */
+  const renderMonthSwitch = () => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDisplayMonths(event.target.checked);
+    };
+    return <Switch checked={displayMonths} onChange={handleChange} />;
+  };
+
+  /**
    * renders the filter fields start month and end month that determine the range of events that should be displayed
-   * ToDo: Implement filter for type of events
    * @returns the filter field
    */
   const renderFilters = () => {
@@ -608,24 +700,30 @@ const DisplayEventsOverview: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-        <Box sx={{ mr: 1, ml: "auto" }}>{renderResetFiltersButton()}</Box>
+
+        <Box sx={{ mr: 1, ml: "auto", fontWeight: 600 }}>
+          {mobile ? "Monate" : "Monate anzeigen:"}
+          {renderMonthSwitch()}
+          {renderResetFiltersButton()}
+        </Box>
       </Stack>
     );
   };
 
   /**
    * renders a table based on a given array of events --> used for all events and events the user is signed up for
-   * ToDo: Make the first column clickable and redirect to the event details page
    * Maybe add a edit button to quickly edit the event
    * @param rows is type of Event[] and contains the events that should be displayed in the table
    * @returns a table with the given events
    */
   const renderTable = (rows: commonEventType[]) => {
-    const design2 = false; //Option to quickly switch between showing the respective months of the events or not
     rows
       .sort((a, b) => a.date.get("date") - b.date.get("date"))
       .sort((a, b) => a.date.get("month") - b.date.get("month"))
       .sort((a, b) => a.date.get("year") - b.date.get("year"));
+    if (displayPastEvents) {
+      rows.reverse();
+    }
 
     startMonth ? rows.filter((event) => event.date > startMonth) : null;
     endMonth ? rows.filter((event) => event.date < endMonth) : null;
@@ -638,7 +736,6 @@ const DisplayEventsOverview: React.FC = () => {
               <TableCell sx={{ fontWeight: "bold" }}>Event</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Uhrzeit</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Ort</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Anmeldungsfrist</TableCell>
             </TableRow>
           </TableHead>
@@ -646,7 +743,7 @@ const DisplayEventsOverview: React.FC = () => {
             {/** Show Months of events? Or just display all events?*/}
             {rows.map((row, index) => (
               <React.Fragment key={row.ID}>
-                {design2 ? (
+                {displayMonths ? (
                   index === 0 || row.date.month() !== rows[index - 1].date.month() ? (
                     <TableRow>
                       <TableCell colSpan={6} sx={{ p: 0, bgcolor: "#f6891f" }}>
@@ -675,7 +772,6 @@ const DisplayEventsOverview: React.FC = () => {
                   <TableCell>
                     {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
                   </TableCell>
-                  <TableCell>{row.location}</TableCell>
                   <TableCell>
                     <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
                       {row.registrationDeadline ? (
@@ -690,9 +786,7 @@ const DisplayEventsOverview: React.FC = () => {
                         <Box />
                       )}
                       <Box ml={0.5}>
-                        {row.registrationDeadline && row.endDate > dayjs()
-                          ? renderSignUpButton(row.ID, row.registrationStart, row.registrationDeadline)
-                          : null}
+                        {row.registrationDeadline && row.endDate > dayjs() ? renderSignUpButton(row) : null}
                       </Box>
                     </Stack>
                   </TableCell>
@@ -709,12 +803,15 @@ const DisplayEventsOverview: React.FC = () => {
    * Renders the table for the mobile site
    * @param rows the events that should be displayed in the table
    */
-  const renderEventsMobile = (rows: commonEventType[]) => {
-    const design2 = false; //Option to quickly switch between showing the respective months of the events or not
+  const renderMobileView = (rows: commonEventType[]) => {
     rows
       .sort((a, b) => a.date.get("date") - b.date.get("date"))
       .sort((a, b) => a.date.get("month") - b.date.get("month"))
       .sort((a, b) => a.date.get("year") - b.date.get("year"));
+
+    if (displayPastEvents) {
+      rows.reverse();
+    }
 
     startMonth ? rows.filter((event) => event.date > startMonth) : null;
     endMonth ? rows.filter((event) => event.date < endMonth) : null;
@@ -722,82 +819,82 @@ const DisplayEventsOverview: React.FC = () => {
       <List disablePadding>
         {rows.map((row, index) => (
           <React.Fragment key={row.ID}>
-            {design2 ? (
+            {displayMonths ? (
               index === 0 || row.date.month() !== rows[index - 1].date.month() ? (
-                <ListItem sx={{ mb: 1, borderColor: "#f6891f", borderBottom: 1 }}>
+                <ListItem sx={{ mb: 1, color: "#f6891f", borderBottom: 1 }}>
                   <Typography fontWeight={"bold"} variant="body1" sx={{ ml: -2 }}>
-                    {row.date.format("MMMM YYYY")}
+                    {row.date.locale("de").format("MMMM YYYY")}
                   </Typography>
                 </ListItem>
               ) : null
             ) : null}
-            <ListItem sx={{ flexDirection: "column", p: 0, alignItems: "flex-start" }}>
-              <Link
-                color="textPrimary"
-                underline="hover"
-                href={`#/veranstaltungen/${row.ID}`}
-                sx={{ alignItems: "center", mb: 1 }}
-              >
-                <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
-                  <EventChip type={row.type} size="small" sx={{ ml: -0.5, mr: 1 }} />
-                  <Typography variant={"body1"} fontWeight={"bold"}>
-                    {row.name}
-                  </Typography>
-                </Box>
-              </Link>
-              <Stack direction="row">
-                <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
-                  Datum: &nbsp;
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {row.date.format("DD.MM.YYYY")}
-                  {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
-                </Typography>
-              </Stack>
-              <Box>
-                {row.registrationDeadline ? (
-                  row.registrationStart ? (
-                    <Stack direction="row">
-                      <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
-                        Anmeldung: &nbsp;
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {row.registrationStart.format("DD.MM.YYYY") +
-                          " - " +
-                          row.registrationDeadline.format("DD.MM.YYYY")}{" "}
-                      </Typography>
-                    </Stack>
-                  ) : (
-                    <Stack direction={"row"}>
-                      <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
-                        Anmeldung: &nbsp;
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {row.registrationDeadline.format("DD.MM.YYYY")}{" "}
-                      </Typography>
-                    </Stack>
-                  )
-                ) : null}
-              </Box>
-              <Box>
-                {row.startTime ? (
+            <Card
+              sx={{ p: 0.5, flexDirection: "column", alignItems: "flex-start", mb: 1, width: "100%" }}
+              style={{ boxShadow: "none" }}
+            >
+              <CardActionArea component={Link} href={`#/veranstaltungen/${row.ID}`}>
+                <CardContent sx={{ p: 0 }}>
+                  <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
+                    <EventChip type={row.type} size="small" sx={{ ml: -0.5, mr: 1 }} />
+                    <Typography variant={"body1"} fontWeight={"bold"}>
+                      {row.name}
+                    </Typography>
+                  </Box>
                   <Stack direction="row">
                     <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
-                      Uhrzeit: &nbsp;
+                      Datum: &nbsp;
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
+                      {row.date.format("DD.MM.YYYY")}
+                      {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
                     </Typography>
                   </Stack>
-                ) : null}
-              </Box>
-              <Box sx={{ ml: "auto" }}>
-                {row.registrationDeadline && row.endDate > dayjs()
-                  ? renderSignUpButton(row.ID, row.registrationStart, row.registrationDeadline)
-                  : null}
-              </Box>
-            </ListItem>
-            <Divider sx={{ mt: 3, mb: 2 }} />
+                  <Box>
+                    {row.registrationDeadline ? (
+                      row.registrationStart ? (
+                        <Stack direction="row">
+                          <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                            Anmeldung: &nbsp;
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {row.registrationStart.format("DD.MM.YYYY") +
+                              " - " +
+                              row.registrationDeadline.format("DD.MM.YYYY")}{" "}
+                          </Typography>
+                        </Stack>
+                      ) : (
+                        <Stack direction={"row"}>
+                          <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                            Anmeldung: &nbsp;
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {row.registrationDeadline.format("DD.MM.YYYY")}{" "}
+                          </Typography>
+                        </Stack>
+                      )
+                    ) : null}
+                  </Box>
+                  <Box>
+                    {row.startTime ? (
+                      <Stack direction="row">
+                        <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                          Uhrzeit: &nbsp;
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
+                        </Typography>
+                      </Stack>
+                    ) : null}
+                  </Box>
+                </CardContent>
+              </CardActionArea>
+              <CardActions sx={{ p: 0, pt: 0.5 }}>
+                <Box sx={{ p: 0, ml: "auto" }}>
+                  {row.registrationDeadline && row.endDate > dayjs() ? renderSignUpButton(row) : null}
+                </Box>
+              </CardActions>
+            </Card>
+            <Divider sx={{ mb: 2 }} />
           </React.Fragment>
         ))}
       </List>
@@ -821,19 +918,15 @@ const DisplayEventsOverview: React.FC = () => {
       {events.length > 0 ? (
         <Box>
           <Box sx={{ ml: 2 }}>{displayFiters ? renderFilters() : null}</Box>
-          <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
+          <Stack direction={"row"} alignItems="center" justifyContent="space-between">
             <Tabs value={tabValue} onChange={handleTabChange} sx={{ ml: 3 }}>
-              <Tab label={mobile ? "Alle" : "Alle Veranstaltungen"} />
-              <Tab label="Meine Veranstaltungen" />
-              {!mobile ? (
-                <>
-                  <Tab label="Events" />
-                  <Tab label="Workshops" />
-                </>
-              ) : null}
+              <Tab label={mobile ? "Alle Events" : "Alle Veranstaltungen"} />
+              <Tab label={mobile ? "Meine Events" : "Meine Veranstaltungen"} />
+              {!mobile ? <Tab label="Events" /> : null}
+              {!mobile ? <Tab label="Workshops" /> : null}
             </Tabs>
             <IconButton
-              sx={{ width: 35, height: 35, mr: 3 }}
+              sx={{ width: 35, height: 35, mr: mobile ? 2 : 3 }}
               onClick={() => {
                 setDisplayFilters((prev) => !prev);
               }}
@@ -842,36 +935,16 @@ const DisplayEventsOverview: React.FC = () => {
             </IconButton>
           </Stack>
           <CustomTabPanel value={tabValue} index={0}>
-            {mobile
-              ? renderEventsMobile(
-                  events
-                    .concat(workshops)
-                    .filter((event) =>
-                      endDate ? event.date > startDate && event.date < endDate : event.date > startDate
-                    )
-                    .filter((event) => (startMonth ? event.date > startMonth : true))
-                    .filter((event) => (endMonth ? event.date < endMonth : true))
-                    .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
-                )
-              : renderTable(
-                  events
-                    .concat(workshops)
-                    .filter((event) =>
-                      endDate ? event.date > startDate && event.date < endDate : event.date > startDate
-                    )
-                    .filter((event) => (startMonth ? event.date > startMonth : true))
-                    .filter((event) => (endMonth ? event.date < endMonth : true))
-                    .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
-                )}
+            {mobile ? renderMobileView(displayedAllEvents) : renderTable(displayedAllEvents)}
           </CustomTabPanel>
           <CustomTabPanel value={tabValue} index={1}>
-            {mobile ? renderEventsMobile(eventsSignedUp) : renderTable(eventsSignedUp)}
+            {mobile ? renderMobileView(displayedEventsSignedUp) : renderTable(displayedEventsSignedUp)}
           </CustomTabPanel>
           <CustomTabPanel value={tabValue} index={2}>
-            {renderTable(events)}
+            {renderTable(displayedEvents)}
           </CustomTabPanel>
           <CustomTabPanel value={tabValue} index={3}>
-            {renderTable(workshops)}
+            {renderTable(displayedWorkshops)}
           </CustomTabPanel>
         </Box>
       ) : (
