@@ -9,7 +9,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
  * @returns - The result of the query
  * @description - This hook is used to make the app responsive
  */
-
 const useResponsive = (
   size: string,
   start: "xs" | "sm" | "md" | "lg" | "xl",
@@ -41,11 +40,11 @@ const useResponsive = (
 };
 
 // ----------------------------------------------------------------------
+
 /**
  * @returns - The width of the screen
  * @description - This hook is used to make the app responsive
  */
-
 const useWidth = (): string => {
   const theme = useTheme();
 
