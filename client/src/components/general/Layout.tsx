@@ -39,6 +39,8 @@ const Layout = () => {
             minHeight: 1,
             display: "flex",
             flexDirection: "column",
+            ml: 3,
+            mr: 3,
             pl: { xs: 0, lg: 1 },
             pr: { xs: 2, lg: 3 },
           }}

@@ -229,7 +229,7 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
    * We also render a logout button at the bottom
    */
   const renderNavigationMenu = () => (
-    <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
+    <Stack component="nav" spacing={0.5} sx={{ px: 2, mt: 2 }}>
       {navConfig.map((item) => (
         <NavItem
           key={item.title}
@@ -251,7 +251,17 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
       }}
     >
       {upLg ? (
-        renderNavigationMenu()
+        <Box
+          sx={{
+            mt: -2,
+            position: "fixed",
+            height: "100%",
+            width: { lg: navWidth.width },
+            borderRight: { lg: "1px solid rgba(0, 0, 0, 0.12)" },
+          }}
+        >
+          {renderNavigationMenu()}
+        </Box>
       ) : (
         <SwipeableDrawer
           open={openDrawer}
