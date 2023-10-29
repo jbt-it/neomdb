@@ -66,6 +66,7 @@ type commonEventType = {
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
+ * TODO: Store filters state in URL
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
