@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Grid, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Navbar from "../navigation/Navbar";
 import Sidebar from "../navigation/Sidebar";
 import ScrollTopBtn from "../navigation/ScrollTopBtn";
+import usePathname from "../../hooks/usePathname";
 
 /**
  * This component is responsible for rendering the app.
@@ -14,7 +15,6 @@ import ScrollTopBtn from "../navigation/ScrollTopBtn";
 const Layout = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  //render pagebar outside of the main content but instead at the bottom of the page
   return (
     <>
       <Navbar onOpenDrawer={() => setOpenDrawer(true)} />
@@ -43,6 +43,7 @@ const Layout = () => {
             mr: 3,
             pl: { xs: 0, lg: 1 },
             pr: { xs: 2, lg: 3 },
+            paddingBottom: "48px",
           }}
         >
           <Outlet />
