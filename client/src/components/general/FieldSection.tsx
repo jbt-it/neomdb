@@ -152,6 +152,7 @@ const FieldSection = (props: Props) => {
             className={`${classes.fieldItem} ${classes.dateField}`}
             label={field.label}
             value={field.state}
+            slotProps={{ textField: { variant: "outlined" } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );

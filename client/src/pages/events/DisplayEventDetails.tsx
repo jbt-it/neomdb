@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { AddCircle, Delete, Edit, RemoveCircleOutline, RemoveCircle } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
 
 import LoadingTable from "../../components/general/LoadingTable";
@@ -43,8 +43,11 @@ type commonEventType = {
   startTime: string;
   endTime: string;
   location: string;
-  registrationDeadline: string | null;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
+  registrationStart: Dayjs | null;
+  registrationDeadline: Dayjs | null;
+  participantsCount?: number | null;
+  maximumParticipants?: number | null;
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
 };
 
 /**
@@ -75,47 +78,30 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
 
       let event: commonEventType | null = null;
 
-      if (type === "event") {
-        mitglied_has_event
-          .filter((event) => event.event_eventID === id)
-          .some((event) => event.mitglied_mitgliedID === auth.userID)
-          ? setUserIsSignedUp(true)
-          : null;
+      mitglied_has_event
+        .filter((event) => event.event_eventID === id)
+        .some((event) => event.mitglied_mitgliedID === auth.userID)
+        ? setUserIsSignedUp(true)
+        : null;
 
-        const res = mockEvents.find((event) => event.eventID === id);
-        res
-          ? (event = {
-              ID: res.eventID,
-              name: res.eventName,
-              description: res.beschreibung,
-              date: dayjs(res.datum).locale("de").format("DD.MM.YYYY").toString(),
-              endDate: dayjs(res.ende).locale("de").format("DD.MM.YYYY").toString(),
-              startTime: dayjs(res.startZeit).locale("de").format("HH:mm").toString(),
-              endTime: dayjs(res.endZeit).locale("de").format("HH:mm").toString(),
-              location: res.ort,
-              registrationDeadline: res.anmeldungbis
-                ? dayjs(res.anmeldungbis).locale("de").format("DD.MM.YYYY").toString()
-                : null,
-              type: res.ww ? "WW" : res.netzwerk ? "Netzwerk" : res.jbtgoes ? "JBT goes" : "Sonstige",
-            })
-          : null;
-      } else if (type === "workshop") {
-        const res = mockWorkshops.find((workshop) => workshop.schulungsinstanzID === id);
-        res
-          ? (event = {
-              ID: res.schulungsinstanzID,
-              name: res.schulungsname,
-              description: res.beschreibung,
-              date: dayjs(res.datum).locale("de").format("DD.MM.YYYY").toString(),
-              endDate: dayjs(res.datum).locale("de").format("DD.MM.YYYY").toString(),
-              startTime: dayjs(res.startzeit).locale("de").format("HH:mm").toString(),
-              endTime: dayjs(res.endzeit).locale("de").format("HH:mm").toString(),
-              location: res.ort,
-              registrationDeadline: null,
-              type: res.art === "Pflichtschulung" ? "Pflichtworkshop" : "Workshop",
-            })
-          : null;
-      }
+      const res = mockEvents.find((event) => event.eventID === id);
+      res
+        ? (event = {
+            ID: res.eventID,
+            name: res.eventName,
+            description: res.beschreibung,
+            date: dayjs(res.datum).locale("de").format("DD.MM.YYYY").toString(),
+            endDate: dayjs(res.ende).locale("de").format("DD.MM.YYYY").toString(),
+            startTime: dayjs(res.startZeit).locale("de").format("HH:mm").toString(),
+            endTime: dayjs(res.endZeit).locale("de").format("HH:mm").toString(),
+            location: res.ort,
+            registrationStart: res.anmeldungvon ? dayjs(res.anmeldungvon).locale("de") : null,
+            registrationDeadline: res.anmeldungbis ? dayjs(res.anmeldungbis).locale("de") : null,
+            participantsCount: res.teilnehmerZahl,
+            maximumParticipants: res.maximaleTeilnehmer,
+            type: res.ww ? "WW" : res.netzwerk ? "Netzwerk" : res.jbtgoes ? "JBT goes" : "Sonstige",
+          })
+        : null;
       setEvent(event);
     },
     [dispatchAuth]
@@ -162,7 +148,11 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
   const displayFields: Array<InformationField> = [
     {
       label: "Anmeldefrist",
-      value: event ? event.registrationDeadline : null,
+      value: event
+        ? event.registrationDeadline
+          ? event.registrationDeadline.locale("de").format("DD.MM.YYYY")
+          : null
+        : null,
       type: "text",
     },
     {
@@ -394,7 +384,19 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
           <EditEventDialog
             open={editDialogOpen}
             onClose={handleDialogClose}
+            type={event.type}
             title={event.name}
+            location={event.location}
+            startDate={event.date}
+            endDate={event.endDate}
+            startTime={event.startTime}
+            endTime={event.endTime}
+            registrationStart={null}
+            registrationEnd={
+              event.registrationDeadline ? event.registrationDeadline.locale("de").format("DD.MM.YYYY") : ""
+            }
+            maxParticipants={10}
+            organizers={["Thomas", "Brigitte"]}
             description={event.description}
           />
         </>

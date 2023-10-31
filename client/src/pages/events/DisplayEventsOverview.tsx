@@ -49,6 +49,7 @@ interface TabPanelProps {
   value: number;
 }
 
+// Defines a type that can be used for events and workshops
 type commonEventType = {
   ID: number;
   name: string;
@@ -66,7 +67,7 @@ type commonEventType = {
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
- * TODO: Store filters state in URL
+ * TODO: Store filters state in URL with useSearchParams from react-router-dom v6
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
