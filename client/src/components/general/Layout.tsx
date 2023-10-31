@@ -4,7 +4,6 @@ import { Box } from "@mui/material";
 import Navbar from "../navigation/Navbar";
 import Sidebar from "../navigation/Sidebar";
 import ScrollTopBtn from "../navigation/ScrollTopBtn";
-import usePathname from "../../hooks/usePathname";
 
 /**
  * This component is responsible for rendering the app.
