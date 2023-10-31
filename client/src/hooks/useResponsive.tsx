@@ -7,7 +7,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
  * @param start - The start breakpoint
  * @param end - The end breakpoint
  * @returns - The result of the query
- * @description - This hook is used to make the app responsive
  */
 const useResponsive = (
   size: string,
@@ -39,11 +38,9 @@ const useResponsive = (
   return mediaOnly;
 };
 
-// ----------------------------------------------------------------------
-
 /**
+ * This hook is used to get the width of the screen
  * @returns - The width of the screen
- * @description - This hook is used to make the app responsive
  */
 const useWidth = (): string => {
   const theme = useTheme();
