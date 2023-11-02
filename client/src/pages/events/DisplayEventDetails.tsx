@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Paper,
   Box,
@@ -59,13 +59,12 @@ type commonEventType = {
  * @param props id in URL
  * @returns the page to display the details of an event
  */
-const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
-  props: RouteComponentProps<RouterMatch>
-) => {
+const DisplayEventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [event, setEvent] = useState<commonEventType | null>();
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+  const { id } = useParams<{ id: string }>();
 
   /**
    * Gets the event or workshop from the database
@@ -109,8 +108,8 @@ const DisplayEventDetails: React.FunctionComponent<RouteComponentProps<RouterMat
 
   //* calls the getEvent function */
   useEffect(() => {
-    getEvent("event", Number(props.match.params.id));
-  }, [props.match.params.id, getEvent]);
+    getEvent("event", Number(id));
+  }, [id, getEvent]);
 
   //mock participants since backend is not connected yet
   const participants = [
