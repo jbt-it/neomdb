@@ -9,6 +9,7 @@ import { Paper, Button, Theme } from "@mui/material";
 import Textfield from "@mui/material/TextField";
 import { makeStyles } from "@mui/styles";
 import PageBar from "../components/navigation/PageBar";
+import { Container } from "@mui/system";
 
 /**
  * Function that allows the user to change the password when logged in, by posting the new password to the backend
@@ -237,8 +238,8 @@ const ChangePassword: React.FunctionComponent = () => {
   };
 
   return (
-    <div>
-      <div className="content-page">
+    <>
+      <Container>
         <Paper className={classes.paper}>
           <p>
             Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen
@@ -268,9 +269,9 @@ const ChangePassword: React.FunctionComponent = () => {
           </div>
         </Paper>
         {resResponse200Field()}
-      </div>
+      </Container>
       <PageBar pageTitle="Passwort ändern" />
-    </div>
+    </>
   );
 };
 

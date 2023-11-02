@@ -3,11 +3,11 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../src/auth/AuthController';
+import { AuthController } from './../src/auth/authController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { MembersController } from './../src/resources/members/MembersController';
+import { MembersController } from './../src/resources/members/membersController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { TraineesController } from './../src/resources/trainees/TraineesController';
+import { TraineesController } from './../src/resources/trainees/traineesController';
 import { expressAuthentication } from './../src/middleware/authenticationTsoa';
 // @ts-ignore - no great way to install types from subpackage
 const promiseAny = require('promise.any');
