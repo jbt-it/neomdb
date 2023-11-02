@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
  */
 const InternalProject: React.FunctionComponent = () => {
   const classes = useStyles();
-  const id = useParams();
+  const { id } = useParams<{ id: string }>();
   const mobile = window.innerWidth <= 600;
 
   const { auth } = useContext(AuthContext);
@@ -146,78 +146,79 @@ const InternalProject: React.FunctionComponent = () => {
   /**
    * Retrieves dummy member details
    */
-  const getInternalProjectDetails: VoidFunction = () => {
+  const getInternalProjectDetails: (id: number) => void = (id) => {
     /* TO-DO: Implement API call to retrieve internal project details
      *  setInternalProjectDetails(ip);
      *  setName(InternalProjectDetails?.name);
      */
+    if (id === 5) {
+      const ip = {
+        id: 5,
+        name: "Analoges Bootcamp",
+        kuerzel: "DB",
+        traineegeneration: "22/WS",
+        kickoff: new Date("2020-01-01"),
+        angebotAbgegeben: false,
+        apDatum: new Date("2022-03-25"),
+        apAbgegeben: false,
+        zpDatum: new Date("2020-01-01"),
+        zpAbgegeben: true,
+        dlAbgegeben: false,
+        projektmitglieder: [
+          {
+            mitgliedID: 8364,
+            name: "Jimmie O'Brien",
+            vorname: "vorname1",
+            nachname: "nachname1",
+            mitgliedstatus: 1,
+          },
+          {
+            mitgliedID: 8320,
+            name: "Radhika Norton",
+            vorname: "vorname2",
+            nachname: "nachname2",
+            mitgliedstatus: 1,
+          },
+          {
+            mitgliedID: 8478,
+            name: "Kellan Mclaughlin",
+            vorname: "vorname3",
+            nachname: "nachname3",
+            mitgliedstatus: 1,
+          },
+        ],
+        qualitaetsmanager: [
+          {
+            mitgliedID: 8338,
+            name: "Mariana Macdonald",
+            vorname: "vorname4",
+            nachname: "nachname4",
+            mitgliedstatus: 3,
+          },
+          {
+            mitgliedID: 8167,
+            name: "Wolfgang U Luft",
+            vorname: "vorname4",
+            nachname: "nachname4",
+            mitgliedstatus: 4,
+          },
+        ],
+      };
 
-    const ip = {
-      id: 5,
-      name: "Analoges Bootcamp",
-      kuerzel: "DB",
-      traineegeneration: "22/WS",
-      kickoff: new Date("2020-01-01"),
-      angebotAbgegeben: false,
-      apDatum: new Date("2022-03-25"),
-      apAbgegeben: false,
-      zpDatum: new Date("2020-01-01"),
-      zpAbgegeben: true,
-      dlAbgegeben: false,
-      projektmitglieder: [
-        {
-          mitgliedID: 8364,
-          name: "Jimmie O'Brien",
-          vorname: "vorname1",
-          nachname: "nachname1",
-          mitgliedstatus: 1,
-        },
-        {
-          mitgliedID: 8320,
-          name: "Radhika Norton",
-          vorname: "vorname2",
-          nachname: "nachname2",
-          mitgliedstatus: 1,
-        },
-        {
-          mitgliedID: 8478,
-          name: "Kellan Mclaughlin",
-          vorname: "vorname3",
-          nachname: "nachname3",
-          mitgliedstatus: 1,
-        },
-      ],
-      qualitaetsmanager: [
-        {
-          mitgliedID: 8338,
-          name: "Mariana Macdonald",
-          vorname: "vorname4",
-          nachname: "nachname4",
-          mitgliedstatus: 3,
-        },
-        {
-          mitgliedID: 8167,
-          name: "Wolfgang U Luft",
-          vorname: "vorname4",
-          nachname: "nachname4",
-          mitgliedstatus: 4,
-        },
-      ],
-    };
-
-    setInternalProjectDetails(ip);
-    setName(ip?.name);
-    setKuerzel(ip?.kuerzel);
-    setTraineegeneration(ip?.traineegeneration);
-    setKickoff(ip?.kickoff);
-    setAngebotAbgegeben(ip?.angebotAbgegeben);
-    setApDatum(ip?.apDatum);
-    setApAbgegeben(ip?.apAbgegeben);
-    setZpDatum(ip?.zpDatum);
-    setZpAbgegeben(ip?.zpAbgegeben);
-    setDlAbgegeben(ip?.dlAbgegeben);
-    setProjektmitglieder(ip?.projektmitglieder);
-    setQualitaetsmanager(ip?.qualitaetsmanager);
+      setInternalProjectDetails(ip);
+      setName(ip?.name);
+      setKuerzel(ip?.kuerzel);
+      setTraineegeneration(ip?.traineegeneration);
+      setKickoff(ip?.kickoff);
+      setAngebotAbgegeben(ip?.angebotAbgegeben);
+      setApDatum(ip?.apDatum);
+      setApAbgegeben(ip?.apAbgegeben);
+      setZpDatum(ip?.zpDatum);
+      setZpAbgegeben(ip?.zpAbgegeben);
+      setDlAbgegeben(ip?.dlAbgegeben);
+      setProjektmitglieder(ip?.projektmitglieder);
+      setQualitaetsmanager(ip?.qualitaetsmanager);
+    }
   };
 
   const getSelectableMembers: VoidFunction = () => {
@@ -290,7 +291,13 @@ const InternalProject: React.FunctionComponent = () => {
   };
   useEffect(getSelectableMembers, []);
   useEffect(getSelectableQms, []);
-  useEffect(getInternalProjectDetails, []);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      await getInternalProjectDetails(Number(id));
+    };
+
+    fetchDetails();
+  }, [id]);
 
   const updateInternalProjectDetails = () => {
     setInternalProjectInfoDialogOpen(false);
