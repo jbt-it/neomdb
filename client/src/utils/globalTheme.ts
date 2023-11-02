@@ -25,3 +25,22 @@ export default createTheme({
     },
   },
 });
+
+export const hideScroll = {
+  x: {
+    msOverflowStyle: "none",
+    scrollbarWidth: "none",
+    overflowX: "scroll",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  y: {
+    msOverflowStyle: "none",
+    scrollbarWidth: "none",
+    overflowY: "scroll",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+};
