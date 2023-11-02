@@ -3,7 +3,6 @@
  */
 
 import React, { useState, useEffect, useContext, useCallback } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import api from "../../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
@@ -11,17 +10,10 @@ import PageBar from "../../../components/navigation/PageBar";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
+import { useParams } from "react-router-dom";
 
-/**
- * Interface for the match parameter of the router
- */
-interface RouterMatch {
-  id: string;
-}
-
-const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> = (
-  props: RouteComponentProps<RouterMatch>
-) => {
+const MemberProfile: React.FunctionComponent = () => {
+  const params = useParams();
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
@@ -153,13 +145,13 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/users/${props.match.params.id}`, {
+      .get(`/users/${params.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setMembersDetails(res.data[0]);
+            setMembersDetails(res.data);
           }
         }
       })
@@ -182,7 +174,7 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .patch(`/users/${props.match.params.id}`, data, {
+      .patch(`/users/${params.id}`, data, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -210,14 +202,14 @@ const MemberProfile: React.FunctionComponent<RouteComponentProps<RouterMatch>> =
   useEffect(
     () =>
       // Checks if the user is the owner of the member page
-      setIsOwner(auth.userID === parseInt(props.match.params.id, 10)),
-    [props.match.params.id, auth.userID]
+      setIsOwner(auth.userID === parseInt(params.id!, 10)),
+    [params.id, auth.userID]
   );
   useEffect(() => getMembers(), [getMembers]);
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
-  useEffect(getMemberDetails, [props.match.params.id, dispatchAuth]);
+  useEffect(getMemberDetails, [params.id, dispatchAuth]);
 
   return (
     <div>

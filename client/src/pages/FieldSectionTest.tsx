@@ -147,7 +147,7 @@ const FieldSectionTest: React.FunctionComponent = () => {
   ];
 
   return (
-    <div className={"content-page"} style={{ borderColor: "black" }}>
+    <div>
       <FieldSection title={"Test Section"} fields={fields}></FieldSection>
       <Box sx={{ maxWidth: 700 }}>
         <Typography variant="subtitle1" gutterBottom>
