@@ -37,10 +37,11 @@ type Field = {
   | {
       type: "Text" | "Checkbox";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+      inputType?: "number";
     }
 );
 interface Props {
-  title: string;
+  title?: string;
   fields: Array<Field>;
 }
 
@@ -130,6 +131,7 @@ const FieldSection = (props: Props) => {
             value={field.state}
             variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            type={field.inputType === "number" ? "number" : "text"}
           />
         );
       } else if (field.type === "TextBig") {
@@ -196,9 +198,11 @@ const FieldSection = (props: Props) => {
 
   return (
     <Box className={classes.fieldSectionBox}>
-      <Typography variant="h5" className={classes.fieldSectionTitle}>
-        {props.title}
-      </Typography>
+      {props.title ? (
+        <Typography variant="h5" className={classes.fieldSectionTitle}>
+          {props.title}
+        </Typography>
+      ) : null}
       <Grid container>{renderFields(props.fields)}</Grid>
     </Box>
   );

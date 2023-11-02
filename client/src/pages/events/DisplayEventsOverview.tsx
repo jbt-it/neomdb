@@ -109,11 +109,7 @@ const DisplayEventsOverview: React.FC = () => {
 
     return (
       <Box hidden={value !== index} id={`tabpanel-${index}`} {...other}>
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
       </Box>
     );
   };

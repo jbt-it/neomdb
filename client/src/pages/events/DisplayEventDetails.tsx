@@ -204,7 +204,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     return (
       <Grid container columns={{ xs: 2, sm: 5, xl: 6 }}>
         {participants.map((item, index) => (
-          <Grid item xs={1} sx={{ display: "flex", direction: "row", alignItems: "center" }}>
+          <Grid item xs={1} sx={{ display: "flex", direction: "row", alignItems: "center" }} key={index}>
             <Typography key={index} variant="subtitle1">
               {item}
             </Typography>
@@ -327,7 +327,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
    * Renders the page
    */
   return (
-    <Container className="content-page" maxWidth="md" sx={{ ml: 3 }}>
+    <Container maxWidth="md" sx={{ ml: 3 }}>
       {event ? (
         <>
           <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3, pb: 1 }}>
