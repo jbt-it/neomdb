@@ -38,23 +38,4 @@ const useResponsive = (
   return mediaOnly;
 };
 
-/**
- * This hook is used to get the width of the screen
- * @returns - The width of the screen
- */
-const useWidth = (): string => {
-  const theme = useTheme();
-
-  const keys = [...theme.breakpoints.keys].reverse();
-
-  return (
-    keys.reduce<string | null>((output, key) => {
-      const matches = useMediaQuery(theme.breakpoints.up(key));
-
-      return !output && matches ? key : output;
-    }, null) || "xs"
-  );
-};
-
 export default useResponsive;
-export { useWidth };
