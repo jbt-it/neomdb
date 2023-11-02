@@ -103,7 +103,7 @@ const FieldSectionTest: React.FunctionComponent = () => {
   ];
 
   return (
-    <div className={"content-page"}>
+    <div>
       <FieldSection title={"Test Section"} fields={fields}></FieldSection>
     </div>
   );

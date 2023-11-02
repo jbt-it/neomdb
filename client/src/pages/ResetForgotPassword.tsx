@@ -184,9 +184,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
         <Paper className={classes.paper}>
           <p>Das passwort wurde gesendet und wird gespeichert, falls die E-Mail korrekt war</p>
           <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-            <NavLink exact to="/login">
-              Login
-            </NavLink>
+            <NavLink to="/login">Login</NavLink>
           </Button>
         </Paper>
       );
