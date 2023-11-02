@@ -1,5 +1,5 @@
 import React, { useState, useReducer } from "react";
-import { Dialog, Container, Divider } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, DialogContent, Button, Divider, Typography } from "@mui/material";
 import FieldSection, { Field } from "../../components/general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
@@ -7,15 +7,30 @@ import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mu
 interface EditEventDialogProps {
   open: boolean;
   onClose: () => void;
-  type?: string;
+  onSubmit: (
+    title: string,
+    location: string,
+    startDate: Dayjs,
+    endDate: Dayjs,
+    startTime: Dayjs | null,
+    endTime: Dayjs | null,
+    registrationStart: Dayjs | null,
+    registrationEnd: Dayjs | null,
+    maxParticipants: number | null,
+    organizers: string[],
+    description: string,
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+  ) => void;
+  newEvent?: boolean;
+  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
   title?: string;
   location?: string;
-  startDate?: string;
-  endDate?: string;
-  startTime?: string;
-  endTime?: string;
+  startDate?: Dayjs | null;
+  endDate?: Dayjs | null;
+  startTime?: Dayjs | null;
+  endTime?: Dayjs | null;
   registrationStart?: Dayjs | null;
-  registrationEnd?: string;
+  registrationEnd?: Dayjs | null;
   maxParticipants?: number | null;
   organizers?: string[];
   description?: string;
@@ -24,23 +39,35 @@ interface EditEventDialogProps {
 interface State {
   title: string;
   location: string;
-  startDate: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  startTime: Dayjs | null;
+  endTime: Dayjs | null;
   registrationStart: Dayjs | null;
-  registrationEnd: string;
+  registrationEnd: Dayjs | null;
   maxParticipants: number | null;
   organizers: string[];
-  eventType: string;
+  eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
   description: string;
 }
 
-type Action = {
-  type: "set";
-  field: keyof State;
-  value: string | number | Dayjs | null;
-};
+type Action = { type: "set"; field: keyof State; value: any } | { type: "reset" };
+
+interface ErrorState {
+  title: boolean;
+  location: boolean;
+  startDate: boolean;
+  endDate: boolean;
+  startTime: boolean;
+  endTime: boolean;
+  registrationStart: boolean;
+  registrationEnd: boolean;
+  maxParticipants: boolean;
+  organizers: boolean;
+  description: boolean;
+}
+
+type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type: "reset" };
 
 /**
  * Dialog to edit an event.
@@ -49,22 +76,27 @@ type Action = {
  * Display fields depending on the event type.
  * Maybe: check wether it is a new event or an existing one.
  */
-
 const EditEventDialog = (props: EditEventDialogProps) => {
-  const [eventType, setEventType] = useState<string>(props.type || "");
+  const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
+
+  const currentDate = dayjs();
+  const content =
+    currentDate.month() < 5
+      ? "Working-Weekend SoSe" + currentDate.format("YY")
+      : "Working-Weekend WiSe " + currentDate.format("YY") + "/" + currentDate.add(1, "year").format("YY");
 
   const initialState: State = {
     title: props.title || "",
     location: props.location || "",
-    startDate: props.startDate || "",
-    endDate: props.endDate || "",
-    startTime: props.startTime || "",
-    endTime: props.endTime || "",
+    startDate: props.startDate || null,
+    endDate: props.endDate || null,
+    startTime: props.startTime || null,
+    endTime: props.endTime || null,
     registrationStart: props.registrationStart || null,
-    registrationEnd: props.registrationEnd || "",
+    registrationEnd: props.registrationEnd || null,
     maxParticipants: props.maxParticipants || null,
     organizers: props.organizers || [],
-    eventType: props.type || "",
+    eventType: props.type || "JBT goes",
     description: props.description || "",
   };
 
@@ -75,12 +107,81 @@ const EditEventDialog = (props: EditEventDialogProps) => {
           ...state,
           [action.field]: action.value,
         };
+      case "reset":
+        return initialState;
+      default:
+        throw new Error();
+    }
+  }
+
+  const initialErrorState: ErrorState = {
+    title: false,
+    location: false,
+    startDate: false,
+    endDate: false,
+    startTime: false,
+    endTime: false,
+    registrationStart: false,
+    registrationEnd: false,
+    maxParticipants: false,
+    organizers: false,
+    description: false,
+  };
+
+  function errorReducer(state: ErrorState, action: ErrorAction) {
+    switch (action.type) {
+      case "set":
+        return {
+          ...state,
+          [action.field]: action.value,
+        };
+      case "reset":
+        return initialErrorState;
       default:
         throw new Error();
     }
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [errorState, errorDispatch] = useReducer(errorReducer, initialErrorState);
+
+  const checkForm = () => {
+    let complete = true;
+    errorDispatch({ type: "reset" });
+
+    // title is necessary for all events and cannot be null
+    if (!state.title) {
+      errorDispatch({ type: "set", field: "title", value: true });
+      complete = false;
+    }
+    // startDate is necessary for all events and cannot be null
+    if (!state.startDate) {
+      errorDispatch({ type: "set", field: "startDate", value: true });
+      complete = false;
+    }
+    // if an endDate is given, it must be after the startDate
+    if (state.startDate && state.endDate ? state.startDate > state.endDate : false) {
+      errorDispatch({ type: "set", field: "endDate", value: true });
+      complete = false;
+    }
+    // if an endTime is given, there has to be a startTime
+    if (!state.startTime && state.endTime) {
+      errorDispatch({ type: "set", field: "startTime", value: true });
+      complete = false;
+    }
+    // if a startTime and an endTime are given, the endTime has to be after the startTime
+    if (state.startTime && state.endTime ? state.startTime > state.endTime : false) {
+      errorDispatch({ type: "set", field: "endTime", value: true });
+      complete = false;
+    }
+    // if a registrationStart and a registrationEnd are given, the registrationEnd has to be after the registrationStart
+    if (state.registrationStart && state.registrationEnd ? state.registrationStart > state.registrationEnd : false) {
+      errorDispatch({ type: "set", field: "registrationEnd", value: true });
+      complete = false;
+    }
+
+    return complete;
+  };
 
   const onChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: "set", field: "title", value: event.target.value });
@@ -90,20 +191,20 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     dispatch({ type: "set", field: "location", value: event.target.value });
   };
 
-  const onChangeStartDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "startDate", value: event.target.value });
+  const onChangeStartDate = (value: unknown) => {
+    dispatch({ type: "set", field: "startDate", value: value as Dayjs });
   };
 
-  const onChangeEndDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "endDate", value: event.target.value });
+  const onChangeEndDate = (value: unknown) => {
+    dispatch({ type: "set", field: "endDate", value: value as Dayjs });
   };
 
-  const onChangeStartTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "startTime", value: event.target.value });
+  const onChangeStartTime = (value: unknown) => {
+    dispatch({ type: "set", field: "startTime", value: value as Dayjs });
   };
 
-  const onChangeEndTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "endTime", value: event.target.value });
+  const onChangeEndTime = (value: unknown) => {
+    dispatch({ type: "set", field: "endTime", value: value as Dayjs });
   };
 
   const onChangeRegistrationStart = (value: unknown) => {
@@ -111,8 +212,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     // setRegistrationStart(event.target.value);
   };
 
-  const onChangeRegistrationEnd = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "registrationEnd", value: event.target.value });
+  const onChangeRegistrationEnd = (value: unknown) => {
+    dispatch({ type: "set", field: "registrationEnd", value: value as Dayjs });
   };
 
   const onChangeMaxParticipants = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,6 +232,26 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     dispatch({ type: "set", field: "description", value: event.target.value });
   };
 
+  const handleChangeEventType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    switch (event.target.value) {
+      case "JBT goes":
+        setEventType("JBT goes");
+        break;
+      case "WW":
+        setEventType("WW");
+        break;
+      case "Netzwerk":
+        setEventType("Netzwerk");
+        break;
+      case "Sonstige":
+        setEventType("Sonstige");
+        break;
+      default:
+        setEventType("Sonstige");
+        break;
+    }
+  };
+
   const editFields: Array<Field> = [
     {
       label: "Name",
@@ -138,6 +259,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       width: "half",
       onChangeCallback: onChangeTitle,
       type: "Text",
+      error: errorState.title,
+      helperText: errorState.title ? "Bitte gib einen Namen ein!" : undefined,
     },
     {
       label: "Ort",
@@ -151,28 +274,36 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       state: state.startDate,
       width: "half",
       onChangeCallback: onChangeStartDate,
-      type: "Text",
+      type: "Date",
+      error: errorState.startDate,
+      helperText: errorState.startDate ? "Bitte gib ein Startdatum ein!" : undefined,
     },
     {
       label: "Ende",
       state: state.endDate,
       width: "half",
       onChangeCallback: onChangeEndDate,
-      type: "Text",
+      type: "Date",
+      error: errorState.endDate,
+      helperText: errorState.endDate ? "Das Enddatum darf nicht vor dem Beginn liegen!" : undefined,
     },
     {
       label: "Startzeit",
       state: state.startTime,
       width: "half",
       onChangeCallback: onChangeStartTime,
-      type: "Text",
+      type: "Time",
+      error: errorState.startTime,
+      helperText: errorState.startTime ? "Bitte gib eine Startzeit ein!" : undefined,
     },
     {
       label: "Endzeit",
       state: state.endTime,
       width: "half",
       onChangeCallback: onChangeEndTime,
-      type: "Text",
+      type: "Time",
+      error: errorState.endTime,
+      helperText: errorState.endTime ? "Die Endzeit darf nicht vor der Startzeit liegen!" : undefined,
     },
     {
       label: "Anmeldung ab",
@@ -186,7 +317,11 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       state: state.registrationEnd,
       width: "half",
       onChangeCallback: onChangeRegistrationEnd,
-      type: "Text",
+      type: "Date",
+      error: errorState.registrationEnd,
+      helperText: errorState.registrationEnd
+        ? "Das Anmeldungsende darf nicht vor dem Anmeldungsstart liegen!"
+        : undefined,
     },
 
     {
@@ -214,10 +349,67 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     },
   ];
 
+  const wwFields: Array<Field> = [
+    {
+      label: "Beginn",
+      state: state.startDate,
+      width: "half",
+      onChangeCallback: onChangeStartDate,
+      type: "Date",
+    },
+    {
+      label: "Ende",
+      state: state.endDate,
+      width: "half",
+      onChangeCallback: onChangeEndDate,
+      type: "Date",
+    },
+    {
+      label: "Anmeldung ab",
+      state: state.registrationStart,
+      width: "half",
+      onChangeCallback: onChangeRegistrationStart,
+      type: "Date",
+    },
+    {
+      label: "Anmeldung bis",
+      state: state.registrationEnd,
+      width: "half",
+      onChangeCallback: onChangeRegistrationEnd,
+      type: "Date",
+    },
+    {
+      label: "Ort",
+      state: state.location,
+      width: "half",
+      onChangeCallback: onChangeLocation,
+      type: "Text",
+    },
+    {
+      label: "Organisatoren",
+      state: state.organizers,
+      width: "half",
+      onChangeCallback: onChangeOrganizers,
+      type: "Text",
+    },
+    {
+      label: "Beschreibung",
+      state: state.description,
+      width: "full",
+      onChangeCallback: onChangeDescription,
+      type: "TextBig",
+      rows: 2,
+    },
+  ];
+
   return (
     <Dialog
       open={props.open}
-      onClose={props.onClose}
+      onClose={() => {
+        props.onClose();
+        dispatch({ type: "reset" });
+        errorDispatch({ type: "reset" });
+      }}
       PaperProps={{
         style: {
           marginTop: "10%",
@@ -225,19 +417,71 @@ const EditEventDialog = (props: EditEventDialogProps) => {
         },
       }}
     >
-      <Container sx={{ pt: 3, pb: 3 }}>
-        <FormControl>
-          <FormLabel sx={{ pl: 1 }}>Veranstaltung bearbeiten</FormLabel>
-          <RadioGroup row sx={{ pl: 1 }} value={eventType} onChange={(event) => setEventType(event.target.value)}>
+      <DialogTitle>{props.newEvent ? "Veranstaltung anlegen" : state.title + " bearbeiten"}</DialogTitle>
+      <DialogContent>
+        <FormControl sx={{ width: "100%" }}>
+          <RadioGroup row sx={{ pl: 1 }} value={eventType} onChange={handleChangeEventType}>
             <FormControlLabel value="JBT goes" control={<Radio />} label="JBT goes" />
             <FormControlLabel value="WW" control={<Radio />} label="WW" />
             <FormControlLabel value="Netzwerk" control={<Radio />} label="Netzwerk" />
             <FormControlLabel value="Sonstige" control={<Radio />} label="Sonstige" />
           </RadioGroup>
           <Divider sx={{ mb: 3 }} />
-          {eventType === "JBT goes" ? <FieldSection fields={editFields} /> : null}
         </FormControl>
-      </Container>
+        {eventType === "JBT goes" || eventType === "Netzwerk" || eventType === "Sonstige" ? (
+          <FieldSection fields={editFields} />
+        ) : null}
+        {eventType === "WW" ? (
+          <>
+            <Typography variant="h6" sx={{ pl: 1 }}>
+              {content}
+            </Typography>
+            <FieldSection fields={wwFields} />
+          </>
+        ) : null}
+      </DialogContent>
+      <DialogActions sx={{ ml: 3, mr: 3, mb: 2 }}>
+        <Button
+          variant="contained"
+          fullWidth
+          color="primary"
+          onClick={() => {
+            dispatch({ type: "reset" });
+            errorDispatch({ type: "reset" });
+            props.onClose();
+          }}
+        >
+          Abbrechen
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          color="primary"
+          onClick={() => {
+            if (checkForm()) {
+              props.onSubmit(
+                state.title,
+                state.location,
+                state.startDate!,
+                state.endDate ? state.endDate : state.startDate!,
+                state.startTime,
+                state.endTime,
+                state.registrationStart,
+                state.registrationEnd ? state.registrationEnd : state.registrationStart ? state.startDate : null,
+                state.maxParticipants,
+                state.organizers,
+                state.description,
+                eventType
+              );
+              props.onClose();
+              dispatch({ type: "reset" });
+              errorDispatch({ type: "reset" });
+            }
+          }}
+        >
+          Speichern
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

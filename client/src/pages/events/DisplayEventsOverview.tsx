@@ -42,6 +42,7 @@ import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
 import LoadingTable from "../../components/general/LoadingTable";
 import EventChip from "../../components/event/EventChip";
+import EditEventDialog from "./EditEventDialog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -55,13 +56,15 @@ type commonEventType = {
   name: string;
   date: Dayjs;
   endDate: Dayjs;
-  startTime: Dayjs;
-  endTime: Dayjs;
-  location: string;
+  startTime: Dayjs | null;
+  endTime: Dayjs | null;
+  location: string | null;
   registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
   participantsCount?: number | null;
   maximumParticipants?: number | null;
+  organizers?: string[];
+  description?: string;
   type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
 
@@ -73,6 +76,8 @@ type commonEventType = {
 const DisplayEventsOverview: React.FC = () => {
   const { auth, dispatchAuth } = React.useContext(AuthContext);
   const { permissions } = auth;
+  const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+
   const [events, setEvents] = useState<commonEventType[]>([]);
   const [workshops, setWorkshops] = useState<commonEventType[]>([]);
   const [eventsSignedUp, setEventsSignedUp] = useState<commonEventType[]>([]);
@@ -95,6 +100,13 @@ const DisplayEventsOverview: React.FC = () => {
   const mobile = useMediaQuery("(max-width:600px)");
 
   /**
+   * Handles the onClose event of the edit dialog
+   */
+  const handleDialogClose = () => {
+    setEditDialogOpen(false);
+  };
+
+  /**
    * Handles change of the tab value
    */
   const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
@@ -109,7 +121,7 @@ const DisplayEventsOverview: React.FC = () => {
 
     return (
       <Box hidden={value !== index} id={`tabpanel-${index}`} {...other}>
-        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+        {value === index && <Box sx={{ p: mobile ? 0 : 3 }}>{children}</Box>}
       </Box>
     );
   };
@@ -161,8 +173,8 @@ const DisplayEventsOverview: React.FC = () => {
         name: event.schulungsname,
         date: dayjs(event.datum).locale("de"),
         endDate: dayjs(event.datum).locale("de"),
-        startTime: dayjs(event.startzeit).locale("de"),
-        endTime: dayjs(event.endzeit).locale("de"),
+        startTime: event.startzeit ? dayjs(event.startzeit).locale("de") : null,
+        endTime: event.endzeit ? dayjs(event.endzeit).locale("de") : null,
         location: event.ort,
         registrationStart: event.anmeldungVon ? dayjs(event.anmeldungVon).locale("de") : null,
         registrationDeadline: event.anmeldungBis ? dayjs(event.anmeldungBis).locale("de") : null,
@@ -204,6 +216,43 @@ const DisplayEventsOverview: React.FC = () => {
     });
     setEventsSignedUp(currentEvents.filter((event) => event.ID === 2 || event.ID === 3));
   }, [dispatchAuth]);
+
+  /**
+   * Function that creates a new event and adds it to the list of events
+   * TODO: Implement the api call and the correct type for the event and if all necessary fields are filled
+   */
+  const createEvent = (
+    title: string,
+    location: string,
+    startDate: Dayjs,
+    endDate: Dayjs,
+    startTime: Dayjs | null,
+    endTime: Dayjs | null,
+    registrationStart: Dayjs | null,
+    registrationEnd: Dayjs | null,
+    maxParticipants: number | null,
+    organizers: string[],
+    description: string,
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+  ) => {
+    const newEvent: commonEventType = {
+      ID: events.length + 1,
+      name: title,
+      location: location,
+      date: startDate,
+      endDate: endDate,
+      startTime: startTime,
+      endTime: endTime,
+      registrationStart: registrationStart,
+      registrationDeadline: registrationEnd,
+      maximumParticipants: maxParticipants,
+      organizers: organizers,
+      description: description,
+      type: type,
+    };
+    console.log(newEvent);
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
 
   /**
    * Function that applied the filters to the displayed events and workshops
@@ -381,7 +430,13 @@ const DisplayEventsOverview: React.FC = () => {
   const renderNewEventButton = () => {
     if (permissions.length > 0) {
       return (
-        <Button variant="outlined" startIcon={<Event />} color="info" sx={{ fontWeight: 600, mr: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<Event />}
+          color="info"
+          sx={{ fontWeight: 600, mr: 2 }}
+          onClick={() => setEditDialogOpen(true)}
+        >
           Neu
         </Button>
       );
@@ -440,7 +495,7 @@ const DisplayEventsOverview: React.FC = () => {
         variant="outlined"
         startIcon={<FilterList />}
         color="secondary"
-        sx={{ fontWeight: 600, margin: 2 }}
+        sx={{ fontWeight: 600, margin: mobile ? 1 : 2 }}
         onClick={() => {
           setStartMonthFilter("");
           setEndMonthFilter("");
@@ -645,7 +700,7 @@ const DisplayEventsOverview: React.FC = () => {
         sx={{ mt: mobile ? 1.5 : 0 }}
       >
         <Box sx={{ display: "flex", direction: "row", alignItems: "center", width: mobile ? "100%" : "auto" }}>
-          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+          <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
             <InputLabel>Von</InputLabel>
             <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
               <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
@@ -663,7 +718,7 @@ const DisplayEventsOverview: React.FC = () => {
             </Select>
           </FormControl>
           <Typography> - </Typography>
-          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+          <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
             <InputLabel>Bis</InputLabel>
             <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
               <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
@@ -681,7 +736,7 @@ const DisplayEventsOverview: React.FC = () => {
             </Select>
           </FormControl>
         </Box>
-        <FormControl sx={{ minWidth: 180, ml: 1, mt: mobile ? 1 : 0 }} size="small">
+        <FormControl sx={{ minWidth: 180, ml: mobile ? 0 : 1, mt: mobile ? 1 : 0 }} size="small">
           <InputLabel>Veranstaltungsart</InputLabel>
           <Select
             label="Veranstaltungsart"
@@ -699,11 +754,21 @@ const DisplayEventsOverview: React.FC = () => {
           </Select>
         </FormControl>
 
-        <Box sx={{ mr: 1, ml: "auto", fontWeight: 600 }}>
-          {mobile ? "Monate" : "Monate anzeigen:"}
-          {renderMonthSwitch()}
+        <Stack
+          direction={"row"}
+          sx={{
+            mr: 1,
+            ml: "auto",
+            fontWeight: 600,
+            alignItems: "center",
+          }}
+        >
+          <Box>
+            {mobile ? "Monate" : "Monate anzeigen:"}
+            {renderMonthSwitch()}
+          </Box>
           {renderResetFiltersButton()}
-        </Box>
+        </Stack>
       </Stack>
     );
   };
@@ -768,18 +833,21 @@ const DisplayEventsOverview: React.FC = () => {
                     {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
                   </TableCell>
                   <TableCell>
-                    {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
+                    {row.startTime ? row.startTime.format("HH:mm") : null}&nbsp;-&nbsp;
+                    {row.endTime ? row.endTime.format("HH:mm") : null}
                   </TableCell>
                   <TableCell>
                     <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
-                      {row.registrationDeadline ? (
-                        row.registrationStart ? (
+                      {row.registrationDeadline && row.registrationStart ? (
+                        row.registrationStart.format("DD.MM.YYYY") === row.registrationDeadline.format("DD.MM.YYYY") ? (
+                          row.registrationStart.format("DD.MM.YYYY")
+                        ) : (
                           row.registrationStart.format("DD.MM.YYYY") +
                           " - " +
                           row.registrationDeadline.format("DD.MM.YYYY")
-                        ) : (
-                          row.registrationDeadline.format("DD.MM.YYYY")
                         )
+                      ) : row.registrationDeadline ? (
+                        row.registrationDeadline.format("DD.MM.YYYY")
                       ) : (
                         <Box />
                       )}
@@ -814,12 +882,12 @@ const DisplayEventsOverview: React.FC = () => {
     startMonth ? rows.filter((event) => event.date > startMonth) : null;
     endMonth ? rows.filter((event) => event.date < endMonth) : null;
     return (
-      <List disablePadding>
+      <List disablePadding sx={{ mt: 2, mr: 3 }}>
         {rows.map((row, index) => (
-          <React.Fragment key={row.ID}>
+          <React.Fragment>
             {displayMonths ? (
               index === 0 || row.date.month() !== rows[index - 1].date.month() ? (
-                <ListItem sx={{ mb: 1, color: "#f6891f", borderBottom: 1 }}>
+                <ListItem sx={{ mb: 1, color: "#f6891f", borderBottom: 1 }} key={row.ID}>
                   <Typography fontWeight={"bold"} variant="body1" sx={{ ml: -2 }}>
                     {row.date.locale("de").format("MMMM YYYY")}
                   </Typography>
@@ -855,9 +923,12 @@ const DisplayEventsOverview: React.FC = () => {
                             Anmeldung: &nbsp;
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
-                            {row.registrationStart.format("DD.MM.YYYY") +
-                              " - " +
-                              row.registrationDeadline.format("DD.MM.YYYY")}{" "}
+                            {row.registrationStart.format("DD.MM.YYYY") ===
+                            row.registrationDeadline.format("DD.MM.YYYY")
+                              ? row.registrationStart.format("DD.MM.YYYY")
+                              : row.registrationStart.format("DD.MM.YYYY") +
+                                " - " +
+                                row.registrationDeadline.format("DD.MM.YYYY")}
                           </Typography>
                         </Stack>
                       ) : (
@@ -879,7 +950,8 @@ const DisplayEventsOverview: React.FC = () => {
                           Uhrzeit: &nbsp;
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {row.startTime.format("HH:mm")} - {row.endTime.format("HH:mm")}
+                          {row.startTime ? row.startTime.format("HH:mm") : null}&nbsp;-&nbsp;
+                          {row.endTime ? row.endTime.format("HH:mm") : null}
                         </Typography>
                       </Stack>
                     ) : null}
@@ -903,8 +975,12 @@ const DisplayEventsOverview: React.FC = () => {
    * Returns the content of the actual page
    */
   return (
-    <Container maxWidth="lg" className={"content-page"}>
-      <Stack direction={mobile ? "column" : "row"} justifyContent={"space-between"} sx={{ ml: 3, mr: 3 }}>
+    <Container maxWidth="lg" sx={{ ml: mobile ? 0 : 1 }}>
+      <Stack
+        direction={mobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        sx={{ ml: mobile ? 0 : 3, mr: mobile ? 2 : 3 }}
+      >
         <Typography variant="h5" component="h1" gutterBottom>
           Veranstaltungen
         </Typography>
@@ -915,16 +991,16 @@ const DisplayEventsOverview: React.FC = () => {
       </Stack>
       {events.length > 0 ? (
         <Box>
-          <Box sx={{ ml: 2 }}>{displayFiters ? renderFilters() : null}</Box>
+          <Box sx={{ ml: mobile ? 0 : 2 }}>{displayFiters ? renderFilters() : null}</Box>
           <Stack direction={"row"} alignItems="center" justifyContent="space-between">
-            <Tabs value={tabValue} onChange={handleTabChange} sx={{ ml: 3 }}>
+            <Tabs value={tabValue} onChange={handleTabChange} sx={{ ml: mobile ? 0 : 3 }}>
               <Tab label={mobile ? "Alle Events" : "Alle Veranstaltungen"} />
               <Tab label={mobile ? "Meine Events" : "Meine Veranstaltungen"} />
               {!mobile ? <Tab label="Events" /> : null}
               {!mobile ? <Tab label="Workshops" /> : null}
             </Tabs>
             <IconButton
-              sx={{ width: 35, height: 35, mr: mobile ? 2 : 3 }}
+              sx={{ width: 35, height: 35, mr: mobile ? 1 : 3 }}
               onClick={() => {
                 setDisplayFilters((prev) => !prev);
               }}
@@ -944,6 +1020,40 @@ const DisplayEventsOverview: React.FC = () => {
           <CustomTabPanel value={tabValue} index={3}>
             {renderTable(displayedWorkshops)}
           </CustomTabPanel>
+          <EditEventDialog
+            newEvent
+            open={editDialogOpen}
+            onClose={handleDialogClose}
+            onSubmit={(
+              title: string,
+              location: string,
+              startDate: Dayjs,
+              endDate: Dayjs,
+              startTime: Dayjs | null,
+              endTime: Dayjs | null,
+              registrationStart: Dayjs | null,
+              registrationEnd: Dayjs | null,
+              maxParticipants: number | null,
+              organizers: string[],
+              description: string,
+              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+            ) => {
+              createEvent(
+                title,
+                location,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                registrationStart,
+                registrationEnd,
+                maxParticipants,
+                organizers,
+                description,
+                type
+              );
+            }}
+          />
         </Box>
       ) : (
         <LoadingTable />

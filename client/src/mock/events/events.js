@@ -122,7 +122,7 @@ export const events = [
     eventID: 8,
     eventName: "JBT goes Fasching",
     beschreibung: "Helau und Alaaf",
-    datum: "2024-01-29T00:00:00.000Z",
+    datum: "2024-01-29T20:00:00.000Z",
     ende: "2024-01-29T00:00:00.000Z",
     anmeldungvon: "2024-01-15T00:00:00.000Z",
     anmeldungbis: null,

@@ -13,7 +13,9 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DateValidationError, PickerChangeHandlerContext, TimeValidationError } from "@mui/x-date-pickers";
+import { Dayjs } from "dayjs";
 
 type Field = {
   label: string;
@@ -32,12 +34,30 @@ type Field = {
     }
   | {
       type: "Date";
-      onChangeCallback: ((value: unknown, context: PickerChangeHandlerContext<DateValidationError>) => void) | null;
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<DateValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
     }
   | {
-      type: "Text" | "Checkbox";
+      type: "Text";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       inputType?: "number";
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "Checkbox";
+      onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+    }
+  | {
+      type: "Time";
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<TimeValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
     }
 );
 interface Props {
@@ -129,6 +149,8 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.textField}`}
+            error={field.error}
+            helperText={field.helperText}
             key={index}
             label={field.label}
             color="primary"
@@ -136,6 +158,7 @@ const FieldSection = (props: Props) => {
             variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             type={field.inputType === "number" ? "number" : "text"}
+            inputProps={field.inputType === "number" ? { min: 0 } : {}}
           />
         );
       } else if (field.type === "TextBig") {
@@ -158,8 +181,19 @@ const FieldSection = (props: Props) => {
             key={index}
             className={`${classes.fieldItem} ${classes.dateField}`}
             label={field.label}
-            value={field.state}
-            slotProps={{ textField: { variant: "outlined" } }}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "Time") {
+        fieldElement = (
+          <TimePicker
+            key={index}
+            className={`${classes.fieldItem} ${classes.dateField}`}
+            label={field.label}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );

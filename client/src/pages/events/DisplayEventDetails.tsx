@@ -38,10 +38,10 @@ type commonEventType = {
   ID: number;
   name: string;
   description: string;
-  date: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
+  date: Dayjs | null;
+  endDate: Dayjs | null;
+  startTime: Dayjs | null;
+  endTime: Dayjs | null;
   location: string;
   registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
@@ -70,7 +70,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
    * Gets the event or workshop from the database
    */
   const getEvent = useCallback(
-    (type: string, id: number) => {
+    (id: number) => {
       // api.get("/events").then((response) => {
       //   console.log(response.data);
       // });
@@ -89,10 +89,10 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             ID: res.eventID,
             name: res.eventName,
             description: res.beschreibung,
-            date: dayjs(res.datum).locale("de").format("DD.MM.YYYY").toString(),
-            endDate: dayjs(res.ende).locale("de").format("DD.MM.YYYY").toString(),
-            startTime: dayjs(res.startZeit).locale("de").format("HH:mm").toString(),
-            endTime: dayjs(res.endZeit).locale("de").format("HH:mm").toString(),
+            date: dayjs(res.datum).locale("de"),
+            endDate: dayjs(res.ende).locale("de"),
+            startTime: dayjs(res.startZeit).locale("de"),
+            endTime: dayjs(res.endZeit).locale("de"),
             location: res.ort,
             registrationStart: res.anmeldungvon ? dayjs(res.anmeldungvon).locale("de") : null,
             registrationDeadline: res.anmeldungbis ? dayjs(res.anmeldungbis).locale("de") : null,
@@ -106,9 +106,45 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     [dispatchAuth]
   );
 
+  const updateEvent = (
+    title: string,
+    location: string,
+    startDate: Dayjs | null,
+    endDate: Dayjs | null,
+    startTime: Dayjs | null,
+    endTime: Dayjs | null,
+    registrationStart: Dayjs | null,
+    registrationEnd: Dayjs | null,
+    maxParticipants: number | null,
+    organizers: string[],
+    description: string,
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+  ) => {
+    setEvent((prevEvent) => {
+      if (prevEvent) {
+        return {
+          ...prevEvent,
+          name: title,
+          location: location,
+          date: startDate,
+          endDate: endDate,
+          startTime: startTime,
+          endTime: endTime,
+          registrationStart: registrationStart,
+          registrationDeadline: registrationEnd,
+          maximumParticipants: maxParticipants,
+          organizers: organizers,
+          description: description,
+          type: type,
+        };
+      }
+      return null;
+    });
+  };
+
   //* calls the getEvent function */
   useEffect(() => {
-    getEvent("event", Number(id));
+    getEvent(Number(id));
   }, [id, getEvent]);
 
   //mock participants since backend is not connected yet
@@ -147,31 +183,27 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const displayFields: Array<InformationField> = [
     {
       label: "Anmeldefrist",
-      value: event
-        ? event.registrationDeadline
-          ? event.registrationDeadline.locale("de").format("DD.MM.YYYY")
-          : null
-        : null,
+      value: event && event.registrationDeadline ? event.registrationDeadline.locale("de").format("DD.MM.YYYY") : null,
       type: "text",
     },
     {
       label: "Beginn",
-      value: event ? event.date : null,
+      value: event && event.date ? event.date.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
       label: "Ende",
-      value: event ? event.endDate : null,
+      value: event && event.endDate ? event.endDate.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
       label: "Startzeit",
-      value: event ? event.startTime : null,
+      value: event && event.startTime ? event.startTime.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
       label: "Endzeit",
-      value: event ? event.endTime : null,
+      value: event && event.endTime ? event.endTime.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
@@ -327,7 +359,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
    * Renders the page
    */
   return (
-    <Container maxWidth="md" sx={{ ml: 3 }}>
+    <Container maxWidth="md" sx={{ ml: 1 }}>
       {event ? (
         <>
           <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3, pb: 1 }}>
@@ -391,12 +423,39 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             startTime={event.startTime}
             endTime={event.endTime}
             registrationStart={null}
-            registrationEnd={
-              event.registrationDeadline ? event.registrationDeadline.locale("de").format("DD.MM.YYYY") : ""
-            }
+            registrationEnd={event.registrationDeadline}
             maxParticipants={10}
             organizers={["Thomas", "Brigitte"]}
             description={event.description}
+            onSubmit={(
+              title: string,
+              location: string,
+              startDate: Dayjs | null,
+              endDate: Dayjs | null,
+              startTime: Dayjs | null,
+              endTime: Dayjs | null,
+              registrationStart: Dayjs | null,
+              registrationEnd: Dayjs | null,
+              maxParticipants: number | null,
+              organizers: string[],
+              description: string,
+              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+            ) => {
+              updateEvent(
+                title,
+                location,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                registrationStart,
+                registrationEnd,
+                maxParticipants,
+                organizers,
+                description,
+                type
+              );
+            }}
           />
         </>
       ) : (
