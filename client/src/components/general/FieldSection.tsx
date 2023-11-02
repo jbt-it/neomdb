@@ -101,8 +101,12 @@ const FieldSection = (props: Props) => {
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             select
           >
-            {field.values.map((value) => {
-              return <MenuItem value={value.value}>{value.label}</MenuItem>;
+            {field.values.map((value, index) => {
+              return (
+                <MenuItem value={value.value} key={index}>
+                  {value.label}
+                </MenuItem>
+              );
             })}
           </TextField>
         );
@@ -151,6 +155,7 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "Date") {
         fieldElement = (
           <DatePicker
+            key={index}
             className={`${classes.fieldItem} ${classes.dateField}`}
             label={field.label}
             value={field.state}
@@ -178,13 +183,13 @@ const FieldSection = (props: Props) => {
       let fieldContainer: React.JSX.Element;
       if (field.width === "half") {
         fieldContainer = (
-          <Grid item xs={6} className={classes.gridItem}>
+          <Grid item xs={6} className={classes.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
       } else if (field.width === "full") {
         fieldContainer = (
-          <Grid item xs={12} className={classes.gridItem}>
+          <Grid item xs={12} className={classes.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
