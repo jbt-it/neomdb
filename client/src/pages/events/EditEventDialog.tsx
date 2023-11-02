@@ -2,7 +2,7 @@ import React, { useState, useReducer } from "react";
 import { Dialog, DialogActions, DialogTitle, DialogContent, Button, Divider, Typography } from "@mui/material";
 import FieldSection, { Field } from "../../components/general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 
 interface EditEventDialogProps {
   open: boolean;
@@ -71,10 +71,7 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
 
 /**
  * Dialog to edit an event.
- * TODO: Correct the onChange functions for maxParticipants and organizers.
- * Set correct radio buttons for event type.
- * Display fields depending on the event type.
- * Maybe: check wether it is a new event or an existing one.
+ * TODO: Correct the onChange functions for rganizers.
  */
 const EditEventDialog = (props: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
@@ -82,8 +79,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
   const currentDate = dayjs();
   const content =
     currentDate.month() < 5
-      ? "Working-Weekend SoSe" + currentDate.format("YY")
-      : "Working-Weekend WiSe " + currentDate.format("YY") + "/" + currentDate.add(1, "year").format("YY");
+      ? "Working Weekend SoSe" + currentDate.format("YY")
+      : "Working Weekend WiSe " + currentDate.format("YY") + "/" + currentDate.add(1, "year").format("YY");
 
   const initialState: State = {
     title: props.title || "",
@@ -150,7 +147,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     errorDispatch({ type: "reset" });
 
     // title is necessary for all events and cannot be null
-    if (!state.title) {
+    if (!state.title && eventType !== "WW") {
       errorDispatch({ type: "set", field: "title", value: true });
       complete = false;
     }
@@ -177,6 +174,12 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     // if a registrationStart and a registrationEnd are given, the registrationEnd has to be after the registrationStart
     if (state.registrationStart && state.registrationEnd ? state.registrationStart > state.registrationEnd : false) {
       errorDispatch({ type: "set", field: "registrationEnd", value: true });
+      complete = false;
+    }
+
+    // if the event type is WW, there has to be an endDate
+    if (eventType === "WW" && !state.endDate) {
+      errorDispatch({ type: "set", field: "endDate", value: true });
       complete = false;
     }
 
@@ -356,6 +359,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       width: "half",
       onChangeCallback: onChangeStartDate,
       type: "Date",
+      error: errorState.startDate,
+      helperText: errorState.startDate ? "Bitte gib ein Startdatum ein!" : undefined,
     },
     {
       label: "Ende",
@@ -363,6 +368,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       width: "half",
       onChangeCallback: onChangeEndDate,
       type: "Date",
+      error: errorState.endDate,
+      helperText: errorState.endDate ? "Bitte gib ein Enddatum ein!" : undefined,
     },
     {
       label: "Anmeldung ab",
@@ -377,6 +384,9 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       width: "half",
       onChangeCallback: onChangeRegistrationEnd,
       type: "Date",
+      helperText: errorState.registrationEnd
+        ? "Das Anmeldungsende darf nicht vor dem Anmeldungsstart liegen!"
+        : undefined,
     },
     {
       label: "Ort",
@@ -460,7 +470,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
           onClick={() => {
             if (checkForm()) {
               props.onSubmit(
-                state.title,
+                eventType === "WW" ? content : state.title,
                 state.location,
                 state.startDate!,
                 state.endDate ? state.endDate : state.startDate!,

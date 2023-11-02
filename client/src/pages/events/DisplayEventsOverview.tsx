@@ -71,6 +71,7 @@ type commonEventType = {
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
  * TODO: Store filters state in URL with useSearchParams from react-router-dom v6
+ * Check why the events of today are not shown
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -88,7 +89,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [displayPastEvents, setDisplayPastEvents] = useState<boolean>(false);
   const [tabValue, setTabValue] = React.useState(0);
   const [displayFiters, setDisplayFilters] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs()); // is the start date from which on events are displayed, is initialized to the current date
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs().startOf("d")); // is the start date from which on events are displayed, is initialized to the current date
   const [endDate, setEndDate] = useState<Dayjs | null>(); // is the start date from which on events are displayed, is initialized to the current date
   const [startMonth, setStartMonth] = useState<Dayjs | null>(); // variable that is used for filtering the beginning of the displayed events
   const [endMonth, setEndMonth] = useState<Dayjs | null>(); // variable that is used for filtering the end of the displayed events
