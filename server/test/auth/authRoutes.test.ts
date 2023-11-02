@@ -50,7 +50,7 @@ describe("Test auth routes", () => {
 
       // --- THEN
       expect(response.status).toBe(401);
-      expect(response.text).toBe("Credentials incomplete");
+      expect(JSON.parse(response.text).message).toBe("Credentials incomplete");
     });
 
     test("should return 401 for invalid username", async () => {
@@ -142,7 +142,7 @@ describe("Test auth routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(204);
     });
 
     test("should return 404 for invalid token or password", async () => {
@@ -164,7 +164,9 @@ describe("Test auth routes", () => {
 
       // --- THEN
       expect(response.statusCode).toBe(404);
-      expect(response.text).toBe(`No password reset entry found with email ${email} and token ${invalidToken}`);
+      expect(JSON.parse(response.text).message).toBe(
+        `No password reset entry found with email ${email} and token ${invalidToken}`
+      );
     });
   });
 
@@ -178,7 +180,7 @@ describe("Test auth routes", () => {
       const response = await request(app).post("/api/auth/logout").set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(204);
     });
   });
 });
