@@ -30,21 +30,12 @@ import InfoSection, { InformationField } from "../../components/general/InfoSect
 import MemberSelection from "../../components/general/MemberSelection";
 import { MembersField } from "../../types/membersTypes";
 import LoadingCircle from "../../components/general/LoadingCircle";
-
-/**
- * Function which provides the styles
- */
-
-const styles = {
-  dialog: {
-    margin: "auto",
-  },
-};
+import PageBar from "../../components/navigation/PageBar";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   margin: "auto",
-  marginTop: theme.spacing(3),
-  padding: theme.spacing(3),
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(4),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -101,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
 const InternalProject: React.FunctionComponent = () => {
   const classes = useStyles();
   const id = useParams();
+  const mobile = window.innerWidth <= 600;
 
   const { auth } = useContext(AuthContext);
 
@@ -440,11 +432,17 @@ const InternalProject: React.FunctionComponent = () => {
     {
       label: "Name",
       state: name,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeName,
       type: "Text",
     },
-    { label: "Kürzel", state: kuerzel, width: "half", onChangeCallback: onChangeKuerzel, type: "Text" },
+    {
+      label: "Kürzel",
+      state: kuerzel,
+      width: mobile ? "full" : "half",
+      onChangeCallback: onChangeKuerzel,
+      type: "Text",
+    },
     {
       label: "Traineegeneration",
       state: traineegeneration,
@@ -562,12 +560,7 @@ const InternalProject: React.FunctionComponent = () => {
    */
   return internalProjectDetails ? (
     <div>
-      <Dialog
-        sx={styles.dialog}
-        open={internalProjectInfoDialogOpen}
-        onClose={handleInternalProjectInfoDialogClose}
-        aria-labelledby="general-dialog-title"
-      >
+      <Dialog open={internalProjectInfoDialogOpen} onClose={handleInternalProjectInfoDialogClose}>
         <DialogTitle>{internalProjectDetails.name} bearbeiten</DialogTitle>
         <DialogContent dividers={true}>
           <div className={classes.fieldSectionBox}>
@@ -599,7 +592,6 @@ const InternalProject: React.FunctionComponent = () => {
           </div>
         </DialogContent>
         <DialogActions>
-          {/* TODO: State bei Abbrechen zurücksetzen */}
           <Button
             className={classes.cancelButton}
             variant="contained"
@@ -621,33 +613,32 @@ const InternalProject: React.FunctionComponent = () => {
         </DialogActions>
       </Dialog>
 
-      <div className="content-page">
-        <Box sx={{ margin: "auto" }}>
-          <StyledPaper>
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingBottom: 2,
-              }}
-            >
-              <Typography variant="h6">
-                <strong>Informationen zum internen Projekt</strong>
-              </Typography>
-              {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
-                <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
-                  <Edit fontSize="inherit" />
-                </IconButton>
-              ) : null}
-            </Box>
-            <Box>
-              <InfoSection fields={internalProjectDetailsFields} />
-            </Box>
-          </StyledPaper>
-        </Box>
-      </div>
+      <Box sx={{ margin: "auto" }}>
+        <StyledPaper>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingBottom: 2,
+            }}
+          >
+            <Typography variant="h6">
+              <strong>Informationen zum internen Projekt</strong>
+            </Typography>
+            {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
+              <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
+                <Edit fontSize="inherit" />
+              </IconButton>
+            ) : null}
+          </Box>
+          <Box>
+            <InfoSection fields={internalProjectDetailsFields} />
+          </Box>
+        </StyledPaper>
+      </Box>
+      <PageBar pageTitle="Internesprojekt" />
     </div>
   ) : (
     <LoadingCircle />
