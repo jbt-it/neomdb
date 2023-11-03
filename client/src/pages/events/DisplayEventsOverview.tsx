@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   Table,
   TableBody,
@@ -43,6 +42,7 @@ import "dayjs/locale/de";
 import LoadingTable from "../../components/general/LoadingTable";
 import EventChip from "../../components/event/EventChip";
 import EditEventDialog from "./EditEventDialog";
+import useResponsive from "../../hooks/useResponsive";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,8 +70,6 @@ type commonEventType = {
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
- * TODO: Store filters state in URL with useSearchParams from react-router-dom v6
- * Check why the events of today are not shown
  * @returns the events overview page
  */
 const DisplayEventsOverview: React.FC = () => {
@@ -98,7 +96,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [eventTypeFilter, setEventTypeFilter] = useState<string[]>([]);
   const [displayMonths, setDisplayMonths] = useState<boolean>(false);
 
-  const mobile = useMediaQuery("(max-width:600px)");
+  const mobile = useResponsive("down", "sm");
 
   /**
    * Handles the onClose event of the edit dialog
@@ -138,6 +136,7 @@ const DisplayEventsOverview: React.FC = () => {
 
     const currentEvents: commonEventType[] = [];
 
+    // initialize the events constant with the mock data
     mockEvents.map((event) => {
       currentEvents.push({
         ID: event.eventID,
@@ -168,6 +167,7 @@ const DisplayEventsOverview: React.FC = () => {
 
     const currentWorkshops: commonEventType[] = [];
 
+    // initialize the workshops constant with the mock data
     mockWorkshops.map((event) => {
       currentWorkshops.push({
         ID: event.schulungsinstanzID,
@@ -199,6 +199,7 @@ const DisplayEventsOverview: React.FC = () => {
 
     const currentEvents: commonEventType[] = [];
 
+    // initialize the events the user is signed up for constant with the mock data
     mockEvents.map((event) => {
       currentEvents.push({
         ID: event.eventID,
@@ -263,6 +264,8 @@ const DisplayEventsOverview: React.FC = () => {
     setDisplayedAllEvents(
       events
         .concat(workshops)
+        // filters all events and workshops that are in the past: check if endDate is not null, then check if the date is after the startDate and before the endDate,
+        // if endDate is null check if the date is after the startDate
         .filter((event) =>
           endDate
             ? event.date > startDate && event.date < endDate
@@ -270,17 +273,25 @@ const DisplayEventsOverview: React.FC = () => {
             ? event.endDate >= startDate
             : event.date >= startDate
         )
+        // if the startMonth filter is set chek if the date is after the startMonth
         .filter((event) => (startMonth ? event.date > startMonth : true))
+        // if the endMonth filter is set chek if the date is before the endMonth
         .filter((event) => (endMonth ? event.date < endMonth : true))
+        // if the eventTypeFilter is set check if the event type is included in the filter
         .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
     );
 
     // applies the filters to the events tab
     setDisplayedEvents(
       events
+        // filters the events that are in the past: check if endDate is not null, then check if the date is after the startDate and before the endDate,
+        // if endDate is null check if the date is after the startDate
         .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
+        // if the startMonth filter is set chek if the date is after the startMonth
         .filter((event) => (startMonth ? event.date > startMonth : true))
+        // if the endMonth filter is set chek if the date is before the endMonth
         .filter((event) => (endMonth ? event.date < endMonth : true))
+        // if the eventTypeFilter is set check if the event type is included in the filter
         .filter((event) =>
           eventTypeFilter.length > 0
             ? eventTypeFilter.length === 1 && eventTypeFilter.includes("Workshop")
@@ -293,9 +304,14 @@ const DisplayEventsOverview: React.FC = () => {
     // applies the filters to the workshops tab
     setDisplayedWorkshops(
       workshops
+        // filters the workshops that are in the past: check if endDate is not null, then check if the date is after the startDate and before the endDate,
+        // if endDate is null check if the date is after the startDate
         .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
+        // if the startMonth filter is set chek if the date is after the startMonth
         .filter((event) => (startMonth ? event.date > startMonth : true))
+        // if the endMonth filter is set chek if the date is before the endMonth
         .filter((event) => (endMonth ? event.date < endMonth : true))
+        // if the eventTypeFilter is set check if the event type is included in the filter
         .filter((event) =>
           eventTypeFilter.length > 0 ? (eventTypeFilter.includes("Workshop") ? event.type === "Workshop" : true) : true
         )
@@ -304,9 +320,14 @@ const DisplayEventsOverview: React.FC = () => {
     // applies the filters to the events signed up tab
     setDisplayedEventsSignedUp(
       eventsSignedUp
+        // filters the events the user is signed up for that are in the past: check if endDate is not null, then check if the date is after the startDate and before the endDate,
+        // if endDate is null check if the date is after the startDate
         .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
+        // if the startMonth filter is set chek if the date is after the startMonth
         .filter((event) => (startMonth ? event.date > startMonth : true))
+        // if the endMonth filter is set chek if the date is before the endMonth
         .filter((event) => (endMonth ? event.date < endMonth : true))
+        // if the eventTypeFilter is set check if the event type is included in the filter
         .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
     );
   };
@@ -379,6 +400,7 @@ const DisplayEventsOverview: React.FC = () => {
         />
       );
     } else if (
+      // check if the registration deadline is in the past or if the registration start is in the future
       (event.registrationDeadline || event.registrationDeadline === null
         ? dayjs().isAfter(event.registrationDeadline?.endOf("d"))
         : false) ||
@@ -399,6 +421,7 @@ const DisplayEventsOverview: React.FC = () => {
         />
       );
     } else if (
+      // check if the maximum participants is reached
       event.maximumParticipants && event.participantsCount
         ? event.participantsCount >= event.maximumParticipants
         : false
@@ -431,7 +454,7 @@ const DisplayEventsOverview: React.FC = () => {
 
   /**
    * Renders button for new event if the user has the permission to create a new event
-   * ToDo: Implement correct permission, fuction for dialog and check if mobile --> just show icon on mobile
+   * ToDo: Implement correct permission
    * @returns the button for creating a new event
    */
   const renderNewEventButton = () => {
@@ -847,12 +870,28 @@ const DisplayEventsOverview: React.FC = () => {
                   <TableCell>
                     <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
                       {row.registrationDeadline && row.registrationStart ? (
+                        // check if registration start is in the future
                         row.registrationStart > dayjs() ? (
-                          row.registrationStart.format("DD.MM.YYYY HH:mm")
+                          // then display the registration start
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            {row.registrationStart.format("DD.MM.YYYY [/] HH:mm")}
+                          </Typography>
                         ) : row.registrationDeadline > dayjs() ? (
-                          row.registrationDeadline.format("DD.MM.YYYY HH:mm")
+                          // else check if registration deadline is in the future and display it
+                          <Typography variant={"subtitle2"}>
+                            {row.registrationDeadline.format("DD.MM.YYYY [/] HH:mm")}
+                          </Typography>
                         ) : (
-                          <Typography variant={"subtitle2"}>Anmeldung abgelaufen</Typography>
+                          <Typography variant={"caption"}>Abgelaufen</Typography>
+                        )
+                      ) : row.registrationDeadline ? (
+                        // if the registrationStart is null check if the registrationDeadline is not null if so display it
+                        row.registrationDeadline > dayjs() ? (
+                          <Typography variant={"subtitle2"}>
+                            {row.registrationDeadline.format("DD.MM.YYYY [/] HH:mm")}
+                          </Typography>
+                        ) : (
+                          <Typography variant={"caption"}>Abgelaufen</Typography>
                         )
                       ) : (
                         <Box />
@@ -922,32 +961,62 @@ const DisplayEventsOverview: React.FC = () => {
                     </Typography>
                   </Stack>
                   <Box>
-                    {row.registrationDeadline ? (
-                      row.registrationStart ? (
-                        <Stack direction="row">
+                    {row.registrationDeadline && row.registrationStart ? (
+                      // check if registration start is in the future
+                      row.registrationStart > dayjs() ? (
+                        // then display the registration start
+                        <Stack direction="row" alignItems="center">
                           <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
-                            Anmeldung: &nbsp;
+                            Anmeldung ab: &nbsp;
                           </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {row.registrationStart.format("DD.MM.YYYY") ===
-                            row.registrationDeadline.format("DD.MM.YYYY")
-                              ? row.registrationStart.format("DD.MM.YYYY")
-                              : row.registrationStart.format("DD.MM.YYYY") +
-                                " - " +
-                                row.registrationDeadline.format("DD.MM.YYYY")}
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            {row.registrationStart.format("DD.MM.YYYY [/] HH:mm")}
+                          </Typography>
+                        </Stack>
+                      ) : row.registrationDeadline > dayjs() ? (
+                        // else check if registration deadline is in the future and display it
+                        <Stack direction="row" alignItems="center">
+                          <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                            Anmeldung bis: &nbsp;
+                          </Typography>
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            {row.registrationDeadline.format("DD.MM.YYYY [/] HH:mm")}
                           </Typography>
                         </Stack>
                       ) : (
-                        <Stack direction={"row"}>
+                        <Stack direction="row" alignItems="center">
                           <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
                             Anmeldung: &nbsp;
                           </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {row.registrationDeadline.format("DD.MM.YYYY")}{" "}
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            Abgelaufen
                           </Typography>
                         </Stack>
                       )
-                    ) : null}
+                    ) : row.registrationDeadline ? (
+                      // if the registrationStart is null check if the registrationDeadline is not null if so display it
+                      row.registrationDeadline > dayjs() ? (
+                        <Stack direction="row" alignItems="center">
+                          <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                            Anmeldung bis: &nbsp;
+                          </Typography>
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            {row.registrationDeadline.format("DD.MM.YYYY [/] HH:mm")}
+                          </Typography>
+                        </Stack>
+                      ) : (
+                        <Stack direction="row" alignItems="center">
+                          <Typography variant="body2" color="textSecondary" fontWeight={"bold"}>
+                            Anmeldung: &nbsp;
+                          </Typography>
+                          <Typography variant={"subtitle2"} color="text.secondary">
+                            Abgelaufen
+                          </Typography>
+                        </Stack>
+                      )
+                    ) : (
+                      <Box />
+                    )}
                   </Box>
                   <Box>
                     {row.startTime ? (

@@ -11,6 +11,7 @@ import {
   RadioGroup,
   Checkbox,
   FormControlLabel,
+  Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -70,6 +71,12 @@ type Field = {
       onChangeCallback:
         | ((value: Dayjs | null, context: PickerChangeHandlerContext<DateTimeValidationError>) => void)
         | null;
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "Autocomplete";
+      onChangeCallback: (event: React.ChangeEvent<object>, value: string[] | string) => void | null;
       error?: boolean;
       helperText?: string;
     }
@@ -220,6 +227,18 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "Autocomplete") {
+        fieldElement = (
+          <Autocomplete
+            key={index}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            renderInput={(params) => <TextField variant="outlined" {...params} label="Organisatoren" />}
+            options={field.state as string[]}
+            className={`${classes.fieldItem} ${classes.dropdownField}`}
+            size="medium"
+            multiple
           />
         );
       } else if (field.type === "Checkbox") {

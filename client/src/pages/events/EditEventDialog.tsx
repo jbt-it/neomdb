@@ -72,11 +72,13 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
 
 /**
  * Dialog to edit an event.
- * TODO: Correct the onChange functions for rganizers.
+ * TODO: Correct the onChange functions for organizers.
  */
 const EditEventDialog = (props: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
   const mobile = useResponsive("down", "md");
+
+  const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
 
   const currentDate = dayjs();
   const content =
@@ -229,8 +231,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     });
   };
 
-  const onChangeOrganizers = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setOrganizers(event.target.value);
+  const onChangeOrganizers = (event: React.ChangeEvent<object>, value: string[] | string) => {
+    dispatch({ type: "set", field: "organizers", value });
   };
 
   const onChangeDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -339,10 +341,10 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     },
     {
       label: "Organisatoren",
-      state: state.organizers,
+      state: members,
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
-      type: "Text",
+      type: "Autocomplete",
     },
     {
       label: "Beschreibung",
@@ -399,10 +401,10 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     },
     {
       label: "Organisatoren",
-      state: state.organizers,
+      state: members,
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
-      type: "Text",
+      type: "Autocomplete",
     },
     {
       label: "Beschreibung",
@@ -472,23 +474,25 @@ const EditEventDialog = (props: EditEventDialogProps) => {
           color="primary"
           onClick={() => {
             if (checkForm()) {
-              props.onSubmit(
-                eventType === "WW" ? content : state.title,
-                state.location,
-                state.startDate!,
-                state.endDate ? state.endDate : state.startDate!,
-                state.startTime,
-                state.endTime,
-                state.registrationStart,
-                state.registrationEnd ? state.registrationEnd : state.registrationStart ? state.startDate : null,
-                state.maxParticipants,
-                state.organizers,
-                state.description,
-                eventType
-              );
-              props.onClose();
-              dispatch({ type: "reset" });
-              errorDispatch({ type: "reset" });
+              if (state.startDate !== null) {
+                props.onSubmit(
+                  eventType === "WW" ? content : state.title,
+                  state.location,
+                  state.startDate,
+                  state.endDate ? state.endDate : state.startDate,
+                  state.startTime,
+                  state.endTime,
+                  state.registrationStart,
+                  state.registrationEnd ? state.registrationEnd : state.registrationStart ? state.startDate : null,
+                  state.maxParticipants,
+                  state.organizers,
+                  state.description,
+                  eventType
+                );
+                props.onClose();
+                dispatch({ type: "reset" });
+                errorDispatch({ type: "reset" });
+              }
             }
           }}
         >
