@@ -3,6 +3,7 @@ import { Dialog, DialogActions, DialogTitle, DialogContent, Button, Divider, Typ
 import FieldSection, { Field } from "../../components/general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import useResponsive from "../../hooks/useResponsive";
 
 interface EditEventDialogProps {
   open: boolean;
@@ -75,6 +76,7 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
  */
 const EditEventDialog = (props: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
+  const mobile = useResponsive("down", "md");
 
   const currentDate = dayjs();
   const content =
@@ -259,7 +261,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Name",
       state: state.title,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeTitle,
       type: "Text",
       error: errorState.title,
@@ -268,14 +270,14 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Ort",
       state: state.location,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeLocation,
       type: "Text",
     },
     {
       label: "Beginn",
       state: state.startDate,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeStartDate,
       type: "Date",
       error: errorState.startDate,
@@ -284,7 +286,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Ende",
       state: state.endDate,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeEndDate,
       type: "Date",
       error: errorState.endDate,
@@ -293,7 +295,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Startzeit",
       state: state.startTime,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeStartTime,
       type: "Time",
       error: errorState.startTime,
@@ -302,7 +304,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Endzeit",
       state: state.endTime,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeEndTime,
       type: "Time",
       error: errorState.endTime,
@@ -311,16 +313,16 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Anmeldung ab",
       state: state.registrationStart,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeRegistrationStart,
-      type: "Date",
+      type: "DateTime",
     },
     {
       label: "Anmeldung bis",
       state: state.registrationEnd,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeRegistrationEnd,
-      type: "Date",
+      type: "DateTime",
       error: errorState.registrationEnd,
       helperText: errorState.registrationEnd
         ? "Das Anmeldungsende darf nicht vor dem Anmeldungsstart liegen!"
@@ -330,7 +332,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Teilnehmeranzahl",
       state: state.maxParticipants,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeMaxParticipants,
       type: "Text",
       inputType: "number",
@@ -338,7 +340,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Organisatoren",
       state: state.organizers,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
       type: "Text",
     },
@@ -356,7 +358,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Beginn",
       state: state.startDate,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeStartDate,
       type: "Date",
       error: errorState.startDate,
@@ -365,7 +367,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Ende",
       state: state.endDate,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeEndDate,
       type: "Date",
       error: errorState.endDate,
@@ -374,16 +376,16 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Anmeldung ab",
       state: state.registrationStart,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeRegistrationStart,
-      type: "Date",
+      type: "DateTime",
     },
     {
       label: "Anmeldung bis",
       state: state.registrationEnd,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeRegistrationEnd,
-      type: "Date",
+      type: "DateTime",
       helperText: errorState.registrationEnd
         ? "Das Anmeldungsende darf nicht vor dem Anmeldungsstart liegen!"
         : undefined,
@@ -391,14 +393,14 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     {
       label: "Ort",
       state: state.location,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeLocation,
       type: "Text",
     },
     {
       label: "Organisatoren",
       state: state.organizers,
-      width: "half",
+      width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
       type: "Text",
     },
@@ -420,15 +422,16 @@ const EditEventDialog = (props: EditEventDialogProps) => {
         dispatch({ type: "reset" });
         errorDispatch({ type: "reset" });
       }}
+      scroll={"paper"}
       PaperProps={{
         style: {
-          marginTop: "10%",
+          marginTop: "5%",
           marginBottom: "auto",
         },
       }}
     >
       <DialogTitle>{props.newEvent ? "Veranstaltung anlegen" : state.title + " bearbeiten"}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ height: "80%" }}>
         <FormControl sx={{ width: "100%" }}>
           <RadioGroup row sx={{ pl: 1 }} value={eventType} onChange={handleChangeEventType}>
             <FormControlLabel value="JBT goes" control={<Radio />} label="JBT goes" />

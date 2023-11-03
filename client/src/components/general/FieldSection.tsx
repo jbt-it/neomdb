@@ -14,7 +14,13 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { DateValidationError, PickerChangeHandlerContext, TimeValidationError } from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {
+  DateTimeValidationError,
+  DateValidationError,
+  PickerChangeHandlerContext,
+  TimeValidationError,
+} from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 
 type Field = {
@@ -55,6 +61,14 @@ type Field = {
       type: "Time";
       onChangeCallback:
         | ((value: Dayjs | null, context: PickerChangeHandlerContext<TimeValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "DateTime";
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<DateTimeValidationError>) => void)
         | null;
       error?: boolean;
       helperText?: string;
@@ -189,6 +203,17 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "Time") {
         fieldElement = (
           <TimePicker
+            key={index}
+            className={`${classes.fieldItem} ${classes.dateField}`}
+            label={field.label}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "DateTime") {
+        fieldElement = (
+          <DateTimePicker
             key={index}
             className={`${classes.fieldItem} ${classes.dateField}`}
             label={field.label}

@@ -90,7 +90,7 @@ const DisplayEventsOverview: React.FC = () => {
   const [tabValue, setTabValue] = React.useState(0);
   const [displayFiters, setDisplayFilters] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs().startOf("d")); // is the start date from which on events are displayed, is initialized to the current date
-  const [endDate, setEndDate] = useState<Dayjs | null>(); // is the start date from which on events are displayed, is initialized to the current date
+  const [endDate, setEndDate] = useState<Dayjs | null>(); // is the end date until which events are displayed, used for filtering past events
   const [startMonth, setStartMonth] = useState<Dayjs | null>(); // variable that is used for filtering the beginning of the displayed events
   const [endMonth, setEndMonth] = useState<Dayjs | null>(); // variable that is used for filtering the end of the displayed events
   const [startMonthFilter, setStartMonthFilter] = useState<string>(""); // start of month filter field
@@ -143,9 +143,9 @@ const DisplayEventsOverview: React.FC = () => {
         ID: event.eventID,
         name: event.eventName,
         date: dayjs(event.datum).locale("de"),
-        endDate: dayjs(event.ende).locale("de"),
+        endDate: event.ende ? dayjs(event.ende).locale("de") : dayjs(event.datum).locale("de"),
         startTime: dayjs(event.startZeit).locale("de"),
-        endTime: dayjs(event.endZeit).locale("de"),
+        endTime: event.endZeit ? dayjs(event.endZeit).locale("de") : null,
         location: event.ort,
         registrationStart: event.anmeldungvon ? dayjs(event.anmeldungvon).locale("de") : null,
         registrationDeadline: event.anmeldungbis ? dayjs(event.anmeldungbis).locale("de") : null,
@@ -263,7 +263,13 @@ const DisplayEventsOverview: React.FC = () => {
     setDisplayedAllEvents(
       events
         .concat(workshops)
-        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) =>
+          endDate
+            ? event.date > startDate && event.date < endDate
+            : event.endDate
+            ? event.endDate >= startDate
+            : event.date >= startDate
+        )
         .filter((event) => (startMonth ? event.date > startMonth : true))
         .filter((event) => (endMonth ? event.date < endMonth : true))
         .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
@@ -272,7 +278,7 @@ const DisplayEventsOverview: React.FC = () => {
     // applies the filters to the events tab
     setDisplayedEvents(
       events
-        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
         .filter((event) => (startMonth ? event.date > startMonth : true))
         .filter((event) => (endMonth ? event.date < endMonth : true))
         .filter((event) =>
@@ -287,7 +293,7 @@ const DisplayEventsOverview: React.FC = () => {
     // applies the filters to the workshops tab
     setDisplayedWorkshops(
       workshops
-        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
         .filter((event) => (startMonth ? event.date > startMonth : true))
         .filter((event) => (endMonth ? event.date < endMonth : true))
         .filter((event) =>
@@ -298,7 +304,7 @@ const DisplayEventsOverview: React.FC = () => {
     // applies the filters to the events signed up tab
     setDisplayedEventsSignedUp(
       eventsSignedUp
-        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.date > startDate))
+        .filter((event) => (endDate ? event.date > startDate && event.date < endDate : event.endDate >= startDate))
         .filter((event) => (startMonth ? event.date > startMonth : true))
         .filter((event) => (endMonth ? event.date < endMonth : true))
         .filter((event) => (eventTypeFilter.length > 0 ? eventTypeFilter.includes(event.type) : true))
@@ -459,7 +465,7 @@ const DisplayEventsOverview: React.FC = () => {
           sx={{ fontWeight: 600 }}
           onClick={() => {
             setDisplayPastEvents(false);
-            setStartDate(dayjs());
+            setStartDate(dayjs().startOf("d"));
             setEndDate(null);
           }}
           size="small"
@@ -834,21 +840,20 @@ const DisplayEventsOverview: React.FC = () => {
                     {row.endDate > row.date ? " - " + row.endDate.format("DD.MM.YYYY") : null}
                   </TableCell>
                   <TableCell>
-                    {row.startTime ? row.startTime.format("HH:mm") : null}&nbsp;-&nbsp;
+                    {row.startTime ? row.startTime.format("HH:mm") : null}
+                    {row.startTime && !row.endTime ? null : " - "}
                     {row.endTime ? row.endTime.format("HH:mm") : null}
                   </TableCell>
                   <TableCell>
                     <Stack justifyContent={"space-between"} direction={"row"} alignItems={"center"}>
                       {row.registrationDeadline && row.registrationStart ? (
-                        row.registrationStart.format("DD.MM.YYYY") === row.registrationDeadline.format("DD.MM.YYYY") ? (
-                          row.registrationStart.format("DD.MM.YYYY")
+                        row.registrationStart > dayjs() ? (
+                          row.registrationStart.format("DD.MM.YYYY HH:mm")
+                        ) : row.registrationDeadline > dayjs() ? (
+                          row.registrationDeadline.format("DD.MM.YYYY HH:mm")
                         ) : (
-                          row.registrationStart.format("DD.MM.YYYY") +
-                          " - " +
-                          row.registrationDeadline.format("DD.MM.YYYY")
+                          <Typography variant={"subtitle2"}>Anmeldung abgelaufen</Typography>
                         )
-                      ) : row.registrationDeadline ? (
-                        row.registrationDeadline.format("DD.MM.YYYY")
                       ) : (
                         <Box />
                       )}
@@ -951,7 +956,8 @@ const DisplayEventsOverview: React.FC = () => {
                           Uhrzeit: &nbsp;
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {row.startTime ? row.startTime.format("HH:mm") : null}&nbsp;-&nbsp;
+                          {row.startTime ? row.startTime.format("HH:mm") : null}
+                          {row.startTime && !row.endTime ? null : " - "}
                           {row.endTime ? row.endTime.format("HH:mm") : null}
                         </Typography>
                       </Stack>
