@@ -10,7 +10,7 @@ class AuthTestUtils {
   authRepository: AuthRepository = null;
   app: Express.Application = null;
 
-  constructor(app: Express) {
+  constructor(app: Express.Application) {
     this.app = app;
     this.authRepository = new AuthRepository();
   }
