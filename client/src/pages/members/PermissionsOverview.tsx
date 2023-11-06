@@ -206,7 +206,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 204) {
           if (mounted) {
             showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
           }

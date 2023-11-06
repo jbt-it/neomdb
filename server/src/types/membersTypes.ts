@@ -105,7 +105,7 @@ export type MemberDetails = {
   nachname: string;
   vorname: string;
   geschlecht: number;
-  geburtsdatum: string;
+  geburtsdatum: string | null;
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
@@ -124,7 +124,7 @@ export type MemberDetails = {
   plz1: number;
   ort1: string;
   tel1: string | null;
-  email1: string;
+  email1: string | null;
   strasse2: string | null;
   plz2: number | null;
   ort2: string | null;

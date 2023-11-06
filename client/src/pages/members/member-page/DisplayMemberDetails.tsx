@@ -223,7 +223,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [plz1State, setPlz1State] = useState<string>(memberDetails.plz1 ? memberDetails.plz1.toString() : "");
   const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.ort1 ? memberDetails.ort1 : "");
   const [telephone1] = useState<string>(memberDetails.tel1 ? memberDetails.tel1.toString() : "");
-  const [email1State] = useState<string>(memberDetails.email1);
+  const [email1State] = useState<string>(memberDetails.email1 || "");
   const [street2] = useState<string>(memberDetails.strasse2 ? memberDetails.strasse2 : "");
   const [plz2State] = useState<string>(memberDetails.plz2 ? memberDetails.plz2.toString() : "");
   const [placeOfResidence2] = useState<string>(memberDetails.ort2 ? memberDetails.ort2 : "");
@@ -240,8 +240,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [accountHolder, setAccountHolder] = useState<string>(
     memberDetails.kontoinhaber ? memberDetails.kontoinhaber : ""
   );
-  const [ibanState, setIbanState] = useState<string>(memberDetails.iban);
-  const [bicState, setBicState] = useState<string>(memberDetails.bic);
+  const [ibanState, setIbanState] = useState<string>(memberDetails?.iban || "");
+  const [bicState, setBicState] = useState<string>(memberDetails?.bic || "");
   const [engagementState] = useState<string>(memberDetails.engagement ? memberDetails.engagement : "");
   const [driversLicense] = useState<boolean>(memberDetails.fuehrerschein);
   const [firstAid] = useState<boolean>(memberDetails.ersthelferausbildung);
@@ -255,7 +255,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [studyInfoDialogOpen, setStudyInfoDialogOpen] = useState<boolean>(false);
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
-  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails.mentees);
+  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
 
   /**
    * Checks if there would be a duplicate value in languages if value would be added
@@ -445,8 +445,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     }
   };
 
-  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails.sprachen);
-  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails.edvkenntnisse);
+  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.sprachen || []);
+  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails?.edvkenntnisse || []);
 
   /**
    * Submits the changed data
@@ -500,8 +500,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       canPL: transformStringToSQLString(memberDetails.canPL),
       canQM: transformStringToSQLString(memberDetails.canQM),
       lastchange: "",
-      fuehrerschein: driversLicense,
-      ersthelferausbildung: firstAid,
+      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
+      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
       sprachen: languages,
       mentees: menteeList,
       edvkenntnisse: edvSkills,
@@ -934,7 +934,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Sprachen:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.sprachen.map((language) => {
+                {(memberDetails?.sprachen || []).map((language) => {
                   return (
                     <Typography className={classes.categoryLine}>
                       {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
@@ -946,7 +946,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.edvkenntnisse.map((edv) => {
+                {(memberDetails?.edvkenntnisse || []).map((edv) => {
                   return (
                     <Typography className={classes.categoryLine}>
                       {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}

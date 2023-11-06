@@ -69,7 +69,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     api
       .patch(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
       .then((res: AxiosResponse) => {
-        if (res.status === 200) {
+        if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");
           onClose();
         }

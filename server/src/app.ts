@@ -38,7 +38,7 @@ app.use(cookieParser());
 /*
  * Swagger UI Setup
  */
-app.use("/docs", swaggerUi.serve, swagger);
+app.use("/api/docs", swaggerUi.serve, swagger);
 
 /*
  * Routes Setup

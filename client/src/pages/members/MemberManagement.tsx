@@ -380,7 +380,7 @@ const MemberManagement: React.FunctionComponent = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 204) {
           getMembers();
           showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
         } else {

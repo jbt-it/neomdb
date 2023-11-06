@@ -27,6 +27,7 @@ import {
   Request,
   Path,
   Query,
+  SuccessResponse,
 } from "@tsoa/runtime";
 import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
@@ -274,6 +275,7 @@ export class MembersController extends Controller {
    */
   @Post("permissions")
   @Security("jwt")
+  @SuccessResponse("201")
   public async assignPermissionToMember(
     @Body() requestBody: AssignPermissionToMemberRequest,
     @Request() request: any

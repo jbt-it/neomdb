@@ -71,7 +71,7 @@ const ChangePassword: React.FunctionComponent = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 204) {
             // Password change was succefull
             setResResponse200(true);
             return [{ status: res.status }];

@@ -69,7 +69,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
         newPassword,
       };
       api.patch("/auth/reset-forgot-password", data).then((res) => {
-        if (res.status === 200) setResResponse200(true);
+        if (res.status === 204) setResResponse200(true);
       });
     }
   };

@@ -644,7 +644,8 @@
 						"nullable": true
 					},
 					"email1": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"tel1": {
 						"type": "string",
@@ -713,7 +714,8 @@
 						"type": "string"
 					},
 					"geburtsdatum": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"geschlecht": {
 						"type": "number",
@@ -1784,8 +1786,8 @@
 			"post": {
 				"operationId": "AssignPermissionToMember",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"201": {
+						"description": ""
 					}
 				},
 				"description": "Create new permission for member",
