@@ -83,7 +83,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateDepartmentRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true},"bezeichnung":{"dataType":"string","required":true},"kuerzel":{"dataType":"string","required":true},"jbt_email":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Value": {

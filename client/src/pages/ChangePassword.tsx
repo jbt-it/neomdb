@@ -67,7 +67,7 @@ const ChangePassword: React.FunctionComponent = () => {
 
       // Patch request
       api
-        .patch("/members/change-password", data, {
+        .patch("/auth/change-password", data, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {

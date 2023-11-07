@@ -169,7 +169,7 @@ class MembersService {
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
     const memberQuery = this.membersRepository.getMemberByID(memberID, false);
-    const permissionQuery = this.membersRepository.getDepartmentByID(permissionID);
+    const permissionQuery = this.membersRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 

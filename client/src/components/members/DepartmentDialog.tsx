@@ -64,10 +64,10 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
   const saveData = (event: React.SyntheticEvent) => {
     event.preventDefault(); // Prevents the page from reloading
 
-    // Given department object with changed wiki, goal and organisation links
+    // Given department object with changed goal and organisation links
     const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
     api
-      .patch(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
+      .put(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
       .then((res: AxiosResponse) => {
         if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");

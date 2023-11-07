@@ -71,7 +71,7 @@ export class AuthController extends Controller {
    * "userID": 8167
    * }
    */
-  // TODO: Use @Post("forgot-password") instead of @Patch("forgot-password")
+  // TODO: Use @Post("change-password") instead of @Patch("change-password")
   @Patch("change-password")
   @Security("jwt")
   public async changePassword(@Body() requestBody: UserChangePasswordRequest, @Request() request: any): Promise<void> {

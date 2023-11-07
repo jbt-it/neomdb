@@ -400,11 +400,28 @@
 					},
 					"linkZielvorstellung": {
 						"type": "string"
+					},
+					"ressortID": {
+						"type": "number",
+						"format": "double"
+					},
+					"bezeichnung": {
+						"type": "string"
+					},
+					"kuerzel": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"linkOrganigramm",
-					"linkZielvorstellung"
+					"linkZielvorstellung",
+					"ressortID",
+					"bezeichnung",
+					"kuerzel",
+					"jbt_email"
 				],
 				"type": "object",
 				"description": "Type of the request to update a department"

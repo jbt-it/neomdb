@@ -185,7 +185,6 @@ export class MembersController extends Controller {
   @Put("departments/{id}")
   @Security("jwt")
   @Middlewares(checkDepartmentAccess)
-  // TODO: Add Middleware!!!
   public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentRequest): Promise<void> {
     await this.membersService.updateDepartment(id, requestBody);
   }

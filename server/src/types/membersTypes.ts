@@ -236,6 +236,10 @@ export type DepartmentPartialID = {
  * Type of the request to update a department
  */
 export type UpdateDepartmentRequest = {
+  jbt_email: string;
+  kuerzel: string;
+  bezeichnung: string;
+  ressortID: number;
   linkZielvorstellung: string;
   linkOrganigramm: string;
 };
