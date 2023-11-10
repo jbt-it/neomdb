@@ -20,12 +20,14 @@ import { executeInTransaction } from "../../database";
 import * as bcrypt from "bcryptjs";
 import { getRandomString } from "../../utils/stringUtils";
 import AuthRepository from "../../auth/AuthRepository";
+import TraineesRepository from "../trainees/TraineesRepository";
 
 /**
  * Provides methods to execute member related service functionalities
  */
 class MembersService {
   membersRepository = new MembersRepository();
+  traineesRepository = new TraineesRepository();
   authRepository = new AuthRepository();
 
   /**
@@ -200,6 +202,7 @@ class MembersService {
    * @returns The new username and jbtMail
    */
   createJBTMailAndNameOfMember = async (memberName: string) => {
+    // TODO: Optimize this code by using sql to set the new username and jbtMail (use count in sql)
     let jbtMail = "";
     // New user name if the name already exists
     let newUserName = "";
@@ -267,10 +270,27 @@ class MembersService {
     let memberID = null;
     // Create member in database
     try {
-      const { password: newPassword, ...newMember } = newMemberRequest;
+      const { password: newPassword, ...member } = newMemberRequest;
       const passwordHash = await bcrypt.hash(newPassword, 10);
       const departmentID = 8; // Default department "Ohne Ressort"
       const statusID = 1; // Default status of member is "trainee"
+
+      let newMember = member;
+      if (member.generation !== null) {
+        // Check if the generation exists
+        const generation = await this.traineesRepository.getGenerationByID(member.generation);
+        if (generation === null) {
+          throw new NotFoundError(`Generation with id ${member.generation} does not exist`);
+        }
+      } else {
+        // Retrieve the generations and select the newest one
+        const generations = await this.traineesRepository.getGenerations();
+        // Because the generations are sorted descending by date, the first element is the newest one
+        const newestGeneration = generations[0];
+        // Add the generation to the member
+        newMember = { ...member, generation: newestGeneration.generationID };
+      }
+
       memberID = await this.membersRepository.createMember(
         newMember as NewMember,
         newUserName,
@@ -288,6 +308,8 @@ class MembersService {
       // TODO: Add mail account to mailing list
       // Throws a specific error if the adding of the mail to the list fails that is catched below
 
+      // TODO: Send Email with generated password to members new mail address
+
       // TODO: Add nextcloud account creation (deprecated)
       // Throws a specific error if the nextcloud account creation fails that is catched below
 
@@ -296,10 +318,10 @@ class MembersService {
       // TODO: this.createWikiAccount(jbtMail, newUserName, passwordHash);
     } catch (error) {
       /* Errors are handled centrally in the error handler middleware by default (immediately sends an error response)
-       * but this is a special case, because the user should be sent the status overview (for transparency)
+       * but this is a special case because the user should be sent the status overview (for transparency)
        * therefore errors must be catched here and handled differently
        */
-      if (error instanceof QueryError) {
+      if (error instanceof QueryError || error instanceof NotFoundError) {
         // Creation of member in database failed
         statusOverview.querySuccesful = false;
         statusOverview.queryErrorMsg = error.message;

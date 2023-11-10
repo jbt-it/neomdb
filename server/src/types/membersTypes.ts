@@ -160,13 +160,13 @@ export type CreateMemberRequest = {
   vorname: string;
   nachname: string;
   name: string;
-  geburtsdatum: string;
-  password: string;
-  handy: string;
-  geschlecht: number;
-  generation: number;
-  traineeSeit: string;
   email: string;
+  geburtsdatum: string | null;
+  handy: string | null;
+  geschlecht: number | null;
+  generation: number | null;
+  password: string; // TODO: Remove password from this type, this should be handled by the backend
+  traineeSeit: string; // TODO: Remove traineeSeit from this type, this should be handled by the backend
 };
 
 /**

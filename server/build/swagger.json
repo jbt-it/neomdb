@@ -312,27 +312,31 @@
 			},
 			"CreateMemberRequest": {
 				"properties": {
-					"email": {
-						"type": "string"
-					},
 					"traineeSeit": {
-						"type": "string"
-					},
-					"generation": {
-						"type": "number",
-						"format": "double"
-					},
-					"geschlecht": {
-						"type": "number",
-						"format": "double"
-					},
-					"handy": {
 						"type": "string"
 					},
 					"password": {
 						"type": "string"
 					},
+					"generation": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"geschlecht": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"handy": {
+						"type": "string",
+						"nullable": true
+					},
 					"geburtsdatum": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
 						"type": "string"
 					},
 					"name": {
@@ -346,13 +350,13 @@
 					}
 				},
 				"required": [
-					"email",
 					"traineeSeit",
+					"password",
 					"generation",
 					"geschlecht",
 					"handy",
-					"password",
 					"geburtsdatum",
+					"email",
 					"name",
 					"nachname",
 					"vorname"

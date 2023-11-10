@@ -205,7 +205,8 @@ class TraineesRepository {
         `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
       auswahlWETermin, infoabendBesucher,
       tuercode, wahl_start, wahl_ende
-      FROM generation`,
+      FROM generation
+      ORDER BY bewerbung_start DESC`,
         [],
         connection
       );
