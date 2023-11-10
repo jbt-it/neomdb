@@ -50,10 +50,18 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    const languages: Language[] = await this.membersRepository.getLanguagesByMemberID(memberID);
-    const edvSkills: EdvSkill[] = await this.membersRepository.getEdvSkillsByMemberID(memberID);
-    const mentor: Mentor = await this.membersRepository.getMentorByMemberID(memberID);
-    const mentees: Mentee[] = await this.membersRepository.getMenteesByMemberID(memberID);
+    const languagesQuery: Promise<Language[]> = this.membersRepository.getLanguagesByMemberID(memberID);
+    const edvSkillsQuery: Promise<EdvSkill[]> = this.membersRepository.getEdvSkillsByMemberID(memberID);
+    const mentorQuery: Promise<Mentor> = this.membersRepository.getMentorByMemberID(memberID);
+    const menteesQuers: Promise<Mentee[]> = this.membersRepository.getMenteesByMemberID(memberID);
+
+    // Executing all queries concurrently
+    const results = await Promise.all([languagesQuery, edvSkillsQuery, mentorQuery, menteesQuers]);
+
+    const languages = results[0];
+    const edvSkills = results[1];
+    const mentor = results[2];
+    const mentees = results[3];
 
     // Combine the four parts for the complete member dto
     const memberDto: MemberDetails = {
