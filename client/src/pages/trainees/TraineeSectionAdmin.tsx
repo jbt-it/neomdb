@@ -420,7 +420,7 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                   Trainee
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Angebot abgegeben
+                  Angebot bei EV
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
                   AP gehalten und abgegeben
@@ -438,28 +438,28 @@ const TraineeSectionAdmin: React.FunctionComponent<TraineeProps> = (props: Train
                   Akquise & Verhandlungstechnik
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Finanzen & Recht
+                  F&R
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Netzwerke
+                  NET
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Qualitätsmanagement
+                  QM
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  MS Powerpoint
+                  MS PPT
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
                   Strategie und Organisation
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Datenschutzschulung
+                  Datenschutz- schulung
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Sicherheitsschulung
+                  Sicherheits- schulung
                 </TableCell>
                 <TableCell className={classes.tableHeader} align="left">
-                  Excel Grundlagen
+                  MS Excel
                 </TableCell>
                 {doesPermissionsHaveSomeOf(props.listOfPermissions, [18]) && (
                   <TableCell className={classes.tableHeader} align="left">

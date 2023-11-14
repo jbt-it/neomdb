@@ -12,6 +12,7 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import PageBar from "../../components/navigation/PageBar";
+import { error } from "console";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,6 +72,7 @@ const TraineeSection: React.FunctionComponent = () => {
   const getTrainee: VoidFunction = () => {
     let mounted = true;
     api
+      //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
       .get(`/users`, {
         //correct Routes need to be imported
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -84,8 +86,8 @@ const TraineeSection: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((error) => {
-        if (error.response.status === 401) {
+      .catch((err) => {
+        if (err.response.status === 401) {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       });
@@ -137,7 +139,7 @@ const TraineeSection: React.FunctionComponent = () => {
   const getInternalProject: VoidFunction = () => {
     let mounted = true;
     api
-      .get(`/trainees/generations/{$:id}/internal-projects`, {
+      .get("/trainees/generations/15/internal-projects", {
         //correct Routes need to be imported when available, currently only one generation is being called, check if new code retreives all IPs
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
@@ -172,8 +174,10 @@ const TraineeSection: React.FunctionComponent = () => {
           }
         }
       })
-      .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
     // Clean-up function
     return () => {
@@ -185,7 +189,7 @@ const TraineeSection: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/trainees/generations/:generationID/internal-projects-and-workshop-feedback", {
+      .get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -196,8 +200,10 @@ const TraineeSection: React.FunctionComponent = () => {
           }
         }
       })
-      .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
       });
     // Clean-up function
     return () => {
@@ -218,7 +224,7 @@ const TraineeSection: React.FunctionComponent = () => {
     { generationID: 11, Bezeichnung: "Wintersemester 17/18", bewerbung_start: "2019-10-10T14:30:00Z" },
     { generationID: 10, Bezeichnung: "Sommersemester 2017", bewerbung_start: "2019-10-10T14:30:00Z" },
   ];
-
+  //TODO dummydata needs to be replaced by original data
   //Function to match the generation Bezeichnung witih the generationID
   const bezeichnungToGenerationID: Record<string, number> = {};
   dummydata.forEach((generation) => {
@@ -278,7 +284,11 @@ const TraineeSection: React.FunctionComponent = () => {
                 select
               >
                 {dummydata.map((generation) => (
-                  <MenuItem key={generation.generationID} value={generation.Bezeichnung}>
+                  <MenuItem
+                    key={generation.generationID}
+                    value={generation.Bezeichnung}
+                    defaultValue={GenerationFilter}
+                  >
                     {generation.Bezeichnung}
                   </MenuItem>
                 ))}

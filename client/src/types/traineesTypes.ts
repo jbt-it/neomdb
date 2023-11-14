@@ -10,6 +10,7 @@ export type Trainee = {
   vorname: string;
   nachname: string;
   generation: number;
+  generationBezeichnung: string;
   AngebotBeiEV: boolean;
   APgehalten: boolean;
   DLbeiEV: boolean;
