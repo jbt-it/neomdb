@@ -45,7 +45,7 @@
   "scripts": {
     "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
     "build": "tsoa spec-and-routes && tsc",
-    "start": "node build/src/server.js",
+    "start": "node dist/src/server.js",
     "start-legcy": "ts-node-dev --respawn --transpile-only --poll ./src/server.ts",
     "prod": "npm run build && npm run start",
     "lint": "eslint --ext .ts --ext .tsx ./src",
