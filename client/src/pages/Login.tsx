@@ -1,19 +1,19 @@
 /**
  * Component that handles the login process
  */
-import React, { useState, useContext } from "react";
-import { useHistory, NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 
 import api from "../utils/api";
-import { AuthContext } from "../context/auth-context/AuthContext";
 import { Paper, Grid, Button, TextField, Theme, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
+import { useAuth } from "../hooks/useAuth";
 
 const Login: React.FunctionComponent = () => {
-  const history = useHistory();
-  const { dispatchAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { dispatchAuth } = useAuth();
 
   /**
    * Styles
@@ -87,7 +87,7 @@ const Login: React.FunctionComponent = () => {
             type: authReducerActionType.authenticate,
             payload: { userID, userName, permissions, roles },
           });
-          history.push("/");
+          navigate("/");
         } else {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
           setFailedLogin(true);
@@ -186,9 +186,7 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <NavLink exact to="/passwort-vergessen">
-                    Forgot Password?
-                  </NavLink>
+                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
                   <Link id="capswarning" variant="body2" className={classes.warningText}>
