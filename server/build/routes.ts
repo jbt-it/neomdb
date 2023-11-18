@@ -8,7 +8,7 @@ import { AuthController } from './../src/auth/authController';
 import { MembersController } from './../src/resources/members/membersController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TraineesController } from './../src/resources/trainees/traineesController';
-import { expressAuthentication } from './../src/middleware/authenticationTsoa';
+import { expressAuthentication } from './../src/middleware/authentication';
 // @ts-ignore - no great way to install types from subpackage
 const promiseAny = require('promise.any');
 import type { RequestHandler, Router } from 'express';

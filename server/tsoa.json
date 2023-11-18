@@ -16,6 +16,6 @@
   "routes": {
     "basePath": "/api",
     "routesDir": "build",
-    "authenticationModule": "src/middleware/authenticationTsoa.ts"
+    "authenticationModule": "src/middleware/authentication.ts"
   }
 }
