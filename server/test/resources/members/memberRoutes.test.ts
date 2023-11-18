@@ -8,27 +8,27 @@ import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
 
+// --------------------------- SETUP AND TEARDOWN --------------------------- \\
+beforeAll(() => {
+  //try {
+  return memberTestUtils.clearMemberData();
+  // await setupMemberData();
+  // } catch (error) {
+  //console.log(error);
+  // } // Executes after every test
+  // await initMemberData(); // Executes before the first test
+  // await setupMemberData();
+});
+
+beforeEach(() => {
+  return memberTestUtils.setupMemberData(); // Executes before every test
+});
+
+afterEach(() => {
+  return memberTestUtils.clearMemberData();
+});
+
 describe("Test member routes", () => {
-  // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-  beforeAll(async () => {
-    try {
-      await memberTestUtils.clearMemberData(); // Executes after every test
-      // await setupMemberData();
-    } catch (error) {
-      console.log(error);
-    } // Executes after every test
-    // await initMemberData(); // Executes before the first test
-    // await setupMemberData();
-  });
-
-  beforeEach(async () => {
-    await memberTestUtils.setupMemberData(); // Executes before every test
-  });
-
-  afterEach(async () => {
-    await memberTestUtils.clearMemberData();
-  });
-
   // --------------------------- TESTS --------------------------- \\
 
   // -----------------------GET ROUTES-----------------------
@@ -489,12 +489,12 @@ describe("Test member routes", () => {
       // --- WHEN
       const mitgliedID = 8167;
       const memberInfo = {
-        mitgliedID: mitgliedID,
-        //mentor: 8111,
+        mitgliedID,
+        mentor: null,
         //sprachen: { Englisch: 5, Hindi: 6 },
         //edvkenntnisse: { "HTML/PHP": 2, "MS Office (Word, Powerpoint, Excel)": 3 },
         member: {
-          mitgliedID: mitgliedID,
+          mitgliedID,
           handy: "0123/456789",
         },
       };
@@ -506,6 +506,163 @@ describe("Test member routes", () => {
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(11);
+    });
+
+    test("should return 403 for update member with permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const memberInfo = {
+        mitgliedID,
+        mentor: null,
+        //sprachen: { Englisch: 5, Hindi: 6 },
+        //edvkenntnisse: { "HTML/PHP": 2, "MS Office (Word, Powerpoint, Excel)": 3 },
+        member: {
+          mitgliedID,
+          handy: "0123/456789",
+        },
+      };
+      const response = await request(app)
+        .patch(`/api/users/${mitgliedID}`)
+        .send(memberInfo)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+      expect(response.text).toBe("Authorization failed: You are not permitted to do this");
+    });
+  });
+
+  describe("PATCH /:id/status Member", () => {
+    test("should return 200 for update member status with permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const mitgliedstatus = "passives Mitglied";
+      const response = await request(app)
+        .patch(`/api/users/${mitgliedID}/status`)
+        .send({ mitgliedstatus })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.text).toBe("Status Update successful");
+    });
+
+    test("should return 422 for unknown member status", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const mitgliedstatus = "unbekannt";
+      const response = await request(app)
+        .patch(`/api/users/${mitgliedID}/status`)
+        .send({ mitgliedstatus })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(422);
+      expect(response.text).toBe("Status unbekannt is not valid");
+    });
+
+    test("should return 403 for unauthorized user", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const mitgliedstatus = "unbekannt";
+      const response = await request(app)
+        .patch(`/api/users/${mitgliedID}/status`)
+        .send({ mitgliedstatus })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+      expect(response.text).toBe("Authorization failed: You are not permitted to do this");
+    });
+  });
+
+  describe("DELETE /permissions", () => {
+    test("should return 200 for delete member's permission with permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberID = 8167;
+      const permissionID = 8;
+      const response = await request(app)
+        .delete(`/api/users/permissions`)
+        .send({ permissionID, memberID })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.text).toBe("Permission deleted");
+    });
+
+    test("should return 403 for delete member's permission without permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberID = 8167;
+      const permissionID = 1;
+      const response = await request(app)
+        .delete(`/api/users/permissions`)
+        .send({ permissionID, memberID })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+      expect(response.text).toBe("Permission cannot be deleted!");
+    });
+
+    test("should return 403 for delete member's permission without permission as normal member", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberID = 8320;
+      const permissionID = 5;
+      const response = await request(app)
+        .delete(`/api/users/permissions`)
+        .send({ permissionID, memberID })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+      expect(response.text).toBe("Permission cannot be deleted!");
+    });
+
+    test("should return 404 for delete member's permission without the member having one and not existing permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberID = 8320;
+      const permissionID = 200;
+      const response = await request(app)
+        .delete(`/api/users/permissions`)
+        .send({ permissionID, memberID })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+      expect(response.text).toBe("Permission cannot be deleted!");
     });
   });
 });
