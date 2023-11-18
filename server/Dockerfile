@@ -18,4 +18,4 @@ COPY . .
 RUN npm run build
 
 # Set the command to run the server
-CMD [ "npm", "start" ]
+CMD [ "npm", "prod" ]
