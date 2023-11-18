@@ -8,7 +8,7 @@
     "@types/jsonwebtoken": "^8.3.7",
     "@types/mysql": "^2.15.8",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
-    "axios": "^0.21.2",
+    "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "concurrently": "^8.2.1",
     "cookie-parser": "^1.4.5",
