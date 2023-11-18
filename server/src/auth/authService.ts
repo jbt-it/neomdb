@@ -1,7 +1,7 @@
 import { createCurrentTimestamp } from "../utils/dateUtils";
 import MembersRepository from "../resources/members/MembersRepository";
 import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
-import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/errors";
+import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import AuthRepository from "./AuthRepository";

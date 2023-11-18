@@ -11,7 +11,7 @@ import {
 } from "../../types/membersTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import MembersService from "./MembersService";
-import { UnauthorizedError } from "../../types/errors";
+import { UnauthorizedError } from "../../types/Errors";
 // TODO: Out comment if external account creation is activated
 // import { createMailAccount, addMailAccountToMailingList } from "../utils/plesk";
 // import { createMWUser } from "../utils/mediawiki";
