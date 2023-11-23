@@ -11,7 +11,7 @@ const memberTestUtils = new MemberTestUtils(app);
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
 beforeAll(() => {
   //try {
-  return memberTestUtils.clearMemberData();
+  return memberTestUtils.initMemberData();
   // await setupMemberData();
   // } catch (error) {
   //console.log(error);
@@ -26,6 +26,10 @@ beforeEach(() => {
 
 afterEach(() => {
   return memberTestUtils.clearMemberData();
+});
+
+afterAll(() => {
+  return memberTestUtils.clearInitMemberData();
 });
 
 describe("Test member routes", () => {

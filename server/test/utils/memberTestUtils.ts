@@ -1,15 +1,16 @@
 /* eslint-disable no-console */
 import MembersRepository from "../../src/resources/members/MembersRepository";
-import { executeScript } from "./databaseUtils";
 import { Member } from "../../src/types/membersTypes";
+import { executeScript } from "./databaseUtils";
 
 /**
  * Utility class for testing the members routes
  */
 class MemberTestUtils {
-  initMemberScript: string = "./test/scripts/members/db_member_init.sql";
-  clearMemberScript: string = "./test/scripts/members/db_member_clear.sql";
-  fillMemberScript: string = "./test/scripts/members/db_member_fill.sql";
+  initMemberScript = "./test/scripts/members/db_member_init.sql";
+  clearInitMemberScript = "./test/scripts/members/db_member_init_clear.sql";
+  clearMemberScript = "./test/scripts/members/db_member_clear.sql";
+  fillMemberScript = "./test/scripts/members/db_member_fill.sql";
 
   membersRepository: MembersRepository = null;
   app: Express.Application = null;
@@ -26,7 +27,20 @@ class MemberTestUtils {
   initMemberData = async () => {
     try {
       console.log("------------------INIT DATABASE------------------");
-      await executeScript(this.initMemberScript, "INSERT");
+      await executeScript(this.initMemberScript);
+      console.log("> Database initialized!");
+    } catch (error) {
+      console.error(`> ERROR: Failed to init member data: ${error}`);
+    }
+  };
+
+  /**
+   * Clears the database of the initial tables (data that is not changed during tests)
+   */
+  clearInitMemberData = async () => {
+    try {
+      console.log("------------------INIT DATABASE------------------");
+      await executeScript(this.clearInitMemberScript);
       console.log("> Database initialized!");
     } catch (error) {
       console.error(`> ERROR: Failed to init member data: ${error}`);
@@ -40,7 +54,7 @@ class MemberTestUtils {
   setupMemberData = async () => {
     try {
       console.log("------------------FILL DATABASE------------------");
-      await executeScript(this.fillMemberScript, "INSERT");
+      await executeScript(this.fillMemberScript);
       console.log("> Database filled!");
     } catch (error) {
       console.error(`> ERROR: Failed to setup member data: ${error}`);
@@ -53,7 +67,7 @@ class MemberTestUtils {
   clearMemberData = async () => {
     try {
       console.log("------------------CLEAR DATABASE------------------");
-      await executeScript(this.clearMemberScript, "TRUNCATE");
+      await executeScript(this.clearMemberScript);
       console.log("> Database cleared!");
     } catch (error) {
       console.error(`> ERROR: Failed to clear member data: ${error}`);
