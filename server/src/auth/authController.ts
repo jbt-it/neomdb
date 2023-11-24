@@ -38,13 +38,6 @@ export class AuthController extends Controller {
     const cookieOptions = getCookieOptionsAsString();
     this.setHeader("Set-Cookie", `token=${token}; ${cookieOptions}`);
 
-    /*
-     * Only set the x-auth-token header in development because swagger-ui does not support cookies
-     */
-    if (process.env.IS_PRODUCTION !== "true") {
-      this.setHeader("x-auth-token", token);
-    }
-
     return payload;
   }
 
