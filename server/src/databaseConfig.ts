@@ -3,6 +3,7 @@
  */
 import * as fs from "fs";
 import logger from "./logger";
+import { PoolOptions } from "mysql2";
 
 // Check if the environment is test
 const isTest = process.env.NODE_ENV === "test";
@@ -31,19 +32,20 @@ try {
 /**
  * Config for the MySQL test database
  */
-const testDatabaseConfig = {
+const testDatabaseConfig: PoolOptions = {
   host: process.env.DB_TEST_HOST,
   user: process.env.DB_TEST_USER,
   password: process.env.DB_TEST_PASSWORD,
   database: process.env.DB_TEST_NAME,
-  connectionLimit: 50,
+  multipleStatements: true,
+  connectionLimit: 200, // Increased limit to accomodate test-setup and connections during request testing
 };
 
 /**
  * Config for the MySQL development database
  * (same as production database)
  */
-const devDatabaseConfig = {
+const devDatabaseConfig: PoolOptions = {
   host: process.env.DB_HOST_DEV,
   port: parseInt(process.env.DB_PORT) || parseInt(process.env.DB_PORT_PROD),
   user: process.env.DB_USER,
@@ -56,7 +58,7 @@ const devDatabaseConfig = {
  * Config for the MySQL production database
  * (same as development database)
  */
-const prodDatabaseConfig = {
+const prodDatabaseConfig: PoolOptions = {
   host: process.env.DB_HOST_PROD,
   port: dbPort,
   user: process.env.DB_USER,

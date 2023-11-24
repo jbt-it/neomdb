@@ -359,13 +359,13 @@ class MembersService {
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = this.membersRepository.getMemberByID(memberID, false);
+    const member = await this.membersRepository.getMemberByID(memberID, false);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
     // Check if potential new mentor exists (if set)
-    if (mentor !== null) {
-      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor?.mitgliedID);
+    if (mentor && mentor.mitgliedID !== null) {
+      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
       if (mentorInDB === null) {
         throw new NotFoundError(`Mentor with id ${mentor?.mitgliedID} does not exist`);
       }

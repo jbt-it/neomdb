@@ -1,30 +1,27 @@
 import { describe, expect, test, beforeAll, beforeEach, afterEach, jest, afterAll } from "@jest/globals";
 import * as request from "supertest";
 import app from "../../src/app";
-import { clearMemberData, initMemberData, setupMemberData } from "../utils/memberTestUtils";
+import MemberTestUtils from "../utils/memberTestUtils";
 import AuthTestUtils from "../utils/authTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
+const memberTestUtils = new MemberTestUtils(app);
 
 describe("Test auth routes", () => {
   // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-  beforeAll(async () => {
-    try {
-      // await setupMemberData();
-    } catch (error) {
-      console.log(error);
-    }
+  beforeAll(() => {
+    return memberTestUtils.initMemberData(); // Executes after every test
   });
 
-  beforeEach(async () => {
-    await setupMemberData(); // Executes before every test
+  beforeEach(() => {
+    return memberTestUtils.setupMemberData(); // Executes before every test
   });
-  afterEach(async () => {
-    await clearMemberData(); // Executes after every test
+  afterEach(() => {
+    return memberTestUtils.clearMemberData(); // Executes after every test
   });
 
-  afterAll(async () => {
-    // await clearMemberData(); // Executes after every test
+  afterAll(() => {
+    return memberTestUtils.clearInitMemberData();
   });
 
   // --------------------------- TESTS --------------------------- \\
