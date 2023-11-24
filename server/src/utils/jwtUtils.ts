@@ -63,17 +63,11 @@ export const verifyJWT = (token: string): null | JWTPayload => {
 /**
  * Checks if the JWT exists and is valid
  * @param req The request object containing the JWT in the header or cookie
- * @param checkHeader Whether to check the header or the cookie for the JWT
- * (the header is only used in development because swagger-ui does not support cookies)
  * @returns true if the JWT is valid
  */
-export const checkForValidJWT = (req: Request, checkHeader: boolean): boolean => {
-  if (checkHeader) {
-    return (
-      (req.headers.authorization && verifyJWT(extractJWTFromHeader(req.headers.authorization)) !== null) ||
-      (req.cookies && req.cookies.token && verifyJWT(req.cookies.token) !== null)
-    );
-  } else {
-    return req.cookies && req.cookies.token && verifyJWT(req.cookies.token) !== null;
-  }
+export const checkForValidJWT = (req: Request): boolean => {
+  return (
+    (req.headers.authorization && verifyJWT(extractJWTFromHeader(req.headers.authorization)) !== null) ||
+    (req.cookies && req.cookies.token && verifyJWT(req.cookies.token) !== null)
+  );
 };

@@ -19,12 +19,10 @@ const checkPermissions = (jwtPermissions: Permission[], permissions: string[]) =
  * Implements the authentication middleware which **protects** all critical routes from unauthorised access
  * @param req the request object
  * @param permissions the permissions required to access the route
- * @param checkHeader whether to check the header or the cookie for the JWT
- * (the header is only used in development because swagger-ui does not support cookies)
  */
-const checkDataFromJWT = (req: express.Request, permissions: string[], checkHeader: boolean) => {
+const checkDataFromJWT = (req: express.Request, permissions: string[]) => {
   return new Promise((resolve, reject) => {
-    if (!checkForValidJWT(req, checkHeader)) {
+    if (!checkForValidJWT(req)) {
       reject(new UnauthenticatedError("Authentication failed: Please log in"));
     }
     const token = req.cookies["token"] || extractJWTFromHeader(req.headers.authorization);
@@ -56,8 +54,7 @@ export const expressAuthentication = (
   securityName: string,
   permissions?: string[]
 ): Promise<any> => {
-  const checkHeader = process.env.IS_PRODUCTION !== "true";
   if (securityName === "jwt") {
-    return checkDataFromJWT(request, permissions, checkHeader);
+    return checkDataFromJWT(request, permissions);
   }
 };
