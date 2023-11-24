@@ -1,6 +1,6 @@
-import fs = require("fs");
+import * as fs from "fs";
 import { PoolConnection } from "mysql2";
-import dotenv = require("dotenv");
+import * as dotenv from "dotenv";
 dotenv.config();
 import { commit, connectionQuery, startTransaction } from "../database";
 

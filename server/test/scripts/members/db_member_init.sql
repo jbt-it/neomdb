@@ -1,6 +1,7 @@
 --
 -- Daten für Tabelle `mitgliedstatus optional`
 --
+SET FOREIGN_KEY_CHECKS = 0;
 
 INSERT INTO `mitgliedstatus` (`mitgliedstatusID`, `bezeichnung`) VALUES
 (1, 'Trainee'),
@@ -106,3 +107,5 @@ INSERT INTO `evposten_has_berechtigung` (`evposten_evpostenID`, `berechtigung_be
 (44, 13, 1),
 (44, 19, 0),
 (44, 21, 0);
+
+SET FOREIGN_KEY_CHECKS = 1
