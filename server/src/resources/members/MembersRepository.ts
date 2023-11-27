@@ -686,11 +686,10 @@ class MembersRepository {
    */
   getPermissionByID = async (permissionID: number, connection?: mysql.PoolConnection): Promise<Permission> => {
     try {
-      // TODO: Check this select query!!!
       const permissionQueryResult = await query(
-        `SELECT berechtigungID, evposten_evpostenID AS directorID
-      FROM berechtigung
-      WHERE berechtigungID = ?`,
+        `SELECT berechtigung_berechtigungID, evposten_evpostenID AS directorID
+      FROM evposten_has_berechtigung 
+      WHERE berechtigung_berechtigungID = ?`,
         [permissionID],
         connection
       );
