@@ -188,6 +188,8 @@ const MemberProfile: React.FunctionComponent = () => {
       .catch((err) => {
         if (err.response.status === 401) {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response.status === 403) {
+          showErrorMessage("Du hast nicht die Berechtigung dies zu tun!");
         } else if (err.response.status === 500) {
           showErrorMessage("Aktualisierung ist fehlgeschlagen!");
         }

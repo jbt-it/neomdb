@@ -677,7 +677,8 @@
 					},
 					"plz1": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"strasse1": {
 						"type": "string"
@@ -718,11 +719,13 @@
 						"nullable": true
 					},
 					"internesprojekt": {
-						"type": "string",
+						"type": "number",
+						"format": "double",
 						"nullable": true
 					},
 					"generation": {
-						"type": "string",
+						"type": "number",
+						"format": "double",
 						"nullable": true
 					},
 					"mitgliedstatus": {

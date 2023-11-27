@@ -201,11 +201,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   // Filter of languages for the autocomplete component
   const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
-  const { members } = props;
-  const { departments } = props;
-  const { listOfLanguages } = props;
-  const { listOfEDVSkills } = props;
-  const { memberDetails } = props;
+  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.nachname);
@@ -478,12 +474,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       ressort: department,
       arbeitgeber: employer,
       strasse1: street1,
-      plz1: parseInt(plz1State, 10),
+      plz1: plz1State ? parseInt(plz1State, 10) : null,
       ort1: placeOfResidence1,
       tel1: parseInt(telephone1, 10),
       email1: email1State,
       strasse2: street2,
-      plz2: parseInt(plz2State, 10),
+      plz2: plz2State ? parseInt(plz2State, 10) : null,
       ort2: placeOfResidence2,
       tel2: parseInt(telephone2, 10),
       email2: email2State,
