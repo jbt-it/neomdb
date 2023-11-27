@@ -129,8 +129,8 @@ export type MemberDetails = {
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
+  generation: number | null;
+  internesprojekt: number | null;
   trainee_seit: string | null;
   mitglied_seit: string | null;
   alumnus_seit: string | null;
@@ -141,7 +141,7 @@ export type MemberDetails = {
   ressort: string | null;
   arbeitgeber: string | null;
   strasse1: string;
-  plz1: number;
+  plz1: number | null;
   ort1: string;
   tel1: number;
   email1: string | null;
