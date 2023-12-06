@@ -44,7 +44,7 @@ describe("GET / get IP", () => {
 
     // --- WHEN
 
-    const response = await request(app).get("/api/trainee/ip/62").send().set("Cookie", `token=${token}`);
+    const response = await request(app).get("/api/trainees/ip/62").send().set("Cookie", `token=${token}`);
 
     // --- THEN
     expect(response.status).toBe(200);

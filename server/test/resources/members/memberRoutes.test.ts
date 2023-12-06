@@ -64,7 +64,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toHaveLength(3);
     });
   });
 
@@ -480,7 +480,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(11);
+      expect(response.text).toBe("Department updated");
     });
   });
 
