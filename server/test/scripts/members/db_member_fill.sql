@@ -161,4 +161,13 @@ INSERT INTO `generation` (`generationID`, `bezeichnung`, `bewerbung_start`, `bew
 (14, 'Sommersemester 2019', '2019-04-15 21:00:00', '2019-04-19 23:59:00', '03.05 bis 05.05', '26.04 - 28.04.2019', 38, '314157', '2019-05-07 12:00:00', '2019-05-09 20:00:00'),
 (15, 'Wintersemester 19/20', '2019-10-28 18:00:00', '2019-11-02 20:10:00', '15. - 17. November', '08.11 - 10.11.2019', 107, '000000', '2019-11-17 23:59:00', '2019-11-20 19:30:00');
 
+
+--
+-- Daten für Tabelle `internesprojekt`
+--
+
+INSERT INTO `internesprojekt` (`internesprojektID`, `generation`, `projektname`, `kuerzel`, `kickoff`, `AngebotBeiEV`, `ZPbeiEV`, `ZPgehalten`, `APbeiEV`, `APgehalten`, `DLbeiEV`) VALUES
+(62, 15, 'JE7 Analyse', 'JE7A', '2019-12-04', 1, 0, NULL, 0, NULL, 0),
+(63, 15, 'JE7 Strategy', 'JE7S', '2019-11-27', 1, 0, NULL, 0, NULL, 0);
+
 SET FOREIGN_KEY_CHECKS = 1;

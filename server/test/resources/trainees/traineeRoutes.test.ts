@@ -48,6 +48,6 @@ describe("GET / get IP", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(10);
+    expect(response.body.projektname).toBe("JE7 Analyse");
   });
 });
