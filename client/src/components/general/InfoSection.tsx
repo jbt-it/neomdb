@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { stringAvatar } from "../../utils/stringUtils";
 import { makeStyles, createStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     avatar: {
       fontSize: "0.75rem",
