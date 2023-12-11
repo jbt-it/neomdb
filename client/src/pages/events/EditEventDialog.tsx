@@ -155,8 +155,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       errorDispatch({ type: "set", field: "title", value: true });
       complete = false;
     }
-    // startDate is necessary for all events and cannot be null
-    if (!state.startDate) {
+    // startDate is necessary for all events and cannot be null and cannot be more than 365 days in the past
+    if (state.startDate ? state.startDate < dayjs().subtract(1, "year").startOf("day") : true) {
       errorDispatch({ type: "set", field: "startDate", value: true });
       complete = false;
     }
@@ -283,7 +283,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       onChangeCallback: onChangeStartDate,
       type: "Date",
       error: errorState.startDate,
-      helperText: errorState.startDate ? "Bitte gib ein Startdatum ein!" : undefined,
+      helperText: errorState.startDate ? "Bitte gib ein gültiges Startdatum ein!" : undefined,
     },
     {
       label: "Ende",
