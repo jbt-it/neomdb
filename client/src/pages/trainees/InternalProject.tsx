@@ -322,7 +322,6 @@ const InternalProject: React.FunctionComponent = () => {
     internalProjectDetails ? setInternalProjectDetails(data) : null;
     // Variable for checking, if the component is mounted
     let mounted = true;
-    console.log(data);
     /*
     *
     * Here will be the api call for storing the changed data in the database, currently the api call for the members page is here as a placeholder since the required function is not implemented yet
