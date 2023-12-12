@@ -319,7 +319,6 @@ const InternalProject: React.FunctionComponent = () => {
           qualitaetsmanager,
         }
       : null;
-    console.log(data?.projektmitglieder);
     internalProjectDetails ? setInternalProjectDetails(data) : null;
     // Variable for checking, if the component is mounted
     let mounted = true;
