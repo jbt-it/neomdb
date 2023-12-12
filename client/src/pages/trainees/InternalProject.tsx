@@ -269,6 +269,7 @@ const InternalProject: React.FunctionComponent = () => {
       },
     ]);
   };
+
   const getSelectableQms: VoidFunction = () => {
     //api call for current trainees
     setSelectableQMs([
