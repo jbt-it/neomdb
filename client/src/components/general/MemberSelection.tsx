@@ -25,6 +25,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+/**
+ * The MemberSelection component is used to select members eg. for a project or an event and uses the Autocomplete component to easily select a member.
+ * For each selected member a Autocomplete component is rendered. Members can be added and removed from the selection.
+ * @param props - The properties of the component
+ * @param props.selectedMembers - The currently selected members state
+ * @param props.allMembers - All members that can be selected as statte
+ * @param props.mitgliedstatus - The mitgliedstatus of the members that can be selected eg. only trainees
+ * @param props.onChangeCallback - The callback function that is called when the selection changes
+ * @param props.addMember - The callback function that is called when a member is added
+ * @param props.removeMember - The callback function that is called when a member is removed
+ * @returns A React FunctionComponent
+ */
+
 const MemberSelection = (props: Props) => {
   const classes = useStyles();
   const { selectedMembers, allMembers, mitgliedstatus, onChangeCallback, addMember, removeMember } = props;

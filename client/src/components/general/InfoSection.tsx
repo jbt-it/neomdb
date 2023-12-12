@@ -82,7 +82,6 @@ const InfoSection = (props: Props) => {
             ))
           : null;
 
-        // listStyleType: "disc" for circles and "square" for squares
         fieldContainer = (
           <Grid container xs={12}>
             <Grid xs={12} md={4}>
@@ -98,7 +97,6 @@ const InfoSection = (props: Props) => {
           </Grid>
         );
       } else if (field.type === "memberList") {
-        // listStyleType: "disc" for circles and "square" for squares
         fieldContainer = (
           <Grid container xs={12} sx={{ marginTop: 0.5, marginBottom: 1.5 }}>
             <Grid xs={12} md={4}>

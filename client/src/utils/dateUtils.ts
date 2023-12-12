@@ -8,6 +8,11 @@ const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", year: "numeric
 // Local option (formats dates and datetimes into the german format dd.mm.yyyy hh.MM.ss)
 const locales = "de-DE";
 
+/**
+ * Transforms a date to a readable string
+ * @param date The date to transform
+ * @returns The date as a readable string
+ */
 export const transformDateToReadableString = (date: Date) => {
   return date.toLocaleDateString(locales, dateOptions);
 };

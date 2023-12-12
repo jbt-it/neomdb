@@ -294,7 +294,7 @@ const InternalProject: React.FunctionComponent = () => {
   useEffect(getSelectableQms, []);
   useEffect(() => {
     const fetchDetails = async () => {
-      await getInternalProjectDetails(Number(id));
+      getInternalProjectDetails(Number(id));
     };
 
     fetchDetails();
@@ -434,7 +434,7 @@ const InternalProject: React.FunctionComponent = () => {
     setQualitaetsmanager(updatedQMs);
   };
 
-  const InternalProjectDialogFields: Array<Field> = [
+  const internalProjectDialogFields: Array<Field> = [
     {
       label: "Name",
       state: name,
@@ -467,7 +467,7 @@ const InternalProject: React.FunctionComponent = () => {
     { label: "ZP Datum", state: dayjs(zpDatum), width: "full", onChangeCallback: onChangeZpDatum, type: "Date" },
   ];
 
-  const FieldDocuments: Array<Field> = [
+  const fieldDocuments: Array<Field> = [
     {
       label: "Angebot abgegeben",
       state: angebotAbgegeben,
@@ -570,10 +570,10 @@ const InternalProject: React.FunctionComponent = () => {
         <DialogTitle>{internalProjectDetails.name} bearbeiten</DialogTitle>
         <DialogContent dividers={true}>
           <div className={classes.fieldSectionBox}>
-            <FieldSection title={"Details"} fields={InternalProjectDialogFields}></FieldSection>
+            <FieldSection title={"Details"} fields={internalProjectDialogFields}></FieldSection>
           </div>
           <div className={classes.fieldSectionBox}>
-            <FieldSection title={"Dokumente"} fields={FieldDocuments}></FieldSection>
+            <FieldSection title={"Dokumente"} fields={fieldDocuments}></FieldSection>
           </div>
           <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
             <Typography variant="subtitle1">Projektmitglieder</Typography>
@@ -634,7 +634,11 @@ const InternalProject: React.FunctionComponent = () => {
               <strong>Informationen zum internen Projekt</strong>
             </Typography>
             {doesPermissionsHaveSomeOf(auth.permissions, [15]) ? (
-              <IconButton onClick={(event) => handleInternalProjectInfoDialogOpen(event)}>
+              <IconButton
+                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+                  handleInternalProjectInfoDialogOpen(event)
+                }
+              >
                 <Edit fontSize="inherit" />
               </IconButton>
             ) : null}
