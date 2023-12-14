@@ -1,7 +1,7 @@
 import mysql = require("mysql2");
 import { executeMultipleQueries, query } from "../../database";
 import { Permission, PermissionAssignment } from "../../types/authTypes";
-import { QueryError, UnprocessableEntityError } from "../../types/errors";
+import { QueryError, UnprocessableEntityError } from "../../types/Errors";
 import {
   Department,
   DepartmentMember,
@@ -219,8 +219,8 @@ class MembersRepository {
         ],
         connection
       );
-      if (queryResult.affectedRows > 0) {
-        return queryResult.insertId;
+      if ((queryResult as mysql.ResultSetHeader).affectedRows > 0) {
+        return (queryResult as mysql.ResultSetHeader).insertId;
       }
 
       return null;

@@ -3,33 +3,7 @@
  */
 import { QueryResult, TransactionTask } from "types/databaseTypes";
 import mysql = require("mysql2");
-import fs = require("fs");
-
-let dbPassword = null;
-try {
-  dbPassword = fs.readFileSync(process.env.DB_PASSWORD_PROD_FILE, "utf8");
-} catch (err) {
-  console.error(`Error trying to read database password from ${process.env.DB_PASSWORD_PROD_FILE}: ${err}`);
-}
-
-let dbPort = null;
-try {
-  dbPort = parseInt(process.env.DB_PORT_PROD) || parseInt(process.env.DB_PORT);
-} catch (err) {
-  console.error(`Error trying to parse database port ${process.env.DB_PORT_PROD} to int: ${err}`);
-}
-
-/**
- * Config for the MySQL database
- */
-const databaseConfig = {
-  host: process.env.DB_HOST_PROD || process.env.DB_HOST_DEV,
-  port: dbPort,
-  user: process.env.DB_USER,
-  password: dbPassword || process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  connectionLimit: 50,
-};
+import databaseConfig from "./databaseConfig";
 
 const pool: mysql.Pool = mysql.createPool(databaseConfig);
 
