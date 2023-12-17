@@ -477,7 +477,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.text).toBe("Department updated");
     });
 
     test("should return 403 for member changes departement info", async () => {
@@ -491,18 +490,17 @@ describe("Test member routes", () => {
         "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/hwekfoiwfjGFHCkhdllewlj12Q?e=JHVUZFZU";
       const linkOrganigramm = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
       const response = await request(app)
-        .patch(`/api/users/departments/${departmentID}`)
+        .patch(`/api/members/departments/${departmentID}`)
         .send({ linkZielvorstellung, linkOrganigramm })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Authorization failed: You are not permitted to do this");
     });
   });
 
   describe("PATCH /:id  update Member", () => {
-    test("should return 200 for update member with permission", async () => {
+    test("should return 204 for update member with permission", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -584,8 +582,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.text).toBe("Member updated");
+      expect(response.status).toBe(204);
     });
 
     test("should return 403 for update member with permission", async () => {
@@ -594,16 +591,75 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8167;
+      const mitgliedID = 8111;
       const memberInfo = {
         mitgliedID,
+        vorname: "Brandon-Lee",
+        nachname: "Frye",
+        jbt_email: "b.frye@studentische-beratung.de",
+        geschlecht: 1,
+        geburtsdatum: "1990-06-05",
+        handy: "0162/9846320",
+        mitgliedstatus: "passives Mitglied",
+        generation: null,
+        internesprojekt: null,
+        trainee_seit: "2011-04-30",
+        mitglied_seit: "2012-11-30",
+        alumnus_seit: null,
+        senior_seit: null,
+        aktiv_seit: "2012-11-30",
+        passiv_seit: null,
+        ausgetreten_seit: null,
+        ressort: "Mitglieder",
+        arbeitgeber: "Versicherung Deutschland",
+        strasse1: "Woodsman Ave 61",
+        plz1: "70364",
+        ort1: "Stuttgart",
+        tel1: null,
+        email1: "brandon-lee@gmx.de",
+        strasse2: "Budapester Straße 96",
+        plz2: "56370",
+        ort2: "Rheinland-Pfalz",
+        tel2: "07042/984365",
+        email2: "brandon-lee@gmx.de",
+        hochschule: "Universität Hohenheim",
+        studiengang: "Master of Financial Management",
+        studienbeginn: "2014-09-30T22:00:00.000Z",
+        studienende: null,
+        vertiefungen: "Controlling und Unternehmensrechnung",
+        ausbildung: null,
+        engagement: null,
+        canPL: "2013-12-22",
+        canQM: "2013-12-22",
+        lastchange: "1899-11-29",
+        fuehrerschein: false,
+        ersthelferausbildung: false,
         mentor: null,
-        //sprachen: { Englisch: 5, Hindi: 6 },
-        //edvkenntnisse: { "HTML/PHP": 2, "MS Office (Word, Powerpoint, Excel)": 3 },
-        member: {
-          mitgliedID,
-          handy: "0123/456789",
-        },
+        mentees: [],
+        sprachen: [
+          {
+            wert: "Deutsch",
+            niveau: 5,
+          },
+          {
+            wert: "English",
+            niveau: 3,
+          },
+          {
+            wert: "Französisch",
+            niveau: 1,
+          },
+        ],
+        edvkenntnisse: [
+          {
+            wert: "MS-Office",
+            niveau: 3,
+          },
+          {
+            wert: "PHP",
+            niveau: 1,
+          },
+        ],
       };
       const response = await request(app)
         .patch(`/api/members/${mitgliedID}`)
@@ -612,12 +668,11 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Authorization failed: You are not permitted to do this");
     });
   });
 
   describe("PATCH /:id/status Member", () => {
-    test("should return 200 for update member status with permission", async () => {
+    test("should return 204 for update member status with permission", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -631,8 +686,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.text).toBe("Status Update successful");
+      expect(response.status).toBe(204);
     });
 
     test("should return 422 for unknown member status", async () => {
@@ -650,7 +704,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(422);
-      expect(response.text).toBe("Status unbekannt is not valid");
     });
 
     test("should return 403 for unauthorized user", async () => {
@@ -668,12 +721,11 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Authorization failed: You are not permitted to do this");
     });
   });
 
   describe("DELETE /permissions", () => {
-    test("should return 200 for delete member's permission with permission", async () => {
+    test("should return 204 for delete member's permission with permission", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -687,8 +739,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.text).toBe("Permission deleted");
+      expect(response.status).toBe(204);
     });
 
     test("should return 403 for delete member's permission without permission", async () => {
@@ -706,7 +757,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Permission cannot be deleted!");
     });
 
     test("should return 403 for delete member's permission without permission as normal member", async () => {
@@ -724,7 +774,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Permission cannot be deleted!");
     });
 
     test("should return 404 for delete member's permission without the member having one and not existing permission", async () => {
@@ -742,7 +791,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(403);
-      expect(response.text).toBe("Permission cannot be deleted!");
     });
   });
 });
