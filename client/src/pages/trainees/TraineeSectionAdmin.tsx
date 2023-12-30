@@ -84,7 +84,7 @@ interface TraineeProps {
   trainees: traineeTypes.Trainee[];
   members: memberTypes.Member[];
   generation: traineeTypes.Trainee[];
-  generationFilter: number;
+  generationFilter: number | undefined;
   currentGeneration: string;
 }
 interface MemberOption {

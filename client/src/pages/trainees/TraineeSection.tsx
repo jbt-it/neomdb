@@ -20,6 +20,8 @@ import {
   Select,
   SelectChangeEvent,
   Typography,
+  Button,
+  IconButton,
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
@@ -27,9 +29,12 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import PageBar from "../../components/navigation/PageBar";
+import { useMediaQuery } from "@mui/material";
 
-import TraineeSectionTraineesTable from "../../components/members/trainees/TraineeSectionTraineesTable";
+import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
 import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
+import { AddCircle } from "@mui/icons-material";
+import AddInternalProjectDialog from "../../components/members/trainees/AddInternalProjectDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -94,6 +99,9 @@ const TraineeSection: React.FunctionComponent = () => {
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const [generations, setGenerations] = useState<traineeTypes.Generation[]>([]);
+  const [addIPDialogOpen, setAddIPDialogOpen] = useState<boolean>(false);
+
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   /**
    * retrieves all trainees from the database and sets the state of trainees
@@ -111,7 +119,31 @@ const TraineeSection: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             //const to add generation value to trainee, because api call currently doesn't get generation
-            const traineesTmp = res.data.map((trainee: traineeTypes.Trainee) => ({ ...trainee, generation: 15 }));
+            const generationID = generations.find(
+              (generation) => generation.bezeichnung === selectedGeneration
+            )?.generationID;
+            //manually add values for testing until route in backend is fixed
+            const traineesTmp = res.data
+              .filter((trainee: traineeTypes.Trainee) => trainee.generation === generationID)
+              .map((trainee: traineeTypes.Trainee) => {
+                return {
+                  ...trainee,
+                  AngebotBeiEV: true,
+                  APgehalten: false,
+                  DLbeiEV: true,
+                  Projektmanagement: true,
+                  RhetorikPräsenationstechnik: true,
+                  AkquiseVerhandlungstechnik: false,
+                  FinanzenRecht: false,
+                  Netzwerke: true,
+                  Qualitätsmanagement: true,
+                  MSPowerpoint: false,
+                  StrategieOrganisation: false,
+                  Datenschutzschulung: false,
+                  Sicherheitsschulung: false,
+                  ExcelGrundlagen: false,
+                };
+              });
             setTrainees(traineesTmp);
           }
         }
@@ -260,8 +292,6 @@ const TraineeSection: React.FunctionComponent = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
-        console.log("res.data getTraineegeneration:");
-        console.log(res.data);
         if (res.status === 200) {
           if (mounted) {
             setGenerationFilter(res.data[res.data.length - 1].bezeichnung);
@@ -286,12 +316,12 @@ const TraineeSection: React.FunctionComponent = () => {
     };
   };
 
-  useEffect(() => getTrainees(), []);
+  useEffect(() => getGenerations(), []);
   useEffect(() => getMembers(), []);
   useEffect(() => getInternalProject(), []);
   useEffect(() => getPermissions(), []);
+  useEffect(() => getTrainees(), [selectedGeneration]);
   useEffect(() => getTraineegeneration(), [selectedGeneration]);
-  useEffect(() => getGenerations(), []);
 
   const dummydata: traineeTypes.Generation[] = [
     { generationID: 15, bezeichnung: "Wintersemester 19/20", bewerbung_start: "2019-10-10T14:30:00Z" },
@@ -358,7 +388,7 @@ const TraineeSection: React.FunctionComponent = () => {
     };
     return (
       <FormControl sx={{ width: 220 }} size="small">
-        <Select value={selectedGeneration} onChange={handleGenerationChange} MenuProps={MenuProps}>
+        <Select value={selectedGeneration} onChange={handleGenerationChange} MenuProps={MenuProps} sx={{ height: 40 }}>
           {generations.length > 0 ? (
             generations.map((generation) => (
               <MenuItem key={generation.generationID} value={generation.bezeichnung}>
@@ -371,6 +401,14 @@ const TraineeSection: React.FunctionComponent = () => {
         </Select>
       </FormControl>
     );
+  };
+
+  const handleClickOpen = () => {
+    setAddIPDialogOpen(true);
+  };
+
+  const handleClickClose = () => {
+    setAddIPDialogOpen(false);
   };
 
   // Code to generate the Traineesection based on the Permissions the User has
@@ -415,10 +453,32 @@ const TraineeSection: React.FunctionComponent = () => {
           generationFilter={numbervalue}
         />
       )} */}
-      <Box sx={{ mt: 1, mb: 3 }}>
-        <Typography fontSize={12}>Traineegeneration:</Typography>
-        {generationSelection()}
-      </Box>
+      {/* TODO ONLY FOR CURRENT GENERATION and with permission*/}
+
+      <AddInternalProjectDialog
+        open={addIPDialogOpen}
+        handleDialogClose={handleClickClose}
+        trainees={trainees}
+        members={members}
+        internalProjects={traineegenerationData}
+        generationFilter={generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID}
+        currentGeneration={selectedGeneration}
+      />
+      <Stack sx={{ mt: 1, mb: 3 }} direction={"row"} spacing={5} alignItems={"end"}>
+        <Stack direction={"column"}>
+          <Typography fontSize={12}>Traineegeneration:</Typography>
+          {generationSelection()}
+        </Stack>
+        {!isMobile ? (
+          <Button variant="contained" startIcon={<AddCircle />} onClick={handleClickOpen} sx={{ height: 40 }}>
+            Internes Projekt Hinzufügen
+          </Button>
+        ) : (
+          <IconButton onClick={handleClickOpen} sx={{ height: 40 }}>
+            <AddCircle color="primary" sx={{ width: 40, height: 40 }} />
+          </IconButton>
+        )}
+      </Stack>
       <Box
         sx={(theme) => ({
           display: "flex",
@@ -429,14 +489,19 @@ const TraineeSection: React.FunctionComponent = () => {
         })}
       >
         {traineegenerationData.map((internalProject) => (
-          <InternalProjectCard internalProject={internalProject} />
+          <InternalProjectCard
+            internalProject={internalProject}
+            trainees={trainees.filter((trainee) => {
+              return trainee.internesprojekt === internalProject.internesProjektID;
+            })}
+          />
         ))}
       </Box>
 
       {hasPermissionInternalProject ? (
         <>
           <Divider sx={{ mb: 5 }} />
-          <TraineeSectionTraineesTable />
+          <TraineeSectionTable trainees={trainees} />
         </>
       ) : null}
       <PageBar pageTitle="Traineebereich" />

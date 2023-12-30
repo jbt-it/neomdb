@@ -33,7 +33,6 @@ router.get(
   restrictRoutes([14], false),
   catchAsync(traineesController.retrieveTraineeChoices)
 );
-// router.get("/generations", restrictRoutes([14], false), catchAsync(traineesController.retrieveGenerations));
 router.get("/generations", catchAsync(traineesController.retrieveGenerations));
 router.get(
   "/generations/:id/mentors",

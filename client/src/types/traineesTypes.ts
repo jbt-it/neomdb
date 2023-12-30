@@ -11,6 +11,7 @@ export type Trainee = {
   nachname: string;
   generation: number;
   generationBezeichnung: string;
+  internesprojekt: number;
   AngebotBeiEV: boolean;
   APgehalten: boolean;
   DLbeiEV: boolean;
