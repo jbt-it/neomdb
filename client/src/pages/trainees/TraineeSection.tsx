@@ -5,14 +5,31 @@ import * as membersTypes from "../../types/membersTypes";
 import { useState, useContext } from "react";
 import api from "../../utils/api";
 import * as traineeTypes from "../../types/traineesTypes";
-import { Grid, TextField, Theme, MenuItem } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Theme,
+  MenuItem,
+  Paper,
+  Stack,
+  Container,
+  Divider,
+  FormControl,
+  Input,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import PageBar from "../../components/navigation/PageBar";
-import { error } from "console";
+
+import TraineeSectionTraineesTable from "../../components/members/trainees/TraineeSectionTraineesTable";
+import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,19 +74,32 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+/**
+ * TODOs: rework getTrainees(), getMembers(), getInternalProject(), getTraineegeneration(), getFilteredInternalProjects()
+ * only retrieve Members from a specific
+ * Zuerst: einfach alle IPs -> easy switch, dann: Route bauen, um nur die IPs einer Generation zu bekommen + Route mit allen Generationen (Nummer und Bezeichnung)
+ * Zuerst: alle Members -> nach Generation filtern, dann: Route bauen, um nur die Members einer Generation zu bekommen/eines IPs
+ * Informationen aus DB richtig darstellen: Date als XX.XX.XXX, 1 -> Ja, 0 -> Nein
+ * @returns TraineeSection
+ */
 const TraineeSection: React.FunctionComponent = () => {
   const classes = useStyles();
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [trainees, setTrainees] = useState<traineeTypes.Trainee[]>([]);
-  const [IP, setInternalProject] = useState<traineeTypes.InternalProject[]>([]);
   const [hasPermission, setListOfPermissions] = useState<boolean>(false);
-  const [Traineegeneration, setTraineeGeneration] = useState<traineeTypes.Trainee[]>([]);
+  const [trainees, setTrainees] = useState<traineeTypes.Trainee[]>([]);
+  const [traineegenerationData, setTraineeGenerationData] = useState<traineeTypes.InternalProjectAll[]>([]);
+  const [internalProject, setInternalProject] = useState<traineeTypes.InternalProject[]>([]);
   const [GenerationFilter, setGenerationFilter] = useState<string>("");
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
+  const [generations, setGenerations] = useState<traineeTypes.Generation[]>([]);
 
-  //api call to get all information of current and former trainees
-
-  const getTrainee: VoidFunction = () => {
+  /**
+   * retrieves all trainees from the database and sets the state of trainees
+   * TODO: find out what this does and maybe only retrieve trainees
+   */
+  const getTrainees: VoidFunction = () => {
     let mounted = true;
     api
       //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
@@ -99,6 +129,7 @@ const TraineeSection: React.FunctionComponent = () => {
 
   /**
    * Retrieves all members
+   * TODO: find out what this does
    */
   const getMembers: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
@@ -130,12 +161,18 @@ const TraineeSection: React.FunctionComponent = () => {
    * Handles the change event on the traineegeneration filter input
    * @param event
    */
-  const handleGenerationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setGenerationFilter(event.target.value);
+  const handleGenerationChange = (event: SelectChangeEvent<string | null>): void => {
+    // setGenerationFilter(event.target.value);
+    setSelectedGeneration(event.target.value as string);
   };
 
   //api call to get all information of current and former internal projects
 
+  /**
+   * retrieves all internal projects from the database and sets the state of internal projects
+   * /trainees/generations/15/internal-projects
+   * TODO: only retrieve internal projects from a specific generation
+   */
   const getInternalProject: VoidFunction = () => {
     let mounted = true;
     api
@@ -185,18 +222,18 @@ const TraineeSection: React.FunctionComponent = () => {
     };
   };
 
-  const getTraineegeneration: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
+  //currently gets all IPs -> should use route to only get generationIDs and Bezeichnung
+  const getGenerations: VoidFunction = () => {
     let mounted = true;
     api
-      .get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
+      .get("/trainees/generations", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setGenerationFilter(res.data[res.data.length - 1].bezeichnung);
-            setTraineeGeneration(res.data);
+            setGenerations(res.data.reverse());
+            setSelectedGeneration(res.data[0].bezeichnung);
           }
         }
       })
@@ -210,29 +247,70 @@ const TraineeSection: React.FunctionComponent = () => {
       mounted = false;
     };
   };
-  useEffect(() => getTrainee(), []);
+
+  /**
+   * retrieves all traineegenerations from the database and sets the state of traineegenerations
+   */
+  const getTraineegeneration: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    // .get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
+    let mounted = true;
+    api
+      .get(`/trainees/ips/all`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        console.log("res.data getTraineegeneration:");
+        console.log(res.data);
+        if (res.status === 200) {
+          if (mounted) {
+            setGenerationFilter(res.data[res.data.length - 1].bezeichnung);
+            setTraineeGenerationData(
+              res.data.filter(
+                (item: traineeTypes.InternalProjectAll) =>
+                  item.generation ===
+                  generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
+              )
+            );
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
+  useEffect(() => getTrainees(), []);
   useEffect(() => getMembers(), []);
   useEffect(() => getInternalProject(), []);
   useEffect(() => getPermissions(), []);
-  useEffect(() => getTraineegeneration(), []);
+  useEffect(() => getTraineegeneration(), [selectedGeneration]);
+  useEffect(() => getGenerations(), []);
 
   const dummydata: traineeTypes.Generation[] = [
-    { generationID: 15, Bezeichnung: "Wintersemester 19/20", bewerbung_start: "2019-10-10T14:30:00Z" },
-    { generationID: 14, Bezeichnung: "Sommersemester 2019", bewerbung_start: "2019-10-10T14:30:00Z" },
-    { generationID: 13, Bezeichnung: "Wintersemester 18/19", bewerbung_start: "2019-10-10T14:30:00Z" },
-    { generationID: 12, Bezeichnung: "Sommersemester 2018", bewerbung_start: "2019-10-10T14:30:00Z" },
-    { generationID: 11, Bezeichnung: "Wintersemester 17/18", bewerbung_start: "2019-10-10T14:30:00Z" },
-    { generationID: 10, Bezeichnung: "Sommersemester 2017", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 15, bezeichnung: "Wintersemester 19/20", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 14, bezeichnung: "Sommersemester 2019", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 13, bezeichnung: "Wintersemester 18/19", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 12, bezeichnung: "Sommersemester 2018", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 11, bezeichnung: "Wintersemester 17/18", bewerbung_start: "2019-10-10T14:30:00Z" },
+    { generationID: 10, bezeichnung: "Sommersemester 2017", bewerbung_start: "2019-10-10T14:30:00Z" },
   ];
   //TODO dummydata needs to be replaced by original data
   //Function to match the generation Bezeichnung witih the generationID
   const bezeichnungToGenerationID: Record<string, number> = {};
   dummydata.forEach((generation) => {
-    bezeichnungToGenerationID[generation.Bezeichnung] = generation.generationID;
+    bezeichnungToGenerationID[generation.bezeichnung] = generation.generationID;
   });
 
   /**
    * Filters and sorts the Trainee data and returns it
+   * TODO: find out what this does
    */
   const getFilteredMembers = (): traineeTypes.Trainee[] => {
     let filteredMembers = trainees;
@@ -250,7 +328,7 @@ const TraineeSection: React.FunctionComponent = () => {
    * Filters and sorts the Internal Project data and returns it
    */
   const getFilteredInternalProjects = (): traineeTypes.InternalProject[] => {
-    let filteredInternalProjects = IP;
+    let filteredInternalProjects = internalProject;
     //Filters IPs by Traineegeneration
     if (GenerationFilter !== "") {
       const generationID = bezeichnungToGenerationID[GenerationFilter];
@@ -267,57 +345,100 @@ const TraineeSection: React.FunctionComponent = () => {
 
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
+  const generationSelection = () => {
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+      PaperProps: {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          width: 250,
+        },
+      },
+    };
+    return (
+      <FormControl sx={{ width: 220 }} size="small">
+        <Select value={selectedGeneration} onChange={handleGenerationChange} MenuProps={MenuProps}>
+          {generations.length > 0 ? (
+            generations.map((generation) => (
+              <MenuItem key={generation.generationID} value={generation.bezeichnung}>
+                {generation.bezeichnung}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>Keine Traineegeneration gefunden</MenuItem>
+          )}
+        </Select>
+      </FormControl>
+    );
+  };
+
   // Code to generate the Traineesection based on the Permissions the User has
   return (
     <>
-      {" "}
-      {hasPermissionInternalProject ? (
-        <div>
-          <div className="content-page">
-            <Grid item xs={6} sm={3} className={classes.generationFilterMain}>
-              <TextField
-                label="Traineegeneration"
-                className={classes.filterElement}
-                color="primary"
-                onChange={handleGenerationChange}
-                value={GenerationFilter}
-                select
-              >
-                {dummydata.map((generation) => (
-                  <MenuItem
-                    key={generation.generationID}
-                    value={generation.Bezeichnung}
-                    defaultValue={GenerationFilter}
-                  >
-                    {generation.Bezeichnung}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <TraineeSectionAdmin
-              listOfPermissions={auth.permissions}
-              isOwner={true}
-              trainees={getFilteredMembers()}
-              internalProjects={getFilteredInternalProjects()}
-              generation={Traineegeneration}
-              generationFilter={numbervalue}
-              members={members}
-              currentGeneration={stringvalue}
-            />
-          </div>
-        </div>
-      ) : (
-        <div>
-          <TraineeSectionMember
+      {/* {hasPermissionInternalProject ? (
+        <>
+          <Box className={classes.generationFilterMain}>
+            <TextField
+              label="Traineegeneration"
+              className={classes.filterElement}
+              color="primary"
+              onChange={handleGenerationChange}
+              value={selectedGeneration?.Bezeichnung || ""}
+              select
+            >
+              {dummydata.map((generation) => (
+                <MenuItem key={generation.generationID} value={generation.bezeichnung} defaultValue={GenerationFilter}>
+                  {generation.Bezeichnung}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+          <TraineeSectionAdmin
             listOfPermissions={auth.permissions}
-            isOwner={false}
+            isOwner={true}
             trainees={getFilteredMembers()}
             internalProjects={getFilteredInternalProjects()}
-            generation={dummydata}
+            generation={Traineegeneration}
             generationFilter={numbervalue}
+            members={members}
+            currentGeneration={stringvalue}
           />
-        </div>
-      )}
+        </>
+      ) : (
+        <TraineeSectionMember
+          listOfPermissions={auth.permissions}
+          isOwner={false}
+          trainees={getFilteredMembers()}
+          internalProjects={getFilteredInternalProjects()}
+          generation={dummydata}
+          generationFilter={numbervalue}
+        />
+      )} */}
+      <Box sx={{ mt: 1, mb: 3 }}>
+        <Typography fontSize={12}>Traineegeneration:</Typography>
+        {generationSelection()}
+      </Box>
+      <Box
+        sx={(theme) => ({
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "left",
+          overflowX: { sm: "auto" },
+          flexWrap: "wrap",
+        })}
+      >
+        {traineegenerationData.map((internalProject) => (
+          <InternalProjectCard internalProject={internalProject} />
+        ))}
+      </Box>
+
+      {hasPermissionInternalProject ? (
+        <>
+          <Divider sx={{ mb: 5 }} />
+          <TraineeSectionTraineesTable />
+        </>
+      ) : null}
       <PageBar pageTitle="Traineebereich" />
     </>
   );

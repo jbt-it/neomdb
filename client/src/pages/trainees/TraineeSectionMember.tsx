@@ -71,7 +71,7 @@ const TraineeSectionMember: React.FunctionComponent<TraineeProps> = (props: Trai
   const currentTrainees = trainees.filter((member) => member.generation === newestGeneration);
 
   // Get the Bezeichnung (name) of the current generation
-  const currentGenerationName = generation.find((gen) => gen.generationID === newestGeneration)?.Bezeichnung;
+  const currentGenerationName = generation.find((gen) => gen.generationID === newestGeneration)?.bezeichnung;
 
   // Filter internal projects to show only the newest generation
   const currentInternalProjects = internalProjects.filter((project) => project.generation === newestGeneration);

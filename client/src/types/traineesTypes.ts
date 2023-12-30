@@ -38,9 +38,23 @@ export type InternalProject = {
   DLbeiEV: boolean;
 };
 
+export type InternalProjectAll = {
+  internesProjektID: number;
+  generation: number;
+  projektname: string;
+  kuerzel: string;
+  kickoff: Date | null;
+  AngebotBeiEV: number;
+  ZPBeiEV: number;
+  ZPGehalten: Date | null;
+  APBeiEV: number;
+  APGehalten: Date | null;
+  DLBeiEV: number;
+};
+
 export type Generation = {
   generationID: number;
-  Bezeichnung: string;
+  bezeichnung: string;
   bewerbung_start: string;
 };
 
