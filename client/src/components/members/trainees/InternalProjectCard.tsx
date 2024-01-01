@@ -61,9 +61,8 @@ const InternalProjectCard = (props: Props) => {
             </Typography>
             <Stack direction={"column"} alignItems={"start"} spacing={0.5}>
               {trainees.map((trainee: Trainee, index) => (
-                <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                <Stack direction={"row"} alignItems={"center"} spacing={1} key={index}>
                   <Avatar
-                    key={index}
                     alt={`${trainee.vorname} ${trainee.nachname}`}
                     {...stringAvatar(`${trainee.vorname} ${trainee.nachname}`)}
                     sx={{ fontSize: "0.5rem", width: 15, height: 15 }}

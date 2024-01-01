@@ -130,8 +130,8 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
                 Trainee
               </Typography>
             </TableCell>
-            {columns.map((column) => (
-              <TableCell sx={{ overflow: "hidden", border: 1, borderColor: "#fff" }}>
+            {columns.map((column, index) => (
+              <TableCell sx={{ overflow: "hidden", border: 1, borderColor: "#fff" }} key={index}>
                 <Box sx={{ transform: "rotate(-90deg)" }}>
                   <Typography sx={{ maxWidth: 10, width: 3, color: "white", mb: 1 }} fontWeight="regular">
                     {column}
@@ -148,7 +148,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
         </TableHead>
         <TableBody>
           {trainees.map((trainee: Trainee, index) => (
-            <TableRow sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }}>
+            <TableRow sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }} key={index}>
               <TableCell sx={{ width: 150, border: 1, borderColor: "#fff" }}>
                 <Link
                   component={RouterLink}

@@ -1,84 +1,33 @@
-import TraineeSectionAdmin from "./TraineeSectionAdmin";
-import TraineeSectionMember from "./TraineeSectionMember";
-import React, { useCallback, useEffect } from "react";
-import * as membersTypes from "../../types/membersTypes";
-import { useState, useContext } from "react";
-import api from "../../utils/api";
-import * as traineeTypes from "../../types/traineesTypes";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import {
   Box,
-  TextField,
   Theme,
   MenuItem,
-  Paper,
   Stack,
-  Container,
   Divider,
   FormControl,
-  Input,
-  InputLabel,
   Select,
   SelectChangeEvent,
   Typography,
   Button,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
-import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { authReducerActionType } from "../../types/globalTypes";
-import { showErrorMessage } from "../../utils/toastUtils";
-import PageBar from "../../components/navigation/PageBar";
-import { useMediaQuery } from "@mui/material";
+import { AddCircle } from "@mui/icons-material";
 
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import api from "../../utils/api";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+
+import * as membersTypes from "../../types/membersTypes";
+import * as traineeTypes from "../../types/traineesTypes";
+import { authReducerActionType } from "../../types/globalTypes";
+
+import PageBar from "../../components/navigation/PageBar";
 import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
 import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
-import { AddCircle } from "@mui/icons-material";
 import AddInternalProjectDialog from "../../components/members/trainees/AddInternalProjectDialog";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    filterBtn: {
-      [theme.breakpoints.up("md")]: {
-        marginTop: "12px",
-        marginBottom: "7px",
-        marginRight: "5px",
-        marginLeft: "50px",
-      },
-      [theme.breakpoints.down("md")]: {
-        marginTop: "15px",
-        marginBottom: "7px",
-        marginRight: "5px",
-        marginLeft: "25px",
-      },
-    },
-    cancelButton: {
-      margin: theme.spacing(1, 1, 1, 1),
-    },
-    generationFilterMain: {
-      "@media screen and (orientation:landscape)": {
-        display: "block",
-      },
-      "@media screen and (orientation:portrait)": {
-        display: "none",
-      },
-    },
-    filterElement: {
-      [theme.breakpoints.up("md")]: {
-        margin: "7px",
-        width: "155px",
-      },
-      [theme.breakpoints.down("md")]: {
-        margin: "7px",
-        width: "120px",
-      },
-      [theme.breakpoints.down("sm")]: {
-        margin: "7px",
-        width: "120px",
-      },
-    },
-  })
-);
+import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSectionSkeleton";
 
 /**
  * TODOs: rework getTrainees(), getMembers(), getInternalProject(), getTraineegeneration(), getFilteredInternalProjects()
@@ -89,9 +38,8 @@ const useStyles = makeStyles((theme: Theme) =>
  * @returns TraineeSection
  */
 const TraineeSection: React.FunctionComponent = () => {
-  const classes = useStyles();
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [hasPermission, setListOfPermissions] = useState<boolean>(false);
+  const [listofPermissions, setListOfPermissions] = useState<boolean>(false);
   const [trainees, setTrainees] = useState<traineeTypes.Trainee[]>([]);
   const [traineegenerationData, setTraineeGenerationData] = useState<traineeTypes.InternalProjectAll[]>([]);
   const [internalProject, setInternalProject] = useState<traineeTypes.InternalProject[]>([]);
@@ -99,7 +47,8 @@ const TraineeSection: React.FunctionComponent = () => {
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const [generations, setGenerations] = useState<traineeTypes.Generation[]>([]);
-  const [addIPDialogOpen, setAddIPDialogOpen] = useState<boolean>(false);
+  const [isAddIPDialogOpen, setIsAddIPDialogOpen] = useState<boolean>(false);
+  const [isLoadingGenerations, setIsLoadingGenerations] = useState<boolean>(true);
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -256,6 +205,7 @@ const TraineeSection: React.FunctionComponent = () => {
 
   //currently gets all IPs -> should use route to only get generationIDs and Bezeichnung
   const getGenerations: VoidFunction = () => {
+    setIsLoadingGenerations(true);
     let mounted = true;
     api
       .get("/trainees/generations", {
@@ -266,6 +216,7 @@ const TraineeSection: React.FunctionComponent = () => {
           if (mounted) {
             setGenerations(res.data.reverse());
             setSelectedGeneration(res.data[0].bezeichnung);
+            setIsLoadingGenerations(false);
           }
         }
       })
@@ -404,80 +355,48 @@ const TraineeSection: React.FunctionComponent = () => {
   };
 
   const handleClickOpen = () => {
-    setAddIPDialogOpen(true);
+    setIsAddIPDialogOpen(true);
   };
 
   const handleClickClose = () => {
-    setAddIPDialogOpen(false);
+    setIsAddIPDialogOpen(false);
   };
 
   // Code to generate the Traineesection based on the Permissions the User has
-  return (
+  return isLoadingGenerations ? (
+    <TraineeSectionSkeleton />
+  ) : (
     <>
-      {/* {hasPermissionInternalProject ? (
-        <>
-          <Box className={classes.generationFilterMain}>
-            <TextField
-              label="Traineegeneration"
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleGenerationChange}
-              value={selectedGeneration?.Bezeichnung || ""}
-              select
-            >
-              {dummydata.map((generation) => (
-                <MenuItem key={generation.generationID} value={generation.bezeichnung} defaultValue={GenerationFilter}>
-                  {generation.Bezeichnung}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <TraineeSectionAdmin
-            listOfPermissions={auth.permissions}
-            isOwner={true}
-            trainees={getFilteredMembers()}
-            internalProjects={getFilteredInternalProjects()}
-            generation={Traineegeneration}
-            generationFilter={numbervalue}
-            members={members}
-            currentGeneration={stringvalue}
-          />
-        </>
-      ) : (
-        <TraineeSectionMember
-          listOfPermissions={auth.permissions}
-          isOwner={false}
-          trainees={getFilteredMembers()}
-          internalProjects={getFilteredInternalProjects()}
-          generation={dummydata}
-          generationFilter={numbervalue}
+      {hasPermissionInternalProject ? (
+        <AddInternalProjectDialog
+          open={isAddIPDialogOpen}
+          handleDialogClose={handleClickClose}
+          trainees={trainees}
+          members={members}
+          internalProjects={traineegenerationData}
+          generationFilter={
+            generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
+          }
+          currentGeneration={selectedGeneration}
         />
-      )} */}
-      {/* TODO ONLY FOR CURRENT GENERATION and with permission*/}
-
-      <AddInternalProjectDialog
-        open={addIPDialogOpen}
-        handleDialogClose={handleClickClose}
-        trainees={trainees}
-        members={members}
-        internalProjects={traineegenerationData}
-        generationFilter={generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID}
-        currentGeneration={selectedGeneration}
-      />
+      ) : null}
       <Stack sx={{ mt: 1, mb: 3 }} direction={"row"} spacing={5} alignItems={"end"}>
         <Stack direction={"column"}>
           <Typography fontSize={12}>Traineegeneration:</Typography>
           {generationSelection()}
         </Stack>
-        {!isMobile ? (
-          <Button variant="contained" startIcon={<AddCircle />} onClick={handleClickOpen} sx={{ height: 40 }}>
-            Internes Projekt Hinzufügen
-          </Button>
-        ) : (
-          <IconButton onClick={handleClickOpen} sx={{ height: 40 }}>
-            <AddCircle color="primary" sx={{ width: 40, height: 40 }} />
-          </IconButton>
-        )}
+
+        {hasPermissionInternalProject && selectedGeneration === generations[0].bezeichnung ? (
+          !isMobile ? (
+            <Button variant="contained" startIcon={<AddCircle />} onClick={handleClickOpen} sx={{ height: 40 }}>
+              Internes Projekt Hinzufügen
+            </Button>
+          ) : (
+            <IconButton onClick={handleClickOpen} sx={{ height: 40 }}>
+              <AddCircle color="primary" sx={{ width: 40, height: 40 }} />
+            </IconButton>
+          )
+        ) : null}
       </Stack>
       <Box
         sx={(theme) => ({
