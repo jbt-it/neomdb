@@ -11,31 +11,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
 import { AddCircleOutline, Clear } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
 import { Member } from "../../../types/membersTypes";
 import { Trainee } from "../../../types/traineesTypes";
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    tableHeader: {
-      backgroundColor: "#f6891f",
-      color: theme.palette.primary.contrastText,
-      paddingTop: "15px",
-      marginBottom: "40px",
-    },
-    tableTop: {
-      fontWeight: "bold",
-    },
-    traineegrid: {
-      ...theme.typography.body2,
-      padding: theme.spacing(2),
-      textAlign: "center",
-      color: theme.palette.text.secondary,
-    },
-  })
-);
 
 interface AddInternalProjectDialogProps {
   open: boolean;
@@ -69,7 +48,6 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
   members,
   generationName,
 }: AddInternalProjectDialogProps) => {
-  const classes = useStyles();
   const [selectedTrainees, setSelectedTrainees] = useState<MemberOption[]>([]);
   const [selectedQMs, setSelectedQMs] = useState<MemberOption[]>([]);
   const [projectName, setProjectName] = useState<string>("");
@@ -132,7 +110,6 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
               <TextField
                 fullWidth
                 id="name"
-                label="Projektname"
                 error={projectName.trim() === "" && projectName !== ""}
                 helperText={projectName.trim() === "" && projectName !== "" ? "Projektname ist erforderlich" : ""}
                 variant="outlined"
@@ -150,7 +127,6 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
               <TextField
                 fullWidth
                 id="kuerzel"
-                label="Kürzel"
                 error={projectShort.trim() === "" && projectShort !== ""}
                 helperText={projectShort.trim() === "" && projectShort !== "" ? "Kürzel ist erforderlich" : ""}
                 variant="outlined"
@@ -180,7 +156,7 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
         <Box sx={{ mt: 1 }}>
           <Typography>Projektmitglieder:</Typography>
           {selectedTrainees.map((trainee, index) => (
-            <Grid container spacing={1} xs={11} sm={8} md={6} lg={10} key={index} sx={{ mt: 1, alignItems: "center" }}>
+            <Grid container spacing={1} key={index} sx={{ mt: 1, alignItems: "center" }}>
               <Grid item xs={7}>
                 <Autocomplete
                   value={trainee}
@@ -239,7 +215,7 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
           <Typography>Qualitätsmanager:</Typography>
 
           {selectedQMs.map((qm, index) => (
-            <Grid container spacing={1} xs={11} sm={8} md={6} lg={10} key={index} sx={{ mt: 1, alignItems: "center" }}>
+            <Grid container spacing={1} key={index} sx={{ mt: 1, alignItems: "center" }}>
               <Grid item xs={7}>
                 <Autocomplete
                   value={qm}
