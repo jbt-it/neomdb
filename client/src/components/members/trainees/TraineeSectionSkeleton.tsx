@@ -5,12 +5,15 @@ const TraineeSectionSkeleton = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   return (
-    <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-      <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
-      <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
-      <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
-      <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
-    </Stack>
+    <>
+      <Skeleton variant="rectangular" width={"70%"} height={50} sx={{ mt: 1, mb: 3 }} />
+      <Stack direction={isMobile ? "column" : "row"} spacing={2}>
+        <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
+        <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
+        <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
+        <Skeleton variant="rectangular" width={isMobile ? "100%" : 200} height={300} />
+      </Stack>
+    </>
   );
 };
 

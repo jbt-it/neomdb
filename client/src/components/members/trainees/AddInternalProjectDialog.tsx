@@ -15,22 +15,10 @@ import { createStyles, makeStyles } from "@mui/styles";
 import { AddCircleOutline, Clear } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
 import { Member } from "../../../types/membersTypes";
-import { Permission } from "../../../types/globalTypes";
-import { InternalProjectAll, Trainee } from "../../../types/traineesTypes";
+import { Trainee } from "../../../types/traineesTypes";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    dialogListItem: {
-      display: "flex",
-      alignContent: "center",
-    },
-    addListItemBtn: {
-      display: "flex",
-      alignContent: "center",
-    },
-    fullWidth: {
-      width: "100%",
-    },
     tableHeader: {
       backgroundColor: "#f6891f",
       color: theme.palette.primary.contrastText,
@@ -46,30 +34,16 @@ const useStyles = makeStyles((theme) =>
       textAlign: "center",
       color: theme.palette.text.secondary,
     },
-    verticaltext: {
-      transform: "rotate(-135deg)",
-      writingMode: "vertical-rl",
-      textOrientation: "mixed",
-      color: "white",
-      fontWeight: "bold",
-      borderBottom: "4px solid white",
-      padding: theme.spacing(1, 2),
-      backgroundColor: "#f6891f",
-      height: "40",
-    },
   })
 );
 
-interface Props {
+interface AddInternalProjectDialogProps {
   open: boolean;
   handleDialogClose: () => void;
-  listOfPermissions?: Permission[];
-  isOwner?: boolean;
-  internalProjects: InternalProjectAll[];
+  addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
   trainees: Trainee[];
   members: Member[];
-  generationFilter: number | undefined;
-  currentGeneration: string | null;
+  generationName: string | null;
 }
 
 interface MemberOption {
@@ -77,50 +51,115 @@ interface MemberOption {
   name: string;
 }
 
-const AddInternalProjectDialog: React.FunctionComponent<Props> = (props: Props) => {
+/**
+ * Dialog to add an internal project to the database
+ * @param open - boolean to determine if the dialog is open
+ * @param handleDialogClose - function to close the dialog
+ * @param addInternalProject - function to add the internal project to the database
+ * @param trainees - array of all current trainees
+ * @param members - array of all members who can be selected as QMs
+ * @param generationName - name of the generation
+ * @returns a dialog to add an internal project to the database
+ */
+const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialogProps> = ({
+  open,
+  handleDialogClose,
+  addInternalProject,
+  trainees,
+  members,
+  generationName,
+}: AddInternalProjectDialogProps) => {
   const classes = useStyles();
-  const [members, setMembers] = useState<MemberOption[]>([]);
-  const [qms, setQMs] = useState<MemberOption[]>([]);
-  const { trainees, generationFilter } = props;
+  const [selectedTrainees, setSelectedTrainees] = useState<MemberOption[]>([]);
+  const [selectedQMs, setSelectedQMs] = useState<MemberOption[]>([]);
+  const [projectName, setProjectName] = useState<string>("");
+  const [projectShort, setProjectShort] = useState<string>("");
+  const [formErrors, setFormErrors] = useState<boolean>(false);
 
+  // reset all values when dialog is closed
   const handleClose = () => {
-    props.handleDialogClose();
-    setQMs([]);
-    setMembers([]);
+    handleDialogClose();
+    setSelectedQMs([]);
+    setSelectedTrainees([]);
+    setProjectName("");
+    setProjectShort("");
+    setFormErrors(false);
   };
 
-  //Function to filter the members based on the wanted generation
+  // calls the addInternalProject function from the parent component and closes the dialog
+  const handleSave = () => {
+    if (
+      projectName.trim() === "" ||
+      projectShort.trim() === "" ||
+      selectedTrainees.length === 0 ||
+      selectedQMs.length === 0
+    ) {
+      setFormErrors(true);
+      return;
+    }
 
-  const filteredMembers: Trainee[] = generationFilter
-    ? trainees.filter((member) => member.generation === generationFilter)
-    : trainees;
+    addInternalProject(
+      selectedTrainees.map((trainee) => trainee.id),
+      selectedQMs.map((qm) => qm.id),
+      projectName.trim(),
+      projectShort.trim()
+    );
+    handleClose();
+  };
 
-  const traineeOptions: MemberOption[] = filteredMembers.map((member) => ({
-    name: `${member.vorname} ${member.nachname}`,
-    id: member.mitgliedID,
+  // create options for the trainees Autocomplete components
+  const traineeOptions: MemberOption[] = trainees.map((trainee) => ({
+    name: `${trainee.vorname} ${trainee.nachname}`,
+    id: trainee.mitgliedID,
   }));
-  const qmOptions: MemberOption[] = props.members.map((member) => ({
+
+  // create options for the qms Autocomplete components
+  const qmOptions: MemberOption[] = members.map((member) => ({
     name: `${member.vorname} ${member.nachname}`,
     id: member.mitgliedID,
   }));
 
   return (
-    <Dialog open={props.open} onClose={handleClose}>
-      <DialogTitle>Informationen zum internen Projekt</DialogTitle>
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Neues internen Projekt erstellen</DialogTitle>
       <DialogContent>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, mt: 1 }}>
           <Grid container spacing={1} justifyContent="center">
             <Grid item xs={12} md={3.5} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-              <Typography>Name:</Typography>
+              <Typography>Projektname:</Typography>
             </Grid>
             <Grid item xs={12} md={8.5} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-              <TextField fullWidth id="name" variant="outlined" size="small" />
+              <TextField
+                fullWidth
+                id="name"
+                label="Projektname"
+                error={projectName.trim() === "" && projectName !== ""}
+                helperText={projectName.trim() === "" && projectName !== "" ? "Projektname ist erforderlich" : ""}
+                variant="outlined"
+                size="small"
+                value={projectName}
+                onChange={(e) => {
+                  setProjectName(e.target.value);
+                }}
+              />
             </Grid>
             <Grid item xs={12} md={3.5} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
               <Typography>Kürzel:</Typography>
             </Grid>
             <Grid item xs={12} md={8.5} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-              <TextField fullWidth id="kuerzel" variant="outlined" size="small" />
+              <TextField
+                fullWidth
+                id="kuerzel"
+                label="Kürzel"
+                error={projectShort.trim() === "" && projectShort !== ""}
+                helperText={projectShort.trim() === "" && projectShort !== "" ? "Kürzel ist erforderlich" : ""}
+                variant="outlined"
+                size="small"
+                value={projectShort}
+                onChange={(e) => {
+                  setProjectShort(e.target.value);
+                }}
+              />
             </Grid>
             <Grid item xs={12} md={3.5} style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
               <Typography>Traineegeneration:</Typography>
@@ -132,152 +171,137 @@ const AddInternalProjectDialog: React.FunctionComponent<Props> = (props: Props) 
                 id="traineegeneration"
                 variant="outlined"
                 size="small"
-                defaultValue={props.currentGeneration}
+                defaultValue={generationName}
               />
             </Grid>
           </Grid>
         </Box>
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
-              <Typography>Projektmitglieder:</Typography>
-            </Grid>
 
-            <Grid container spacing={1}>
-              {members.map((member, index) => (
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={11}
-                  sm={8}
-                  md={6}
-                  lg={10}
-                  className={classes.dialogListItem}
-                  key={index}
-                >
-                  <Grid item xs={5} style={{ marginTop: "10px" }}>
-                    <Autocomplete
-                      value={member}
-                      onChange={(event, newValue: MemberOption | null) => {
-                        if (newValue) {
-                          const newMembers = [...members];
-                          newMembers[index] = newValue;
-                          setMembers(newMembers);
-                        }
-                      }}
-                      id={`members-${index}`}
-                      options={traineeOptions.filter((option) => !members.includes(option))}
-                      getOptionLabel={(option: MemberOption) => option.name}
-                      className={classes.fullWidth}
-                      renderInput={(params) => <TextField {...params} label="Name" variant="outlined" size="small" />}
-                    />
-                  </Grid>
+        <Box sx={{ mt: 1 }}>
+          <Typography>Projektmitglieder:</Typography>
+          {selectedTrainees.map((trainee, index) => (
+            <Grid container spacing={1} xs={11} sm={8} md={6} lg={10} key={index} sx={{ mt: 1, alignItems: "center" }}>
+              <Grid item xs={7}>
+                <Autocomplete
+                  value={trainee}
+                  onChange={(event, newValue: MemberOption | null) => {
+                    if (newValue) {
+                      setSelectedTrainees(selectedTrainees.map((trainee, i) => (i === index ? newValue : trainee)));
+                    }
+                  }}
+                  id={`selectedTrainees-${index}`}
+                  options={traineeOptions.filter((option) => !selectedTrainees.includes(option))}
+                  filterOptions={(options, state) => {
+                    return options.filter(
+                      (option) =>
+                        option.name.toLowerCase().includes(state.inputValue) &&
+                        selectedTrainees.every((trainee) => trainee.id !== option.id)
+                    );
+                  }}
+                  getOptionLabel={(option: MemberOption) => option.name}
+                  renderInput={(params) => <TextField {...params} label="Name" variant="outlined" size="small" />}
+                  noOptionsText={"Keine Trainees gefunden"}
+                  isOptionEqualToValue={(option, value) => {
+                    return option.id === value.id;
+                  }}
+                />
+              </Grid>
 
-                  <Grid item xs={2} style={{ marginTop: "10px" }}>
-                    <IconButton
-                      aria-label="delete"
-                      color="primary"
-                      onClick={() => {
-                        const newMembers = [...members];
-                        newMembers.splice(index, 1);
-                        setMembers(newMembers);
-                      }}
-                    >
-                      <Clear />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              ))}
-
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.addListItemBtn}>
+              <Grid item xs={2}>
                 <IconButton
-                  aria-label="add"
+                  aria-label="delete"
                   color="primary"
-                  disabled={members.some((member) => member.name === "")}
                   onClick={() => {
-                    setMembers((prev) => [...prev, { id: 0, name: "" }]);
+                    setSelectedTrainees(selectedTrainees.filter((_, currentIndex) => currentIndex !== index));
                   }}
                 >
-                  <AddCircleOutline />
+                  <Clear />
                 </IconButton>
               </Grid>
             </Grid>
+          ))}
+
+          <Grid item xs={12}>
+            <IconButton
+              aria-label="add"
+              color="primary"
+              disabled={selectedTrainees.some((member) => member.name === "")}
+              onClick={() => {
+                setSelectedTrainees((prev) => [...prev, { id: 0, name: "" }]);
+              }}
+            >
+              <AddCircleOutline />
+            </IconButton>
           </Grid>
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: "20px" }}>
-              <Typography>QMs:</Typography>
-            </Grid>
+        </Box>
 
-            <Grid container spacing={1}>
-              {qms.map((qm, index) => (
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  xs={11}
-                  sm={8}
-                  md={6}
-                  lg={10}
-                  className={classes.dialogListItem}
-                  key={index}
-                >
-                  <Grid item xs={5} style={{ marginTop: "10px" }}>
-                    <Autocomplete
-                      value={qm}
-                      onChange={(event, newValue: MemberOption | null) => {
-                        if (newValue) {
-                          const newQMs = [...qms];
-                          newQMs[index] = newValue;
-                          setQMs(newQMs);
-                        }
-                      }}
-                      id={`members-${index}`}
-                      options={qmOptions.filter((option) => !qms.includes(option))}
-                      getOptionLabel={(option: MemberOption) => option.name}
-                      className={classes.fullWidth}
-                      renderInput={(params) => <TextField {...params} label="Name" variant="outlined" size="small" />}
-                    />
-                  </Grid>
+        <Box sx={{ mt: 1 }}>
+          <Typography>QMs:</Typography>
 
-                  <Grid item xs={2} style={{ marginTop: "10px" }}>
-                    <IconButton
-                      aria-label="delete"
-                      color="primary"
-                      onClick={() => {
-                        const newQMs = [...qms];
-                        newQMs.splice(index, 1);
-                        setQMs(newQMs);
-                      }}
-                    >
-                      <Clear />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              ))}
+          {selectedQMs.map((qm, index) => (
+            <Grid container spacing={1} xs={11} sm={8} md={6} lg={10} key={index} sx={{ mt: 1, alignItems: "center" }}>
+              <Grid item xs={7}>
+                <Autocomplete
+                  value={qm}
+                  onChange={(event, newValue: MemberOption | null) => {
+                    if (newValue) {
+                      setSelectedQMs(selectedQMs.map((qm, i) => (i === index ? newValue : qm)));
+                    }
+                  }}
+                  id={`qm-${index}`}
+                  options={qmOptions.filter((option) => !selectedQMs.includes(option))}
+                  getOptionLabel={(option: MemberOption) => option.name}
+                  filterOptions={(options, state) => {
+                    return options.filter(
+                      (option) =>
+                        option.name.toLowerCase().includes(state.inputValue) &&
+                        selectedQMs.every((qm) => qm.id !== option.id)
+                    );
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Name" variant="outlined" size="small" />}
+                  noOptionsText={"Keine Mitglieder gefunden"}
+                  isOptionEqualToValue={(option, value) => {
+                    return option.id === value.id;
+                  }}
+                />
+              </Grid>
 
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.addListItemBtn}>
+              <Grid item xs={2}>
                 <IconButton
-                  aria-label="add"
+                  aria-label="delete"
                   color="primary"
-                  disabled={qms.some((qm) => qm.name === "")}
                   onClick={() => {
-                    setQMs((prev) => [...prev, { id: 0, name: "" }]);
+                    setSelectedQMs(selectedQMs.filter((_, currentIndex) => currentIndex !== index));
                   }}
                 >
-                  <AddCircleOutline />
+                  <Clear />
                 </IconButton>
               </Grid>
             </Grid>
+          ))}
+
+          <Grid item xs={12}>
+            <IconButton
+              aria-label="add"
+              color="primary"
+              disabled={selectedQMs.some((qm) => qm.name === "")}
+              onClick={() => {
+                setSelectedQMs((prev) => [...prev, { id: 0, name: "" }]);
+              }}
+            >
+              <AddCircleOutline />
+            </IconButton>
           </Grid>
-        </Grid>
+        </Box>
+        {formErrors && (
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Typography style={{ color: "red" }}>Bitte füllen Sie alle Felder aus!</Typography>
+          </Grid>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Abbrechen</Button>
-        {/* TODO: Once a backend connection is established, this button needs to save the IP data into the according page*/}
-        <Button onClick={handleClose}>Speichern</Button>
+        <Button onClick={handleSave}>Speichern</Button>
       </DialogActions>
     </Dialog>
   );
