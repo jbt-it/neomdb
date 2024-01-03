@@ -236,7 +236,7 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
         </Box>
 
         <Box sx={{ mt: 1 }}>
-          <Typography>QMs:</Typography>
+          <Typography>Qualitätsmanager:</Typography>
 
           {selectedQMs.map((qm, index) => (
             <Grid container spacing={1} xs={11} sm={8} md={6} lg={10} key={index} sx={{ mt: 1, alignItems: "center" }}>
