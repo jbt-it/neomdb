@@ -189,12 +189,12 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     },
     {
       label: "Startzeit",
-      value: event && event.startTime ? event.startTime.format("DD.MM.YYYY").toString() : null,
+      value: event && event.startTime ? event.startTime.format("HH:mm").toString() : null,
       type: "text",
     },
     {
       label: "Endzeit",
-      value: event && event.endTime ? event.endTime.format("DD.MM.YYYY").toString() : null,
+      value: event && event.endTime ? event.endTime.format("HH:mm").toString() : null,
       type: "text",
     },
     {
