@@ -9,7 +9,7 @@ import { Workshop, WorkshopInstance } from "../../types/eventTypes";
 import { schulung as res } from "../../mock/events/schulung";
 import useResponsive from "../../hooks/useResponsive";
 import { Stack } from "@mui/system";
-import NewWorkshopButton from "../../components/event/NewWorkshopButton";
+import WorkshopButton from "../../components/event/WorkshopButton";
 import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
@@ -60,7 +60,7 @@ const DisplayWorkshopDetails = () => {
           {isMobile ? "Details" : "Informationen zum Workshop"}
         </Typography>
         {hasWorkshopPermission ? (
-          <NewWorkshopButton
+          <WorkshopButton
             edit
             workshopName={workshop?.schulungsName}
             workshopDescription={workshop?.beschreibung}

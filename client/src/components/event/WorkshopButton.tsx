@@ -4,7 +4,7 @@ import { Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
 
-interface NewWorkshopButtonProps {
+interface WorkshopButtonProps {
   edit?: boolean;
   workshopName?: string;
   workshopDescription?: string;
@@ -15,12 +15,12 @@ interface NewWorkshopButtonProps {
  * Button to add a new workshop and open the corresponding dialog
  * @returns Button to add a new workshop and open the corresponding dialog
  */
-const NewWorkshopButton: FunctionComponent<NewWorkshopButtonProps> = ({
+const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
   edit,
   workshopName,
   workshopDescription,
   workshopType,
-}: NewWorkshopButtonProps) => {
+}) => {
   const [addWorkshopDialogOpen, setAddWorkshopDialogOpen] = useState<boolean>(false);
 
   // Function to open the dialog
@@ -60,9 +60,10 @@ const NewWorkshopButton: FunctionComponent<NewWorkshopButtonProps> = ({
         workshopName={workshopName}
         workshopDescription={workshopDescription}
         workshopType={workshopType}
+        edit={edit}
       />
     </>
   );
 };
 
-export default NewWorkshopButton;
+export default WorkshopButton;
