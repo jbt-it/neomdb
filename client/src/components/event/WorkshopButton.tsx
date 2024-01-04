@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { Edit, Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
+import useResponsive from "../../hooks/useResponsive";
 
 interface WorkshopButtonProps {
   edit?: boolean;
@@ -22,6 +23,8 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
   workshopType,
 }) => {
   const [addWorkshopDialogOpen, setAddWorkshopDialogOpen] = useState<boolean>(false);
+
+  const isMobile = useResponsive("down", "sm");
 
   // Function to open the dialog
   const handleDialogOpen = () => {
@@ -44,15 +47,21 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
 
   return (
     <>
-      <Button
-        variant="outlined"
-        startIcon={edit ? <Edit /> : <Event />}
-        color={edit ? "primary" : "info"}
-        sx={{ fontWeight: 600, mr: 2 }}
-        onClick={handleDialogOpen}
-      >
-        {edit ? "Bearbeiten" : "Neu"}
-      </Button>
+      {isMobile ? (
+        <IconButton onClick={handleDialogOpen} sx={{ ml: 1 }}>
+          {edit ? <Edit color="secondary" /> : <Event color="info" />}
+        </IconButton>
+      ) : (
+        <Button
+          variant="outlined"
+          startIcon={edit ? <Edit /> : <Event />}
+          color={edit ? "primary" : "info"}
+          sx={{ fontWeight: 600, mr: 2 }}
+          onClick={handleDialogOpen}
+        >
+          {edit ? "Bearbeiten" : "Neu"}
+        </Button>
+      )}
       <WorkshopDialog
         open={addWorkshopDialogOpen}
         onClose={handleDialogClose}
