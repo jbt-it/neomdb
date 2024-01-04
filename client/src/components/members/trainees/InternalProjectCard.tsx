@@ -12,6 +12,7 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import { InternalProjectAll } from "../../../types/traineesTypes";
 import dayjs from "dayjs";
 import { stringAvatar } from "../../../utils/stringUtils";
@@ -53,14 +54,16 @@ const InternalProjectCard = (props: Props) => {
 
   return (
     <Card sx={(theme) => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internesProjektID}>
-      <CardActionArea>
-        <CardContent>
-          <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
+      <CardContent>
+        <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
+          <Link to={`/internes-projekt/${internesProjektID}`} style={{ textDecoration: "none", color: "inherit" }}>
             <Typography fontSize={16} fontWeight={"bold"} sx={{ mb: 1, mt: 1 }}>
               {projektname}
             </Typography>
-            <Stack direction={"column"} alignItems={"start"} spacing={0.5}>
-              {trainees.map((trainee: Trainee, index) => (
+          </Link>
+          <Stack direction={"column"} alignItems={"start"} spacing={0.5}>
+            {trainees.map((trainee: Trainee, index) => (
+              <Link to={`/gesamtuebersicht/${trainee.mitgliedID}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <Stack direction={"row"} alignItems={"center"} spacing={1} key={index}>
                   <Avatar
                     alt={`${trainee.vorname} ${trainee.nachname}`}
@@ -71,28 +74,28 @@ const InternalProjectCard = (props: Props) => {
                     {`${trainee.vorname} ${trainee.nachname}`}
                   </Typography>
                 </Stack>
-              ))}
-            </Stack>
+              </Link>
+            ))}
           </Stack>
-          <TableContainer>
-            <Table size="small">
-              <TableHead sx={{ fontWeight: "medium", borderBottom: 1, color: "primary.main", fontSize: 16 }}>
-                Meilensteine
-              </TableHead>
-              {rows.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell sx={{ fontWeight: "bold", borderBottom: 0, padding: 0, color: "text.secondary" }}>
-                    {row.label}
-                  </TableCell>
-                  <TableCell align="right" sx={{ borderBottom: 0, padding: 0, color: "text.secondary" }}>
-                    {row.value}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </CardActionArea>
+        </Stack>
+        <TableContainer>
+          <Table size="small">
+            <TableHead sx={{ fontWeight: "medium", borderBottom: 1, color: "primary.main", fontSize: 16 }}>
+              Meilensteine
+            </TableHead>
+            {rows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell sx={{ fontWeight: "bold", borderBottom: 0, padding: 0, color: "text.secondary" }}>
+                  {row.label}
+                </TableCell>
+                <TableCell align="right" sx={{ borderBottom: 0, padding: 0, color: "text.secondary" }}>
+                  {row.value}
+                </TableCell>
+              </TableRow>
+            ))}
+          </Table>
+        </TableContainer>
+      </CardContent>
     </Card>
   );
 };
