@@ -53,18 +53,38 @@ describe("Test member routes", () => {
   });
 
   describe("GET /directors", () => {
-    test("should return 200 for getting directors", async () => {
+    test("should return 200 for getting all directors", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
 
-      const response = await request(app).get("/api/members/directors").send().set("Cookie", `token=${token}`);
+      const response = await request(app)
+        .get("/api/members/directors?current=false")
+        .send()
+        .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(3);
+    });
+
+    test("should return 200 for getting current directors", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+
+      const response = await request(app)
+        .get("/api/members/directors?current=true")
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(2);
     });
   });
 
@@ -264,7 +284,7 @@ describe("Test member routes", () => {
       expect(response.body.permissions).toEqual(loginResponse.body.permissions);
     });
 
-    test("should return 200 for member without permissions gets empty return", async () => {
+    test("should return 403 for member without permissions getting Permissions of a member", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -277,8 +297,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.body.permissions).toHaveLength(0);
+      expect(response.status).toBe(403);
     });
   });
 
@@ -459,8 +478,8 @@ describe("Test member routes", () => {
     });
   });
   // -----------------------PATCH ROUTES-----------------------
-  describe("PATCH /departments/:id", () => {
-    test("should return 200 for director changes own departement info", async () => {
+  describe("PUT /departments/:id", () => {
+    test("should return 204 for director changes own departement info", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -471,12 +490,12 @@ describe("Test member routes", () => {
         "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/hwekfoiwfjGFHCkhdllewlj12Q?e=JHVUZFZU";
       const linkOrganigramm = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
       const response = await request(app)
-        .patch(`/api/members/departments/${departmentID}`)
+        .put(`/api/members/departments/${departmentID}`)
         .send({ linkZielvorstellung, linkOrganigramm })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(204);
     });
 
     test("should return 403 for member changes departement info", async () => {
@@ -490,7 +509,7 @@ describe("Test member routes", () => {
         "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/hwekfoiwfjGFHCkhdllewlj12Q?e=JHVUZFZU";
       const linkOrganigramm = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
       const response = await request(app)
-        .patch(`/api/members/departments/${departmentID}`)
+        .put(`/api/members/departments/${departmentID}`)
         .send({ linkZielvorstellung, linkOrganigramm })
         .set("Cookie", `token=${token}`);
 

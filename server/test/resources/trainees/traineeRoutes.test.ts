@@ -459,7 +459,7 @@ describe("POST /generations/:id/add-mentor/:memberID", () => {
 
     // --- WHEN
     const response = await request(app)
-      .post("/api/trainees/generations/15/add-mentor/8111")
+      .post("/api/trainees/generations/15/add-mentor/8167")
       .send()
       .set("Cookie", `token=${token}`);
 

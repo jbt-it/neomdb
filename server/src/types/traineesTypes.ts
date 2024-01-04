@@ -83,7 +83,6 @@ export type Trainee = {
  * Type of the assignment of a trainee to an internal project, mentor and department
  */
 export type TraineeAssignment = {
-  memberID: number;
   ipID: number;
   mentorID: number;
   departmentID: number;

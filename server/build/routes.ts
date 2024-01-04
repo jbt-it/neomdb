@@ -83,7 +83,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateDepartmentRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true},"bezeichnung":{"dataType":"string","required":true},"kuerzel":{"dataType":"string","required":true},"jbt_email":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Value": {
@@ -163,7 +163,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TraineeAssignment": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InternalProjectAndTrainee": {
@@ -635,6 +635,7 @@ export function RegisterRoutes(app: Router) {
             function MembersController_getPermissionsByMemberID(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
