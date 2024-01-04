@@ -16,15 +16,15 @@ interface WorkshopsOverviewCardProps {
  */
 const WorkshopsOverviewCard = ({ workshop }: WorkshopsOverviewCardProps) => {
   return (
-    <Card sx={{ minHeight: 100 }} key={workshop.workshopID}>
-      <Link to={`/workshops/${workshop.workshopID}`} style={{ textDecoration: "none", color: "inherit" }}>
+    <Card sx={{ minHeight: 100 }} key={workshop.schulungId}>
+      <Link to={`/workshops/${workshop.schulungId}`} style={{ textDecoration: "none", color: "inherit" }}>
         <CardContent>
-          <EventChip type={workshop.workshopType} size="small" sx={{ ml: -0.5 }} />
+          <EventChip type={workshop.art} size="small" sx={{ ml: -0.5 }} />
           <Typography variant="body1" fontWeight={"bold"}>
-            {workshop.workshopName}
+            {workshop.schulungsName}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {workshop.workshopDescription}
+            {workshop.beschreibung}
           </Typography>
         </CardContent>
       </Link>
