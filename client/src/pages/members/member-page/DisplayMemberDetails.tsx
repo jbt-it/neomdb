@@ -804,9 +804,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Mentees:</Typography>
                 <div className={classes.categoryItemList}>
-                  {menteeList.map((mentee) => {
+                  {menteeList.map((mentee, index) => {
                     return (
-                      <Typography className={classes.categoryLine}>{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                      <Typography
+                        className={classes.categoryLine}
+                        key={index}
+                      >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
                     );
                   })}
                 </div>
@@ -934,9 +937,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Sprachen:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.sprachen.map((language) => {
+                {memberDetails.sprachen.map((language, index) => {
                   return (
-                    <Typography className={classes.categoryLine}>
+                    <Typography className={classes.categoryLine} key={index}>
                       {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
                     </Typography>
                   );
@@ -946,9 +949,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.edvkenntnisse.map((edv) => {
+                {memberDetails.edvkenntnisse.map((edv, index) => {
                   return (
-                    <Typography className={classes.categoryLine}>
+                    <Typography className={classes.categoryLine} key={index}>
                       {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
                     </Typography>
                   );
@@ -1434,6 +1437,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
@@ -1551,6 +1555,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
