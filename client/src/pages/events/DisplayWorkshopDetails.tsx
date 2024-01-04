@@ -56,12 +56,12 @@ const DisplayWorkshopDetails = () => {
   ];
   return (
     <Container component={Paper} sx={{ m: 2, p: 2 }}>
-      <Stack direction={"row"} justifyContent={"space-between"}>
-        <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"} sx={{ mb: 2 }}>
+      <Stack direction={isMobile ? "column" : "row"} justifyContent={"space-between"} sx={{ mb: 2 }}>
+        <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           {isMobile ? "Details" : "Informationen zum Workshop"}
         </Typography>
         {hasWorkshopPermission ? (
-          <Stack direction={"row"} spacing={2}>
+          <Stack direction={"row"} spacing={2} height={40}>
             <WorkshopButton
               edit
               workshopName={workshop?.schulungsName}
