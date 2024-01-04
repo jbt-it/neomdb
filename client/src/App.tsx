@@ -33,6 +33,7 @@ import AssignTrainees from "./pages/trainees/AssignTrainees";
 import DisplayEventsOverview from "./pages/events/DisplayEventsOverview";
 import DisplayEventDetails from "./pages/events/DisplayEventDetails";
 import DisplayWorkshopsOverview from "./pages/events/DisplayWorkshopsOverview";
+import DisplayWorkshopDetails from "./pages/events/DisplayWorkshopDetails";
 
 // other pages
 import Login from "./pages/Login";
@@ -73,7 +74,7 @@ const App: React.FunctionComponent = () => {
             <Route path="veranstaltungen" element={<DisplayEventsOverview />} />
             <Route path="veranstaltungen/:id" element={<DisplayEventDetails />} />
             <Route path="workshops" element={<DisplayWorkshopsOverview />} />
-            <Route path="workshops/:id" element={<Dashboard />} />
+            <Route path="workshops/:id" element={<DisplayWorkshopDetails />} />
             <Route path="workshops/:id/:id" element={<Dashboard />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
