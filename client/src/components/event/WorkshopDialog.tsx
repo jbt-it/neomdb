@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -41,21 +41,27 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
   workshopType,
   edit,
 }: WorkshopDialogProps) => {
-  const [name, setName] = useState<string>(workshopName || "");
-  const [description, setDescription] = useState<string>(workshopDescription || "");
-  const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | null>(workshopType || null);
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | undefined>(undefined);
+
+  useEffect(() => {
+    setName(workshopName || "");
+    setDescription(workshopDescription || "");
+    setType(workshopType || undefined);
+  }, [workshopName, workshopDescription, workshopType]);
 
   // Function to handle the Abbrechen button
   const handleClose = () => {
     setName("");
     setDescription("");
-    setType(null);
+    setType(undefined);
     onClose();
   };
 
   // Function to handle the Speichern button
   const handleSave = () => {
-    if (name.length === 0 || description.length === 0 || type === null) {
+    if (name.length === 0 || description.length === 0 || type === undefined) {
       return;
     }
     onSave(name, description, type);
