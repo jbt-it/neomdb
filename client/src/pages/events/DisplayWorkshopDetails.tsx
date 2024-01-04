@@ -12,6 +12,7 @@ import { Stack } from "@mui/system";
 import WorkshopButton from "../../components/event/WorkshopButton";
 import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
 
 const DisplayWorkshopDetails = () => {
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
@@ -60,12 +61,15 @@ const DisplayWorkshopDetails = () => {
           {isMobile ? "Details" : "Informationen zum Workshop"}
         </Typography>
         {hasWorkshopPermission ? (
-          <WorkshopButton
-            edit
-            workshopName={workshop?.schulungsName}
-            workshopDescription={workshop?.beschreibung}
-            workshopType={workshop?.art}
-          />
+          <Stack direction={"row"} spacing={2}>
+            <WorkshopButton
+              edit
+              workshopName={workshop?.schulungsName}
+              workshopDescription={workshop?.beschreibung}
+              workshopType={workshop?.art}
+            />
+            <WorkshopInstanceButton />
+          </Stack>
         ) : null}
       </Stack>
       <InfoSection fields={displayFields} />
