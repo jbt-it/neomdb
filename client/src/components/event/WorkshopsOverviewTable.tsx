@@ -20,9 +20,9 @@ const WorkshopsOverviewTable = ({ workshops }: WorkshopsOverviewTableProps) => {
       <Table size="small">
         <TableHead>
           <TableRow sx={{ backgroundColor: "primary.main" }}>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Art</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Workshopname</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Beschreibung</TableCell>
+            <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Art</TableCell>
+            <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Workshopname</TableCell>
+            <TableCell sx={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Beschreibung</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

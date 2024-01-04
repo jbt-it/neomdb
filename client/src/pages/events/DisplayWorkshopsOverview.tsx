@@ -46,7 +46,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
   }, []);
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 1, mr: isMobile ? 0 : 1 }}>
+    <Container sx={{ ml: isMobile ? 0 : 2, mr: isMobile ? 0 : 2 }}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
@@ -54,7 +54,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
         alignContent={"center"}
         sx={{ mb: 2 }}
       >
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops
         </Typography>
         {hasWorkshopPermission ? <NewWorkshopButton /> : null}
