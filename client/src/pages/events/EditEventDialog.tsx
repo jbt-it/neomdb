@@ -161,7 +161,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       complete = false;
     }
     // if an endDate is given, it must be after the startDate
-    if (state.startDate && state.endDate ? state.startDate > state.endDate : false) {
+    if (state.startDate && state.endDate ? state.startDate.startOf("day") > state.endDate.endOf("day") : false) {
       errorDispatch({ type: "set", field: "endDate", value: true });
       complete = false;
     }
