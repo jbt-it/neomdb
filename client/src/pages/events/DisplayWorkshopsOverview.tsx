@@ -11,6 +11,7 @@ import useResponsive from "../../hooks/useResponsive";
 import { schulung as res } from "../../mock/events/schulung";
 import WorkshopsOverviewTable from "../../components/event/WorkshopsOverviewTable";
 import WorkshopsOverviewCard from "../../components/event/WorkshopsOverviewCard";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * Component to display a table or cards of all workshops
@@ -20,6 +21,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const { auth } = useAuth();
   const { permissions } = auth;
+  const hasWorkshopPermission = doesPermissionsHaveSomeOf(permissions, [4]);
 
   const isMobile = useResponsive("down", "sm");
 
@@ -55,7 +57,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
         <Typography variant="h5" component="h1" gutterBottom>
           Alle Workshops
         </Typography>
-        {permissions.length > 0 ? <NewWorkshopButton /> : null}
+        {hasWorkshopPermission ? <NewWorkshopButton /> : null}
       </Stack>
       {isMobile ? (
         <Stack direction={"column"} spacing={2}>
