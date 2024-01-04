@@ -65,7 +65,7 @@ type commonEventType = {
   maximumParticipants?: number | null;
   organizers?: string[];
   description?: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop" | "Externer Workshop";
 };
 
 /**
