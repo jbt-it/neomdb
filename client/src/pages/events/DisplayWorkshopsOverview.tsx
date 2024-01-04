@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Stack, Typography, Container } from "@mui/material";
 
-import NewWorkshopButton from "../../components/event/NewWorkshopButton";
+import WorkshopButton from "../../components/event/WorkshopButton";
 
 import { Workshop } from "../../types/eventTypes";
 
@@ -48,7 +48,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops
         </Typography>
-        {hasWorkshopPermission ? <NewWorkshopButton /> : null}
+        {hasWorkshopPermission ? <WorkshopButton /> : null}
       </Stack>
       {isMobile ? (
         <Stack direction={"column"} spacing={2}>

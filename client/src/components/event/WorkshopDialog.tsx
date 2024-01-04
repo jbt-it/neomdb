@@ -19,6 +19,7 @@ interface WorkshopDialogProps {
   workshopName?: string;
   workshopDescription?: string;
   workshopType?: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
+  edit?: boolean;
 }
 
 /**
@@ -26,6 +27,9 @@ interface WorkshopDialogProps {
  * @param open - boolean to determine if the dialog is open
  * @param onClose - function to close the dialog
  * @param onSave - function to save the workshop
+ * @param workshopName - name of the workshop
+ * @param workshopDescription - description of the workshop
+ * @param workshopType - type of the workshop
  * @returns Dialog to add a new workshop
  */
 const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
@@ -35,6 +39,7 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
   workshopName,
   workshopDescription,
   workshopType,
+  edit,
 }: WorkshopDialogProps) => {
   const [name, setName] = useState<string>(workshopName || "");
   const [description, setDescription] = useState<string>(workshopDescription || "");
@@ -59,7 +64,7 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
 
   return (
     <Dialog open={open}>
-      <DialogTitle>Workshop hinzufügen</DialogTitle>
+      <DialogTitle>{edit ? "Workshop bearbeiten" : "Workshop hinzufügen"}</DialogTitle>
       <DialogContent>
         <Grid container alignItems={"center"} spacing={2}>
           <Grid container item alignItems={"center"}>
