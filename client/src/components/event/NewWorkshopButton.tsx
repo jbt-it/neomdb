@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { Button } from "@mui/material";
 import { Event } from "@mui/icons-material";
 
-import AddWorkshopDialog from "./AddWorkshopDialog";
+import WorkshopDialog from "./WorkshopDialog";
 
 /**
  * Button to add a new workshop and open the corresponding dialog
@@ -41,7 +41,7 @@ const NewWorkshopButton: FunctionComponent = () => {
       >
         Neu
       </Button>
-      <AddWorkshopDialog open={addWorkshopDialogOpen} onClose={handleDialogClose} onSave={handleSave} />
+      <WorkshopDialog open={addWorkshopDialogOpen} onClose={handleDialogClose} onSave={handleSave} />
     </>
   );
 };

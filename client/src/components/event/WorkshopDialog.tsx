@@ -12,10 +12,13 @@ import {
   Typography,
 } from "@mui/material";
 
-interface AddWorkshopDialogProps {
+interface WorkshopDialogProps {
   open: boolean;
   onClose: () => void;
   onSave: (name: string, description: string, type: "Pflichtworkshop" | "Workshop" | "Externer Workshop") => void;
+  workshopName?: string;
+  workshopDescription?: string;
+  workshopType?: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
 }
 
 /**
@@ -25,14 +28,17 @@ interface AddWorkshopDialogProps {
  * @param onSave - function to save the workshop
  * @returns Dialog to add a new workshop
  */
-const AddWorkshopDialog: FunctionComponent<AddWorkshopDialogProps> = ({
+const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
   open,
   onClose,
   onSave,
-}: AddWorkshopDialogProps) => {
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | null>(null);
+  workshopName,
+  workshopDescription,
+  workshopType,
+}: WorkshopDialogProps) => {
+  const [name, setName] = useState<string>(workshopName || "");
+  const [description, setDescription] = useState<string>(workshopDescription || "");
+  const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | null>(workshopType || null);
 
   // Function to handle the Abbrechen button
   const handleClose = () => {
@@ -117,4 +123,4 @@ const AddWorkshopDialog: FunctionComponent<AddWorkshopDialogProps> = ({
   );
 };
 
-export default AddWorkshopDialog;
+export default WorkshopDialog;
