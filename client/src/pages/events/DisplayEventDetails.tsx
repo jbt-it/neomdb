@@ -49,6 +49,12 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
+  const isRegistrationOpen =
+    event?.registrationStart &&
+    event.registrationStart < dayjs() &&
+    event?.registrationDeadline &&
+    event.registrationDeadline > dayjs();
+
   const isMobile = useResponsive("down", "md");
 
   // Mock participants since backend is not connected yet
@@ -304,7 +310,9 @@ const DisplayEventDetails: React.FunctionComponent = () => {
         <Chip label="Abmelden" color="error" variant="outlined" icon={<RemoveCircleOutline />} onClick={handleSignUp} />
       );
     } else {
-      return <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />;
+      return isRegistrationOpen ? (
+        <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />
+      ) : null;
     }
   };
 
@@ -312,7 +320,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
    * Renders the page
    */
   return (
-    <Container maxWidth="md" sx={{ ml: isMobile ? 0 : 1, maxWidth: isMobile ? "95%" : "100%" }}>
+    <Container maxWidth="lg" sx={{ ml: isMobile ? 0 : 1, maxWidth: isMobile ? "95%" : "100%" }}>
       {event ? (
         <>
           <Stack
@@ -343,7 +351,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               </Typography>
               <EventChip type={event ? event.type : "Sonstige"} sx={{ ml: 3 }} size="medium" />
             </Stack>
-            <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4 }}>
+            <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4, maxWidth: 600 }}>
               <InfoSection fields={displayFields} />
             </Box>
             {participants.length > 0 ? (
@@ -387,7 +395,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             endDate={event.endDate}
             startTime={event.startTime}
             endTime={event.endTime}
-            registrationStart={null}
+            registrationStart={event.registrationStart}
             registrationEnd={event.registrationDeadline}
             maxParticipants={10}
             organizers={["Thomas", "Brigitte"]}

@@ -220,7 +220,6 @@ const EditEventDialog = (props: EditEventDialogProps) => {
 
   const onChangeRegistrationStart = (value: unknown) => {
     dispatch({ type: "set", field: "registrationStart", value: value as Dayjs });
-    // setRegistrationStart(event.target.value);
   };
 
   const onChangeRegistrationEnd = (value: unknown) => {
