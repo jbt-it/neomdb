@@ -199,11 +199,15 @@ const EditEventDialog = (props: EditEventDialogProps) => {
   };
 
   const onChangeStartDate = (value: unknown) => {
-    dispatch({ type: "set", field: "startDate", value: value as Dayjs });
+    let startDate = value as Dayjs;
+    startDate = startDate.startOf("day");
+    dispatch({ type: "set", field: "startDate", value: startDate });
   };
 
   const onChangeEndDate = (value: unknown) => {
-    dispatch({ type: "set", field: "endDate", value: value as Dayjs });
+    let endDate = value as Dayjs;
+    endDate = endDate.endOf("day");
+    dispatch({ type: "set", field: "endDate", value: endDate });
   };
 
   const onChangeStartTime = (value: unknown) => {
