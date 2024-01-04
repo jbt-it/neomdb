@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, FunctionComponent } from "react";
 import { useParams } from "react-router-dom";
 import {
   Paper,
@@ -12,33 +12,31 @@ import {
   DialogTitle,
   Container,
   Divider,
-  useMediaQuery,
 } from "@mui/material";
 import { AddCircle, Delete, Edit, RemoveCircleOutline } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
+import api from "../../utils/api";
+import useResponsive from "../../hooks/useResponsive";
 
 import LoadingTable from "../../components/general/LoadingTable";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 import EditEventDialog from "./EditEventDialog";
-
-import { events as mockEvents } from "../../mock/events/events";
-import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import EventChip from "../../components/event/EventChip";
-import { CommonEventType, EventParticipant } from "../../types/eventTypes";
-import { eventParticipants } from "../../mock/events/eventParticipants";
-import api from "../../utils/api";
-import { authReducerActionType } from "../../types/globalTypes";
-import { Member } from "../../types/membersTypes";
 import EventParticipants from "../../components/event/EventParticipants";
 import AddMembersField from "../../components/event/AddMembersField";
 
+import { CommonEventType, EventParticipant } from "../../types/eventTypes";
+import { Member } from "../../types/membersTypes";
+import { authReducerActionType } from "../../types/globalTypes";
+
+import { events as mockEvents } from "../../mock/events/events";
+import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
+import { eventParticipants } from "../../mock/events/eventParticipants";
+
 /**
  * Renders the page for displaying the details of a given event as well as the participants
- * TODO: Implement the functionality to add and remove participants
- * TODO: hide remove button from participants if user is not admin / organizer and generally only display the remove button if hovered over the participant
- * TODO: Change participants to be a list of clickable members instead of a list of strings
  * @param props id in URL
  * @returns the page to display the details of an event
  */
@@ -49,10 +47,11 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const [members, setMembers] = useState<EventParticipant[]>([]);
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useResponsive("down", "md");
 
-  //mock participants since backend is not connected yet
+  // Mock participants since backend is not connected yet
   const [participants, setParticipants] = useState<EventParticipant[]>(eventParticipants || []);
 
   /**
@@ -129,6 +128,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     };
   }, [dispatchAuth]);
 
+  // Function to update the event
   const updateEvent = (
     title: string,
     location: string,
@@ -165,7 +165,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     });
   };
 
-  //* calls the getEvent function */
+  // Calls the getEvent and getMembers function
   useEffect(() => {
     getEvent(Number(id));
   }, [id, getEvent]);
@@ -209,28 +209,28 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     },
   ];
 
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-
   /**
    * Renders the delete button to delete an event and the dialog to confirm the deletion
-   * TODO: Implement deletion functionality
+   * TODO: Implement delete functionality
    */
-  const renderDeleteButton = () => {
+  const RenderDeleteButton: FunctionComponent = () => {
     const handleclose = () => {
       setDeleteOpen(false);
     };
 
+    // Function to open the delete confirmation dialog
     const handleDeleteOpen = () => {
       setDeleteOpen(true);
     };
 
-    /** Renders the delete confirmation dialog */
-    const HandleDelete = () => {
+    // Renders the delete confirmation dialog
+    // TODO: Implement delete functionality when backend is connected
+    const HandleDelete: FunctionComponent = () => {
       return (
         <Dialog onClose={handleclose} open={deleteOpen}>
           <DialogTitle>Dieses Event wirklich löschen?</DialogTitle>
           <Stack direction={"row"} spacing={5} margin={"auto"} pb={2}>
-            <Button color="error" variant="outlined" onClick={() => console.log("TODO: implement deletion")}>
+            <Button color="error" variant="outlined" onClick={() => alert("TODO: implement deletion")}>
               Ja
             </Button>
             <Button color="error" variant="contained" onClick={handleclose}>
@@ -254,9 +254,8 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   /**
    * Renders the edit button for the event
    * When clicked the dialog to edit the event will open
-   * TODO: Implement edit functionality
    */
-  const renderEditButton = () => {
+  const RenderEditButton: FunctionComponent = () => {
     return (
       <IconButton sx={{ mt: 0.5 }} onClick={() => setEditDialogOpen(true)}>
         <Edit />
@@ -294,7 +293,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   /**
    * Renders sign up button
    */
-  const renderSignUpButton = () => {
+  const RenderSignUpButton: FunctionComponent = () => {
     const handleSignUp = () => {
       // here should be a api call to sign up or sign off the user
       setUserIsSignedUp(!userIsSignedUp);
@@ -327,8 +326,8 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             </Typography>
             {auth.permissions.length > 0 ? (
               <Stack direction={"row"} spacing={2}>
-                {renderDeleteButton()}
-                {renderEditButton()}
+                <RenderDeleteButton />
+                <RenderEditButton />
               </Stack>
             ) : null}
           </Stack>
@@ -371,7 +370,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
           >
             {participants.length > 0 ? (
               <>
-                {renderSignUpButton()}{" "}
+                <RenderSignUpButton />
                 {auth.permissions.length > 0 ? (
                   <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
                 ) : null}

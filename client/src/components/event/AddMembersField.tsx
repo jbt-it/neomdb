@@ -12,7 +12,9 @@ interface AddMembersFieldProps {
 /**
  * The AddMembersField component is used to add members to an event.
  * It displays a text field with an autocomplete function and a button.
- * @param param0 members: all members of the club, participants: all participants of the event
+ * @param members: all members of the club, participants: all participants of the event
+ * @param participants: all participants of the event
+ * @param addParticipant: function to add a participant to the event
  * @returns AddMembersField component
  */
 const AddMembersField: FunctionComponent<AddMembersFieldProps> = ({
@@ -23,6 +25,7 @@ const AddMembersField: FunctionComponent<AddMembersFieldProps> = ({
   const isMobile = useResponsive("down", "sm");
   const [participant, setParticipant] = useState<EventParticipant | null>(null);
 
+  // function to handle the add participant button if a participant is selected
   const handleAddParticipant = () => {
     if (participant) {
       addParticipant(participant);

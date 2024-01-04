@@ -505,7 +505,7 @@ const DisplayEventsOverview: React.FC = () => {
           sx={{ fontWeight: 600 }}
           onClick={() => {
             setDisplayPastEvents(true);
-            setStartDate(dayjs("2010-01-01"));
+            setStartDate(dayjs("2000-01-01"));
             setEndDate(dayjs().subtract(1, "day"));
           }}
           size="small"
@@ -729,44 +729,46 @@ const DisplayEventsOverview: React.FC = () => {
         alignItems={{ xs: "flex-start", lg: "center" }}
         sx={{ mt: mobile ? 1.5 : 0 }}
       >
-        <Box sx={{ display: "flex", direction: "row", alignItems: "center", width: mobile ? "100%" : "auto" }}>
-          <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
-            <InputLabel>Von</InputLabel>
-            <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
-              <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
-              <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
-              <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
-              <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
-              <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
-              <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
-              <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
-              <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
-              <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
-              <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
-              <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
-              <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
-            </Select>
-          </FormControl>
-          <Typography> - </Typography>
-          <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
-            <InputLabel>Bis</InputLabel>
-            <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
-              <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
-              <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
-              <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
-              <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
-              <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
-              <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
-              <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
-              <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
-              <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
-              <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
-              <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
-              <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <FormControl sx={{ minWidth: 180, ml: mobile ? 0 : 1, mt: mobile ? 1 : 0 }} size="small">
+        {!displayPastEvents ? (
+          <Box sx={{ display: "flex", direction: "row", alignItems: "center", width: mobile ? "100%" : "auto" }}>
+            <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
+              <InputLabel>Von</InputLabel>
+              <Select label="Monat" value={startMonthFilter} onChange={onChangeStartMonthFilter}>
+                <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+                <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+                <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+                <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+                <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+                <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+                <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+                <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+                <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+                <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+                <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+                <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+              </Select>
+            </FormControl>
+            <Typography> - </Typography>
+            <FormControl sx={{ m: mobile ? 0 : 1, minWidth: 120 }} size="small">
+              <InputLabel>Bis</InputLabel>
+              <Select label="Monat" value={endMonthFilter} onChange={onChangeEndMonthFilter}>
+                <MenuItem value={dayjs().month(0).locale("de").format("MMMM")}>Januar</MenuItem>
+                <MenuItem value={dayjs().month(1).locale("de").format("MMMM")}>Februar</MenuItem>
+                <MenuItem value={dayjs().month(2).locale("de").format("MMMM")}>März</MenuItem>
+                <MenuItem value={dayjs().month(3).locale("de").format("MMMM")}>April</MenuItem>
+                <MenuItem value={dayjs().month(4).locale("de").format("MMMM")}>Mai</MenuItem>
+                <MenuItem value={dayjs().month(5).locale("de").format("MMMM")}>Juni</MenuItem>
+                <MenuItem value={dayjs().month(6).locale("de").format("MMMM")}>Juli</MenuItem>
+                <MenuItem value={dayjs().month(7).locale("de").format("MMMM")}>August</MenuItem>
+                <MenuItem value={dayjs().month(8).locale("de").format("MMMM")}>September</MenuItem>
+                <MenuItem value={dayjs().month(9).locale("de").format("MMMM")}>Oktober</MenuItem>
+                <MenuItem value={dayjs().month(10).locale("de").format("MMMM")}>November</MenuItem>
+                <MenuItem value={dayjs().month(11).locale("de").format("MMMM")}>Dezember</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        ) : null}
+        <FormControl sx={{ width: 180, ml: mobile ? 0 : 1, mt: mobile ? 1 : 0 }} size="small">
           <InputLabel>Veranstaltungsart</InputLabel>
           <Select
             label="Veranstaltungsart"
@@ -818,8 +820,10 @@ const DisplayEventsOverview: React.FC = () => {
       rows.reverse();
     }
 
-    startMonth ? rows.filter((event) => event.date > startMonth) : null;
-    endMonth ? rows.filter((event) => event.date < endMonth) : null;
+    if (!displayPastEvents) {
+      startMonth ? rows.filter((event) => event.date > startMonth) : null;
+      endMonth ? rows.filter((event) => event.date < endMonth) : null;
+    }
     return (
       <TableContainer component={Paper} sx={{ margin: "auto" }}>
         <Table size="small">
