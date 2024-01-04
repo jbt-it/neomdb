@@ -28,16 +28,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
   // Function to get all workshops
   // TODO: Replace mock with real data
   const getWorkshops = () => {
-    const transformedRes: Workshop[] = [];
-    res.forEach((workshop) => {
-      transformedRes.push({
-        workshopID: workshop.schulungId,
-        workshopName: workshop.schulungsName,
-        workshopType: workshop.art as "Pflichtworkshop" | "Workshop" | "Externer Workshop",
-        workshopDescription: workshop.beschreibung,
-      });
-    });
-    setWorkshops(transformedRes);
+    setWorkshops(res as Workshop[]);
     return;
   };
 

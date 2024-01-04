@@ -27,10 +27,10 @@ const WorkshopsOverviewTable = ({ workshops }: WorkshopsOverviewTableProps) => {
         </TableHead>
         <TableBody>
           {workshops.map((workshop, index) => (
-            <TableRow key={workshop.workshopID} sx={{ backgroundColor: index % 2 === 0 ? "white" : "grey.200" }}>
+            <TableRow key={workshop.schulungId} sx={{ backgroundColor: index % 2 === 0 ? "white" : "grey.200" }}>
               <TableCell sx={{ width: 100 }}>
-                <Link to={`/workshops/${workshop.workshopID}`} style={{ textDecoration: "none", color: "inherit" }}>
-                  <EventChip type={workshop.workshopType} size="small" />
+                <Link to={`/workshops/${workshop.schulungId}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <EventChip type={workshop.art} size="small" />
                 </Link>
               </TableCell>
               <TableCell
@@ -40,8 +40,8 @@ const WorkshopsOverviewTable = ({ workshops }: WorkshopsOverviewTableProps) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                <Link to={`/workshops/${workshop.workshopID}`} style={{ textDecoration: "none", color: "inherit" }}>
-                  {workshop.workshopName}
+                <Link to={`/workshops/${workshop.schulungId}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  {workshop.schulungsName}
                 </Link>
               </TableCell>
               <TableCell
@@ -51,7 +51,7 @@ const WorkshopsOverviewTable = ({ workshops }: WorkshopsOverviewTableProps) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {workshop.workshopDescription}
+                {workshop.beschreibung}
               </TableCell>
             </TableRow>
           ))}
