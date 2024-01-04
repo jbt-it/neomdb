@@ -35,8 +35,8 @@ export type CommonEventType = {
  * Type of a workshop
  */
 export type Workshop = {
-  workshopID: number;
-  workshopName: string;
-  workshopType: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
-  workshopDescription: string;
+  schulungId: number;
+  schulungsName: string;
+  art: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
+  beschreibung: string;
 };
