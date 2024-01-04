@@ -6,17 +6,15 @@ import {
   Button,
   Typography,
   Chip,
-  Autocomplete,
-  TextField,
   Stack,
   IconButton,
   Dialog,
   DialogTitle,
   Container,
-  Grid,
   Divider,
+  useMediaQuery,
 } from "@mui/material";
-import { AddCircle, Delete, Edit, RemoveCircleOutline, RemoveCircle } from "@mui/icons-material";
+import { AddCircle, Delete, Edit, RemoveCircleOutline } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
@@ -26,45 +24,36 @@ import InfoSection, { InformationField } from "../../components/general/InfoSect
 import EditEventDialog from "./EditEventDialog";
 
 import { events as mockEvents } from "../../mock/events/events";
-import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import EventChip from "../../components/event/EventChip";
-
-interface RouterMatch {
-  id: string;
-}
-
-type commonEventType = {
-  ID: number;
-  name: string;
-  description: string;
-  date: Dayjs | null;
-  endDate: Dayjs | null;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  location: string;
-  registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
-  participantsCount?: number | null;
-  maximumParticipants?: number | null;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
-};
+import { CommonEventType, EventParticipant } from "../../types/eventTypes";
+import { eventParticipants } from "../../mock/events/eventParticipants";
+import api from "../../utils/api";
+import { authReducerActionType } from "../../types/globalTypes";
+import { Member } from "../../types/membersTypes";
+import EventParticipants from "../../components/event/EventParticipants";
+import AddMembersField from "../../components/event/AddMembersField";
 
 /**
  * Renders the page for displaying the details of a given event as well as the participants
  * TODO: Implement the functionality to add and remove participants
  * TODO: hide remove button from participants if user is not admin / organizer and generally only display the remove button if hovered over the participant
  * TODO: Change participants to be a list of clickable members instead of a list of strings
- * TODO: Check use for floating action button
  * @param props id in URL
  * @returns the page to display the details of an event
  */
 const DisplayEventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [event, setEvent] = useState<commonEventType | null>();
+  const { id } = useParams<{ id: string }>();
+  const [event, setEvent] = useState<CommonEventType | null>();
+  const [members, setMembers] = useState<EventParticipant[]>([]);
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
-  const { id } = useParams<{ id: string }>();
+
+  const isMobile = useMediaQuery("(max-width: 600px)");
+
+  //mock participants since backend is not connected yet
+  const [participants, setParticipants] = useState<EventParticipant[]>(eventParticipants || []);
 
   /**
    * Gets the event or workshop from the database
@@ -75,7 +64,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
       //   console.log(response.data);
       // });
 
-      let event: commonEventType | null = null;
+      let event: CommonEventType | null = null;
 
       mitglied_has_event
         .filter((event) => event.event_eventID === id)
@@ -105,6 +94,40 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     },
     [dispatchAuth]
   );
+
+  // Retrieves the members
+  const getMembers: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/users/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMembers(
+              res.data.map((member: Member) => ({
+                mitgliedID: member.mitgliedID,
+                vorname: member.vorname,
+                nachname: member.nachname,
+                mitgliedstatus: member.mitgliedstatus,
+              }))
+            );
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
 
   const updateEvent = (
     title: string,
@@ -146,39 +169,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   useEffect(() => {
     getEvent(Number(id));
   }, [id, getEvent]);
-
-  //mock participants since backend is not connected yet
-  const participants = [
-    "Alice",
-    "Bob",
-    "Charlie",
-    "David",
-    "Eve",
-    "Frank",
-    "Grace",
-    "Heidi",
-    "Ivan",
-    "Julia",
-    "Kevin",
-    "Linda",
-    "Mallory",
-    "Nancy",
-    "Oliver",
-    "Peggy",
-    "Quentin",
-    "Ralph",
-    "Sara",
-    "Trudy",
-    "Ursula",
-    "Victor",
-    "Wendy",
-    "Xander",
-    "Yvonne",
-    "Zoe",
-  ];
-
-  // empty participants for testing
-  const participantsLeer: string[] = [];
+  useEffect(() => getMembers(), [getMembers]);
 
   const displayFields: Array<InformationField> = [
     {
@@ -217,39 +208,6 @@ const DisplayEventDetails: React.FunctionComponent = () => {
       type: "multi",
     },
   ];
-
-  /**
-   * Renders the details of the event
-   */
-  const renderDetails = () => {
-    return (
-      <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4 }}>
-        <InfoSection fields={displayFields} />
-      </Box>
-    );
-  };
-
-  /**
-   * Renders the members who are participating in the event
-   */
-  const renderParticipants = () => {
-    return (
-      <Grid container columns={{ xs: 2, sm: 5, xl: 6 }}>
-        {participants.map((item, index) => (
-          <Grid item xs={1} sx={{ display: "flex", direction: "row", alignItems: "center" }} key={index}>
-            <Typography key={index} variant="subtitle1">
-              {item}
-            </Typography>
-            {auth.permissions.length > 0 ? (
-              <IconButton sx={{ width: 20, height: 20 }} onClick={() => console.log("TODO: implement delete user")}>
-                <RemoveCircle sx={{ fontSize: 15, "&:hover": { color: "#d32f2f" } }} />
-              </IconButton>
-            ) : null}
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
 
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -313,28 +271,24 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     setEditDialogOpen(false);
   };
 
-  const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
+  /**
+   * function is called to add a participant to the event
+   * TODO: Implement backend functionality to add a participant to the event
+   * @param participant the participant to add
+   */
+  const addParticipant = (participant: EventParticipant) => {
+    alert(participant.vorname + " " + participant.nachname + " wurde hinzugefügt");
+    setParticipants((prevParticipants) => [...prevParticipants, participant]);
+  };
 
   /**
-   * Renders the autocomplete field and button for adding new members to the event
+   * function is called to remove a participant to the event
+   * TODO: Implement backend functionality to remove a participant to the event
+   * @param participant the participant to remove
    */
-  const renderAddMembersField = () => {
-    return (
-      <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
-        <Typography variant="subtitle1" sx={{ mr: 1 }}>
-          Teilnehmer hinzufügen:
-        </Typography>
-        <Autocomplete
-          renderInput={(params) => <TextField variant="outlined" {...params} label="Mitglieder" />}
-          options={members.filter((member) => !participants.includes(member))}
-          sx={{ width: 200 }}
-          size="small"
-        />
-        <Button variant="contained" color="primary" size="medium" sx={{ ml: 2 }}>
-          Hinzufügen
-        </Button>
-      </Box>
-    );
+  const removeParticipant = (participant: EventParticipant) => {
+    alert(participant.vorname + " " + participant.nachname + " wurde entfernt");
+    setParticipants(participants.filter((item) => item.mitgliedID !== participant.mitgliedID));
   };
 
   /**
@@ -359,10 +313,15 @@ const DisplayEventDetails: React.FunctionComponent = () => {
    * Renders the page
    */
   return (
-    <Container maxWidth="md" sx={{ ml: 1 }}>
+    <Container maxWidth="md" sx={{ ml: isMobile ? 0 : 1, maxWidth: isMobile ? "95%" : "100%" }}>
       {event ? (
         <>
-          <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ ml: 3, pb: 1 }}>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            sx={{ ml: isMobile ? 0 : 3, pb: 1 }}
+          >
             <Typography fontWeight={"bold"} variant="h5">
               Termininformationen - {event ? event.name : null}
             </Typography>
@@ -373,7 +332,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               </Stack>
             ) : null}
           </Stack>
-          <Paper sx={{ ml: 3 }}>
+          <Paper sx={{ ml: isMobile ? 0 : 3 }}>
             <Stack
               direction={"row"}
               justifyContent={"space-between"}
@@ -385,33 +344,40 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               </Typography>
               <EventChip type={event ? event.type : "Sonstige"} sx={{ ml: 3 }} size="medium" />
             </Stack>
-            {renderDetails()}
+            <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4 }}>
+              <InfoSection fields={displayFields} />
+            </Box>
             {participants.length > 0 ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
                   Teilnehmerliste
                 </Typography>
-                <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>{renderParticipants()}</Box>
+                <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                  <EventParticipants participants={participants} removeParticipant={removeParticipant} />
+                </Box>
               </>
             ) : null}
           </Paper>
-          <Box
+          <Stack
             sx={{
-              display: "flex",
-              direction: "row",
               justifyContent: "space-between",
-              alignItems: "center",
-              ml: 3,
+              ml: isMobile ? 0 : 3,
               mt: 2,
             }}
+            alignItems={isMobile ? "start" : "center"}
+            direction={isMobile ? "column" : "row"}
+            spacing={isMobile ? 2 : 0}
           >
             {participants.length > 0 ? (
               <>
-                {renderSignUpButton()} {auth.permissions.length > 0 ? renderAddMembersField() : null}
+                {renderSignUpButton()}{" "}
+                {auth.permissions.length > 0 ? (
+                  <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                ) : null}
               </>
             ) : null}
-          </Box>
+          </Stack>
           <EditEventDialog
             open={editDialogOpen}
             onClose={handleDialogClose}
