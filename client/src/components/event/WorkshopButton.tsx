@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import { Button } from "@mui/material";
-import { Event } from "@mui/icons-material";
+import { Edit, Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
 
@@ -46,8 +46,8 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
     <>
       <Button
         variant="outlined"
-        startIcon={<Event />}
-        color="info"
+        startIcon={edit ? <Edit /> : <Event />}
+        color={edit ? "primary" : "info"}
         sx={{ fontWeight: 600, mr: 2 }}
         onClick={handleDialogOpen}
       >
