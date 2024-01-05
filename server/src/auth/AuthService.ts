@@ -5,8 +5,8 @@ import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import AuthRepository from "./AuthRepository";
-import bcrypt = require("bcryptjs");
-import crypto = require("node:crypto");
+import * as bcrypt from "bcryptjs";
+import * as crypto from "node:crypto";
 
 class AuthService {
   authRepository = new AuthRepository();

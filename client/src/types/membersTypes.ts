@@ -129,9 +129,8 @@ export type MemberDetails = {
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
-  mentor: Mentor | null;
+  generation: number | null;
+  internesprojekt: number | null;
   trainee_seit: string | null;
   mitglied_seit: string | null;
   alumnus_seit: string | null;
@@ -142,10 +141,10 @@ export type MemberDetails = {
   ressort: string | null;
   arbeitgeber: string | null;
   strasse1: string;
-  plz1: number;
+  plz1: number | null;
   ort1: string;
   tel1: number;
-  email1: string;
+  email1: string | null;
   strasse2: string | null;
   plz2: number | null;
   ort2: string | null;
@@ -157,18 +156,19 @@ export type MemberDetails = {
   studienende: string | null;
   vertiefungen: string | null;
   ausbildung: string | null;
-  kontoinhaber: string;
-  iban: string;
-  bic: string;
   engagement: string | null;
   canPL: string | null;
   canQM: string | null;
   lastchange: string;
   fuehrerschein: boolean;
   ersthelferausbildung: boolean;
-  sprachen: LanguageOfMember[];
-  mentees: Mentee[];
-  edvkenntnisse: EDVSkillOfMember[];
+  kontoinhaber?: string;
+  iban?: string;
+  bic?: string;
+  sprachen?: LanguageOfMember[];
+  mentees?: Mentee[];
+  edvkenntnisse?: EDVSkillOfMember[];
+  mentor?: Mentor | null;
 };
 
 /**
