@@ -8,6 +8,7 @@ import {
   Director,
   MemberDetails,
   MemberPartial,
+  MemberStatus,
   StatusOverview,
   UpdateDepartmentRequest,
   Value,
@@ -165,7 +166,10 @@ export class MembersController extends Controller {
   // TODO: Change route name
   @Patch("{id}/status")
   @Security("jwt", ["1"])
-  public async updateMemberStatus(@Path() id: number, @Body() requestBody: { mitgliedstatus: string }): Promise<void> {
+  public async updateMemberStatus(
+    @Path() id: number,
+    @Body() requestBody: { mitgliedstatus: MemberStatus }
+  ): Promise<void> {
     const status = requestBody.mitgliedstatus;
     await this.membersService.updateMemberStatus(id, status);
   }

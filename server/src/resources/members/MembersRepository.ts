@@ -11,6 +11,7 @@ import {
   Language,
   Member,
   MemberPartial,
+  MemberStatus,
   Mentee,
   Mentor,
   NewMember,
@@ -352,7 +353,7 @@ class MembersRepository {
    * @throws UnprocessableEntityError if the status is not valid
    * @throws QueryError if the query fails
    */
-  updateMemberStatusByID = async (memberID: number, lastChangeTime: string, newStatus: string) => {
+  updateMemberStatusByID = async (memberID: number, lastChangeTime: string, newStatus: MemberStatus) => {
     // Retrieves the attribute of the status change date to update (e.g. "trainee_seit")
     const statusChangeDate = getStatusChangeDate(newStatus);
     if (statusChangeDate === null) {
