@@ -1,12 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
 import { Button, IconButton } from "@mui/material";
-import { Edit, Event } from "@mui/icons-material";
+import { Delete, Edit, Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
 import useResponsive from "../../hooks/useResponsive";
 
 interface WorkshopButtonProps {
   edit?: boolean;
+  deletion?: boolean;
   workshopName?: string;
   workshopDescription?: string;
   workshopType?: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
@@ -18,6 +19,7 @@ interface WorkshopButtonProps {
  */
 const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
   edit,
+  deletion,
   workshopName,
   workshopDescription,
   workshopType,
@@ -45,6 +47,25 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
     alert("Workshop wurde gespeichert \nName: " + name + "\nBeschreibung: " + description + "\nArt: " + type);
   };
 
+  if (deletion) {
+    return isMobile ? (
+      <IconButton onClick={() => alert("Workshop wurde gelöscht")}>
+        <Delete color="error" />
+      </IconButton>
+    ) : (
+      <Button
+        variant="outlined"
+        color="error"
+        sx={{ fontWeight: 600, mr: 2 }}
+        onClick={() => alert("Workshop wurde gelöscht")}
+        startIcon={<Delete />}
+        size="small"
+      >
+        Workshop löschen
+      </Button>
+    );
+  }
+
   return (
     <>
       {isMobile ? (
@@ -58,6 +79,7 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
           color={edit ? "primary" : "info"}
           sx={{ fontWeight: 600, mr: 2 }}
           onClick={handleDialogOpen}
+          size="small"
         >
           {edit ? "Bearbeiten" : "Neu"}
         </Button>

@@ -66,7 +66,9 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   useEffect(() => {
     if (item.children !== undefined) {
       setActiveChild(
-        item.children.some((child: NavItemChildProps) => child.path === pathname.slice(0, item.path?.length))
+        item.children.some(
+          (child: NavItemChildProps) => child.path === pathname.replace("/#", "").split("/").slice(0, 2).join("/")
+        )
       );
     }
   }, [item.children, pathname]);
@@ -122,7 +124,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
                     color: "text.secondary",
                     textTransform: "capitalize",
                     fontWeight: "fontWeightMedium",
-                    ...(child.path === pathname.slice(0, item.path?.length) && {
+                    ...(child.path === pathname.replace("/#", "").split("/").slice(0, 2).join("/") && {
                       color: "primary.main",
                       fontWeight: "fontWeightSemiBold",
                       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),

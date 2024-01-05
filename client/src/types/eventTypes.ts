@@ -48,13 +48,13 @@ export type WorkshopInstance = {
   schulungsinstanzID: number;
   schulungId: number;
   status: "Abgeschlossen";
-  datum: Dayjs;
-  startzeit: Dayjs;
-  endzeit: Dayjs;
+  datum: string;
+  startzeit: string;
+  endzeit: string;
   ort: string;
-  teilnehmeranzahl: number;
+  anzahlTeilnehmer: number;
   maximaleTeilnehmer: number;
-  reference: string;
+  referenten: string;
   zielgruppe: string;
   note: number;
 };

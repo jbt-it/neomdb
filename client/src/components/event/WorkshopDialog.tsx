@@ -45,17 +45,25 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
   const [description, setDescription] = useState<string>("");
   const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | undefined>(undefined);
 
+  function resetData() {
+    if (edit) {
+      setName(workshopName || "");
+      setDescription(workshopDescription || "");
+      setType(workshopType || undefined);
+    } else {
+      setName("");
+      setDescription("");
+      setType(undefined);
+    }
+  }
+
   useEffect(() => {
-    setName(workshopName || "");
-    setDescription(workshopDescription || "");
-    setType(workshopType || undefined);
+    resetData();
   }, [workshopName, workshopDescription, workshopType]);
 
   // Function to handle the Abbrechen button
   const handleClose = () => {
-    setName("");
-    setDescription("");
-    setType(undefined);
+    resetData();
     onClose();
   };
 
