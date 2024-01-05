@@ -622,3 +622,40 @@ describe("PUT /ip/:id", () => {
     expect(response.status).toBe(422);
   });
 });
+describe("POST /admission/:id", () => {
+  test("should return 204 for setting admission for a trainee with permission", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+    const response = await request(app).post("/api/trainees/admission/8478").set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(204);
+  });
+
+  test("should return 403 for setting admission for a trainee without permission", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+    const response = await request(app).post("/api/trainees/admission/8478").set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(403);
+  });
+
+  test("should return 404 for setting admission for a trainee with invalid id", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+    const response = await request(app).post("/api/trainees/admission/9999").set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(404);
+  });
+});
