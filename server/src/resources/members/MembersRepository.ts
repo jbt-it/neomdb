@@ -353,7 +353,12 @@ class MembersRepository {
    * @throws UnprocessableEntityError if the status is not valid
    * @throws QueryError if the query fails
    */
-  updateMemberStatusByID = async (memberID: number, lastChangeTime: string, newStatus: MemberStatus) => {
+  updateMemberStatusByID = async (
+    memberID: number,
+    lastChangeTime: string,
+    newStatus: MemberStatus,
+    connection?: mysql.PoolConnection
+  ) => {
     // Retrieves the attribute of the status change date to update (e.g. "trainee_seit")
     const statusChangeDate = getStatusChangeDate(newStatus);
     if (statusChangeDate === null) {
@@ -366,7 +371,8 @@ class MembersRepository {
           SET mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?),
           lastchange = ?, ${statusChangeDate} = ?
           WHERE mitgliedID = ?`,
-        [newStatus, lastChangeTime, lastChangeTime, memberID]
+        [newStatus, lastChangeTime, lastChangeTime, memberID],
+        connection
       );
     } catch (error) {
       logger.error(`Caught error while updating status ${newStatus} of member with id ${memberID}: ${error}`);
