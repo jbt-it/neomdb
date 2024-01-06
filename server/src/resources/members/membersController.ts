@@ -104,7 +104,7 @@ export class MembersController extends Controller {
    */
   @Post("")
   @Security("jwt", ["1"])
-  public async creeateMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
+  public async createMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
     /**
      * Overview of the status of the different account creation operations
      */
