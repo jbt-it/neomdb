@@ -234,7 +234,7 @@ const FieldSection = (props: Props) => {
           <Autocomplete
             key={index}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
-            renderInput={(params) => <TextField variant="outlined" {...params} label="Organisatoren" />}
+            renderInput={(params) => <TextField variant="outlined" {...params} label={field.label} />}
             options={field.state as string[]}
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             size="medium"
