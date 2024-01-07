@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Paper, Stack, Typography } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
-import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { Box, Container, Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import useResponsive from "../../hooks/useResponsive";
-import { redirect, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
@@ -11,11 +9,14 @@ import { Workshop, WorkshopInstance } from "../../types/eventTypes";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 import EventChip from "../../components/event/EventChip";
 import dayjs from "dayjs";
+import WorkshopInstanceQuestions from "../../components/event/WorkshopInstanceQuestions";
+import WorkshopInstanceEvaluationTable from "../../components/event/WorkshopInstanceEvaluationTable";
 
+/**
+ * This component is responsible for rendering the workshop instance evaluation page.
+ * @returns the workshop instance evaluation page
+ */
 const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
-  const { auth, dispatchAuth } = useAuth();
-  const { permissions } = auth;
-  const hasWorkshopPermission = doesPermissionsHaveSomeOf(permissions, [4]);
   const { workshopInstanceID } = useParams();
   const [workshopInstance, setWorkshopInstance] = useState<WorkshopInstance | undefined>(undefined);
   const [workshop, setWorkshop] = useState<Workshop | undefined>(undefined);
@@ -38,12 +39,16 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
       alert(`No workshop found with id ${idWorkshop}`);
     }
   };
+
   useEffect(() => {
     getWorkshopInstance();
+  }, []);
+
+  useEffect(() => {
     if (workshopInstance) {
       getWorkshop(workshopInstance.schulungId);
     }
-  }, [dispatchAuth]);
+  }, [workshopInstance]);
 
   const instanceFields: Array<InformationField> = [
     {
@@ -88,33 +93,32 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
     },
   ];
 
-  return (
+  return workshopInstance === undefined || workshop === undefined ? (
+    <Skeleton />
+  ) : (
     <Container sx={{ ml: isMobile ? 0 : 3 }}>
       <Stack direction={"column"} justifyContent={"space-between"} alignItems={"flex-start"} sx={{ mb: 1 }}>
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
-          Informationen zum Workshop-Termin
+          Workshop-Termin Auswertung
         </Typography>
       </Stack>
-      <Paper>
-        <Stack direction={"row"} justifyContent={"space-between"} sx={{ pt: 2, ml: 3, mr: 3 }} alignItems={"center"}>
+      <Paper sx={{ pl: 3, pr: 3, pt: 1 }}>
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography variant="h6" color="primary" fontWeight={"bold"}>
             Details
           </Typography>
           <EventChip type={workshop ? workshop.art : "Sonstige"} sx={{ ml: 3 }} size="medium" />
         </Stack>
-        <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4, maxWidth: 600 }}>
+        <Box sx={{ mr: "auto", pt: 1, maxWidth: 600 }}>
           <InfoSection fields={instanceFields} />
         </Box>
+        <Divider light sx={{ width: "95%", borderColor: "#f6891f", mt: 2, mb: 2 }} />
+        <Typography variant="h6" color="primary" fontWeight={"bold"}>
+          Auswertung
+        </Typography>
+        <WorkshopInstanceQuestions workshopInstance={workshopInstance} />
+        <WorkshopInstanceEvaluationTable workshopInstance={workshopInstance} />
       </Paper>
-      <Stack
-        sx={{
-          justifyContent: "space-between",
-          mt: 2,
-        }}
-        alignItems={isMobile ? "start" : "center"}
-        direction={isMobile ? "column" : "row"}
-        spacing={isMobile ? 2 : 0}
-      ></Stack>
     </Container>
   );
 };
