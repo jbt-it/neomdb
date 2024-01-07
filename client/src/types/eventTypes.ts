@@ -59,3 +59,11 @@ export type WorkshopInstance = {
   zielgruppe: string;
   note: number | null;
 };
+
+/**
+ * Type of a workshop Feedback
+ */
+export type NumericFeedback = {
+  feedbackfrageID: number;
+  bewertung: number;
+};

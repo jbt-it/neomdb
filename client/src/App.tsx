@@ -41,6 +41,7 @@ import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
+import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 
 /**
  * This component is responsible for rendering the app.
@@ -77,6 +78,11 @@ const App: React.FunctionComponent = () => {
             <Route path="workshops" element={<DisplayWorkshopsOverview />} />
             <Route path="workshops/:id" element={<DisplayWorkshopDetails />} />
             <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
+            <Route path="workshops/:id/:workshopInstanceID/feedback/" element={<Dashboard />} />
+            <Route
+              path="workshops/:workshopID/:workshopInstanceID/feedback/:workshopInstanceFeedbackID"
+              element={<WorkshopInstanceFeedback />}
+            />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
