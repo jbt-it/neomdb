@@ -79,7 +79,7 @@ const App: React.FunctionComponent = () => {
             <Route path="workshops/:id" element={<DisplayWorkshopDetails />} />
             <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
             <Route path="workshops/:workshopID/:workshopInstanceID/feedback/" element={<WorkshopInstanceFeedback />} />
-            <Route path="workshops/:workshopID/:workshopInstanceID/feedbackuebersicht" element={<Dashboard />} />
+            <Route path="workshops/:workshopID/:workshopInstanceID/feedbackauswertung" element={<Dashboard />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
