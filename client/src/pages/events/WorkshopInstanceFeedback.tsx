@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import dayjs from "dayjs";
 import { useAuth } from "../../hooks/useAuth";
-import { Workshop, WorkshopInstance } from "../../types/eventTypes";
+import { NumericFeedback, Workshop, WorkshopInstance } from "../../types/eventTypes";
 
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import dayjs from "dayjs";
-import WorkshopInstanceFeedbackTable from "../../components/event/WorkshopInstanceFeedback";
+import WorkshopInstanceFeedbackForm from "../../components/event/WorkshopInstanceFeedbackForm";
 
 import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
@@ -18,9 +18,8 @@ import useResponsive from "../../hooks/useResponsive";
  * @returns The WorkshopInstanceFeedback component
  */
 const WorkshopInstanceFeedback = () => {
-  const { workshopInstanceID, workshopInstanceFeedbackID } = useParams<{
+  const { workshopInstanceID } = useParams<{
     workshopInstanceID: string;
-    workshopInstanceFeedbackID: string;
   }>();
   const { auth, dispatchAuth } = useAuth();
   const [workshopInstance, setWorkshopInstance] = useState<WorkshopInstance | null>(null);
@@ -95,9 +94,19 @@ const WorkshopInstanceFeedback = () => {
     { label: "Ort", value: workshopInstance?.ort || "", type: "text" },
   ];
 
-  // Function to submit the feedback to the DB
-  const submitFeedback = () => {
-    alert("Feedback submitted" + workshopInstanceFeedbackID);
+  // Function to submit the feedback to the DB, the feedback id will be generated in the backend
+  const submitFeedback = (numericFeedback: NumericFeedback[], textFeedback: { [key: number]: string }) => {
+    alert(
+      "Feedback submitted " +
+        "\n " +
+        numericFeedback
+          .map((numericFeedback) => `${numericFeedback.feedbackfrageID}: ${numericFeedback.bewertung}`)
+          .join("\n") +
+        "\n" +
+        Object.entries(textFeedback)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join("\n")
+    );
   };
 
   return checkParticipation() ? (
@@ -127,9 +136,10 @@ const WorkshopInstanceFeedback = () => {
           <Typography variant="h6" fontWeight={"bold"} sx={{ mb: 3 }}>
             Bitte gib Dein Feedback ab:
           </Typography>
-          <WorkshopInstanceFeedbackTable
+          <WorkshopInstanceFeedbackForm
             onSumbit={submitFeedback}
-            workshopInstanceID={workshopInstance.schulungsinstanzID}
+            workshopInstance={workshopInstance}
+            workshopType={workshop.art}
           />
         </Stack>
       </Container>

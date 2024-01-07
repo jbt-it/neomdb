@@ -4,13 +4,20 @@ import React, { useState } from "react";
 interface FeedbackSelectionProps {
   question: { feedbackfrageID: number };
   handleFeedbackChange: (feedbackfrageID: number, bewertung: number) => void;
+  questionAnswered: (questionID: number) => boolean;
+  checkAnswered: boolean;
 }
 
 /**
  * Displays the feedback options
  * @returns The FeedbackSelection component
  */
-const FeedbackSelection: React.FunctionComponent<FeedbackSelectionProps> = ({ question, handleFeedbackChange }) => {
+const FeedbackSelection: React.FunctionComponent<FeedbackSelectionProps> = ({
+  question,
+  handleFeedbackChange,
+  questionAnswered,
+  checkAnswered,
+}) => {
   const [value, setValue] = useState<number>();
 
   // Function to handle the feedback change
@@ -20,8 +27,10 @@ const FeedbackSelection: React.FunctionComponent<FeedbackSelectionProps> = ({ qu
     handleFeedbackChange(question.feedbackfrageID, newValue);
   };
 
+  const answered = checkAnswered && !questionAnswered(question.feedbackfrageID);
+
   return (
-    <FormControl size="small" sx={{ width: 150 }}>
+    <FormControl size="small" sx={{ width: 150 }} error={answered}>
       <InputLabel>Bewertung</InputLabel>
       <Select label="Bewertung" value={value} onChange={handleChange}>
         <MenuItem value={1}>1</MenuItem>
