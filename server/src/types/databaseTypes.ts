@@ -1,4 +1,4 @@
-import mysql = require("mysql2");
+import * as mysql from "mysql2";
 
 /**
  * Custom type for the result of a query
