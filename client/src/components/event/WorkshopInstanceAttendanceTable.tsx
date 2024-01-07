@@ -37,6 +37,7 @@ const WorkshopInstanceAttendanceTable: React.FunctionComponent<WorkshopInstancea
 
   const isMobile = useResponsive("down", "sm");
 
+  // Function to select all participants
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelecteds = participants;
@@ -46,29 +47,29 @@ const WorkshopInstanceAttendanceTable: React.FunctionComponent<WorkshopInstancea
     setSelected([]);
   };
 
+  // Function to select a participant
   const handleClick = (event: React.MouseEvent<unknown>, participant: EventParticipant) => {
     const selectedIndex = selected.indexOf(participant);
     let newSelected: EventParticipant[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, participant);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
+    } else {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
 
     setSelected(newSelected);
   };
 
+  // Function to check if a participant is selected
   const isSelected = (participant: EventParticipant) => selected.indexOf(participant) !== -1;
 
+  // Function to go back to the previous page
   const handleBack = () => {
     setIsEditingParticipants(false);
   };
 
+  // Function to close admission and send selected participants
   const handleComplete = () => {
     // POST request to close admission and send selected participants
     alert(
@@ -80,7 +81,12 @@ const WorkshopInstanceAttendanceTable: React.FunctionComponent<WorkshopInstancea
 
   return (
     <>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={"flex-start"} sx={{ mb: 2 }} spacing={2}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        alignItems={"flex-start"}
+        sx={{ mb: 2 }}
+        spacing={isMobile ? 2 : 6}
+      >
         <Stack direction={"row"} spacing={5}>
           <Button variant="contained" sx={{ fontWeight: 600 }} color="primary" onClick={handleBack}>
             Zurück
