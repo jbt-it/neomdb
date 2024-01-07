@@ -1,7 +1,7 @@
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Typography } from "@mui/material";
 import React from "react";
 import WorkshopInstanceDialog from "./WorkshopInstanceDialog";
-import { Delete, Event } from "@mui/icons-material";
+import { Delete, Edit, Event } from "@mui/icons-material";
 import useResponsive from "../../hooks/useResponsive";
 import { Workshop, WorkshopInstance } from "../../types/eventTypes";
 
@@ -56,7 +56,7 @@ const WorkshopInstanceButton: React.FunctionComponent<WorkshopInstanceButtonProp
       </IconButton>
     ) : (
       <Button
-        variant="outlined"
+        variant="contained"
         color="error"
         sx={{ fontWeight: 600, mr: 2 }}
         onClick={handleDelete}
@@ -71,16 +71,22 @@ const WorkshopInstanceButton: React.FunctionComponent<WorkshopInstanceButtonProp
   return (
     <>
       {isMobile ? (
-        <IconButton onClick={handleOpen}>
-          <Event color="info" />
-        </IconButton>
+        <Button
+          variant="contained"
+          onClick={handleOpen}
+          startIcon={edit ? <Edit /> : <Event />}
+          sx={{ fontSize: 10 }}
+          color={edit ? "primary" : "info"}
+        >
+          {edit ? "bearbeiten" : "neu"}
+        </Button>
       ) : (
         <Button
-          variant="outlined"
-          color="info"
+          variant="contained"
+          color={edit ? "primary" : "info"}
           sx={{ fontWeight: 600, mr: 2 }}
           onClick={handleOpen}
-          startIcon={<Event />}
+          startIcon={edit ? <Edit /> : <Event />}
           size="small"
         >
           {edit ? "Bearbeiten" : "Termin hinzufügen"}

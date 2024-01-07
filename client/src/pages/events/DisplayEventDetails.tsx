@@ -58,7 +58,11 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const isMobile = useResponsive("down", "md");
 
   // Mock participants since backend is not connected yet
-  const [participants, setParticipants] = useState<EventParticipant[]>(eventParticipants || []);
+  const [participants, setParticipants] = useState<EventParticipant[]>(
+    eventParticipants
+      ? eventParticipants.map((participant) => ({ ...participant, anmeldedatum: dayjs(participant.anmeldedatum) }))
+      : []
+  );
 
   /**
    * Gets the event or workshop from the database
@@ -299,7 +303,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   /**
    * Renders sign up button
    */
-  const RenderSignUpButton: FunctionComponent = () => {
+  const SignUpButton: FunctionComponent = () => {
     const handleSignUp = () => {
       // here should be a api call to sign up or sign off the user
       setUserIsSignedUp(!userIsSignedUp);
@@ -358,7 +362,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
-                  Teilnehmerliste
+                  Teilnehmerliste ({participants.length})
                 </Typography>
                 <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
                   <EventParticipants participants={participants} removeParticipant={removeParticipant} />
@@ -378,7 +382,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
           >
             {participants.length > 0 ? (
               <>
-                <RenderSignUpButton />
+                <SignUpButton />
                 {auth.permissions.length > 0 ? (
                   <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
                 ) : null}

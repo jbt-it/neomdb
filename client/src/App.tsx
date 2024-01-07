@@ -40,6 +40,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
+import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 
 /**
  * This component is responsible for rendering the app.
@@ -75,7 +76,7 @@ const App: React.FunctionComponent = () => {
             <Route path="veranstaltungen/:id" element={<DisplayEventDetails />} />
             <Route path="workshops" element={<DisplayWorkshopsOverview />} />
             <Route path="workshops/:id" element={<DisplayWorkshopDetails />} />
-            <Route path="workshops/:id/:id" element={<Dashboard />} />
+            <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
