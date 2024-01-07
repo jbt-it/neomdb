@@ -193,7 +193,7 @@ const WorkshopInstanceDetails = () => {
     ) : workshopInstance.status === "Feedback" || workshopInstance.status === "Abgeschlossen" ? (
       <Button
         variant="contained"
-        href={`/#/feedback/${workshopInstance.schulungsinstanzID}`}
+        href={`/#/workshops/feedback/${workshopInstance.schulungsinstanzID}`}
         sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
         color="info"
         startIcon={<Grade />}
