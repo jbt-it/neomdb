@@ -14,7 +14,7 @@ import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
 import { eventParticipants } from "../../mock/events/eventParticipants";
 import useResponsive from "../../hooks/useResponsive";
-import { AddCircle, CheckCircle, RemoveCircleOutline, Group } from "@mui/icons-material";
+import { AddCircle, CheckCircle, RemoveCircleOutline, Group, Grade } from "@mui/icons-material";
 import api from "../../utils/api";
 import { Member } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
@@ -192,12 +192,13 @@ const WorkshopInstanceDetails = () => {
       </Button>
     ) : workshopInstance.status === "Feedback" || workshopInstance.status === "Abgeschlossen" ? (
       <Button
-        variant="outlined"
+        variant="contained"
         href={`/#/feedback/${workshopInstance.schulungsinstanzID}`}
-        sx={{ fontWeight: 600 }}
+        sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
         color="info"
+        startIcon={<Grade />}
       >
-        Feedback anzeigen
+        {isMobile ? "Feedback" : "Feedback anzeigen"}
       </Button>
     ) : null;
   };
