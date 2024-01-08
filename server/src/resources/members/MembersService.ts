@@ -13,7 +13,7 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
-import { getPathOfImage } from "utils/assetsUtils";
+import { getPathOfImage } from "../../utils/assetsUtils";
 import AuthRepository from "../../auth/AuthRepository";
 import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
