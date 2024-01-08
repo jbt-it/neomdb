@@ -255,7 +255,15 @@ export class MembersController extends Controller {
    */
   @Get("{id}/permissions")
   @Security("jwt")
-  public async getPermissionsByMemberID(@Path() id: number): Promise<{ permissions: Permission[] }> {
+  public async getPermissionsByMemberID(
+    @Path() id: number,
+    @Request() request: any
+  ): Promise<{ permissions: Permission[] }> {
+    const user = request.user as JWTPayload;
+    const userHasAnyPermission = user.permissions.length > 0;
+    if (!userHasAnyPermission) {
+      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
+    }
     const permissions = await this.membersService.getPermissionsByMemberID(id);
 
     return permissions;
