@@ -67,7 +67,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 2,
-        note: 2,
+        note: 1,
       },
       {
         feedbackfrage_feedbackfrageID: 3,
@@ -75,11 +75,11 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 4,
-        note: 2,
+        note: 4,
       },
       {
         feedbackfrage_feedbackfrageID: 5,
-        note: 1,
+        note: 2,
       },
       {
         feedbackfrage_feedbackfrageID: 6,
@@ -87,7 +87,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 7,
-        note: 2,
+        note: 3,
       },
       {
         feedbackfrage_feedbackfrageID: 8,
@@ -95,13 +95,13 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 9,
-        note: 1,
+        note: 2,
       },
     ],
     referenten_feedback: [
       {
         mitgliedID: 8111,
-        note: 1,
+        note: 2,
       },
       {
         mitgliedID: 8222,
@@ -109,7 +109,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         mitgliedID: 8300,
-        note: 1,
+        note: 3,
       },
     ],
   },
@@ -120,7 +120,7 @@ export const schulung_has_feedbackfrage = [
     feedback_noten: [
       {
         feedbackfrage_feedbackfrageID: 1,
-        note: 1,
+        note: 3,
       },
       {
         feedbackfrage_feedbackfrageID: 2,
@@ -132,11 +132,11 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 4,
-        note: 2,
+        note: 1,
       },
       {
         feedbackfrage_feedbackfrageID: 5,
-        note: 1,
+        note: 3,
       },
       {
         feedbackfrage_feedbackfrageID: 6,
@@ -144,7 +144,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 7,
-        note: 2,
+        note: 1,
       },
       {
         feedbackfrage_feedbackfrageID: 8,
@@ -166,7 +166,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         mitgliedID: 8300,
-        note: 1,
+        note: 3,
       },
     ],
   },
@@ -189,7 +189,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 4,
-        note: 2,
+        note: 4,
       },
       {
         feedbackfrage_feedbackfrageID: 5,
@@ -219,11 +219,11 @@ export const schulung_has_feedbackfrage = [
       },
       {
         mitgliedID: 8222,
-        note: 2,
+        note: 1,
       },
       {
         mitgliedID: 8300,
-        note: 1,
+        note: 3,
       },
     ],
   },
@@ -234,7 +234,7 @@ export const schulung_has_feedbackfrage = [
     feedback_noten: [
       {
         feedbackfrage_feedbackfrageID: 1,
-        note: 1,
+        note: 3,
       },
       {
         feedbackfrage_feedbackfrageID: 2,
@@ -254,7 +254,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 6,
-        note: 1,
+        note: 3,
       },
       {
         feedbackfrage_feedbackfrageID: 7,
@@ -262,7 +262,7 @@ export const schulung_has_feedbackfrage = [
       },
       {
         feedbackfrage_feedbackfrageID: 8,
-        note: 2,
+        note: 5,
       },
       {
         feedbackfrage_feedbackfrageID: 9,

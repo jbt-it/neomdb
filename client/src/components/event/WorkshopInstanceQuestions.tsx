@@ -29,7 +29,7 @@ const WorkshopInstanceQuestions: React.FunctionComponent<WorkshopInstanceQuestio
   }
 
   return (
-    <Accordion sx={{ mb: 3 }}>
+    <Accordion sx={{ mb: 3, maxWidth: "90%" }}>
       <AccordionSummary expandIcon={<ExpandMore />}>
         <Typography>Feedbackfragen</Typography>
       </AccordionSummary>

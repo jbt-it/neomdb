@@ -11,6 +11,7 @@ import EventChip from "../../components/event/EventChip";
 import dayjs from "dayjs";
 import WorkshopInstanceQuestions from "../../components/event/WorkshopInstanceQuestions";
 import WorkshopInstanceEvaluationTable from "../../components/event/WorkshopInstanceEvaluationTable";
+import WorkshopInstanceEvaluationAccordions from "../../components/event/WorkshopInstanceEvaluationAccordions";
 
 /**
  * This component is responsible for rendering the workshop instance evaluation page.
@@ -116,6 +117,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
         <Typography variant="h6" color="primary" fontWeight={"bold"}>
           Auswertung
         </Typography>
+        <WorkshopInstanceEvaluationAccordions workshopInstanceID={workshopInstance.schulungsinstanzID} />
         <WorkshopInstanceQuestions workshopInstance={workshopInstance} />
         <WorkshopInstanceEvaluationTable workshopInstance={workshopInstance} />
       </Paper>
