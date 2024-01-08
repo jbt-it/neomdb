@@ -42,8 +42,6 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
     getWorkshopInstanceFeedback(workshopInstance.schulungsinstanzID);
   }, []);
 
-  console.log(numericalFeedback);
-
   return numericalFeedback.length > 0 ? (
     <TableContainer sx={{ pt: 10 }}>
       <Table size="small">

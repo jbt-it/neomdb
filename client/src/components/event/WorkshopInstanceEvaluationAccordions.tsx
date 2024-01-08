@@ -1,82 +1,147 @@
-import React, { useEffect, useState } from "react";
-import { NumericalWorkshopInstanceFeedback } from "../../types/eventTypes";
-import { schulung_has_feedbackfrage } from "../../mock/events/schulung_has_feedbackfrage";
+import React from "react";
+import { Frage, ReferentenBewertung } from "../../types/eventTypes";
 import dayjs from "dayjs";
-import { Accordion, AccordionDetails, AccordionSummary, Skeleton, Stack, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Divider,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
-import { schulung_has_feedbackfragen } from "../../mock/events/schulung_has_feedbackfragen";
 import useResponsive from "../../hooks/useResponsive";
 
 interface WorkshopInstanceEvaluationAccordionsProps {
-  workshopInstanceID: number;
+  workshopInstanceFeedbackFragen: Frage[];
+  workshopInstanceFeedbackReferenten: ReferentenBewertung[];
 }
 
+/**
+ * This component is responsible for rendering the accordions for the workshop instance evaluation page.
+ * All questions and referents are displayed with the respective grades
+ * @param workshopInstanceFeedbackFragen the questions of the workshop instance feedback
+ * @param workshopInstanceFeedbackReferenten the referents of the workshop instance feedback
+ * @returns the accordions for the workshop instance evaluation page
+ */
 const WorkshopInstanceEvaluationAccordions: React.FunctionComponent<WorkshopInstanceEvaluationAccordionsProps> = ({
-  workshopInstanceID,
+  workshopInstanceFeedbackFragen,
+  workshopInstanceFeedbackReferenten,
 }: WorkshopInstanceEvaluationAccordionsProps) => {
-  const [numericalFeedback, setNumericFeedback] = useState<NumericalWorkshopInstanceFeedback[]>([]);
   const isMobile = useResponsive("down", "sm");
 
-  const getWorkshopInstanceFeedback = (workshopInstanceID: number) => {
-    const result = schulung_has_feedbackfrage.filter(
-      (workshopinstance) => workshopinstance.schulung_schulungID === workshopInstanceID
-    );
-
-    const transformedResult: NumericalWorkshopInstanceFeedback[] = result.map((item) => {
-      const feedback: NumericalWorkshopInstanceFeedback = {
-        schulung_schulungID: item.schulung_schulungID,
-        schulungsfeedback_has_schulungsfeedbackID: item.schulungsfeedback_has_schulungsfeedbackID,
-        feedback_noten: item.feedback_noten.map((feedbackItem) => ({
-          feedbackfrageID: feedbackItem.feedbackfrage_feedbackfrageID,
-          bewertung: feedbackItem.note,
-        })),
-        referenten_feedback: item.referenten_feedback.map((referentenItem) => ({
-          feedbackfrageID: referentenItem.mitgliedID,
-          bewertung: referentenItem.note,
-        })),
-        schulungsfeedback_datum: dayjs(item.schulungsfeedback_datum),
-      };
-      return feedback;
-    });
-
-    setNumericFeedback(transformedResult);
-  };
-
-  const getFeedbackQuestions = () => {
-    if (workshopInstanceID != undefined) {
-      const result = schulung_has_feedbackfragen.find(
-        (feedbackQuestion) => feedbackQuestion.schulungsfeedback_schulungsfeedbackID === workshopInstanceID
-      );
-      return result;
-    }
-  };
-
-  const feedbackQuestions = getFeedbackQuestions();
-
-  useEffect(() => {
-    getWorkshopInstanceFeedback(workshopInstanceID);
-  }, []);
-
-  console.log(numericalFeedback.map((feedback) => feedback.feedback_noten));
-
-  return feedbackQuestions != undefined ? (
+  return workshopInstanceFeedbackFragen ? (
     <>
-      {numericalFeedback.map((feedback: NumericalWorkshopInstanceFeedback, index) => (
-        <Accordion sx={{ maxWidth: isMobile ? "100%" : "90%" }}>
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <Stack direction="column">
-              <Stack spacing={1} direction={"row"}>
-                <Typography fontWeight={"bold"}>
-                  Frage
-                  {feedback.feedback_noten.find((question) => question.feedbackfrageID === index)?.feedbackfrageID}:
-                </Typography>
-                <Typography fontWeight={"bold"}>Durchschnitt</Typography>
-              </Stack>
-            </Stack>
-          </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
-        </Accordion>
-      ))}
+      <Box>
+        <Typography fontWeight={"bold"} fontSize={18} sx={{ mb: 1 }}>
+          Fragen:
+        </Typography>
+        {workshopInstanceFeedbackFragen.map((question, index) => {
+          return (
+            <Accordion disableGutters key={`Frage-${index}`}>
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Stack spacing={isMobile ? 8 : 3} direction={"row"}>
+                  <Box sx={{ display: "flex" }}>
+                    <Typography fontWeight={"bold"}>Frage {index + 1}: &nbsp;</Typography>
+                    {isMobile ? null : <Typography>{question.frageText}</Typography>}
+                  </Box>
+                  <Box sx={{ display: "flex" }}>
+                    <Typography color={"primary.main"} fontWeight={"bold"}>
+                      Ø
+                    </Typography>
+                    <Typography color={"primary.main"} fontWeight={"bold"}>
+                      &nbsp;{question.durchschnitt}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Divider />
+                {isMobile ? <Typography>{question.frageText}</Typography> : null}
+                <TableContainer sx={{ maxWidth: 350, margin: "auto" }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                          Bewertung
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {question.bewertungen.map((bewertung) => (
+                        <TableRow>
+                          <TableCell>{dayjs(bewertung.schulungsfeedback_datum).format("DD.MM.YYYY")}</TableCell>
+                          <TableCell align="right">{bewertung.note === 0 ? "-" : bewertung.note}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+      </Box>
+      {workshopInstanceFeedbackReferenten.length > 0 ? (
+        <Box sx={{ mt: 3 }}>
+          <Divider sx={{ mb: 2 }} />
+          <Typography fontWeight={"bold"} fontSize={18} sx={{ mb: 1 }}>
+            Referenten:
+          </Typography>
+          {workshopInstanceFeedbackReferenten.map((referent, index) => {
+            return (
+              <Accordion disableGutters key={`Referent-${index}`}>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Stack spacing={isMobile ? 8 : 3} direction={"row"}>
+                    <Typography fontWeight={"bold"}>
+                      {referent.vorname} {referent.nachname}
+                    </Typography>
+                    <Box sx={{ display: "flex" }}>
+                      <Typography color={"primary.main"} fontWeight={"bold"}>
+                        Ø
+                      </Typography>
+                      <Typography color={"primary.main"} fontWeight={"bold"}>
+                        &nbsp;{referent.durchschnitt}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Divider />
+                  <TableContainer sx={{ maxWidth: 350, margin: "auto" }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: "bold" }}>Datum</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                            Bewertung
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {referent.bewertungen.map((bewertung) => (
+                          <TableRow>
+                            <TableCell>{dayjs(bewertung.schulungsfeedback_datum).format("DD.MM.YYYY")}</TableCell>
+                            <TableCell align="right">{bewertung.note === 0 ? "-" : bewertung.note}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
+        </Box>
+      ) : null}
     </>
   ) : null;
 };
