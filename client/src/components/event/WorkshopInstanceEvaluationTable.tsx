@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableCell, TableBody, TableHead, TableRow, TableContainer, Box } from "@mui/material";
-import { NumericalWorkshopInstanceFeedback, WorkshopInstance } from "../../types/eventTypes";
+import {
+  Frage,
+  NumericalWorkshopInstanceFeedback,
+  ReferentenBewertung,
+  WorkshopInstance,
+} from "../../types/eventTypes";
 import dayjs from "dayjs";
 import { schulung_has_feedbackfrage } from "../../mock/events/schulung_has_feedbackfrage";
 
 interface WorkshopInstanceEvaluationTableProps {
   workshopInstance: WorkshopInstance;
+  fragen: Frage[];
+  referenten: ReferentenBewertung[];
 }
 
 const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceEvaluationTableProps> = ({
