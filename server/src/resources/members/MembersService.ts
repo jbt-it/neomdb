@@ -1,3 +1,5 @@
+import * as bcrypt from "bcryptjs";
+import fs from "fs/promises";
 import {
   CreateMemberRequest,
   EdvSkill,
@@ -11,16 +13,16 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
+import { getPathOfImage } from "utils/assetsUtils";
+import AuthRepository from "../../auth/AuthRepository";
+import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
-import { executeInTransaction } from "../../database";
-import * as bcrypt from "bcryptjs";
 import { getRandomString } from "../../utils/stringUtils";
-import AuthRepository from "../../auth/AuthRepository";
 import TraineesRepository from "../trainees/TraineesRepository";
+import MembersRepository from "./MembersRepository";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -72,6 +74,29 @@ class MembersService {
       edvkenntnisse: edvSkills,
     };
     return memberDto;
+  };
+
+  /**
+   * Retrieves the image of a member by its id as base64 string
+   * @param imageFolderPath The path to the image folder
+   * @param memberID The id of the member
+   * @returns The base64 string of the image and its mime type or null if no image was found
+   */
+  getMemberImage = async (imageFolderPath: string, memberID: number) => {
+    const { imagePath, mimeType } = await getPathOfImage(imageFolderPath, `${memberID}`);
+    if (imagePath === null) {
+      return null;
+    }
+
+    try {
+      const fileContents = await fs.readFile(imagePath);
+      // Convert to Base64
+      const base64 = fileContents.toString("base64");
+
+      return { base64, mimeType };
+    } catch (err: any) {
+      return null;
+    }
   };
 
   /**
