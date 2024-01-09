@@ -18,7 +18,7 @@ const app = express();
  * Express configuration
  */
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 
 /*
  * Enable CORS middleware for all incoming requests
