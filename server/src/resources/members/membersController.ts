@@ -33,11 +33,8 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
-import path from "path";
-import fs from "fs/promises";
 
 // TODO: Compose file anpassen
-// TODO: Add route for saving a single member image
 // TODO: Adjust get members route such that it can also return the image of a member
 
 /**
@@ -86,15 +83,11 @@ export class MembersController extends Controller {
   @Post("{id}/image")
   @Security("jwt")
   public async saveImage(@Path() id: number, @Body() requestBody: any) {
-    // TODO: Refactor
     const { base64, mimeType } = requestBody;
-    const filePath = path.join(`${this.assetPath}/images`, path.basename(`${id}.${mimeType}`));
+    const imageFolderPath = `${this.assetPath}/images`;
+    const imageName = `${id}.${mimeType}`;
 
-    // Convert Base64 to binary
-    const fileContents = Buffer.from(base64, "base64");
-
-    // Write file to disk
-    await fs.writeFile(filePath, fileContents);
+    await this.membersService.saveMemberImage(imageFolderPath, imageName, base64);
   }
 
   /**

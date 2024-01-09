@@ -23,6 +23,7 @@ import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import TraineesRepository from "../trainees/TraineesRepository";
 import MembersRepository from "./MembersRepository";
+import path from "path";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -97,6 +98,22 @@ class MembersService {
     } catch (err: any) {
       return null;
     }
+  };
+
+  /**
+   * Saves the image of a member
+   * @param imageFolderPath The path to the image folder
+   * @param imageName The name of the image
+   * @param base64 The base64 string of the image
+   */
+  saveMemberImage = async (imageFolderPath: string, imageName: string, base64: string) => {
+    const filePath = path.join(imageFolderPath, path.basename(`${imageName}`));
+
+    // Convert Base64 to binary
+    const fileContents = Buffer.from(base64, "base64");
+
+    // Write file to disk
+    await fs.writeFile(filePath, fileContents);
   };
 
   /**
