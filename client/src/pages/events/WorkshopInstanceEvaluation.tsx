@@ -162,7 +162,11 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
           />
           <WorkshopInstanceTextEvaluation textFeedback={workshopInstanceFeedback.textFeedback} />
         </Box>
-        {/* <WorkshopInstanceEvaluationTable workshopInstance={workshopInstance} /> */}
+        <WorkshopInstanceEvaluationTable
+          fragen={workshopInstanceFeedback.fragen}
+          referenten={workshopInstanceFeedback.referenten}
+          gesamt={workshopInstanceFeedback.gesamt}
+        />
         {workshopInstanceFeedback.status === "Feedback" ? (
           <>
             <Divider light sx={{ width: "95%", borderColor: "#f6891f", mt: 2, mb: 2 }} />

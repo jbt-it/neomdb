@@ -68,18 +68,7 @@ export type NumericFeedback = {
   bewertung: number;
 };
 
-/**
- * Type of a workshop Feedback
- */
-export type NumericalWorkshopInstanceFeedback = {
-  schulung_schulungID: number;
-  schulungsfeedback_has_schulungsfeedbackID: number;
-  schulungsfeedback_datum: Dayjs;
-  feedback_noten: NumericFeedback[];
-  referenten_feedback: NumericFeedback[];
-};
-
-type Bewertung = {
+export type Bewertung = {
   schulungsfeedback_has_schulungsfeedbackID: number;
   schulungsfeedback_datum: string;
   note: number;

@@ -317,12 +317,274 @@ export const schulungsInstanzFeedback = [
           },
         ],
       },
+      {
+        feedbackfrage_feedbackfrageID: 7,
+        frageText: "Waren die Übungen/Cases hilfreich?",
+        durchschnitt: 1.5,
+        bewertungen: [
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6700,
+            schulungsfeedback_datum: "2023-10-30T00:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6701,
+            schulungsfeedback_datum: "2023-10-31T07:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6702,
+            schulungsfeedback_datum: "2023-11-01T08:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6703,
+            schulungsfeedback_datum: "2023-11-02T09:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6704,
+            schulungsfeedback_datum: "2023-11-03T10:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6705,
+            schulungsfeedback_datum: "2023-11-04T11:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6706,
+            schulungsfeedback_datum: "2023-11-05T12:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6707,
+            schulungsfeedback_datum: "2023-11-06T13:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6708,
+            schulungsfeedback_datum: "2023-11-07T14:00:00.000Z",
+            note: 1,
+          },
+        ],
+      },
+      {
+        feedbackfrage_feedbackfrageID: 8,
+        frageText: "Waren die Übungen/Cases hilfreich?",
+        durchschnitt: 1.5,
+        bewertungen: [
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6700,
+            schulungsfeedback_datum: "2023-10-30T00:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6701,
+            schulungsfeedback_datum: "2023-10-31T07:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6702,
+            schulungsfeedback_datum: "2023-11-01T08:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6703,
+            schulungsfeedback_datum: "2023-11-02T09:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6704,
+            schulungsfeedback_datum: "2023-11-03T10:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6705,
+            schulungsfeedback_datum: "2023-11-04T11:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6706,
+            schulungsfeedback_datum: "2023-11-05T12:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6707,
+            schulungsfeedback_datum: "2023-11-06T13:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6708,
+            schulungsfeedback_datum: "2023-11-07T14:00:00.000Z",
+            note: 1,
+          },
+        ],
+      },
+      {
+        feedbackfrage_feedbackfrageID: 9,
+        frageText: "Waren die Übungen/Cases hilfreich?",
+        durchschnitt: 1.5,
+        bewertungen: [
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6700,
+            schulungsfeedback_datum: "2023-10-30T00:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6701,
+            schulungsfeedback_datum: "2023-10-31T07:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6702,
+            schulungsfeedback_datum: "2023-11-01T08:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6703,
+            schulungsfeedback_datum: "2023-11-02T09:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6704,
+            schulungsfeedback_datum: "2023-11-03T10:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6705,
+            schulungsfeedback_datum: "2023-11-04T11:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6706,
+            schulungsfeedback_datum: "2023-11-05T12:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6707,
+            schulungsfeedback_datum: "2023-11-06T13:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6708,
+            schulungsfeedback_datum: "2023-11-07T14:00:00.000Z",
+            note: 1,
+          },
+        ],
+      },
     ],
     referenten: [
       {
         mitglied_mitgliedID: 8111,
-        vorname: "Max",
-        nachname: "Mustermann",
+        vorname: "Maximilian",
+        nachname: " von und zu Mustermann des Hauses",
+        durchschnitt: 1.5,
+        bewertungen: [
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6700,
+            schulungsfeedback_datum: "2023-10-30T00:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6701,
+            schulungsfeedback_datum: "2023-10-31T07:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6702,
+            schulungsfeedback_datum: "2023-11-01T08:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6703,
+            schulungsfeedback_datum: "2023-11-02T09:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6704,
+            schulungsfeedback_datum: "2023-11-03T10:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6705,
+            schulungsfeedback_datum: "2023-11-04T11:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6706,
+            schulungsfeedback_datum: "2023-11-05T12:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6707,
+            schulungsfeedback_datum: "2023-11-06T13:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6708,
+            schulungsfeedback_datum: "2023-11-07T14:00:00.000Z",
+            note: 1,
+          },
+        ],
+      },
+      {
+        mitglied_mitgliedID: 8222,
+        vorname: "Maximilian",
+        nachname: " von und zu Mustermann des Hauses",
+        durchschnitt: 1.5,
+        bewertungen: [
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6700,
+            schulungsfeedback_datum: "2023-10-30T00:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6701,
+            schulungsfeedback_datum: "2023-10-31T07:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6702,
+            schulungsfeedback_datum: "2023-11-01T08:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6703,
+            schulungsfeedback_datum: "2023-11-02T09:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6704,
+            schulungsfeedback_datum: "2023-11-03T10:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6705,
+            schulungsfeedback_datum: "2023-11-04T11:00:00.000Z",
+            note: 1,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6706,
+            schulungsfeedback_datum: "2023-11-05T12:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6707,
+            schulungsfeedback_datum: "2023-11-06T13:00:00.000Z",
+            note: 2,
+          },
+          {
+            schulungsfeedback_has_schulungsfeedbackID: 6708,
+            schulungsfeedback_datum: "2023-11-07T14:00:00.000Z",
+            note: 1,
+          },
+        ],
+      },
+      {
+        mitglied_mitgliedID: 8167,
+        vorname: "Maximilian",
+        nachname: " von und zu Mustermann des Hauses",
         durchschnitt: 1.5,
         bewertungen: [
           {
