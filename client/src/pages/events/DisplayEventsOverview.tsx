@@ -43,6 +43,7 @@ import LoadingTable from "../../components/general/LoadingTable";
 import EventChip from "../../components/event/EventChip";
 import EditEventDialog from "./EditEventDialog";
 import useResponsive from "../../hooks/useResponsive";
+import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -216,7 +217,8 @@ const DisplayEventsOverview: React.FC = () => {
         type: event.ww ? "WW" : event.netzwerk ? "Netzwerk" : event.jbtgoes ? "JBT goes" : "Sonstige",
       });
     });
-    setEventsSignedUp(currentEvents.filter((event) => event.ID === 2 || event.ID === 3));
+    const signedUp = mitglied_has_event.filter((event) => event.mitglied_mitgliedID === auth.userID);
+    setEventsSignedUp(currentEvents.filter((event) => signedUp.some((e) => e.event_eventID === event.ID)));
   }, [dispatchAuth]);
 
   /**
@@ -387,26 +389,34 @@ const DisplayEventsOverview: React.FC = () => {
    */
   const renderSignUpButton = (event: commonEventType) => {
     if (eventsSignedUp.some((e) => e.ID === event.ID)) {
-      return (
-        <Chip
-          label="Abmelden"
-          color="error"
-          size={mobile ? "medium" : "small"}
-          variant="outlined"
-          icon={<RemoveCircleOutline />}
-          onClick={() => {
-            signOutFromEvent(event);
-          }}
-        />
-      );
+      if (event.registrationDeadline ? event.registrationDeadline > dayjs() : true) {
+        return (
+          <Chip
+            label="Abmelden"
+            color="error"
+            size={mobile ? "medium" : "small"}
+            variant="outlined"
+            icon={<RemoveCircleOutline />}
+            onClick={() => {
+              signOutFromEvent(event);
+            }}
+          />
+        );
+      } else
+        return (
+          <Chip
+            label="Abmelden"
+            color="default"
+            size={mobile ? "medium" : "small"}
+            variant="outlined"
+            icon={<RemoveCircleOutline />}
+            disabled
+          />
+        );
     } else if (
       // check if the registration deadline is in the past or if the registration start is in the future
-      (event.registrationDeadline || event.registrationDeadline === null
-        ? dayjs().isAfter(event.registrationDeadline?.endOf("d"))
-        : false) ||
-      (event.registrationStart || event.registrationStart === null
-        ? dayjs().isBefore(event.registrationStart?.startOf("d"))
-        : false)
+      (event.registrationDeadline != null && event.registrationDeadline < dayjs()) ||
+      (event.registrationStart != null && event.registrationStart > dayjs())
     ) {
       return (
         <Chip

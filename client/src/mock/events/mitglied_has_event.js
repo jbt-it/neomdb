@@ -24,11 +24,15 @@ export const mitglied_has_event = [
     mitglied_mitgliedID: 8167,
   },
   {
+    event_eventID: 9,
+    mitglied_mitgliedID: 8167,
+  },
+  {
     event_eventID: 3,
     mitglied_mitgliedID: 8111,
   },
   {
     event_eventID: 3,
-    mitglied_has_event: 8222,
+    mitglied_mitgliedID: 8222,
   },
 ];
