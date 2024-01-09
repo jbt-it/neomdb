@@ -59,9 +59,8 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
                   to={`/gesamtuebersicht/${ref.mitglied_mitgliedID}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200, maxWidth: 50 }}>
-                    {ref.vorname}
-                    {ref.nachname}
+                  <Box sx={{ writingMode: "sideways-lr", whiteSpace: "pre-line", maxHeight: 150, maxWidth: 50 }}>
+                    {ref.vorname} {ref.nachname}
                   </Box>
                 </Link>
               </TableCell>

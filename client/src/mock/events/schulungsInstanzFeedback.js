@@ -478,7 +478,7 @@ export const schulungsInstanzFeedback = [
       {
         mitglied_mitgliedID: 8111,
         vorname: "Maximilian",
-        nachname: " von und zu Mustermann des Hauses",
+        nachname: " von und zu Mustermann",
         durchschnitt: 1.5,
         bewertungen: [
           {
@@ -531,7 +531,7 @@ export const schulungsInstanzFeedback = [
       {
         mitglied_mitgliedID: 8222,
         vorname: "Maximilian",
-        nachname: " von und zu Mustermann des Hauses",
+        nachname: "von und zu Mustermann",
         durchschnitt: 1.5,
         bewertungen: [
           {
@@ -584,7 +584,7 @@ export const schulungsInstanzFeedback = [
       {
         mitglied_mitgliedID: 8167,
         vorname: "Maximilian",
-        nachname: " von und zu Mustermann des Hauses",
+        nachname: " von und zu Mustermann",
         durchschnitt: 1.5,
         bewertungen: [
           {
@@ -981,7 +981,7 @@ export const schulungsInstanzFeedback = [
     referenten: [
       {
         mitglied_mitgliedID: 8111,
-        vorname: "Max",
+        vorname: "Hans-Dieter",
         nachname: "Mustermann",
         durchschnitt: 1.5,
         bewertungen: [
