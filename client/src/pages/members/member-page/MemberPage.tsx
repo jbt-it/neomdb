@@ -20,6 +20,7 @@ const MemberProfile: React.FunctionComponent = () => {
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
+  const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   /**
@@ -94,6 +95,35 @@ const MemberProfile: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             setLanguages(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /**
+   * Retrieves the image of the member
+   */
+  const getMemberImage: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/members/${params.id}/image`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMemberImage(res.data);
           }
         }
       })
@@ -212,6 +242,7 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
+  useEffect(getMemberImage, [params.id, dispatchAuth]);
 
   return (
     <div>
@@ -226,6 +257,7 @@ const MemberProfile: React.FunctionComponent = () => {
             memberDetails={memberDetails}
             isOwner={isOwner}
             getMemberDetails={getMemberDetails}
+            memberImage={memberImage}
             updateMemberDetails={updateMemberDetails}
           />
         ) : null}

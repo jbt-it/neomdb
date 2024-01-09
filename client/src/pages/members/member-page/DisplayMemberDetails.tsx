@@ -33,6 +33,7 @@ import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
+import MemberImage from "../../../components/general/MemberImage";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -55,15 +56,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
-    },
-    memberImage: {
-      backgroundColor: "white",
-      borderRadius: "50%",
-      border: "3px solid var(--white,#fff)",
-      boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-      width: "40%",
-      marginLeft: "20px",
-      marginTop: "20px",
     },
     category: {
       color: theme.palette.text.secondary,
@@ -185,6 +177,7 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.EDVSkill[];
   memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
+  memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
   getMemberDetails: () => void;
 }
@@ -652,7 +645,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderImage: VoidFunction = () => {
     return (
       <div className={classes.imageSection}>
-        <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
+        <MemberImage
+          base64={props.memberImage?.base64}
+          mimeType={props.memberImage?.mimeType}
+          defaultImage={JBTLogoBlack}
+          alt="Member Image"
+          size={240}
+        />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
           <Typography>
