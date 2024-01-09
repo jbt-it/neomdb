@@ -1,5 +1,15 @@
 import React from "react";
-import { Table, TableCell, TableBody, TableHead, TableRow, TableContainer, Box } from "@mui/material";
+import {
+  Table,
+  TableCell,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableContainer,
+  Box,
+  Divider,
+  Typography,
+} from "@mui/material";
 import { Frage, ReferentenBewertung } from "../../types/eventTypes";
 import { Link } from "react-router-dom";
 
@@ -37,89 +47,95 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
   });
 
   return fragen.length > 0 ? (
-    <TableContainer>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ p: 0 }} />
-            {fragen.map((frage) => (
-              <TableCell
-                key={frage.feedbackfrage_feedbackfrageID}
-                style={{ verticalAlign: "bottom", fontWeight: "bold" }}
-                align="center"
-              >
-                <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200 }}>
-                  Frage {frage.feedbackfrage_feedbackfrageID}
-                </Box>
-              </TableCell>
-            ))}
-            {referenten.map((ref) => (
-              <TableCell key={ref.mitglied_mitgliedID} style={{ padding: 0, paddingBottom: 5, fontWeight: "bold" }}>
-                <Link
-                  to={`/gesamtuebersicht/${ref.mitglied_mitgliedID}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
+    <Box sx={{ pb: 2 }}>
+      <Divider sx={{ mb: 2 }} />
+      <Typography fontWeight={"bold"} fontSize={18}>
+        Übersicht:
+      </Typography>
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ p: 0 }} />
+              {fragen.map((frage) => (
+                <TableCell
+                  key={frage.feedbackfrage_feedbackfrageID}
+                  style={{ verticalAlign: "bottom", fontWeight: "bold" }}
+                  align="center"
                 >
-                  <Box sx={{ writingMode: "sideways-lr", whiteSpace: "pre-line", maxHeight: 150, maxWidth: 50 }}>
-                    {ref.vorname} {ref.nachname}
+                  <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200 }}>
+                    Frage {frage.feedbackfrage_feedbackfrageID}
                   </Box>
-                </Link>
-              </TableCell>
-            ))}
-            <TableCell style={{ verticalAlign: "bottom", fontWeight: "bold" }}>Durchschnitt</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {uniqueSchulungsfeedbackIds.map((id, index) => (
-            <TableRow key={id}>
-              <TableCell sx={{ p: 0, fontWeight: "bold" }}> {index + 1}</TableCell>
-              {fragen.map((frage) => {
-                const bewertung = frage.bewertungen.find((b) => b.schulungsfeedback_has_schulungsfeedbackID === id);
-                return (
-                  <TableCell
-                    key={frage.feedbackfrage_feedbackfrageID}
-                    sx={{ paddingLeft: 1, borderLeft: 1, borderLeftColor: "#e4e4e4" }}
-                    align="center"
+                </TableCell>
+              ))}
+              {referenten.map((ref) => (
+                <TableCell key={ref.mitglied_mitgliedID} style={{ padding: 0, paddingBottom: 5, fontWeight: "bold" }}>
+                  <Link
+                    to={`/gesamtuebersicht/${ref.mitglied_mitgliedID}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    {bewertung?.note === 0 ? "-" : bewertung?.note.toLocaleString("de-DE")}
-                  </TableCell>
-                );
-              })}
-              {referenten.map((ref) => {
-                const bewertung = ref.bewertungen.find((b) => b.schulungsfeedback_has_schulungsfeedbackID === id);
-                return (
-                  <TableCell
-                    key={ref.mitglied_mitgliedID}
-                    sx={{ borderLeft: 1, borderLeftColor: "#e4e4e4" }}
-                    align="center"
-                  >
-                    {bewertung?.note === 0 ? "-" : bewertung?.note.toLocaleString("de-DE")}
-                  </TableCell>
-                );
-              })}
-              <TableCell sx={{ borderLeft: 1, borderLeftColor: "#e4e4e4" }}>{averages[index]}</TableCell>
+                    <Box sx={{ writingMode: "sideways-lr", whiteSpace: "pre-line", maxHeight: 150, maxWidth: 50 }}>
+                      {ref.vorname} {ref.nachname}
+                    </Box>
+                  </Link>
+                </TableCell>
+              ))}
+              <TableCell style={{ verticalAlign: "bottom", fontWeight: "bold", maxWidth: 80 }}>Durchschnitt</TableCell>
             </TableRow>
-          ))}
-          <TableRow sx={{ p: 0, borderTopColor: "black", borderTop: 2 }}>
-            <TableCell sx={{ p: 0, pr: 1, color: "primary.main", fontWeight: "bold" }} align="left">
-              Ø
-            </TableCell>
-            {fragen.map((frage) => (
-              <TableCell sx={{ p: 0, fontWeight: "bold" }} align="center">
-                {frage.durchschnitt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </TableCell>
+          </TableHead>
+          <TableBody>
+            {uniqueSchulungsfeedbackIds.map((id, index) => (
+              <TableRow key={id}>
+                <TableCell sx={{ p: 0, fontWeight: "bold" }}> {index + 1}</TableCell>
+                {fragen.map((frage) => {
+                  const bewertung = frage.bewertungen.find((b) => b.schulungsfeedback_has_schulungsfeedbackID === id);
+                  return (
+                    <TableCell
+                      key={frage.feedbackfrage_feedbackfrageID}
+                      sx={{ paddingLeft: 1, borderLeft: 1, borderLeftColor: "#e4e4e4" }}
+                      align="center"
+                    >
+                      {bewertung?.note === 0 ? "-" : bewertung?.note.toLocaleString("de-DE")}
+                    </TableCell>
+                  );
+                })}
+                {referenten.map((ref) => {
+                  const bewertung = ref.bewertungen.find((b) => b.schulungsfeedback_has_schulungsfeedbackID === id);
+                  return (
+                    <TableCell
+                      key={ref.mitglied_mitgliedID}
+                      sx={{ borderLeft: 1, borderLeftColor: "#e4e4e4" }}
+                      align="center"
+                    >
+                      {bewertung?.note === 0 ? "-" : bewertung?.note.toLocaleString("de-DE")}
+                    </TableCell>
+                  );
+                })}
+                <TableCell sx={{ borderLeft: 1, borderLeftColor: "#e4e4e4" }}>{averages[index]}</TableCell>
+              </TableRow>
             ))}
-            {referenten.map((ref) => (
-              <TableCell sx={{ p: 0, fontWeight: "bold" }} align="center">
-                {ref.durchschnitt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <TableRow sx={{ p: 0, borderTopColor: "black", borderTop: 2, borderBottom: 0 }}>
+              <TableCell sx={{ p: 0, pr: 1, color: "primary.main", fontWeight: "bold", borderBottom: 0 }} align="left">
+                Ø
               </TableCell>
-            ))}
-            <TableCell sx={{ fontWeight: "bold" }}>
-              {gesamt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+              {fragen.map((frage) => (
+                <TableCell sx={{ p: 0, fontWeight: "bold", borderBottom: 0 }} align="center">
+                  {frage.durchschnitt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </TableCell>
+              ))}
+              {referenten.map((ref) => (
+                <TableCell sx={{ p: 0, fontWeight: "bold", borderBottom: 0 }} align="center">
+                  {ref.durchschnitt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </TableCell>
+              ))}
+              <TableCell sx={{ fontWeight: "bold", maxWidth: 80, borderBottom: 0 }}>
+                {gesamt.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   ) : null;
 };
 

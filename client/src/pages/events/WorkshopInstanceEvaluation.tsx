@@ -112,16 +112,19 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
       type: "text",
     },
     {
-      label: "Max. Teilnehmeranzahl",
-      value: workshopInstance ? workshopInstance.maximaleTeilnehmer.toString() : null,
+      label: "Teilnehmeranzahl",
+      value: workshopInstanceFeedback ? workshopInstanceFeedback.teilnehmerAnzahl.toString() : null,
       type: "text",
     },
   ];
 
   return workshopInstance === undefined || workshop === undefined || workshopInstanceFeedback === undefined ? (
-    <Skeleton />
+    <Stack direction={"column"} spacing={2} sx={{ maxWidth: 800, ml: isMobile ? 0 : 5 }}>
+      <Skeleton variant="rounded" sx={{ height: 50 }} />
+      <Skeleton variant="rounded" sx={{ height: 500 }} />
+    </Stack>
   ) : (
-    <Container sx={{ ml: isMobile ? 0 : 3 }}>
+    <Container sx={{ ml: isMobile ? 0 : 3, maxWidth: 800 }}>
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}
@@ -161,12 +164,12 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
             workshopInstanceFeedbackReferenten={workshopInstanceFeedback.referenten}
           />
           <WorkshopInstanceTextEvaluation textFeedback={workshopInstanceFeedback.textFeedback} />
+          <WorkshopInstanceEvaluationTable
+            fragen={workshopInstanceFeedback.fragen}
+            referenten={workshopInstanceFeedback.referenten}
+            gesamt={workshopInstanceFeedback.gesamt}
+          />
         </Box>
-        <WorkshopInstanceEvaluationTable
-          fragen={workshopInstanceFeedback.fragen}
-          referenten={workshopInstanceFeedback.referenten}
-          gesamt={workshopInstanceFeedback.gesamt}
-        />
         {workshopInstanceFeedback.status === "Feedback" ? (
           <>
             <Divider light sx={{ width: "95%", borderColor: "#f6891f", mt: 2, mb: 2 }} />

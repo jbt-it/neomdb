@@ -12,6 +12,9 @@ const WorkshopInstanceTextEvaluation: React.FunctionComponent<WorkshopInstanceTe
   return (
     <Box sx={{ mt: 3, pb: 3 }}>
       <Divider sx={{ mb: 2 }} />
+      <Typography fontWeight={"bold"} fontSize={18}>
+        Textfeedback:
+      </Typography>
       {textFeedback.map((feedback, index) => {
         return (
           <Box
