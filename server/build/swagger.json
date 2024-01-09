@@ -169,6 +169,22 @@
 				"type": "object",
 				"description": "Type of the partial member"
 			},
+			"MemberImage": {
+				"properties": {
+					"mimeType": {
+						"type": "string"
+					},
+					"base64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"mimeType",
+					"base64"
+				],
+				"type": "object",
+				"description": "Type of the member image"
+			},
 			"DepartmentMember": {
 				"properties": {
 					"bezeichnung": {
@@ -1543,6 +1559,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
+								"$ref": "#/components/schemas/MemberImage",
 								"description": "The image to save"
 							},
 							"example": {

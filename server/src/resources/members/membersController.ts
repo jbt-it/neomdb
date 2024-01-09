@@ -7,6 +7,7 @@ import {
   DepartmentMember,
   Director,
   MemberDetails,
+  MemberImage,
   MemberPartial,
   StatusOverview,
   UpdateDepartmentRequest,
@@ -33,9 +34,6 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
-
-// TODO: Compose file anpassen
-// TODO: Adjust get members route such that it can also return the image of a member
 
 /**
  * Controller for the members module
@@ -82,7 +80,13 @@ export class MembersController extends Controller {
    */
   @Post("{id}/image")
   @Security("jwt")
-  public async saveImage(@Path() id: number, @Body() requestBody: any) {
+  public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: any) {
+    const user = request.user as JWTPayload;
+    // The user can only save the image if he is the member himself
+    if (id !== user.mitgliedID) {
+      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
+    }
+
     const { base64, mimeType } = requestBody;
     const imageFolderPath = `${this.assetPath}/images`;
     const imageName = `${id}.${mimeType}`;
