@@ -231,6 +231,53 @@ const MemberProfile: React.FunctionComponent = () => {
     };
   };
 
+  /**
+   * Saves the member image
+   * @param file The image file
+   */
+  const saveMemberImage = (file: File) => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+
+    const mimeType = file.name.split(".")[1];
+    // Transform file to base64 string
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const base64 = reader.result?.toString().split(",")[1];
+      api
+        .post(
+          `/members/${params.id}/image`,
+          { base64, mimeType },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 204) {
+            if (mounted) {
+              showSuccessMessage("Bild wurde erfolgreich hochgeladen!");
+              getMemberImage();
+            }
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            dispatchAuth({ type: authReducerActionType.deauthenticate });
+          } else if (err.response.status === 403) {
+            showErrorMessage("Du hast nicht die Berechtigung dies zu tun!");
+          } else if (err.response.status === 500) {
+            showErrorMessage("Hochladen ist fehlgeschlagen!");
+          }
+        });
+    };
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
   useEffect(
     () =>
       // Checks if the user is the owner of the member page
@@ -259,6 +306,7 @@ const MemberProfile: React.FunctionComponent = () => {
             getMemberDetails={getMemberDetails}
             memberImage={memberImage}
             updateMemberDetails={updateMemberDetails}
+            saveMemberImage={saveMemberImage}
           />
         ) : null}
       </div>

@@ -179,6 +179,7 @@ interface DisplayMemberDetailsProps {
   isOwner: boolean;
   memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
+  saveMemberImage: (file: File) => void;
   getMemberDetails: () => void;
 }
 
@@ -245,6 +246,17 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
   const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
+
+  /**
+   * Saves the changes of the image
+   * @param event ChangeEvent
+   */
+  const saveImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      props.saveMemberImage(file);
+    }
+  };
 
   /**
    * Checks if there would be a duplicate value in languages if value would be added
@@ -651,6 +663,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           defaultImage={JBTLogoBlack}
           alt="Member Image"
           size={240}
+          onImageChange={props.isOwner ? saveImage : undefined}
         />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
