@@ -44,6 +44,7 @@ import EventChip from "../../components/event/EventChip";
 import EditEventDialog from "./EditEventDialog";
 import useResponsive from "../../hooks/useResponsive";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
+import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -447,6 +448,11 @@ const DisplayEventsOverview: React.FC = () => {
           }}
         />
       );
+    } else if (
+      // check if event is WW
+      event.type === "WW"
+    ) {
+      return <WorkingWeekendSignUp ww={event} />;
     } else {
       return (
         <Chip
