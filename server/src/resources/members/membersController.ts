@@ -43,7 +43,7 @@ import { UnauthorizedError } from "../../types/Errors";
 @Route("members")
 export class MembersController extends Controller {
   private membersService: MembersService = new MembersService();
-  private assetPath = process.env.ASSETS_PATH || "./assets";
+  private assetsPath = process.env.ASSETS_PATH || process.env.NODE_ENV === "test" ? "./test/assets" : "./assets";
 
   /**
    * Retrieves a list of all members
@@ -65,7 +65,7 @@ export class MembersController extends Controller {
   @Get("{id}/image")
   @Security("jwt")
   public async getMemberImage(@Path() id: number) {
-    const imageFolderPath = `${this.assetPath}/images`;
+    const imageFolderPath = `${this.assetsPath}/images`;
     return await this.membersService.getMemberImage(imageFolderPath, id);
   }
 
@@ -88,7 +88,7 @@ export class MembersController extends Controller {
     }
 
     const { base64, mimeType } = requestBody;
-    const imageFolderPath = `${this.assetPath}/images`;
+    const imageFolderPath = `${this.assetsPath}/images`;
     const imageName = `${id}.${mimeType}`;
 
     await this.membersService.saveMemberImage(imageFolderPath, imageName, base64);
