@@ -35,8 +35,38 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
 }: WorkingWeekendSignUpProps) => {
   const [open, setOpen] = React.useState(false);
   const mobile = useResponsive("down", "sm");
-  const signUpForWW = (ww: commonEventType) => {
-    console.log("Sign up for WW");
+  const signUpForWW = (
+    arrival: string,
+    departure: string,
+    car: boolean,
+    vegetarian: boolean,
+    remarks: string,
+    seats?: number
+  ) => {
+    alert(
+      "Anmeldung für " +
+        ww.name +
+        ww.ID +
+        " erfolgreich!" +
+        "\n" +
+        "Ankunft: " +
+        arrival +
+        "\n" +
+        "Abfahrt: " +
+        departure +
+        "\n" +
+        "Auto: " +
+        car +
+        "\n" +
+        "Sitzplätze: " +
+        seats +
+        "\n" +
+        "Vegetarisch: " +
+        vegetarian +
+        "\n" +
+        "Bemerkungen: " +
+        remarks
+    );
   };
 
   const handleOpen = () => {
@@ -56,7 +86,7 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
         icon={<AddCircle />}
         onClick={handleOpen}
       />
-      <WorkingWeekendSignUpDialog open={open} handleClose={handleClose} ww={ww} />
+      <WorkingWeekendSignUpDialog open={open} handleClose={handleClose} ww={ww} onSubmit={signUpForWW} />
     </>
   );
 };
