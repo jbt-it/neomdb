@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -157,6 +157,8 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     setArrival(event.target.value);
     if (!checkArrivalAndDeparture()) {
       setErrorArrivalAfterDeparture(true);
+    } else {
+      setErrorArrivalAfterDeparture(false);
     }
   };
 
@@ -165,6 +167,8 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     setDeparture(event.target.value);
     if (!checkArrivalAndDeparture()) {
       setErrorDepartureBeforeArrival(true);
+    } else {
+      setErrorDepartureBeforeArrival(false);
     }
   };
 
