@@ -40,7 +40,7 @@ export const events = [
     datum: "2024-11-17T00:00:00.000Z",
     ende: "2024-11-19T00:00:00.000Z",
     anmeldungvon: "2024-01-01T00:00:00.000Z",
-    anmeldungbis: "2024-03-01T00:00:00.000Z",
+    anmeldungbis: "2024-02-01T00:00:00.000Z",
     ort: "Berlin",
     startZeit: "2024-11-17T09:00:00.000Z",
     endZeit: "2024-11-19T23:59:00.000Z",
