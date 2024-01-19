@@ -35,6 +35,7 @@ import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { eventParticipants } from "../../mock/events/eventParticipants";
 import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
+import WorkingWeekendParticipantsTable from "../../components/event/WorkingWeekendParticipantsTable";
 
 /**
  * Renders the page for displaying the details of a given event as well as the participants
@@ -307,9 +308,19 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     };
 
     if (userIsSignedUp) {
-      return (
-        <Chip label="Abmelden" color="error" variant="outlined" icon={<RemoveCircleOutline />} onClick={handleSignUp} />
-      );
+      if (isRegistrationOpen) {
+        return (
+          <Chip
+            label="Abmelden"
+            color="error"
+            variant="outlined"
+            icon={<RemoveCircleOutline />}
+            onClick={handleSignUp}
+          />
+        );
+      } else {
+        return <Chip label="Abmelden" color="error" variant="outlined" disabled icon={<RemoveCircleOutline />} />;
+      }
     } else if (event?.type === "WW") {
       return <WorkingWeekendSignUp ww={event} size="medium" />;
     } else if (isRegistrationOpen) {
@@ -363,9 +374,15 @@ const DisplayEventDetails: React.FunctionComponent = () => {
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
                   Teilnehmerliste
                 </Typography>
-                <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
-                  <EventParticipants participants={participants} removeParticipant={removeParticipant} />
-                </Box>
+                {event.type === "WW" ? (
+                  <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                    <WorkingWeekendParticipantsTable />
+                  </Box>
+                ) : (
+                  <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                    <EventParticipants participants={participants} removeParticipant={removeParticipant} />
+                  </Box>
+                )}
               </>
             ) : null}
           </Paper>
