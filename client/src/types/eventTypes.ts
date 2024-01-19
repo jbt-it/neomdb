@@ -18,15 +18,16 @@ export type EventParticipant = {
 export type CommonEventType = {
   ID: number;
   name: string;
-  description: string;
-  date: Dayjs | null;
-  endDate: Dayjs | null;
+  description?: string;
+  date: Dayjs;
+  endDate: Dayjs;
   startTime: Dayjs | null;
   endTime: Dayjs | null;
-  location: string;
+  location: string | null;
   registrationStart: Dayjs | null;
   registrationDeadline: Dayjs | null;
+  organizers?: string[];
   participantsCount?: number | null;
   maximumParticipants?: number | null;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };

@@ -2,28 +2,12 @@ import React from "react";
 import { Chip } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
 import useResponsive from "../../hooks/useResponsive";
-import { Dayjs } from "dayjs";
 import WorkingWeekendSignUpDialog from "./WorkingWeekendSignUpDialog";
-
-type commonEventType = {
-  ID: number;
-  name: string;
-  date: Dayjs;
-  endDate: Dayjs;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  location: string | null;
-  registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
-  participantsCount?: number | null;
-  maximumParticipants?: number | null;
-  organizers?: string[];
-  description?: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
+import { CommonEventType } from "../../types/eventTypes";
 
 interface WorkingWeekendSignUpProps {
-  ww: commonEventType;
+  ww: CommonEventType;
+  size?: "small" | "medium";
 }
 
 /**
@@ -32,6 +16,7 @@ interface WorkingWeekendSignUpProps {
  */
 const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> = ({
   ww,
+  size,
 }: WorkingWeekendSignUpProps) => {
   const [open, setOpen] = React.useState(false);
   const mobile = useResponsive("down", "sm");
@@ -82,7 +67,7 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
       <Chip
         label="Anmelden"
         color="success"
-        size={mobile ? "medium" : "small"}
+        size={size ? size : mobile ? "medium" : "small"}
         icon={<AddCircle />}
         onClick={handleOpen}
       />

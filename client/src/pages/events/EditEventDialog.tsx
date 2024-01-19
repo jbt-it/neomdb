@@ -20,12 +20,12 @@ interface EditEventDialogProps {
     maxParticipants: number | null,
     organizers: string[],
     description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => void;
   newEvent?: boolean;
-  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
+  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   title?: string;
-  location?: string;
+  location?: string | null;
   startDate?: Dayjs | null;
   endDate?: Dayjs | null;
   startTime?: Dayjs | null;
@@ -48,7 +48,7 @@ interface State {
   registrationEnd: Dayjs | null;
   maxParticipants: number | null;
   organizers: string[];
-  eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
+  eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   description: string;
 }
 
@@ -75,7 +75,9 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
  * TODO: Correct the onChange functions for organizers.
  */
 const EditEventDialog = (props: EditEventDialogProps) => {
-  const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
+  const [eventType, setEventType] = useState<
+    "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
+  >(props.type || "JBT goes");
   const mobile = useResponsive("down", "md");
 
   const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];

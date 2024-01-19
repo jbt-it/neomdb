@@ -34,6 +34,7 @@ import { authReducerActionType } from "../../types/globalTypes";
 import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { eventParticipants } from "../../mock/events/eventParticipants";
+import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
 
 /**
  * Renders the page for displaying the details of a given event as well as the participants
@@ -137,9 +138,9 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   // Function to update the event
   const updateEvent = (
     title: string,
-    location: string,
-    startDate: Dayjs | null,
-    endDate: Dayjs | null,
+    location: string | null,
+    startDate: Dayjs,
+    endDate: Dayjs,
     startTime: Dayjs | null,
     endTime: Dayjs | null,
     registrationStart: Dayjs | null,
@@ -147,7 +148,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     maxParticipants: number | null,
     organizers: string[],
     description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => {
     setEvent((prevEvent) => {
       if (prevEvent) {
@@ -210,7 +211,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     },
     {
       label: "Beschreibung",
-      value: event ? event.description : null,
+      value: event ? (event.description ? event.description : null) : null,
       type: "multi",
     },
   ];
@@ -309,10 +310,12 @@ const DisplayEventDetails: React.FunctionComponent = () => {
       return (
         <Chip label="Abmelden" color="error" variant="outlined" icon={<RemoveCircleOutline />} onClick={handleSignUp} />
       );
+    } else if (event?.type === "WW") {
+      return <WorkingWeekendSignUp ww={event} size="medium" />;
+    } else if (isRegistrationOpen) {
+      return <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />;
     } else {
-      return isRegistrationOpen ? (
-        <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />
-      ) : null;
+      return null;
     }
   };
 
@@ -402,9 +405,9 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             description={event.description}
             onSubmit={(
               title: string,
-              location: string,
-              startDate: Dayjs | null,
-              endDate: Dayjs | null,
+              location: string | null,
+              startDate: Dayjs,
+              endDate: Dayjs,
               startTime: Dayjs | null,
               endTime: Dayjs | null,
               registrationStart: Dayjs | null,
@@ -412,7 +415,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               maxParticipants: number | null,
               organizers: string[],
               description: string,
-              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
             ) => {
               updateEvent(
                 title,

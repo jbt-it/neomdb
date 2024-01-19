@@ -175,7 +175,7 @@ export const events = [
     beschreibung: "Glühwein und Lebkuchen",
     datum: "2024-10-06T00:00:00.000Z",
     ende: null,
-    anmeldungvon: "2024-12-10T00:00:00.000Z",
+    anmeldungvon: "2024-01-10T00:00:00.000Z",
     anmeldungbis: "2024-12-17T00:00:00.000Z",
     ort: "Büro",
     startZeit: "2024-12-17T10:00:00.000Z",

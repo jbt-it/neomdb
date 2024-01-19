@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -19,29 +19,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Dayjs } from "dayjs";
-
-type commonEventType = {
-  ID: number;
-  name: string;
-  date: Dayjs;
-  endDate: Dayjs;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  location: string | null;
-  registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
-  participantsCount?: number | null;
-  maximumParticipants?: number | null;
-  organizers?: string[];
-  description?: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
+import { CommonEventType } from "../../types/eventTypes";
 
 interface WorkingWeekendSignUpDialogProps {
   open: boolean;
   handleClose: () => void;
-  ww: commonEventType;
+  ww: CommonEventType;
   onSubmit: (
     arrival: string,
     departure: string,
