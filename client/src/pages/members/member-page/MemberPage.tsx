@@ -238,8 +238,9 @@ const MemberProfile: React.FunctionComponent = () => {
   const saveMemberImage = (file: File) => {
     // Variable for checking, if the component is mounted
     let mounted = true;
+    // Extract file type (the part of the file name after the last dot)
+    const mimeType = file.name.split(".").pop();
 
-    const mimeType = file.name.split(".")[1];
     // Transform file to base64 string
     const reader = new FileReader();
     reader.readAsDataURL(file);
