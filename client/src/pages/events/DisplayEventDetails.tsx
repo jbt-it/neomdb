@@ -38,6 +38,7 @@ import { workingWeekendParticipants } from "../../mock/events/workingWeekendPart
 import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
 import WorkingWeekendParticipantsTable from "../../components/event/WorkingWeekendParticipantsTable";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import AddWorkingWeekendParticipant from "../../components/event/AddWorkingWeekendParticipant";
 
 type WWRegistrationInfo = {
   anreise: string;
@@ -520,7 +521,11 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               <>
                 <RenderSignUpButton />
                 {hasEventPermission ? (
-                  <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                  event.type === "WW" ? (
+                    <AddWorkingWeekendParticipant members={members} participants={participants} ww={event} />
+                  ) : (
+                    <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                  )
                 ) : null}
               </>
             ) : null}
