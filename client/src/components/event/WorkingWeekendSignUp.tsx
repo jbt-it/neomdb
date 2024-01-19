@@ -26,6 +26,7 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
     car: boolean,
     vegetarian: boolean,
     remarks: string,
+    debitNotice: boolean,
     seats?: number
   ) => {
     alert(
@@ -50,7 +51,10 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
         vegetarian +
         "\n" +
         "Bemerkungen: " +
-        remarks
+        remarks +
+        "\n" +
+        "Lastschrift: " +
+        debitNotice
     );
   };
 

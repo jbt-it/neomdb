@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -31,6 +32,7 @@ interface WorkingWeekendSignUpDialogProps {
     car: boolean,
     vegetarian: boolean,
     remarks: string,
+    debitNotice: boolean,
     seats?: number
   ) => void;
 }
@@ -55,11 +57,13 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   const [seats, setSeats] = useState<number>(0);
   const [vegetarian, setVegetarian] = useState<boolean>(false);
   const [remarks, setRemarks] = useState<string>("");
+  const [debitNotice, setDebitNotice] = useState<boolean>(false);
   const [errorArrival, setErrorArrival] = useState<boolean>(false);
   const [errorDeparture, setErrorDeparture] = useState<boolean>(false);
   const [errorSeats, setErrorSeats] = useState<boolean>(false);
   const [errorArrivalAfterDeparture, setErrorArrivalAfterDeparture] = useState<boolean>(false);
   const [errorDepartureBeforeArrival, setErrorDepartureBeforeArrival] = useState<boolean>(false);
+  const [errorDebitNotice, setErrorDebitNotice] = useState<boolean>(false);
 
   // Functino to reset all values and close the dialog
   const handleCancel = () => {
@@ -70,11 +74,13 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     setSeats(0);
     setVegetarian(false);
     setRemarks("");
+    setDebitNotice(false);
     setErrorArrival(false);
     setErrorDeparture(false);
     setErrorSeats(false);
     setErrorArrivalAfterDeparture(false);
     setErrorDepartureBeforeArrival(false);
+    setErrorDebitNotice(false);
   };
 
   // Function to check if the arrival is before the departure
@@ -109,13 +115,14 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   // Function to submit the sign up
   const handleSubmit = () => {
     // Checks if all required fields are filled out
-    if (!arrival || !departure || seats > 9 || !checkArrivalAndDeparture()) {
+    if (!arrival || !departure || seats > 9 || !checkArrivalAndDeparture() || !debitNotice) {
       // Reset all error states
       setErrorArrival(false);
       setErrorDeparture(false);
       setErrorSeats(false);
       setErrorArrivalAfterDeparture(false);
       setErrorDepartureBeforeArrival(false);
+      setErrorDebitNotice(false);
       if (!arrival) {
         setErrorArrival(true);
       }
@@ -129,9 +136,12 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
         setErrorArrivalAfterDeparture(true);
         setErrorDepartureBeforeArrival(true);
       }
+      if (!debitNotice) {
+        setErrorDebitNotice(true);
+      }
       return;
     }
-    onSubmit(arrival, departure, car, vegetarian, remarks, seats);
+    onSubmit(arrival, departure, car, vegetarian, remarks, debitNotice, seats);
     handleCancel();
   };
 
@@ -173,6 +183,10 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   // Functions to handle change of the remarks field
   const onChangeRemarks = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRemarks(event.target.value);
+  };
+
+  const onChangeDebitNotice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDebitNotice(event.target.checked);
   };
 
   return (
@@ -278,6 +292,21 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
               maxRows={10}
               placeholder={"Alt-Trainees: Bitte nachzuholende Pflichtworkshops hier eintragen!"}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography fontWeight={"bold"}>Lastschriftverfahren</Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <FormControl>
+                <FormControlLabel
+                  control={<Checkbox value={debitNotice} onChange={onChangeDebitNotice} />}
+                  label="Hiermit ermächtige ich den Junior Business Team e.V., den Beitrag für das Working Weekend von meinem
+                  Konto einzuziehen."
+                />
+                {errorDebitNotice && (
+                  <FormHelperText error>Der Eintzugsermächtigung muss zugestimmt werden</FormHelperText>
+                )}
+              </FormControl>
+            </Box>
           </Grid>
         </Grid>
       </DialogContent>

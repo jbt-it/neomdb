@@ -213,6 +213,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   }, [id, getEvent]);
   useEffect(() => getMembers(), [getMembers]);
 
+  // Fields for the display of event information
   const displayFields: Array<InformationField> = [
     {
       label: "Anmeldefrist",
@@ -273,6 +274,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     }
   };
 
+  // Fields for the registration information
   const wwRegistrationFields: Array<InformationField> = [
     {
       label: "Anreise",
@@ -379,7 +381,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   };
 
   /**
-   * function is called to add a participant to the event
+   * Function is called to add a participant to the event
    * TODO: Implement backend functionality to add a participant to the event
    * @param participant the participant to add
    */
@@ -389,7 +391,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   };
 
   /**
-   * function is called to remove a participant to the event
+   * Function is called to remove a participant to the event
    * TODO: Implement backend functionality to remove a participant to the event
    * @param participant the participant to remove
    */
