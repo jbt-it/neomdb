@@ -8,7 +8,7 @@ networks:
 
 services:
   client:
-    image: jbtit/neomdb:client-demo0.1.1
+    image: jbtit/neomdb:client${CLIENT_VERSION}
     networks:
       - neomdb_network
 
@@ -33,7 +33,7 @@ services:
       - neomdb_network
 
   server:
-    image: jbtit/neomdb:server-demo0.1.1
+    image: jbtit/neomdb:server${SERVER_VERSION}
     depends_on:
       - database
     networks:
