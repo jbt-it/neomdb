@@ -106,7 +106,7 @@ export class TraineesController extends Controller {
    * @summary Get generations
    */
   @Get("generations")
-  @Security("jwt")
+  @Security("jwt", ["14"])
   public async getGenerations(): Promise<Generation[]> {
     const generations = await this.traineesService.getGenerations();
 

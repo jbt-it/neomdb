@@ -110,7 +110,6 @@ export type Member = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
-  generation: number;
   handy: string;
   jbt_email: string;
   ressort: string;
