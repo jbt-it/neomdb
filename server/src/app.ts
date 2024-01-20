@@ -1,15 +1,15 @@
 /*
  * Configure our API endpoint
  */
-import * as express from "express";
 import * as dotenv from "dotenv";
-import * as cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import { errorHandler } from "./middleware/errorHandling";
 // import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
 import swagger from "./middleware/swagger";
+import express from "express";
 
 dotenv.config();
 const app = express();
@@ -18,7 +18,7 @@ const app = express();
  * Express configuration
  */
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 
 /*
  * Enable CORS middleware for all incoming requests

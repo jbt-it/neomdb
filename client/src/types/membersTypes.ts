@@ -119,6 +119,14 @@ export type DepartmentMember = {
 };
 
 /**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
+};
+
+/**
  * Type of the member details
  */
 export type MemberDetails = {
