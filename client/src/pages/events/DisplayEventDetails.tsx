@@ -147,7 +147,6 @@ const DisplayEventDetails: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data);
           if (mounted) {
             setMembers(
               res.data.map((member: Member) => ({
