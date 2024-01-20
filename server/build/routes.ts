@@ -487,9 +487,9 @@ export function RegisterRoutes(app: Router) {
         app.post('/api/members',
             authenticateMiddleware([{"jwt":["1"]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
-            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.creeateMember)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.createMember)),
 
-            function MembersController_creeateMember(request: any, response: any, next: any) {
+            function MembersController_createMember(request: any, response: any, next: any) {
             const args = {
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMemberRequest"},
             };
@@ -503,7 +503,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new MembersController();
 
 
-              const promise = controller.creeateMember.apply(controller, validatedArgs as any);
+              const promise = controller.createMember.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
