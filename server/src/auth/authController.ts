@@ -49,7 +49,13 @@ export class AuthController extends Controller {
   @Get("me")
   @Security("jwt")
   public async getUserData(@Request() request: any): Promise<JWTPayload> {
-    const payload = await this.authService.getUserData(request.user.name);
+    const user = request.user as JWTPayload;
+    const payload = await this.authService.getUserData(user.name);
+    const token = generateJWT(payload);
+
+    const cookieOptions = getCookieOptionsAsString();
+    this.setHeader("Set-Cookie", `token=${token}; ${cookieOptions}`);
+
     return payload;
   }
 
