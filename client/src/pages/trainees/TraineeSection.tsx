@@ -74,7 +74,7 @@ const TraineeSection: React.FunctionComponent = () => {
     let mounted = true;
     api
       //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
-      .get(`/users`, {
+      .get(`/members`, {
         //correct Routes need to be imported
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
