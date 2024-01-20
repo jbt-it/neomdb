@@ -1,3 +1,5 @@
+import * as bcrypt from "bcryptjs";
+import fs from "fs/promises";
 import {
   CreateMemberRequest,
   EdvSkill,
@@ -11,21 +13,24 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
+import { getPathOfImage } from "../../utils/assetsUtils";
+import AuthRepository from "../../auth/AuthRepository";
+import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
-import { executeInTransaction } from "../../database";
-import bcrypt = require("bcryptjs");
 import { getRandomString } from "../../utils/stringUtils";
-import AuthRepository from "../../auth/AuthRepository";
+import TraineesRepository from "../trainees/TraineesRepository";
+import MembersRepository from "./MembersRepository";
+import path from "path";
 
 /**
  * Provides methods to execute member related service functionalities
  */
 class MembersService {
   membersRepository = new MembersRepository();
+  traineesRepository = new TraineesRepository();
   authRepository = new AuthRepository();
 
   /**
@@ -48,10 +53,18 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    const languages: Language[] = await this.membersRepository.getLanguagesByMemberID(memberID);
-    const edvSkills: EdvSkill[] = await this.membersRepository.getEdvSkillsByMemberID(memberID);
-    const mentor: Mentor = await this.membersRepository.getMentorByMemberID(memberID);
-    const mentees: Mentee[] = await this.membersRepository.getMenteesByMemberID(memberID);
+    const languagesQuery: Promise<Language[]> = this.membersRepository.getLanguagesByMemberID(memberID);
+    const edvSkillsQuery: Promise<EdvSkill[]> = this.membersRepository.getEdvSkillsByMemberID(memberID);
+    const mentorQuery: Promise<Mentor> = this.membersRepository.getMentorByMemberID(memberID);
+    const menteesQuers: Promise<Mentee[]> = this.membersRepository.getMenteesByMemberID(memberID);
+
+    // Executing all queries concurrently
+    const results = await Promise.all([languagesQuery, edvSkillsQuery, mentorQuery, menteesQuers]);
+
+    const languages = results[0];
+    const edvSkills = results[1];
+    const mentor = results[2];
+    const mentees = results[3];
 
     // Combine the four parts for the complete member dto
     const memberDto: MemberDetails = {
@@ -62,6 +75,45 @@ class MembersService {
       edvkenntnisse: edvSkills,
     };
     return memberDto;
+  };
+
+  /**
+   * Retrieves the image of a member by its id as base64 string
+   * @param imageFolderPath The path to the image folder
+   * @param memberID The id of the member
+   * @returns The base64 string of the image and its mime type or null if no image was found
+   */
+  getMemberImage = async (imageFolderPath: string, memberID: number) => {
+    const { imagePath, mimeType } = await getPathOfImage(imageFolderPath, `${memberID}`);
+    if (imagePath === null) {
+      return null;
+    }
+
+    try {
+      const fileContents = await fs.readFile(imagePath);
+      // Convert to Base64
+      const base64 = fileContents.toString("base64");
+
+      return { base64, mimeType };
+    } catch (err: any) {
+      return null;
+    }
+  };
+
+  /**
+   * Saves the image of a member
+   * @param imageFolderPath The path to the image folder
+   * @param imageName The name of the image
+   * @param base64 The base64 string of the image
+   */
+  saveMemberImage = async (imageFolderPath: string, imageName: string, base64: string) => {
+    const filePath = path.join(imageFolderPath, path.basename(`${imageName}`));
+
+    // Convert Base64 to binary
+    const fileContents = Buffer.from(base64, "base64");
+
+    // Write file to disk
+    await fs.writeFile(filePath, fileContents);
   };
 
   /**
@@ -169,7 +221,7 @@ class MembersService {
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
     const memberQuery = this.membersRepository.getMemberByID(memberID, false);
-    const permissionQuery = this.membersRepository.getDepartmentByID(permissionID);
+    const permissionQuery = this.membersRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
@@ -200,6 +252,7 @@ class MembersService {
    * @returns The new username and jbtMail
    */
   createJBTMailAndNameOfMember = async (memberName: string) => {
+    // TODO: Optimize this code by using sql to set the new username and jbtMail (use count in sql)
     let jbtMail = "";
     // New user name if the name already exists
     let newUserName = "";
@@ -267,10 +320,27 @@ class MembersService {
     let memberID = null;
     // Create member in database
     try {
-      const { password: newPassword, ...newMember } = newMemberRequest;
+      const { password: newPassword, ...member } = newMemberRequest;
       const passwordHash = await bcrypt.hash(newPassword, 10);
       const departmentID = 8; // Default department "Ohne Ressort"
       const statusID = 1; // Default status of member is "trainee"
+
+      let newMember = member;
+      if (member.generation !== null) {
+        // Check if the generation exists
+        const generation = await this.traineesRepository.getGenerationByID(member.generation);
+        if (generation === null) {
+          throw new NotFoundError(`Generation with id ${member.generation} does not exist`);
+        }
+      } else {
+        // Retrieve the generations and select the newest one
+        const generations = await this.traineesRepository.getGenerations();
+        // Because the generations are sorted descending by date, the first element is the newest one
+        const newestGeneration = generations[0];
+        // Add the generation to the member
+        newMember = { ...member, generation: newestGeneration.generationID };
+      }
+
       memberID = await this.membersRepository.createMember(
         newMember as NewMember,
         newUserName,
@@ -288,6 +358,8 @@ class MembersService {
       // TODO: Add mail account to mailing list
       // Throws a specific error if the adding of the mail to the list fails that is catched below
 
+      // TODO: Send Email with generated password to members new mail address
+
       // TODO: Add nextcloud account creation (deprecated)
       // Throws a specific error if the nextcloud account creation fails that is catched below
 
@@ -296,10 +368,10 @@ class MembersService {
       // TODO: this.createWikiAccount(jbtMail, newUserName, passwordHash);
     } catch (error) {
       /* Errors are handled centrally in the error handler middleware by default (immediately sends an error response)
-       * but this is a special case, because the user should be sent the status overview (for transparency)
+       * but this is a special case because the user should be sent the status overview (for transparency)
        * therefore errors must be catched here and handled differently
        */
-      if (error instanceof QueryError) {
+      if (error instanceof QueryError || error instanceof NotFoundError) {
         // Creation of member in database failed
         statusOverview.querySuccesful = false;
         statusOverview.queryErrorMsg = error.message;
@@ -329,15 +401,15 @@ class MembersService {
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = this.membersRepository.getMemberByID(memberID, false);
+    const member = await this.membersRepository.getMemberByID(memberID, false);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
     // Check if potential new mentor exists (if set)
-    if (mentor.mitgliedID !== null) {
+    if (mentor && mentor.mitgliedID !== null) {
       const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
       if (mentorInDB === null) {
-        throw new NotFoundError(`Mentor with id ${mentor.mitgliedID} does not exist`);
+        throw new NotFoundError(`Mentor with id ${mentor?.mitgliedID} does not exist`);
       }
     }
 

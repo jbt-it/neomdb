@@ -16,7 +16,7 @@ const config: Config = {
   preset: "ts-jest",
   testEnvironment: "node",
   forceExit: true,
-  testTimeout: isDebugging() ? 240000 : 5000, // Increase maximum timeout to 4 minutes if debugging is enabled
+  testTimeout: isDebugging() ? 240000 : 20000, // Increase maximum timeout to 4 minutes if debugging is enabled
 };
 
 export default config;

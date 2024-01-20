@@ -1,4 +1,4 @@
-import cors = require("cors");
+import cors from "cors";
 
 /**
  * Implements the CORS middleware for allowing other sites to access the express web server
