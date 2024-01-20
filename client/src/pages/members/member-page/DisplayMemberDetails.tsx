@@ -185,6 +185,7 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.EDVSkill[];
   memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
+  directorPositions: membersTypes.MemberDirectorPositions[];
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
   getMemberDetails: () => void;
 }
@@ -201,7 +202,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   // Filter of languages for the autocomplete component
   const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
-  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
+  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails, directorPositions } = props;
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.nachname);
@@ -655,9 +656,21 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+          {directorPositions.map((position) => {
+            return (
+              <Typography>
+                <i>{`${position.kuerzel}`}</i>
+              </Typography>
+            );
+          })}
           <Typography>
             <i>{`${memberDetails.mitgliedstatus}`}</i>
           </Typography>
+          {doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) && (
+            <Button variant="contained" onClick={() => console.log("Open")}>
+              EV Posten
+            </Button>
+          )}
         </div>
       </div>
     );

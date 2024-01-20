@@ -11,6 +11,7 @@ import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils"
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
 import { useParams } from "react-router-dom";
+import { MemberDirectorPositions } from "../../../types/membersTypes";
 
 const MemberProfile: React.FunctionComponent = () => {
   const params = useParams();
@@ -21,6 +22,7 @@ const MemberProfile: React.FunctionComponent = () => {
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [directorPositions, setDirectorPositions] = useState<MemberDirectorPositions[]>([]);
 
   /**
    * Retrieves all members
@@ -167,6 +169,33 @@ const MemberProfile: React.FunctionComponent = () => {
     };
   };
 
+  const getDirectorPositions: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/members/${params.id}/director-positions?current=true`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            console.log(res.data);
+            setDirectorPositions(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   /**
    * Updates the member details
    */
@@ -211,6 +240,7 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
+  useEffect(() => getDirectorPositions(), [getDirectorPositions]);
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
 
   return (
@@ -227,6 +257,7 @@ const MemberProfile: React.FunctionComponent = () => {
             isOwner={isOwner}
             getMemberDetails={getMemberDetails}
             updateMemberDetails={updateMemberDetails}
+            directorPositions={directorPositions}
           />
         ) : null}
       </div>

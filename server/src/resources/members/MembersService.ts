@@ -92,6 +92,35 @@ class MembersService {
     return directors;
   };
 
+  getMemberDirectorPositions = async (memberID: number, current: boolean) => {
+    const memberDirectorPositions = this.membersRepository.getMemberDirectorPositions(memberID, current);
+    if (memberDirectorPositions === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+    return memberDirectorPositions;
+  };
+
+  /**
+   * Retrieves all director positions including the current members occupying the posititions if `includeDirectorMembers` is true
+   */
+  getDirectorPositions = async (includeDirectorMembers: boolean) => {
+    const directorPositions = await this.membersRepository.getDirectorPositions(includeDirectorMembers);
+
+    return directorPositions;
+  };
+
+  /**
+   * Changes the director to the given member
+   * @throws NotFoundError if no department was found
+   */
+  changeDirector = async (evpostenID: number, mitgliedID: number, von: string, bis: string) => {
+    if (evpostenID === null) {
+      throw new NotFoundError(`Department with id ${evpostenID} not found`);
+    }
+
+    await this.membersRepository.changeDirector(evpostenID, mitgliedID, von, bis);
+  };
+
   /**
    * Retrieves all departments
    */

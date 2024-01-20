@@ -253,6 +253,44 @@ export type Department = {
 };
 
 /**
+ * Type of a director change
+ */
+export type ChangeDirectorDetails = {
+  evpostenID: number;
+  mitgliedID: number;
+  von: string;
+  bis: string;
+};
+
+/**
+ * Type of director position
+ */
+export type MemberDirectorPositions = {
+  evpostenID: number;
+  mitgliedID: number;
+  kuerzel: string;
+  von: string;
+  bis: string;
+};
+
+/**
+ * Type of director position
+ */
+export type DirectorPosition = {
+  evpostenID: number;
+  bezeichnung_maennlich: string;
+  bezeichnung_weiblich: string;
+  ressortID: number;
+  jbt_email: string;
+  kurzvorstellung: string;
+  inhalt: string;
+  reihenfolge: number;
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+};
+
+/**
  * Type of the director (partial member with department and role information)
  */
 export type Director = {

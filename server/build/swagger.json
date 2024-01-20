@@ -245,6 +245,62 @@
 				"type": "object",
 				"description": "Type of the director (partial member with department and role information)"
 			},
+			"DirectorPosition": {
+				"properties": {
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					},
+					"reihenfolge": {
+						"type": "number",
+						"format": "double"
+					},
+					"inhalt": {
+						"type": "string"
+					},
+					"kurzvorstellung": {
+						"type": "string"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"ressortID": {
+						"type": "number",
+						"format": "double"
+					},
+					"bezeichnung_weiblich": {
+						"type": "string"
+					},
+					"bezeichnung_maennlich": {
+						"type": "string"
+					},
+					"evpostenID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nachname",
+					"vorname",
+					"mitgliedID",
+					"reihenfolge",
+					"inhalt",
+					"kurzvorstellung",
+					"jbt_email",
+					"ressortID",
+					"bezeichnung_weiblich",
+					"bezeichnung_maennlich",
+					"evpostenID"
+				],
+				"type": "object",
+				"description": "Type of director position"
+			},
 			"StatusOverview": {
 				"properties": {
 					"wikiErrorMsg": {
@@ -363,6 +419,36 @@
 				],
 				"type": "object",
 				"description": "Type of the request to create a member"
+			},
+			"MemberDirectorPositions": {
+				"properties": {
+					"bis": {
+						"type": "string"
+					},
+					"von": {
+						"type": "string"
+					},
+					"kuerzel": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					},
+					"evpostenID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"bis",
+					"von",
+					"kuerzel",
+					"mitgliedID",
+					"evpostenID"
+				],
+				"type": "object",
+				"description": "Type of director position"
 			},
 			"Department": {
 				"properties": {
@@ -784,6 +870,32 @@
 				],
 				"type": "object",
 				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
+			},
+			"ChangeDirectorDetails": {
+				"properties": {
+					"bis": {
+						"type": "string"
+					},
+					"von": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					},
+					"evpostenID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"bis",
+					"von",
+					"mitgliedID",
+					"evpostenID"
+				],
+				"type": "object",
+				"description": "Type of a director change"
 			},
 			"Trainee": {
 				"properties": {
@@ -1535,6 +1647,47 @@
 				]
 			}
 		},
+		"/members/director-positions": {
+			"get": {
+				"operationId": "GetDirectorPositions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DirectorPosition"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all director positions, if query parameter `includeDirectorMembers` is true also retrieve the members occupying the positions",
+				"summary": "Get director positions",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Query parameter to specify if the current director members should be included",
+						"in": "query",
+						"name": "includeDirectorMembers",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
 		"/members/{id}/status": {
 			"patch": {
 				"operationId": "UpdateMemberStatus",
@@ -1590,6 +1743,55 @@
 						}
 					}
 				}
+			}
+		},
+		"/members/{id}/director-positions": {
+			"get": {
+				"operationId": "GetMemberDirectorPositions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MemberDirectorPositions"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all directory roles of the user",
+				"summary": "Get directory roles of user",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "current",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
 			}
 		},
 		"/members/departments": {
@@ -2050,6 +2252,35 @@
 										"niveau": 1
 									}
 								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/change-director": {
+			"post": {
+				"operationId": "ChangeDirector",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangeDirectorDetails"
 							}
 						}
 					}

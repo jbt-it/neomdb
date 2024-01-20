@@ -1,15 +1,30 @@
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles, createStyles } from "@mui/styles";
-import { Theme, Paper, Typography, Grid, Button, Link, Divider, IconButton } from "@mui/material";
-import PageBar from "../global/components/navigation/PageBar";
-import JBTLogoBlack from "../../images/jbt-logo-black.png";
-import { AuthContext } from "../global/AuthContext";
-import { doesPermissionsHaveSomeOf } from "../utils/authUtils";
-import { authReducerActionType } from "../global/globalTypes";
-import api from "../utils/api";
-import * as membersTypes from "../members/membersTypes";
+import {
+  Theme,
+  Paper,
+  Typography,
+  Grid,
+  Button,
+  Link,
+  Divider,
+  IconButton,
+  Modal,
+  TextField,
+  Autocomplete,
+} from "@mui/material";
+import PageBar from "../../components/navigation/PageBar";
+import JBTLogoBlack from "../../assets/jbt-logo-black.png";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { authReducerActionType } from "../../types/globalTypes";
+import api from "../../utils/api";
+import * as membersTypes from "../../types/membersTypes";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,88 +54,57 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "grey",
       borderRadius: "50%",
     },
+    modalPaper: {
+      overflowY: "auto",
+      position: "absolute",
+      margin: "auto",
+      top: "20%",
+      left: "10%",
+      right: "10%",
+      bottom: "20%",
+      width: "60%",
+      display: "flex",
+      justifyContent: "center",
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
   })
 );
 
-const boardMembers: Array<membersTypes.DirectorDetails> = [
-  {
-    evPostenID: 1,
-    bezeichnung_maennlich: "1. Vorstand",
-    bezeichnung_weiblich: "1. Vorstand",
-    kuerzel: "1V",
-    kurzvorstellung:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization.",
-    inhalt:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization. Their primary responsibilities include providing strategic direction and oversight to ensure the organization achieves its goals and objectives. Board members are expected to actively participate in board meetings, contribute their expertise, and make informed decisions on matters ranging from financial management to policy development. They must act in the best interests of the organization and its stakeholders, often representing the organization to external parties. Additionally, board members are responsible for ensuring compliance with legal and ethical standards, maintaining transparency, and fostering a culture of accountability within the organization. Their role is pivotal in guiding the organization toward long-term success and sustainability.",
-    mitgliedID: 1,
-    vorname: "Walter",
-    nachname: "Luft",
-    geschlecht: 0,
-    ressortID: null,
-    jbtEmail: "vorstand@studentische-beratung.de",
-  },
-  {
-    evPostenID: 1,
-    bezeichnung_maennlich: "1. Vorstand",
-    bezeichnung_weiblich: "1. Vorstand",
-    kuerzel: "1V",
-    kurzvorstellung:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization.",
-    inhalt:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization. Their primary responsibilities include providing strategic direction and oversight to ensure the organization achieves its goals and objectives. Board members are expected to actively participate in board meetings, contribute their expertise, and make informed decisions on matters ranging from financial management to policy development. They must act in the best interests of the organization and its stakeholders, often representing the organization to external parties. Additionally, board members are responsible for ensuring compliance with legal and ethical standards, maintaining transparency, and fostering a culture of accountability within the organization. Their role is pivotal in guiding the organization toward long-term success and sustainability.",
-    mitgliedID: 1,
-    vorname: "Walter",
-    nachname: "Luft",
-    geschlecht: 0,
-    ressortID: null,
-    jbtEmail: "vorstand@studentische-beratung.de",
-  },
-  {
-    evPostenID: 1,
-    bezeichnung_maennlich: "1. Vorstand",
-    bezeichnung_weiblich: "1. Vorstand",
-    kuerzel: "1V",
-    kurzvorstellung:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization.",
-    inhalt:
-      "A member of the board, often referred to as a board member or director, plays a crucial role in the governance and decision-making processes of an organization. Their primary responsibilities include providing strategic direction and oversight to ensure the organization achieves its goals and objectives. Board members are expected to actively participate in board meetings, contribute their expertise, and make informed decisions on matters ranging from financial management to policy development. They must act in the best interests of the organization and its stakeholders, often representing the organization to external parties. Additionally, board members are responsible for ensuring compliance with legal and ethical standards, maintaining transparency, and fostering a culture of accountability within the organization. Their role is pivotal in guiding the organization toward long-term success and sustainability.",
-    mitgliedID: null,
-    vorname: "Walter",
-    nachname: "Luft",
-    geschlecht: 0,
-    ressortID: null,
-    jbtEmail: "vorstand@studentische-beratung.de",
-  },
-];
+const DirectorOverview: React.FunctionComponent = () => {
+  interface memberSelection {
+    vorname: string;
+    nachname: string;
+    mitgliedID: number;
+  }
 
-const BoardOverview: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [boardMembers, setBoardMembers] = useState<membersTypes.DirectorDetails[]>();
+  const [directorPositions, setDirectorPositions] = useState<membersTypes.DirectorDetails[]>();
+  const [isEditingPosition, setIsEditingPosition] = useState<boolean>(false);
+  const [directorPositionToEdit, setDirectorPositionToEdit] = useState<number>();
+  const [members, setMembers] = useState<membersTypes.Member[]>();
+  const [memberOptions, setMemberOptions] = useState<memberSelection[]>([]);
+  const [selectedMember, setSelectedMember] = useState<memberSelection | null>(null);
+  const [vonValue, setVonValue] = useState<Dayjs | null>(dayjs());
+  const [bisValue, setBisValue] = useState<Dayjs | null>(dayjs());
+
+  const defaultProps = {
+    options: members,
+    getOptionLabel: (option: memberSelection) => option.vorname + " " + option.nachname,
+  };
 
   const classes = useStyles();
 
-  const getBoard: VoidFunction = () => {
+  const getDirectorPositions = () => {
     let mounted = true;
-
     api
-      .get(`/users/department-members`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    api
-      .get(`/users/current-directors`, {
+      .get(`/members/director-positions?includeDirectorMembers=true`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setBoardMembers(res.data);
+            setDirectorPositions(res.data);
           }
         }
       })
@@ -129,43 +113,142 @@ const BoardOverview: React.FunctionComponent = () => {
           dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
       });
-
-    // Clean-up function
     return () => {
       mounted = false;
     };
   };
 
   useEffect(() => {
-    getBoard();
+    getDirectorPositions();
   }, []);
 
-  const renderBoardMembers = () => {
-    if (boardMembers) {
-      return boardMembers.map((member) => {
+  const handleEditOpen = (directorPosition: number) => {
+    setDirectorPositionToEdit(directorPosition);
+    api
+      .get(`/members`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setMembers(res.data);
+          const memberOpt = [];
+          for (const member of res.data) {
+            memberOpt.push({ vorname: member.vorname, nachname: member.nachname, mitgliedID: member.mitgliedID });
+          }
+          setMemberOptions(memberOpt);
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+    setIsEditingPosition(true);
+  };
+
+  const assignPosition = () => {
+    if (selectedMember && directorPositionToEdit && vonValue && bisValue) {
+      const mitgliedID = selectedMember.mitgliedID;
+      const evpostenID = directorPositionToEdit;
+      const von = vonValue.format("YYYY-MM-DD");
+      const bis = bisValue.format("YYYY-MM-DD");
+      api
+        .post(
+          "/members/change-director",
+          { evpostenID, mitgliedID, von, bis },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Member:", selectedMember.mitgliedID);
+            console.log("EV posten:", directorPositionToEdit);
+            console.log("Von", von);
+            console.log("Bis", bis);
+            getDirectorPositions();
+            setIsEditingPosition(false);
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            dispatchAuth({ type: authReducerActionType.deauthenticate });
+          }
+        });
+    }
+  };
+
+  const renderEditDirectorPosition = () => {
+    return (
+      <Modal
+        open={isEditingPosition}
+        onClose={() => setIsEditingPosition(false)}
+        aria-labelledby="EV Posten zuweisen"
+        aria-describedby="Zuweisung eines EV Posten"
+      >
+        <Paper className={classes.modalPaper}>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h5" className={classes.paperHeaderText}>
+                Neuen Vorstand bestimmen
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                {...defaultProps}
+                disablePortal
+                options={memberOptions}
+                value={selectedMember}
+                onChange={(event: any, newValue: memberSelection | null) => {
+                  setSelectedMember(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} label="Mitglied" />}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <DatePicker label="von" value={vonValue} onChange={(newValue) => setVonValue(newValue)} />
+            </Grid>
+            <Grid item xs={12}>
+              <DatePicker label="bis" value={bisValue} onChange={(newValue) => setBisValue(newValue)} />
+            </Grid>
+            <Grid item xs={12}>
+              <Button className={classes.headerButton} variant="contained" onClick={() => assignPosition()}>
+                Neue Position besetzen
+              </Button>
+              <Button className={classes.headerButton} variant="contained" onClick={() => setIsEditingPosition(false)}>
+                Abbrechen
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Modal>
+    );
+  };
+
+  const renderDirectorPositions = () => {
+    if (directorPositions) {
+      return directorPositions.map((position) => {
         return (
-          <Grid container className={classes.memberContainer} key={member.mitgliedID}>
+          <Grid container className={classes.memberContainer} key={position.evpostenID}>
             <Grid item xs={2} lg={1} className={classes.memberDisplay}>
               <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
               <Grid item xs={12}>
-                <Typography
-                  align="center"
-                  variant="h6"
-                  color="primary"
-                >{`${member.vorname} ${member.nachname}`}</Typography>
+                <Typography align="center" variant="h6" color="primary">
+                  {position.mitgliedID === null ? "unbesetzt" : `${position.vorname} ${position.nachname}`}
+                </Typography>
               </Grid>
             </Grid>
             <Grid item xs={10} lg={11}>
               <Grid item xs={12}>
                 <Typography variant="h5">
-                  {member.geschlecht === 0 ? member.bezeichnung_weiblich : member.bezeichnung_maennlich}
-                  <IconButton>
+                  {position.geschlecht === 0 ? position.bezeichnung_weiblich : position.bezeichnung_maennlich}
+                  <IconButton onClick={() => handleEditOpen(position.evpostenID)}>
                     <EditIcon />
                   </IconButton>
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>{member.kurzvorstellung}</Typography>
+                <Typography>{position.kurzvorstellung}</Typography>
               </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -180,15 +263,12 @@ const BoardOverview: React.FunctionComponent = () => {
   return (
     <div>
       <div className="content-page">
+        {renderEditDirectorPosition()}
         <Paper className={classes.paperContainer}>
           <Typography variant="h4" className={classes.paperHeaderText}>
             Der aktuelle Vorstand
-            <Button className={classes.headerButton} variant="contained" endIcon={<AddCircleIcon />}>
-              Ressortleitung hinzufügen
-            </Button>
           </Typography>
-
-          {renderBoardMembers()}
+          {renderDirectorPositions()}
         </Paper>
       </div>
       <PageBar pageTitle="Der Vorstand" />
@@ -196,4 +276,4 @@ const BoardOverview: React.FunctionComponent = () => {
   );
 };
 
-export default BoardOverview;
+export default DirectorOverview;

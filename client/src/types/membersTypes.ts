@@ -78,7 +78,7 @@ export type Director = {
  * Type of director details
  */
 export type DirectorDetails = {
-  evPostenID: number;
+  evpostenID: number;
   bezeichnung_maennlich: string;
   bezeichnung_weiblich: string;
   kuerzel: string;
@@ -90,6 +90,17 @@ export type DirectorDetails = {
   geschlecht: number | null;
   ressortID: number | null;
   jbtEmail: string;
+};
+
+/**
+ * Type of director position
+ */
+export type MemberDirectorPositions = {
+  evpostenID: number;
+  mitgliedID: number;
+  kuerzel: string;
+  von: string;
+  bis: string;
 };
 
 /**

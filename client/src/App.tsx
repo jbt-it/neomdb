@@ -17,6 +17,7 @@ import Dashboard from "./pages/members/Dashboard";
 import MemberOverview from "./pages/members/MemberOverview";
 import MemberManagement from "./pages/members/MemberManagement";
 import DepartmentOverview from "./pages/members/DepartmentOverview";
+import BoardOverview from "./pages/members/BoardOverview";
 import PermissionsOverview from "./pages/members/PermissionsOverview";
 import MemberProfile from "./pages/members/member-page/MemberPage";
 import ChangePassword from "./pages/ChangePassword";
@@ -57,6 +58,7 @@ const App: React.FunctionComponent = () => {
               <Route path=":id" element={<MemberProfile />} />
             </Route>
             <Route path="ressorts" element={<DepartmentOverview />} />
+            <Route path="vorstand" element={<BoardOverview />} />
             <Route path="ewigervorstand" element={<DirectorsHistory />} />
             <Route path="traineebereich" element={<Dashboard />} />
             <Route path="traineepraeferenzen" element={<TraineePreferences />} />

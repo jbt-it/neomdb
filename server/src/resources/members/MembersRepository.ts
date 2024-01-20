@@ -6,6 +6,7 @@ import {
   Department,
   DepartmentMember,
   DepartmentPartialID,
+  DirectorPosition,
   Director,
   EdvSkill,
   Language,
@@ -15,6 +16,7 @@ import {
   Mentor,
   NewMember,
   Value,
+  MemberDirectorPositions,
 } from "../../types/membersTypes";
 import getStatusChangeDate from "../../utils/repositoryUtils";
 import logger from "../../logger";
@@ -163,7 +165,7 @@ class MembersRepository {
       AND NOT EXISTS (
         SELECT mitglied_mitgliedID
         FROM mitglied_has_evposten
-        WHERE von < DATE(NOW()) AND DATE(NOW()) < bis AND mitglied_mitgliedID = mitgliedID
+        WHERE von <=CURDATE() AND CURDATE() <=bis AND mitglied_mitgliedID = mitgliedID
         )
       ORDER BY ressortID`,
         [],
@@ -383,11 +385,12 @@ class MembersRepository {
   getDirectors = async (onlyCurrent: boolean, connection?: mysql.PoolConnection): Promise<Director[]> => {
     try {
       let sql = `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID,
-    geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+    geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel, inhalt, kurzvorstellung
         FROM mitglied, mitglied_has_evposten, evposten
-        WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID`;
+        WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID
+        ORDER BY evpostenID`;
       if (onlyCurrent) {
-        sql += " AND von < DATE(NOW()) AND DATE(NOW()) < bis ";
+        sql += " AND von <=CURDATE() AND CURDATE() <=bis ";
       }
       const directorsQueryResult = await query(sql, [], connection);
       if (Array.isArray(directorsQueryResult)) {
@@ -399,6 +402,78 @@ class MembersRepository {
     } catch (error) {
       logger.error(`Caught error while retrieving directors: ${error}`);
       throw new QueryError(`Error retrieving directors`);
+    }
+  };
+
+  getMemberDirectorPositions = async (
+    memberID: number,
+    current: boolean,
+    connection?: mysql.PoolConnection
+  ): Promise<MemberDirectorPositions[]> => {
+    try {
+      let directorPositionsQueryResult;
+      if (current) {
+        directorPositionsQueryResult = await query(
+          `SELECT evpostenID, mitglied_mitgliedID as mitgliedID, kuerzel, von, bis
+        FROM mitglied_has_evposten LEFT JOIN evposten ON evposten_evpostenID = evpostenID
+        WHERE mitglied_mitgliedID = ? AND von <=CURDATE() AND CURDATE() <=bis`,
+          [memberID],
+          connection
+        );
+      } else {
+        directorPositionsQueryResult = await query(
+          `SELECT evpostenID, mitglied_mitgliedID as mitgliedID, kuerzel, von, bis
+        FROM mitglied_has_evposten LEFT JOIN evposten ON evposten_evpostenID = evpostenID
+        WHERE mitglied_mitgliedID = ?`,
+          [memberID],
+          connection
+        );
+      }
+      if (Array.isArray(directorPositionsQueryResult)) {
+        const directorPositions = directorPositionsQueryResult as MemberDirectorPositions[];
+        return directorPositions;
+      }
+      return null;
+    } catch (error) {
+      logger.error(`Caught error while retrieving director positions: ${error}`);
+      throw new QueryError(`Error retrieving director positions`);
+    }
+  };
+
+  /**
+   * Retrieves all director positions
+   * @param includeDirectorMembers Include names of director members if true
+   * @returns All director positions
+   */
+  getDirectorPositions = async (
+    includeDirectorMembers: boolean,
+    connection?: mysql.PoolConnection
+  ): Promise<DirectorPosition[]> => {
+    try {
+      let sql = "";
+      if (includeDirectorMembers) {
+        sql = `SELECT evpostenID, bezeichnung_maennlich, bezeichnung_weiblich, ressortID, kuerzel, evposten.jbt_email, kurzvorstellung, inhalt, reihenfolge, mitgliedID, vorname, nachname
+        FROM evposten LEFT JOIN 
+        (
+          SELECT * FROM mitglied_has_evposten
+          WHERE von <=CURDATE() AND CURDATE() <=bis
+        ) AS occupiedPositions ON evpostenID = evposten_evpostenID LEFT JOIN mitglied ON mitglied_mitgliedID = mitgliedID
+        ORDER By reihenfolge ASC`;
+      } else {
+        sql = `SELECT evpostenID, bezeichnung_maennlich, bezeichnung_weiblich, ressortID, kuerzel, jbt_email, kurzvorstellung, inhalt, reihenfolge
+        FROM evposten
+        ORDER By reihenfolge ASC`;
+      }
+      const directorPositionsQueryResult = await query(sql, [], connection);
+      if (Array.isArray(directorPositionsQueryResult)) {
+        const directorPositions = directorPositionsQueryResult as DirectorPosition[];
+        return directorPositions;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`Caught error while retrieving director positions: ${error}`);
+      throw new QueryError(`Error retrieving director positions`);
     }
   };
 
@@ -450,6 +525,45 @@ class MembersRepository {
     } catch (error) {
       logger.error(`Caught error while retrieving department with id ${departmentID}: ${error}`);
       throw new QueryError(`Error retrieving department with id ${departmentID}`);
+    }
+  };
+
+  changeDirector = async (
+    evpostenID: number,
+    mitgliedID: number,
+    von: string,
+    bis: string,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    try {
+      // Get current directors and remove them
+      const currentDirectors = await query(
+        `SELECT mitglied_mitgliedID FROM mitglied_has_evposten
+        WHERE evposten_evpostenID = ? AND von <=CURDATE() AND CURDATE() <= bis`,
+        [evpostenID],
+        connection
+      );
+      if (Array.isArray(currentDirectors) && currentDirectors.length !== 0) {
+        currentDirectors.forEach(async (director) => {
+          const updateCurrentDirectors = await query(
+            `UPDATE mitglied_has_evposten
+            SET bis = CURDATE() - INTERVAL 1 DAY
+            WHERE evposten_evpostenID = ? AND mitglied_mitgliedID = ? AND von <= CURDATE() AND CURDATE() <= bis`,
+            [evpostenID, director.mitglied_mitgliedID],
+            connection
+          );
+        });
+      }
+      // Add new director
+      const addNewDirector = await query(
+        `INSERT INTO mitglied_has_evposten (evposten_evpostenID, mitglied_mitgliedID, von, bis)
+        VALUES (?, ?, ?, ?)`,
+        [evpostenID, mitgliedID, von, bis],
+        connection
+      );
+    } catch (error) {
+      logger.error(`Caught error while changing director for id ${evpostenID}: ${error}`);
+      throw new QueryError(`Error changing director for id ${evpostenID}`);
     }
   };
 

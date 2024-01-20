@@ -1,6 +1,7 @@
 import MembersService from "./MembersService";
 import {
   AssignPermissionToMemberRequest,
+  DirectorPosition,
   CreateMemberRequest,
   CreateMemberResponse,
   Department,
@@ -11,6 +12,8 @@ import {
   StatusOverview,
   UpdateDepartmentRequest,
   Value,
+  ChangeDirectorDetails,
+  MemberDirectorPositions,
 } from "../../types/membersTypes";
 import {
   Body,
@@ -79,6 +82,22 @@ export class MembersController extends Controller {
     const directors = await this.membersService.getDirectors(current);
 
     return directors;
+  }
+
+  /**
+   * Retrieves all director positions, if query parameter `includeDirectorMembers` is true also retrieve the members occupying the positions
+   * @summary Get director positions
+   * @param includeDirectorMembers Query parameter to specify if the current director members should be included
+   */
+  @Get("director-positions")
+  @Security("jwt")
+  public async getDirectorPositions(
+    @Query("includeDirectorMembers") includeDirectorMembers: boolean
+  ): Promise<DirectorPosition[]> {
+    // Query parameter to specify if only the current directors should be retrieved
+    const directorPositions = await this.membersService.getDirectorPositions(includeDirectorMembers);
+
+    return directorPositions;
   }
 
   /**
@@ -168,6 +187,20 @@ export class MembersController extends Controller {
   public async updateMemberStatus(@Path() id: number, @Body() requestBody: { mitgliedstatus: string }): Promise<void> {
     const status = requestBody.mitgliedstatus;
     await this.membersService.updateMemberStatus(id, status);
+  }
+
+  /**
+   * Retrieves all directory roles of the user
+   * @summary Get directory roles of user
+   */
+  @Get("{id}/director-positions")
+  @Security("jwt")
+  public async getMemberDirectorPositions(
+    @Path() id: number,
+    @Query("current") current: boolean
+  ): Promise<MemberDirectorPositions[]> {
+    const memberDirectorPositions = await this.membersService.getMemberDirectorPositions(id, current);
+    return memberDirectorPositions;
   }
 
   /**
@@ -453,5 +486,13 @@ export class MembersController extends Controller {
     } else {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }
+  }
+
+  @Post("change-director")
+  @Security("jwt")
+  public async changeDirector(@Body() requestBody: ChangeDirectorDetails, @Request() request: any): Promise<void> {
+    const { evpostenID, mitgliedID, von, bis } = requestBody;
+
+    await this.membersService.changeDirector(evpostenID, mitgliedID, von, bis);
   }
 }
