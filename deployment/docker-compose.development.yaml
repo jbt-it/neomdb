@@ -1,0 +1,81 @@
+# Only for development and demo purposes
+
+version: "3.8"
+
+networks:
+  neomdb_network:
+    driver: bridge
+
+services:
+  client:
+    image: jbtit/neomdb:client-demo0.1.1
+    networks:
+      - neomdb_network
+
+  database:
+    image: mysql
+    ports:
+      - 5306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - neomdb_network
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    secrets:
+      - db_root_password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - database:db
+    networks:
+      - neomdb_network
+
+  server:
+    image: jbtit/neomdb:server-demo0.1.1
+    depends_on:
+      - database
+    networks:
+      - neomdb_network
+    environment:
+      IS_PRODUCTION: "true"
+      ORIGIN_PROD: "${ORIGIN_PROD}"
+      DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
+      DB_HOST_PROD: "${DB_HOST_PROD}"
+      DB_PORT_PROD: "${DB_PORT_PROD}"
+    secrets:
+      - db_neomdb_password
+
+  nginx-app:
+    image: nginx:latest
+    ports:
+      - 9002:80
+    depends_on:
+      - client
+      - server
+    volumes:
+      - ../nginx/default-app.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - neomdb_network
+
+  nginx-db:
+    image: nginx:latest
+    ports:
+      - 9001:80
+    depends_on:
+      - database
+      - phpmyadmin
+    volumes:
+      - ../nginx/default-db.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - neomdb_network
+
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+  db_neomdb_password:
+    file: ./secrets/db_neomdb_password.txt
+
+volumes:
+  mysql:

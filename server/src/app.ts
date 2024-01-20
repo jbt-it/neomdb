@@ -1,15 +1,15 @@
 /*
  * Configure our API endpoint
  */
-import express = require("express");
-import dotenv = require("dotenv");
-import cookieParser = require("cookie-parser");
-
-import refererValidationMiddleware from "./middleware/refererValidation";
+import * as express from "express";
+import * as dotenv from "dotenv";
+import * as cookieParser from "cookie-parser";
+import * as swaggerUi from "swagger-ui-express";
+import { RegisterRoutes } from "../build/routes";
+import { errorHandler } from "./middleware/errorHandling";
+// import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
-import authRoutes from "./global/auth/authRoutes";
-import membersRoutes from "./members/membersRoutes";
-import traineesRoutes from "./trainees/traineesRoutes";
+import swagger from "./middleware/swagger";
 
 dotenv.config();
 const app = express();
@@ -33,13 +33,21 @@ app.use(cookieParser());
 /*
  * Enables referer validation middleware
  */
-// app.use(refererValidationMiddleware); TODO: Currently deactivated for development puropose
+// app.use(refererValidationMiddleware);
 
 /*
- * Use routes
+ * Swagger UI Setup
  */
-app.use("/auth", authRoutes);
-app.use("/users", membersRoutes);
-app.use("/trainees", traineesRoutes);
+app.use("/api/docs", swaggerUi.serve, swagger);
+
+/*
+ * Routes Setup
+ */
+RegisterRoutes(app);
+
+/*
+ * Centralized Error handling
+ */
+app.use(errorHandler);
 
 export default app;
