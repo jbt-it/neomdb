@@ -1,229 +1,240 @@
-/**
- * Definition of the handler functions for the members module
- */
-import { Request, Response } from "express";
-import { checkForSQLKeywords } from "../../utils/stringUtils";
-import database = require("../../database");
+import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
 import TraineesService from "./TraineesService";
-import { InternalProject, TraineeAssignment } from "types/traineesTypes";
-
-const traineesService = new TraineesService();
-
-/**
- * Retrieves a single internal project
- */
-export const retrieveIP = async (req: Request, res: Response): Promise<Response> => {
-  const ipID = parseInt(req.params.id);
-  const ip = await traineesService.getIPByID(ipID);
-
-  return res.status(200).json(ip);
-};
-
-/**
- * Retrieves choices of mentor, internal project and department of all trainees of given generation
- * @param {Request} req request object
- * @param {number} req.params.id ID of generation
- * @param res member ID, first and last name and choices
- */
-export const retrieveTraineeChoices = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const choices = await traineesService.getTraineeChoicesByGenerationID(generationID);
-
-  return res.status(200).json(choices);
-};
+import { Mentor } from "../../types/membersTypes";
+import {
+  Generation,
+  InternalProject,
+  JBTMail,
+  Trainee,
+  TraineeAssignment,
+  TraineeChoice,
+  TraineeMotivation,
+  TraineeProgress,
+  UpdateVotingDeadlinesRequest,
+} from "../../types/traineesTypes";
 
 /**
- * Updates an internal project
+ * Controller for the trainees
+ * Provides routes for managing trainees, internal projects and trainee assignments
  */
-export const updateIP = async (req: Request, res: Response): Promise<Response> => {
-  const ipID = parseInt(req.params.id);
-  const updatedIp = req.body as InternalProject;
+@Tags("Trainees")
+@Route("trainees")
+export class TraineesController extends Controller {
+  private traineesService: TraineesService = new TraineesService();
 
-  await traineesService.updateIPByID(ipID, updatedIp);
+  /**
+   * Retrieves all current trainees
+   * @summary Get current trainees
+   * @param id id of the generation
+   */
+  @Get("")
+  @Security("jwt")
+  public async getTrainees(): Promise<Trainee[]> {
+    const trainees = await this.traineesService.getTrainees();
 
-  return res.status(200).send("Updated IP");
-};
-
-/**
- * Retrieves the mails for the specified internal projects
- */
-export const retrieveTeamMails = async (req: Request, res: Response): Promise<Response> => {
-  const ipID = parseInt(req.params.id);
-  const mails = await traineesService.getTraineeMailsByIpID(ipID);
-
-  return res.status(200).json(mails);
-};
-
-/*
- * Gets letter of motivation form trainees of given generation
- * @param {Request} req request object
- * @param {number} req.body.generationID
- * @param res member ID and 3 motivation texts
- */
-export const retrieveTraineeMotivation = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const motivation = await traineesService.getTraineeMotivationsByGenerationID(generationID);
-
-  return res.status(200).json(motivation);
-};
-
-/**
- * Retrieves information about all generations
- * @param {Request} req empty request object
- * @param res generationID, short name and deadlines
- */
-export const retrieveGenerations = async (req: Request, res: Response): Promise<Response> => {
-  const generations = await traineesService.getGenerations();
-
-  return res.status(200).json(generations);
-};
-
-/**
- * Sets "wahl_start" and "wahl_ende" for generation
- * @param {Request} req request object
- * @param {Date} req.body.votingStart
- * @param {Date} req.body.votingEnd
- * @param {number} req.params.id ID of generation
- * @param res status code and message
- */
-export const setVotingDeadline = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const votingStart = req.body.votingStart as string; // TODO: Date
-  const votingEnd = req.body.votingEnd as string; // TODO: Date
-
-  await traineesService.updateVotingDeadline(generationID, votingStart, votingEnd);
-
-  return res.status(200).send("Updated voting deadline");
-};
-
-/**
- * Sets choices of internesprojekt, mentor and ressort of member
- * @param {Request} req request object
- * @param {number} req.body.internesprojektID
- * @param {number} req.body.mentorID
- * @param {number} req.body.ressortID
- * @param {number} req.params.id ID of member
- * @param res status code and message
- */
-export const setTraineeAssignment = async (req: Request, res: Response): Promise<Response> => {
-  const memberID = parseInt(req.params.id);
-  const assignment = req.body as TraineeAssignment;
-
-  await traineesService.updateAssignmentByMemberID(memberID, assignment);
-
-  return res.status(200).send("Updated trainee assignment");
-};
-
-/**
- * Addes one new member as mentor to generation
- * @param {Request} req request object
- * @param {number} req.params.member_id ID of member
- * @param {number} req.params.id ID of generation
- * @param res status code and message
- */
-export const addMentor = async (req: Request, res: Response): Promise<Response> => {
-  const memberID = parseInt(req.params.member_id);
-  const generationID = parseInt(req.params.id);
-
-  await traineesService.addMentorToGeneration(generationID, memberID);
-
-  return res.status(200).send("Added mentor");
-};
-
-/**
- * Gets memberID, first and last name of Mentors of generation
- * @param {Request} req request object
- * @param {number} req.params.id ID of generation
- * @param res status code and message
- */
-export const getMentorsOfGeneration = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const mentors = await traineesService.getMentorsByGenerationID(generationID);
-
-  return res.status(200).json(mentors);
-};
-
-/**
- * Gets information of internal projects of generation
- * @param {Request} req request object
- * @param {number} req.params.id ID of Generation
- * @param res ID, generation, name and short name
- */
-export const getInternalProjectsOfGeneration = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const internalProjects = await traineesService.getInternalProjectsByGenerationID(generationID);
-
-  return res.status(200).json(internalProjects);
-};
-
-/**
- * Checks if the given ids are present in the database
- * @param {Array<string>} ids ids that need to be checked
- * @param {Array<string>} idNames id's corresponding column names in database
- * @param {Array<string>} tables id's corresponding tabel names in database
- * @returns {Promise<{ state: number; errorMessage: string }>} status code and error message when an error was found. If no error occured return { state: 0, errorMessage: "success" }
- */
-const checkForIDs = async (
-  ids: Array<string>,
-  idNames: Array<string>,
-  tables: Array<string>
-): Promise<{ state: number; errorMessage: string }> => {
-  // Iterate over all inputs
-  for (let index = 0; index < ids.length; index++) {
-    // Check if given names vor table und colum contain any SQL keywords
-    if (checkForSQLKeywords(tables[index]) || checkForSQLKeywords(idNames[index])) {
-      throw Error("No SQL statements allowed in String!");
-    }
-    // Check if id is null or empty
-    if (ids[index]) {
-      // Query database to check if id exits
-      const resultQuery = await database.query(
-        `SELECT ${idNames[index]} FROM ${tables[index]} WHERE ${idNames[index]} = ?;`,
-        [ids[index]]
-      );
-      if (!Array.isArray(resultQuery) || resultQuery.length === 0) {
-        return { state: 404, errorMessage: `ID of ${idNames[index]} does not exist` };
-      }
-    } else {
-      return { state: 422, errorMessage: `ID of ${idNames[index]} is null or empty` };
-    }
+    return trainees;
   }
-  return { state: 0, errorMessage: "success" };
-};
 
-/**
- * Retrieves all current trainees
- */
-export const retrieveCurrentTrainees = async (req: Request, res: Response): Promise<Response> => {
-  const trainees = await traineesService.getTrainees();
+  /**
+   * Retrieves a single internal project by id
+   * @summary Get an internal project
+   * @param id id of the internal project
+   */
+  @Get("ip/{id}")
+  @Security("jwt")
+  public async getIP(@Path() id: number): Promise<InternalProject> {
+    const ip = this.traineesService.getIPByID(id);
 
-  return res.status(200).json(trainees);
-};
+    return ip;
+  }
 
-/*
-  Retrieves all current IPs
-  */
-export const retrieveCurrentIPs = async (req: Request, res: Response): Promise<Response> => {
-  const ips = await traineesService.getInternalProjects(true);
+  /**
+   * Retrieves choices of mentor, internal project and department of all trainees of given generation
+   * @summary Get trainee choices
+   * @param id id of the generation
+   */
+  @Get("generations/{id}/trainee-choices")
+  @Security("jwt", ["14"])
+  public async getTraineeChoicesOfGeneration(@Path() id: number): Promise<TraineeChoice[]> {
+    const choices = await this.traineesService.getTraineeChoicesByGenerationID(id);
 
-  return res.status(200).json(ips);
-};
+    return choices;
+  }
 
-/*
-  Retrieve all IPs
-*/
-export const retrieveAllIPs = async (req: Request, res: Response): Promise<Response> => {
-  const ips = await traineesService.getInternalProjects(false);
+  /**
+   * Updates an internal project by id
+   * @summary Update an internal project
+   * @param id id of the internal project
+   * @param requestBody updated internal project
+   *
+   * @example requestBody {
+   *  "DLBeiEV": true,
+   *  "APGehalten": "2021-01-01",
+   *  "APBeiEV": true,
+   *  "ZPGehalten": "2021-01-01",
+   *  "ZPBeiEV": true,
+   *  "AngebotBeiEV": true,
+   *  "kickoff": "2021-01-01",
+   *  "kuerzel": "string",
+   *  "projektname": "string-long",
+   *  "generation": 3,
+   *  "internesProjektID": 62
+   * }
+   *
+   */
+  @Put("ip/{id}")
+  @Security("jwt", ["15"])
+  public async updateIP(@Path() id: number, @Body() requestBody: InternalProject): Promise<void> {
+    await this.traineesService.updateIPByID(id, requestBody);
+  }
 
-  return res.status(200).json(ips);
-};
+  /**
+   * Retrieves the mails for the specified internal projects
+   * @summary Get ip team mails
+   * @param id id of the internal project
+   */
+  @Get("ip/{id}/mails")
+  @Security("jwt")
+  public async getIPTeamMails(@Path() id: number): Promise<JBTMail[]> {
+    const mails = await this.traineesService.getTraineeMailsByIpID(id);
 
-/*
-  Retrieve milestones of internal project by generation
- */
-export const retrieveIPMilestonesAndWorkshopFeedback = async (req: Request, res: Response): Promise<Response> => {
-  const generationID = parseInt(req.params.id);
-  const ips = await traineesService.getIPMilestonesAndWorkshopFeedback(generationID);
+    return mails;
+  }
 
-  return res.status(200).json(ips);
-};
+  /**
+   * Retrieves information about all generations
+   * @summary Get generations
+   */
+  @Get("generations")
+  @Security("jwt", ["14"])
+  public async getGenerations(): Promise<Generation[]> {
+    const generations = await this.traineesService.getGenerations();
+
+    return generations;
+  }
+
+  /**
+   * Gets letter of motivation form trainees of given generation
+   * @summary Get trainee motivations
+   * @param id id of the generation
+   */
+  @Get("generations/{id}/motivation")
+  @Security("jwt", ["14"])
+  public async getTraineeMotivation(@Path() id: number): Promise<TraineeMotivation[]> {
+    const motivation = await this.traineesService.getTraineeMotivationsByGenerationID(id);
+
+    return motivation;
+  }
+
+  /**
+   * Sets "wahl_start" and "wahl_ende" for generation
+   * @summary Set voting deadline
+   * @param id id of the generation
+   * @param requestBody start and end date of the voting
+   *
+   * @example requestBody {
+   * "votingStart": "2021-01-01",
+   * "votingEnd": "2021-01-01"
+   * }
+   */
+  @Post("generations/{id}/set-deadline")
+  @Security("jwt", ["14"])
+  public async setVotingDeadline(@Path() id: number, @Body() requestBody: UpdateVotingDeadlinesRequest): Promise<void> {
+    await this.traineesService.updateVotingDeadline(id, requestBody.votingStart, requestBody.votingEnd);
+  }
+
+  /**
+   * Sets choices of internesprojekt, mentor and department of member
+   * @summary Set trainee assignment
+   * @param id id of the trainee
+   * @param requestBody assignment of the trainee
+   *
+   * @example requestBody {
+   * "memberID": 8167,
+   * "ipID": 62,
+   * "mentorID": 8167,
+   * "departmentID": 1
+   * }
+   */
+  // TODO: Use @Post("{id}/assignment") instead of @Patch("{id}/assignment")
+  @Patch("{id}/assignment")
+  @Security("jwt", ["14"])
+  public async setTraineeAssignment(@Path() id: number, @Body() requestBody: TraineeAssignment): Promise<void> {
+    await this.traineesService.updateAssignmentByMemberID(id, requestBody);
+  }
+
+  /**
+   * Retrieves all internal projects of a generation
+   * @summary Get internal projects
+   * @param id id of the generation
+   */
+  @Get("generations/{id}/mentors")
+  @Security("jwt", ["14"])
+  public async getMentorsOfGeneration(@Path() id: number): Promise<Mentor[]> {
+    const mentors = await this.traineesService.getMentorsByGenerationID(id);
+
+    return mentors;
+  }
+
+  /**
+   * Adds a mentor to a generation
+   * @summary Add mentor
+   * @param id id of the generation
+   * @param memberID id of the mentor
+   */
+  @Post("generations/{id}/add-mentor/{memberID}")
+  @Security("jwt", ["14"])
+  public async addMentor(@Path() id: number, @Path() memberID: number): Promise<void> {
+    await this.traineesService.addMentorToGeneration(id, memberID);
+  }
+
+  /**
+   * Retrieves all internal projects of a generation
+   * @summary Get internal projects
+   * @param id id of the generation
+   */
+  @Get("generations/{id}/internal-projects")
+  @Security("jwt", ["14"])
+  public async getInternalProjectsOfGeneration(@Path() id: number): Promise<InternalProject[]> {
+    const internalProjects = await this.traineesService.getInternalProjectsByGenerationID(id);
+
+    return internalProjects;
+  }
+
+  /**
+   * Retrieves all current IPs
+   * @summary Get current IPs
+   */
+  @Get("ips/current")
+  @Security("jwt")
+  public async getCurrentIPs(): Promise<InternalProject[]> {
+    const ips = await this.traineesService.getInternalProjects(true);
+
+    return ips;
+  }
+
+  /**
+   * Retrieves all IPs
+   * @summary Get all IPs
+   */
+  @Get("ips/all")
+  @Security("jwt")
+  public async getAllIPs(): Promise<InternalProject[]> {
+    const ips = await this.traineesService.getInternalProjects(false);
+
+    return ips;
+  }
+
+  /**
+   * Retrieves all milestones of internal projects and workshop feedback of a generation
+   * @summary Get progress of the trainee generation
+   * @param id id of the generation
+   */
+  @Get("generations/{id}/trainee-progress")
+  @Security("jwt", ["14"])
+  public async getTraineeProgress(@Path() id: number): Promise<TraineeProgress[]> {
+    const ips = await this.traineesService.getTraineeProgress(id);
+
+    return ips;
+  }
+}

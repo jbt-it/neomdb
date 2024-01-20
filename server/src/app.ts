@@ -1,14 +1,15 @@
 /*
  * Configure our API endpoint
  */
-import express = require("express");
-import dotenv = require("dotenv");
-import cookieParser = require("cookie-parser");
-
-import errorHandler from "./middleware/errorHandling";
+import * as express from "express";
+import * as dotenv from "dotenv";
+import * as cookieParser from "cookie-parser";
+import * as swaggerUi from "swagger-ui-express";
+import { RegisterRoutes } from "../build/routes";
+import { errorHandler } from "./middleware/errorHandling";
 // import refererValidationMiddleware from "./middleware/refererValidation";
 import corsMiddleware from "./middleware/cors";
-import routes from "./routes";
+import swagger from "./middleware/swagger";
 
 dotenv.config();
 const app = express();
@@ -35,9 +36,14 @@ app.use(cookieParser());
 // app.use(refererValidationMiddleware);
 
 /*
- * Use routes
+ * Swagger UI Setup
  */
-app.use("/api", routes);
+app.use("/api/docs", swaggerUi.serve, swagger);
+
+/*
+ * Routes Setup
+ */
+RegisterRoutes(app);
 
 /*
  * Centralized Error handling
