@@ -98,6 +98,14 @@ export type Mentee = {
 };
 
 /**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
+};
+
+/**
  * Type of member with additional data (languages, mentor, mentee, edvskills)
  */
 export type MemberDetails = {

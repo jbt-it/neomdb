@@ -1,9 +1,8 @@
 import { describe, expect, test, beforeAll, beforeEach, afterEach, jest, afterAll } from "@jest/globals";
-import * as request from "supertest";
+import request from "supertest";
 import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
-import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);

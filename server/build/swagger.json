@@ -169,6 +169,22 @@
 				"type": "object",
 				"description": "Type of the partial member"
 			},
+			"MemberImage": {
+				"properties": {
+					"mimeType": {
+						"type": "string"
+					},
+					"base64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"mimeType",
+					"base64"
+				],
+				"type": "object",
+				"description": "Type of the member image"
+			},
 			"DepartmentMember": {
 				"properties": {
 					"bezeichnung": {
@@ -1457,6 +1473,98 @@
 								"generation": 3,
 								"traineeSeit": "2020-01-01",
 								"email": "m.mustermann@email.de"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/{id}/image": {
+			"get": {
+				"operationId": "GetMemberImage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"mimeType": {},
+										"base64": {}
+									},
+									"required": [
+										"mimeType",
+										"base64"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the image of a member with the given `id`.\r\nReturns null with status code 204 if no image was found.",
+				"summary": "Get image of member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve the image from",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SaveImage",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Saves the image of a member with the given `id`",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to save the image to",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The image to save",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberImage",
+								"description": "The image to save"
+							},
+							"example": {
+								"base64": "test",
+								"mimeType": "jpg"
 							}
 						}
 					}

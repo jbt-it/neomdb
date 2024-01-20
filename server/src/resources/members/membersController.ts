@@ -7,6 +7,7 @@ import {
   DepartmentMember,
   Director,
   MemberDetails,
+  MemberImage,
   MemberPartial,
   StatusOverview,
   UpdateDepartmentRequest,
@@ -42,6 +43,7 @@ import { UnauthorizedError } from "../../types/Errors";
 @Route("members")
 export class MembersController extends Controller {
   private membersService: MembersService = new MembersService();
+  private assetsPath = process.env.ASSETS_PATH || process.env.NODE_ENV === "test" ? "./test/assets" : "./assets";
 
   /**
    * Retrieves a list of all members
@@ -52,6 +54,44 @@ export class MembersController extends Controller {
   public async getMembers(): Promise<MemberPartial[]> {
     const members = await this.membersService.getMemberList();
     return members;
+  }
+
+  /**
+   * Retrieves the image of a member with the given `id`.
+   * Returns null with status code 204 if no image was found.
+   * @summary Get image of member
+   * @param id The id of the member to retrieve the image from
+   */
+  @Get("{id}/image")
+  @Security("jwt")
+  public async getMemberImage(@Path() id: number) {
+    const imageFolderPath = `${this.assetsPath}/images`;
+    return await this.membersService.getMemberImage(imageFolderPath, id);
+  }
+
+  /**
+   * Saves the image of a member with the given `id`
+   * @param id The id of the member to save the image to
+   * @param requestBody The image to save
+   * @example requestBody {
+   * "base64": "test",
+   * "mimeType": "jpg"
+   * }
+   */
+  @Post("{id}/image")
+  @Security("jwt")
+  public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: any) {
+    const user = request.user as JWTPayload;
+    // The user can only save the image if he is the member himself
+    if (id !== user.mitgliedID) {
+      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
+    }
+
+    const { base64, mimeType } = requestBody;
+    const imageFolderPath = `${this.assetsPath}/images`;
+    const imageName = `${id}.${mimeType}`;
+
+    await this.membersService.saveMemberImage(imageFolderPath, imageName, base64);
   }
 
   /**
