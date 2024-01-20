@@ -1,5 +1,4 @@
-# Only for development and demo purposes
-
+# Only for testing purposes development and demo purposes
 version: "3.8"
 
 networks:
@@ -8,14 +7,16 @@ networks:
 
 services:
   client:
-    image: jbtit/neomdb:client${CLIENT_VERSION}
+    build:
+      context: ../client
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_ENV=development # Is used to indicate to react, that it should use the env variables regarding development
     networks:
       - neomdb_network
 
   database:
     image: mysql
-    ports:
-      - 5306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
@@ -33,13 +34,15 @@ services:
       - neomdb_network
 
   server:
-    image: jbtit/neomdb:server${SERVER_VERSION}
+    build:
+      context: ../server
+      dockerfile: Dockerfile
     depends_on:
       - database
     networks:
       - neomdb_network
     environment:
-      IS_PRODUCTION: "true"
+      NODE_ENV: "production"
       ORIGIN_PROD: "${ORIGIN_PROD}"
       DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
       DB_HOST_PROD: "${DB_HOST_PROD}"
@@ -50,7 +53,7 @@ services:
   nginx-app:
     image: nginx:latest
     ports:
-      - 9002:80
+      - 9000:80
     depends_on:
       - client
       - server

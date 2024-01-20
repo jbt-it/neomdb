@@ -26,14 +26,14 @@ def main():
 
     environment = input("Enter the environment (prod/dev/test): ")
 
-    if (environment == "test"):
-        cmd = "docker-compose -f docker-compose.testing.yaml --env-file .env.testing up --detach --build"
+    if (environment == "dev"):
+        cmd = "docker-compose -f docker-compose.development.yaml --env-file .env.development up --detach --build"
         run_command(cmd)
         if input("Stop containers? (y/n): ") == "y":
             run_command("docker-compose -f docker-compose.testing.yaml down")
         return
     
-    client_env = "production" if environment == "prod" else "development"
+    client_env = "production" if environment == "prod" else "testing"
     version = input("Enter the version number (X.Y.Z): ")
 
     # Build client
