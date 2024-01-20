@@ -302,7 +302,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
                   Konto einzuziehen."
                 />
                 {errorDebitNotice && (
-                  <FormHelperText error>Der Eintzugsermächtigung muss zugestimmt werden</FormHelperText>
+                  <FormHelperText error>Der Einzugsermächtigung muss zugestimmt werden</FormHelperText>
                 )}
               </FormControl>
             </Box>
