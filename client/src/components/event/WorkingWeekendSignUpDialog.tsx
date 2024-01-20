@@ -151,6 +151,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     } else {
       setErrorArrivalAfterDeparture(false);
     }
+    setErrorArrival(false);
   };
 
   // Functions to handle change of the departure field
@@ -161,6 +162,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     } else {
       setErrorDepartureBeforeArrival(false);
     }
+    setErrorDeparture(false);
   };
 
   // Functions to handle change of the car field
