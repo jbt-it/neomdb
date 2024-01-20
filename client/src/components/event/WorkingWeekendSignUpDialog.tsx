@@ -301,7 +301,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
                 <FormControlLabel
                   control={<Checkbox value={debitNotice} onChange={onChangeDebitNotice} />}
                   label="Hiermit ermächtige ich den Junior Business Team e.V., den Beitrag für das Working Weekend von meinem
-                  Konto einzuziehen."
+                 Konto einzuziehen."
                 />
                 {errorDebitNotice && (
                   <FormHelperText error>Der Einzugsermächtigung muss zugestimmt werden</FormHelperText>
