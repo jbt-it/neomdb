@@ -75,6 +75,24 @@ export type Director = {
 };
 
 /**
+ * Type of director details
+ */
+export type DirectorDetails = {
+  evPostenID: number;
+  bezeichnung_maennlich: string;
+  bezeichnung_weiblich: string;
+  kuerzel: string;
+  kurzvorstellung: string;
+  inhalt: string;
+  mitgliedID: number | null;
+  vorname: string | null;
+  nachname: string | null;
+  geschlecht: number | null;
+  ressortID: number | null;
+  jbtEmail: string;
+};
+
+/**
  * Type of a mentor
  */
 export type Mentor = {

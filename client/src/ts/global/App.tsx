@@ -8,6 +8,7 @@ import MemberManagement from "../members/MemberManagement";
 import Login from "../members/Login";
 import Nav from "./components/navigation/Nav";
 import NotFound from "./NotFound";
+import BoardOverview from "../members/BoardOverview";
 import DepartmentOverview from "../members/DepartmentOverview";
 import PermissionsOverview from "../members/PermissionsOverview";
 import MemberProfile from "../members/member-page/MemberPage";
@@ -167,6 +168,7 @@ const App: React.FunctionComponent = () => {
           <PrivateRoute exact path="/user-change-password" component={ChangePassword} />
           <PrivateRoute exact path="/" component={Dashboard} />
           <PrivateRoute exact path="/gesamtuebersicht" component={MemberOverview} />
+          <PrivateRoute exact path="/vorstand" component={BoardOverview} />
           <PrivateRoute exact path="/ressorts" component={DepartmentOverview} />
           <PrivateRoute exact path="/ewigervorstand" component={DirectorsHistory} />
           <PrivateRoute exact path="/geburtstage" component={Dashboard} />

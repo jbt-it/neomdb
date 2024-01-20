@@ -374,7 +374,7 @@ export const retrieveDepartmentMembers = (req: Request, res: Response): void => 
 export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
   database
     .query(
-      `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+      `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID, geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel, inhalt, kurzvorstellung
       FROM mitglied, mitglied_has_evposten, evposten
       WHERE mitgliedID = mitglied_mitgliedID AND von < DATE(NOW()) AND DATE(NOW()) < bis AND evpostenID = evposten_evpostenID`,
       []
@@ -385,7 +385,7 @@ export const retrieveCurrentDirectors = (req: Request, res: Response): void => {
         // membersTypes.GetCurrentDirectorsQueryResult[]
       ) => {
         if (result.length === 0) {
-          res.status(404).send("Directors not found");
+          res.status(404).send("No directors found");
         } else {
           res.status(200).json(result);
         }
@@ -717,25 +717,21 @@ export const createMember = async (req: Request, res: Response) => {
  * Retrieves the history of directors
  */
 export const retrieveDirectors = (req: Request, res: Response): void => {
+  console.log("test");
   database
     .query(
       `SELECT mitgliedID, vorname, nachname, geschlecht, kuerzel, bezeichnung_maennlich,bezeichnung_weiblich, von, bis
       FROM mitglied, mitglied_has_evposten, evposten
-      WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID `,
+      WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID`,
       []
     )
-    .then(
-      (
-        result: QueryResult
-        //  membersTypes.GetDirectorsQueryResult[]
-      ) => {
-        if (result.length === 0) {
-          res.status(404).send("Directors not found");
-        } else {
-          res.status(200).json(result);
-        }
+    .then((result: QueryResult) => {
+      if (result.length === 0) {
+        res.status(404).send("Directors not found");
+      } else {
+        res.status(200).json(result);
       }
-    )
+    })
     .catch(() => {
       res.status(500).send("Query Error");
     });
