@@ -154,7 +154,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/directors", {
+      .get("/members/directors?current=false", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
