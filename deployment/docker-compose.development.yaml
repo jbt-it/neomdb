@@ -14,6 +14,8 @@ services:
 
   database:
     image: mysql
+    ports:
+      - 5306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
@@ -42,6 +44,9 @@ services:
       DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
       DB_HOST_PROD: "${DB_HOST_PROD}"
       DB_PORT_PROD: "${DB_PORT_PROD}"
+      ASSETS_PATH: "./assets"
+    volumes:
+      - ./assets:/app/assets
     secrets:
       - db_neomdb_password
 

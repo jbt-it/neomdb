@@ -67,11 +67,11 @@ const ChangePassword: React.FunctionComponent = () => {
 
       // Patch request
       api
-        .patch("/users/change-password", data, {
+        .patch("/auth/change-password", data, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 204) {
             // Password change was succefull
             setResResponse200(true);
             return [{ status: res.status }];

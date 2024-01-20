@@ -69,7 +69,7 @@ const ForgotPassword: React.FunctionComponent = () => {
       email,
     };
     api.post("/auth/forgot-password", data).then((res) => {
-      if (res.status === 200) setSubmitBoolean(true);
+      if (res.status === 204) setSubmitBoolean(true);
     });
   };
 
