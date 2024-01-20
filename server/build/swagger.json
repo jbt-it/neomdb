@@ -132,6 +132,17 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"MemberStatus": {
+				"type": "string",
+				"enum": [
+					"Trainee",
+					"aktives Mitglied",
+					"Senior",
+					"Alumnus",
+					"passives Mitglied",
+					"Ausgetretene"
+				]
+			},
 			"MemberPartial": {
 				"properties": {
 					"lastchange": {
@@ -141,7 +152,7 @@
 						"type": "string"
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -168,6 +179,22 @@
 				],
 				"type": "object",
 				"description": "Type of the partial member"
+			},
+			"MemberImage": {
+				"properties": {
+					"mimeType": {
+						"type": "string"
+					},
+					"base64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"mimeType",
+					"base64"
+				],
+				"type": "object",
+				"description": "Type of the member image"
 			},
 			"DepartmentMember": {
 				"properties": {
@@ -712,7 +739,7 @@
 						"nullable": true
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -1463,6 +1490,98 @@
 				}
 			}
 		},
+		"/members/{id}/image": {
+			"get": {
+				"operationId": "GetMemberImage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"mimeType": {},
+										"base64": {}
+									},
+									"required": [
+										"mimeType",
+										"base64"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the image of a member with the given `id`.\r\nReturns null with status code 204 if no image was found.",
+				"summary": "Get image of member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve the image from",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SaveImage",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Saves the image of a member with the given `id`",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to save the image to",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The image to save",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberImage",
+								"description": "The image to save"
+							},
+							"example": {
+								"base64": "test",
+								"mimeType": "jpg"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/members/department-members": {
 			"get": {
 				"operationId": "GetMembersOfDepartments",
@@ -1575,7 +1694,7 @@
 							"schema": {
 								"properties": {
 									"mitgliedstatus": {
-										"type": "string"
+										"$ref": "#/components/schemas/MemberStatus"
 									}
 								},
 								"required": [
@@ -2675,6 +2794,40 @@
 				"parameters": [
 					{
 						"description": "id of the generation",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/trainees/admission/{id}": {
+			"post": {
+				"operationId": "AdmitTrainee",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Admits a trainee which sets the active since state of the member to the current date and\r\nupdates the member status",
+				"summary": "Admit a trainee",
+				"tags": [
+					"Trainees"
+				],
+				"security": [
+					{
+						"jwt": [
+							"18"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "id of the trainee",
 						"in": "path",
 						"name": "id",
 						"required": true,
