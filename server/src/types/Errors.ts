@@ -53,6 +53,13 @@ export class QueryError extends Error {
   }
 }
 
+export class ConflictError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "ConflictError";
+  }
+}
+
 /**
  * Error thrown when a token is expired
  */
