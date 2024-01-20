@@ -9,6 +9,7 @@ import {
   Box,
   Divider,
   Typography,
+  Stack,
 } from "@mui/material";
 import { Frage, ReferentenBewertung } from "../../types/eventTypes";
 import { Link } from "react-router-dom";
@@ -52,6 +53,25 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
       <Typography fontWeight={"bold"} fontSize={18}>
         Übersicht:
       </Typography>
+      {referenten.length > 1
+        ? referenten.map((ref, index) => {
+            return (
+              <Stack direction={"row"} key={ref.mitglied_mitgliedID}>
+                <Typography fontSize={14} fontWeight={"bold"}>
+                  Referent {index + 1}: &nbsp;
+                </Typography>
+                <Link
+                  to={`/gesamtuebersicht/${ref.mitglied_mitgliedID}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Typography fontSize={14}>
+                    {ref.vorname} {ref.nachname}
+                  </Typography>
+                </Link>
+              </Stack>
+            );
+          })
+        : null}
       <TableContainer>
         <Table size="small">
           <TableHead>
@@ -60,7 +80,7 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
                 style={{ verticalAlign: "bottom", fontWeight: "bold", padding: 0, paddingBottom: 5 }}
                 align="center"
               >
-                <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200 }}>Nr.</Box>
+                <Box>Nr.</Box>
               </TableCell>
               {fragen.map((frage) => (
                 <TableCell
@@ -68,21 +88,12 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
                   style={{ verticalAlign: "bottom", fontWeight: "bold" }}
                   align="center"
                 >
-                  <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200 }}>
-                    Frage {frage.feedbackfrage_feedbackfrageID}
-                  </Box>
+                  F{frage.feedbackfrage_feedbackfrageID}
                 </TableCell>
               ))}
-              {referenten.map((ref) => (
-                <TableCell key={ref.mitglied_mitgliedID} style={{ padding: 0, paddingBottom: 5, fontWeight: "bold" }}>
-                  <Link
-                    to={`/gesamtuebersicht/${ref.mitglied_mitgliedID}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <Box sx={{ writingMode: "sideways-lr", whiteSpace: "pre-line", maxHeight: 150, maxWidth: 50 }}>
-                      {ref.vorname} {ref.nachname}
-                    </Box>
-                  </Link>
+              {referenten.map((ref, index) => (
+                <TableCell key={ref.mitglied_mitgliedID} style={{ verticalAlign: "bottom", fontWeight: "bold" }}>
+                  R {index + 1}
                 </TableCell>
               ))}
               <TableCell style={{ verticalAlign: "bottom", fontWeight: "bold", maxWidth: 80 }}>Durchschnitt</TableCell>
