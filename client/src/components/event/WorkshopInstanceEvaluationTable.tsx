@@ -56,7 +56,12 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ p: 0 }} />
+              <TableCell
+                style={{ verticalAlign: "bottom", fontWeight: "bold", padding: 0, paddingBottom: 5 }}
+                align="center"
+              >
+                <Box sx={{ writingMode: "sideways-lr", whiteSpace: "normal", maxHeight: 200 }}>Nr.</Box>
+              </TableCell>
               {fragen.map((frage) => (
                 <TableCell
                   key={frage.feedbackfrage_feedbackfrageID}
