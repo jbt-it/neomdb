@@ -1,7 +1,7 @@
 /**
  * Provides access to the mediawiki api
  */
-import dotenv = require("dotenv");
+import * as dotenv from "dotenv";
 import { mwn } from "mwn";
 dotenv.config();
 

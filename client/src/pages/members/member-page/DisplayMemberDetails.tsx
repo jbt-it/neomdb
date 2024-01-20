@@ -33,6 +33,7 @@ import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
+import MemberImage from "../../../components/general/MemberImage";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -55,15 +56,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
-    },
-    memberImage: {
-      backgroundColor: "white",
-      borderRadius: "50%",
-      border: "3px solid var(--white,#fff)",
-      boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-      width: "40%",
-      marginLeft: "20px",
-      marginTop: "20px",
     },
     category: {
       color: theme.palette.text.secondary,
@@ -185,7 +177,9 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.EDVSkill[];
   memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
+  memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
+  saveMemberImage: (file: File) => void;
   getMemberDetails: () => void;
 }
 
@@ -201,11 +195,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   // Filter of languages for the autocomplete component
   const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
-  const { members } = props;
-  const { departments } = props;
-  const { listOfLanguages } = props;
-  const { listOfEDVSkills } = props;
-  const { memberDetails } = props;
+  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.nachname);
@@ -223,7 +213,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [plz1State, setPlz1State] = useState<string>(memberDetails.plz1 ? memberDetails.plz1.toString() : "");
   const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.ort1 ? memberDetails.ort1 : "");
   const [telephone1] = useState<string>(memberDetails.tel1 ? memberDetails.tel1.toString() : "");
-  const [email1State] = useState<string>(memberDetails.email1);
+  const [email1State] = useState<string>(memberDetails.email1 || "");
   const [street2] = useState<string>(memberDetails.strasse2 ? memberDetails.strasse2 : "");
   const [plz2State] = useState<string>(memberDetails.plz2 ? memberDetails.plz2.toString() : "");
   const [placeOfResidence2] = useState<string>(memberDetails.ort2 ? memberDetails.ort2 : "");
@@ -240,8 +230,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [accountHolder, setAccountHolder] = useState<string>(
     memberDetails.kontoinhaber ? memberDetails.kontoinhaber : ""
   );
-  const [ibanState, setIbanState] = useState<string>(memberDetails.iban);
-  const [bicState, setBicState] = useState<string>(memberDetails.bic);
+  const [ibanState, setIbanState] = useState<string>(memberDetails?.iban || "");
+  const [bicState, setBicState] = useState<string>(memberDetails?.bic || "");
   const [engagementState] = useState<string>(memberDetails.engagement ? memberDetails.engagement : "");
   const [driversLicense] = useState<boolean>(memberDetails.fuehrerschein);
   const [firstAid] = useState<boolean>(memberDetails.ersthelferausbildung);
@@ -255,7 +245,18 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [studyInfoDialogOpen, setStudyInfoDialogOpen] = useState<boolean>(false);
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
-  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails.mentees);
+  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
+
+  /**
+   * Saves the changes of the image
+   * @param event ChangeEvent
+   */
+  const saveImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      props.saveMemberImage(file);
+    }
+  };
 
   /**
    * Checks if there would be a duplicate value in languages if value would be added
@@ -445,8 +446,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     }
   };
 
-  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails.sprachen);
-  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails.edvkenntnisse);
+  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.sprachen || []);
+  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails?.edvkenntnisse || []);
 
   /**
    * Submits the changed data
@@ -478,12 +479,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       ressort: department,
       arbeitgeber: employer,
       strasse1: street1,
-      plz1: parseInt(plz1State, 10),
+      plz1: plz1State ? parseInt(plz1State, 10) : null,
       ort1: placeOfResidence1,
       tel1: parseInt(telephone1, 10),
       email1: email1State,
       strasse2: street2,
-      plz2: parseInt(plz2State, 10),
+      plz2: plz2State ? parseInt(plz2State, 10) : null,
       ort2: placeOfResidence2,
       tel2: parseInt(telephone2, 10),
       email2: email2State,
@@ -500,8 +501,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       canPL: transformStringToSQLString(memberDetails.canPL),
       canQM: transformStringToSQLString(memberDetails.canQM),
       lastchange: "",
-      fuehrerschein: driversLicense,
-      ersthelferausbildung: firstAid,
+      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
+      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
       sprachen: languages,
       mentees: menteeList,
       edvkenntnisse: edvSkills,
@@ -656,7 +657,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderImage: VoidFunction = () => {
     return (
       <div className={classes.imageSection}>
-        <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
+        <MemberImage
+          base64={props.memberImage?.base64}
+          mimeType={props.memberImage?.mimeType}
+          defaultImage={JBTLogoBlack}
+          alt="Member Image"
+          size={240}
+          onImageChange={props.isOwner ? saveImage : undefined}
+        />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
           <Typography>
@@ -937,9 +945,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Sprachen:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.sprachen.map((language, index) => {
+                {(memberDetails?.sprachen || []).map((language) => {
                   return (
-                    <Typography className={classes.categoryLine} key={index}>
+                    <Typography className={classes.categoryLine}>
                       {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
                     </Typography>
                   );
@@ -949,9 +957,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
               <div className={classes.categoryItemList}>
-                {memberDetails.edvkenntnisse.map((edv, index) => {
+                {(memberDetails?.edvkenntnisse || []).map((edv) => {
                   return (
-                    <Typography className={classes.categoryLine} key={index}>
+                    <Typography className={classes.categoryLine}>
                       {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
                     </Typography>
                   );

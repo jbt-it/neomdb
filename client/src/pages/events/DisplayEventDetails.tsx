@@ -34,6 +34,20 @@ import { authReducerActionType } from "../../types/globalTypes";
 import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { eventParticipants } from "../../mock/events/eventParticipants";
+import { workingWeekendParticipants } from "../../mock/events/workingWeekendParticipants";
+import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
+import WorkingWeekendParticipantsTable from "../../components/event/WorkingWeekendParticipantsTable";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import AddWorkingWeekendParticipant from "../../components/event/AddWorkingWeekendParticipant";
+
+type WWRegistrationInfo = {
+  anreise: string;
+  abreise: string;
+  auto: boolean;
+  plaetze: number;
+  vegetarier: boolean;
+  kommentar: string;
+};
 
 /**
  * Renders the page for displaying the details of a given event as well as the participants
@@ -48,12 +62,15 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [wwRegistrationData, setWWRegistrationData] = useState<WWRegistrationInfo | null>(null);
+  const hasEventPermission = doesPermissionsHaveSomeOf(auth.permissions, [8]);
 
   const isRegistrationOpen =
-    event?.registrationStart &&
-    event.registrationStart < dayjs() &&
-    event?.registrationDeadline &&
-    event.registrationDeadline > dayjs();
+    (!event?.registrationStart && event?.registrationDeadline && event.registrationDeadline > dayjs()) ||
+    (event?.registrationStart &&
+      event.registrationStart < dayjs() &&
+      event?.registrationDeadline &&
+      event.registrationDeadline > dayjs());
 
   const isMobile = useResponsive("down", "md");
 
@@ -75,12 +92,6 @@ const DisplayEventDetails: React.FunctionComponent = () => {
 
       let event: CommonEventType | null = null;
 
-      mitglied_has_event
-        .filter((event) => event.event_eventID === id)
-        .some((event) => event.mitglied_mitgliedID === auth.userID)
-        ? setUserIsSignedUp(true)
-        : null;
-
       const res = mockEvents.find((event) => event.eventID === id);
       res
         ? (event = {
@@ -100,6 +111,34 @@ const DisplayEventDetails: React.FunctionComponent = () => {
           })
         : null;
       setEvent(event);
+
+      if (event?.type === "WW") {
+        workingWeekendParticipants
+          .filter((event) => event.event_eventID === id)
+          .some((event) => event.mitglied_mitgliedID === auth.userID)
+          ? setUserIsSignedUp(true)
+          : null;
+        setWWRegistrationData(
+          workingWeekendParticipants.find((event) => event.mitglied_mitgliedID === auth.userID) || null
+        );
+        setParticipants(
+          workingWeekendParticipants
+            .filter((event) => event.event_eventID === id)
+            .map((participant) => ({
+              mitgliedID: participant.mitglied_mitgliedID,
+              vorname: participant.name.split(" ")[0],
+              nachname: participant.name.split(" ")[1],
+              mitgliedstatus: participant.status,
+              anmeldedatum: dayjs(participant.anmeldedatum),
+            }))
+        );
+      } else {
+        mitglied_has_event
+          .filter((event) => event.event_eventID === id)
+          .some((event) => event.mitglied_mitgliedID === auth.userID)
+          ? setUserIsSignedUp(true)
+          : null;
+      }
     },
     [dispatchAuth]
   );
@@ -109,7 +148,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/", {
+      .get("/members/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -141,9 +180,9 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   // Function to update the event
   const updateEvent = (
     title: string,
-    location: string,
-    startDate: Dayjs | null,
-    endDate: Dayjs | null,
+    location: string | null,
+    startDate: Dayjs,
+    endDate: Dayjs,
     startTime: Dayjs | null,
     endTime: Dayjs | null,
     registrationStart: Dayjs | null,
@@ -151,7 +190,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     maxParticipants: number | null,
     organizers: string[],
     description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => {
     setEvent((prevEvent) => {
       if (prevEvent) {
@@ -181,6 +220,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   }, [id, getEvent]);
   useEffect(() => getMembers(), [getMembers]);
 
+  // Fields for the display of event information
   const displayFields: Array<InformationField> = [
     {
       label: "Anmeldefrist",
@@ -214,8 +254,75 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     },
     {
       label: "Beschreibung",
-      value: event ? event.description : null,
+      value: event ? (event.description ? event.description : null) : null,
       type: "multi",
+    },
+  ];
+
+  // Function to map the arrival and departure of a participant to a string
+  const mapAnUndAbreise = (tag: string, anreise: boolean): string => {
+    switch (tag) {
+      case "FrF":
+        return "Freitag früh";
+      case "FrM":
+        return anreise ? "Freitag vor dem Mittagessen" : "Freitag nach dem Mittagessen";
+      case "FrA":
+        return anreise ? "Freitag vor dem Abendessen" : "Freitag nach dem Abendessen";
+      case "SaF":
+        return anreise ? "Samstag vor dem Frühstück" : "Samstag nach dem Frühstück";
+      case "SaM":
+        return anreise ? "Samstag vor dem Mittagessen" : "Samstag nach dem Mittagessen";
+      case "SaA":
+        return anreise ? "Samstag vor dem Abendessen" : "Samstag nach dem Abendessen";
+      case "So":
+        return "Sonntag";
+      default:
+        return "Fehler";
+    }
+  };
+
+  // Fields for the registration information
+  const wwRegistrationFields: Array<InformationField> = [
+    {
+      label: "Anreise",
+      value:
+        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+          ? mapAnUndAbreise(wwRegistrationData.anreise, true)
+          : null,
+      type: "text",
+    },
+    {
+      label: "Geplante Abreise",
+      value:
+        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+          ? mapAnUndAbreise(wwRegistrationData.abreise, false)
+          : null,
+      type: "text",
+    },
+    {
+      label: "Auto",
+      value:
+        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+          ? wwRegistrationData.auto
+            ? "Ja, " + wwRegistrationData.plaetze
+            : "Nein"
+          : null,
+      type: "text",
+    },
+    {
+      label: "Vegetarier",
+      value:
+        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+          ? wwRegistrationData.vegetarier
+            ? "Ja"
+            : "Nein"
+          : null,
+      type: "text",
+    },
+    {
+      label: "Bemerkungen",
+      value: userIsSignedUp && wwRegistrationData && event?.type === "WW" ? wwRegistrationData.kommentar : null,
+      type: "text",
     },
   ];
 
@@ -281,7 +388,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   };
 
   /**
-   * function is called to add a participant to the event
+   * Function is called to add a participant to the event
    * TODO: Implement backend functionality to add a participant to the event
    * @param participant the participant to add
    */
@@ -291,7 +398,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   };
 
   /**
-   * function is called to remove a participant to the event
+   * Function is called to remove a participant to the event
    * TODO: Implement backend functionality to remove a participant to the event
    * @param participant the participant to remove
    */
@@ -310,13 +417,25 @@ const DisplayEventDetails: React.FunctionComponent = () => {
     };
 
     if (userIsSignedUp) {
-      return (
-        <Chip label="Abmelden" color="error" variant="outlined" icon={<RemoveCircleOutline />} onClick={handleSignUp} />
-      );
+      if (isRegistrationOpen) {
+        return (
+          <Chip
+            label="Abmelden"
+            color="error"
+            variant="outlined"
+            icon={<RemoveCircleOutline />}
+            onClick={handleSignUp}
+          />
+        );
+      } else {
+        return <Chip label="Abmelden" color="error" variant="outlined" disabled icon={<RemoveCircleOutline />} />;
+      }
+    } else if (event?.type === "WW") {
+      return <WorkingWeekendSignUp ww={event} size="medium" />;
+    } else if (isRegistrationOpen) {
+      return <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />;
     } else {
-      return isRegistrationOpen ? (
-        <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />
-      ) : null;
+      return null;
     }
   };
 
@@ -336,7 +455,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             <Typography fontWeight={"bold"} variant="h5">
               Termininformationen - {event ? event.name : null}
             </Typography>
-            {auth.permissions.length > 0 ? (
+            {hasEventPermission ? (
               <Stack direction={"row"} spacing={2}>
                 <RenderDeleteButton />
                 <RenderEditButton />
@@ -358,15 +477,39 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4, maxWidth: 600 }}>
               <InfoSection fields={displayFields} />
             </Box>
+            {userIsSignedUp && event.type === "WW" ? (
+              <>
+                <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
+                <Box sx={{ ml: 3, mb: 3 }}>
+                  <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2 }}>
+                    Anmeldedaten
+                  </Typography>
+                  <Typography sx={{ pb: 2 }}>
+                    Du bist angemeldet!{" "}
+                    {isRegistrationOpen
+                      ? null
+                      : "Da die Anmeldephase abgelaufen ist, kannst du dich nicht mehr abmelden. "}
+                    Deine Anmeldedaten:
+                  </Typography>
+                  <InfoSection fields={wwRegistrationFields} />
+                </Box>
+              </>
+            ) : null}
             {participants.length > 0 ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
                   Teilnehmerliste ({participants.length})
                 </Typography>
-                <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
-                  <EventParticipants participants={participants} removeParticipant={removeParticipant} />
-                </Box>
+                {event.type === "WW" && hasEventPermission ? (
+                  <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                    <WorkingWeekendParticipantsTable />
+                  </Box>
+                ) : (
+                  <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                    <EventParticipants participants={participants} removeParticipant={removeParticipant} />
+                  </Box>
+                )}
               </>
             ) : null}
           </Paper>
@@ -380,14 +523,16 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             direction={isMobile ? "column" : "row"}
             spacing={isMobile ? 2 : 0}
           >
-            {participants.length > 0 ? (
-              <>
-                <SignUpButton />
-                {auth.permissions.length > 0 ? (
+            <SignUpButton />
+            <>
+              {hasEventPermission ? (
+                event.type === "WW" ? (
+                  <AddWorkingWeekendParticipant members={members} participants={participants} ww={event} />
+                ) : (
                   <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
-                ) : null}
-              </>
-            ) : null}
+                )
+              ) : null}
+            </>
           </Stack>
           <EditEventDialog
             open={editDialogOpen}
@@ -406,9 +551,9 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             description={event.description}
             onSubmit={(
               title: string,
-              location: string,
-              startDate: Dayjs | null,
-              endDate: Dayjs | null,
+              location: string | null,
+              startDate: Dayjs,
+              endDate: Dayjs,
               startTime: Dayjs | null,
               endTime: Dayjs | null,
               registrationStart: Dayjs | null,
@@ -416,7 +561,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               maxParticipants: number | null,
               organizers: string[],
               description: string,
-              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
             ) => {
               updateEvent(
                 title,

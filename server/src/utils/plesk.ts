@@ -1,9 +1,9 @@
 /**
  * Provides access to the plesk api
  */
-import dotenv = require("dotenv");
+import * as dotenv from "dotenv";
 import axios from "axios";
-import https = require("https");
+import * as https from "https";
 dotenv.config();
 /**
  * The host of the plesk application

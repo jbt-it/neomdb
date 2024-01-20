@@ -6,8 +6,6 @@ import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { authReducerActionType } from "../../types/globalTypes";
 
-import Lenni from "../../assets/lenni.jpeg";
-
 interface MenuOption {
   label: string;
   path: string;
@@ -66,7 +64,6 @@ const AccountPopover = () => {
         }}
       >
         <Avatar
-          src={Lenni}
           alt={auth.userName?.toString()}
           sx={{
             width: 36,
