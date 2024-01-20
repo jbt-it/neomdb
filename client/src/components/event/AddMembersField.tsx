@@ -43,7 +43,7 @@ const AddMembersField: FunctionComponent<AddMembersFieldProps> = ({
         Teilnehmer hinzufügen:
       </Typography>
       <Autocomplete
-        renderInput={(params) => <TextField variant="outlined" {...params} label="Mitglieder" />}
+        renderInput={(params) => <TextField variant="outlined" {...params} label="Mitglied" />}
         options={members.filter((member) => !participants.includes(member))}
         getOptionLabel={(option) => `${option.vorname} ${option.nachname}`}
         sx={{ width: 230 }}
