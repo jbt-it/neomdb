@@ -118,7 +118,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/permissions", {
+      .get("/members/permissions", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -144,7 +144,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/permission-assignments", {
+      .get("/members/permission-assignments", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -171,7 +171,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
     let mounted = true;
     api
       .post(
-        "/users/permissions",
+        "/members/permissions",
         { memberID, permissionID },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -200,13 +200,13 @@ const PermissionsOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .delete("/users/permissions", {
+      .delete("/members/permissions", {
         data: { memberID, permissionID },
 
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 204) {
           if (mounted) {
             showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
           }

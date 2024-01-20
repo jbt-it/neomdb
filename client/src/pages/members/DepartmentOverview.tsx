@@ -72,7 +72,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/departments/", {
+      .get("/members/departments/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -99,7 +99,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/department-members/", {
+      .get("/members/department-members/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -126,7 +126,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/directors?current=true", {
+      .get("/members/directors?current=true", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

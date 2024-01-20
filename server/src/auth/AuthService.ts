@@ -5,8 +5,8 @@ import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import AuthRepository from "./AuthRepository";
-import bcrypt = require("bcryptjs");
-import crypto = require("node:crypto");
+import * as bcrypt from "bcryptjs";
+import * as crypto from "node:crypto";
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -29,16 +29,15 @@ class AuthService {
       sleepRandomly(50, 110);
       throw new UnauthenticatedError("Username or password wrong");
     }
-
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
-      user.mitgliedID
-    );
-
     const match = await bcrypt.compare(userLogin.password, user.passwordHash);
 
     if (!match) {
       throw new UnauthenticatedError("Username or password wrong");
     }
+
+    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
+      user.mitgliedID
+    );
 
     const payload: JWTPayload = createUserDataPayload(user, directorPermissions);
     return payload;

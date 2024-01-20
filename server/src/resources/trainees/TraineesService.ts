@@ -225,9 +225,7 @@ class TraineesService {
    * @param generationID ID of the generation
    * @returns A promise that resolves to an array containing the combined data
    */
-  getIPMilestonesAndWorkshopFeedback = async (
-    generationID: number
-  ): Promise<(InternalProjectAndTrainee & Workshop)[]> => {
+  getTraineeProgress = async (generationID: number): Promise<(InternalProjectAndTrainee & Workshop)[]> => {
     // Fetch generation to check if it exists
     const generation = await this.traineesRepository.getGenerationByID(generationID);
 

@@ -18,13 +18,13 @@ export type Member = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
-  geschlecht: string;
+  geschlecht: number;
   geburtsdatum: string;
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
+  generation: number | null;
+  internesprojekt: number | null;
   trainee_seit: string | null;
   mitglied_seit: string | null;
   alumnus_seit: string | null;
@@ -35,14 +35,14 @@ export type Member = {
   ressort: string;
   arbeitgeber: string | null;
   strasse1: string;
-  plz1: number;
+  plz1: number | null;
   ort1: string;
-  tel1: number;
+  tel1: string | null;
   email1: string;
   strasse2: string | null;
   plz2: number | null;
   ort2: string | null;
-  tel2: number | null;
+  tel2: string | null;
   email2: string | null;
   hochschule: string;
   studiengang: string;
@@ -63,19 +63,62 @@ export type Member = {
 };
 
 /**
+ * Type of the language of a member
+ */
+export type Language = {
+  wert: string;
+  niveau: number;
+};
+
+/**
+ * Type of the edv skill of a member
+ */
+export type EdvSkill = {
+  wert: string;
+  niveau: number;
+};
+
+/**
+ * Type of the mentor (partial member)
+ */
+export type Mentor = {
+  mitgliedID: number;
+  vorname?: string;
+  nachname?: string;
+  generationID?: number;
+};
+
+/**
+ * Type of the mentee (partial member)
+ */
+export type Mentee = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+};
+
+/**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
+};
+
+/**
  * Type of member with additional data (languages, mentor, mentee, edvskills)
  */
 export type MemberDetails = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
-  geschlecht: string;
-  geburtsdatum: string;
+  geschlecht: number;
+  geburtsdatum: string | null;
   handy: string;
   jbt_email: string;
   mitgliedstatus: string;
-  generation: string | null;
-  internesprojekt: string | null;
+  generation: number | null;
+  internesprojekt: number | null;
   trainee_seit: string | null;
   mitglied_seit: string | null;
   alumnus_seit: string | null;
@@ -86,14 +129,14 @@ export type MemberDetails = {
   ressort: string;
   arbeitgeber: string | null;
   strasse1: string;
-  plz1: number;
+  plz1: number | null;
   ort1: string;
-  tel1: number;
-  email1: string;
+  tel1: string | null;
+  email1: string | null;
   strasse2: string | null;
   plz2: number | null;
   ort2: string | null;
-  tel2: number | null;
+  tel2: string | null;
   email2: string | null;
   hochschule: string;
   studiengang: string;
@@ -115,7 +158,7 @@ export type MemberDetails = {
   sprachen?: Language[];
   edvkenntnisse?: EdvSkill[];
   mentees?: Mentee[];
-  mentor?: Mentor;
+  mentor?: Mentor | null;
 };
 
 /**
@@ -125,13 +168,13 @@ export type CreateMemberRequest = {
   vorname: string;
   nachname: string;
   name: string;
-  geburtsdatum: string;
-  password: string;
-  handy: string;
-  geschlecht: string;
-  generation: string;
-  traineeSeit: string;
   email: string;
+  geburtsdatum: string | null;
+  handy: string | null;
+  geschlecht: number | null;
+  generation: number | null;
+  password: string; // TODO: Remove password from this type, this should be handled by the backend
+  traineeSeit: string; // TODO: Remove traineeSeit from this type, this should be handled by the backend
 };
 
 /**
@@ -142,10 +185,26 @@ export type NewMember = {
   nachname: string;
   geburtsdatum: string;
   handy: string;
-  geschlecht: string;
-  generation: string;
+  geschlecht: number;
+  generation: number;
   traineeSeit: string;
   email: string;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
 };
 
 /**
@@ -157,45 +216,10 @@ export type CreateMemberResponse = {
 };
 
 /**
- * Type of the language of a member
- */
-export type Language = {
-  wert: string;
-  niveau: string;
-};
-
-/**
  * Value type used for languages and edv skills
  */
 export type Value = {
   wert: string;
-};
-
-/**
- * Type of the edv skill of a member
- */
-export type EdvSkill = {
-  wert: string;
-  niveau: string;
-};
-
-/**
- * Type of the mentor (partial member)
- */
-export type Mentor = {
-  mitgliedID: number;
-  vorname?: string;
-  nachname?: string;
-  generationID?: number;
-};
-
-/**
- * Type of the mentee (partial member)
- */
-export type Mentee = {
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
 };
 
 /**
@@ -252,22 +276,6 @@ export type Director = {
 };
 
 /**
- * Type of the overview of the status of the different account creation operations
- */
-export type StatusOverview = {
-  querySuccesful: boolean;
-  queryErrorMsg: string;
-  mailSuccesful: boolean;
-  mailErrorMsg: string;
-  mailListSuccesful: boolean;
-  mailListErrorMsg: string;
-  nextcloudSuccesful: boolean;
-  nextcloudErrorMsg: string;
-  wikiSuccesful: boolean;
-  wikiErrorMsg: string;
-};
-
-/**
  * Type of plesk api call result
  */
 export type PleskApiResult = {
@@ -298,4 +306,9 @@ export type MWApiResult = {
   message: string;
   messagecode: string;
   canpreservestate: boolean;
+};
+
+export type AssignPermissionToMemberRequest = {
+  memberID: number;
+  permissionID: number;
 };
