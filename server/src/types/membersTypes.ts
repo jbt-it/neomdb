@@ -1,3 +1,5 @@
+export type MemberStatus = "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus" | "passives Mitglied" | "Ausgetretene";
+
 /**
  * Type of the partial member
  */
@@ -6,7 +8,7 @@ export type MemberPartial = {
   nachname: string;
   handy: number;
   jbt_email: string;
-  mitgliedstatus: string;
+  mitgliedstatus: MemberStatus;
   ressort: string;
   lastchange: string;
 };
@@ -22,7 +24,7 @@ export type Member = {
   geburtsdatum: string;
   handy: string;
   jbt_email: string;
-  mitgliedstatus: string;
+  mitgliedstatus: MemberStatus;
   generation: number | null;
   internesprojekt: number | null;
   trainee_seit: string | null;
@@ -116,7 +118,7 @@ export type MemberDetails = {
   geburtsdatum: string | null;
   handy: string;
   jbt_email: string;
-  mitgliedstatus: string;
+  mitgliedstatus: MemberStatus;
   generation: number | null;
   internesprojekt: number | null;
   trainee_seit: string | null;

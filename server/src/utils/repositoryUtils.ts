@@ -1,10 +1,12 @@
+import { MemberStatus } from "types/membersTypes";
+
 /**
  * Returns the status change date attribute for a given status.
  * It is used to get the correct attribute to update.
  * @param status The status to get the change date for (e.g. "Trainee")
  * @returns The attribute corresponding to the status (e.g. "trainee_seit")
  */
-const getStatusChangeDate = (status: string) => {
+const getStatusChangeDate = (status: MemberStatus) => {
   switch (status) {
     case "Trainee":
       return "trainee_seit";
