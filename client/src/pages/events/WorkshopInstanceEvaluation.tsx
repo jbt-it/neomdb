@@ -54,6 +54,10 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
     alert("Feedback abgeschlossen");
   };
 
+  const handleReopenFeedback = () => {
+    alert("Feedback wieder geöffnet");
+  };
+
   useEffect(() => {
     getWorkshopInstance();
   }, []);
@@ -134,7 +138,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Workshop-Termin Feedback
         </Typography>
-        {workshopInstanceFeedback.mitgliederOhneFeedback.length === 0 ? (
+        {workshopInstance.status === "Feedback" && workshopInstanceFeedback.mitgliederOhneFeedback.length === 0 ? (
           <Button
             variant="contained"
             onClick={handleFinishFeedback}
@@ -143,6 +147,16 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
             startIcon={<CheckCircle />}
           >
             Feedbackphase abschließen
+          </Button>
+        ) : workshopInstance.status === "Abgeschlossen" ? (
+          <Button
+            variant="contained"
+            onClick={handleReopenFeedback}
+            sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
+            color="info"
+            startIcon={<CheckCircle />}
+          >
+            Feedbackphase wieder öffnen
           </Button>
         ) : null}
       </Stack>
