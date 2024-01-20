@@ -39,6 +39,22 @@ export type UserChangePasswordRequest = {
 };
 
 /**
+ * Type of the request to send a password reset link to a user
+ */
+export type UserForgotPasswordRequest = {
+  email: string;
+};
+
+/**
+ * Type of the request to reset the password of a user
+ */
+export type UserResetPasswordRequest = {
+  email: string;
+  key: string;
+  newPassword: string;
+};
+
+/**
  * Type of the permission
  */
 export type Permission = {
