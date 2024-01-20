@@ -471,7 +471,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4, maxWidth: 600 }}>
               <InfoSection fields={displayFields} />
             </Box>
-            {userIsSignedUp ? (
+            {userIsSignedUp && event.type === "WW" ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Box sx={{ ml: 3, mb: 3 }}>
