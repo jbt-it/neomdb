@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -48,6 +49,7 @@ interface WorkingWeekendSignUpDialogProps {
     car: boolean,
     vegetarian: boolean,
     remarks: string,
+    debitNotice: boolean,
     seats?: number
   ) => void;
 }
@@ -72,13 +74,18 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   const [seats, setSeats] = useState<number>(0);
   const [vegetarian, setVegetarian] = useState<boolean>(false);
   const [remarks, setRemarks] = useState<string>("");
+  const [debitNotice, setDebitNotice] = useState<boolean>(false);
   const [errorArrival, setErrorArrival] = useState<boolean>(false);
   const [errorDeparture, setErrorDeparture] = useState<boolean>(false);
   const [errorSeats, setErrorSeats] = useState<boolean>(false);
   const [errorArrivalAfterDeparture, setErrorArrivalAfterDeparture] = useState<boolean>(false);
   const [errorDepartureBeforeArrival, setErrorDepartureBeforeArrival] = useState<boolean>(false);
+  const [errorDebitNotice, setErrorDebitNotice] = useState<boolean>(false);
 
-  // Functino to reset all values and close the dialog
+  // Optons for the arrival and departure selection
+  const travelOptions = ["FrF", "FrM", "FrA", "SaF", "SaM", "SaA", "SaS", "So"];
+
+  // Function to reset all values and close the dialog
   const handleCancel = () => {
     handleClose();
     setArrival("");
@@ -87,52 +94,47 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     setSeats(0);
     setVegetarian(false);
     setRemarks("");
+    setDebitNotice(false);
     setErrorArrival(false);
     setErrorDeparture(false);
     setErrorSeats(false);
     setErrorArrivalAfterDeparture(false);
     setErrorDepartureBeforeArrival(false);
+    setErrorDebitNotice(false);
   };
 
   // Function to check if the arrival is before the departure
-  const checkArrivalAndDeparture = () => {
-    // if arrival is Saturday late departure can only be Saturday after dinner or Sunday
-    if ((arrival === "SaS" && departure != "SaA") || (arrival === "SaS" && departure != "So")) {
+  const checkArrivalAndDeparture = (newArrival?: string, newDeparture?: string) => {
+    const arrivalIndex = newArrival ? travelOptions.indexOf(newArrival) : travelOptions.indexOf(arrival);
+    const departureIndex = newDeparture ? travelOptions.indexOf(newDeparture) : travelOptions.indexOf(departure);
+
+    if (arrivalIndex === -1 || departureIndex === -1) {
+      return true;
+    }
+    // if arrival is after departure return false
+    if (arrivalIndex > departureIndex) {
       return false;
     }
-    // if arrival is Saturday evening departure can only be Saturday after dinner or Sunday
-    if ((arrival === "SaA" && departure != "SaA") || (arrival === "SaA" && departure != "So")) {
+    // if departure is before arrival return false
+    if (departureIndex < arrivalIndex) {
       return false;
     }
-    // if arrival is Saturday before lunch departure cannot be Friday after lunch, Friday after dinner or Saturday after breakfast
-    if (
-      (arrival === "SaM" && departure === "FrM") ||
-      (arrival === "SaM" && departure === "FrA") ||
-      (arrival === "SaM" && departure === "SaF")
-    ) {
-      return false;
-    }
-    // if arrival is Saturday before breakfast departure cannot be Friday after lunch or Friday after dinner
-    if ((arrival === "SaF" && departure === "FrM") || (arrival === "SaF" && departure === "FrA")) {
-      return false;
-    }
-    // if arrival is Friday before dinner departure cannot be Friday after lunch
-    if (arrival === "FrA" && departure === "FrM") {
-      return false;
-    }
+    setErrorArrivalAfterDeparture(false);
+    setErrorDepartureBeforeArrival(false);
     return true;
   };
 
   // Function to submit the sign up
   const handleSubmit = () => {
     // Checks if all required fields are filled out
-    if (!arrival || !departure || seats > 9 || !checkArrivalAndDeparture()) {
+    if (!arrival || !departure || seats > 9 || !checkArrivalAndDeparture() || !debitNotice) {
       // Reset all error states
       setErrorArrival(false);
       setErrorDeparture(false);
       setErrorSeats(false);
       setErrorArrivalAfterDeparture(false);
       setErrorDepartureBeforeArrival(false);
+      setErrorDebitNotice(false);
       if (!arrival) {
         setErrorArrival(true);
       }
@@ -146,16 +148,19 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
         setErrorArrivalAfterDeparture(true);
         setErrorDepartureBeforeArrival(true);
       }
+      if (!debitNotice) {
+        setErrorDebitNotice(true);
+      }
       return;
     }
-    onSubmit(arrival, departure, car, vegetarian, remarks, seats);
+    onSubmit(arrival, departure, car, vegetarian, remarks, debitNotice, seats);
     handleCancel();
   };
 
   // Functions to handle change of the arrival field
   const onChangeArrival = (event: SelectChangeEvent<string>) => {
     setArrival(event.target.value);
-    if (!checkArrivalAndDeparture()) {
+    if (!checkArrivalAndDeparture(event.target.value, departure)) {
       setErrorArrivalAfterDeparture(true);
     } else {
       setErrorArrivalAfterDeparture(false);
@@ -165,7 +170,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   // Functions to handle change of the departure field
   const onChangeDeparture = (event: SelectChangeEvent<string>) => {
     setDeparture(event.target.value);
-    if (!checkArrivalAndDeparture()) {
+    if (!checkArrivalAndDeparture(arrival, event.target.value)) {
       setErrorDepartureBeforeArrival(true);
     } else {
       setErrorDepartureBeforeArrival(false);
@@ -190,6 +195,11 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
   // Functions to handle change of the remarks field
   const onChangeRemarks = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRemarks(event.target.value);
+  };
+
+  // Functions to handle change of the debitNotice field
+  const onChangeDebitNotice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDebitNotice(event.target.checked);
   };
 
   return (
@@ -217,13 +227,13 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
               <Box width={1}>
                 <Typography fontWeight={"bold"}>Anreise</Typography>
                 <Select variant="outlined" value={arrival} onChange={onChangeArrival} fullWidth>
-                  <MenuItem value={"FrF"}>Freitag früh</MenuItem>
-                  <MenuItem value={"FrM"}>Freitag vor dem Mittagessen</MenuItem>
-                  <MenuItem value={"FrA"}>Freitag vor dem Abendessen</MenuItem>
-                  <MenuItem value={"SaF"}>Samstag vor dem Frühstück</MenuItem>
-                  <MenuItem value={"SaM"}>Samstag vor dem Mittagessen</MenuItem>
-                  <MenuItem value={"SaA"}>Samstag vor dem Abendessen</MenuItem>
-                  <MenuItem value={"SaS"}>Samstag spät</MenuItem>
+                  <MenuItem value={travelOptions[0]}>Freitag früh</MenuItem>
+                  <MenuItem value={travelOptions[1]}>Freitag vor dem Mittagessen</MenuItem>
+                  <MenuItem value={travelOptions[2]}>Freitag vor dem Abendessen</MenuItem>
+                  <MenuItem value={travelOptions[3]}>Samstag vor dem Frühstück</MenuItem>
+                  <MenuItem value={travelOptions[4]}>Samstag vor dem Mittagessen</MenuItem>
+                  <MenuItem value={travelOptions[5]}>Samstag vor dem Abendessen</MenuItem>
+                  <MenuItem value={travelOptions[6]}>Samstag spät</MenuItem>
                 </Select>
                 {errorArrivalAfterDeparture && (
                   <FormHelperText error>Die Anreise darf nicht vor der Abreise liegen</FormHelperText>
@@ -235,12 +245,12 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
               <Box width={1}>
                 <Typography fontWeight={"bold"}>Abreise</Typography>
                 <Select variant="outlined" value={departure} onChange={onChangeDeparture} fullWidth>
-                  <MenuItem value={"FrM"}>Freitag nach dem Mittagessen</MenuItem>
-                  <MenuItem value={"FrA"}>Freitag nach dem Abendessen</MenuItem>
-                  <MenuItem value={"SaF"}>Samstag nach dem Frühstück</MenuItem>
-                  <MenuItem value={"SaM"}>Samstag nach dem Mittagessen</MenuItem>
-                  <MenuItem value={"SaA"}>Samstag nach dem Abendessen</MenuItem>
-                  <MenuItem value={"So"}>Sonntag</MenuItem>
+                  <MenuItem value={travelOptions[1]}>Freitag nach dem Mittagessen</MenuItem>
+                  <MenuItem value={travelOptions[2]}>Freitag nach dem Abendessen</MenuItem>
+                  <MenuItem value={travelOptions[3]}>Samstag nach dem Frühstück</MenuItem>
+                  <MenuItem value={travelOptions[4]}>Samstag nach dem Mittagessen</MenuItem>
+                  <MenuItem value={travelOptions[5]}>Samstag nach dem Abendessen</MenuItem>
+                  <MenuItem value={travelOptions[7]}>Sonntag</MenuItem>
                 </Select>
                 {errorDepartureBeforeArrival && (
                   <FormHelperText error>Die Abreise darf nicht vor der Anreise liegen</FormHelperText>
@@ -295,6 +305,21 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
               maxRows={10}
               placeholder={"Alt-Trainees: Bitte nachzuholende Pflichtworkshops hier eintragen!"}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography fontWeight={"bold"}>Lastschriftverfahren</Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <FormControl>
+                <FormControlLabel
+                  control={<Checkbox value={debitNotice} onChange={onChangeDebitNotice} />}
+                  label="Hiermit ermächtige ich den Junior Business Team e.V., den Beitrag für das Working Weekend von meinem
+                 Konto einzuziehen."
+                />
+                {errorDebitNotice && (
+                  <FormHelperText error>Der Einzugsermächtigung muss zugestimmt werden</FormHelperText>
+                )}
+              </FormControl>
+            </Box>
           </Grid>
         </Grid>
       </DialogContent>

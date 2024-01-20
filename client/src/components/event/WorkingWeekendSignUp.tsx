@@ -41,6 +41,7 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
     car: boolean,
     vegetarian: boolean,
     remarks: string,
+    debitNotice: boolean,
     seats?: number
   ) => {
     alert(
