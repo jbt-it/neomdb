@@ -28,6 +28,7 @@ import DirectorsHistory from "./pages/members/DirectorsHistory";
 import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
 import InternalProject from "./pages/trainees/InternalProject";
+import TraineeSection from "./pages/trainees/TraineeSection";
 
 // other pages
 import Login from "./pages/Login";
@@ -59,7 +60,7 @@ const App: React.FunctionComponent = () => {
             </Route>
             <Route path="ressorts" element={<DepartmentOverview />} />
             <Route path="ewigervorstand" element={<DirectorsHistory />} />
-            <Route path="traineebereich" element={<Dashboard />} />
+            <Route path="traineebereich" element={<TraineeSection />} />
             <Route path="traineepraeferenzen" element={<TraineePreferences />} />
             <Route path="traineezuteilung" element={<AssignTrainees />} />
             <Route path="internes-projekt/:id" element={<InternalProject />} />
