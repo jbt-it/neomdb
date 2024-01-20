@@ -416,6 +416,11 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
 
+    if (member.mitgliedstatus === status) {
+      // Member already has the new status
+      return;
+    }
+
     const lastChangeTime = createCurrentTimestamp();
     await this.membersRepository.updateMemberStatusByID(memberID, lastChangeTime, status);
   };
