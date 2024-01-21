@@ -38,9 +38,9 @@ import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import LoadingTable from "../../components/general/LoadingTable";
-import EventChip from "../../components/event/events/EventChip";
-import EditEventDialog from "../../components/event/events/EditEventDialog";
-import WorkingWeekendSignUp from "../../components/event/workingweekend/WorkingWeekendSignUp";
+import EventChip from "../../components/events/EventChip";
+import EditEventDialog from "../../components/events/EditEventDialog";
+import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import useResponsive from "../../hooks/useResponsive";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
