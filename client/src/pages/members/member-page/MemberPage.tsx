@@ -11,46 +11,25 @@ import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils"
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
 import { useParams } from "react-router-dom";
+import useGetMembers from "../../../hooks/members/useGetMembers";
+import useGetMemberDetails from "../../../hooks/members/useGetMemberDetails";
+import useUpdateMemberDetails from "../../../hooks/members/useUpdateMemberDetails";
+import LoadingCircle from "../../../components/general/LoadingCircle";
 
 const MemberProfile: React.FunctionComponent = () => {
   const params = useParams();
-  const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  // const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
-  const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
+  // const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
   const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
-  /**
-   * Retrieves all members
-   */
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/members`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
+  const { members, isMembersLoading } = useGetMembers();
+  const { memberDetails, isMemberDetailsLoading } = useGetMemberDetails(Number(params.id));
+  const { updateMemberDetails, isUpdatingMemberDetails } = useUpdateMemberDetails();
 
   /**
    * Retrieves all departments
@@ -169,69 +148,6 @@ const MemberProfile: React.FunctionComponent = () => {
   }, []);
 
   /**
-   * Retrieves the member details
-   */
-  const getMemberDetails: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/members/${params.id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembersDetails(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Updates the member details
-   */
-  const updateMemberDetails = (data: membersTypes.MemberDetails) => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .patch(`/members/${params.id}`, data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 204) {
-          if (mounted) {
-            showSuccessMessage("Aktualisierung des Profils war erfolgreich!");
-            getMemberDetails();
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response.status === 403) {
-          showErrorMessage("Du hast nicht die Berechtigung dies zu tun!");
-        } else if (err.response.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
    * Saves the member image
    * @param file The image file
    */
@@ -285,32 +201,31 @@ const MemberProfile: React.FunctionComponent = () => {
       setIsOwner(auth.userID === parseInt(params.id!, 10)),
     [params.id, auth.userID]
   );
-  useEffect(() => getMembers(), [getMembers]);
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
-  useEffect(getMemberDetails, [params.id, dispatchAuth]);
   useEffect(getMemberImage, [params.id, dispatchAuth]);
+
+  if (isMembersLoading || isMemberDetailsLoading) {
+    return <LoadingCircle />;
+  }
 
   return (
     <div>
-      <div className="content-page">
-        {memberDetails ? (
-          <DisplayMemberDetails
-            members={members}
-            listOfPermissions={auth.permissions}
-            departments={departments}
-            listOfLanguages={languages}
-            listOfEDVSkills={edvSkills}
-            memberDetails={memberDetails}
-            isOwner={isOwner}
-            getMemberDetails={getMemberDetails}
-            memberImage={memberImage}
-            updateMemberDetails={updateMemberDetails}
-            saveMemberImage={saveMemberImage}
-          />
-        ) : null}
-      </div>
+      {memberDetails && members && memberDetails && (
+        <DisplayMemberDetails
+          members={members}
+          listOfPermissions={auth.permissions}
+          departments={departments}
+          listOfLanguages={languages}
+          listOfEDVSkills={edvSkills}
+          memberDetails={memberDetails}
+          isOwner={isOwner}
+          memberImage={memberImage}
+          updateMemberDetails={updateMemberDetails}
+          saveMemberImage={saveMemberImage}
+        />
+      )}
       <PageBar pageTitle="Profilseite" />
     </div>
   );

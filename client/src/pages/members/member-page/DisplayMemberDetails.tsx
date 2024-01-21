@@ -180,7 +180,6 @@ interface DisplayMemberDetailsProps {
   memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
   saveMemberImage: (file: File) => void;
-  getMemberDetails: () => void;
 }
 
 /**

@@ -2,7 +2,7 @@
  * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Table,
@@ -22,11 +22,9 @@ import {
 import { makeStyles, createStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { useContext } from "react";
 import * as membersTypes from "../../types/membersTypes";
-import { authReducerActionType } from "../../types/globalTypes";
+import useGetMembers from "../../hooks/members/useGetMembers";
+import LoadingCircle from "../../components/general/LoadingCircle";
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -143,7 +141,7 @@ const MemberOverview: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  // const [members, setMembers] = useState<membersTypes.Member[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -151,36 +149,11 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
-  const { dispatchAuth } = useContext(AuthContext);
+  const { members, isMembersLoading } = useGetMembers();
 
-  // Retrieves the members
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  useEffect(() => getMembers(), [getMembers]);
+  if (isMembersLoading) {
+    return <LoadingCircle />;
+  }
 
   /**
    * Handles the change event on the search filter input
@@ -247,7 +220,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
     // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
-      sortedMembers = sortedMembers.sort((a, b) => {
+      sortedMembers = sortedMembers?.sort((a, b) => {
         const dateA = new Date(a.lastchange);
         const dateB = new Date(b.lastchange);
 
