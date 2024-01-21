@@ -181,6 +181,12 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       complete = false;
     }
 
+    // registrationStart cannot be more than 365 days in the past
+    if (state.registrationStart ? state.registrationStart < dayjs().subtract(1, "year").startOf("day") : false) {
+      errorDispatch({ type: "set", field: "registrationStart", value: true });
+      complete = false;
+    }
+
     // if the event type is WW, there has to be an endDate
     if (eventType === "WW" && !state.endDate) {
       errorDispatch({ type: "set", field: "endDate", value: true });
@@ -318,6 +324,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeRegistrationStart,
       type: "DateTime",
+      error: errorState.registrationStart,
+      helperText: errorState.registrationStart ? "Bitte gib einen gültigen Anmeldungsstart ein!" : undefined,
     },
     {
       label: "Anmeldung bis",
