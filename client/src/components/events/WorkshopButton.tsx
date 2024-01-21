@@ -48,9 +48,15 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
   return (
     <>
       {isMobile ? (
-        <IconButton onClick={handleDialogOpen} sx={{ ml: 1 }}>
-          {edit ? <Edit color="secondary" /> : <Event color="info" />}
-        </IconButton>
+        <Button
+          variant="contained"
+          onClick={handleDialogOpen}
+          startIcon={edit ? <Edit /> : <Event />}
+          sx={{ fontSize: 10 }}
+          color={edit ? "primary" : "info"}
+        >
+          {edit ? "bearbeiten" : "neu"}
+        </Button>
       ) : (
         <Button
           variant="contained"
