@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useState } from "react";
-import { Button, IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 import { Edit, Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface WorkshopButtonProps {
   edit?: boolean;
