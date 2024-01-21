@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { EventParticipant } from "../../types/eventTypes";
 import { Link } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 interface EventParticipantsProps {
   participants: EventParticipant[];
@@ -23,6 +24,7 @@ const EventParticipants: React.FunctionComponent<EventParticipantsProps> = ({
   removeParticipant,
 }: EventParticipantsProps) => {
   const { auth } = useAuth();
+  const hasEventPermissions = doesPermissionsHaveSomeOf(auth.permissions, [14]);
   const isMobile = useResponsive("down", "md");
 
   // function to handle the remove participant button
@@ -50,7 +52,7 @@ const EventParticipants: React.FunctionComponent<EventParticipantsProps> = ({
               {item.vorname} {item.nachname}
             </Typography>
           </Link>
-          {auth.permissions.length > 0 && (
+          {hasEventPermissions && (
             <IconButton
               sx={{
                 width: 20,

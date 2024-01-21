@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Autocomplete, Button, Stack, TextField, Typography } from "@mui/material";
-import { EventParticipant, CommonEventType } from "../../types/eventTypes";
-import useResponsive from "../../hooks/useResponsive";
+import { EventParticipant, CommonEventType } from "../../../types/eventTypes";
+import useResponsive from "../../../hooks/useResponsive";
 import WorkingWeekendSignUpDialog from "./WorkingWeekendSignUpDialog";
 
 interface AddWorkingWeekendParticipant {
