@@ -1,7 +1,7 @@
 import React from "react";
 import { Chip } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import { Dayjs } from "dayjs";
 import WorkingWeekendSignUpDialog from "./WorkingWeekendSignUpDialog";
 
