@@ -30,9 +30,10 @@ import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
 
 // events and workshop pages
-import DisplayEventsOverview from "./pages/events/DisplayEventsOverview";
-import DisplayEventDetails from "./pages/events/DisplayEventDetails";
-import DisplayWorkshopsOverview from "./pages/events/DisplayWorkshopsOverview";
+import EventDetails from "./pages/events/EventDetails";
+import EventsOverview from "./pages/events/EventsOverview";
+import DisplayWorkshopsOverview from "./pages/events/WorkshopsOverview";
+// events pages
 
 // other pages
 import Login from "./pages/Login";
@@ -70,8 +71,8 @@ const App: React.FunctionComponent = () => {
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
             <Route path="projekte" element={<Dashboard />} />
-            <Route path="veranstaltungen" element={<DisplayEventsOverview />} />
-            <Route path="veranstaltungen/:id" element={<DisplayEventDetails />} />
+            <Route path="veranstaltungen" element={<EventsOverview />} />
+            <Route path="veranstaltungen/:id" element={<EventDetails />} />
             <Route path="workshops" element={<DisplayWorkshopsOverview />} />
             <Route path="workshops/:id" element={<Dashboard />} />
             <Route path="workshops/:id/:id" element={<Dashboard />} />

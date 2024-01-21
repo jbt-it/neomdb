@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Stack, Typography, Container } from "@mui/material";
 
-import WorkshopButton from "../../components/event/WorkshopButton";
+import WorkshopButton from "../../components/events/WorkshopButton";
 
 import { Workshop } from "../../types/eventTypes";
 
@@ -9,8 +9,8 @@ import { useAuth } from "../../hooks/useAuth";
 import useResponsive from "../../hooks/useResponsive";
 
 import { schulung as res } from "../../mock/events/schulung";
-import WorkshopsOverviewTable from "../../components/event/WorkshopsOverviewTable";
-import WorkshopsOverviewCard from "../../components/event/WorkshopsOverviewCard";
+import WorkshopsOverviewTable from "../../components/events/WorkshopsOverviewTable";
+import WorkshopsOverviewCard from "../../components/events/WorkshopsOverviewCard";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**

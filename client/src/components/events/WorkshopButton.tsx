@@ -53,13 +53,13 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
         </IconButton>
       ) : (
         <Button
-          variant="outlined"
-          startIcon={edit ? <Edit /> : <Event />}
-          color={edit ? "primary" : "info"}
-          sx={{ fontWeight: 600, mr: 2 }}
+          variant="contained"
           onClick={handleDialogOpen}
+          startIcon={edit ? <Edit /> : <Event />}
+          sx={{ fontSize: 10 }}
+          color={edit ? "primary" : "info"}
         >
-          {edit ? "Bearbeiten" : "Neu"}
+          {edit ? "bearbeiten" : "neu"}
         </Button>
       )}
       <WorkshopDialog
