@@ -116,13 +116,13 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
   };
 
   return (
-    <Paper sx={{ padding: 3, maxWidth: 1200 }}>
+    <>
       <AdmissionDialog
         open={openAdmissionDialog}
         onClose={() => setOpenAdmissionDialog(false)}
         trainee={selectedTrainee}
       />
-      <Table size="small">
+      <Table size="small" component={Paper} sx={{ maxWidth: 1200 }}>
         <TableHead className={classes.tableHeader}>
           <TableRow sx={{ height: 300, verticalAlign: "bottom" }}>
             <TableCell sx={{ minWidth: 130, width: 150, border: 1, borderColor: "#fff" }}>
@@ -196,7 +196,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
           ))}
         </TableBody>
       </Table>
-    </Paper>
+    </>
   );
 };
 

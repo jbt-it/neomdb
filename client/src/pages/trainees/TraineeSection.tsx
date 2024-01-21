@@ -224,19 +224,22 @@ const TraineeSection: React.FunctionComponent = () => {
           handleGenerationChange={handleGenerationChange}
           generations={generations}
         />
-        {hasPermissionInternalProject && selectedGeneration === generations[0].bezeichnung ? (
-          <AddInternalProjectButton
-            generationName={selectedGeneration}
-            addInternalProject={addInternalProject}
-            trainees={trainees}
-            members={members.filter(
-              (member) =>
-                member.generation != generations[0].generationID &&
-                member.mitgliedstatus != "Alumnus" &&
-                member.mitgliedstatus != "Ausgetretene"
-            )}
-          />
-        ) : null}
+        {generations[0]
+          ? hasPermissionInternalProject &&
+            selectedGeneration === generations[0].bezeichnung && (
+              <AddInternalProjectButton
+                generationName={selectedGeneration}
+                addInternalProject={addInternalProject}
+                trainees={trainees}
+                members={members.filter(
+                  (member) =>
+                    member.generation != generations[0].generationID &&
+                    member.mitgliedstatus != "Alumnus" &&
+                    member.mitgliedstatus != "Ausgetretene"
+                )}
+              />
+            )
+          : null}
       </Stack>
       <Box
         sx={() => ({
