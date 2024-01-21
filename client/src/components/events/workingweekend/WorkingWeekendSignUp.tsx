@@ -1,9 +1,9 @@
 import React from "react";
 import { Chip } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import WorkingWeekendSignUpDialog from "./WorkingWeekendSignUpDialog";
-import { CommonEventType } from "../../types/eventTypes";
+import { CommonEventType } from "../../../types/eventTypes";
 
 interface WorkingWeekendSignUpProps {
   ww: CommonEventType;

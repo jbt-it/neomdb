@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Stack, Typography, Container } from "@mui/material";
 
-import WorkshopButton from "../../components/event/WorkshopButton";
+import WorkshopButton from "../../components/events/workshops/WorkshopButton";
 
 import { Workshop } from "../../types/eventTypes";
 
@@ -9,15 +9,15 @@ import { useAuth } from "../../hooks/useAuth";
 import useResponsive from "../../hooks/useResponsive";
 
 import { schulung as res } from "../../mock/events/schulung";
-import WorkshopsOverviewTable from "../../components/event/WorkshopsOverviewTable";
-import WorkshopsOverviewCard from "../../components/event/WorkshopsOverviewCard";
+import WorkshopsOverviewTable from "../../components/events/workshops/WorkshopsOverviewTable";
+import WorkshopsOverviewCard from "../../components/events/workshops/WorkshopsOverviewCard";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * Component to display a table or cards of all workshops
  * @returns Displays all workshops
  */
-const DisplayWorkshopsOverview: FunctionComponent = () => {
+const WorkshopsOverview: FunctionComponent = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const { auth } = useAuth();
   const { permissions } = auth;
@@ -43,7 +43,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
         justifyContent={"space-between"}
         alignItems={"center"}
         alignContent={"center"}
-        sx={{ mb: 2 }}
+        sx={{ mb: 2, maxWidth: "98%" }}
       >
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops
@@ -63,4 +63,4 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
   );
 };
 
-export default DisplayWorkshopsOverview;
+export default WorkshopsOverview;

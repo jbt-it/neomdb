@@ -20,7 +20,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { CommonEventType } from "../../types/eventTypes";
+import { CommonEventType } from "../../../types/eventTypes";
 
 /**
  * Interface for the props of the WorkingWeekendSignUpDialog
@@ -269,7 +269,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
                   fullWidth
                   placeholder="0"
                 />
-                {errorSeats && <FormHelperText error>Bitte wähle eine Anzahl aus</FormHelperText>}
+                {errorSeats && <FormHelperText error>Bitte wähle eine gültige Anzahl aus</FormHelperText>}
               </Grid>
             )}
           </Grid>

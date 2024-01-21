@@ -1,8 +1,8 @@
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 
-import { Workshop } from "../../types/eventTypes";
-import EventChip from "./EventChip";
+import { Workshop } from "../../../types/eventTypes";
+import EventChip from "../EventChip";
 import { Link } from "react-router-dom";
 
 interface WorkshopsOverviewCardProps {

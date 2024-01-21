@@ -1,9 +1,9 @@
 import React from "react";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 
-import { Workshop } from "../../types/eventTypes";
+import { Workshop } from "../../../types/eventTypes";
 import { Link } from "react-router-dom";
-import EventChip from "./EventChip";
+import EventChip from "../EventChip";
 
 interface WorkshopsOverviewTableProps {
   workshops: Workshop[];

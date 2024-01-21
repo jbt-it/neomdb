@@ -34,19 +34,20 @@ import {
   Switch,
 } from "@mui/material";
 import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
-import { events as mockEvents } from "../../mock/events/events";
-import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
-import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 import LoadingTable from "../../components/general/LoadingTable";
-import EventChip from "../../components/event/EventChip";
-import EditEventDialog from "./EditEventDialog";
+import EventChip from "../../components/events/EventChip";
+import EditEventDialog from "../../components/events/EditEventDialog";
+import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import useResponsive from "../../hooks/useResponsive";
-import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
-import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { CommonEventType } from "../../types/eventTypes";
 
+import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
+import { events as mockEvents } from "../../mock/events/events";
+import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -57,9 +58,9 @@ interface TabPanelProps {
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
  * @returns the events overview page
  */
-const DisplayEventsOverview: React.FC = () => {
+const EventsOverview: React.FC = () => {
   const { auth, dispatchAuth } = React.useContext(AuthContext);
-  const { permissions } = auth;
+  const hasEventPermissions = doesPermissionsHaveSomeOf(auth.permissions, [14]);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
   const [events, setEvents] = useState<CommonEventType[]>([]);
@@ -453,11 +454,10 @@ const DisplayEventsOverview: React.FC = () => {
 
   /**
    * Renders button for new event if the user has the permission to create a new event
-   * ToDo: Implement correct permission
    * @returns the button for creating a new event
    */
   const renderNewEventButton = () => {
-    if (permissions.length > 0) {
+    if (hasEventPermissions) {
       return (
         <Button
           variant="outlined"
@@ -1064,7 +1064,7 @@ const DisplayEventsOverview: React.FC = () => {
           Veranstaltungen
         </Typography>
         <Stack direction={"row"} justifyContent={mobile ? "space-between" : ""}>
-          {permissions.length > 0 ? renderNewEventButton() : null}
+          {hasEventPermissions ? renderNewEventButton() : null}
           {renderShowAllButton()}
         </Stack>
       </Stack>
@@ -1141,4 +1141,4 @@ const DisplayEventsOverview: React.FC = () => {
   );
 };
 
-export default DisplayEventsOverview;
+export default EventsOverview;
