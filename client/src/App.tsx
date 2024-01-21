@@ -29,8 +29,9 @@ import DirectorsHistory from "./pages/members/DirectorsHistory";
 import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
 
-import DisplayEventsOverview from "./pages/events/DisplayEventsOverview";
+// events pages
 import EventDetails from "./pages/events/EventDetails";
+import EventsOverview from "./pages/events/EventsOverview";
 
 // other pages
 import Login from "./pages/Login";
@@ -68,7 +69,7 @@ const App: React.FunctionComponent = () => {
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
             <Route path="projekte" element={<Dashboard />} />
-            <Route path="veranstaltungen" element={<DisplayEventsOverview />} />
+            <Route path="veranstaltungen" element={<EventsOverview />} />
             <Route path="veranstaltungen/:id" element={<EventDetails />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
