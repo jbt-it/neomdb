@@ -20,7 +20,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { CommonEventType } from "../../types/eventTypes";
+import { CommonEventType } from "../../../types/eventTypes";
 
 /**
  * Interface for the props of the WorkingWeekendSignUpDialog

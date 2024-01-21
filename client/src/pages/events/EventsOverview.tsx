@@ -34,20 +34,20 @@ import {
   Switch,
 } from "@mui/material";
 import { RemoveCircleOutline, AddCircle, Event, FilterList, CalendarMonth } from "@mui/icons-material/";
-import { events as mockEvents } from "../../mock/events/events";
-import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
-import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 import LoadingTable from "../../components/general/LoadingTable";
 import EventChip from "../../components/events/EventChip";
 import EditEventDialog from "../../components/events/EditEventDialog";
+import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import useResponsive from "../../hooks/useResponsive";
-import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
-import WorkingWeekendSignUp from "../../components/events/WorkingWeekendSignUp";
-import { CommonEventType } from "../../types/eventTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { CommonEventType } from "../../types/eventTypes";
 
+import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
+import { events as mockEvents } from "../../mock/events/events";
+import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
