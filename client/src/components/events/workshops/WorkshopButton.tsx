@@ -3,7 +3,7 @@ import { Button, IconButton } from "@mui/material";
 import { Delete, Edit, Event } from "@mui/icons-material";
 
 import WorkshopDialog from "./WorkshopDialog";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface WorkshopButtonProps {
   edit?: boolean;
@@ -68,9 +68,15 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
   return (
     <>
       {isMobile ? (
-        <IconButton onClick={handleDialogOpen} sx={{ ml: 1 }}>
-          {edit ? <Edit color="secondary" /> : <Event color="info" />}
-        </IconButton>
+        <Button
+          variant="contained"
+          onClick={handleDialogOpen}
+          startIcon={edit ? <Edit /> : <Event />}
+          sx={{ fontSize: 10 }}
+          color={edit ? "primary" : "info"}
+        >
+          {edit ? "bearbeiten" : "neu"}
+        </Button>
       ) : (
         <Button
           variant="contained"
@@ -78,8 +84,9 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
           color={edit ? "primary" : "info"}
           sx={{ fontWeight: 600, mr: 2 }}
           onClick={handleDialogOpen}
+          size="small"
         >
-          {edit ? "Bearbeiten" : "Neu"}
+          {edit ? "bearbeiten" : "neu"}
         </Button>
       )}
       <WorkshopDialog

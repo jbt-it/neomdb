@@ -69,7 +69,7 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
 
   // Function to handle the Speichern button
   const handleSave = () => {
-    if (name.length === 0 || description.length === 0 || type === undefined) {
+    if (name.length === 0 || type === undefined) {
       return;
     }
     onSave(name, description, type);

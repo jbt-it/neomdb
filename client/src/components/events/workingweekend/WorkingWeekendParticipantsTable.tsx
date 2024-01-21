@@ -1,5 +1,5 @@
 import React from "react";
-import { workingWeekendParticipants as participants } from "../../mock/events/workingWeekendParticipants";
+import { workingWeekendParticipants as participants } from "../../../mock/events/workingWeekendParticipants";
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { RemoveCircleOutline } from "@mui/icons-material";
 

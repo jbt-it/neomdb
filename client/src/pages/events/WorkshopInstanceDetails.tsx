@@ -4,9 +4,9 @@ import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from 
 
 import { Workshop, WorkshopInstance, EventParticipant } from "../../types/eventTypes";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import EventParticipants from "../../components/event/EventParticipants";
-import EventChip from "../../components/event/EventChip";
-import AddMembersField from "../../components/event/AddMembersField";
+import EventParticipants from "../../components/events/EventParticipants";
+import EventChip from "../../components/events/EventChip";
+import AddMembersField from "../../components/events/AddMembersField";
 import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
 import { useAuth } from "../../hooks/useAuth";
 

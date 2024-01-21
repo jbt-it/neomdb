@@ -22,10 +22,10 @@ import useResponsive from "../../hooks/useResponsive";
 
 import LoadingTable from "../../components/general/LoadingTable";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import EditEventDialog from "./EditEventDialog";
-import EventChip from "../../components/event/EventChip";
-import EventParticipants from "../../components/event/EventParticipants";
-import AddMembersField from "../../components/event/AddMembersField";
+import EditEventDialog from "../../components/events/EditEventDialog";
+import EventChip from "../../components/events/EventChip";
+import EventParticipants from "../../components/events/EventParticipants";
+import AddMembersField from "../../components/events/AddMembersField";
 
 import { CommonEventType, EventParticipant } from "../../types/eventTypes";
 import { Member } from "../../types/membersTypes";
@@ -35,10 +35,10 @@ import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { eventParticipants } from "../../mock/events/eventParticipants";
 import { workingWeekendParticipants } from "../../mock/events/workingWeekendParticipants";
-import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
-import WorkingWeekendParticipantsTable from "../../components/event/WorkingWeekendParticipantsTable";
+import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
+import WorkingWeekendParticipantsTable from "../../components/events/workingweekend/WorkingWeekendParticipantsTable";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import AddWorkingWeekendParticipant from "../../components/event/AddWorkingWeekendParticipant";
+import AddWorkingWeekendParticipant from "../../components/events/workingweekend/AddWorkingWeekendParticipant";
 
 type WWRegistrationInfo = {
   anreise: string;
@@ -54,7 +54,7 @@ type WWRegistrationInfo = {
  * @param props id in URL
  * @returns the page to display the details of an event
  */
-const DisplayEventDetails: React.FunctionComponent = () => {
+const EventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<CommonEventType | null>();
@@ -587,4 +587,4 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   );
 };
 
-export default DisplayEventDetails;
+export default EventDetails;
