@@ -22,7 +22,7 @@ import useResponsive from "../../hooks/useResponsive";
 
 import LoadingTable from "../../components/general/LoadingTable";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import EditEventDialog from "./EditEventDialog";
+import EditEventDialog from "../../components/event/EditEventDialog";
 import EventChip from "../../components/event/EventChip";
 import EventParticipants from "../../components/event/EventParticipants";
 import AddMembersField from "../../components/event/AddMembersField";
