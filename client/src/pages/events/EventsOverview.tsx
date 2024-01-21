@@ -40,11 +40,11 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
 import LoadingTable from "../../components/general/LoadingTable";
-import EventChip from "../../components/event/EventChip";
-import EditEventDialog from "../../components/event/EditEventDialog";
+import EventChip from "../../components/events/EventChip";
+import EditEventDialog from "../../components/events/EditEventDialog";
 import useResponsive from "../../hooks/useResponsive";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
-import WorkingWeekendSignUp from "../../components/event/WorkingWeekendSignUp";
+import WorkingWeekendSignUp from "../../components/events/WorkingWeekendSignUp";
 import { CommonEventType } from "../../types/eventTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
