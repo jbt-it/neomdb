@@ -43,7 +43,7 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
         justifyContent={"space-between"}
         alignItems={"center"}
         alignContent={"center"}
-        sx={{ mb: 2 }}
+        sx={{ mb: 2, maxWidth: "98%" }}
       >
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops

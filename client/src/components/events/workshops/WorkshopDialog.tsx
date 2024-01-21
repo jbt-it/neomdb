@@ -44,6 +44,8 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [type, setType] = useState<"Pflichtworkshop" | "Workshop" | "Externer Workshop" | undefined>(undefined);
+  const [nameError, setNameError] = useState<boolean>(false);
+  const [typeError, setTypeError] = useState<boolean>(false);
 
   useEffect(() => {
     setName(workshopName || "");
@@ -56,12 +58,22 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
     setName("");
     setDescription("");
     setType(undefined);
+    setNameError(false);
+    setTypeError(false);
     onClose();
   };
 
   // Function to handle the Speichern button
   const handleSave = () => {
+    setNameError(false);
+    setTypeError(false);
     if (name.length === 0 || type === undefined) {
+      if (name.length === 0) {
+        setNameError(true);
+      }
+      if (type === undefined) {
+        setTypeError(true);
+      }
       return;
     }
     onSave(name, description, type);
@@ -85,6 +97,11 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
                 value={name}
                 onChange={(event) => setName(event.target.value)}
               />
+              {nameError && (
+                <Typography color={"error"} fontSize={12}>
+                  Bitte gib einen Namen ein
+                </Typography>
+              )}
             </Grid>
           </Grid>
           <Grid container item alignItems={"center"}>
@@ -118,6 +135,11 @@ const WorkshopDialog: FunctionComponent<WorkshopDialogProps> = ({
                 <MenuItem value={"Workshop"}>Workshop</MenuItem>
                 <MenuItem value={"Externer Workshop"}>Externer Workshop</MenuItem>
               </Select>
+              {typeError && (
+                <Typography color={"error"} fontSize={12}>
+                  Bitte wähle eine Art aus
+                </Typography>
+              )}
             </Grid>
           </Grid>
         </Grid>
