@@ -35,10 +35,10 @@ import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { eventParticipants } from "../../mock/events/eventParticipants";
 import { workingWeekendParticipants } from "../../mock/events/workingWeekendParticipants";
-import WorkingWeekendSignUp from "../../components/events/WorkingWeekendSignUp";
-import WorkingWeekendParticipantsTable from "../../components/events/WorkingWeekendParticipantsTable";
+import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
+import WorkingWeekendParticipantsTable from "../../components/events/workingweekend/WorkingWeekendParticipantsTable";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import AddWorkingWeekendParticipant from "../../components/events/AddWorkingWeekendParticipant";
+import AddWorkingWeekendParticipant from "../../components/events/workingweekend/AddWorkingWeekendParticipant";
 
 type WWRegistrationInfo = {
   anreise: string;
