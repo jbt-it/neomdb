@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogTitle, Button, DialogContent } from "@mui/material";
-import FieldSection, { Field } from "../general/FieldSection";
+import FieldSection, { Field } from "../../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
-import { Workshop, WorkshopInstance } from "../../types/eventTypes";
+import { Workshop, WorkshopInstance } from "../../../types/eventTypes";
 
 interface WorkshopInstanceDialogProps {
   open: boolean;

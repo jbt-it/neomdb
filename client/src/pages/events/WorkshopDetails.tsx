@@ -11,8 +11,8 @@ import { Stack } from "@mui/system";
 import WorkshopButton from "../../components/events/workshops/WorkshopButton";
 import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
-import WorkshopInstanceTable from "../../components/event/WorkshopInstanceTable";
+import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
+import WorkshopInstanceTable from "../../components/events/workshops/WorkshopInstanceTable";
 
 import { schulung as res } from "../../mock/events/schulung";
 import { schulungsinstanz as res2 } from "../../mock/events/schulungsinstanz";

@@ -2,8 +2,8 @@ import { Button, IconButton } from "@mui/material";
 import React from "react";
 import WorkshopInstanceDialog from "./WorkshopInstanceDialog";
 import { Delete, Event } from "@mui/icons-material";
-import useResponsive from "../../hooks/useResponsive";
-import { Workshop, WorkshopInstance } from "../../types/eventTypes";
+import useResponsive from "../../../hooks/useResponsive";
+import { Workshop, WorkshopInstance } from "../../../types/eventTypes";
 
 interface WorkshopInstanceButtonProps {
   edit?: boolean;
