@@ -7,7 +7,7 @@ import InfoSection, { InformationField } from "../../components/general/InfoSect
 import EventParticipants from "../../components/events/EventParticipants";
 import EventChip from "../../components/events/EventChip";
 import AddMembersField from "../../components/events/AddMembersField";
-import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
+import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
 import { useAuth } from "../../hooks/useAuth";
 
 import { schulung } from "../../mock/events/schulung";
@@ -20,8 +20,8 @@ import { Member } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
-import WorkshopInstanceAdmissionClosingTable from "../../components/event/WorkshopInstanceAdmissionClosingTable";
-import WorkshopInstanceAttendanceTable from "../../components/event/WorkshopInstanceAttendanceTable";
+import WorkshopInstanceAdmissionClosingTable from "../../components/events/workshops/WorkshopInstanceAdmissionClosingTable";
+import WorkshopInstanceAttendanceTable from "../../components/events/workshops/WorkshopInstanceAttendanceTable";
 
 /**
  * Displays the details of a workshop instance
