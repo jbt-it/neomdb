@@ -53,7 +53,7 @@ const WorkshopInstanceEvaluationTable: React.FunctionComponent<WorkshopInstanceE
       <Typography fontWeight={"bold"} fontSize={18}>
         Übersicht:
       </Typography>
-      {referenten.length > 1
+      {referenten.length > 0
         ? referenten.map((ref, index) => {
             return (
               <Stack direction={"row"} key={ref.mitglied_mitgliedID}>
