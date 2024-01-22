@@ -2,7 +2,7 @@
  * Contains all trainees types for the frontend
  */
 
-import { MembersField } from "../../types/membersTypes";
+import { MembersField } from "./membersTypes";
 
 /**
  * Type of the Ip Info

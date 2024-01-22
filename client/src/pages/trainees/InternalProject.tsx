@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Edit } from "@mui/icons-material";
-import * as traineesTypes from "./traineesTypes";
+import * as traineesTypes from "../../types/traineesTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import api from "../../utils/api";
