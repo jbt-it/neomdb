@@ -215,6 +215,9 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
     if (openTools) {
       setOpenTools(false);
     }
+    if (openEvents) {
+      setOpenEvents(false);
+    }
   };
 
   const handleOpenTools = () => {
@@ -222,12 +225,18 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
     if (openMitglieder) {
       setOpenMitglieder(false);
     }
+    if (openEvents) {
+      setOpenEvents(false);
+    }
   };
 
   const handleOpenEvents = () => {
     setOpenEvents(!openEvents);
-    if (openEvents) {
-      setOpenEvents(false);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
     }
   };
 
