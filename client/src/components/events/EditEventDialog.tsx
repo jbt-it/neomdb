@@ -1,9 +1,9 @@
 import React, { useState, useReducer } from "react";
 import { Dialog, DialogActions, DialogTitle, DialogContent, Button, Divider, Typography } from "@mui/material";
-import FieldSection, { Field } from "../../general/FieldSection";
+import FieldSection, { Field } from "../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import useResponsive from "../../../hooks/useResponsive";
+import useResponsive from "../../hooks/useResponsive";
 
 interface EditEventDialogProps {
   open: boolean;
