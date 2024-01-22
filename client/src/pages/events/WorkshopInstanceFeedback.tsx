@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { NumericFeedback, Workshop, WorkshopInstance } from "../../types/eventTypes";
 
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import WorkshopInstanceFeedbackForm from "../../components/event/WorkshopInstanceFeedbackForm";
+import WorkshopInstanceFeedbackForm from "../../components/events/workshops/WorkshopInstanceFeedbackForm";
 
 import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
