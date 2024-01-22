@@ -20,29 +20,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Dayjs } from "dayjs";
+import { CommonEventType } from "../../../types/eventTypes";
 
-type commonEventType = {
-  ID: number;
-  name: string;
-  date: Dayjs;
-  endDate: Dayjs;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  location: string | null;
-  registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
-  participantsCount?: number | null;
-  maximumParticipants?: number | null;
-  organizers?: string[];
-  description?: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
-
+/**
+ * Interface for the props of the WorkingWeekendSignUpDialog
+ */
 interface WorkingWeekendSignUpDialogProps {
   open: boolean;
   handleClose: () => void;
-  ww: commonEventType;
+  ww: CommonEventType;
   onSubmit: (
     arrival: string,
     departure: string,
@@ -165,6 +151,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     } else {
       setErrorArrivalAfterDeparture(false);
     }
+    setErrorArrival(false);
   };
 
   // Functions to handle change of the departure field
@@ -175,6 +162,7 @@ const WorkingWeekendSignUpDialog: React.FunctionComponent<WorkingWeekendSignUpDi
     } else {
       setErrorDepartureBeforeArrival(false);
     }
+    setErrorDeparture(false);
   };
 
   // Functions to handle change of the car field

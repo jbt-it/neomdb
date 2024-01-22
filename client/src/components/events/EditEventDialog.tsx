@@ -20,12 +20,12 @@ interface EditEventDialogProps {
     maxParticipants: number | null,
     organizers: string[],
     description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => void;
   newEvent?: boolean;
-  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
+  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   title?: string;
-  location?: string;
+  location?: string | null;
   startDate?: Dayjs | null;
   endDate?: Dayjs | null;
   startTime?: Dayjs | null;
@@ -48,7 +48,7 @@ interface State {
   registrationEnd: Dayjs | null;
   maxParticipants: number | null;
   organizers: string[];
-  eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige";
+  eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   description: string;
 }
 
@@ -75,7 +75,9 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
  * TODO: Correct the onChange functions for organizers.
  */
 const EditEventDialog = (props: EditEventDialogProps) => {
-  const [eventType, setEventType] = useState<"WW" | "Netzwerk" | "JBT goes" | "Sonstige">(props.type || "JBT goes");
+  const [eventType, setEventType] = useState<
+    "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
+  >(props.type || "JBT goes");
   const mobile = useResponsive("down", "md");
 
   const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
@@ -161,7 +163,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       complete = false;
     }
     // if an endDate is given, it must be after the startDate
-    if (state.startDate && state.endDate ? state.startDate > state.endDate : false) {
+    if (state.startDate && state.endDate ? state.startDate.startOf("day") > state.endDate.endOf("day") : false) {
       errorDispatch({ type: "set", field: "endDate", value: true });
       complete = false;
     }
@@ -205,11 +207,15 @@ const EditEventDialog = (props: EditEventDialogProps) => {
   };
 
   const onChangeStartDate = (value: unknown) => {
-    dispatch({ type: "set", field: "startDate", value: value as Dayjs });
+    let startDate = value as Dayjs;
+    startDate = startDate.startOf("day");
+    dispatch({ type: "set", field: "startDate", value: startDate });
   };
 
   const onChangeEndDate = (value: unknown) => {
-    dispatch({ type: "set", field: "endDate", value: value as Dayjs });
+    let endDate = value as Dayjs;
+    endDate = endDate.endOf("day");
+    dispatch({ type: "set", field: "endDate", value: endDate });
   };
 
   const onChangeStartTime = (value: unknown) => {
@@ -222,7 +228,6 @@ const EditEventDialog = (props: EditEventDialogProps) => {
 
   const onChangeRegistrationStart = (value: unknown) => {
     dispatch({ type: "set", field: "registrationStart", value: value as Dayjs });
-    // setRegistrationStart(event.target.value);
   };
 
   const onChangeRegistrationEnd = (value: unknown) => {

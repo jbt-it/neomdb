@@ -43,34 +43,16 @@ import EditEventDialog from "../../components/events/EditEventDialog";
 import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import useResponsive from "../../hooks/useResponsive";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { CommonEventType } from "../../types/eventTypes";
 
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
-
-// Defines a type that can be used for events and workshops
-type commonEventType = {
-  ID: number;
-  name: string;
-  date: Dayjs;
-  endDate: Dayjs;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  location: string | null;
-  registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
-  participantsCount?: number | null;
-  maximumParticipants?: number | null;
-  organizers?: string[];
-  description?: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
 
 /**
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
@@ -81,13 +63,13 @@ const DisplayEventsOverview: React.FC = () => {
   const hasEventPermissions = doesPermissionsHaveSomeOf(auth.permissions, [14]);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
-  const [events, setEvents] = useState<commonEventType[]>([]);
-  const [workshops, setWorkshops] = useState<commonEventType[]>([]);
-  const [eventsSignedUp, setEventsSignedUp] = useState<commonEventType[]>([]);
-  const [displayedAllEvents, setDisplayedAllEvents] = useState<commonEventType[]>([]);
-  const [displayedEvents, setDisplayedEvents] = useState<commonEventType[]>([]);
-  const [displayedWorkshops, setDisplayedWorkshops] = useState<commonEventType[]>([]);
-  const [displayedEventsSignedUp, setDisplayedEventsSignedUp] = useState<commonEventType[]>([]);
+  const [events, setEvents] = useState<CommonEventType[]>([]);
+  const [workshops, setWorkshops] = useState<CommonEventType[]>([]);
+  const [eventsSignedUp, setEventsSignedUp] = useState<CommonEventType[]>([]);
+  const [displayedAllEvents, setDisplayedAllEvents] = useState<CommonEventType[]>([]);
+  const [displayedEvents, setDisplayedEvents] = useState<CommonEventType[]>([]);
+  const [displayedWorkshops, setDisplayedWorkshops] = useState<CommonEventType[]>([]);
+  const [displayedEventsSignedUp, setDisplayedEventsSignedUp] = useState<CommonEventType[]>([]);
   const [displayPastEvents, setDisplayPastEvents] = useState<boolean>(false);
   const [tabValue, setTabValue] = React.useState(0);
   const [displayFiters, setDisplayFilters] = useState<boolean>(false);
@@ -138,7 +120,7 @@ const DisplayEventsOverview: React.FC = () => {
     //   console.log(response.data);
     // });
 
-    const currentEvents: commonEventType[] = [];
+    const currentEvents: CommonEventType[] = [];
 
     // initialize the events constant with the mock data
     mockEvents.map((event) => {
@@ -169,7 +151,7 @@ const DisplayEventsOverview: React.FC = () => {
     //   console.log(response.data);
     // });
 
-    const currentWorkshops: commonEventType[] = [];
+    const currentWorkshops: CommonEventType[] = [];
 
     // initialize the workshops constant with the mock data
     mockWorkshops.map((event) => {
@@ -201,7 +183,7 @@ const DisplayEventsOverview: React.FC = () => {
     //   console.log(response.data);
     // });
 
-    const currentEvents: commonEventType[] = [];
+    const currentEvents: CommonEventType[] = [];
 
     // initialize the events the user is signed up for constant with the mock data
     mockEvents.map((event) => {
@@ -230,7 +212,7 @@ const DisplayEventsOverview: React.FC = () => {
    */
   const createEvent = (
     title: string,
-    location: string,
+    location: string | null,
     startDate: Dayjs,
     endDate: Dayjs,
     startTime: Dayjs | null,
@@ -240,9 +222,9 @@ const DisplayEventsOverview: React.FC = () => {
     maxParticipants: number | null,
     organizers: string[],
     description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => {
-    const newEvent: commonEventType = {
+    const newEvent: CommonEventType = {
       ID: events.length + 1,
       name: title,
       location: location,
@@ -341,7 +323,7 @@ const DisplayEventsOverview: React.FC = () => {
    * Function that sends the request to sign out from an event to the backend and removes the event from the list of events the user is signed up for
    */
   const signOutFromEvent = useCallback(
-    (event: commonEventType) => {
+    (event: CommonEventType) => {
       // api.get("/events/signed-out").then((response) => {
       //   console.log(response.data);
       // });
@@ -359,7 +341,7 @@ const DisplayEventsOverview: React.FC = () => {
    * Function that sends the request to sign up for an event to the backend and adds the event to the list of events the user is signed up for
    */
   const signUpForEvent = useCallback(
-    (event: commonEventType) => {
+    (event: CommonEventType) => {
       // api.get("/events/signed-up").then((response) => {
       //   console.log(response.data);
       // });
@@ -390,7 +372,7 @@ const DisplayEventsOverview: React.FC = () => {
    * @param event the event for which the button should be rendered
    * @returns the button for sign up or sign out from event
    */
-  const renderSignUpButton = (event: commonEventType) => {
+  const renderSignUpButton = (event: CommonEventType) => {
     if (eventsSignedUp.some((e) => e.ID === event.ID)) {
       if (event.registrationDeadline ? event.registrationDeadline > dayjs() : true) {
         return (
@@ -828,7 +810,7 @@ const DisplayEventsOverview: React.FC = () => {
    * @param rows is type of Event[] and contains the events that should be displayed in the table
    * @returns a table with the given events
    */
-  const renderTable = (rows: commonEventType[]) => {
+  const renderTable = (rows: CommonEventType[]) => {
     rows
       .sort((a, b) => a.date.get("date") - b.date.get("date"))
       .sort((a, b) => a.date.get("month") - b.date.get("month"))
@@ -935,7 +917,7 @@ const DisplayEventsOverview: React.FC = () => {
    * Renders the table for the mobile site
    * @param rows the events that should be displayed in the table
    */
-  const renderMobileView = (rows: commonEventType[]) => {
+  const renderMobileView = (rows: CommonEventType[]) => {
     rows
       .sort((a, b) => a.date.get("date") - b.date.get("date"))
       .sort((a, b) => a.date.get("month") - b.date.get("month"))
@@ -1123,7 +1105,7 @@ const DisplayEventsOverview: React.FC = () => {
             onClose={handleDialogClose}
             onSubmit={(
               title: string,
-              location: string,
+              location: string | null,
               startDate: Dayjs,
               endDate: Dayjs,
               startTime: Dayjs | null,
@@ -1133,7 +1115,7 @@ const DisplayEventsOverview: React.FC = () => {
               maxParticipants: number | null,
               organizers: string[],
               description: string,
-              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige"
+              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
             ) => {
               createEvent(
                 title,
