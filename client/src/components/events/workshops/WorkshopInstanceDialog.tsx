@@ -35,10 +35,13 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
   const [internalInstructors, setInternalInstructors] = useState<string[]>([]);
   const [maxParticipants, setMaxParticipants] = useState<number | null>(null);
 
+  const [errordate, setErrorDate] = useState<boolean>(false);
+
   // mock members
   const mockMembers = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
 
   function resetData() {
+    setErrorDate(false);
     if (!workshopInstance) {
       setDate(null);
       setStartTime(null);
@@ -112,6 +115,11 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
 
   // Function to handle the save button
   const handleSave = () => {
+    setErrorDate(false);
+    if (date === null) {
+      setErrorDate(true);
+      return;
+    }
     onSave();
     handleClose();
   };
@@ -123,6 +131,8 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
       state: date,
       width: "half",
       onChangeCallback: onChangeDate,
+      error: errordate,
+      helperText: errordate ? "Bitte lege ein Datum fest" : "",
     },
     {
       label: "Startzeit",
