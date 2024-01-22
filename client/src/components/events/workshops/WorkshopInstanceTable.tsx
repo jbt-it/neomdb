@@ -3,6 +3,7 @@ import { Divider, TableBody, Table, TableContainer, TableHead, TableRow, TableCe
 
 import { WorkshopInstance } from "../../../types/eventTypes";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 
 interface WorkshopInstanceTableProps {
   workshopInstances: WorkshopInstance[];
@@ -37,6 +38,7 @@ const WorkshopInstanceTable: React.FunctionComponent<WorkshopInstanceTableProps>
           <TableHead>
             <TableRow sx={{ backgroundColor: "primary.main" }}>
               <TableCell sx={{ color: "white", fontWeight: "bold", border: "1px solid white" }}>Datum</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold", border: "1px solid white" }}>Status</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", border: "1px solid white" }}>Referenten</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", border: "1px solid white" }}># Teilnehmer</TableCell>
               <TableCell sx={{ color: "white", fontWeight: "bold", border: "1px solid white" }}>Note</TableCell>
@@ -51,8 +53,10 @@ const WorkshopInstanceTable: React.FunctionComponent<WorkshopInstanceTableProps>
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0 }}>
-                  {workshopInstance.datum} {workshopInstance.startzeit} - {workshopInstance.endzeit}
+                  {dayjs(workshopInstance.datum).format("DD.MM.YYYY")} / {workshopInstance.startzeit} -{" "}
+                  {workshopInstance.endzeit}
                 </TableCell>
+                <TableCell sx={{ border: "1px solid grey", borderTop: 0 }}>{workshopInstance.status}</TableCell>
                 <TableCell sx={{ border: "1px solid grey", borderTop: 0 }}>{workshopInstance.referenten}</TableCell>
                 <TableCell sx={{ border: "1px solid grey", borderTop: 0 }}>
                   {workshopInstance.anzahlTeilnehmer}
@@ -68,6 +72,7 @@ const WorkshopInstanceTable: React.FunctionComponent<WorkshopInstanceTableProps>
               >
                 Durchschnitt
               </TableCell>
+              <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0, borderRight: 0 }} />
               <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0, borderRight: 0 }} />
               <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0, borderRight: 0 }} />
               <TableCell

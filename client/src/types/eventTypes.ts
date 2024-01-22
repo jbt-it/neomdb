@@ -48,7 +48,7 @@ export type Workshop = {
 export type WorkshopInstance = {
   schulungsinstanzID: number;
   schulungId: number;
-  status: "Abgeschlossen";
+  status: "Anmeldung" | "Anmeldung abgeschlossen" | "Feedback" | "Abgeschlossen";
   datum: string;
   startzeit: string;
   endzeit: string;
