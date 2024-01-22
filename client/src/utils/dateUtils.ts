@@ -9,6 +9,15 @@ const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", year: "numeric
 const locales = "de-DE";
 
 /**
+ * Transforms a date to a readable string
+ * @param date The date to transform
+ * @returns The date as a readable string
+ */
+export const transformDateToReadableString = (date: Date) => {
+  return date.toLocaleDateString(locales, dateOptions);
+};
+
+/**
  * Transforms a sql date in string format to a german date in string format
  * @param sqlString A sql date in string format
  * @returns The sql date as a german date in string format

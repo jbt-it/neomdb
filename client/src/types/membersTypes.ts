@@ -309,3 +309,14 @@ export type edvSkillsReducerAction =
   | {
       type: edvSkillsReducerActionType.addEmptyEdvSkill;
     };
+
+/**
+ * Type of the Member for projects
+ */
+export type MembersField = {
+  mitgliedID: number;
+  name: string;
+  vorname: string;
+  nachname: string;
+  mitgliedstatus: number;
+};

@@ -36,6 +36,55 @@ const InfoSectionTest: React.FunctionComponent = () => {
       value: ["Item 1", "Item 2", "Item 3"],
       type: "list",
     },
+    {
+      label: "Test Member List",
+      value: [
+        {
+          mitgliedID: 8364,
+          name: "Jimmie O'Brien",
+          vorname: "vorname1",
+          nachname: "nachname1",
+          mitgliedstatus: 1,
+        },
+        {
+          mitgliedID: 8320,
+          name: "Radhika Norton",
+          vorname: "vorname2",
+          nachname: "nachname2",
+          mitgliedstatus: 1,
+        },
+        {
+          mitgliedID: 8478,
+          name: "Kellan Mclaughlin",
+          vorname: "vorname3",
+          nachname: "nachname3",
+          mitgliedstatus: 1,
+        },
+        {
+          mitgliedID: 8331,
+          name: "Jorja Bautista",
+          vorname: "Jorja",
+          nachname: "Bautista",
+          mitgliedstatus: 1,
+        },
+        { mitgliedID: 8748, name: "Mason Vinson", vorname: "Mason", nachname: "Vinson", mitgliedstatus: 2 },
+        {
+          mitgliedID: 8338,
+          name: "Mariana Macdonald",
+          vorname: "vorname4",
+          nachname: "nachname4",
+          mitgliedstatus: 3,
+        },
+        {
+          mitgliedID: 8167,
+          name: "Wolfgang U Luft",
+          vorname: "vorname4",
+          nachname: "nachname4",
+          mitgliedstatus: 4,
+        },
+      ],
+      type: "memberList",
+    },
   ];
 
   return (

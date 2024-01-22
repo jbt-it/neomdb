@@ -2,6 +2,9 @@
  * Contains all members types for the frontend
  */
 
+import { Dayjs } from "dayjs";
+import { MembersField } from "./membersTypes";
+
 /**
  * Type of a trainee
  */
@@ -64,4 +67,23 @@ export type Pflichtworkshops = {
   schulungID: number;
   schulungsname: string;
   feedbackAbgegeben: boolean;
+};
+
+/**
+ * Type of the Ip Info
+ */
+export type IpInfoType = {
+  id: number;
+  name: string;
+  kuerzel: string;
+  traineegeneration: string;
+  kickoff: Dayjs | null | undefined;
+  angebotAbgegeben: boolean | undefined;
+  apDatum: Dayjs | null | undefined;
+  apAbgegeben: boolean | undefined;
+  zpDatum: Dayjs | null | undefined;
+  zpAbgegeben: boolean | undefined;
+  dlAbgegeben: boolean | undefined;
+  projektmitglieder: MembersField[];
+  qualitaetsmanager: MembersField[];
 };

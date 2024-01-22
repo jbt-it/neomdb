@@ -33,11 +33,13 @@ type Field = {
       type: "RadioButton" | "Dropdown";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       values: Array<{ label: string; value: any }>;
+      disabled?: boolean;
     }
   | {
       type: "TextBig";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       rows: number;
+      disabled?: boolean;
     }
   | {
       type: "Date";
@@ -46,6 +48,7 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Text";
@@ -53,10 +56,12 @@ type Field = {
       inputType?: "number";
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Checkbox";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+      disabled?: boolean;
     }
   | {
       type: "Time";
@@ -65,6 +70,7 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "DateTime";
@@ -73,12 +79,14 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Autocomplete";
       onChangeCallback: (event: React.ChangeEvent<object>, value: string[] | string) => void | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
 );
 interface Props {
@@ -181,6 +189,7 @@ const FieldSection = (props: Props) => {
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             type={field.inputType === "number" ? "number" : "text"}
             inputProps={field.inputType === "number" ? { min: 0 } : {}}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "TextBig") {
@@ -250,7 +259,7 @@ const FieldSection = (props: Props) => {
               <Checkbox
                 key={index}
                 color="primary"
-                value={field.state}
+                checked={field.state as boolean}
                 onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
               />
             }
