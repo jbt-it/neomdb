@@ -2413,9 +2413,7 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"14"
-						]
+						"jwt": []
 					}
 				],
 				"parameters": []

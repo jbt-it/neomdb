@@ -31,7 +31,7 @@ class MembersRepository {
   getMembers = async (connection?: mysql.PoolConnection): Promise<MemberPartial[]> => {
     try {
       const membersQueryResult = await query(
-        `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
+        `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange, generation, internesprojekt
       FROM mitglied
       INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
       INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
