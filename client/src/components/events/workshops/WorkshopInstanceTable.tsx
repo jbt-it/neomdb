@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider, TableBody, Table, TableContainer, TableHead, TableRow, TableCell, Typography } from "@mui/material";
 
-import { WorkshopInstance } from "../../types/eventTypes";
+import { WorkshopInstance } from "../../../types/eventTypes";
 import { Link } from "react-router-dom";
 
 interface WorkshopInstanceTableProps {

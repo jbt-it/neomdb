@@ -11,7 +11,7 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-import { Frage, ReferentenBewertung } from "../../types/eventTypes";
+import { Frage, ReferentenBewertung } from "../../../types/eventTypes";
 import { Link } from "react-router-dom";
 
 interface WorkshopInstanceEvaluationTableProps {

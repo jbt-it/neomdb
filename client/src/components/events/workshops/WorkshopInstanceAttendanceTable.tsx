@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EventParticipant } from "../../types/eventTypes";
+import { EventParticipant } from "../../../types/eventTypes";
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface WorkshopInstanceattendanceTableProps {
   participants: EventParticipant[];

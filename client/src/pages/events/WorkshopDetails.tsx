@@ -8,11 +8,11 @@ import { Workshop, WorkshopInstance } from "../../types/eventTypes";
 
 import useResponsive from "../../hooks/useResponsive";
 import { Stack } from "@mui/system";
-import WorkshopButton from "../../components/event/WorkshopButton";
+import WorkshopButton from "../../components/events/workshops/WorkshopButton";
 import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
-import WorkshopInstanceTable from "../../components/event/WorkshopInstanceTable";
+import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
+import WorkshopInstanceTable from "../../components/events/workshops/WorkshopInstanceTable";
 
 import { schulung as res } from "../../mock/events/schulung";
 import { schulungsinstanz as res2 } from "../../mock/events/schulungsinstanz";
@@ -21,7 +21,7 @@ import { schulungsinstanz as res2 } from "../../mock/events/schulungsinstanz";
  * Displays the details of a workshop.
  * @returns The details of a workshop and a table of all workshop instances.
  */
-const DisplayWorkshopDetails = () => {
+const WorkshopDetails = () => {
   const [workshop, setWorkshop] = useState<Workshop | undefined>(undefined);
   const [workshopInstances, setWorkshopInstances] = useState<WorkshopInstance[]>([]);
   const { id } = useParams<{ id: string }>();
@@ -107,4 +107,4 @@ const DisplayWorkshopDetails = () => {
   );
 };
 
-export default DisplayWorkshopDetails;
+export default WorkshopDetails;

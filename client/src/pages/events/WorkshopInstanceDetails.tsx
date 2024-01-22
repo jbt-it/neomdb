@@ -4,10 +4,10 @@ import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from 
 
 import { Workshop, WorkshopInstance, EventParticipant } from "../../types/eventTypes";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import EventParticipants from "../../components/event/EventParticipants";
-import EventChip from "../../components/event/EventChip";
-import AddMembersField from "../../components/event/AddMembersField";
-import WorkshopInstanceButton from "../../components/event/WorkshopInstanceButton";
+import EventParticipants from "../../components/events/EventParticipants";
+import EventChip from "../../components/events/EventChip";
+import AddMembersField from "../../components/events/AddMembersField";
+import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
 import { useAuth } from "../../hooks/useAuth";
 
 import { schulung } from "../../mock/events/schulung";
@@ -20,8 +20,8 @@ import { Member } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
-import WorkshopInstanceAdmissionClosingTable from "../../components/event/WorkshopInstanceAdmissionClosingTable";
-import WorkshopInstanceAttendanceTable from "../../components/event/WorkshopInstanceAttendanceTable";
+import WorkshopInstanceAdmissionClosingTable from "../../components/events/workshops/WorkshopInstanceAdmissionClosingTable";
+import WorkshopInstanceAttendanceTable from "../../components/events/workshops/WorkshopInstanceAttendanceTable";
 
 /**
  * Displays the details of a workshop instance

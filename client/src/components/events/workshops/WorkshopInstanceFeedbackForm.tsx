@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button, Dialog, Divider, Grid, TextField, Typography } from "@mui/material";
-import { NumericFeedback, WorkshopInstance } from "../../types/eventTypes";
-import useResponsive from "../../hooks/useResponsive";
+import { NumericFeedback, WorkshopInstance } from "../../../types/eventTypes";
+import useResponsive from "../../../hooks/useResponsive";
 
-import { schulung_has_feedbackfragen } from "../../mock/events/schulung_has_feedbackfragen";
+import { schulung_has_feedbackfragen } from "../../../mock/events/schulung_has_feedbackfragen";
 import FeedbackSelection from "./FeedbackSelection";
 
 interface WorkshopInstanceFeedbackFormProps {

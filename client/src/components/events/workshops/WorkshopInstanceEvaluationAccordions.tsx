@@ -1,5 +1,5 @@
 import React from "react";
-import { Frage, ReferentenBewertung } from "../../types/eventTypes";
+import { Frage, ReferentenBewertung } from "../../../types/eventTypes";
 import dayjs from "dayjs";
 import {
   Accordion,
@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface WorkshopInstanceEvaluationAccordionsProps {
   workshopInstanceFeedbackFragen: Frage[];

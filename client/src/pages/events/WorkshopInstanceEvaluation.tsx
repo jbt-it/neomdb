@@ -7,10 +7,10 @@ import useResponsive from "../../hooks/useResponsive";
 
 import { Workshop, WorkshopInstance, WorkshopInstanceFeedback } from "../../types/eventTypes";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
-import EventChip from "../../components/event/EventChip";
-import WorkshopInstanceEvaluationTable from "../../components/event/WorkshopInstanceEvaluationTable";
-import WorkshopInstanceEvaluationAccordions from "../../components/event/WorkshopInstanceEvaluationAccordions";
-import WorkshopInstanceTextEvaluation from "../../components/event/WorkshopInstanceTextEvaluation";
+import EventChip from "../../components/events/EventChip";
+import WorkshopInstanceEvaluationTable from "../../components/events/workshops/WorkshopInstanceEvaluationTable";
+import WorkshopInstanceEvaluationAccordions from "../../components/events/workshops/WorkshopInstanceEvaluationAccordions";
+import WorkshopInstanceTextEvaluation from "../../components/events/workshops/WorkshopInstanceTextEvaluation";
 
 import { schulungsInstanzFeedback } from "../../mock/events/schulungsInstanzFeedback";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";

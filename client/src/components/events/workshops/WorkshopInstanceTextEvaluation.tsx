@@ -1,5 +1,5 @@
 import React from "react";
-import { TextFeedback } from "../../types/eventTypes";
+import { TextFeedback } from "../../../types/eventTypes";
 import { Box, Divider, List, ListItem, Typography } from "@mui/material";
 
 interface WorkshopInstanceTextEvaluationProps {
