@@ -99,6 +99,7 @@ export type Member = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
+  generation: number;
   handy: string;
   jbt_email: string;
   ressort: string;
@@ -115,6 +116,14 @@ export type DepartmentMember = {
   nachname: string;
   ressort: number;
   bezeichnung: string;
+};
+
+/**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
 };
 
 /**

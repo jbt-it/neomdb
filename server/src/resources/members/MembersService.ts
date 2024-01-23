@@ -1,3 +1,5 @@
+import * as bcrypt from "bcryptjs";
+import fs from "fs/promises";
 import {
   CreateMemberRequest,
   EdvSkill,
@@ -5,22 +7,24 @@ import {
   Member,
   MemberDetails,
   MemberPartial,
+  MemberStatus,
   Mentee,
   Mentor,
   NewMember,
   StatusOverview,
   UpdateDepartmentRequest,
 } from "types/membersTypes";
+import { getPathOfImage } from "../../utils/assetsUtils";
+import AuthRepository from "../../auth/AuthRepository";
+import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import MembersRepository from "./MembersRepository";
 import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
-import { executeInTransaction } from "../../database";
-import * as bcrypt from "bcryptjs";
 import { getRandomString } from "../../utils/stringUtils";
-import AuthRepository from "../../auth/AuthRepository";
 import TraineesRepository from "../trainees/TraineesRepository";
+import MembersRepository from "./MembersRepository";
+import path from "path";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -72,6 +76,45 @@ class MembersService {
       edvkenntnisse: edvSkills,
     };
     return memberDto;
+  };
+
+  /**
+   * Retrieves the image of a member by its id as base64 string
+   * @param imageFolderPath The path to the image folder
+   * @param memberID The id of the member
+   * @returns The base64 string of the image and its mime type or null if no image was found
+   */
+  getMemberImage = async (imageFolderPath: string, memberID: number) => {
+    const { imagePath, mimeType } = await getPathOfImage(imageFolderPath, `${memberID}`);
+    if (imagePath === null) {
+      return null;
+    }
+
+    try {
+      const fileContents = await fs.readFile(imagePath);
+      // Convert to Base64
+      const base64 = fileContents.toString("base64");
+
+      return { base64, mimeType };
+    } catch (err: any) {
+      return null;
+    }
+  };
+
+  /**
+   * Saves the image of a member
+   * @param imageFolderPath The path to the image folder
+   * @param imageName The name of the image
+   * @param base64 The base64 string of the image
+   */
+  saveMemberImage = async (imageFolderPath: string, imageName: string, base64: string) => {
+    const filePath = path.join(imageFolderPath, path.basename(`${imageName}`));
+
+    // Convert Base64 to binary
+    const fileContents = Buffer.from(base64, "base64");
+
+    // Write file to disk
+    await fs.writeFile(filePath, fileContents);
   };
 
   /**
@@ -408,11 +451,16 @@ class MembersService {
    * Updates the status of a member
    * @throws NotFoundError if the member does not exist
    */
-  updateMemberStatus = async (memberID: number, status: string) => {
+  updateMemberStatus = async (memberID: number, status: MemberStatus) => {
     // Check if member exists
-    const member = this.membersRepository.getMemberByID(memberID, false);
+    const member = await this.membersRepository.getMemberByID(memberID, false);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+
+    if (member.mitgliedstatus === status) {
+      // Member already has the new status
+      return;
     }
 
     const lastChangeTime = createCurrentTimestamp();

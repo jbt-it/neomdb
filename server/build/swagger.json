@@ -6,6 +6,143 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Permission": {
+				"properties": {
+					"directorID": {
+						"type": "number",
+						"format": "double"
+					},
+					"canDelegate": {
+						"type": "boolean"
+					},
+					"permissionID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"canDelegate",
+					"permissionID"
+				],
+				"type": "object",
+				"description": "Type of the permission"
+			},
+			"JWTPayload": {
+				"properties": {
+					"roles": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/Permission"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"roles",
+					"permissions",
+					"name",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the payload if the jason web token"
+			},
+			"UserLoginRequest": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"username"
+				],
+				"type": "object",
+				"description": "Type for the request to login a user"
+			},
+			"UserChangePasswordRequest": {
+				"properties": {
+					"newPassword": {
+						"type": "string"
+					},
+					"oldPassword": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"userID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"newPassword",
+					"oldPassword",
+					"userName",
+					"userID"
+				],
+				"type": "object",
+				"description": "Type of the request to change the password of a user"
+			},
+			"UserForgotPasswordRequest": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"description": "Type of the request to send a password reset link to a user"
+			},
+			"UserResetPasswordRequest": {
+				"properties": {
+					"newPassword": {
+						"type": "string"
+					},
+					"key": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"newPassword",
+					"key",
+					"email"
+				],
+				"type": "object",
+				"description": "Type of the request to reset the password of a user"
+			},
+			"MemberStatus": {
+				"type": "string",
+				"enum": [
+					"Trainee",
+					"aktives Mitglied",
+					"Senior",
+					"Alumnus",
+					"passives Mitglied",
+					"Ausgetretene"
+				]
+			},
 			"MemberPartial": {
 				"properties": {
 					"lastchange": {
@@ -15,7 +152,7 @@
 						"type": "string"
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -42,6 +179,22 @@
 				],
 				"type": "object",
 				"description": "Type of the partial member"
+			},
+			"MemberImage": {
+				"properties": {
+					"mimeType": {
+						"type": "string"
+					},
+					"base64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"mimeType",
+					"base64"
+				],
+				"type": "object",
+				"description": "Type of the member image"
 			},
 			"DepartmentMember": {
 				"properties": {
@@ -607,7 +760,7 @@
 						"nullable": true
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -1225,7 +1378,7 @@
 				"parameters": []
 			},
 			"post": {
-				"operationId": "CreeateMember",
+				"operationId": "CreateMember",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1271,6 +1424,98 @@
 								"generation": 3,
 								"traineeSeit": "2020-01-01",
 								"email": "m.mustermann@email.de"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/{id}/image": {
+			"get": {
+				"operationId": "GetMemberImage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"mimeType": {},
+										"base64": {}
+									},
+									"required": [
+										"mimeType",
+										"base64"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the image of a member with the given `id`.\r\nReturns null with status code 204 if no image was found.",
+				"summary": "Get image of member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve the image from",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SaveImage",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Saves the image of a member with the given `id`",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to save the image to",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The image to save",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberImage",
+								"description": "The image to save"
+							},
+							"example": {
+								"base64": "test",
+								"mimeType": "jpg"
 							}
 						}
 					}
@@ -1389,7 +1634,7 @@
 							"schema": {
 								"properties": {
 									"mitgliedstatus": {
-										"type": "string"
+										"$ref": "#/components/schemas/MemberStatus"
 									}
 								},
 								"required": [
@@ -2108,9 +2353,7 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"14"
-						]
+						"jwt": []
 					}
 				],
 				"parameters": []
@@ -2500,190 +2743,38 @@
 				]
 			}
 		},
-		"/auth/login": {
+		"/trainees/admission/{id}": {
 			"post": {
-				"operationId": "Login",
+				"operationId": "AdmitTrainee",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/JWTPayload"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
-				"description": "Sends an httpOnly cookie to the client and retrieves id, username and corresponding permissions",
-				"summary": "Logs in a user",
+				"description": "Admits a trainee which sets the active since state of the member to the current date and\r\nupdates the member status",
+				"summary": "Admit a trainee",
 				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserLoginRequest"
-							},
-							"example": {
-								"username": "w.luft",
-								"password": "s3cre7"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/me": {
-			"get": {
-				"operationId": "GetUserData",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/JWTPayload"
-								}
-							}
-						}
-					}
-				},
-				"description": "Sends the user data of the currently logged in user to the client",
-				"summary": "Retrieves own user data",
-				"tags": [
-					"Auth"
+					"Trainees"
 				],
 				"security": [
 					{
-						"jwt": []
+						"jwt": [
+							"18"
+						]
 					}
 				],
-				"parameters": []
-			}
-		},
-		"/auth/change-password": {
-			"patch": {
-				"operationId": "ChangePassword",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"description": "Updates the passwordHash in the database if the old password is correct",
-				"summary": "Changes the users password",
-				"tags": [
-					"Auth"
-				],
-				"security": [
+				"parameters": [
 					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserChangePasswordRequest"
-							},
-							"example": {
-								"userName": "w.luft",
-								"oldPassword": "s3cre7",
-								"newPassword": "s3cre7",
-								"userID": 8167
-							}
+						"description": "id of the trainee",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
-				}
-			}
-		},
-		"/auth/forgot-password": {
-			"post": {
-				"operationId": "SendPasswordResetLink",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"description": "An email is sent with an password reset link and a key in the url to the user\r\nThe key used in the link is saved in the databse for the later verification",
-				"summary": "Sends a password reset link to the user",
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserForgotPasswordRequest"
-							},
-							"example": {
-								"email": "w.luft@studentische-beratung.de"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/reset-forgot-password": {
-			"patch": {
-				"operationId": "ResetPasswordWithKey",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"description": "The user can set a new password by entering their mailadress and a new password\r\nThe mail and the key in the url are then checked to se if it is a valid pair\r\nIf the pair is valid the new password is stored",
-				"summary": "Resets the password of a user",
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserResetPasswordRequest"
-							},
-							"example": {
-								"email": "w.luft@studentische-beratung.de",
-								"key": "1234567890",
-								"newPassword": "s3cre7"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/logout": {
-			"post": {
-				"operationId": "Logout",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"description": "Logs the user out by removing the jwt from the cookie",
-				"summary": "Logs out the user",
-				"tags": [
-					"Auth"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
+				]
 			}
 		}
 	},
