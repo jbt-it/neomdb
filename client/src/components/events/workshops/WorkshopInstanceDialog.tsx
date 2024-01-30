@@ -36,12 +36,16 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
   const [maxParticipants, setMaxParticipants] = useState<number | null>(null);
 
   const [errordate, setErrorDate] = useState<boolean>(false);
+  const [errorStartTime, setErrorStartTime] = useState<boolean>(false);
+  const [errorEndTime, setErrorEndTime] = useState<boolean>(false);
 
   // mock members
   const mockMembers = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
 
   function resetData() {
     setErrorDate(false);
+    setErrorStartTime(false);
+    setErrorEndTime(false);
     if (!workshopInstance) {
       setDate(null);
       setStartTime(null);
@@ -80,10 +84,26 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
   };
 
   const onChangeStartTime = (value: unknown) => {
+    setErrorStartTime(false);
+    setErrorEndTime(false);
+    if (endTime ? (value as Dayjs).isAfter(endTime) : null) {
+      setErrorStartTime(true);
+    }
+    if (endTime ? endTime.isBefore(value as Dayjs) : null) {
+      setErrorEndTime(true);
+    }
     setStartTime(value as Dayjs);
   };
 
   const onChangeEndTime = (value: unknown) => {
+    setErrorEndTime(false);
+    setErrorStartTime(false);
+    if (!startTime) {
+      setErrorEndTime(true);
+    }
+    if (startTime ? (value as Dayjs).isBefore(startTime) : null) {
+      setErrorEndTime(true);
+    }
     setEndTime(value as Dayjs);
   };
 
@@ -116,8 +136,10 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
   // Function to handle the save button
   const handleSave = () => {
     setErrorDate(false);
-    if (date === null) {
+    if (date === null || date.isBefore(dayjs().subtract(180, "day")) || date.isAfter(dayjs().add(365, "day"))) {
       setErrorDate(true);
+      return;
+    } else if (errorStartTime || errorEndTime) {
       return;
     }
     onSave();
@@ -132,7 +154,7 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
       width: "half",
       onChangeCallback: onChangeDate,
       error: errordate,
-      helperText: errordate ? "Bitte lege ein Datum fest" : "",
+      helperText: errordate ? "Bitte lege ein gültiges Datum fest" : "",
     },
     {
       label: "Startzeit",
@@ -140,6 +162,8 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
       state: startTime,
       width: "half",
       onChangeCallback: onChangeStartTime,
+      helperText: errorStartTime ? "Bitte gib eine gültige Startzeit an" : "",
+      error: errorStartTime,
     },
     {
       label: "Endzeit",
@@ -147,6 +171,8 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
       state: endTime,
       width: "half",
       onChangeCallback: onChangeEndTime,
+      helperText: errorEndTime ? "Bitte gib eine gültige Endzeit an" : "",
+      error: errorEndTime,
     },
     {
       label: "Ort",
