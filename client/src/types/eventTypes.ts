@@ -31,3 +31,13 @@ export type CommonEventType = {
   maximumParticipants?: number | null;
   type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
+
+/**
+ * Type of a workshop
+ */
+export type Workshop = {
+  schulungId: number;
+  schulungsName: string;
+  art: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
+  beschreibung: string;
+};
