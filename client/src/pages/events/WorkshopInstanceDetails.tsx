@@ -69,7 +69,7 @@ const WorkshopInstanceDetails = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/users/", {
+      .get("/members/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
