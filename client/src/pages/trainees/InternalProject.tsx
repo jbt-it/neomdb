@@ -1,8 +1,19 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Paper, Typography, IconButton, styled } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  IconButton,
+  styled,
+  Dialog,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 
-import { Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { InternalProjectDetails, TraineeShort } from "../../types/traineesTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -37,9 +48,10 @@ const InternalProject: React.FunctionComponent = () => {
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
   const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectDetails | null>(null);
-  const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
   const [trainees, setTrainees] = useState<MembersField[]>([]);
+  const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   /**
    * Handles the click on the edit button of the internal project information section
@@ -55,6 +67,20 @@ const InternalProject: React.FunctionComponent = () => {
    */
   const handleInternalProjectInfoDialogClose = () => {
     setInternalProjectInfoDialogOpen(false);
+  };
+
+  /**
+   * Handles the opening of the delete dialog
+   */
+  const handleDeleteDialogOpen = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  /**
+   * Handles the closing of the delete dialog
+   */
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
   };
 
   /**
@@ -101,21 +127,13 @@ const InternalProject: React.FunctionComponent = () => {
           }
         }
       })
-      .catch((err) => {
-        if (axios.isAxiosError(err)) {
-          if (err.code === "ECONNABORTED") {
-            console.error("Request was aborted");
-          } else {
-            console.error(err.message);
-          }
-        } else if (err.response) {
-          console.error(err.response.data);
-          if (err.response.status === 401) {
-            dispatchAuth({ type: authReducerActionType.deauthenticate });
-          }
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled", error.message);
+        } else if (error.code === "ECONNABORTED") {
+          console.log("Timeout error", error.message);
         } else {
-          // Handle the error when there's no response
-          console.error(err);
+          // handle other errors
         }
       });
 
@@ -202,7 +220,13 @@ const InternalProject: React.FunctionComponent = () => {
     };
   }, [dispatchAuth]);
 
+  /**
+   * Updates the internal project details
+   * @param updatedInternalProjectDetails - The updated internal project details
+   */
   const updateInternalProjectDetails = (updatedInternalProjectDetails: InternalProjectDetails) => {
+    event?.preventDefault();
+
     const newInternalProjectDetails = {
       internesProjektID: updatedInternalProjectDetails.internesProjektID,
       projektname: updatedInternalProjectDetails.projektname,
@@ -251,6 +275,29 @@ const InternalProject: React.FunctionComponent = () => {
       });
   };
 
+  /**
+   * Deletes the internal project
+   * @param id - The id of the internal project to be deleted
+   */
+  const deleteInternalProject = (id: number) => {
+    api
+      .delete(`/trainees/ip/${id}`)
+      .then((res) => {
+        if (res.status === 204) {
+          showSuccessMessage("Internes Projekt erfolgreich gelöscht!");
+        }
+      })
+      .catch((err: AxiosError) => {
+        if (err.response?.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response?.status === 500) {
+          showErrorMessage("Löschen ist fehlgeschlagen!");
+        } else {
+          showErrorMessage("Löschen ist fehlgeschlagen!");
+        }
+      });
+  };
+
   useEffect(() => {
     getInternalProjectDetails(Number(id));
   }, [id, updateInternalProjectDetails]);
@@ -263,6 +310,7 @@ const InternalProject: React.FunctionComponent = () => {
     getTrainees();
   }, [getTrainees]);
 
+  // Fields for the internal project details
   const internalProjectDetailsFields: Array<InformationField> = [
     {
       label: "Internesprojekt",
@@ -354,13 +402,41 @@ const InternalProject: React.FunctionComponent = () => {
             Informationen zum internen Projekt
           </Typography>
           {hasInternalProjectPermission ? (
-            <IconButton
-              onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-                handleInternalProjectInfoDialogOpen(event)
-              }
-            >
-              <Edit fontSize="inherit" />
-            </IconButton>
+            <Box>
+              <IconButton
+                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+                  handleInternalProjectInfoDialogOpen(event)
+                }
+              >
+                <Edit fontSize="inherit" />
+              </IconButton>
+              <IconButton onClick={handleDeleteDialogOpen}>
+                <Delete fontSize="inherit" />
+              </IconButton>
+              <Dialog open={deleteDialogOpen}>
+                <DialogTitle>Internes Projekt löschen</DialogTitle>
+                <DialogContent>
+                  <Typography>
+                    Bist Du sicher, dass Du das interne Projekt <strong>"{internalProjectDetails?.projektname}"</strong>{" "}
+                    löschen möchtest?
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      deleteInternalProject(Number(id));
+                    }}
+                    color="error"
+                  >
+                    Löschen
+                  </Button>
+                  <Button onClick={handleDeleteDialogClose} variant="contained" color="secondary">
+                    Abbrechen
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </Box>
           ) : null}
         </Box>
         <Box>

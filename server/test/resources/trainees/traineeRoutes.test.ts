@@ -48,6 +48,20 @@ describe("GET /ip/:id", () => {
     // --- THEN
     expect(response.status).toBe(200);
     expect(response.body.projektname).toBe("JE7 Analyse");
+    expect(response.body.projektmitglieder).toBe([
+      {
+        mitgliedID: 8478,
+        vorname: "Kellan",
+        nachname: "Mclaughlin",
+        mitgliedstatus: "Trainee",
+      },
+      {
+        mitgliedID: 8748,
+        vorname: "Mason",
+        nachname: "Vinson",
+        mitgliedstatus: "Trainee",
+      },
+    ]);
   });
 
   test("should return 404 for getting an IP not existing", async () => {
