@@ -310,6 +310,8 @@ export type edvSkillsReducerAction =
       type: edvSkillsReducerActionType.addEmptyEdvSkill;
     };
 
+export type MemberStatus = "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus" | "passives Mitglied" | "Ausgetretene";
+
 /**
  * Type of the Member for projects
  */
@@ -318,5 +320,5 @@ export type MembersField = {
   name: string;
   vorname: string;
   nachname: string;
-  mitgliedstatus: string;
+  mitgliedstatus: MemberStatus;
 };

@@ -80,7 +80,31 @@ export class TraineesController extends Controller {
    *  "kuerzel": "string",
    *  "projektname": "string-long",
    *  "generation": 3,
-   *  "internesProjektID": 62
+   *  "internesProjektID": 62,
+   *  "projektmitglieder": [
+   *    {
+   *     "mitgliedID": 8167,
+   *     "vorname": "string",
+   *     "nachname": "string"
+   *    },
+   *    {
+   *     "mitgliedID": 8333,
+   *     "vorname": "string",
+   *     "nachname": "string"
+   *    }
+   *   ],
+   *  "qualitaetsmanager": [
+   *    {
+   *     "mitgliedID": 8167,
+   *     "vorname": "string",
+   *     "nachname": "string"
+   *    },
+   *    {
+   *     "mitgliedID": 8333,
+   *     "vorname": "string",
+   *     "nachname": "string"
+   *    }
+   *   ]
    * }
    *
    */

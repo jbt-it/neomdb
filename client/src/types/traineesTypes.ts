@@ -82,18 +82,19 @@ export type Pflichtworkshops = {
 /**
  * Type of the Ip Info
  */
-export type IpInfoType = {
-  id: number;
-  name: string;
+export type InternalProjectDetails = {
+  internesProjektID: number;
+  projektname: string;
   kuerzel: string;
-  traineegeneration: string;
+  generation: number;
+  generationsBezeichnung: string;
   kickoff: Dayjs | null | undefined;
-  angebotAbgegeben: boolean | undefined;
-  apDatum: Dayjs | null | undefined;
-  apAbgegeben: boolean | undefined;
-  zpDatum: Dayjs | null | undefined;
-  zpAbgegeben: boolean | undefined;
-  dlAbgegeben: boolean | undefined;
+  AngebotBeiEV: boolean | undefined;
+  ZPBeiEV: boolean | undefined;
+  ZPGehalten: Dayjs | null | undefined;
+  APBeiEV: boolean | undefined;
+  APGehalten: Dayjs | null | undefined;
+  DLBeiEV: boolean | undefined;
   projektmitglieder: MembersField[];
   qualitaetsmanager: MembersField[];
 };

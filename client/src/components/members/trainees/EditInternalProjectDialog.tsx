@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
 import React, { useState } from "react";
 import FieldSection, { Field } from "../../general/FieldSection";
 import MemberSelection from "../../general/MemberSelection";
-import { IpInfoType } from "../../../types/traineesTypes";
+import { InternalProjectDetails } from "../../../types/traineesTypes";
 import { MembersField } from "../../../types/membersTypes";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
@@ -55,10 +55,10 @@ const useStyles = makeStyles((theme) => ({
  * Interface for the edit internal project dialog
  */
 interface EditInternalProjectDialogProps {
-  internalProjectDetails: IpInfoType;
+  internalProjectDetails: InternalProjectDetails;
   open: boolean;
   closeDialog: () => void;
-  updateInternalProjectDetails: (data: IpInfoType | null) => void;
+  updateInternalProjectDetails: (data: InternalProjectDetails) => void;
   selectableTrainees: MembersField[];
   selectableQMs: MembersField[];
 }
@@ -83,25 +83,25 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
 }: EditInternalProjectDialogProps) => {
   const classes = useStyles();
   const isMobile = useResponsive("down", "sm");
-  const [name, setName] = useState<string>(internalProjectDetails.name);
+  const [projektname, setProjektName] = useState<string>(internalProjectDetails.projektname);
   const [kuerzel, setKuerzel] = useState<string>(internalProjectDetails.kuerzel);
-  const [traineegeneration, setTraineegeneration] = useState<string>(internalProjectDetails.traineegeneration);
-  const [kickoff, setKickoff] = useState<Dayjs | null | undefined>(internalProjectDetails.kickoff);
-  const [angebotAbgegeben, setAngebotAbgegeben] = useState<boolean | undefined>(
-    internalProjectDetails.angebotAbgegeben
+  const [generationsBezeichnung, setGenerationsBezeichnung] = useState<string>(
+    internalProjectDetails.generationsBezeichnung
   );
-  const [zpDatum, setZpDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.zpDatum);
-  const [zpAbgegeben, setZpAbgegeben] = useState<boolean | undefined>(internalProjectDetails.zpAbgegeben);
-  const [apDatum, setApDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.apDatum);
-  const [apAbgegeben, setApAbgegeben] = useState<boolean | undefined>(internalProjectDetails.apAbgegeben);
-  const [dlAbgegeben, setDlAbgegeben] = useState<boolean | undefined>(internalProjectDetails.dlAbgegeben);
+  const [kickoff, setKickoff] = useState<Dayjs | null | undefined>(internalProjectDetails.kickoff);
+  const [angebotAbgegeben, setAngebotAbgegeben] = useState<boolean | undefined>(internalProjectDetails.AngebotBeiEV);
+  const [zpDatum, setZpDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.ZPGehalten);
+  const [zpAbgegeben, setZpAbgegeben] = useState<boolean | undefined>(internalProjectDetails.ZPBeiEV);
+  const [apDatum, setApDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.APGehalten);
+  const [apAbgegeben, setApAbgegeben] = useState<boolean | undefined>(internalProjectDetails.APBeiEV);
+  const [dlAbgegeben, setDlAbgegeben] = useState<boolean | undefined>(internalProjectDetails.DLBeiEV);
   const [projektmitglieder, setProjektmitglieder] = useState<MembersField[]>(internalProjectDetails.projektmitglieder);
   const [qualitaetsmanager, setQualitaetsmanager] = useState<MembersField[]>(internalProjectDetails.qualitaetsmanager);
 
   const errorAP = apDatum ? (kickoff ? apDatum.isBefore(kickoff) : zpDatum ? apDatum.isBefore(zpDatum) : false) : false;
   const errorZP = zpDatum ? (kickoff ? zpDatum.isBefore(kickoff) : false) : false;
 
-  const errorName = name === "";
+  const errorName = projektname === "";
   const errorKuerzel = kuerzel === "";
 
   // Function to update the internal project details
@@ -109,25 +109,23 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     if (errorAP || errorZP || errorName || errorKuerzel) {
       return;
     }
-    closeDialog();
-    const data = internalProjectDetails
-      ? {
-          id: internalProjectDetails?.id,
-          name,
-          kuerzel,
-          traineegeneration,
-          kickoff,
-          angebotAbgegeben,
-          apAbgegeben,
-          apDatum,
-          zpDatum,
-          dlAbgegeben,
-          zpAbgegeben,
-          projektmitglieder,
-          qualitaetsmanager,
-        }
-      : null;
-    internalProjectDetails ? updateInternalProjectDetails(data) : null;
+    const data = {
+      internesProjektID: internalProjectDetails?.internesProjektID,
+      projektname,
+      kuerzel,
+      generation: internalProjectDetails.generation,
+      generationsBezeichnung,
+      kickoff,
+      AngebotBeiEV: angebotAbgegeben,
+      ZPBeiEV: zpAbgegeben,
+      ZPGehalten: zpDatum,
+      APBeiEV: apAbgegeben,
+      APGehalten: apDatum,
+      DLBeiEV: dlAbgegeben,
+      projektmitglieder,
+      qualitaetsmanager,
+    };
+    updateInternalProjectDetails(data);
   };
 
   /**
@@ -135,23 +133,23 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
    * @param event FormEvent
    */
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
-    setName(internalProjectDetails.name);
+    setProjektName(internalProjectDetails.projektname);
     setKuerzel(internalProjectDetails.kuerzel);
-    setTraineegeneration(internalProjectDetails.traineegeneration);
+    setGenerationsBezeichnung(internalProjectDetails.generationsBezeichnung);
     setKickoff(internalProjectDetails.kickoff);
-    setAngebotAbgegeben(internalProjectDetails.angebotAbgegeben);
-    setApDatum(internalProjectDetails.apDatum);
-    setApAbgegeben(internalProjectDetails.apAbgegeben);
-    setZpDatum(internalProjectDetails.zpDatum);
-    setZpAbgegeben(internalProjectDetails.zpAbgegeben);
-    setDlAbgegeben(internalProjectDetails.dlAbgegeben);
+    setAngebotAbgegeben(internalProjectDetails.AngebotBeiEV);
+    setApDatum(internalProjectDetails.APGehalten);
+    setApAbgegeben(internalProjectDetails.APBeiEV);
+    setZpDatum(internalProjectDetails.ZPGehalten);
+    setZpAbgegeben(internalProjectDetails.ZPBeiEV);
+    setDlAbgegeben(internalProjectDetails.DLBeiEV);
     setProjektmitglieder(internalProjectDetails.projektmitglieder);
     setQualitaetsmanager(internalProjectDetails.qualitaetsmanager);
     closeDialog();
   };
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+    setProjektName(event.target.value);
   };
 
   const onChangeKuerzel = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +157,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   };
 
   const onChangeTraineegeneration = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTraineegeneration(event.target.value);
+    setGenerationsBezeichnung(event.target.value);
   };
 
   const onChangeKickoff = (value: unknown) => {
@@ -240,7 +238,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   const internalProjectDialogFields: Array<Field> = [
     {
       label: "Name",
-      state: name,
+      state: projektname,
       width: isMobile ? "full" : "half",
       onChangeCallback: onChangeName,
       type: "Text",
@@ -258,7 +256,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     },
     {
       label: "Traineegeneration",
-      state: traineegeneration,
+      state: generationsBezeichnung,
       width: "full",
       onChangeCallback: onChangeTraineegeneration,
       type: "Text",
@@ -319,7 +317,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
 
   return (
     <Dialog open={open} onClose={handleInternalProjectInfoDialogClose}>
-      <DialogTitle>{internalProjectDetails.name} bearbeiten</DialogTitle>
+      <DialogTitle>{internalProjectDetails.projektname} bearbeiten</DialogTitle>
       <DialogContent dividers={true}>
         <div className={classes.fieldSectionBox}>
           <FieldSection title={"Details"} fields={internalProjectDialogFields}></FieldSection>
@@ -335,7 +333,6 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             onChangeCallback={handleMemberSelection}
             removeMember={removeMember}
             selectableMembers={selectableTrainees}
-            memberstatus={["Trainee"]}
           ></MemberSelection>
         </div>
         <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>

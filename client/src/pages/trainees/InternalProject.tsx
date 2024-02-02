@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Box, Paper, Typography, IconButton, styled } from "@mui/material";
 
 import { Edit } from "@mui/icons-material";
-import * as traineesTypes from "../../types/traineesTypes";
+import { InternalProjectDetails, TraineeShort } from "../../types/traineesTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import api from "../../utils/api";
 import { authReducerActionType } from "../../types/globalTypes";
 import { Member, MembersField } from "../../types/membersTypes";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
+import axios, { AxiosError } from "axios";
 
 // Styling for the paper element
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -34,7 +36,7 @@ const InternalProject: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
-  const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType | null>(null);
+  const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectDetails | null>(null);
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
   const [trainees, setTrainees] = useState<MembersField[]>([]);
@@ -56,69 +58,71 @@ const InternalProject: React.FunctionComponent = () => {
   };
 
   /**
-   * Retrieves dummy member details
+   * Retrieves the internal project details
    */
-  const getInternalProjectDetails: (id: number) => void = (id) => {
-    /* TO-DO: Implement API call to retrieve internal project details
-     *  setInternalProjectDetails(ip);
-     *  setName(InternalProjectDetails?.name);
-     */
-    if (id === 5) {
-      const ip = {
-        id: 5,
-        name: "Analoges Bootcamp",
-        kuerzel: "DB",
-        traineegeneration: "Sommersemester 2022",
-        kickoff: dayjs("2023-11-25"),
-        angebotAbgegeben: true,
-        apDatum: null,
-        apAbgegeben: false,
-        zpDatum: dayjs("2024-03-10"),
-        zpAbgegeben: true,
-        dlAbgegeben: false,
-        projektmitglieder: [
-          {
-            mitgliedID: 8364,
-            name: "Jimmie O'Brien",
-            vorname: "vorname1",
-            nachname: "nachname1",
-            mitgliedstatus: "Trainee",
-          },
-          {
-            mitgliedID: 8320,
-            name: "Radhika Norton",
-            vorname: "vorname2",
-            nachname: "nachname2",
-            mitgliedstatus: "Trainee",
-          },
-          {
-            mitgliedID: 8478,
-            name: "Kellan Mclaughlin",
-            vorname: "vorname3",
-            nachname: "nachname3",
-            mitgliedstatus: "Trainee",
-          },
-        ],
-        qualitaetsmanager: [
-          {
-            mitgliedID: 8338,
-            name: "Mariana Macdonald",
-            vorname: "vorname4",
-            nachname: "nachname4",
-            mitgliedstatus: "Senior",
-          },
-          {
-            mitgliedID: 8167,
-            name: "Wolfgang U Luft",
-            vorname: "vorname4",
-            nachname: "nachname4",
-            mitgliedstatus: "aktives Mitglied",
-          },
-        ],
-      };
+  const getInternalProjectDetails = (id: number) => {
+    let mounted = true;
+    api
+      .get(`/trainees/ip/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            const internalProject: InternalProjectDetails = {
+              internesProjektID: res.data.internesProjektID,
+              projektname: res.data.projektname,
+              kuerzel: res.data.kuerzel,
+              generation: res.data.generation,
+              generationsBezeichnung: res.data.generationsBezeichnung,
+              kickoff: res.data.kickoff ? dayjs(res.data.kickoff) : null,
+              AngebotBeiEV: res.data.AngebotBeiEV === 1 ? true : false,
+              ZPBeiEV: res.data.ZPBeiEV === 1 ? true : false,
+              ZPGehalten: res.data.ZPGehalten ? dayjs(res.data.ZPGehalten) : null,
+              APBeiEV: res.data.APBeiEV === 1 ? true : false,
+              APGehalten: res.data.APGehalten ? dayjs(res.data.APGehalten) : null,
+              DLBeiEV: res.data.DLBeiEV === 1 ? true : false,
+              projektmitglieder: res.data.projektmitglieder.map((member: Member) => ({
+                mitgliedID: member.mitgliedID,
+                name: `${member.vorname} ${member.nachname}`,
+                vorname: member.vorname,
+                nachname: member.nachname,
+                mitgliedstatus: member.mitgliedstatus,
+              })),
+              qualitaetsmanager: res.data.qualitaetsmanager.map((member: Member) => ({
+                mitgliedID: member.mitgliedID,
+                name: `${member.vorname} ${member.nachname}`,
+                vorname: member.vorname,
+                nachname: member.nachname,
+                mitgliedstatus: member.mitgliedstatus,
+              })),
+            };
+            setInternalProjectDetails(internalProject);
+          }
+        }
+      })
+      .catch((err) => {
+        if (axios.isAxiosError(err)) {
+          if (err.code === "ECONNABORTED") {
+            console.error("Request was aborted");
+          } else {
+            console.error(err.message);
+          }
+        } else if (err.response) {
+          console.error(err.response.data);
+          if (err.response.status === 401) {
+            dispatchAuth({ type: authReducerActionType.deauthenticate });
+          }
+        } else {
+          // Handle the error when there's no response
+          console.error(err);
+        }
+      });
 
-      setInternalProjectDetails(ip);
-    }
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
   };
 
   // Retrieves all members and only sets the selectableQMs to the ones that are not trainees or no longer part of jbt
@@ -134,7 +138,7 @@ const InternalProject: React.FunctionComponent = () => {
           if (mounted) {
             setSelectableQMs(
               res.data
-                .map((member: Member) => ({
+                .map((member: MembersField) => ({
                   mitgliedID: member.mitgliedID,
                   name: `${member.vorname} ${member.nachname}`,
                   vorname: member.vorname,
@@ -174,7 +178,7 @@ const InternalProject: React.FunctionComponent = () => {
           if (mounted) {
             setTrainees(
               res.data
-                .map((trainee: traineesTypes.TraineeShort) => ({
+                .map((trainee: TraineeShort) => ({
                   mitgliedID: trainee.mitgliedID,
                   name: `${trainee.vorname} ${trainee.nachname}`,
                   vorname: trainee.vorname,
@@ -198,13 +202,58 @@ const InternalProject: React.FunctionComponent = () => {
     };
   }, [dispatchAuth]);
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      getInternalProjectDetails(Number(id));
+  const updateInternalProjectDetails = (updatedInternalProjectDetails: InternalProjectDetails) => {
+    const newInternalProjectDetails = {
+      internesProjektID: updatedInternalProjectDetails.internesProjektID,
+      projektname: updatedInternalProjectDetails.projektname,
+      kuerzel: updatedInternalProjectDetails.kuerzel,
+      generation: updatedInternalProjectDetails.generation,
+      generationsBezeichnung: updatedInternalProjectDetails.generationsBezeichnung,
+      kickoff: updatedInternalProjectDetails.kickoff
+        ? updatedInternalProjectDetails.kickoff.format("YYYY-MM-DD")
+        : null,
+      AngebotBeiEV: updatedInternalProjectDetails.AngebotBeiEV,
+      ZPBeiEV: updatedInternalProjectDetails.ZPBeiEV,
+      ZPGehalten: updatedInternalProjectDetails.ZPGehalten
+        ? updatedInternalProjectDetails.ZPGehalten.format("YYYY-MM-DD")
+        : null,
+      APBeiEV: updatedInternalProjectDetails.APBeiEV,
+      APGehalten: updatedInternalProjectDetails.APGehalten
+        ? updatedInternalProjectDetails.APGehalten.format("YYYY-MM-DD")
+        : null,
+      DLBeiEV: updatedInternalProjectDetails.DLBeiEV,
+      projektmitglieder: updatedInternalProjectDetails.projektmitglieder.map((member: MembersField) => ({
+        mitgliedID: member.mitgliedID,
+        vorname: member.vorname,
+        nachname: member.nachname,
+      })),
+      qualitaetsmanager: updatedInternalProjectDetails.qualitaetsmanager.map((member: MembersField) => ({
+        mitgliedID: member.mitgliedID,
+        vorname: member.vorname,
+        nachname: member.nachname,
+      })),
     };
 
-    fetchDetails();
-  }, [id]);
+    api
+      .put(`/trainees/ip/${updatedInternalProjectDetails.internesProjektID}`, newInternalProjectDetails)
+      .then((res) => {
+        if (res.status === 204) {
+          showSuccessMessage("Aktualisierung erfolgreich!");
+          handleInternalProjectInfoDialogClose();
+        }
+      })
+      .catch((err: AxiosError) => {
+        if (err.response?.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response?.status === 500) {
+          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
+        }
+      });
+  };
+
+  useEffect(() => {
+    getInternalProjectDetails(Number(id));
+  }, [id, updateInternalProjectDetails]);
 
   useEffect(() => {
     getSelectableQms();
@@ -217,7 +266,7 @@ const InternalProject: React.FunctionComponent = () => {
   const internalProjectDetailsFields: Array<InformationField> = [
     {
       label: "Internesprojekt",
-      value: internalProjectDetails?.name,
+      value: internalProjectDetails?.projektname,
       type: "text",
     },
     {
@@ -227,7 +276,7 @@ const InternalProject: React.FunctionComponent = () => {
     },
     {
       label: "Traineegeneration",
-      value: internalProjectDetails?.traineegeneration,
+      value: internalProjectDetails?.generationsBezeichnung,
       type: "text",
     },
     {
@@ -237,32 +286,32 @@ const InternalProject: React.FunctionComponent = () => {
     },
     {
       label: "Angebot abgegeben",
-      value: internalProjectDetails?.angebotAbgegeben ? true : false,
+      value: internalProjectDetails?.AngebotBeiEV ? true : false,
       type: "checkbox",
     },
     {
       label: "ZP abgegeben",
-      value: internalProjectDetails?.zpAbgegeben ? true : false,
+      value: internalProjectDetails?.ZPBeiEV ? true : false,
       type: "checkbox",
     },
     {
       label: "ZP Datum",
-      value: internalProjectDetails?.zpDatum ? internalProjectDetails?.zpDatum.format("DD.MM.YYYY") : "",
+      value: internalProjectDetails?.ZPGehalten ? internalProjectDetails?.ZPGehalten.format("DD.MM.YYYY") : "",
       type: "text",
     },
     {
       label: "AP abgegeben",
-      value: internalProjectDetails?.apAbgegeben ? true : false,
+      value: internalProjectDetails?.APBeiEV ? true : false,
       type: "checkbox",
     },
     {
       label: "AP Datum",
-      value: internalProjectDetails?.apDatum ? internalProjectDetails?.apDatum.format("DD.MM.YYYY") : "",
+      value: internalProjectDetails?.APGehalten ? internalProjectDetails?.APGehalten.format("DD.MM.YYYY") : "",
       type: "text",
     },
     {
       label: "DL abgegeben",
-      value: internalProjectDetails?.dlAbgegeben ? true : false,
+      value: internalProjectDetails?.DLBeiEV ? true : false,
       type: "checkbox",
     },
     {
@@ -286,7 +335,7 @@ const InternalProject: React.FunctionComponent = () => {
         internalProjectDetails={internalProjectDetails}
         open={internalProjectInfoDialogOpen}
         closeDialog={handleInternalProjectInfoDialogClose}
-        updateInternalProjectDetails={setInternalProjectDetails}
+        updateInternalProjectDetails={updateInternalProjectDetails}
         selectableQMs={selectableQMs}
         selectableTrainees={trainees}
       />

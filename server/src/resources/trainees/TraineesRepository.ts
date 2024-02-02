@@ -1,4 +1,4 @@
-import { Mentor } from "types/membersTypes";
+import { MembersField, Mentor } from "types/membersTypes";
 import { query } from "../../database";
 import { ConflictError, QueryError } from "../../types/Errors";
 import {
@@ -23,15 +23,51 @@ class TraineesRepository {
    */
   getIPByID = async (id: number, connection?: mysql.PoolConnection): Promise<InternalProject> => {
     try {
-      const ipQueryResult = await query(
-        `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
+      const ipDetailsQueryResult = await query(
+        `SELECT internesProjektID, generation, bezeichnung, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
       FROM internesprojekt
+      JOIN generation ON internesprojekt.generation = generation.generationID
       WHERE internesProjektID = ?`,
         [id],
         connection
       );
-      if (Array.isArray(ipQueryResult) && ipQueryResult.length !== 0) {
-        const ip = ipQueryResult[0] as InternalProject;
+      const ipProjectMembersResult = await query(
+        `SELECT mitgliedID, vorname, nachname, mitgliedstatus.bezeichnung AS mitgliedstatus
+        FROM mitglied
+        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+        WHERE internesProjekt = ?`,
+        [id],
+        connection
+      );
+      const ipQMsResult = await query(
+        `SELECT mitgliedID, vorname, nachname, mitgliedstatus
+        FROM mitglied
+        WHERE mitgliedID IN (
+          SELECT mitglied_mitgliedID
+          FROM internesprojekt_has_qm
+          WHERE internesprojekt_internesprojektID = ?
+        )`,
+        [id],
+        connection
+      );
+      if (Array.isArray(ipDetailsQueryResult) && ipDetailsQueryResult.length !== 0) {
+        const rowData = ipDetailsQueryResult[0] as mysql.RowDataPacket;
+        const ip = {
+          internesProjektID: rowData.internesProjektID,
+          generation: rowData.generation,
+          generationsBezeichnung: rowData.bezeichnung,
+          projektname: rowData.projektname,
+          kuerzel: rowData.kuerzel,
+          kickoff: rowData.kickoff,
+          AngebotBeiEV: rowData.AngebotBeiEV,
+          ZPBeiEV: rowData.ZPBeiEV,
+          ZPGehalten: rowData.ZPGehalten,
+          APBeiEV: rowData.APBeiEV,
+          APGehalten: rowData.APGehalten,
+          DLBeiEV: rowData.DLBeiEV,
+          projektmitglieder: ipProjectMembersResult,
+          qualitaetsmanager: ipQMsResult,
+        } as InternalProject;
         return ip;
       }
 
@@ -129,6 +165,71 @@ class TraineesRepository {
         ],
         connection
       );
+
+      if (updatedIp.projektmitglieder.length > 0) {
+        const memberIDs = updatedIp.projektmitglieder.map((member) => member.mitgliedID);
+
+        // Select all members that are not in the updatedIp.projektmitglieder array but have internesProjekt set to id
+        const selectQuery = mysql.format(
+          `SELECT mitgliedID FROM mitglied
+          WHERE internesProjekt = ?
+          AND mitgliedID NOT IN (?)`,
+          [id, memberIDs]
+        );
+
+        // Get all members that have internesProjekt set to id but are not in the updatedIp.projektmitglieder array
+        const membersToNullify = (await query(selectQuery, [], connection)) as Array<{ mitgliedID: number }>;
+
+        // Set internesProjekt to null for each of these members
+        for (const member of membersToNullify) {
+          const nullifyQuery = mysql.format(
+            `UPDATE mitglied
+            SET internesProjekt = NULL
+            WHERE mitgliedID = ?`,
+            [member.mitgliedID]
+          );
+          await query(nullifyQuery, [], connection);
+        }
+        // Set internesProjekt to id for each member in updatedIp.projektmitglieder
+        for (const member of updatedIp.projektmitglieder) {
+          const updateQuery = mysql.format(
+            `UPDATE mitglied
+            SET internesProjekt = ?
+            WHERE mitgliedID = ?`,
+            [id, member.mitgliedID]
+          );
+
+          await query(updateQuery, [], connection);
+        }
+      }
+      if (updatedIp.qualitaetsmanager.length > 0) {
+        const qmIDs = updatedIp.qualitaetsmanager.map((manager) => manager.mitgliedID);
+
+        // Insert new rows for new qms
+        for (const qmID of qmIDs) {
+          const insertQuery = mysql.format(
+            `INSERT INTO internesprojekt_has_qm (internesprojekt_internesProjektID, mitglied_mitgliedID)
+            SELECT ?, ?
+            WHERE NOT EXISTS (
+              SELECT 1 FROM internesprojekt_has_qm
+              WHERE internesprojekt_internesProjektID = ? AND mitglied_mitgliedID = ?
+            )`,
+            [id, qmID, id, qmID]
+          );
+
+          await query(insertQuery, [], connection);
+        }
+
+        // Delete rows of qms that have an entry for the ip a but are not in the updatedIp.qualitaetsmanager array
+        const deleteQuery = mysql.format(
+          `DELETE FROM internesprojekt_has_qm
+          WHERE internesprojekt_internesProjektID = ?
+          AND mitglied_mitgliedID NOT IN (?)`,
+          [id, qmIDs]
+        );
+
+        await query(deleteQuery, [], connection);
+      }
     } catch (error) {
       logger.error(`Error while updating IP with id ${id}: ${error}`);
       throw new QueryError(`Error while updating IP with id ${id}`);

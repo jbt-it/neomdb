@@ -52,8 +52,8 @@ interface Props {
  * The type of the field determines how the value is displayed.
  * If the type is "text" the value is displayed as text.
  * If the type is "checkbox" the value is displayed as a checkbox.
- *
- * TODO: Add support for Autocomplete fields / check how to display a list of members e.g. project members
+ * If the type is "list" the value is displayed as a list of items.
+ * If the type is "memberList" the value is displayed as a list of members with an avatar and a link to the respective profile.
  */
 const InfoSection = (props: Props) => {
   const classes = useStyles();
