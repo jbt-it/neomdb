@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FieldSection, { Field } from "../../general/FieldSection";
 import MemberSelection from "../../general/MemberSelection";
 import { IpInfoType } from "../../../types/traineesTypes";
@@ -58,7 +58,9 @@ interface EditInternalProjectDialogProps {
   internalProjectDetails: IpInfoType;
   open: boolean;
   closeDialog: () => void;
-  setInternalProjectDetails: (data: IpInfoType | null) => void;
+  updateInternalProjectDetails: (data: IpInfoType | null) => void;
+  selectableTrainees: MembersField[];
+  selectableQMs: MembersField[];
 }
 
 /**
@@ -66,14 +68,18 @@ interface EditInternalProjectDialogProps {
  * @param internalProjectDetails - the internal project details
  * @param open - boolean that indicates if the dialog is open
  * @param closeDialog - function to close the dialog
- * @param setInternalProjectDetails - function to set the internal project details
+ * @param updateInternalProjectDetails - function to update the internal project details
+ * @param selectableTrainees - the selectable trainees
+ * @param selectableQMs - the selectable QMs
  * @returns the dialog for editing internal project details
  */
 const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDialogProps> = ({
   internalProjectDetails,
   open,
   closeDialog,
-  setInternalProjectDetails,
+  selectableTrainees,
+  selectableQMs,
+  updateInternalProjectDetails,
 }: EditInternalProjectDialogProps) => {
   const classes = useStyles();
   const isMobile = useResponsive("down", "sm");
@@ -91,8 +97,6 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   const [dlAbgegeben, setDlAbgegeben] = useState<boolean | undefined>(internalProjectDetails.dlAbgegeben);
   const [projektmitglieder, setProjektmitglieder] = useState<MembersField[]>(internalProjectDetails.projektmitglieder);
   const [qualitaetsmanager, setQualitaetsmanager] = useState<MembersField[]>(internalProjectDetails.qualitaetsmanager);
-  const [selectableMembers, setSelectableMembers] = useState<MembersField[]>([]);
-  const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
 
   const errorAP = apDatum ? (kickoff ? apDatum.isBefore(kickoff) : zpDatum ? apDatum.isBefore(zpDatum) : false) : false;
   const errorZP = zpDatum ? (kickoff ? zpDatum.isBefore(kickoff) : false) : false;
@@ -100,80 +104,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   const errorName = name === "";
   const errorKuerzel = kuerzel === "";
 
-  // Function to get the selectable members
-  const getSelectableMembers: VoidFunction = () => {
-    //api call for current trainees
-    setSelectableMembers([
-      {
-        mitgliedID: 8364,
-        name: "Jimmie O'Brien",
-        vorname: "vorname1",
-        nachname: "nachname1",
-        mitgliedstatus: 1,
-      },
-      {
-        mitgliedID: 8320,
-        name: "Radhika Norton",
-        vorname: "vorname2",
-        nachname: "nachname2",
-        mitgliedstatus: 1,
-      },
-      {
-        mitgliedID: 8478,
-        name: "Kellan Mclaughlin",
-        vorname: "vorname3",
-        nachname: "nachname3",
-        mitgliedstatus: 1,
-      },
-      {
-        mitgliedID: 8331,
-        name: "Jorja Bautista",
-        vorname: "Jorja",
-        nachname: "Bautista",
-        mitgliedstatus: 1,
-      },
-      { mitgliedID: 8748, name: "Mason Vinson", vorname: "Mason", nachname: "Vinson", mitgliedstatus: 2 },
-      {
-        mitgliedID: 8338,
-        name: "Mariana Macdonald",
-        vorname: "vorname4",
-        nachname: "nachname4",
-        mitgliedstatus: 3,
-      },
-      {
-        mitgliedID: 8167,
-        name: "Wolfgang U Luft",
-        vorname: "vorname4",
-        nachname: "nachname4",
-        mitgliedstatus: 4,
-      },
-    ]);
-  };
-
-  // Function to get the selectable QMs
-  const getSelectableQms: VoidFunction = () => {
-    //api call for current trainees
-    setSelectableQMs([
-      {
-        mitgliedID: 8338,
-        name: "Mariana Macdonald",
-        vorname: "vorname4",
-        nachname: "nachname4",
-        mitgliedstatus: 3,
-      },
-      {
-        mitgliedID: 8167,
-        name: "Wolfgang U Luft",
-        vorname: "vorname4",
-        nachname: "nachname4",
-        mitgliedstatus: 4,
-      },
-      { mitgliedID: 8748, name: "Mason Vinson", vorname: "Mason", nachname: "Vinson", mitgliedstatus: 2 },
-    ]);
-  };
-
   // Function to update the internal project details
-  const updateInternalProjectDetails = () => {
+  const handleUpdateInternalProjectDetails = () => {
     if (errorAP || errorZP || errorName || errorKuerzel) {
       return;
     }
@@ -195,10 +127,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
           qualitaetsmanager,
         }
       : null;
-    internalProjectDetails ? setInternalProjectDetails(data) : null;
+    internalProjectDetails ? updateInternalProjectDetails(data) : null;
   };
-  useEffect(getSelectableMembers, []);
-  useEffect(getSelectableQms, []);
 
   /**
    * Handles the closing of the internal project information dialog
@@ -404,8 +334,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             addMember={addMember}
             onChangeCallback={handleMemberSelection}
             removeMember={removeMember}
-            allMembers={selectableMembers}
-            mitgliedstatus={[1]}
+            selectableMembers={selectableTrainees}
+            memberstatus={["Trainee"]}
           ></MemberSelection>
         </div>
         <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
@@ -415,7 +345,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             addMember={addQM}
             removeMember={removeQM}
             onChangeCallback={handleQMSelection}
-            allMembers={selectableQMs}
+            selectableMembers={selectableQMs}
           ></MemberSelection>
         </div>
       </DialogContent>
@@ -434,7 +364,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
           variant="contained"
           fullWidth
           color="primary"
-          onClick={updateInternalProjectDetails}
+          onClick={handleUpdateInternalProjectDetails}
         >
           Speichern
         </Button>

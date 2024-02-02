@@ -149,6 +149,7 @@ const FieldSection = (props: Props) => {
             color="primary"
             value={field.state}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
             select
           >
             {field.values.map((value, index) => {
@@ -163,13 +164,15 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "RadioButton") {
         fieldElement = (
           <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
-            {field.values.map((value) => {
+            {field.values.map((value, index) => {
               return (
                 <FormControlLabel
                   className={classes.radioButtonItem}
                   value={value.value}
                   control={<Radio />}
                   label={value.label}
+                  key={`${value.label + index}`}
+                  disabled={field.disabled}
                 />
               );
             })}
@@ -204,6 +207,7 @@ const FieldSection = (props: Props) => {
             rows={field.rows}
             variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Date") {
@@ -215,6 +219,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Time") {
@@ -226,6 +231,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "DateTime") {
@@ -237,6 +243,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Autocomplete") {
@@ -249,6 +256,7 @@ const FieldSection = (props: Props) => {
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             size="medium"
             multiple
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Checkbox") {
@@ -261,6 +269,7 @@ const FieldSection = (props: Props) => {
                 color="primary"
                 checked={field.state as boolean}
                 onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+                disabled={field.disabled}
               />
             }
             label={field.label}

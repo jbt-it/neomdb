@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 interface MemberSelectionProps {
   selectedMembers: MembersField[];
-  allMembers: MembersField[];
-  mitgliedstatus?: number[];
+  selectableMembers: MembersField[];
+  memberstatus?: string[];
   onChangeCallback: (event: React.SyntheticEvent, value: MembersField | null) => void;
   addMember: () => void;
   removeMember: (mitgliedID: number) => void;
@@ -32,8 +32,8 @@ interface MemberSelectionProps {
  * The MemberSelection component is used to select members eg. for a project or an event and uses the Autocomplete component to easily select a member.
  * For each selected member a Autocomplete component is rendered. Members can be added and removed from the selection.
  * @param selectedMembers - The currently selected members state
- * @param allMembers - All members that can be selected as statte
- * @param mitgliedstatus - The mitgliedstatus of the members that can be selected eg. only trainees
+ * @param selectableMembers - All members that can be selected as statte
+ * @param memberstatus - The memberstatus of the members that can be selected eg. only trainees
  * @param onChangeCallback - The callback function that is called when the selection changes
  * @param addMember - The callback function that is called when a member is added
  * @param removeMember - The callback function that is called when a member is removed
@@ -41,20 +41,20 @@ interface MemberSelectionProps {
  */
 const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
   selectedMembers,
-  allMembers,
-  mitgliedstatus,
+  selectableMembers,
+  memberstatus,
   onChangeCallback,
   addMember,
   removeMember,
 }: MemberSelectionProps) => {
   const classes = useStyles();
-  const options: MembersField[] = mitgliedstatus
-    ? allMembers.filter(
+  const options: MembersField[] = memberstatus
+    ? selectableMembers.filter(
         (member) =>
-          mitgliedstatus.includes(member.mitgliedstatus) &&
+          memberstatus.includes(member.mitgliedstatus) &&
           !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID)
       )
-    : allMembers.filter(
+    : selectableMembers.filter(
         (member) => !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID)
       );
 
@@ -67,12 +67,12 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
             autoSelect
             className={`${classes.fieldItem} `}
             id={`members-${index}`}
-            options={allMembers}
+            options={selectableMembers}
             filterOptions={(options, state) => {
-              const result = mitgliedstatus
+              const result = memberstatus
                 ? options.filter(
                     (member) =>
-                      mitgliedstatus.includes(member.mitgliedstatus) &&
+                      memberstatus.includes(member.mitgliedstatus) &&
                       !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID) &&
                       member.name.toLowerCase().includes(state.inputValue.toLowerCase())
                   )

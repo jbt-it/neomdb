@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Paper, Typography, IconButton, styled } from "@mui/material";
 
@@ -11,6 +11,9 @@ import LoadingCircle from "../../components/general/LoadingCircle";
 import PageBar from "../../components/navigation/PageBar";
 import EditInternalProjectDialog from "../../components/members/trainees/EditInternalProjectDialog";
 import dayjs from "dayjs";
+import api from "../../utils/api";
+import { authReducerActionType } from "../../types/globalTypes";
+import { Member, MembersField } from "../../types/membersTypes";
 
 // Styling for the paper element
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -28,11 +31,13 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
  */
 const InternalProject: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
-  const { auth } = useContext(AuthContext);
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
   const [internalProjectDetails, setInternalProjectDetails] = useState<traineesTypes.IpInfoType | null>(null);
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
+  const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
+  const [trainees, setTrainees] = useState<MembersField[]>([]);
 
   /**
    * Handles the click on the edit button of the internal project information section
@@ -77,21 +82,21 @@ const InternalProject: React.FunctionComponent = () => {
             name: "Jimmie O'Brien",
             vorname: "vorname1",
             nachname: "nachname1",
-            mitgliedstatus: 1,
+            mitgliedstatus: "Trainee",
           },
           {
             mitgliedID: 8320,
             name: "Radhika Norton",
             vorname: "vorname2",
             nachname: "nachname2",
-            mitgliedstatus: 1,
+            mitgliedstatus: "Trainee",
           },
           {
             mitgliedID: 8478,
             name: "Kellan Mclaughlin",
             vorname: "vorname3",
             nachname: "nachname3",
-            mitgliedstatus: 1,
+            mitgliedstatus: "Trainee",
           },
         ],
         qualitaetsmanager: [
@@ -100,14 +105,14 @@ const InternalProject: React.FunctionComponent = () => {
             name: "Mariana Macdonald",
             vorname: "vorname4",
             nachname: "nachname4",
-            mitgliedstatus: 3,
+            mitgliedstatus: "Senior",
           },
           {
             mitgliedID: 8167,
             name: "Wolfgang U Luft",
             vorname: "vorname4",
             nachname: "nachname4",
-            mitgliedstatus: 4,
+            mitgliedstatus: "aktives Mitglied",
           },
         ],
       };
@@ -116,6 +121,83 @@ const InternalProject: React.FunctionComponent = () => {
     }
   };
 
+  // Retrieves all members and only sets the selectableQMs to the ones that are not trainees or no longer part of jbt
+  const getSelectableQms: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/members/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setSelectableQMs(
+              res.data
+                .map((member: Member) => ({
+                  mitgliedID: member.mitgliedID,
+                  name: `${member.vorname} ${member.nachname}`,
+                  vorname: member.vorname,
+                  nachname: member.nachname,
+                  mitgliedstatus: member.mitgliedstatus,
+                }))
+                .filter(
+                  (member: MembersField) =>
+                    member.mitgliedstatus !== "Trainee" && member.mitgliedstatus !== "Ausgetretene"
+                )
+            );
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  // Retrieves the current trainees
+  const getTrainees: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/trainees/", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setTrainees(
+              res.data
+                .map((trainee: traineesTypes.TraineeShort) => ({
+                  mitgliedID: trainee.mitgliedID,
+                  name: `${trainee.vorname} ${trainee.nachname}`,
+                  vorname: trainee.vorname,
+                  nachname: trainee.nachname,
+                  mitgliedstatus: "Trainee",
+                }))
+                .filter((trainee: MembersField) => trainee.mitgliedstatus !== "Ausgetretene")
+            );
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
   useEffect(() => {
     const fetchDetails = async () => {
       getInternalProjectDetails(Number(id));
@@ -123,6 +205,14 @@ const InternalProject: React.FunctionComponent = () => {
 
     fetchDetails();
   }, [id]);
+
+  useEffect(() => {
+    getSelectableQms();
+  }, [getSelectableQms]);
+
+  useEffect(() => {
+    getTrainees();
+  }, [getTrainees]);
 
   const internalProjectDetailsFields: Array<InformationField> = [
     {
@@ -196,7 +286,9 @@ const InternalProject: React.FunctionComponent = () => {
         internalProjectDetails={internalProjectDetails}
         open={internalProjectInfoDialogOpen}
         closeDialog={handleInternalProjectInfoDialogClose}
-        setInternalProjectDetails={setInternalProjectDetails}
+        updateInternalProjectDetails={setInternalProjectDetails}
+        selectableQMs={selectableQMs}
+        selectableTrainees={trainees}
       />
 
       <StyledPaper>

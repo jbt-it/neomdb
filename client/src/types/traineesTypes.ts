@@ -31,6 +31,16 @@ export type Trainee = {
   ExcelGrundlagen: boolean;
 };
 
+/**
+ * Type of the trainee data received from the backend
+ */
+export type TraineeShort = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  generation: number;
+};
+
 export type InternalProject = {
   internesprojektID: number;
   generation: number;

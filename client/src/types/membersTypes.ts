@@ -318,5 +318,5 @@ export type MembersField = {
   name: string;
   vorname: string;
   nachname: string;
-  mitgliedstatus: number;
+  mitgliedstatus: string;
 };
