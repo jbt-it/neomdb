@@ -8,6 +8,7 @@ import ProtectedRoutes from "./components/routing/ProtectedRoutes";
 // MUI imports
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/de";
 
 /**
  * page imports
@@ -27,6 +28,13 @@ import DirectorsHistory from "./pages/members/DirectorsHistory";
 // trainee pages
 import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
+import TraineeSection from "./pages/trainees/TraineeSection";
+
+// events and workshop pages
+import EventDetails from "./pages/events/EventDetails";
+import EventsOverview from "./pages/events/EventsOverview";
+import DisplayWorkshopsOverview from "./pages/events/WorkshopsOverview";
+// events pages
 
 // other pages
 import Login from "./pages/Login";
@@ -41,7 +49,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 
 const App: React.FunctionComponent = () => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
       <HashRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
@@ -58,13 +66,17 @@ const App: React.FunctionComponent = () => {
             </Route>
             <Route path="ressorts" element={<DepartmentOverview />} />
             <Route path="ewigervorstand" element={<DirectorsHistory />} />
-            <Route path="traineebereich" element={<Dashboard />} />
+            <Route path="traineebereich" element={<TraineeSection />} />
             <Route path="traineepraeferenzen" element={<TraineePreferences />} />
             <Route path="traineezuteilung" element={<AssignTrainees />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
             <Route path="projekte" element={<Dashboard />} />
-            <Route path="veranstaltungen" element={<Dashboard />} />
+            <Route path="veranstaltungen" element={<EventsOverview />} />
+            <Route path="veranstaltungen/:id" element={<EventDetails />} />
+            <Route path="workshops" element={<DisplayWorkshopsOverview />} />
+            <Route path="workshops/:id" element={<Dashboard />} />
+            <Route path="workshops/:id/:id" element={<Dashboard />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />

@@ -3,7 +3,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Radio,
-  Paper,
+  Box,
   TextField,
   Theme,
   Typography,
@@ -11,9 +11,18 @@ import {
   RadioGroup,
   Checkbox,
   FormControlLabel,
+  Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {
+  DateTimeValidationError,
+  DateValidationError,
+  PickerChangeHandlerContext,
+  TimeValidationError,
+} from "@mui/x-date-pickers";
+import { Dayjs } from "dayjs";
 
 type Field = {
   label: string;
@@ -32,15 +41,48 @@ type Field = {
     }
   | {
       type: "Date";
-      onChangeCallback: ((value: unknown, context: PickerChangeHandlerContext<DateValidationError>) => void) | null;
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<DateValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
     }
   | {
-      type: "Text" | "Checkbox";
+      type: "Text";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+      inputType?: "number";
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "Checkbox";
+      onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+    }
+  | {
+      type: "Time";
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<TimeValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "DateTime";
+      onChangeCallback:
+        | ((value: Dayjs | null, context: PickerChangeHandlerContext<DateTimeValidationError>) => void)
+        | null;
+      error?: boolean;
+      helperText?: string;
+    }
+  | {
+      type: "Autocomplete";
+      onChangeCallback: (event: React.ChangeEvent<object>, value: string[] | string) => void | null;
+      error?: boolean;
+      helperText?: string;
     }
 );
 interface Props {
-  title: string;
+  title?: string;
   fields: Array<Field>;
 }
 
@@ -94,14 +136,19 @@ const FieldSection = (props: Props) => {
           <TextField
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             key={index}
+            variant="outlined"
             label={field.label}
             color="primary"
             value={field.state}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             select
           >
-            {field.values.map((value) => {
-              return <MenuItem value={value.value}>{value.label}</MenuItem>;
+            {field.values.map((value, index) => {
+              return (
+                <MenuItem value={value.value} key={index}>
+                  {value.label}
+                </MenuItem>
+              );
             })}
           </TextField>
         );
@@ -124,11 +171,16 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <TextField
             className={`${classes.fieldItem} ${classes.textField}`}
+            error={field.error}
+            helperText={field.helperText}
             key={index}
             label={field.label}
             color="primary"
             value={field.state}
+            variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            type={field.inputType === "number" ? "number" : "text"}
+            inputProps={field.inputType === "number" ? { min: 0 } : {}}
           />
         );
       } else if (field.type === "TextBig") {
@@ -141,16 +193,53 @@ const FieldSection = (props: Props) => {
             value={field.state}
             multiline
             rows={field.rows}
+            variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
           />
         );
       } else if (field.type === "Date") {
         fieldElement = (
           <DatePicker
+            key={index}
             className={`${classes.fieldItem} ${classes.dateField}`}
             label={field.label}
-            value={field.state}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "Time") {
+        fieldElement = (
+          <TimePicker
+            key={index}
+            className={`${classes.fieldItem} ${classes.dateField}`}
+            label={field.label}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "DateTime") {
+        fieldElement = (
+          <DateTimePicker
+            key={index}
+            className={`${classes.fieldItem} ${classes.dateField}`}
+            label={field.label}
+            value={field.state as Dayjs}
+            slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+          />
+        );
+      } else if (field.type === "Autocomplete") {
+        fieldElement = (
+          <Autocomplete
+            key={index}
+            onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            renderInput={(params) => <TextField variant="outlined" {...params} label="Organisatoren" />}
+            options={field.state as string[]}
+            className={`${classes.fieldItem} ${classes.dropdownField}`}
+            size="medium"
+            multiple
           />
         );
       } else if (field.type === "Checkbox") {
@@ -173,13 +262,13 @@ const FieldSection = (props: Props) => {
       let fieldContainer: React.JSX.Element;
       if (field.width === "half") {
         fieldContainer = (
-          <Grid item xs={6} className={classes.gridItem}>
+          <Grid item xs={6} className={classes.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
       } else if (field.width === "full") {
         fieldContainer = (
-          <Grid item xs={12} className={classes.gridItem}>
+          <Grid item xs={12} className={classes.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
@@ -192,12 +281,14 @@ const FieldSection = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.fieldSectionBox}>
-      <Typography variant="h5" className={classes.fieldSectionTitle}>
-        {props.title}
-      </Typography>
+    <Box className={classes.fieldSectionBox}>
+      {props.title ? (
+        <Typography variant="h5" className={classes.fieldSectionTitle}>
+          {props.title}
+        </Typography>
+      ) : null}
       <Grid container>{renderFields(props.fields)}</Grid>
-    </Paper>
+    </Box>
   );
 };
 

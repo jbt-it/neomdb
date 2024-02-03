@@ -38,10 +38,10 @@ const Layout = () => {
             minHeight: 1,
             display: "flex",
             flexDirection: "column",
-            ml: 3,
-            mr: 3,
+            ml: { xs: 0, lg: 3 },
+            mr: { xs: 0, lg: 3 },
             pl: { xs: 0, lg: 1 },
-            pr: { xs: 2, lg: 3 },
+            pr: { xs: 0, lg: 3 },
             paddingBottom: "48px",
           }}
         >
