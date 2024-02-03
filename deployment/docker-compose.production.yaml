@@ -20,7 +20,7 @@ services:
     networks:
       - neomdb_network
     environment:
-      IS_PRODUCTION: "true"
+      NODE_ENV: "production"
       ORIGIN_PROD: "${ORIGIN_PROD}"
       DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
       DB_HOST_PROD: "${DB_HOST_PROD}"
