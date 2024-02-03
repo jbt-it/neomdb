@@ -1060,7 +1060,7 @@ const DisplayEventsOverview: React.FC = () => {
         justifyContent={"space-between"}
         sx={{ ml: mobile ? 0 : 3, mr: mobile ? 2 : 3 }}
       >
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Veranstaltungen
         </Typography>
         <Stack direction={"row"} justifyContent={mobile ? "space-between" : ""}>

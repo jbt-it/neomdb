@@ -2,7 +2,7 @@ import React from "react";
 import { Chip, SxProps } from "@mui/material";
 
 interface Props {
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop" | "Externer Workshop";
   sx?: SxProps;
   size?: "small" | "medium";
 }
@@ -23,6 +23,14 @@ function EventChip(props: Props) {
         label="Workshop"
         size={props.size}
         sx={{ bgcolor: "#318c6f", color: "#ffffff", fontWeight: 600, margin: 0.5, ...props.sx }}
+      />
+    );
+  } else if (props.type === "Externer Workshop") {
+    return (
+      <Chip
+        label="Externer Workshop"
+        size={props.size}
+        sx={{ bgcolor: "#ad3d9b", color: "#ffffff", fontWeight: 600, margin: 0.5, ...props.sx }}
       />
     );
   }

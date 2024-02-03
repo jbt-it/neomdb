@@ -30,9 +30,11 @@ import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
 import TraineeSection from "./pages/trainees/TraineeSection";
 
-// events pages
+// events and workshop pages
 import EventDetails from "./pages/events/EventDetails";
 import EventsOverview from "./pages/events/EventsOverview";
+import DisplayWorkshopsOverview from "./pages/events/WorkshopsOverview";
+// events pages
 
 // other pages
 import Login from "./pages/Login";
@@ -72,6 +74,9 @@ const App: React.FunctionComponent = () => {
             <Route path="projekte" element={<Dashboard />} />
             <Route path="veranstaltungen" element={<EventsOverview />} />
             <Route path="veranstaltungen/:id" element={<EventDetails />} />
+            <Route path="workshops" element={<DisplayWorkshopsOverview />} />
+            <Route path="workshops/:id" element={<Dashboard />} />
+            <Route path="workshops/:id/:id" element={<Dashboard />} />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
