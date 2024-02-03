@@ -79,30 +79,31 @@ export class TraineesController extends Controller {
    *  "kickoff": "2021-01-01",
    *  "kuerzel": "string",
    *  "projektname": "string-long",
-   *  "generation": 3,
+   *  "generationsBezeichnung": "Wintersemester 19/20",
+   *  "generation": 15,
    *  "internesProjektID": 62,
    *  "projektmitglieder": [
    *    {
-   *     "mitgliedID": 8167,
-   *     "vorname": "string",
-   *     "nachname": "string"
+   *     "mitgliedID": 8478,
+   *     "vorname": "Kellan",
+   *     "nachname": "Mclaughlin"
    *    },
    *    {
-   *     "mitgliedID": 8333,
-   *     "vorname": "string",
-   *     "nachname": "string"
+   *     "mitgliedID": 8748,
+   *     "vorname": "Mason",
+   *     "nachname": "Vinson"
    *    }
    *   ],
    *  "qualitaetsmanager": [
    *    {
-   *     "mitgliedID": 8167,
-   *     "vorname": "string",
-   *     "nachname": "string"
+   *     "mitgliedID": 8320,
+   *     "vorname": "Radhika",
+   *     "nachname": "Norton"
    *    },
    *    {
    *     "mitgliedID": 8333,
-   *     "vorname": "string",
-   *     "nachname": "string"
+   *     "vorname": "Miruna",
+   *     "nachname": "Decker"
    *    }
    *   ]
    * }

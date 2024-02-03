@@ -264,6 +264,7 @@ const InternalProject: React.FunctionComponent = () => {
         if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");
           handleInternalProjectInfoDialogClose();
+          getInternalProjectDetails(Number(id));
         }
       })
       .catch((err: AxiosError) => {
@@ -300,7 +301,7 @@ const InternalProject: React.FunctionComponent = () => {
 
   useEffect(() => {
     getInternalProjectDetails(Number(id));
-  }, [id, updateInternalProjectDetails]);
+  }, [id]);
 
   useEffect(() => {
     getSelectableQms();
