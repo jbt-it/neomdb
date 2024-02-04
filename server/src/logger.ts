@@ -10,7 +10,7 @@ const logsPath = process.env.LOGS_PATH || "./logs"; // Path to the logs folder, 
  * @returns {transports[]} Array of transports
  */
 const getTransports = () => {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV !== "production") {
     return [
       new transports.Console({
         format: format.combine(
@@ -36,7 +36,7 @@ const getTransports = () => {
       level: "error",
     }),
     new transports.File({
-      filename: `${logsPath}logs/combined.log`,
+      filename: `${logsPath}/combined.log`,
     }),
     // For log rotation
     new DailyRotateFile({

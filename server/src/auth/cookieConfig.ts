@@ -1,13 +1,15 @@
 import { CookieOptions } from "express-serve-static-core";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 /**
  * Options for the cookie
  */
 export const cookieOptions: CookieOptions = {
   path: "/api", // Cookie is only sent to routes starting with /api
   httpOnly: true, // Cookie is only accesible via the browser
-  secure: process.env.IS_PRODUCTION ? true : false, // Cookie can only be sent to an HTTPS page in production
-  sameSite: process.env.IS_PRODUCTION ? "strict" : "lax", // In development cookie can be sent to the same domain
+  secure: isProduction ? true : false, // Cookie can only be sent to an HTTPS page in production
+  sameSite: isProduction ? "strict" : "lax", // In development cookie can be sent to the same domain
 };
 
 /**

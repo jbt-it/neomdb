@@ -208,11 +208,15 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
 
   const [openMitglieder, setOpenMitglieder] = useState(false);
   const [openTools, setOpenTools] = useState(false);
+  const [openEvents, setOpenEvents] = useState(false);
 
   const handleOpenMitglieder = () => {
     setOpenMitglieder(!openMitglieder);
     if (openTools) {
       setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
     }
   };
 
@@ -220,6 +224,19 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
     setOpenTools(!openTools);
     if (openMitglieder) {
       setOpenMitglieder(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
+    }
+  };
+
+  const handleOpenEvents = () => {
+    setOpenEvents(!openEvents);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
     }
   };
 
@@ -234,9 +251,23 @@ const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
         <NavItem
           key={item.title}
           item={item}
-          openItem={item.title === "Mitglieder" ? openMitglieder : item.title === "Tools" ? openTools : undefined}
+          openItem={
+            item.title === "Mitglieder"
+              ? openMitglieder
+              : item.title === "Tools"
+              ? openTools
+              : item.title === "Veranstaltungen"
+              ? openEvents
+              : undefined
+          }
           setOpenItem={
-            item.title === "Mitglieder" ? handleOpenMitglieder : item.title === "Tools" ? handleOpenTools : undefined
+            item.title === "Mitglieder"
+              ? handleOpenMitglieder
+              : item.title === "Tools"
+              ? handleOpenTools
+              : item.title === "Veranstaltungen"
+              ? handleOpenEvents
+              : undefined
           }
         />
       ))}

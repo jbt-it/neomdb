@@ -5,13 +5,13 @@ import * as fs from "fs";
 import logger from "./logger";
 import { PoolOptions } from "mysql2";
 
-// Check if the environment is test
+const isProduction = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "test";
 
 // Read the database password from file if production
 let dbPassword = null;
 try {
-  if (!isTest && process.env.IS_PRODUCTION) {
+  if (!isTest && isProduction) {
     dbPassword = fs.readFileSync(process.env.DB_PASSWORD_PROD_FILE, "utf8");
   }
 } catch (err) {
@@ -21,7 +21,7 @@ try {
 // Parse the database port to int
 let dbPort = null;
 try {
-  if (!isTest && process.env.IS_PRODUCTION) {
+  if (!isTest && isProduction) {
     dbPort = parseInt(process.env.DB_PORT_PROD);
   }
   dbPort = parseInt(process.env.DB_PORT);
@@ -71,10 +71,5 @@ const prodDatabaseConfig: PoolOptions = {
  * Config for the MySQL database
  * (depending on the environment)
  */
-const databaseConfig = isTest
-  ? testDatabaseConfig
-  : process.env.IS_PRODUCTION === "true"
-  ? prodDatabaseConfig
-  : devDatabaseConfig;
-
+const databaseConfig = isTest ? testDatabaseConfig : isProduction ? prodDatabaseConfig : devDatabaseConfig;
 export default databaseConfig;
