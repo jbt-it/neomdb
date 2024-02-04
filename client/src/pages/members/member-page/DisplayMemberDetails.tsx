@@ -251,7 +251,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param event ChangeEvent
    */
   const saveImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("here1");
+
     if (event.target.files && event.target.files[0]) {
+      console.log("here2");
       const file = event.target.files[0];
       props.saveMemberImage(file);
     }

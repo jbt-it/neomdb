@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getCurrentDirectors, getDepartmentMembers, getDepartments, getMembers } from "../../api/members";
-import { DepartmentDetails, DepartmentMember, Director, Member } from "../../types/membersTypes";
+import {
+  getCurrentDirectors,
+  getDepartmentMembers,
+  getDepartments,
+  getEdvSkills,
+  getLanguages,
+  getMembers,
+} from "../../api/members";
+import { DepartmentDetails, DepartmentMember, Director, EDVSkill, Language, Member } from "../../types/membersTypes";
 import { AxiosError } from "axios";
 import { authReducerActionType } from "../../types/globalTypes";
 import { useAuth } from "../useAuth";
@@ -95,6 +102,44 @@ const useMembers = () => {
   });
 
   const currentDirectors = (currentDirectorsData?.data as Director[]) || [];
+
+  // ----------------------------------------------------------------------------------
+  // getLanguages query
+  const {
+    data: languagesData,
+    isLoading: isLanguagesLoading,
+    isError: isLanguagesError,
+  } = useQuery({
+    queryKey: ["Languages"],
+    queryFn: getLanguages,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Fehler beim Laden der Sprachen");
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+  });
+
+  const languages = (languagesData?.data as Language[]) || [];
+
+  // ----------------------------------------------------------------------------------
+  // getEDVSkills query
+  const {
+    data: edvSkillsData,
+    isLoading: isEDVSkillsLoading,
+    isError: isEDVSkillsError,
+  } = useQuery({
+    queryKey: ["EDVSkills"],
+    queryFn: getEdvSkills,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Fehler beim Laden der Sprachen");
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+  });
+
+  const edvSkills = (edvSkillsData?.data as EDVSkill[]) || [];
 
   // ----------------------------------------------------------------------------------
 
@@ -204,6 +249,12 @@ const useMembers = () => {
     currentDirectors,
     isCurrentDirectorsLoading,
     isCurrentDirectorsError,
+    languages,
+    isLanguagesLoading,
+    isLanguagesError,
+    edvSkills,
+    isEDVSkillsLoading,
+    isEDVSkillsError,
   };
 };
 

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { getMemberDetails } from "../../api/members";
-import { MemberDetails } from "../../types/membersTypes";
+import { getMemberDetails, getMemberImage } from "../../api/members";
+import { Member, MemberDetails, MemberImage } from "../../types/membersTypes";
 import { AxiosError } from "axios";
 import { authReducerActionType } from "../../types/globalTypes";
 import { useAuth } from "../useAuth";
@@ -36,6 +36,24 @@ const useMemberDetails = (memberID: number) => {
   const memberDetails = memberDetailsData && (memberDetailsData.data as MemberDetails);
 
   // ----------------------------------------------------------------------------------
+  // getMemberImage query
+  const {
+    data: memberImageData,
+    isLoading: isMemberImageLoading,
+    isError: isMemberImageError,
+  } = useQuery({
+    queryKey: ["MemberImage", memberID],
+    queryFn: () => getMemberImage(memberID),
+    onError: (err: AxiosError) => {
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+  });
+
+  const memberImage = memberImageData ? (memberImageData.data as MemberImage) : null;
+
+  // ----------------------------------------------------------------------------------
   // updateMemberDetails mutation
   const { mutate: mutateDetails, isLoading: isUpdatingMemberDetails } = useMutation({
     mutationFn: updateDetails,
@@ -61,6 +79,9 @@ const useMemberDetails = (memberID: number) => {
     isMemberDetailsError,
     updateMemberDetails,
     isUpdatingMemberDetails,
+    memberImage,
+    isMemberImageLoading,
+    isMemberImageError,
   };
 };
 

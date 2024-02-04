@@ -1,5 +1,14 @@
 import api from "../utils/api";
-import { DepartmentDetails, DepartmentMember, Director, Member, MemberDetails } from "../types/membersTypes";
+import {
+  DepartmentDetails,
+  DepartmentMember,
+  Director,
+  EDVSkill,
+  Language,
+  Member,
+  MemberDetails,
+  MemberImage,
+} from "../types/membersTypes";
 import { AxiosResponse } from "axios";
 
 // GET ROUTES
@@ -11,15 +20,15 @@ export const getMemberDetails = async (memberId: number): Promise<AxiosResponse<
   return await api.get<MemberDetails>(`/members/${memberId}`);
 };
 
-export const getMemberImage = async (id: number): Promise<AxiosResponse<string>> => {
+export const getMemberImage = async (id: number): Promise<AxiosResponse<MemberImage>> => {
   return await api.get(`/members/${id}/image`);
 };
 
-export const getLanguages = async (): Promise<string[]> => {
+export const getLanguages = async (): Promise<AxiosResponse<Language[]>> => {
   return await api.get("/members/languages");
 };
 
-export const getEdvSkills = async (): Promise<string[]> => {
+export const getEdvSkills = async (): Promise<AxiosResponse<EDVSkill[]>> => {
   return await api.get("/members/edv-skills");
 };
 
