@@ -216,7 +216,7 @@ const ChangePassword: React.FunctionComponent = () => {
    */
   const postNotSentWarning = () => {
     if (!postSuccesful) {
-      return "Das neue Paswwort wurde nicht gesendet, da es entweder nicht komplex genug war oder nicht übereingestimmt hat";
+      return "Das neue Passwort wurde nicht gesendet, da es entweder nicht komplex genug war oder nicht übereingestimmt hat";
     } else {
       return "";
     }

@@ -1,7 +1,7 @@
 /**
  * The MemberManagement-Component lets admins manually add members and change the status of existing members
  */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Divider,
@@ -21,11 +21,8 @@ import {
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
-import { showSuccessMessage, showErrorMessage } from "../../utils/toastUtils";
-import { transfromDateToSQLDate } from "../../utils/dateUtils";
-import { replaceSpecialCharacters } from "../../utils/stringUtils";
 import { makeStyles, createStyles } from "@mui/styles";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Function which proivdes the styles of the MemberManagement
@@ -175,7 +172,9 @@ const MemberManagement: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<Member[]>([]);
+  // const [members, setMembers] = useState<Member[]>([]);
+  const { members } = useMembers();
+  const { updateMemberStatus, addMember } = useMembers();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -184,33 +183,6 @@ const MemberManagement: React.FunctionComponent = () => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-
-  // Retrieves the members
-  const getMembers: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Laden der Benutzer fehlgeschlagen");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  useEffect(() => getMembers(), []);
 
   /**
    * Handles the change event on the search filter input
@@ -366,83 +338,6 @@ const MemberManagement: React.FunctionComponent = () => {
   };
 
   /**
-   * Changes the status of the member specified with the id
-   * @param id The id of the member
-   * @param status The status
-   */
-  const changeMemberStatus = (id: number, status: string) => {
-    const payload = {
-      mitgliedstatus: status,
-    };
-
-    api
-      .patch(`/members/${id}/status`, payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 204) {
-          getMembers();
-          showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
-        } else {
-          showErrorMessage("Mitgliedsstatus Änderung fehlgeschlagen");
-        }
-      })
-      .catch((error) => {
-        showErrorMessage(error.message);
-      });
-  };
-
-  /**
-   * Creates a new member
-   */
-  const addMember = () => {
-    if (firstName.trim().length <= 0) {
-      showErrorMessage("Der Vorname darf nicht leer sein");
-      return;
-    }
-    if (lastName.trim().length <= 0) {
-      showErrorMessage("Der Nachname darf nicht leer sein");
-      return;
-    }
-    if (email.trim().length <= 0) {
-      showErrorMessage("Die E-Mail darf nicht leer sein");
-      return;
-    }
-
-    const password = Math.random().toString(36).slice(2, 11);
-    const firstNameSanitized = replaceSpecialCharacters(firstName.trim().replace(" ", "-")).toLowerCase();
-    const lastNameSanitized = replaceSpecialCharacters(lastName.trim().replace(" ", "-")).toLowerCase();
-    const payload = {
-      name: firstNameSanitized + "." + lastNameSanitized,
-      password: password,
-      vorname: firstName.trim(),
-      nachname: lastName.trim(),
-      geburtsdatum: null,
-      handy: null,
-      geschlecht: null,
-      generation: null,
-      traineeSeit: transfromDateToSQLDate(new Date()),
-      email: email,
-    };
-
-    api
-      .post("members/", payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          getMembers();
-          showSuccessMessage("Mitglied erfolgreich hinzugefügt");
-        } else {
-          showErrorMessage("Mitglied konnte nicht hinzugefügt werden");
-        }
-      })
-      .catch((error) => {
-        showErrorMessage(error.message);
-      });
-  };
-
-  /**
    * Handles the change event of the first name field
    * @param event
    */
@@ -464,6 +359,16 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const handleEmail = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
+  };
+
+  /**
+   * Handles the add member button click
+   */
+  const handleAddMember = () => {
+    addMember(firstName, lastName, email);
+    setFirstName("");
+    setLastName("");
+    setEmail("");
   };
 
   /**
@@ -508,7 +413,7 @@ const MemberManagement: React.FunctionComponent = () => {
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12}>
-          <Button variant="outlined" color="primary" className={classes.inputButton} onClick={addMember}>
+          <Button variant="outlined" color="primary" className={classes.inputButton} onClick={handleAddMember}>
             Benutzer anlegen
           </Button>
         </Grid>
@@ -644,7 +549,7 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const changeStatusTable = (
     <TableContainer component={Paper} className={classes.tableContainer}>
-      <Table stickyHeader aria-label="sticky table">
+      <Table stickyHeader aria-label="sticky table" size="small">
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableHeadCell}>
@@ -681,7 +586,7 @@ const MemberManagement: React.FunctionComponent = () => {
                   className={classes.filterElement}
                   color="primary"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    changeMemberStatus(member.mitgliedID, event.target.value);
+                    updateMemberStatus(member.mitgliedID, event.target.value);
                   }}
                   value={member.mitgliedstatus}
                   select

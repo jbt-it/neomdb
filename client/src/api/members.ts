@@ -1,8 +1,8 @@
 import api from "../utils/api";
-import { Member, MemberDetails } from "../types/membersTypes";
+import { DepartmentDetails, DepartmentMember, Director, Member, MemberDetails } from "../types/membersTypes";
 import { AxiosResponse } from "axios";
 
-// GET
+// GET ROUTES
 export const getMembers = async (): Promise<AxiosResponse<Member[]>> => {
   return await api.get<Member[]>("/members/");
 };
@@ -19,18 +19,39 @@ export const getLanguages = async (): Promise<string[]> => {
   return await api.get("/members/languages");
 };
 
-export const getDepartments = async (): Promise<string[]> => {
-  return await api.get("/members/departments");
-};
-
 export const getEdvSkills = async (): Promise<string[]> => {
   return await api.get("/members/edv-skills");
 };
 
+export const getDepartments = async (): Promise<AxiosResponse<DepartmentDetails[]>> => {
+  return await api.get("/members/departments");
+};
+
+export const getDepartmentMembers = async (): Promise<AxiosResponse<DepartmentMember[]>> => {
+  return await api.get("/members/department-members");
+};
+
+export const getCurrentDirectors = async (): Promise<AxiosResponse<Director[]>> => {
+  return await api.get("/members/directors?current=true");
+};
+
 //----------------------------------------
 
+// UPDATE ROUTES
 export const updateMemberDetails = async (memberDetails: MemberDetails): Promise<AxiosResponse<MemberDetails>> => {
   return api.patch(`/members/${memberDetails.mitgliedID}`, memberDetails);
+};
+
+interface UpdateMemberStatusParams {
+  memberID: number;
+  status: string;
+}
+
+export const updateMemberStatus = async ({
+  memberID,
+  status,
+}: UpdateMemberStatusParams): Promise<AxiosResponse<MemberDetails>> => {
+  return api.patch(`/members/${memberID}/status`, { mitgliedstatus: status });
 };
 
 export const saveMemberImage = async (image: File, id: number): Promise<void> => {
@@ -50,4 +71,24 @@ export const saveMemberImage = async (image: File, id: number): Promise<void> =>
       }
     );
   };
+};
+
+//----------------------------------------
+
+// CREATE ROUTES
+
+interface AddMemberParams {
+  name: string;
+  password: string;
+  vorname: string;
+  nachname: string;
+  geburtsdatum: null;
+  handy: null;
+  geschlecht: null;
+  generation: null;
+  traineeSeit: string;
+  email: string;
+}
+export const addMember = async (member: AddMemberParams): Promise<AxiosResponse<MemberDetails>> => {
+  return api.post("/members", member);
 };

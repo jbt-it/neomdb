@@ -23,8 +23,8 @@ import { makeStyles, createStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import PageBar from "../../components/navigation/PageBar";
 import * as membersTypes from "../../types/membersTypes";
-import useGetMembers from "../../hooks/members/useGetMembers";
 import LoadingCircle from "../../components/general/LoadingCircle";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Function which proivdes the styles of the MemberOverview
@@ -149,7 +149,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
-  const { members, isMembersLoading } = useGetMembers();
+  const { members, isMembersLoading } = useMembers();
 
   if (isMembersLoading) {
     return <LoadingCircle />;

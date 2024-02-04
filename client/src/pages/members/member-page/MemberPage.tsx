@@ -11,54 +11,21 @@ import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils"
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
 import { useParams } from "react-router-dom";
-import useGetMembers from "../../../hooks/members/useGetMembers";
-import useGetMemberDetails from "../../../hooks/members/useGetMemberDetails";
-import useUpdateMemberDetails from "../../../hooks/members/useUpdateMemberDetails";
 import LoadingCircle from "../../../components/general/LoadingCircle";
+import useMembers from "../../../hooks/members/useMembers";
+import useMemberDetails from "../../../hooks/members/useMemberDetails";
 
 const MemberProfile: React.FunctionComponent = () => {
-  const params = useParams();
-  // const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  const { id } = useParams();
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
+
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
-  // const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
   const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
-  const { members, isMembersLoading } = useGetMembers();
-  const { memberDetails, isMemberDetailsLoading } = useGetMemberDetails(Number(params.id));
-  const { updateMemberDetails, isUpdatingMemberDetails } = useUpdateMemberDetails();
-
-  /**
-   * Retrieves all departments
-   */
-  const getDepartments: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/members/departments`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setDepartments(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
+  const { members, isMembersLoading, departments } = useMembers();
+  const { memberDetails, isMemberDetailsLoading, updateMemberDetails } = useMemberDetails(Number(id));
 
   /**
    * Retrieves all languages
@@ -96,7 +63,7 @@ const MemberProfile: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/members/${params.id}/image`, {
+      .get(`/members/${id}/image`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -164,7 +131,7 @@ const MemberProfile: React.FunctionComponent = () => {
       const base64 = reader.result?.toString().split(",")[1];
       api
         .post(
-          `/members/${params.id}/image`,
+          `/members/${id}/image`,
           { base64, mimeType },
           {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -198,13 +165,12 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(
     () =>
       // Checks if the user is the owner of the member page
-      setIsOwner(auth.userID === parseInt(params.id!, 10)),
-    [params.id, auth.userID]
+      setIsOwner(auth.userID === Number(id)),
+    [id, auth.userID]
   );
-  useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
-  useEffect(getMemberImage, [params.id, dispatchAuth]);
+  useEffect(getMemberImage, [id, dispatchAuth]);
 
   if (isMembersLoading || isMemberDetailsLoading) {
     return <LoadingCircle />;
