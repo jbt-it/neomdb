@@ -4,13 +4,14 @@ import { query } from "../../database";
 import logger from "../../logger";
 
 class EventsRepository {
-  private updateEvent = async (
+  updateEventByID = async (
     eventID: number,
     updatedEvent: any, // TODO: Add type
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
       // TODO: Add attributes
+      // SELECT eventname, ort, datum, ende, startzeit, endzeit, anmeldungsfrist FROM event;
       await query(`UPDATE events SET ? WHERE id = ?`, [updatedEvent, eventID], connection);
 
       return null;
