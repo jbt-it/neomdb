@@ -278,6 +278,17 @@ export type Director = {
 };
 
 /**
+ * Type for a member field
+ */
+export type MemberField = {
+  memberID: number;
+  name: string;
+  vorname: string;
+  nachname: string;
+  status: string;
+};
+
+/**
  * Type of plesk api call result
  */
 export type PleskApiResult = {
