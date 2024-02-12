@@ -1,18 +1,23 @@
+import { MembersField } from "./membersTypes";
+
 /**
  * Type of the internal project of a member
  */
 export type InternalProject = {
   internesProjektID: number;
   generation: number;
+  generationsBezeichnung: string;
   projektname: string;
   kuerzel: string;
-  kickoff: string;
+  kickoff: string | null;
   AngebotBeiEV: boolean;
   ZPBeiEV: boolean;
-  ZPGehalten: string;
+  ZPGehalten: string | null;
   APBeiEV: boolean;
-  APGehalten: string;
+  APGehalten: string | null;
   DLBeiEV: boolean;
+  projektmitglieder: MembersField[] | null;
+  qualitaetsmanager: MembersField[] | null;
 };
 
 /**
