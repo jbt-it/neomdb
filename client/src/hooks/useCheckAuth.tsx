@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import api from "../utils/api";
 import { authReducerActionType } from "../types/globalTypes";
-import { useAuth } from "../hooks/useAuth";
+import { AuthContext } from "../context/auth-context/AuthContext";
 
 /**
  * This hook is responsible for checking if the user is authenticated.
@@ -14,7 +14,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export const useCheckAuth = () => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
 
   const checkAuth = useCallback(() => {
     setIsAuthLoading(true);
@@ -31,8 +31,6 @@ export const useCheckAuth = () => {
             type: authReducerActionType.authenticate,
             payload: { userID, userName, permissions, roles },
           });
-        } else {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
         }
         setIsAuthLoading(false);
       })

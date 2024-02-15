@@ -10,19 +10,20 @@ import {
 import { DepartmentDetails, DepartmentMember, Director, EDVSkill, Language, Member } from "../../types/membersTypes";
 import { AxiosError } from "axios";
 import { authReducerActionType } from "../../types/globalTypes";
-import { useAuth } from "../useAuth";
 import { updateMemberStatus as updateStatus } from "../../api/members";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { addMember as addMemberApi } from "../../api/members";
 import { replaceSpecialCharacters } from "../../utils/stringUtils";
 import { transfromDateToSQLDate } from "../../utils/dateUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import { useContext } from "react";
 
 /**
  * Hook that handles the members api calls, uses react-query
  * @returns The members, a boolean indicating if the data is loading and a boolean indicating if an error occured
  */
 const useMembers = () => {
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
   // ############
@@ -171,6 +172,8 @@ const useMembers = () => {
   const updateMemberStatus = (memberID: number, status: string) => {
     mutateStatus({ memberID, status });
   };
+
+  // ----------------------------------------------------------------------------------
 
   // ############
   // CREATE QUERIES

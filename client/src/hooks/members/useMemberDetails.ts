@@ -1,23 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { getMemberDetails, getMemberImage } from "../../api/members";
-import { Member, MemberDetails, MemberImage } from "../../types/membersTypes";
 import { AxiosError } from "axios";
+import { MemberDetails, MemberImage } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
-import { useAuth } from "../useAuth";
-import { updateMemberDetails as updateDetails } from "../../api/members";
+import {
+  getMemberDetails,
+  getMemberImage,
+  updateMemberDetails as updateDetails,
+  saveMemberImage as saveImage,
+} from "../../api/members";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
+import { useContext } from "react";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Hook that handles the members api calls, uses react-query
  * @returns The members, a boolean indicating if the data is loading and a boolean indicating if an error occured
  */
 const useMemberDetails = (memberID: number) => {
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
   // If a memberID is provided, the following code will be executed
   // Not good ... rather use a separate hook for the updateMemberStatus mutation
 
-  // ----------------------------------------------------------------------------------
+  // ############
+  // GET QUERIES
+  // ############
+
   // getMemberDetails query
   const {
     data: memberDetailsData,
@@ -54,6 +63,11 @@ const useMemberDetails = (memberID: number) => {
   const memberImage = memberImageData ? (memberImageData.data as MemberImage) : null;
 
   // ----------------------------------------------------------------------------------
+
+  // ############
+  // UPDATE QUERIES
+  // ############
+
   // updateMemberDetails mutation
   const { mutate: mutateDetails, isLoading: isUpdatingMemberDetails } = useMutation({
     mutationFn: updateDetails,
@@ -72,6 +86,31 @@ const useMemberDetails = (memberID: number) => {
   };
 
   // ----------------------------------------------------------------------------------
+  //saveMemberImage mutation
+  const { mutate: mutateImage, isLoading: isSavingMemberImage } = useMutation({
+    mutationFn: saveImage,
+    onError: (err: AxiosError) => {
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      } else if (err.response?.status === 403) {
+        showErrorMessage("Hochladen ist fehlgeschlagen!");
+      } else if (err.response?.status === 500) {
+        showErrorMessage("Hochladen ist fehlgeschlagen!");
+      }
+    },
+    onSuccess: () => {
+      showSuccessMessage("Bild wurde erfolgreich hochgeladen!");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["MemberImage"] });
+    },
+  });
+
+  const saveMemberImage = (image: File) => {
+    mutateImage({ image, memberID });
+  };
+
+  // ----------------------------------------------------------------------------------
 
   return {
     memberDetails,
@@ -82,6 +121,8 @@ const useMemberDetails = (memberID: number) => {
     memberImage,
     isMemberImageLoading,
     isMemberImageError,
+    saveMemberImage,
+    isSavingMemberImage,
   };
 };
 

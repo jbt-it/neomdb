@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 
 import LoadingCircle from "../general/LoadingCircle";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 
 /**
  * This file contains the PublicRoutes component, which is responsible for rendering the public routes of the application.
@@ -18,7 +19,7 @@ import LoadingCircle from "../general/LoadingCircle";
  */
 const PublicRoutes: React.FunctionComponent = () => {
   const { checkAuth, isAuthLoading } = useCheckAuth();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const location = useLocation();
 
   // Calls checkAuth on (re)render of routes

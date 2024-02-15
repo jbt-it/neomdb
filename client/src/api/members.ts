@@ -63,7 +63,12 @@ export const updateMemberStatus = async ({
   return api.patch(`/members/${memberID}/status`, { mitgliedstatus: status });
 };
 
-export const saveMemberImage = async (image: File, id: number): Promise<void> => {
+interface UpdateMemberImageParams {
+  image: File;
+  memberID: number;
+}
+
+export const saveMemberImage = async ({ image, memberID }: UpdateMemberImageParams): Promise<void> => {
   // Extract file type (the part of the file name after the last dot)
   const mimeType = image.name.split(".").pop();
 
@@ -72,13 +77,7 @@ export const saveMemberImage = async (image: File, id: number): Promise<void> =>
   reader.readAsDataURL(image);
   reader.onloadend = () => {
     const base64 = reader.result?.toString().split(",")[1];
-    api.post(
-      `/members/${id}/image`,
-      { base64, mimeType },
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-    );
+    api.post(`/members/${memberID}/image`, { base64, mimeType });
   };
 };
 

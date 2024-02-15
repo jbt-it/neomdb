@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-import { useAuth } from "../../hooks/useAuth";
 import Layout from "../general/Layout";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 
 import LoadingCircle from "../general/LoadingCircle";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 
 /**
  * This file contains the PrivateRoutes component, which is responsible for rendering the private routes of the application.
@@ -22,7 +23,7 @@ import LoadingCircle from "../general/LoadingCircle";
  */
 const PrivateRoutes: React.FunctionComponent = () => {
   const { checkAuth, isAuthLoading } = useCheckAuth();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const location = useLocation();
 
   // Calls checkAuth on (re)render of routes

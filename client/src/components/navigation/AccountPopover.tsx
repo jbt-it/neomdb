@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { alpha } from "@mui/material/styles";
 import { MenuItem, Typography, IconButton, Avatar, Popover, Box, Divider } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
-import api from "../../utils/api";
-import { useNavigate, Link } from "react-router-dom";
-import { authReducerActionType } from "../../types/globalTypes";
+import { Link } from "react-router-dom";
+import useMemberDetails from "../../hooks/members/useMemberDetails";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 
 interface MenuOption {
   label: string;
@@ -17,8 +17,9 @@ interface MenuOption {
  */
 const AccountPopover = () => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
-  const { auth, dispatchAuth } = useAuth();
-  const navigate = useNavigate();
+  const { auth } = useContext(AuthContext);
+  const { memberImage } = useMemberDetails(Number(auth.userID));
+  const { logout } = useAuth();
 
   const MENU_OPTIONS: MenuOption[] = [
     {
@@ -39,16 +40,6 @@ const AccountPopover = () => {
     setOpen(null);
   };
 
-  /**
-   * Handles click on logout link
-   */
-  const handleLogout: VoidFunction = () => {
-    api.post("/auth/logout").then(() => {
-      navigate("/login");
-      dispatchAuth({ type: authReducerActionType.deauthenticate });
-    });
-  };
-
   return (
     <>
       <IconButton
@@ -66,13 +57,16 @@ const AccountPopover = () => {
         <Avatar
           alt={auth.userName?.toString()}
           sx={{
-            width: 36,
-            height: 36,
+            width: 40,
+            height: 40,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-        >
-          {auth.userName?.charAt(0).toUpperCase()}
-        </Avatar>
+          src={
+            memberImage?.base64
+              ? `data:image/${memberImage.mimeType};base64,${memberImage.base64}`
+              : auth.userName?.charAt(0).toUpperCase()
+          }
+        />
       </IconButton>
 
       <Popover
@@ -111,7 +105,7 @@ const AccountPopover = () => {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleLogout}
+          onClick={logout}
           sx={{ typography: "body2", color: "error.main", py: 1.5 }}
         >
           Logout
