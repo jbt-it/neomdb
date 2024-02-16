@@ -10,6 +10,7 @@ export const workingWeekendParticipants = [
     vegetarier: false,
     kommentar: "Hab richtig Bock aufs Wochenende!",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
   {
     event_eventID: 3,
@@ -22,6 +23,7 @@ export const workingWeekendParticipants = [
     vegetarier: true,
     kommentar: "Jetzt geht die Party und die Party geht ab!",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
   {
     event_eventID: 3,
@@ -35,6 +37,7 @@ export const workingWeekendParticipants = [
     kommentar:
       "Kann es kaum erwarten ^_^ Ich esse nur Halal-Fleisch und würde für mich selber Essen mitbringen (für alle Mahlzeiten). Aus religiösen Gründen möchte Ich keine Küchenschichten/Arbeiten übernehmen bei den Ich nicht Halal Fleisch zubereite/umgehen muss, gleiches gegenüber alk.. Darüber hinaus war letztes mal eine hohe Nachfrage nach Ayran, daher würde ich es sehr begrüßen wenn das Einkaufteam 5kg Joghurt (vorzugsweise stichfest aber nicht notwendig) einkaufen könnte. Ich würde beim Mittag/Abendessen Ayran machen und es bei der Essensausgabe anbieten bzw. auf den Getränketischen hinstellen. Zudem habe ich letztes Mahl auch alk. freies Bier mitgebracht, welches auch sehr begehrt war. Ein Kasten hat leider nicht ausgereicht, daher währe es nice wenn dieses mal 2 Kästen gekauft werden können. Nicht nur müssen viele Mitglieder Autofahren und wollen auch mitt rinken auch werden es mehr Mitglieder, welche keinen alk. trinken aber auch sicha uch integrieren möchten. Es währe auch sehr schön wenn wieder das gleiche alk. freie Bier bekommen könnten. Wichtig ist aber nur das es 0,0% alk. hat: Um die Tradition ums Popcorn bei zu behalten wäre ich dem Einkaufsteam sehr verbunden wenn es auch 1kg Popcorn Mais und mindestens 500g Braunen Rohrzucker (besser für Karamell und wird auch für Cocktails verwendet) Hier nochmal eine die Zusammengefasste Einkaufsliste, wenn etwas davon nicht besorgt werden kann sagt mir bitte beschied dann kann ich es vll. noch mitnehmen. - 5kg Joghurt (wenn möglich stichfest) - 2 Kästen alk. freies Bier 0,0% - 1kg Popcorn Mais - 500g Brauner Rohrzucker",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
   {
     event_eventID: 3,
@@ -47,6 +50,7 @@ export const workingWeekendParticipants = [
     vegetarier: false,
     kommentar: "Lass das mal den Papa machen!",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
   {
     event_eventID: 3,
@@ -59,6 +63,7 @@ export const workingWeekendParticipants = [
     vegetarier: false,
     kommentar: "Ich freu mich schon!",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
   {
     event_eventID: 3,
@@ -71,5 +76,6 @@ export const workingWeekendParticipants = [
     vegetarier: false,
     kommentar: "Ich freu mich schon!",
     status: "Mitglied",
+    anmeldedatum: "2024-01-10T10:15:00.000Z",
   },
 ];

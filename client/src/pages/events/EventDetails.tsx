@@ -54,7 +54,7 @@ type WWRegistrationInfo = {
  * @param props id in URL
  * @returns the page to display the details of an event
  */
-const DisplayEventDetails: React.FunctionComponent = () => {
+const EventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<CommonEventType | null>();
@@ -66,15 +66,20 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   const hasEventPermission = doesPermissionsHaveSomeOf(auth.permissions, [8]);
 
   const isRegistrationOpen =
-    event?.registrationStart &&
-    event.registrationStart < dayjs() &&
-    event?.registrationDeadline &&
-    event.registrationDeadline > dayjs();
+    (!event?.registrationStart && event?.registrationDeadline && event.registrationDeadline > dayjs()) ||
+    (event?.registrationStart &&
+      event.registrationStart < dayjs() &&
+      event?.registrationDeadline &&
+      event.registrationDeadline > dayjs());
 
   const isMobile = useResponsive("down", "md");
 
   // Mock participants since backend is not connected yet
-  const [participants, setParticipants] = useState<EventParticipant[]>(eventParticipants || []);
+  const [participants, setParticipants] = useState<EventParticipant[]>(
+    eventParticipants
+      ? eventParticipants.map((participant) => ({ ...participant, anmeldedatum: dayjs(participant.anmeldedatum) }))
+      : []
+  );
 
   /**
    * Gets the event or workshop from the database
@@ -124,6 +129,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               vorname: participant.name.split(" ")[0],
               nachname: participant.name.split(" ")[1],
               mitgliedstatus: participant.status,
+              anmeldedatum: dayjs(participant.anmeldedatum),
             }))
         );
       } else {
@@ -404,7 +410,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   /**
    * Renders sign up button
    */
-  const RenderSignUpButton: FunctionComponent = () => {
+  const SignUpButton: FunctionComponent = () => {
     const handleSignUp = () => {
       // here should be a api call to sign up or sign off the user
       setUserIsSignedUp(!userIsSignedUp);
@@ -493,7 +499,7 @@ const DisplayEventDetails: React.FunctionComponent = () => {
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
-                  Teilnehmerliste
+                  Teilnehmerliste ({participants.length})
                 </Typography>
                 {event.type === "WW" && hasEventPermission ? (
                   <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
@@ -517,18 +523,16 @@ const DisplayEventDetails: React.FunctionComponent = () => {
             direction={isMobile ? "column" : "row"}
             spacing={isMobile ? 2 : 0}
           >
-            {participants.length > 0 ? (
-              <>
-                <RenderSignUpButton />
-                {hasEventPermission ? (
-                  event.type === "WW" ? (
-                    <AddWorkingWeekendParticipant members={members} participants={participants} ww={event} />
-                  ) : (
-                    <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
-                  )
-                ) : null}
-              </>
-            ) : null}
+            <SignUpButton />
+            <>
+              {hasEventPermission ? (
+                event.type === "WW" ? (
+                  <AddWorkingWeekendParticipant members={members} participants={participants} ww={event} />
+                ) : (
+                  <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                )
+              ) : null}
+            </>
           </Stack>
           <EditEventDialog
             open={editDialogOpen}
@@ -583,4 +587,4 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   );
 };
 
-export default DisplayEventDetails;
+export default EventDetails;
