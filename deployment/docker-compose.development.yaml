@@ -48,8 +48,10 @@ services:
       DB_HOST_PROD: "${DB_HOST_PROD}"
       DB_PORT_PROD: "${DB_PORT_PROD}"
       ASSETS_PATH: "./assets"
+      LOGS_PATH: "./logs"
     volumes:
       - ./assets:/app/assets
+      - ./logs:/app/logs
     secrets:
       - db_neomdb_password
 
