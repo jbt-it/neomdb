@@ -82,6 +82,8 @@ export class EventsController extends Controller {
     @Body() requestBody: UpdateEventRequest,
     @Request() request
   ): Promise<void> {
+    // TODO: Needs testing after database changes are implemented!!
+
     const { organizers, ...updatedEvent } = requestBody;
     const organizerIDs = organizers.map((organizer) => organizer.memberID);
     const currentOrganizers = await this.eventsService.getEventOrganizers(eventID);
