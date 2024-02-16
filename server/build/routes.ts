@@ -5,6 +5,8 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, H
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../src/auth/authController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EventsController } from './../src/resources/events/EventsController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MembersController } from './../src/resources/members/membersController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TraineesController } from './../src/resources/trainees/traineesController';
@@ -44,6 +46,31 @@ const models: TsoaRoute.Models = {
     "UserResetPasswordRequest": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"newPassword":{"dataType":"string","required":true},"key":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Event": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"type":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["WW"]},{"dataType":"enum","enums":["Netzwerk"]},{"dataType":"enum","enums":["JBT goes"]},{"dataType":"enum","enums":["Sonstige"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Pflichtworkshop"]}],"required":true},"description":{"dataType":"string","required":true},"maxParticipants":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"registrationEnd":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"registrationStart":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"startTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endDate":{"dataType":"string","required":true},"startDate":{"dataType":"string","required":true},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"name":{"dataType":"string","required":true},"eventID":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberField": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EventMember": {
+        "dataType": "refAlias",
+        "type": {"ref":"MemberField","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EventWWMember": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"kommentar":{"dataType":"string","required":true},"vegetarier":{"dataType":"boolean","required":true},"plaetze":{"dataType":"double","required":true},"auto":{"dataType":"boolean","required":true},"abreise":{"dataType":"string","required":true},"anreise":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true},"eventID":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateEventRequest": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"type":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["WW"]},{"dataType":"enum","enums":["Netzwerk"]},{"dataType":"enum","enums":["JBT goes"]},{"dataType":"enum","enums":["Sonstige"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Pflichtworkshop"]}],"required":true},"description":{"dataType":"string","required":true},"organizers":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberField"},"required":true},"maxParticipants":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"registrationEnd":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"registrationStart":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"startTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endDate":{"dataType":"string","required":true},"startDate":{"dataType":"string","required":true},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"name":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberStatus": {
@@ -348,6 +375,112 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.logout.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/events/:eventID',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EventsController)),
+            ...(fetchMiddlewares<RequestHandler>(EventsController.prototype.getEvent)),
+
+            function EventsController_getEvent(request: any, response: any, next: any) {
+            const args = {
+                    eventID: {"in":"path","name":"eventID","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new EventsController();
+
+
+              const promise = controller.getEvent.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/events/:eventID/members',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EventsController)),
+            ...(fetchMiddlewares<RequestHandler>(EventsController.prototype.getEventMembers)),
+
+            function EventsController_getEventMembers(request: any, response: any, next: any) {
+            const args = {
+                    eventID: {"in":"path","name":"eventID","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new EventsController();
+
+
+              const promise = controller.getEventMembers.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/events/:eventID/ww-members',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EventsController)),
+            ...(fetchMiddlewares<RequestHandler>(EventsController.prototype.getEventWWMembers)),
+
+            function EventsController_getEventWWMembers(request: any, response: any, next: any) {
+            const args = {
+                    eventID: {"in":"path","name":"eventID","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new EventsController();
+
+
+              const promise = controller.getEventWWMembers.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/api/events/:eventID',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EventsController)),
+            ...(fetchMiddlewares<RequestHandler>(EventsController.prototype.updateEvent)),
+
+            function EventsController_updateEvent(request: any, response: any, next: any) {
+            const args = {
+                    eventID: {"in":"path","name":"eventID","required":true,"dataType":"double"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateEventRequest"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new EventsController();
+
+
+              const promise = controller.updateEvent.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
