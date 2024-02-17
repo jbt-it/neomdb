@@ -36,17 +36,17 @@ Secrets are used for the mysql root password and the database user password. Eve
 
 ### Development
 
-The development setup (consisting of `docker-deploy.development.yaml` and `.env.development`) is used for testing docker containers locally. This can be the first step before deploying a new version to production (`neomdb.studentische-beratung.de`). Instead of using the images, the development setup uses the local code to build the containers.
+The development setup (consisting of `docker-deploy.development.yaml` and `.env.development`) is used for testing docker containers locally. This can be the first step before deploying a new version to the testing environment (`test.neomdb.studentische-beratung.de`). Instead of using the images, the development setup uses the local code to build the containers.
 
 ### Testing
 
-The testing setup (consisting of `docker-deploy.testing.yaml` and `.env.testing`) is used for testing docker containers on the server (using `test.neomdb.studentische-beratung.de`). This is the final step before deploying a new version to production (`neomdb.studentische-beratung.de`). The image from our private repository are used to build the server and client containers.
+The testing setup (consisting of `docker-deploy.testing.yaml` and `.env.testing`) is used for testing the neomdb on the server (using `test.neomdb.studentische-beratung.de`). This is the final step before deploying a new version to production (`neomdb.studentische-beratung.de`). The image from our private repository are used to build the server and client containers.
 
 ### Production
 
-The production setup (consisting of `docker-deploy.production.yaml` and `.env.production`) is used for testing docker containers on the server (using `neomdb.studentische-beratung.de`). This is the final step before deploying a new version to production (`neomdb.studentische-beratung.de`). The image from our private repository are used to build the server and client containers.
+The production setup (consisting of `docker-deploy.production.yaml` and `.env.production`) is used for testing docker containers on the server (using `neomdb.studentische-beratung.de`). The image from our private repository are used to build the server and client containers.
 
-**Important Note**: The image for the client is build with a specific API_URL (for development `dev-neomdb.studentische-beratung.de/api` and for production `neomdb.studentische-beratung.de/api`) this means, that using the client image build for development for production or vice versa is not possible!
+**Important Note**: The image for the client is build with a specific API_URL (for testing `test.neomdb.studentische-beratung.de/api` and for production `neomdb.studentische-beratung.de/api`) this means, that using the client image build for development for production or vice versa is not possible!
 
 ### Client Container
 
