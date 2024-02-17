@@ -16,6 +16,13 @@ INSERT INTO `mitglied` (`mitgliedID`, `vorname`, `nachname`, `name`, `passwordHa
 (8748, 'Mason', 'Vinson', 'm.vinson', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', '17c0d8291ca698', 1, NULL, '0172/316492', NULL, 'm.vinson@studentische-beratung.de', 1, 15, 62, NULL, NULL, '2019-04-29', NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'mason.vinson@gmail.com', 'Uni Stuttgart', 'Softwaretechnik', '2015-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '.jpeg', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 8634, 8634, 8705, 8698, 57, 56, 'Gerne würde ich als Pro Bono Projekt einer gemeinnützigen Organisation helfen.', 57, '-', 58, '-', 3, 4, 3, 7, NULL);
 
 --
+-- Daten für Tabelle `internesprojekt_has_qm`
+--
+INSERT INTO `internesprojekt_has_qm` (`internesprojekt_internesprojektID`, `mitglied_mitgliedID`) VALUES
+(62, 8320),
+(62, 8324);
+
+--
 -- Daten für Tabelle `ressort`
 --
 

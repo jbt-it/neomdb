@@ -99,6 +99,7 @@ export type Member = {
   mitgliedID: number;
   nachname: string;
   vorname: string;
+  generation: number;
   handy: string;
   jbt_email: string;
   ressort: string;
@@ -308,3 +309,16 @@ export type edvSkillsReducerAction =
   | {
       type: edvSkillsReducerActionType.addEmptyEdvSkill;
     };
+
+export type MemberStatus = "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus" | "passives Mitglied" | "Ausgetretene";
+
+/**
+ * Type of the Member for projects
+ */
+export type MembersField = {
+  mitgliedID: number;
+  name: string;
+  vorname: string;
+  nachname: string;
+  mitgliedstatus: MemberStatus;
+};

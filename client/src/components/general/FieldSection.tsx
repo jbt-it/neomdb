@@ -33,11 +33,13 @@ type Field = {
       type: "RadioButton" | "Dropdown";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       values: Array<{ label: string; value: any }>;
+      disabled?: boolean;
     }
   | {
       type: "TextBig";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
       rows: number;
+      disabled?: boolean;
     }
   | {
       type: "Date";
@@ -46,6 +48,7 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Text";
@@ -53,10 +56,12 @@ type Field = {
       inputType?: "number";
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Checkbox";
       onChangeCallback: ((event: React.ChangeEvent<HTMLInputElement>) => void) | null;
+      disabled?: boolean;
     }
   | {
       type: "Time";
@@ -65,6 +70,7 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "DateTime";
@@ -73,12 +79,14 @@ type Field = {
         | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
   | {
       type: "Autocomplete";
       onChangeCallback: (event: React.ChangeEvent<object>, value: string[] | string) => void | null;
       error?: boolean;
       helperText?: string;
+      disabled?: boolean;
     }
 );
 interface Props {
@@ -141,6 +149,7 @@ const FieldSection = (props: Props) => {
             color="primary"
             value={field.state}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
             select
           >
             {field.values.map((value, index) => {
@@ -155,13 +164,15 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "RadioButton") {
         fieldElement = (
           <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
-            {field.values.map((value) => {
+            {field.values.map((value, index) => {
               return (
                 <FormControlLabel
                   className={classes.radioButtonItem}
                   value={value.value}
                   control={<Radio />}
                   label={value.label}
+                  key={`${value.label + index}`}
+                  disabled={field.disabled}
                 />
               );
             })}
@@ -181,6 +192,7 @@ const FieldSection = (props: Props) => {
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             type={field.inputType === "number" ? "number" : "text"}
             inputProps={field.inputType === "number" ? { min: 0 } : {}}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "TextBig") {
@@ -195,6 +207,7 @@ const FieldSection = (props: Props) => {
             rows={field.rows}
             variant="outlined"
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Date") {
@@ -206,6 +219,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Time") {
@@ -217,6 +231,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "DateTime") {
@@ -228,6 +243,7 @@ const FieldSection = (props: Props) => {
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Autocomplete") {
@@ -240,6 +256,7 @@ const FieldSection = (props: Props) => {
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             size="medium"
             multiple
+            disabled={field.disabled}
           />
         );
       } else if (field.type === "Checkbox") {
@@ -250,8 +267,9 @@ const FieldSection = (props: Props) => {
               <Checkbox
                 key={index}
                 color="primary"
-                value={field.state}
+                checked={field.state as boolean}
                 onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
+                disabled={field.disabled}
               />
             }
             label={field.label}
