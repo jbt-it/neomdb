@@ -9,6 +9,7 @@ import {
   MemberDetails,
   MemberImage,
   MemberPartial,
+  MemberStatus,
   StatusOverview,
   UpdateDepartmentRequest,
   Value,
@@ -143,7 +144,7 @@ export class MembersController extends Controller {
    */
   @Post("")
   @Security("jwt", ["1"])
-  public async creeateMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
+  public async createMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
     /**
      * Overview of the status of the different account creation operations
      */
@@ -205,7 +206,10 @@ export class MembersController extends Controller {
   // TODO: Change route name
   @Patch("{id}/status")
   @Security("jwt", ["1"])
-  public async updateMemberStatus(@Path() id: number, @Body() requestBody: { mitgliedstatus: string }): Promise<void> {
+  public async updateMemberStatus(
+    @Path() id: number,
+    @Body() requestBody: { mitgliedstatus: MemberStatus }
+  ): Promise<void> {
     const status = requestBody.mitgliedstatus;
     await this.membersService.updateMemberStatus(id, status);
   }

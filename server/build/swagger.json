@@ -132,6 +132,17 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"MemberStatus": {
+				"type": "string",
+				"enum": [
+					"Trainee",
+					"aktives Mitglied",
+					"Senior",
+					"Alumnus",
+					"passives Mitglied",
+					"Ausgetretene"
+				]
+			},
 			"MemberPartial": {
 				"properties": {
 					"lastchange": {
@@ -141,7 +152,7 @@
 						"type": "string"
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -728,7 +739,7 @@
 						"nullable": true
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -827,19 +838,59 @@
 				"type": "object",
 				"description": "Type of a trainee (partial member)"
 			},
+			"MembersField": {
+				"properties": {
+					"mitgliedstatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the member field"
+			},
 			"InternalProject": {
 				"properties": {
+					"qualitaetsmanager": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"projektmitglieder": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
 					"DLBeiEV": {
 						"type": "boolean"
 					},
 					"APGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"APBeiEV": {
 						"type": "boolean"
 					},
 					"ZPGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"ZPBeiEV": {
 						"type": "boolean"
@@ -848,12 +899,16 @@
 						"type": "boolean"
 					},
 					"kickoff": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"kuerzel": {
 						"type": "string"
 					},
 					"projektname": {
+						"type": "string"
+					},
+					"generationsBezeichnung": {
 						"type": "string"
 					},
 					"generation": {
@@ -866,6 +921,8 @@
 					}
 				},
 				"required": [
+					"qualitaetsmanager",
+					"projektmitglieder",
 					"DLBeiEV",
 					"APGehalten",
 					"APBeiEV",
@@ -875,6 +932,7 @@
 					"kickoff",
 					"kuerzel",
 					"projektname",
+					"generationsBezeichnung",
 					"generation",
 					"internesProjektID"
 				],
@@ -1427,7 +1485,7 @@
 				"parameters": []
 			},
 			"post": {
-				"operationId": "CreeateMember",
+				"operationId": "CreateMember",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1683,7 +1741,7 @@
 							"schema": {
 								"properties": {
 									"mitgliedstatus": {
-										"type": "string"
+										"$ref": "#/components/schemas/MemberStatus"
 									}
 								},
 								"required": [
@@ -2283,8 +2341,33 @@
 								"kickoff": "2021-01-01",
 								"kuerzel": "string",
 								"projektname": "string-long",
-								"generation": 3,
-								"internesProjektID": 62
+								"generationsBezeichnung": "Wintersemester 19/20",
+								"generation": 15,
+								"internesProjektID": 62,
+								"projektmitglieder": [
+									{
+										"mitgliedID": 8478,
+										"vorname": "Kellan",
+										"nachname": "Mclaughlin"
+									},
+									{
+										"mitgliedID": 8748,
+										"vorname": "Mason",
+										"nachname": "Vinson"
+									}
+								],
+								"qualitaetsmanager": [
+									{
+										"mitgliedID": 8320,
+										"vorname": "Radhika",
+										"nachname": "Norton"
+									},
+									{
+										"mitgliedID": 8333,
+										"vorname": "Miruna",
+										"nachname": "Decker"
+									}
+								]
 							}
 						}
 					}
@@ -2402,9 +2485,7 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"14"
-						]
+						"jwt": []
 					}
 				],
 				"parameters": []
@@ -2783,6 +2864,40 @@
 				"parameters": [
 					{
 						"description": "id of the generation",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/trainees/admission/{id}": {
+			"post": {
+				"operationId": "AdmitTrainee",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Admits a trainee which sets the active since state of the member to the current date and\r\nupdates the member status",
+				"summary": "Admit a trainee",
+				"tags": [
+					"Trainees"
+				],
+				"security": [
+					{
+						"jwt": [
+							"18"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "id of the trainee",
 						"in": "path",
 						"name": "id",
 						"required": true,
