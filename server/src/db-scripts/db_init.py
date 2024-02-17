@@ -57,6 +57,8 @@ def main(args):
         if cnx:
             cnx.close()
 
+# Example usage: python .\db_init.py localhost 3306 root passw0rd init_test passw0rd init_db .\mdb.sql
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Set up a MySQL database and user.")
     parser.add_argument("host", help="MySQL server host (e.g., localhost)")
