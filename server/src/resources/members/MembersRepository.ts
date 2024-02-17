@@ -11,6 +11,7 @@ import {
   Language,
   Member,
   MemberPartial,
+  MemberStatus,
   Mentee,
   Mentor,
   NewMember,
@@ -30,7 +31,7 @@ class MembersRepository {
   getMembers = async (connection?: mysql.PoolConnection): Promise<MemberPartial[]> => {
     try {
       const membersQueryResult = await query(
-        `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange
+        `SELECT mitgliedID, nachname, vorname, handy, mitglied.jbt_email, mitgliedstatus.bezeichnung AS mitgliedstatus, ressort.kuerzel AS ressort, lastchange, generation, internesprojekt
       FROM mitglied
       INNER JOIN ressort ON mitglied.ressort = ressort.ressortID
       INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
@@ -352,7 +353,12 @@ class MembersRepository {
    * @throws UnprocessableEntityError if the status is not valid
    * @throws QueryError if the query fails
    */
-  updateMemberStatusByID = async (memberID: number, lastChangeTime: string, newStatus: string) => {
+  updateMemberStatusByID = async (
+    memberID: number,
+    lastChangeTime: string,
+    newStatus: MemberStatus,
+    connection?: mysql.PoolConnection
+  ) => {
     // Retrieves the attribute of the status change date to update (e.g. "trainee_seit")
     const statusChangeDate = getStatusChangeDate(newStatus);
     if (statusChangeDate === null) {
@@ -365,7 +371,8 @@ class MembersRepository {
           SET mitgliedstatus = (SELECT mitgliedstatusID FROM mitgliedstatus WHERE bezeichnung = ?),
           lastchange = ?, ${statusChangeDate} = ?
           WHERE mitgliedID = ?`,
-        [newStatus, lastChangeTime, lastChangeTime, memberID]
+        [newStatus, lastChangeTime, lastChangeTime, memberID],
+        connection
       );
     } catch (error) {
       logger.error(`Caught error while updating status ${newStatus} of member with id ${memberID}: ${error}`);
@@ -570,7 +577,8 @@ class MembersRepository {
   };
 
   /**
-   * Updates the languages of a member by removing all existing languages and inserting the new ones
+   * Updates the languages of a member by removing all existing languages and inserting the new ones.
+   * Should only be used in combination with a transaction!
    * @param memberID The id of the member
    * @param updatedLanguages The updated languages
    * @throws QueryError if the query fails
