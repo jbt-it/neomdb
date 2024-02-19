@@ -15,6 +15,7 @@ class EventsRepository {
    * @returns The event with the given `eventID` or `null` if no event with the given `eventID` exists
    */
   public getEventByID = async (eventID: number, connection?: mysql.PoolConnection): Promise<Event> => {
+    // TODO: Add anmeldungVon
     try {
       const eventQueryResult = await query(
         `SELECT
@@ -24,14 +25,14 @@ class EventsRepository {
           ende AS endDate,
           startzeit AS startTime,
           endzeit AS endTime,
-          anmeldungsfrist AS registrationStart,
-          NULL AS registrationEnd,  -- //TODO: Add  registrationEnd
-          NULL AS maxParticipants,  -- //TODO: Add maxParticipants
+          Null AS registrationStart, 
+          anmeldungbis AS registrationEnd,  
+          maximaleTeilnehmerzahl AS maxParticipants,
           beschreibung AS description,
           CASE
             WHEN ww = 1 THEN 'WW'
             WHEN netzwerk = 1 THEN 'Netzwerk'
-            -- Add additional conditions here for 'JBT goes', 'Sonstige', 'Workshop', 'Pflichtworkshop'
+            WHEN jbtgoes = 1 THEN 'JBT goes'
             ELSE 'Sonstige'
           END AS type
         FROM
@@ -73,7 +74,7 @@ class EventsRepository {
         FROM
           mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
         WHERE
-          mitglied_has_event.event_eventID = ?`,
+          mitglied_has_event.event_eventID = ? AND mitglied_has_event.rolle = 'Teilnehmer'`,
         [eventID],
         connection
       );
@@ -138,15 +139,15 @@ class EventsRepository {
     try {
       const eventMembersQueryResult = await query(
         `SELECT
-          event_has_organisator.event_eventID AS eventID,
+          mitglied_has_event.event_eventID AS eventID,
           mitglied.mitgliedID,
           mitglied.vorname,
           mitglied.nachname,
           mitglied.mitgliedstatus
         FROM
-          event_has_organisator INNER JOIN mitglied ON event_has_organisator.mitglied_mitgliedID = mitglied.mitgliedID
+          mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
         WHERE
-          event_has_organisator.event_eventID = ?`,
+          mitglied_has_event.event_eventID = ? AND mitglied_has_event.rolle = 'Organisator'`,
         [eventID],
         connection
       );
@@ -176,7 +177,7 @@ class EventsRepository {
     try {
       // TODO: Use correct attributes for jbt goes, sonsitges, workshop, pflichtworkshop, registration_end, max_participants
       await query(
-        `UPDATE events SET eventname = ?, ort = ?, datum = ?, ende = ?, startzeit = ?, endzeit = ?, anmeldungsfrist = ?, registration_end = ?, max_participants = ?, beschreibung = ?, ww = ?, netzwerk = ? WHERE event_id = ?`,
+        `UPDATE event SET eventname = ?, ort = ?, datum = ?, ende = ?, startzeit = ?, endzeit = ?, anmeldungsfrist = ?, registration_end = ?, max_participants = ?, beschreibung = ?, ww = ?, netzwerk = ? WHERE eventID = ?`,
         [
           updatedEvent.name,
           updatedEvent.location,
@@ -212,8 +213,9 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
+      // TODO: Add attributes!!!
       await query(
-        `INSERT INTO event_has_organisator (event_eventID, mitglied_mitgliedID) VALUES ?`,
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID) VALUES ?`,
         [eventID, memberID],
         connection
       );
@@ -238,7 +240,7 @@ class EventsRepository {
   ): Promise<void> => {
     try {
       await query(
-        `DELETE FROM event_has_organisator WHERE event_eventID = ? AND mitglied_mitgliedID = ?`,
+        `DELETE FROM mitglied_has_event WHERE event_eventID = ? AND mitglied_mitgliedID = ?`,
         [eventID, memberID],
         connection
       );
@@ -262,6 +264,7 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
+      // TODO: Add attributes!!!
       await query(
         `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID) VALUES ?`,
         [eventID, memberID],
@@ -299,6 +302,8 @@ class EventsRepository {
       );
     }
   };
+
+  // TODO: Add ww members and delete ww members?
 }
 
 export default EventsRepository;
