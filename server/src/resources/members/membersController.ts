@@ -333,11 +333,13 @@ export class MembersController extends Controller {
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
-    // Checks if the member is allowed to delegate the permission
+    // Checks if the member is allowed to delegate the permission (if they are not an admin)
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be delegated!");
     }
@@ -364,11 +366,13 @@ export class MembersController extends Controller {
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
     // Checks if the member is allowed to delete the permission
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be deleted!");
     }
