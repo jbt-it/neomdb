@@ -25,6 +25,8 @@
     "swagger-ui-express": "^5.0.0",
     "ts-node-dev": "^1.1.7",
     "tsoa": "^5.1.1",
+    "typeorm": "^0.3.20",
+    "typeorm-model-generator": "^0.4.6-no-engines",
     "winston": "^3.11.0"
   },
   "devDependencies": {
