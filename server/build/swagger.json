@@ -1826,6 +1826,48 @@
 				]
 			}
 		},
+		"/events/{eventID}/organizers": {
+			"get": {
+				"operationId": "GetEventOrganizers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/EventMember"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the organizers of the event with the given `eventID`",
+				"summary": "Retrieves the organizers of the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve the organizers of",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/members": {
 			"get": {
 				"operationId": "GetMembers",

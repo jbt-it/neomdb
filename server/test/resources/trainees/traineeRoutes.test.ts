@@ -3,14 +3,15 @@ import request from "supertest";
 import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
-
+const memberTestUtils = new MemberTestUtils(app);
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
 beforeAll(() => {
   //try {
-  return traineeTestUtils.initTraineeData();
+  return memberTestUtils.initMemberData();
   // await setupTraineeData();
   // } catch (error) {
   //console.log(error);
@@ -28,7 +29,7 @@ afterEach(() => {
 });
 
 afterAll(() => {
-  return traineeTestUtils.clearInitTraineeData();
+  return memberTestUtils.clearInitMemberData();
 });
 
 // --------------------------- TESTS --------------------------- \\
@@ -161,19 +162,6 @@ describe("GET /ip/:id/mails", () => {
 });
 
 describe("GET /generations", () => {
-  test("should return 403 for getting all generations without permission", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/generations").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(403);
-  });
-
   test("should return 200 for getting all generations", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");

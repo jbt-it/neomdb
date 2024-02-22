@@ -48,6 +48,17 @@ export class EventsController extends Controller {
   }
 
   /**
+   * Retrieves the organizers of the event with the given `eventID`
+   * @summary Retrieves the organizers of the event
+   * @param eventID The ID of the event to retrieve the organizers of
+   */
+  @Get("{eventID}/organizers")
+  @Security("jwt")
+  public async getEventOrganizers(@Path() eventID: number): Promise<EventMember[]> {
+    return this.eventsService.getEventOrganizers(eventID);
+  }
+
+  /**
    * Updates the event with the given `eventID` with the given `updatedEvent`
    * @summary Updates the event
    * @param eventID The ID of the event to update

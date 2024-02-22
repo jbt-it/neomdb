@@ -25,9 +25,9 @@ class EventsRepository {
           ende AS endDate,
           startzeit AS startTime,
           endzeit AS endTime,
-          Null AS registrationStart, 
-          anmeldungbis AS registrationEnd,  
-          maximaleTeilnehmerzahl AS maxParticipants,
+          anmeldungVon AS registrationStart, 
+          anmeldungBis AS registrationEnd,  
+          maximaleTeilnehmer AS maxParticipants,
           beschreibung AS description,
           CASE
             WHEN ww = 1 THEN 'WW'
@@ -175,9 +175,24 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
-      // TODO: Use correct attributes for jbt goes, sonsitges, workshop, pflichtworkshop, registration_end, max_participants
       await query(
-        `UPDATE event SET eventname = ?, ort = ?, datum = ?, ende = ?, startzeit = ?, endzeit = ?, anmeldungsfrist = ?, registration_end = ?, max_participants = ?, beschreibung = ?, ww = ?, netzwerk = ? WHERE eventID = ?`,
+        `UPDATE event
+          SET
+            eventname = ?,
+            ort = ?,
+            datum = ?,
+            ende = ?,
+            startzeit = ?,
+            endzeit = ?,
+            anmeldungVon = ?,
+            anmeldungBis = ?,
+            maximaleTeilnehmer = ?,
+            beschreibung = ?,
+            ww = ?,
+            netzwerk = ?,
+            jbtgoes = ?,
+            sonstige = ?
+          WHERE eventID = ?`,
         [
           updatedEvent.name,
           updatedEvent.location,
@@ -191,6 +206,8 @@ class EventsRepository {
           updatedEvent.description,
           updatedEvent.type === "WW" ? 1 : 0,
           updatedEvent.type === "Netzwerk" ? 1 : 0,
+          updatedEvent.type === "JBT goes" ? 1 : 0,
+          updatedEvent.type === "Sonstige" ? 1 : 0,
           eventID,
         ],
         connection
@@ -215,8 +232,8 @@ class EventsRepository {
     try {
       // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID) VALUES ?`,
-        [eventID, memberID],
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
+        [eventID, memberID, "Organisator"],
         connection
       );
     } catch (error) {
@@ -266,8 +283,8 @@ class EventsRepository {
     try {
       // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID) VALUES ?`,
-        [eventID, memberID],
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
+        [eventID, memberID, "Teilnehmer"],
         connection
       );
     } catch (error) {
