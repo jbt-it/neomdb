@@ -96,6 +96,16 @@ const navConfig: NavItem[] = [
     title: "Veranstaltungen",
     path: "/veranstaltungen",
     icon: getIconByName("Event"),
+    children: [
+      {
+        title: "Veranstatlungen",
+        path: "/veranstaltungen",
+      },
+      {
+        title: "Workshops",
+        path: "/workshops",
+      },
+    ],
   },
 
   {

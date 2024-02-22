@@ -7,6 +7,7 @@ import {
   Member,
   MemberDetails,
   MemberPartial,
+  MemberStatus,
   Mentee,
   Mentor,
   NewMember,
@@ -450,11 +451,16 @@ class MembersService {
    * Updates the status of a member
    * @throws NotFoundError if the member does not exist
    */
-  updateMemberStatus = async (memberID: number, status: string) => {
+  updateMemberStatus = async (memberID: number, status: MemberStatus) => {
     // Check if member exists
-    const member = this.membersRepository.getMemberByID(memberID, false);
+    const member = await this.membersRepository.getMemberByID(memberID, false);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+
+    if (member.mitgliedstatus === status) {
+      // Member already has the new status
+      return;
     }
 
     const lastChangeTime = createCurrentTimestamp();

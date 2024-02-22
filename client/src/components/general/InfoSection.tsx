@@ -39,11 +39,11 @@ interface Props {
  */
 const InfoSection = (props: Props) => {
   const renderFields = (fields: InformationField[]) => {
-    return fields.map((field: InformationField) => {
+    return fields.map((field: InformationField, index) => {
       let fieldContainer: React.JSX.Element;
       if (field.type === "text") {
         fieldContainer = (
-          <Grid container xs={12}>
+          <Grid container xs={12} key={index}>
             <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
@@ -55,14 +55,14 @@ const InfoSection = (props: Props) => {
       } else if (field.type === "list") {
         const items = field.value as Array<string>;
         const listItems = items.map((item, index) => (
-          <ListItem disablePadding sx={{ display: "list-item" }}>
+          <ListItem disablePadding sx={{ display: "list-item" }} key={index}>
             <ListItemText key={index} primary={item} />
           </ListItem>
         ));
 
         // listStyleType: "disc" for circles and "square" for squares
         fieldContainer = (
-          <Grid container xs={12}>
+          <Grid container xs={12} key={index}>
             <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
@@ -77,7 +77,7 @@ const InfoSection = (props: Props) => {
         );
       } else if (field.type === "checkbox") {
         fieldContainer = (
-          <Grid container xs={12}>
+          <Grid container xs={12} key={index}>
             <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
@@ -88,7 +88,7 @@ const InfoSection = (props: Props) => {
         );
       } else {
         fieldContainer = (
-          <Grid container xs={12}>
+          <Grid container xs={12} key={index}>
             <Grid xs={12} md={4}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>

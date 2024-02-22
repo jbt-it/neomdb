@@ -70,3 +70,6 @@ secrets/
 
 # prevent .DS_store files from being comitted
 **/.DS_Store
+
+# pyenv
+venv

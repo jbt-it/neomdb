@@ -12,6 +12,7 @@ import {
   TraineeProgress,
   UpdateVotingDeadlinesRequest,
 } from "../../types/traineesTypes";
+import MembersService from "../members/MembersService";
 
 /**
  * Controller for the trainees
@@ -21,6 +22,7 @@ import {
 @Route("trainees")
 export class TraineesController extends Controller {
   private traineesService: TraineesService = new TraineesService();
+  private membersService: MembersService = new MembersService();
 
   /**
    * Retrieves all current trainees
@@ -106,7 +108,7 @@ export class TraineesController extends Controller {
    * @summary Get generations
    */
   @Get("generations")
-  @Security("jwt", ["14"])
+  @Security("jwt")
   public async getGenerations(): Promise<Generation[]> {
     const generations = await this.traineesService.getGenerations();
 
@@ -236,5 +238,17 @@ export class TraineesController extends Controller {
     const ips = await this.traineesService.getTraineeProgress(id);
 
     return ips;
+  }
+
+  /**
+   * Admits a trainee which sets the active since state of the member to the current date and
+   * updates the member status
+   * @summary Admit a trainee
+   * @param id id of the trainee
+   */
+  @Post("admission/{id}")
+  @Security("jwt", ["18"])
+  public async admitTrainee(@Path() id: number): Promise<void> {
+    await this.membersService.updateMemberStatus(id, "aktives Mitglied");
   }
 }

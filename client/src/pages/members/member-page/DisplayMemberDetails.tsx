@@ -812,9 +812,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Mentees:</Typography>
                 <div className={classes.categoryItemList}>
-                  {menteeList.map((mentee) => {
+                  {menteeList.map((mentee, index) => {
                     return (
-                      <Typography className={classes.categoryLine}>{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                      <Typography
+                        className={classes.categoryLine}
+                        key={index}
+                      >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
                     );
                   })}
                 </div>
@@ -1442,6 +1445,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
@@ -1559,6 +1563,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
