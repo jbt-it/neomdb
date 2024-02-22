@@ -70,9 +70,10 @@ class EventsRepository {
           mitglied_has_event.event_eventID AS eventID,
           mitglied.mitgliedID, mitglied.vorname,
           mitglied.nachname,
-          mitglied.mitgliedstatus
+          mitgliedstatus.bezeichnung AS status
         FROM
           mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
+          INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
         WHERE
           mitglied_has_event.event_eventID = ? AND mitglied_has_event.rolle = 'Teilnehmer'`,
         [eventID],
@@ -106,10 +107,11 @@ class EventsRepository {
           mitglied_has_eventww.*,
           mitglied.vorname,
           mitglied.nachname,
-          mitglied.mitgliedstatus AS status
+          mitgliedstatus.bezeichnung AS status
         FROM
           mitglied_has_eventww INNER JOIN mitglied ON mitglied_has_eventww.mitglied_mitgliedID = mitglied.mitgliedID
-        WHERE
+          INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+          WHERE
           event_eventID = ?;`,
         [eventID],
         connection
@@ -143,10 +145,11 @@ class EventsRepository {
           mitglied.mitgliedID,
           mitglied.vorname,
           mitglied.nachname,
-          mitglied.mitgliedstatus
+          mitgliedstatus.bezeichnung AS status
         FROM
           mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
-        WHERE
+          INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+          WHERE
           mitglied_has_event.event_eventID = ? AND mitglied_has_event.rolle = 'Organisator'`,
         [eventID],
         connection
