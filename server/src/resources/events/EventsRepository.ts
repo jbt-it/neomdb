@@ -142,9 +142,9 @@ class EventsRepository {
       const eventMembersQueryResult = await query(
         `SELECT
           mitglied_has_event.event_eventID AS eventID,
-          mitglied.mitgliedID,
-          mitglied.vorname,
-          mitglied.nachname,
+          mitglied.mitgliedID as memberID,
+          mitglied.vorname as firstName,
+          mitglied.nachname as lastName,
           mitgliedstatus.bezeichnung AS status
         FROM
           mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
@@ -233,9 +233,8 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
-      // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES (?, ?, ?, NOW())`,
         [eventID, memberID, "Organisator"],
         connection
       );
@@ -284,9 +283,8 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
-      // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES (?, ?, ?, NOW())`,
         [eventID, memberID, "Teilnehmer"],
         connection
       );
@@ -322,8 +320,6 @@ class EventsRepository {
       );
     }
   };
-
-  // TODO: Add ww members and delete ww members?
 }
 
 export default EventsRepository;

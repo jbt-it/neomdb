@@ -21,7 +21,6 @@ INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `a
 
 INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle`, `anmeldezeitpunkt`) VALUES
 (7, 8111, 'Organisator', '2024-02-22 01:09:14'),
-(7, 8222, 'Organisator', '2024-02-22 01:09:14'),
 (7, 8324, 'Teilnehmer', '2024-02-22 01:09:14'),
 (7, 8478, 'Teilnehmer', '2024-02-22 01:09:14'),
 (8, 8111, 'Teilnehmer', '2024-02-22 01:09:14'),

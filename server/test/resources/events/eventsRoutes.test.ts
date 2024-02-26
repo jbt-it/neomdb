@@ -4,6 +4,7 @@ import app from "../../../src/app";
 import MemberTestUtils from "../../utils/memberTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import EventsTestUtils from "../../utils/eventsTestUtils";
+import { UpdateEventRequest } from "types/EventTypes";
 
 const authTestUtils = new AuthTestUtils(app);
 const eventsTestUtils = new EventsTestUtils(app);
@@ -132,7 +133,7 @@ describe("Test events routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toHaveLength(1);
     });
 
     test("Should return 404 Not Found", async () => {
@@ -149,6 +150,174 @@ describe("Test events routes", () => {
 
       // --- THEN
       expect(response.status).toBe(404);
+    });
+  });
+
+  describe("PUT /events/{eventID}", () => {
+    test("Should return 200 OK and update the event (with Permission)", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+      const eventID = 7;
+      const updatedEvent: UpdateEventRequest = {
+        name: "Test Event Updated",
+        location: "Test Location Updated",
+        startDate: "2024-04-04",
+        endDate: "2025-05-05",
+        startTime: "14:00",
+        endTime: "15:00",
+        registrationStart: "2023-03-03",
+        registrationEnd: "2023-04-04",
+        maxParticipants: 200,
+        organizers: [
+          {
+            memberID: 8167,
+            vorname: "Wolfgang",
+            nachname: "Luft",
+            status: "aktives Mitglied",
+            name: "w.luft",
+          },
+        ],
+        description: "Test Description Updated",
+        type: "WW",
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(204);
+    });
+
+    test("Should return 200 OK and update the event (as Organizer)", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+      const eventID = 7;
+      const updatedEvent: UpdateEventRequest = {
+        name: "Test Event Updated",
+        location: "Test Location Updated",
+        startDate: "2024-04-04",
+        endDate: "2025-05-05",
+        startTime: "14:00",
+        endTime: "15:00",
+        registrationStart: "2023-03-03",
+        registrationEnd: "2023-04-04",
+        maxParticipants: 200,
+        organizers: [
+          {
+            memberID: 8167,
+            vorname: "Wolfgang",
+            nachname: "Luft",
+            status: "aktives Mitglied",
+            name: "w.luft",
+          },
+        ],
+        description: "Test Description Updated",
+        type: "WW",
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(204);
+    });
+
+    test("Should return 404 Not Found", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+      const eventID = 999;
+      const updatedEvent: UpdateEventRequest = {
+        name: "Test Event Updated",
+        location: "Test Location Updated",
+        startDate: "2024-04-04",
+        endDate: "2025-05-05",
+        startTime: "14:00",
+        endTime: "15:00",
+        registrationStart: "2023-03-03",
+        registrationEnd: "2023-04-04",
+        maxParticipants: 200,
+        organizers: [
+          {
+            memberID: 8167,
+            vorname: "Wolfgang",
+            nachname: "Luft",
+            status: "aktives Mitglied",
+            name: "w.luft",
+          },
+          {
+            memberID: 8111,
+            nachname: "Frye",
+            vorname: "Brandon-Lee",
+            status: "Senior",
+            name: "b.frye",
+          },
+        ],
+        description: "Test Description Updated",
+        type: "WW",
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(404);
+    });
+
+    test("Should return 403 Unauthorized", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+      const eventID = 7;
+      const updatedEvent: UpdateEventRequest = {
+        name: "Test Event Updated",
+        location: "Test Location Updated",
+        startDate: "2024-04-04",
+        endDate: "2025-05-05",
+        startTime: "14:00",
+        endTime: "15:00",
+        registrationStart: "2023-03-03",
+        registrationEnd: "2023-04-04",
+        maxParticipants: 200,
+        organizers: [
+          {
+            memberID: 8167,
+            vorname: "Wolfgang",
+            nachname: "Luft",
+            status: "aktives Mitglied",
+            name: "w.luft",
+          },
+          {
+            memberID: 8111,
+            nachname: "Frye",
+            vorname: "Brandon-Lee",
+            status: "Senior",
+            name: "b.frye",
+          },
+        ],
+        description: "Test Description Updated",
+        type: "WW",
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
     });
   });
 });
