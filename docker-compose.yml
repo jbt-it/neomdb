@@ -11,12 +11,17 @@ services:
   # The mysql-service needed for the database
   mdb-container:
     image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: passw0rd
+      MYSQL_DATABASE: mdb
+      MYSQL_USER: develop
+      MYSQL_PASSWORD: passw0rd
     ports:
       - 3306:3306
     volumes:
       - mysql:/var/lib/mysql
+      - ./.devcontainer/0_init.sql:/docker-entrypoint-initdb.d/1.sql
 
   # The phpmyadmin-service needed for managing the database
   mdb-phpmyadmin-container:
