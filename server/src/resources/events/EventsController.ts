@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Path, Request, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
 import { Event, EventMember, EventWWMember, UpdateEventRequest } from "../../types/EventTypes";
 import EventsService from "./EventsService";
 import { JWTPayload } from "../../types/authTypes";
@@ -89,15 +89,13 @@ export class EventsController extends Controller {
    *  ]
    * }
    */
-  @Patch("{eventID}")
+  @Put("{eventID}")
   @Security("jwt")
   public async updateEvent(
     @Path() eventID: number,
     @Body() requestBody: UpdateEventRequest,
-    @Request() request
+    @Request() request: any
   ): Promise<void> {
-    // TODO: Needs testing after database changes are implemented!!
-
     const { organizers, event: updatedEvent } = requestBody;
     const organizerIDs = organizers.map((organizer) => organizer.memberID);
     const currentOrganizers = await this.eventsService.getEventOrganizers(eventID);

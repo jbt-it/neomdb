@@ -1628,7 +1628,7 @@
 					}
 				]
 			},
-			"patch": {
+			"put": {
 				"operationId": "UpdateEvent",
 				"responses": {
 					"204": {
