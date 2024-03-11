@@ -233,7 +233,6 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
-      // TODO: Add attributes!!!
       await query(
         `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
         [eventID, memberID, "Organisator"],

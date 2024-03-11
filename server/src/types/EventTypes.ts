@@ -1,24 +1,6 @@
 import { MemberField } from "./membersTypes";
 
 /**
- * Type of the request to update an event
- */
-export type UpdateEventRequest = {
-  name: string;
-  location: string | null;
-  startDate: string;
-  endDate: string;
-  startTime: string | null;
-  endTime: string | null;
-  registrationStart: string | null;
-  registrationEnd: string | null;
-  maxParticipants: number | null;
-  organizers: MemberField[];
-  description: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
-
-/**
  * Type of the updated event
  */
 export type Event = {
@@ -37,14 +19,22 @@ export type Event = {
 };
 
 /**
+ * Type of an organizer of an event
+ */
+export type EventOrganizer = MemberField;
+
+/**
  * Type of a member of an event
  */
 export type EventMember = MemberField;
 
 /**
- * Type of an organizer of an event
+ * Type of the request to update an event
  */
-export type EventOrganizer = MemberField;
+export type UpdateEventRequest = {
+  event: Event;
+  organizers: EventOrganizer[];
+};
 
 /**
  * Type of a member of an event that is a working weekend
