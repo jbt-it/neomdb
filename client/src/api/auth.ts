@@ -14,6 +14,10 @@ interface LoginMembersResponse {
   roles: number[];
 }
 
+interface ResetPasswordParams {
+  email: string;
+}
+
 export const loginMember = async ({
   username,
   password,
@@ -21,10 +25,10 @@ export const loginMember = async ({
   return api.post("/auth/login", { username, password });
 };
 
-export const getUserAuthenticated = async (): Promise<AxiosResponse<LoginMembersResponse>> => {
-  return api.get("auth/me");
+export const logoutMember = async (): Promise<void> => {
+  return api.post("/auth/logout");
 };
 
-export const logoutMember = async (): Promise<void> => {
-  api.post("/auth/logout");
+export const resetPassword = async ({ email }: ResetPasswordParams): Promise<void> => {
+  return api.post("/auth/forgot-password", { email });
 };

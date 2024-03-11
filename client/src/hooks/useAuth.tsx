@@ -1,21 +1,20 @@
-import { useContext, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useContext } from "react";
+import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { AuthContext } from "../context/auth-context/AuthContext";
-import { getUserAuthenticated, loginMember, logoutMember } from "../api/auth";
+import { loginMember, logoutMember, resetPassword } from "../api/auth";
 import { authReducerActionType } from "../types/globalTypes";
-import { showErrorMessage } from "../utils/toastUtils";
+import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
+import { duration } from "@mui/material";
 
 /**
  * Hook that handles the auth api calls, uses react-query
- * @returns logout function
+ * @returns logout function, login function
  */
 const useAuth = () => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { dispatchAuth } = useContext(AuthContext);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   // login function
   const { mutate: mutateLogin, isError: isLoginError } = useMutation({
@@ -64,7 +63,26 @@ const useAuth = () => {
     mutateLogout();
   };
 
-  return { login, isLoginError, logout };
+  // ------------------------------------------------------------------------------------------------
+  // reset password function
+  const { mutateAsync: mutateResetPassword } = useMutation({
+    mutationFn: resetPassword,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Passwort zurücksetzen fehlgeschlagen", 10000);
+    },
+    onSuccess: () => {
+      showSuccessMessage(
+        "Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.",
+        10000
+      );
+    },
+  });
+
+  const sendResetPasswordLink = async (email: string) => {
+    return await mutateResetPassword({ email });
+  };
+
+  return { login, isLoginError, logout, sendResetPasswordLink };
 };
 
 export default useAuth;
