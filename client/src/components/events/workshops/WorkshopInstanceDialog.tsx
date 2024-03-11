@@ -136,7 +136,12 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
   // Function to handle the save button
   const handleSave = () => {
     setErrorDate(false);
-    if (date === null || date.isBefore(dayjs().subtract(180, "day")) || date.isAfter(dayjs().add(365, "day"))) {
+    if (
+      date === null ||
+      date.isBefore(dayjs().subtract(180, "day")) ||
+      date.isAfter(dayjs().add(365, "day")) ||
+      !date.isValid()
+    ) {
       setErrorDate(true);
       return;
     } else if (errorStartTime || errorEndTime) {
