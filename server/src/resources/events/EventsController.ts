@@ -65,7 +65,7 @@ export class EventsController extends Controller {
    * @param updatedEvent The updated event
    * @example requestBody {
    *  "event": {
-   *    "eventID": 7
+   *    "eventID": 7,
    *    "name": "Test Event",
    *    "location": "Test Location",
    *    "startDate": "2022-01-01",

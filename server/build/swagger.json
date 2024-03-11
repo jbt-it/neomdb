@@ -1666,6 +1666,7 @@
 							},
 							"example": {
 								"event": {
+									"eventID": 7,
 									"name": "Test Event",
 									"location": "Test Location",
 									"startDate": "2022-01-01",
