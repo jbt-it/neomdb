@@ -14,6 +14,16 @@ export type MemberPartial = {
 };
 
 /**
+ * Type of the member field
+ */
+export type MembersField = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  mitgliedstatus?: MemberStatus;
+};
+
+/**
  * Type of the member
  */
 export type Member = {

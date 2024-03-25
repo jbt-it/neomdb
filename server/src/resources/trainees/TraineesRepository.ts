@@ -1,5 +1,5 @@
-import { Mentor } from "types/membersTypes";
-import { query } from "../../database";
+import { Mentor } from "../../types/membersTypes";
+import { executeMultipleQueries, query } from "../../database";
 import { ConflictError, QueryError } from "../../types/Errors";
 import {
   Generation,
@@ -23,15 +23,52 @@ class TraineesRepository {
    */
   getIPByID = async (id: number, connection?: mysql.PoolConnection): Promise<InternalProject> => {
     try {
-      const ipQueryResult = await query(
-        `SELECT internesProjektID, generation, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
+      const ipDetailsQueryResult = await query(
+        `SELECT internesProjektID, generation, bezeichnung, projektname, kuerzel, kickoff, AngebotBeiEV, ZPBeiEV, ZPGehalten, APBeiEV, APGehalten, DLBeiEV
       FROM internesprojekt
+      JOIN generation ON internesprojekt.generation = generation.generationID
       WHERE internesProjektID = ?`,
         [id],
         connection
       );
-      if (Array.isArray(ipQueryResult) && ipQueryResult.length !== 0) {
-        const ip = ipQueryResult[0] as InternalProject;
+      const ipProjectMembersResult = await query(
+        `SELECT mitgliedID, vorname, nachname, mitgliedstatus.bezeichnung AS mitgliedstatus
+        FROM mitglied
+        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+        WHERE internesProjekt = ?`,
+        [id],
+        connection
+      );
+      const ipQMsResult = await query(
+        `SELECT mitgliedID, vorname, nachname, mitgliedstatus.bezeichnung AS mitgliedstatus
+        FROM mitglied
+        INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+        WHERE mitgliedID IN (
+          SELECT mitglied_mitgliedID
+          FROM internesprojekt_has_qm
+          WHERE internesprojekt_internesprojektID = ?
+        )`,
+        [id],
+        connection
+      );
+      if (Array.isArray(ipDetailsQueryResult) && ipDetailsQueryResult.length !== 0) {
+        const rowData = ipDetailsQueryResult[0] as mysql.RowDataPacket;
+        const ip = {
+          internesProjektID: rowData.internesProjektID,
+          generation: rowData.generation,
+          generationsBezeichnung: rowData.bezeichnung,
+          projektname: rowData.projektname,
+          kuerzel: rowData.kuerzel,
+          kickoff: rowData.kickoff,
+          AngebotBeiEV: rowData.AngebotBeiEV,
+          ZPBeiEV: rowData.ZPBeiEV,
+          ZPGehalten: rowData.ZPGehalten,
+          APBeiEV: rowData.APBeiEV,
+          APGehalten: rowData.APGehalten,
+          DLBeiEV: rowData.DLBeiEV,
+          projektmitglieder: ipProjectMembersResult,
+          qualitaetsmanager: ipQMsResult,
+        } as InternalProject;
         return ip;
       }
 
@@ -47,7 +84,7 @@ class TraineesRepository {
    * @param id id of the generation
    * @throws QueryError if the query fails
    */
-  getGenerationByID = async (id: number, connection?: mysql.PoolConnection): Promise<any> => {
+  getGenerationByID = async (id: number, connection?: mysql.PoolConnection): Promise<Generation> => {
     try {
       const generationQueryResult = await query(
         `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin, auswahlWETermin, infoabendBesucher, tuercode, wahl_start, wahl_ende 
@@ -103,12 +140,16 @@ class TraineesRepository {
   };
 
   /**
-   * Update an internal project by its id
+   * Update the details of an internal project by its id
    * @param id id of the internal project
    * @param updatedIp updated internal project
    * @throws QueryError if the query fails
    */
-  updateIPByID = async (id: number, updatedIp: InternalProject, connection?: mysql.PoolConnection): Promise<void> => {
+  updateIPDetailsByID = async (
+    id: number,
+    updatedIp: InternalProject,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
     try {
       await query(
         `UPDATE internesprojekt
@@ -129,6 +170,59 @@ class TraineesRepository {
         ],
         connection
       );
+    } catch (error) {
+      logger.error(`Error while updating IP with id ${id}: ${error}`);
+      throw new QueryError(`Error while updating IP with id ${id}`);
+    }
+  };
+
+  /**
+   * Update the assigned IP of each trainee
+   * @param id id of the internal project or null if the trainee should be removed from the ip
+   * @param projectMembers array of memberIDs of the trainees
+   */
+  updateIPMembers = async (
+    id: number | null,
+    projectMembers: number[],
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    if (projectMembers.length === 0) {
+      return;
+    }
+    // Construct sql string to update internesProjekt of each member
+    let sql = "";
+    // Iterate over projectMembers and construct sql string to update the internesProjekt of each member
+    for (let i = 0; i < projectMembers.length; i++) {
+      if (i === 0) {
+        sql += `UPDATE mitglied SET internesprojekt = ? WHERE mitgliedID = ${projectMembers[i]}`;
+      } else {
+        sql += ` OR mitgliedID = ${projectMembers[i]}`;
+      }
+    }
+    try {
+      await query(sql, [id], connection);
+    } catch (error) {
+      logger.error(`Error while updating IP with id ${id}: ${error}`);
+      throw new QueryError(`Error while updating IP with id ${id}`);
+    }
+  };
+
+  /**
+   * Update the assigned QMs of the IP
+   * @param id id of the internal project
+   * @param qms array of memberIDs of the qms
+   */
+  updateIPQMs = async (id: number | null, qms: number[], connection?: mysql.PoolConnection): Promise<void> => {
+    try {
+      // 1. Delete the exisitng entries of qms of the specific ip
+      await query(`DELETE FROM internesprojekt_has_qm WHERE internesprojekt_internesprojektID = ?`, [id], connection);
+      // 2. Construct list of update queries for each qm
+      const qmQueries = qms.map(
+        (qm) => `INSERT INTO internesprojekt_has_qm (internesprojekt_internesprojektID, mitglied_mitgliedID)
+                    VALUES (${id}, '${qm}');`
+      );
+      // 3. Execute all update queries
+      await executeMultipleQueries(qmQueries, connection);
     } catch (error) {
       logger.error(`Error while updating IP with id ${id}: ${error}`);
       throw new QueryError(`Error while updating IP with id ${id}`);

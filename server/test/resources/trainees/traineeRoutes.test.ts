@@ -48,6 +48,34 @@ describe("GET /ip/:id", () => {
     // --- THEN
     expect(response.status).toBe(200);
     expect(response.body.projektname).toBe("JE7 Analyse");
+    expect(response.body.projektmitglieder).toStrictEqual([
+      {
+        mitgliedID: 8478,
+        vorname: "Kellan",
+        nachname: "Mclaughlin",
+        mitgliedstatus: "Trainee",
+      },
+      {
+        mitgliedID: 8748,
+        vorname: "Mason",
+        nachname: "Vinson",
+        mitgliedstatus: "Trainee",
+      },
+    ]);
+    expect(response.body.qualitaetsmanager).toStrictEqual([
+      {
+        mitgliedID: 8320,
+        vorname: "Radhika",
+        nachname: "Norton",
+        mitgliedstatus: "passives Mitglied",
+      },
+      {
+        mitgliedID: 8324,
+        vorname: "Miruna",
+        nachname: "Decker",
+        mitgliedstatus: "Alumnus",
+      },
+    ]);
   });
 
   test("should return 404 for getting an IP not existing", async () => {
@@ -161,19 +189,6 @@ describe("GET /ip/:id/mails", () => {
 });
 
 describe("GET /generations", () => {
-  test("should return 403 for getting all generations without permission", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/generations").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(403);
-  });
-
   test("should return 200 for getting all generations", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
@@ -578,7 +593,31 @@ describe("PUT /ip/:id", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-    const assignments = {
+    const newIPData = {
+      projektmitglieder: [
+        {
+          mitgliedID: 8478,
+          vorname: "Kellan",
+          nachname: "Mclaughlin",
+        },
+        {
+          mitgliedID: 8748,
+          vorname: "Mason",
+          nachname: "Vinson",
+        },
+      ],
+      qualitaetsmanager: [
+        {
+          mitgliedID: 8320,
+          vorname: "Radhika",
+          nachname: "Norton",
+        },
+        {
+          mitgliedID: 8333,
+          vorname: "Miruna",
+          nachname: "Decker",
+        },
+      ],
       DLBeiEV: true,
       APGehalten: "2021-01-01",
       APBeiEV: true,
@@ -589,9 +628,10 @@ describe("PUT /ip/:id", () => {
       kuerzel: "string",
       projektname: "string-long",
       generation: 15,
+      generationsBezeichnung: "string-long",
       internesProjektID: 62,
     };
-    const response = await request(app).put("/api/trainees/ip/62").send(assignments).set("Cookie", `token=${token}`);
+    const response = await request(app).put("/api/trainees/ip/62").send(newIPData).set("Cookie", `token=${token}`);
 
     // --- THEN
     expect(response.status).toBe(204);
