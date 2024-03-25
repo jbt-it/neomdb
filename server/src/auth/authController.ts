@@ -96,8 +96,7 @@ export class AuthController extends Controller {
     sleepRandomly(3000, 3000);
     const email = requestBody.email;
     const name = String(email).split("@")[0];
-    console.log("Sending password reset link to " + email + " for user " + name);
-    // throw new Error("no user");
+
     // const token = await this.authService.createPasswordResetToken(name, email);
 
     /**

@@ -51,3 +51,10 @@ export type authReducerAction =
   | {
       type: authReducerActionType.deauthenticate;
     };
+
+export type ChangePasswordParams = {
+  oldPassword: string;
+  newPassword: string;
+  userID: number | null;
+  userName: string | null;
+};

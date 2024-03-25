@@ -1,10 +1,9 @@
 /**
  * The TraineePreferences-Component lets admins manually add members and change the status of existing members
  */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button } from "@mui/material";
 import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
 import { makeStyles, createStyles } from "@mui/styles";
 import { showErrorMessage } from "../../utils/toastUtils";
 

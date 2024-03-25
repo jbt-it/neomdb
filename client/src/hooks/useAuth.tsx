@@ -2,11 +2,10 @@ import { useContext } from "react";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { AuthContext } from "../context/auth-context/AuthContext";
-import { loginMember, logoutMember, resetPassword } from "../api/auth";
-import { authReducerActionType } from "../types/globalTypes";
+import { loginMember, logoutMember, resetPassword, changePassword as changePasswordApi } from "../api/auth";
+import { ChangePasswordParams, authReducerActionType } from "../types/globalTypes";
 import { showErrorMessage, showSuccessMessage } from "../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
-import { duration } from "@mui/material";
 
 /**
  * Hook that handles the auth api calls, uses react-query
@@ -71,18 +70,31 @@ const useAuth = () => {
       showErrorMessage("Passwort zurücksetzen fehlgeschlagen", 10000);
     },
     onSuccess: () => {
-      showSuccessMessage(
-        "Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.",
-        10000
-      );
+      showSuccessMessage("Link zum Zurücksetzen wurde gesendet.", 10000);
     },
   });
 
   const sendResetPasswordLink = async (email: string) => {
-    return await mutateResetPassword({ email });
+    return await mutateResetPassword(email);
   };
 
-  return { login, isLoginError, logout, sendResetPasswordLink };
+  // ------------------------------------------------------------------------------------------------
+  // change password function
+  const { mutateAsync: mutateChangePassword } = useMutation({
+    mutationFn: changePasswordApi,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Passwort ändern fehlgeschlagen", 10000);
+    },
+    onSuccess: () => {
+      showSuccessMessage("Passwort erfolgreich geändert.", 10000);
+    },
+  });
+
+  const changePassword = async (changePasswordData: ChangePasswordParams) => {
+    return await mutateChangePassword(changePasswordData);
+  };
+
+  return { login, isLoginError, logout, sendResetPasswordLink, changePassword };
 };
 
 export default useAuth;

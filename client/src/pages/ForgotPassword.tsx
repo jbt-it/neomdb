@@ -2,10 +2,9 @@
  * Component for resetting the password by the user without the help of a admin, bofore logging in
  */
 import React, { useState } from "react";
-import { Paper, Grid, Button, TextField, Typography } from "@mui/material";
+import { Paper, Grid, Button, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import jbtLogoBlack from "../assets/jbt-logo-black.png";
-import api from "../utils/api";
 import useAuth from "../hooks/useAuth";
 
 /**
@@ -60,6 +59,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   const classes = useStyles();
   const [email, setEmail] = useState<string>("");
   const { sendResetPasswordLink } = useAuth();
+  const [isResetSuccess, setIsResetSuccess] = useState<boolean>(false);
 
   /**
    * Check if input is an email
@@ -80,6 +80,19 @@ const ForgotPassword: React.FunctionComponent = () => {
     }
   };
 
+  /**
+   * Sends the new PW to the database
+   * If the status is 204, the reset email was sent
+   */
+  const handleResetPassword = () => {
+    const response = sendResetPasswordLink(email);
+    response.then((res) => {
+      if (res.status === 204) {
+        setIsResetSuccess(true);
+      }
+    });
+  };
+
   return (
     <div className="forgotPassword">
       <Grid container spacing={0} alignItems="center" justifyContent="center">
@@ -87,7 +100,7 @@ const ForgotPassword: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.jbtLogoBlack} src={jbtLogoBlack} />
             <h1>Passwort vergessen</h1>
-            <form id="emailForm" onSubmit={(event) => sendResetPasswordLink(email)}>
+            <form id="emailForm" onSubmit={handleResetPassword}>
               <TextField
                 className={classes.inputfield}
                 id="email"
@@ -105,6 +118,11 @@ const ForgotPassword: React.FunctionComponent = () => {
               </Button>
             </form>
           </Paper>
+          {isResetSuccess ? (
+            <Paper className={classes.paper}>
+              Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.
+            </Paper>
+          ) : null}
         </Grid>
       </Grid>
     </div>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Container, Paper, Typography, useMediaQuery } from "@mui/material";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 
@@ -9,7 +10,6 @@ import { Workshop, WorkshopInstance } from "../../types/eventTypes";
 import useResponsive from "../../hooks/useResponsive";
 import { Stack } from "@mui/system";
 import WorkshopButton from "../../components/events/workshops/WorkshopButton";
-import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
 import WorkshopInstanceTable from "../../components/events/workshops/WorkshopInstanceTable";
@@ -25,7 +25,7 @@ const WorkshopDetails = () => {
   const [workshop, setWorkshop] = useState<Workshop | undefined>(undefined);
   const [workshopInstances, setWorkshopInstances] = useState<WorkshopInstance[]>([]);
   const { id } = useParams<{ id: string }>();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const { permissions } = auth;
   const hasWorkshopPermission = doesPermissionsHaveSomeOf(permissions, [4]);
 

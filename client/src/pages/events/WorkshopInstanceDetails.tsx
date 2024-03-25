@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from "@mui/material";
 
@@ -8,7 +8,6 @@ import EventParticipants from "../../components/events/EventParticipants";
 import EventChip from "../../components/events/EventChip";
 import AddMembersField from "../../components/events/AddMembersField";
 import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
-import { useAuth } from "../../hooks/useAuth";
 
 import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
@@ -22,6 +21,7 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
 import WorkshopInstanceAdmissionClosingTable from "../../components/events/workshops/WorkshopInstanceAdmissionClosingTable";
 import WorkshopInstanceAttendanceTable from "../../components/events/workshops/WorkshopInstanceAttendanceTable";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Displays the details of a workshop instance
@@ -38,7 +38,7 @@ const WorkshopInstanceDetails = () => {
   );
   const [members, setMembers] = useState<EventParticipant[]>([]);
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
-  const { auth, dispatchAuth } = useAuth();
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const [isRegistraionClosing, setIsRegistrationClosing] = useState<boolean>(false);
   const [isEditingParticipants, setIsEditingParticipants] = useState<boolean>(false);
 

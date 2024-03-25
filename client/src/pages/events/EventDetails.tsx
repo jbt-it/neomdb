@@ -86,10 +86,6 @@ const EventDetails: React.FunctionComponent = () => {
    */
   const getEvent = useCallback(
     (id: number) => {
-      // api.get("/events").then((response) => {
-      //   console.log(response.data);
-      // });
-
       let event: CommonEventType | null = null;
 
       const res = mockEvents.find((event) => event.eventID === id);

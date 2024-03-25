@@ -116,10 +116,6 @@ const EventsOverview: React.FC = () => {
    * sets the right type for the fields and sets the state for the events cosntant
    */
   const getEvents: VoidFunction = useCallback(() => {
-    // api.get("/events").then((response) => {
-    //   console.log(response.data);
-    // });
-
     const currentEvents: CommonEventType[] = [];
 
     // initialize the events constant with the mock data
@@ -147,10 +143,6 @@ const EventsOverview: React.FC = () => {
    * sets the right type for the fields and sets the state for the workshops
    */
   const getWorkshops: VoidFunction = useCallback(() => {
-    // api.get("/events").then((response) => {
-    //   console.log(response.data);
-    // });
-
     const currentWorkshops: CommonEventType[] = [];
 
     // initialize the workshops constant with the mock data
@@ -179,10 +171,6 @@ const EventsOverview: React.FC = () => {
    * OR MAYBE FILTERS DEPENDING ON THE MEMBER_HAS_EVENT TABLE --> implement in Mock
    */
   const getEventsSignedUp: VoidFunction = useCallback(() => {
-    // api.get("/events/signed-up").then((response) => {
-    //   console.log(response.data);
-    // });
-
     const currentEvents: CommonEventType[] = [];
 
     // initialize the events the user is signed up for constant with the mock data
@@ -324,9 +312,6 @@ const EventsOverview: React.FC = () => {
    */
   const signOutFromEvent = useCallback(
     (event: CommonEventType) => {
-      // api.get("/events/signed-out").then((response) => {
-      //   console.log(response.data);
-      // });
       const index = eventsSignedUp.findIndex((e) => e.ID === event.ID);
       if (index !== -1) {
         const newEventsSignedUp = [...eventsSignedUp];
@@ -342,9 +327,6 @@ const EventsOverview: React.FC = () => {
    */
   const signUpForEvent = useCallback(
     (event: CommonEventType) => {
-      // api.get("/events/signed-up").then((response) => {
-      //   console.log(response.data);
-      // });
       setEventsSignedUp([...eventsSignedUp, event]);
     },
     [events, eventsSignedUp]

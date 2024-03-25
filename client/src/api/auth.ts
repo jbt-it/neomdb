@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Permission } from "../types/globalTypes";
+import { ChangePasswordParams, Permission } from "../types/globalTypes";
 import api from "../utils/api";
 
 interface LoginMemberParams {
@@ -14,21 +14,21 @@ interface LoginMembersResponse {
   roles: number[];
 }
 
-interface ResetPasswordParams {
-  email: string;
-}
-
 export const loginMember = async ({
   username,
   password,
 }: LoginMemberParams): Promise<AxiosResponse<LoginMembersResponse>> => {
-  return api.post("/auth/login", { username, password });
+  return await api.post("/auth/login", { username, password });
 };
 
 export const logoutMember = async (): Promise<void> => {
-  return api.post("/auth/logout");
+  return await api.post("/auth/logout");
 };
 
-export const resetPassword = async ({ email }: ResetPasswordParams): Promise<void> => {
-  return api.post("/auth/forgot-password", { email });
+export const resetPassword = async (email: string): Promise<AxiosResponse> => {
+  return await api.post("/auth/forgot-password", { email });
+};
+
+export const changePassword = async (changePasswordData: ChangePasswordParams): Promise<AxiosResponse> => {
+  return await api.patch("/auth/change-password", changePasswordData);
 };

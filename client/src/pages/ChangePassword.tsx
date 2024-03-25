@@ -10,6 +10,7 @@ import Textfield from "@mui/material/TextField";
 import { makeStyles } from "@mui/styles";
 import PageBar from "../components/navigation/PageBar";
 import { Container } from "@mui/system";
+import useAuth from "../hooks/useAuth";
 
 /**
  * Function that allows the user to change the password when logged in, by posting the new password to the backend
@@ -49,6 +50,15 @@ const ChangePassword: React.FunctionComponent = () => {
   const [failedOldPassword, setFailedoldPassword] = useState<boolean>(false);
   const [postSuccesful, setPostSuccesful] = useState<boolean>(true);
   const [resResponse200, setResResponse200] = useState<boolean>(false);
+  const { changePassword } = useAuth();
+
+  /**
+   * check if the new PW is okay: min 8 chars; mind 1 je num/a-z/A-Z
+   */
+  const checkNewPassword = (testString: string) => {
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+    return regex.test(testString);
+  };
 
   /**
    * checks old PW
@@ -64,41 +74,25 @@ const ChangePassword: React.FunctionComponent = () => {
         userID: auth.userID,
         userName: auth.userName,
       };
-
-      // Patch request
-      api
-        .patch("/auth/change-password", data, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
+      const response = changePassword(data);
+      response
         .then((res) => {
           if (res.status === 204) {
             // Password change was succefull
             setResResponse200(true);
-            return [{ status: res.status }];
           } else {
             setFailedoldPassword(true);
             setResResponse200(false);
-            return [{ status: res.status }];
           }
         })
         .catch(() => {
           setFailedoldPassword(true);
         });
-    } else {
-      setPostSuccesful(false);
-      setResResponse200(false);
     }
+
     setOldPassword("");
     setNewPassword("");
     setNewPasswordValidation("");
-  };
-
-  /**
-   * check if the new PW is okay: min 8 chars; mind 1 je num/a-z/A-Z
-   */
-  const checkNewPassword = (testString: string) => {
-    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-    return regex.test(testString);
   };
 
   /*

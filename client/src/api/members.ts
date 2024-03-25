@@ -48,7 +48,7 @@ export const getCurrentDirectors = async (): Promise<AxiosResponse<Director[]>> 
 
 // UPDATE ROUTES
 export const updateMemberDetails = async (memberDetails: MemberDetails): Promise<AxiosResponse<MemberDetails>> => {
-  return api.patch(`/members/${memberDetails.mitgliedID}`, memberDetails);
+  return await api.patch(`/members/${memberDetails.mitgliedID}`, memberDetails);
 };
 
 interface UpdateMemberStatusParams {
@@ -60,7 +60,7 @@ export const updateMemberStatus = async ({
   memberID,
   status,
 }: UpdateMemberStatusParams): Promise<AxiosResponse<MemberDetails>> => {
-  return api.patch(`/members/${memberID}/status`, { mitgliedstatus: status });
+  return await api.patch(`/members/${memberID}/status`, { mitgliedstatus: status });
 };
 
 interface UpdateMemberImageParams {
@@ -98,5 +98,5 @@ interface AddMemberParams {
   email: string;
 }
 export const addMember = async (member: AddMemberParams): Promise<AxiosResponse<MemberDetails>> => {
-  return api.post("/members", member);
+  return await api.post("/members", member);
 };

@@ -2,7 +2,7 @@
  * Component for resetting the password by the user without the help of a admin, when the user gets the reset link
  *
  */
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import api from "../utils/api";
 import { Paper, Button, TextField, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
