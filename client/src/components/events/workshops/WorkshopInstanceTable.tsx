@@ -17,15 +17,10 @@ interface WorkshopInstanceTableProps {
 const WorkshopInstanceTable: React.FunctionComponent<WorkshopInstanceTableProps> = ({
   workshopInstances,
 }: WorkshopInstanceTableProps) => {
-  const workshopsWithNote = workshopInstances.filter(
-    (workshop) => workshop.note !== null && workshop.note !== undefined
-  );
-
-  // Calculate average grade
-  const average =
-    workshopsWithNote.length > 0
-      ? workshopsWithNote.reduce((acc, curr) => acc + curr.note, 0) / workshopsWithNote.length
-      : "-";
+  // Calculate the average note of all workshop instances.
+  const validWorkshops = workshopInstances.filter((workshop) => workshop.note !== null && workshop.note !== undefined);
+  const sum = validWorkshops.reduce((acc, curr) => acc + curr.note!, 0);
+  const average = validWorkshops.length > 0 ? sum / validWorkshops.length : "-";
 
   return (
     <>

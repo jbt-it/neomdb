@@ -10,6 +10,7 @@ export type EventParticipant = {
   vorname: string;
   nachname: string;
   mitgliedstatus: string;
+  anmeldedatum: Dayjs;
 };
 
 /**
@@ -57,5 +58,5 @@ export type WorkshopInstance = {
   maximaleTeilnehmer: number;
   referenten: string;
   zielgruppe: string;
-  note: number;
+  note: number | null;
 };

@@ -54,12 +54,11 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
       </IconButton>
     ) : (
       <Button
-        variant="outlined"
+        variant="contained"
         color="error"
         sx={{ fontWeight: 600, mr: 2 }}
         onClick={() => alert("Workshop wurde gelöscht")}
         startIcon={<Delete />}
-        size="small"
       >
         Workshop löschen
       </Button>
@@ -81,11 +80,11 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
       ) : (
         <Button
           variant="contained"
+          startIcon={edit ? <Edit /> : <Event />}
+          color={edit ? "primary" : "info"}
+          sx={{ fontWeight: 600, mr: 2 }}
           onClick={handleDialogOpen}
           size="small"
-          startIcon={edit ? <Edit /> : <Event />}
-          sx={{ fontSize: 10 }}
-          color={edit ? "primary" : "info"}
         >
           {edit ? "bearbeiten" : "neu"}
         </Button>
