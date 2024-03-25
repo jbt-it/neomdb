@@ -54,7 +54,7 @@ type WWRegistrationInfo = {
  * @param props id in URL
  * @returns the page to display the details of an event
  */
-const DisplayEventDetails: React.FunctionComponent = () => {
+const EventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<CommonEventType | null>();
@@ -583,4 +583,4 @@ const DisplayEventDetails: React.FunctionComponent = () => {
   );
 };
 
-export default DisplayEventDetails;
+export default EventDetails;

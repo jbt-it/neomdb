@@ -41,3 +41,21 @@ export type Workshop = {
   art: "Pflichtworkshop" | "Workshop" | "Externer Workshop";
   beschreibung: string;
 };
+
+/**
+ * Type of a workshop instance
+ */
+export type WorkshopInstance = {
+  schulungsinstanzID: number;
+  schulungId: number;
+  status: "Anmeldung" | "Anmeldung abgeschlossen" | "Feedback" | "Abgeschlossen";
+  datum: string;
+  startzeit: string;
+  endzeit: string;
+  ort: string;
+  anzahlTeilnehmer: number;
+  maximaleTeilnehmer: number;
+  referenten: string;
+  zielgruppe: string;
+  note: number;
+};
