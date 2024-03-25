@@ -60,3 +60,59 @@ export type WorkshopInstance = {
   zielgruppe: string;
   note: number | null;
 };
+
+/**
+ * Type of a workshop Feedback
+ */
+export type NumericFeedback = {
+  feedbackfrageID: number;
+  bewertung: number;
+};
+
+export type Bewertung = {
+  schulungsfeedback_has_schulungsfeedbackID: number;
+  schulungsfeedback_datum: string;
+  note: number;
+};
+
+/**
+ * Type of a workshop feedback question
+ */
+export type Frage = {
+  feedbackfrage_feedbackfrageID: number;
+  frageText: string;
+  durchschnitt: number;
+  bewertungen: Bewertung[];
+};
+
+export type ReferentenBewertung = {
+  mitglied_mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  durchschnitt: number;
+  bewertungen: Bewertung[];
+};
+
+export type TextFeedback = {
+  name: string;
+  frageText: string;
+  kommentare: string[];
+};
+
+/**
+ * Type of a workshop Feedback
+ */
+export type WorkshopInstanceFeedback = {
+  schulung_schulungID: number;
+  status: string;
+  teilnehmerAnzahl: number;
+  gesamt: number;
+  fragen: Frage[];
+  referenten: ReferentenBewertung[];
+  textFeedback: TextFeedback[];
+  mitgliederOhneFeedback: {
+    mitgliedID: number;
+    vorname: string;
+    nachname: string;
+  }[];
+};
