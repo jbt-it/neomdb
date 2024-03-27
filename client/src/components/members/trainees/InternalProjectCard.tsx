@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Card,
-  CardActionArea,
   CardContent,
   TableContainer,
   Table,
@@ -38,9 +37,9 @@ const InternalProjectCard = (props: Props) => {
     ? dayjs(props.internalProject.APGehalten).format("DD.MM.YYYY")
     : "Nein";
 
-  const AngebotBeiEV = props.internalProject.AngebotBeiEV === 1 ? "Ja" : "Nein";
-  const DLBeiEV = props.internalProject.DLBeiEV === 1 ? "Ja" : "Nein";
-  const ZPBeiEV = props.internalProject.ZPBeiEV === 1 ? "Ja" : "Nein";
+  const AngebotBeiEV = props.internalProject.AngebotBeiEV ? "Ja" : "Nein";
+  const DLBeiEV = props.internalProject.DLBeiEV ? "Ja" : "Nein";
+  const ZPBeiEV = props.internalProject.ZPBeiEV ? "Ja" : "Nein";
   const trainees = props.trainees;
 
   // rows for the table
@@ -63,7 +62,11 @@ const InternalProjectCard = (props: Props) => {
           </Link>
           <Stack direction={"column"} alignItems={"start"} spacing={0.5}>
             {trainees.map((trainee: Trainee, index) => (
-              <Link to={`/gesamtuebersicht/${trainee.mitgliedID}`} style={{ textDecoration: "none", color: "inherit" }}>
+              <Link
+                to={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+                key={trainee.mitgliedID}
+              >
                 <Stack direction={"row"} alignItems={"center"} spacing={1} key={index}>
                   <Avatar
                     alt={`${trainee.vorname} ${trainee.nachname}`}
@@ -84,7 +87,7 @@ const InternalProjectCard = (props: Props) => {
               Meilensteine
             </TableHead>
             {rows.map((row, index) => (
-              <TableRow key={index}>
+              <TableRow key={`${row.label}-${index}`}>
                 <TableCell sx={{ fontWeight: "bold", borderBottom: 0, padding: 0, color: "text.secondary" }}>
                   {row.label}
                 </TableCell>

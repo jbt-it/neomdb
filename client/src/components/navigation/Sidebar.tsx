@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -18,12 +18,12 @@ import { alpha } from "@mui/material/styles";
 import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 import { Permission } from "../../types/globalTypes";
-import { useAuth } from "../../hooks/useAuth";
 import usePathname from "../../hooks/usePathname";
 import useResponsive from "../../hooks/useResponsive";
 
 import JBTLogo from "../../assets/jbt-logo.svg";
 import navConfig from "./navConfig";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 interface NavItemProps {
   item: {
@@ -60,7 +60,7 @@ interface NavProps {
  */
 const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const [activeChild, setActiveChild] = useState(false);
 
   useEffect(() => {

@@ -11,6 +11,7 @@ import { generateJWT } from "../utils/jwtUtils";
 import { getCookieOptionsAsString } from "./cookieConfig";
 import { UnauthorizedError } from "../types/Errors";
 import * as nodemailer from "nodemailer";
+import { sleepRandomly } from "../utils/timeUtils";
 
 /**
  * Controller for the authentication
@@ -94,12 +95,13 @@ export class AuthController extends Controller {
   public async sendPasswordResetLink(@Body() requestBody: UserForgotPasswordRequest): Promise<void> {
     const email = requestBody.email;
     const name = String(email).split("@")[0];
+
     const token = await this.authService.createPasswordResetToken(name, email);
 
     /**
      * // TODO: implement nodemailer to be able to send mails with microsoft exchange 365
      * put nodemailer transporter in a new file
-     */
+     *
     // Send email with correct URL to usermail
     const transport = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
@@ -133,6 +135,7 @@ export class AuthController extends Controller {
     };
     // TODO: Handle Errors
     transport.sendMail(mailOptions);
+    */
   }
 
   /**

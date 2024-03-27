@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from "@mui/material";
 
@@ -8,20 +8,18 @@ import EventParticipants from "../../components/events/EventParticipants";
 import EventChip from "../../components/events/EventChip";
 import AddMembersField from "../../components/events/AddMembersField";
 import WorkshopInstanceButton from "../../components/events/workshops/WorkshopInstanceButton";
-import { useAuth } from "../../hooks/useAuth";
 
 import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
 import { eventParticipants } from "../../mock/events/eventParticipants";
 import useResponsive from "../../hooks/useResponsive";
 import { AddCircle, CheckCircle, RemoveCircleOutline, Group, Grade } from "@mui/icons-material";
-import api from "../../utils/api";
 import { Member } from "../../types/membersTypes";
-import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
 import WorkshopInstanceAdmissionClosingTable from "../../components/events/workshops/WorkshopInstanceAdmissionClosingTable";
 import WorkshopInstanceAttendanceTable from "../../components/events/workshops/WorkshopInstanceAttendanceTable";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Displays the details of a workshop instance
@@ -36,9 +34,8 @@ const WorkshopInstanceDetails = () => {
       ? eventParticipants.map((participant) => ({ ...participant, anmeldedatum: dayjs(participant.anmeldedatum) }))
       : []
   );
-  const [members, setMembers] = useState<EventParticipant[]>([]);
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
-  const { auth, dispatchAuth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const [isRegistraionClosing, setIsRegistrationClosing] = useState<boolean>(false);
   const [isEditingParticipants, setIsEditingParticipants] = useState<boolean>(false);
 
@@ -64,40 +61,6 @@ const WorkshopInstanceDetails = () => {
     }
   };
 
-  // Retrieves all members
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(
-              res.data.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
-              }))
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
   useEffect(() => {
     getWorkshopInstance();
   }, []);
@@ -107,10 +70,6 @@ const WorkshopInstanceDetails = () => {
       getWorkshop(workshopInstance.schulungId);
     }
   }, [workshopInstance]);
-
-  useEffect(() => {
-    getMembers();
-  }, [getMembers]);
 
   /**
    * function is called to remove a participant to the event
@@ -127,9 +86,9 @@ const WorkshopInstanceDetails = () => {
    * TODO: Implement backend functionality to add a participant to the event
    * @param participant the participant to add
    */
-  const addParticipant = (participant: EventParticipant) => {
+  const addParticipant = (participant: Member) => {
     alert(participant.vorname + " " + participant.nachname + " wurde hinzugefügt");
-    setParticipants((prevParticipants) => [...prevParticipants, participant]);
+    setParticipants((prevParticipants) => [...prevParticipants, { ...participant, anmeldedatum: dayjs() }]);
   };
 
   /**
@@ -312,7 +271,7 @@ const WorkshopInstanceDetails = () => {
               <>
                 <SignUpButton />
                 {hasWorkshopPermission ? (
-                  <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                  <AddMembersField participants={participants} addParticipant={addParticipant} />
                 ) : null}
               </>
             ) : null}

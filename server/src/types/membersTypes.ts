@@ -285,6 +285,8 @@ export type Director = {
   bezeichnung_weiblich: string;
   bezeichnung_maennlich: string;
   kuerzel: string;
+  von: string;
+  bis: string;
 };
 
 /**

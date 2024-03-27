@@ -390,7 +390,7 @@ class MembersRepository {
   getDirectors = async (onlyCurrent: boolean, connection?: mysql.PoolConnection): Promise<Director[]> => {
     try {
       let sql = `SELECT mitgliedID, vorname, nachname, evpostenID, evposten.ressortID,
-    geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel
+    geschlecht, bezeichnung_weiblich, bezeichnung_maennlich, kuerzel, von, bis
         FROM mitglied, mitglied_has_evposten, evposten
         WHERE mitgliedID = mitglied_mitgliedID AND evpostenID = evposten_evpostenID`;
       if (onlyCurrent) {

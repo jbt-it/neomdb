@@ -1,13 +1,10 @@
-import React, { useCallback, useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Box, Stack, Divider, SelectChangeEvent } from "@mui/material";
 
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 
-import { Member } from "../../types/membersTypes";
-import { Trainee, InternalProjectAll, Generation } from "../../types/traineesTypes";
-import { authReducerActionType } from "../../types/globalTypes";
+import { InternalProjectAll } from "../../types/traineesTypes";
 
 import PageBar from "../../components/navigation/PageBar";
 import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
@@ -15,6 +12,8 @@ import InternalProjectCard from "../../components/members/trainees/InternalProje
 import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSectionSkeleton";
 import AddInternalProjectButton from "../../components/members/trainees/AddInternalProjectButton";
 import GenerationSelection from "../../components/members/trainees/GenerationSelection";
+import useTrainees from "../../hooks/useTrainees";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * This component displays the trainee section page
@@ -24,174 +23,31 @@ import GenerationSelection from "../../components/members/trainees/GenerationSel
  * @returns TraineeSection
  */
 const TraineeSection: React.FunctionComponent = () => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
-  const [trainees, setTrainees] = useState<Trainee[]>([]);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [internalProjects, setInternalProjects] = useState<InternalProjectAll[]>([]);
-  const [generations, setGenerations] = useState<Generation[]>([]);
-  const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
+  const { auth } = useContext(AuthContext);
+
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
-  const [isLoadingGenerations, setIsLoadingGenerations] = useState<boolean>(true); // state for loading generations
-  const [isLoadingTrainees, setIsLoadingTrainees] = useState<boolean>(true); // state for loading trainees
+  const { members } = useMembers();
 
-  /**
-   * retrieves all generations from the database and sets the state of generations
-   * @returns a list of all generations with their generationID and bezeichnung
-   */
-  const getGenerations: VoidFunction = () => {
-    setIsLoadingGenerations(true);
-    let mounted = true;
-    api
-      .get("/trainees/generations", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setGenerations(res.data);
-            setSelectedGeneration(res.data[0].bezeichnung);
-            setIsLoadingGenerations(false);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
+  const { internalProjects, generations, isGenerationsFetched } = useTrainees();
 
-  /**
-   * retrieves all trainees of the selected generation from the database and sets the state of trainees
-   * TODO: remove traineesTmp as soon as the backend route is fixed
-   */
-  const getTrainees: VoidFunction = () => {
-    let mounted = true;
-    api
-      //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
-      .get(`/members`, {
-        //correct Routes need to be imported
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            //const to add generation value to trainee, because api call currently doesn't get generation
-            const generationID = generations.find(
-              (generation) => generation.bezeichnung === selectedGeneration
-            )?.generationID;
-            //manually add values for testing until route in backend is fixed
-            const traineesTmp = res.data
-              .filter((trainee: Trainee) => trainee.generation === generationID)
-              .map((trainee: Trainee) => {
-                return {
-                  ...trainee,
-                  AngebotBeiEV: true,
-                  APgehalten: false,
-                  DLbeiEV: true,
-                  Projektmanagement: true,
-                  RhetorikPräsenationstechnik: true,
-                  AkquiseVerhandlungstechnik: false,
-                  FinanzenRecht: false,
-                  Netzwerke: true,
-                  Qualitätsmanagement: true,
-                  MSPowerpoint: false,
-                  StrategieOrganisation: false,
-                  Datenschutzschulung: false,
-                  Sicherheitsschulung: false,
-                  ExcelGrundlagen: false,
-                };
-              });
-            setTrainees(traineesTmp);
-            setIsLoadingTrainees(false);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
+  const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
 
-    return () => {
-      mounted = false;
-    };
-  };
+  const selectedGenerationIPs = internalProjects.filter(
+    (item: InternalProjectAll) =>
+      item.generation === generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
+  );
 
-  /**
-   * Retrieves all members
-   * TODO: split into two functions, one for all members who should be selected as qms and one for members of a specific generation
-   */
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/users`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
+  const { traineeProgress, isTraineeProgressFetched } = useTrainees(
+    generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
+  );
 
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  /**
-   * retrieves all traineegenerations from the database and sets the state of traineegenerations
-   * TODO: change to only get a specific generation as soon as the backend route is fixed
-   */
-  const getInternalProjects: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/trainees/ips/all`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setInternalProjects(
-              res.data.filter(
-                (item: InternalProjectAll) =>
-                  item.generation ===
-                  generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
-              )
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  useEffect(() => getGenerations(), []);
-  useEffect(() => getMembers(), []);
-  useEffect(() => getTrainees(), [selectedGeneration]);
-  useEffect(() => getInternalProjects(), [selectedGeneration]);
+  useEffect(() => {
+    // Sets selectedGeneration to the first object of generations once generations is loaded
+    if (generations.length > 0 && !selectedGeneration) {
+      setSelectedGeneration(generations[0].bezeichnung);
+    }
+  }, [generations, selectedGeneration]);
 
   const addInternalProject = (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => {
     alert(
@@ -214,7 +70,7 @@ const TraineeSection: React.FunctionComponent = () => {
     setSelectedGeneration(event.target.value as string);
   };
 
-  return isLoadingGenerations && isLoadingTrainees ? (
+  return !isGenerationsFetched || !isTraineeProgressFetched ? (
     <TraineeSectionSkeleton />
   ) : (
     <>
@@ -230,7 +86,7 @@ const TraineeSection: React.FunctionComponent = () => {
               <AddInternalProjectButton
                 generationName={selectedGeneration}
                 addInternalProject={addInternalProject}
-                trainees={trainees}
+                trainees={traineeProgress}
                 members={members.filter(
                   (member) =>
                     member.generation != generations[0].generationID &&
@@ -250,10 +106,10 @@ const TraineeSection: React.FunctionComponent = () => {
           flexWrap: "wrap",
         })}
       >
-        {internalProjects.map((internalProject) => (
+        {selectedGenerationIPs.map((internalProject) => (
           <InternalProjectCard
             internalProject={internalProject}
-            trainees={trainees.filter((trainee) => {
+            trainees={traineeProgress.filter((trainee) => {
               return trainee.internesprojekt === internalProject.internesProjektID;
             })}
           />
@@ -263,7 +119,7 @@ const TraineeSection: React.FunctionComponent = () => {
       {hasPermissionInternalProject ? (
         <>
           <Divider sx={{ mb: 5 }} />
-          <TraineeSectionTable trainees={trainees} />
+          <TraineeSectionTable trainees={traineeProgress} />
         </>
       ) : null}
       <PageBar pageTitle="Traineebereich" />

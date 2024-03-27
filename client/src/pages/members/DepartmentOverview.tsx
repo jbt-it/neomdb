@@ -1,18 +1,17 @@
 /*
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Grid, Typography, Theme } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
 import { NavLink } from "react-router-dom";
 import InfoCard from "../../components/general/InfoCard";
 import DepartmentDialog from "../../components/members/DepartmentDialog";
-import { DepartmentDetails, DepartmentMember, Director } from "../../types/membersTypes";
-import { showErrorMessage } from "../../utils/toastUtils";
+import { DepartmentDetails, Director } from "../../types/membersTypes";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { doesRolesHaveSomeOf } from "../../utils/authUtils";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Function which proivdes the styles of the DepartmentOverview
@@ -54,9 +53,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const { auth } = useContext(AuthContext);
 
-  const [members, setMembers] = useState<DepartmentMember[]>([]);
-  const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
-  const [directors, setDirectors] = useState<Director[]>([]);
+  const { departments, departmentMembers, currentDirectors } = useMembers();
   const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
   const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
   const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
@@ -66,96 +63,11 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const [dialogITOpen, setDialogITOpen] = useState<boolean>(false);
 
   /**
-   * Retrieves the departments
-   */
-  const getDepartments: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/departments/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setDepartments(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Fehler beim Laden der Ressorts");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Retrieves the department members
-   */
-  const getDepartmentMembers: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/department-members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Fehler beim Laden der Ressortmitglieder");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Retrieves the directors of the departments
-   */
-  const getCurrentDirectors: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/directors?current=true", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setDirectors(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Fehler beim Laden der Ressortleitungen");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  useEffect(() => getDepartmentMembers(), []);
-  useEffect(() => getDepartments(), []);
-  useEffect(() => getCurrentDirectors(), []);
-
-  /**
    * Filters members according to the given department id
    * @param departmentID The id of the department from which all members should be
    */
   const getMembersOfDeparment = (departmentID: number) => {
-    return members.filter((member) => {
+    return departmentMembers.filter((member) => {
       return member.ressort === departmentID;
     });
   };
@@ -165,7 +77,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @param departmentID The id of the department from which the director should be
    */
   const getDirectorOfDepartment = (departmentID: number) => {
-    return directors.filter((director) => {
+    return currentDirectors.filter((director) => {
       return director.ressortID === departmentID;
     })[0];
   };

@@ -3,14 +3,10 @@
  */
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, Theme } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
-import React, { memo, useContext, useState } from "react";
+import React, { memo, useState } from "react";
 import { DepartmentDetails } from "../../types/membersTypes";
-import api from "../../utils/api";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { authReducerActionType } from "../../types/globalTypes";
-import { AxiosError } from "axios";
 import { AxiosResponse } from "axios";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Function which proivdes the styles of the dialog department component
@@ -33,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
+    dialogForm: {
+      paddingTop: 5,
+    },
   })
 );
 
@@ -53,7 +52,7 @@ interface DepartmentDialogProps {
 const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((props: DepartmentDialogProps) => {
   const classes = useStyles();
   const { title, isOpen, onClose, department } = props;
-  const { dispatchAuth } = useContext(AuthContext);
+  const { updateDepartmentDetails } = useMembers();
 
   const [goalLink, setGoalLink] = useState(department.linkZielvorstellung);
   const [organisationLink, setOrganisationLink] = useState(department.linkOrganigramm);
@@ -66,28 +65,19 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
 
     // Given department object with changed goal and organisation links
     const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
-    api
-      .put(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
-      .then((res: AxiosResponse) => {
-        if (res.status === 204) {
-          showSuccessMessage("Aktualisierung erfolgreich!");
-          onClose();
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
+    const response = updateDepartmentDetails(editedDepartment);
+    response.then((res: AxiosResponse<DepartmentDetails>) => {
+      if (res.status === 204) {
+        onClose();
+      }
+    });
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="lg" keepMounted aria-labelledby="general-dialog-title">
       <DialogTitle id={`${title}-title`}>{title}</DialogTitle>
       <DialogContent>
-        <form autoComplete="off" onSubmit={saveData}>
+        <form autoComplete="off" onSubmit={saveData} className={classes.dialogForm}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField

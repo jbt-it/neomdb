@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Grid, IconButton, Typography } from "@mui/material";
 import { RemoveCircle } from "@mui/icons-material";
-import { useAuth } from "../../hooks/useAuth";
 import { EventParticipant } from "../../types/eventTypes";
 import { Link } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 interface EventParticipantsProps {
   participants: EventParticipant[];
@@ -23,7 +23,7 @@ const EventParticipants: React.FunctionComponent<EventParticipantsProps> = ({
   participants,
   removeParticipant,
 }: EventParticipantsProps) => {
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const hasEventPermissions = doesPermissionsHaveSomeOf(auth.permissions, [14]);
   const isMobile = useResponsive("down", "md");
 

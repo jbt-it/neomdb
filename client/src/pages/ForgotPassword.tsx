@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Paper, Grid, Button, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import jbtLogoBlack from "../assets/jbt-logo-black.png";
-import api from "../utils/api";
+import useAuth from "../hooks/useAuth";
 
 /**
  * Function that allwos the user to reset the password, if forgotten by sending them a reset link
@@ -58,20 +58,8 @@ const ForgotPassword: React.FunctionComponent = () => {
 
   const classes = useStyles();
   const [email, setEmail] = useState<string>("");
-  const [submitBoolean, setSubmitBoolean] = useState<boolean>(false);
-
-  /**
-   * Send the email to the backend
-   */
-  const sendEmailWithLink = () => {
-    console.log("sendEmailWithLink");
-    const data = {
-      email,
-    };
-    api.post("/auth/forgot-password", data).then((res) => {
-      if (res.status === 204) setSubmitBoolean(true);
-    });
-  };
+  const { sendResetPasswordLink } = useAuth();
+  const [isResetSuccess, setIsResetSuccess] = useState<boolean>(false);
 
   /**
    * Check if input is an email
@@ -93,18 +81,16 @@ const ForgotPassword: React.FunctionComponent = () => {
   };
 
   /**
-   * The button was clicked and the user is informed about the action
+   * Sends the new PW to the database
+   * If the status is 204, the reset email was sent
    */
-  const informationOfSubmit = () => {
-    if (submitBoolean) {
-      return (
-        <Paper className={classes.paper}>
-          Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.
-        </Paper>
-      );
-    } else {
-      return;
-    }
+  const handleResetPassword = () => {
+    const response = sendResetPasswordLink(email);
+    response.then((res) => {
+      if (res.status === 204) {
+        setIsResetSuccess(true);
+      }
+    });
   };
 
   return (
@@ -114,12 +100,7 @@ const ForgotPassword: React.FunctionComponent = () => {
           <Paper className={classes.paper}>
             <img className={classes.jbtLogoBlack} src={jbtLogoBlack} />
             <h1>Passwort vergessen</h1>
-            <form
-              id="emailForm"
-              onSubmit={(event) => {
-                sendEmailWithLink();
-              }}
-            >
+            <form id="emailForm" onSubmit={handleResetPassword}>
               <TextField
                 className={classes.inputfield}
                 id="email"
@@ -137,7 +118,11 @@ const ForgotPassword: React.FunctionComponent = () => {
               </Button>
             </form>
           </Paper>
-          {informationOfSubmit()}
+          {isResetSuccess ? (
+            <Paper className={classes.paper}>
+              Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.
+            </Paper>
+          ) : null}
         </Grid>
       </Grid>
     </div>

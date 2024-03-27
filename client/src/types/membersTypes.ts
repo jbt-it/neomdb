@@ -67,11 +67,17 @@ export type DepartmentDetails = {
  * Type of the directors
  */
 export type Director = {
-  evpostenID: number;
-  ressortID: number;
   mitgliedID: number;
   vorname: string;
   nachname: string;
+  evpostenID: number;
+  ressortID: number;
+  geschlecht: string;
+  bezeichnung_weiblich: string;
+  bezeichnung_maennlich: string;
+  kuerzel: string;
+  von: string;
+  bis: string;
 };
 
 /**
@@ -321,4 +327,23 @@ export type MembersField = {
   vorname: string;
   nachname: string;
   mitgliedstatus: MemberStatus;
+};
+
+/**
+ * Type of permissions
+ */
+export type Permissions = {
+  bezeichnung: string;
+  beschreibung: string;
+  berechtigungID: number;
+};
+
+/**
+ * Type of permission-assignments
+ */
+export type PermissionAssignment = {
+  name: string;
+  permission: number;
+  canDelegate: number;
+  memberID: number;
 };

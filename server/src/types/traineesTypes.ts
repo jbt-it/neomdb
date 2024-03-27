@@ -82,6 +82,7 @@ export type Trainee = {
   vorname: string;
   nachname: string;
   generation: number;
+  mitgliedstatus: string;
 };
 
 /**

@@ -2,19 +2,15 @@
  * Component that handles the login process
  */
 import React, { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-import api from "../utils/api";
 import { Paper, Grid, Button, TextField, Theme, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
-import { authReducerActionType } from "../types/globalTypes";
-import { useAuth } from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
+import { inherits } from "util";
 
 const Login: React.FunctionComponent = () => {
-  const navigate = useNavigate();
-  const { dispatchAuth } = useAuth();
-
   /**
    * Styles
    */
@@ -48,6 +44,10 @@ const Login: React.FunctionComponent = () => {
       justifyContent: "flex-start",
       alignItems: "center",
     },
+    link: {
+      color: "inherit",
+      textDecoration: "none",
+    },
     warningItem: {
       display: "flex",
       justifyContent: "flex-end",
@@ -62,48 +62,32 @@ const Login: React.FunctionComponent = () => {
 
   const classes = useStyles();
 
+  const { login, isLoginError } = useAuth();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [capslock, setCapslock] = useState<boolean>(false);
-  const [failedLogin, setFailedLogin] = useState<boolean>(false);
 
   /**
-   * Handles the API call and cleans state thereafter
+   * Function that handles the login process
+   * @param event - the event that triggers the login
    */
-  const login = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    api
-      .post("/auth/login", {
-        username,
-        password,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          const userID = res.data.mitgliedID;
-          const userName = res.data.name;
-          const permissions = res.data.permissions;
-          const roles = res.data.roles;
-          dispatchAuth({
-            type: authReducerActionType.authenticate,
-            payload: { userID, userName, permissions, roles },
-          });
-          navigate("/");
-        } else {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-          setFailedLogin(true);
-        }
-      })
-      .catch(() => {
-        setFailedLogin(true);
-      });
-    setPassword("");
+    login(username, password);
+  };
+
+  /**
+   * Check if Capslock is enabled
+   */
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    setCapslock(event.getModifierState("CapsLock"));
   };
 
   /**
    * Gets the password correct state of the password field, depending on if a previous login attempt failed
    */
   const getPasswordField: VoidFunction = () => {
-    if (failedLogin) {
+    if (isLoginError) {
       return (
         <TextField
           error
@@ -137,19 +121,12 @@ const Login: React.FunctionComponent = () => {
     );
   };
 
-  /**
-   * Check if Capslock is enabled
-   */
-  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    setCapslock(event.getModifierState("CapsLock"));
-  };
-
   /*
    * Warn if capslock is enabled
    */
   const setCapsLockWaring = () => {
     if (capslock) {
-      return "Caps Lock is enabled!";
+      return "Die Feststelltaste ist aktiviert!";
     }
     return "";
   };
@@ -165,7 +142,7 @@ const Login: React.FunctionComponent = () => {
               className={classes.login}
               id="loginform"
               onSubmit={(event) => {
-                login(event);
+                handleLogin(event);
               }}
             >
               <TextField
@@ -186,7 +163,9 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
+                  <NavLink to="/passwort-vergessen" className={classes.link}>
+                    Passwort vergessen?
+                  </NavLink>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
                   <Link id="capswarning" variant="body2" className={classes.warningText}>

@@ -6,18 +6,23 @@ import globalTheme from "./utils/globalTheme";
 import { AuthProvider } from "./context/auth-context/AuthContext";
 import "./css/app.css";
 import { Toaster } from "react-hot-toast";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <AuthProvider>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={globalTheme}>
-        <App />
-        <Toaster position="bottom-center" reverseOrder={true} />
+        <QueryClientProvider client={queryClient}>
+          <App />
+          <Toaster position="bottom-center" reverseOrder={true} />
+        </QueryClientProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   </AuthProvider>,
