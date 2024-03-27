@@ -3,14 +3,15 @@ import request from "supertest";
 import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
-
+const memberTestUtils = new MemberTestUtils(app);
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
 beforeAll(() => {
   //try {
-  return traineeTestUtils.initTraineeData();
+  return memberTestUtils.initMemberData();
   // await setupTraineeData();
   // } catch (error) {
   //console.log(error);
@@ -28,7 +29,7 @@ afterEach(() => {
 });
 
 afterAll(() => {
-  return traineeTestUtils.clearInitTraineeData();
+  return memberTestUtils.clearInitMemberData();
 });
 
 // --------------------------- TESTS --------------------------- \\
