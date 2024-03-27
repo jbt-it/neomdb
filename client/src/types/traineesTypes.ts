@@ -16,7 +16,7 @@ export type Trainee = {
   mitgliedstatus: string;
 };
 
-export type TraineeAll = Trainee & {
+export type TraineeProgress = Trainee & {
   generationBezeichnung: string;
   internesprojekt: number;
   AngebotBeiEV: boolean;

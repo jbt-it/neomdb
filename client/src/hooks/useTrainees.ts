@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/auth-context/AuthContext";
 import { getGenerations, getInternalProjects, getTraineeProgress, getTrainees } from "../api/trainees";
 import { authReducerActionType } from "../types/globalTypes";
-import { Generation, InternalProject, InternalProjectAll, Trainee, TraineeAll } from "../types/traineesTypes";
+import { Generation, InternalProjectAll, Trainee, TraineeProgress } from "../types/traineesTypes";
 /**
  * Hook that handles the members api calls, uses react-query
  * @returns The members, a boolean indicating if the data is loading and a boolean indicating if an error occured
@@ -77,7 +77,7 @@ const useTrainees = (generationID?: number) => {
     enabled: generationID !== undefined,
   });
 
-  const traineeProgress = (traineeProgressData?.data as TraineeAll[]) || [];
+  const traineeProgress = (traineeProgressData?.data as TraineeProgress[]) || [];
 
   return {
     trainees,

@@ -1,6 +1,6 @@
 import api from "../utils/api";
 import { AxiosResponse } from "axios";
-import { Generation, InternalProject, InternalProjectDetails, Trainee, TraineeAll } from "../types/traineesTypes";
+import { Generation, InternalProject, InternalProjectDetails, Trainee, TraineeProgress } from "../types/traineesTypes";
 
 //----------------------------------------
 // GET ROUTES
@@ -37,8 +37,13 @@ export const getGenerations = async (): Promise<AxiosResponse<Generation[]>> => 
   return await api.get<Generation[]>("/trainees/generations");
 };
 
-export const getTraineeProgress = async (generationId: number): Promise<AxiosResponse<TraineeAll[]>> => {
-  const response = await api.get<TraineeAll[]>(`/trainees/generations/${generationId}/trainee-progress`);
+/**
+ * Get all trainees with their progress
+ * @param generationId - The ID of the generation
+ * @returns An array of all trainees with their progress
+ */
+export const getTraineeProgress = async (generationId: number): Promise<AxiosResponse<TraineeProgress[]>> => {
+  const response = await api.get<TraineeProgress[]>(`/trainees/generations/${generationId}/trainee-progress`);
   return response;
 };
 

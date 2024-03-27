@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { AddCircleOutline, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import { Trainee, TraineeAll } from "../../../types/traineesTypes";
+import { Trainee, TraineeProgress } from "../../../types/traineesTypes";
 import { Link as RouterLink } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -99,7 +99,7 @@ const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, 
   );
 };
 interface Props {
-  trainees: TraineeAll[];
+  trainees: TraineeProgress[];
 }
 
 /**
@@ -176,7 +176,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
                       padding: 0,
                     }}
                   >
-                    {trainee[key as keyof TraineeAll] ? (
+                    {trainee[key as keyof TraineeProgress] ? (
                       <CheckBox color="primary" />
                     ) : (
                       <CheckBoxOutlineBlank color="primary" />
