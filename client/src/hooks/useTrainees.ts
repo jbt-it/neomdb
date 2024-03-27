@@ -6,8 +6,8 @@ import { getGenerations, getInternalProjects, getTraineeProgress, getTrainees } 
 import { authReducerActionType } from "../types/globalTypes";
 import { Generation, InternalProjectAll, Trainee, TraineeProgress } from "../types/traineesTypes";
 /**
- * Hook that handles the members api calls, uses react-query
- * @returns The members, a boolean indicating if the data is loading and a boolean indicating if an error occured
+ * Hook that handles the trainees api calls, uses react-query
+ * @returns The trainees, internal projects, generations, a boolean indicating if the generations are loading, a boolean indicating if the generations are fetched, the trainee progress and a boolean indicating if the trainee progress is fetched
  */
 const useTrainees = (generationID?: number) => {
   const { dispatchAuth } = useContext(AuthContext);
@@ -61,6 +61,7 @@ const useTrainees = (generationID?: number) => {
   const generations = (generationsData?.data as Generation[]) || [];
 
   // getTraineeProgress query
+  // will only be enabled if the generationID is provided
   const { data: traineeProgressData, isFetched: isTraineeProgressFetched } = useQuery({
     queryKey: ["TraineeProgress", generationID],
     queryFn: () => {

@@ -36,6 +36,7 @@ const useInternalProjectDetails = (internalProjectID: number) => {
     },
   });
 
+  // The dates are converted to dayjs objects and the members are formatted to also include a name
   const internalProjectDetails =
     internalProjectDetailsData &&
     ({
