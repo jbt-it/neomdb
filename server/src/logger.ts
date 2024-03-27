@@ -3,7 +3,7 @@
 import { createLogger, format, transports } from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 
-const logsPath = process.env.LOGS_PATH || "./logs"; // Path to the logs folder, defaults to logs if not set in .en
+const logsPath = process.env.LOGS_PATH || "./logs"; // Path to the logs folder, defaults to logs if not set in .env
 
 /**
  * Returns the transports to be used by the logger
@@ -19,6 +19,10 @@ const getTransports = () => {
             return `${timestamp} ${level}: ${message}`;
           })
         ),
+      }),
+      new transports.File({
+        filename: `${logsPath}/error.log`,
+        level: "error",
       }),
     ];
   }
