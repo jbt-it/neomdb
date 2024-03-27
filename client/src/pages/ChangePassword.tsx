@@ -3,7 +3,6 @@
  *
  */
 import React, { useState, useContext } from "react";
-import api from "../utils/api";
 import { AuthContext } from "../context/auth-context/AuthContext";
 import { Paper, Button, Theme } from "@mui/material";
 import Textfield from "@mui/material/TextField";

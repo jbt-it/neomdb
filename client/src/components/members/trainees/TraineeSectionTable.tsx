@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { AddCircleOutline, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import { Trainee } from "../../../types/traineesTypes";
+import { Trainee, TraineeAll } from "../../../types/traineesTypes";
 import { Link as RouterLink } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -52,23 +52,22 @@ const columns = [
   "MS Excel",
 ];
 
-// all checklist keys
-const checklist = [
-  "AngebotBeiEV",
-  "APgehalten",
-  "DLbeiEV",
-  "Projektmanagement",
-  "RhetorikPräsenationstechnik",
-  "AkquiseVerhandlungstechnik",
-  "FinanzenRecht",
-  "Netzwerke",
-  "Qualitätsmanagement",
-  "MSPowerpoint",
-  "StrategieOrganisation",
-  "Datenschutzschulung",
-  "Sicherheitsschulung",
-  "ExcelGrundlagen",
-];
+const columnKeyMapping: { [key: string]: string } = {
+  "Angebot bei EV": "AngebotBeiEV",
+  "AP gehalten und abgegeben": "APgehalten",
+  "DL abgegeben": "DLbeiEV",
+  Projektmanagement: "Projektmanagement",
+  "Rhetorik & Präsentationstechnik": "Präsentationstechnik",
+  "Akquise & Verhandlungstechnik": "AkquiseVerhandlungstechnik",
+  "F&R": "FinanzenRecht",
+  NET: "Netzwerke",
+  QM: "Qualitätsmanagement",
+  "MS PPT": "MSPowerpoint",
+  "Strategie und Organisation": "StrategieOrganisation",
+  Datenschutzschulung: "Datenschutzschulung",
+  Sicherheitsschulung: "Sicherheitsschulung",
+  "MS Excel": "ExcelGrundlagen",
+};
 
 interface DialogProps {
   open: boolean;
@@ -89,14 +88,18 @@ const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, 
         {trainee?.vorname} {trainee?.nachname} aufnehmen?
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Abbrechen</Button>
-        <Button onClick={onClose}>Aufnehmen</Button>
+        <Button onClick={onClose} variant="contained">
+          Abbrechen
+        </Button>
+        <Button onClick={onClose} variant="contained">
+          Aufnehmen
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 interface Props {
-  trainees: Trainee[];
+  trainees: TraineeAll[];
 }
 
 /**
@@ -147,8 +150,8 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {trainees.map((trainee: Trainee, index) => (
-            <TableRow sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }} key={index}>
+          {trainees.map((trainee, index) => (
+            <TableRow key={trainee.mitgliedID} sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }}>
               <TableCell sx={{ width: 150, border: 1, borderColor: "#fff" }}>
                 <Link
                   component={RouterLink}
@@ -160,23 +163,26 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
                   {trainee.vorname} {trainee.nachname}
                 </Link>
               </TableCell>
-              {Object.entries(trainee).map(([key, value], index) => {
-                if (checklist.includes(key)) {
-                  return (
-                    <TableCell
-                      key={index}
-                      align="center"
-                      sx={{
-                        width: 10,
-                        border: 1,
-                        borderColor: "#fff",
-                        padding: 0,
-                      }}
-                    >
-                      {value ? <CheckBox color="primary" /> : <CheckBoxOutlineBlank color="primary" />}
-                    </TableCell>
-                  );
-                }
+              {columns.map((column) => {
+                const key = columnKeyMapping[column];
+                return (
+                  <TableCell
+                    key={`${trainee.mitgliedID}-${key}`}
+                    align="center"
+                    sx={{
+                      width: 10,
+                      border: 1,
+                      borderColor: "#fff",
+                      padding: 0,
+                    }}
+                  >
+                    {trainee[key as keyof TraineeAll] ? (
+                      <CheckBox color="primary" />
+                    ) : (
+                      <CheckBoxOutlineBlank color="primary" />
+                    )}
+                  </TableCell>
+                );
               })}
               <TableCell sx={{ maxWidth: 100, width: 80, border: 1, borderColor: "#fff" }} align="right">
                 <Stack

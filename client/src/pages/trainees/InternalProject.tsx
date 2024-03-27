@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
@@ -14,19 +14,16 @@ import {
 } from "@mui/material";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { InternalProjectDetails, TraineeShort } from "../../types/traineesTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 import LoadingCircle from "../../components/general/LoadingCircle";
 import PageBar from "../../components/navigation/PageBar";
 import EditInternalProjectDialog from "../../components/members/trainees/EditInternalProjectDialog";
-import dayjs from "dayjs";
-import api from "../../utils/api";
-import { authReducerActionType } from "../../types/globalTypes";
-import { Member, MembersField } from "../../types/membersTypes";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import axios, { AxiosError } from "axios";
+import { Member, MemberStatus, MembersField } from "../../types/membersTypes";
+import useMembers from "../../hooks/members/useMembers";
+import useTrainees from "../../hooks/useTrainees";
+import useInternalProjectDetails from "../../hooks/useInternalProjectDetails";
 
 // Styling for the paper element
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -44,12 +41,25 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
  */
 const InternalProject: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
-  const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectDetails | null>(null);
-  const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
-  const [trainees, setTrainees] = useState<MembersField[]>([]);
+  const { members } = useMembers();
+  const { trainees } = useTrainees();
+  const { internalProjectDetails, updateInternalProjectDetails, deleteInternalProject } = useInternalProjectDetails(
+    Number(id)
+  );
+
+  const selectableQMs: MembersField[] = members
+    .filter((member: Member) => member.mitgliedstatus !== "Trainee" && member.mitgliedstatus !== "Ausgetretene")
+    .map((member: Member) => ({
+      mitgliedID: member.mitgliedID,
+      name: `${member.vorname} ${member.nachname}`,
+      vorname: member.vorname,
+      nachname: member.nachname,
+      mitgliedstatus: member.mitgliedstatus as MemberStatus,
+    }));
+
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
@@ -82,234 +92,6 @@ const InternalProject: React.FunctionComponent = () => {
   const handleDeleteDialogClose = () => {
     setDeleteDialogOpen(false);
   };
-
-  /**
-   * Retrieves the internal project details
-   */
-  const getInternalProjectDetails = (id: number) => {
-    let mounted = true;
-    api
-      .get(`/trainees/ip/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            const internalProject: InternalProjectDetails = {
-              internesProjektID: res.data.internesProjektID,
-              projektname: res.data.projektname,
-              kuerzel: res.data.kuerzel,
-              generation: res.data.generation,
-              generationsBezeichnung: res.data.generationsBezeichnung,
-              kickoff: res.data.kickoff ? dayjs(res.data.kickoff) : null,
-              AngebotBeiEV: res.data.AngebotBeiEV === 1 ? true : false,
-              ZPBeiEV: res.data.ZPBeiEV === 1 ? true : false,
-              ZPGehalten: res.data.ZPGehalten ? dayjs(res.data.ZPGehalten) : null,
-              APBeiEV: res.data.APBeiEV === 1 ? true : false,
-              APGehalten: res.data.APGehalten ? dayjs(res.data.APGehalten) : null,
-              DLBeiEV: res.data.DLBeiEV === 1 ? true : false,
-              projektmitglieder: res.data.projektmitglieder.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                name: `${member.vorname} ${member.nachname}`,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
-              })),
-              qualitaetsmanager: res.data.qualitaetsmanager.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                name: `${member.vorname} ${member.nachname}`,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
-              })),
-            };
-            setInternalProjectDetails(internalProject);
-          }
-        }
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log("Request canceled", error.message);
-        } else if (error.code === "ECONNABORTED") {
-          console.log("Timeout error", error.message);
-        } else {
-          // handle other errors
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  // Retrieves all members and only sets the selectableQMs to the ones that are not trainees or no longer part of jbt
-  const getSelectableQms: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setSelectableQMs(
-              res.data
-                .map((member: MembersField) => ({
-                  mitgliedID: member.mitgliedID,
-                  name: `${member.vorname} ${member.nachname}`,
-                  vorname: member.vorname,
-                  nachname: member.nachname,
-                  mitgliedstatus: member.mitgliedstatus,
-                }))
-                .filter(
-                  (member: MembersField) =>
-                    member.mitgliedstatus !== "Trainee" && member.mitgliedstatus !== "Ausgetretene"
-                )
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  // Retrieves the current trainees
-  const getTrainees: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/trainees/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setTrainees(
-              res.data
-                .map((trainee: TraineeShort) => ({
-                  mitgliedID: trainee.mitgliedID,
-                  name: `${trainee.vorname} ${trainee.nachname}`,
-                  vorname: trainee.vorname,
-                  nachname: trainee.nachname,
-                  mitgliedstatus: "Trainee",
-                }))
-                .filter((trainee: MembersField) => trainee.mitgliedstatus !== "Ausgetretene")
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  /**
-   * Updates the internal project details
-   * @param updatedInternalProjectDetails - The updated internal project details
-   */
-  const updateInternalProjectDetails = (updatedInternalProjectDetails: InternalProjectDetails) => {
-    event?.preventDefault();
-
-    const newInternalProjectDetails = {
-      internesProjektID: updatedInternalProjectDetails.internesProjektID,
-      projektname: updatedInternalProjectDetails.projektname,
-      kuerzel: updatedInternalProjectDetails.kuerzel,
-      generation: updatedInternalProjectDetails.generation,
-      generationsBezeichnung: updatedInternalProjectDetails.generationsBezeichnung,
-      kickoff: updatedInternalProjectDetails.kickoff
-        ? updatedInternalProjectDetails.kickoff.format("YYYY-MM-DD")
-        : null,
-      AngebotBeiEV: updatedInternalProjectDetails.AngebotBeiEV,
-      ZPBeiEV: updatedInternalProjectDetails.ZPBeiEV,
-      ZPGehalten: updatedInternalProjectDetails.ZPGehalten
-        ? updatedInternalProjectDetails.ZPGehalten.format("YYYY-MM-DD")
-        : null,
-      APBeiEV: updatedInternalProjectDetails.APBeiEV,
-      APGehalten: updatedInternalProjectDetails.APGehalten
-        ? updatedInternalProjectDetails.APGehalten.format("YYYY-MM-DD")
-        : null,
-      DLBeiEV: updatedInternalProjectDetails.DLBeiEV,
-      projektmitglieder: updatedInternalProjectDetails.projektmitglieder.map((member: MembersField) => ({
-        mitgliedID: member.mitgliedID,
-        vorname: member.vorname,
-        nachname: member.nachname,
-      })),
-      qualitaetsmanager: updatedInternalProjectDetails.qualitaetsmanager.map((member: MembersField) => ({
-        mitgliedID: member.mitgliedID,
-        vorname: member.vorname,
-        nachname: member.nachname,
-      })),
-    };
-
-    api
-      .put(`/trainees/ip/${updatedInternalProjectDetails.internesProjektID}`, newInternalProjectDetails)
-      .then((res) => {
-        if (res.status === 204) {
-          showSuccessMessage("Aktualisierung erfolgreich!");
-          handleInternalProjectInfoDialogClose();
-          getInternalProjectDetails(Number(id));
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
-  };
-
-  /**
-   * Deletes the internal project
-   * @param id - The id of the internal project to be deleted
-   */
-  const deleteInternalProject = (id: number) => {
-    api
-      .delete(`/trainees/ip/${id}`)
-      .then((res) => {
-        if (res.status === 204) {
-          showSuccessMessage("Internes Projekt erfolgreich gelöscht!");
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Löschen ist fehlgeschlagen!");
-        } else {
-          showErrorMessage("Löschen ist fehlgeschlagen!");
-        }
-      });
-  };
-
-  useEffect(() => {
-    getInternalProjectDetails(Number(id));
-  }, [id]);
-
-  useEffect(() => {
-    getSelectableQms();
-  }, [getSelectableQms]);
-
-  useEffect(() => {
-    getTrainees();
-  }, [getTrainees]);
 
   // Fields for the internal project details
   const internalProjectDetailsFields: Array<InformationField> = [
@@ -386,7 +168,13 @@ const InternalProject: React.FunctionComponent = () => {
         closeDialog={handleInternalProjectInfoDialogClose}
         updateInternalProjectDetails={updateInternalProjectDetails}
         selectableQMs={selectableQMs}
-        selectableTrainees={trainees}
+        selectableTrainees={trainees
+          .map((trainee) => ({
+            ...trainee,
+            mitgliedstatus: trainee.mitgliedstatus as MemberStatus,
+            name: `${trainee.vorname} ${trainee.nachname}`,
+          }))
+          .filter((trainee: MembersField) => trainee.mitgliedstatus !== "Ausgetretene")}
       />
 
       <StyledPaper>

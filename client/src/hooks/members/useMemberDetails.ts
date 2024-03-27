@@ -69,7 +69,7 @@ const useMemberDetails = (memberID: number) => {
   // ############
 
   // updateMemberDetails mutation
-  const { mutate: mutateDetails, isLoading: isUpdatingMemberDetails } = useMutation({
+  const { mutateAsync: mutateDetails, isLoading: isUpdatingMemberDetails } = useMutation({
     mutationFn: updateDetails,
     onError: (err: AxiosError) => {
       if (err.response?.status === 401) {
@@ -81,13 +81,13 @@ const useMemberDetails = (memberID: number) => {
     },
   });
 
-  const updateMemberDetails = (memberDetails: MemberDetails) => {
-    mutateDetails(memberDetails);
+  const updateMemberDetails = async (memberDetails: MemberDetails) => {
+    return await mutateDetails(memberDetails);
   };
 
   // ----------------------------------------------------------------------------------
   //saveMemberImage mutation
-  const { mutate: mutateImage, isLoading: isSavingMemberImage } = useMutation({
+  const { mutateAsync: mutateImage, isLoading: isSavingMemberImage } = useMutation({
     mutationFn: saveImage,
     onError: (err: AxiosError) => {
       if (err.response?.status === 401) {
@@ -106,8 +106,8 @@ const useMemberDetails = (memberID: number) => {
     },
   });
 
-  const saveMemberImage = (image: File) => {
-    mutateImage({ image, memberID });
+  const saveMemberImage = async (image: File) => {
+    return await mutateImage({ image, memberID });
   };
 
   // ----------------------------------------------------------------------------------

@@ -93,11 +93,10 @@ export class AuthController extends Controller {
    */
   @Post("forgot-password")
   public async sendPasswordResetLink(@Body() requestBody: UserForgotPasswordRequest): Promise<void> {
-    sleepRandomly(3000, 3000);
     const email = requestBody.email;
     const name = String(email).split("@")[0];
 
-    // const token = await this.authService.createPasswordResetToken(name, email);
+    const token = await this.authService.createPasswordResetToken(name, email);
 
     /**
      * // TODO: implement nodemailer to be able to send mails with microsoft exchange 365

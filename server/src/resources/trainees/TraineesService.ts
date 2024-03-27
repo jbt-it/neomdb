@@ -283,11 +283,30 @@ class TraineesService {
       mapMemberIDToTrainingData.get(mitgliedID)![schulungsname] = feedbackAbgegeben;
     });
 
+    // Adjust the names of the workshops
+    function adjustSchulungsname(name: string): string {
+      const replacements = {
+        "Akquise & Verhandlungstechnik": "AkquiseVerhandlungstechnik",
+        "Excel | Grundlagen": "ExcelGrundlagen",
+        "BDSU-Vorstellung": "BDSU",
+        "Finanzen & Recht": "FinanzenRecht",
+        "MS Powerpoint": "MSPowerpoint",
+        "Strategie und Organisation": "StrategieOrganisation",
+      };
+
+      return replacements[name] || name;
+    }
+
     // Combine data from the "ips" array
     const resultArray = ips.map((item) => {
       const { mitgliedID, ...rest } = item;
       const trainingData = mapMemberIDToTrainingData.get(mitgliedID) || {};
-      return { mitgliedID, ...rest, ...trainingData } as InternalProjectAndTrainee & Workshop;
+      const adjustedTrainingData = Object.keys(trainingData).reduce((acc, key) => {
+        const adjustedKey = adjustSchulungsname(key);
+        acc[adjustedKey] = trainingData[key];
+        return acc;
+      }, {} as Record<string, number>);
+      return { mitgliedID, ...rest, ...adjustedTrainingData } as InternalProjectAndTrainee & Workshop;
     });
 
     return resultArray;

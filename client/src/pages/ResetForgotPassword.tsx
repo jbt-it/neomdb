@@ -3,11 +3,11 @@
  *
  */
 import React, { useState } from "react";
-import api from "../utils/api";
 import { Paper, Button, TextField, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useParams } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 /**
  * Functions that allows the user to reset the password with the sent reset link
@@ -48,6 +48,10 @@ const ResetForgotPassword: React.FunctionComponent = () => {
       textDecoration: "none",
       pointerEvents: "none",
     },
+    loginLink: {
+      textDecoration: "none",
+      color: "white",
+    },
   }));
 
   const classes = useStyles();
@@ -56,23 +60,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [newPasswordValidation, setNewPasswordValidation] = useState<string>("");
   const [resResponse200, setResResponse200] = useState<boolean>(false);
-
-  /**
-   * Sends the new PW to the database
-   */
-  const postResetPassword = () => {
-    console.log("postRestPassword");
-    if (newPassword === newPasswordValidation && checkNewPassword(newPassword)) {
-      const data = {
-        email,
-        key,
-        newPassword,
-      };
-      api.patch("/auth/reset-forgot-password", data).then((res) => {
-        if (res.status === 204) setResResponse200(true);
-      });
-    }
-  };
+  const { resetForgottenPassword } = useAuth();
 
   /**
    * Check if the new password is okay: min 8 chars; min 1 per num/a-z/A-Z
@@ -80,6 +68,23 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   const checkNewPassword = (testString: string) => {
     const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
     return regex.test(testString);
+  };
+
+  /**
+   * Sends the new PW to the database
+   */
+  const postResetPassword = () => {
+    if (newPassword === newPasswordValidation && checkNewPassword(newPassword)) {
+      const data = {
+        email,
+        key,
+        newPassword,
+      };
+      const response = resetForgottenPassword(data);
+      response.then((res) => {
+        if (res.status === 204) setResResponse200(true);
+      });
+    }
   };
 
   /**
@@ -182,9 +187,11 @@ const ResetForgotPassword: React.FunctionComponent = () => {
     if (resResponse200) {
       return (
         <Paper className={classes.paper}>
-          <p>Das passwort wurde gesendet und wird gespeichert, falls die E-Mail korrekt war</p>
+          <p>Das Passwort wurde geändert, falls die E-Mail korrekt war</p>
           <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/login" className={classes.loginLink}>
+              Login
+            </NavLink>
           </Button>
         </Paper>
       );
@@ -204,12 +211,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
             </p>
           </Paper>
           <Paper className={classes.paper}>
-            <form
-              id="resetForgotPW"
-              onSubmit={(event) => {
-                postResetPassword();
-              }}
-            >
+            <form id="resetForgotPW" onSubmit={postResetPassword}>
               <div>
                 {getNewPasswordField()}
                 {getNewPasswordFieldValidation()}

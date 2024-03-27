@@ -3,21 +3,22 @@ import { Autocomplete, Button, Stack, TextField, Typography } from "@mui/materia
 import { EventParticipant, CommonEventType } from "../../../types/eventTypes";
 import useResponsive from "../../../hooks/useResponsive";
 import WorkingWeekendSignUpDialog from "./WorkingWeekendSignUpDialog";
+import useMembers from "../../../hooks/members/useMembers";
+import { Member } from "../../../types/membersTypes";
 
 interface AddWorkingWeekendParticipant {
   ww: CommonEventType;
-  members: EventParticipant[];
   participants: EventParticipant[];
 }
 
 const AddWorkingWeekendParticipant: React.FunctionComponent<AddWorkingWeekendParticipant> = ({
   ww,
-  members,
   participants,
 }: AddWorkingWeekendParticipant) => {
   const isMobile = useResponsive("down", "sm");
-  const [participant, setParticipant] = useState<EventParticipant | null>(null);
+  const [participant, setParticipant] = useState<Member | null>(null);
   const [open, setOpen] = React.useState(false);
+  const { members } = useMembers();
 
   const handleOpen = () => {
     setOpen(true);
@@ -83,7 +84,9 @@ const AddWorkingWeekendParticipant: React.FunctionComponent<AddWorkingWeekendPar
         </Typography>
         <Autocomplete
           renderInput={(params) => <TextField variant="outlined" {...params} label="Mitglied" />}
-          options={members.filter((member) => !participants.includes(member))}
+          options={members.filter(
+            (member) => !participants.some((participant) => participant.mitgliedID === member.mitgliedID)
+          )}
           getOptionLabel={(option) => `${option.vorname} ${option.nachname}`}
           sx={{ width: 230 }}
           size="small"

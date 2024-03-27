@@ -2,28 +2,28 @@ import React, { FunctionComponent, useState } from "react";
 import { EventParticipant } from "../../types/eventTypes";
 import { Stack, Typography, TextField, Button, Autocomplete } from "@mui/material";
 import useResponsive from "../../hooks/useResponsive";
+import useMembers from "../../hooks/members/useMembers";
+import { Member } from "../../types/membersTypes";
 
 interface AddMembersFieldProps {
-  members: EventParticipant[];
   participants: EventParticipant[];
-  addParticipant: (participant: EventParticipant) => void;
+  addParticipant: (participant: Member) => void;
 }
 
 /**
  * The AddMembersField component is used to add members to an event.
  * It displays a text field with an autocomplete function and a button.
- * @param members: all members of the club, participants: all participants of the event
  * @param participants: all participants of the event
  * @param addParticipant: function to add a participant to the event
  * @returns AddMembersField component
  */
 const AddMembersField: FunctionComponent<AddMembersFieldProps> = ({
-  members,
   participants,
   addParticipant,
 }: AddMembersFieldProps) => {
   const isMobile = useResponsive("down", "sm");
-  const [participant, setParticipant] = useState<EventParticipant | null>(null);
+  const [participant, setParticipant] = useState<Member | null>(null);
+  const { members } = useMembers();
 
   // function to handle the add participant button if a participant is selected
   const handleAddParticipant = () => {
@@ -44,7 +44,9 @@ const AddMembersField: FunctionComponent<AddMembersFieldProps> = ({
       </Typography>
       <Autocomplete
         renderInput={(params) => <TextField variant="outlined" {...params} label="Mitglied" />}
-        options={members.filter((member) => !participants.includes(member))}
+        options={members.filter(
+          (member) => !participants.some((participant) => participant.mitgliedID === member.mitgliedID)
+        )}
         getOptionLabel={(option) => `${option.vorname} ${option.nachname}`}
         sx={{ width: 230 }}
         size="small"

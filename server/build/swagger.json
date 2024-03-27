@@ -227,6 +227,12 @@
 			},
 			"Director": {
 				"properties": {
+					"bis": {
+						"type": "string"
+					},
+					"von": {
+						"type": "string"
+					},
 					"kuerzel": {
 						"type": "string"
 					},
@@ -259,6 +265,8 @@
 					}
 				},
 				"required": [
+					"bis",
+					"von",
 					"kuerzel",
 					"bezeichnung_maennlich",
 					"bezeichnung_weiblich",
@@ -814,6 +822,9 @@
 			},
 			"Trainee": {
 				"properties": {
+					"mitgliedstatus": {
+						"type": "string"
+					},
 					"generation": {
 						"type": "number",
 						"format": "double"
@@ -830,6 +841,7 @@
 					}
 				},
 				"required": [
+					"mitgliedstatus",
 					"generation",
 					"nachname",
 					"vorname",

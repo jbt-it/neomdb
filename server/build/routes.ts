@@ -68,7 +68,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Director": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"kuerzel":{"dataType":"string","required":true},"bezeichnung_maennlich":{"dataType":"string","required":true},"bezeichnung_weiblich":{"dataType":"string","required":true},"geschlecht":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true},"evpostenID":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"bis":{"dataType":"string","required":true},"von":{"dataType":"string","required":true},"kuerzel":{"dataType":"string","required":true},"bezeichnung_maennlich":{"dataType":"string","required":true},"bezeichnung_weiblich":{"dataType":"string","required":true},"geschlecht":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true},"evpostenID":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StatusOverview": {
@@ -138,7 +138,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Trainee": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generation":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mitgliedstatus":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MembersField": {

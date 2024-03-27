@@ -2,32 +2,12 @@
  * The PermissionsOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Paper, Grid, Theme, Typography, Divider, Box, TextField, Chip } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-import api from "../../utils/api";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-
-/**
- * Interface of route get permission-assignments
- */
-interface MemberPermissions {
-  name: string;
-  permission: number;
-  canDelegate: number;
-  memberID: number;
-}
-
-/**
- * Interface of route get permissions
- */
-interface Permissions {
-  bezeichnung: string;
-  beschreibung: string;
-  berechtigungID: number;
-}
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Interface used for autocomplete
@@ -106,120 +86,9 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const PermissionsOverview: React.FunctionComponent = () => {
   const classes = useStyles();
-  const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
-  const [permissionsOverview, setPermissionsOverview] = useState<Permissions[]>([]);
   const { auth } = useContext(AuthContext);
+  const { permissions, permissionAssignments, createPermission, deletePermission } = useMembers();
   let tmp: AllNames[] = [];
-
-  /**
-   * Handles the API call and cleans state thereafter
-   */
-  const getPermissions: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/permissions", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setPermissionsOverview(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Retrieves the permissions of all members
-   */
-  const getPermissionAssignments: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/permission-assignments", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMemberPermissions(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Create a new relation between a member and a permission
-   */
-  const createPermission = (memberID: number, permissionID: number) => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .post(
-        "/members/permissions",
-        { memberID, permissionID },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          if (mounted) {
-            showSuccessMessage("Berechtigung wurde erfolgreich erteilt");
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigung konnte nicht erteilt werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Deletes a given permission
-   */
-  const deletePermission = (memberID: number, permissionID: number) => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .delete("/members/permissions", {
-        data: { memberID, permissionID },
-
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 204) {
-          if (mounted) {
-            showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigung konnte nicht entzogen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
 
   /**
    * Check if clicked event added or removed entity from autocomplete
@@ -249,9 +118,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
     );
   };
 
-  useEffect(() => getPermissions(), []);
-  useEffect(() => getPermissionAssignments(), []);
-
   return (
     <div>
       <div className="content-page">
@@ -265,7 +131,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                 <Divider className={classes.paperHeaderDivider} />
               </Grid>
               <Grid container spacing={0}>
-                {permissionsOverview.map((permissions) => (
+                {permissions.map((permissions) => (
                   <Grid item container spacing={0} className={classes.contentContainer} key={permissions.bezeichnung}>
                     <Grid item xs={6}>
                       <Grid item xs={12}>
@@ -273,9 +139,11 @@ const PermissionsOverview: React.FunctionComponent = () => {
                       </Grid>
                     </Grid>
                     <Grid container spacing={0}>
-                      {memberPermissions.map((memberP) => {
+                      {permissionAssignments.map((memberP) => {
                         if (permissions.berechtigungID === memberP.permission) {
-                          if (memberPermissions.map((entry) => memberP.permission === entry.permission).length > 0) {
+                          if (
+                            permissionAssignments.map((entry) => memberP.permission === entry.permission).length > 0
+                          ) {
                             tmp.push({
                               name: memberP.name,
                               memberID: memberP.memberID,
@@ -301,7 +169,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                             }}
                             options={
                               // Remove duplicated options
-                              memberPermissions.filter(
+                              permissionAssignments.filter(
                                 (value, index, self) =>
                                   index ===
                                   self.findIndex((t) => t.memberID === value.memberID && t.name === value.name)

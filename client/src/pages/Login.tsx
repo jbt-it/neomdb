@@ -8,6 +8,7 @@ import { Paper, Grid, Button, TextField, Theme, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import useAuth from "../hooks/useAuth";
+import { inherits } from "util";
 
 const Login: React.FunctionComponent = () => {
   /**
@@ -42,6 +43,10 @@ const Login: React.FunctionComponent = () => {
       display: "flex",
       justifyContent: "flex-start",
       alignItems: "center",
+    },
+    link: {
+      color: "inherit",
+      textDecoration: "none",
     },
     warningItem: {
       display: "flex",
@@ -121,7 +126,7 @@ const Login: React.FunctionComponent = () => {
    */
   const setCapsLockWaring = () => {
     if (capslock) {
-      return "Caps Lock is enabled!";
+      return "Die Feststelltaste ist aktiviert!";
     }
     return "";
   };
@@ -158,7 +163,9 @@ const Login: React.FunctionComponent = () => {
               </Button>
               <Grid container>
                 <Grid item xs className={classes.linkItem}>
-                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
+                  <NavLink to="/passwort-vergessen" className={classes.link}>
+                    Passwort vergessen?
+                  </NavLink>
                 </Grid>
                 <Grid item xs className={classes.warningItem}>
                   <Link id="capswarning" variant="body2" className={classes.warningText}>

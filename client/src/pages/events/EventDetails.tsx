@@ -17,7 +17,6 @@ import { AddCircle, Delete, Edit, RemoveCircleOutline } from "@mui/icons-materia
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/de";
-import api from "../../utils/api";
 import useResponsive from "../../hooks/useResponsive";
 
 import LoadingTable from "../../components/general/LoadingTable";
@@ -28,8 +27,6 @@ import EventParticipants from "../../components/events/EventParticipants";
 import AddMembersField from "../../components/events/AddMembersField";
 
 import { CommonEventType, EventParticipant } from "../../types/eventTypes";
-import { Member } from "../../types/membersTypes";
-import { authReducerActionType } from "../../types/globalTypes";
 
 import { events as mockEvents } from "../../mock/events/events";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
@@ -39,6 +36,7 @@ import WorkingWeekendSignUp from "../../components/events/workingweekend/Working
 import WorkingWeekendParticipantsTable from "../../components/events/workingweekend/WorkingWeekendParticipantsTable";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import AddWorkingWeekendParticipant from "../../components/events/workingweekend/AddWorkingWeekendParticipant";
+import { Member } from "../../types/membersTypes";
 
 type WWRegistrationInfo = {
   anreise: string;
@@ -58,7 +56,6 @@ const EventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<CommonEventType | null>();
-  const [members, setMembers] = useState<EventParticipant[]>([]);
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -139,40 +136,6 @@ const EventDetails: React.FunctionComponent = () => {
     [dispatchAuth]
   );
 
-  // Retrieves the members
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(
-              res.data.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
-              }))
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
   // Function to update the event
   const updateEvent = (
     title: string,
@@ -214,7 +177,6 @@ const EventDetails: React.FunctionComponent = () => {
   useEffect(() => {
     getEvent(Number(id));
   }, [id, getEvent]);
-  useEffect(() => getMembers(), [getMembers]);
 
   // Fields for the display of event information
   const displayFields: Array<InformationField> = [
@@ -388,9 +350,9 @@ const EventDetails: React.FunctionComponent = () => {
    * TODO: Implement backend functionality to add a participant to the event
    * @param participant the participant to add
    */
-  const addParticipant = (participant: EventParticipant) => {
+  const addParticipant = (participant: Member) => {
     alert(participant.vorname + " " + participant.nachname + " wurde hinzugefügt");
-    setParticipants((prevParticipants) => [...prevParticipants, participant]);
+    setParticipants((prevParticipants) => [...prevParticipants, { ...participant, anmeldedatum: dayjs() }]);
   };
 
   /**
@@ -523,9 +485,9 @@ const EventDetails: React.FunctionComponent = () => {
             <>
               {hasEventPermission ? (
                 event.type === "WW" ? (
-                  <AddWorkingWeekendParticipant members={members} participants={participants} ww={event} />
+                  <AddWorkingWeekendParticipant participants={participants} ww={event} />
                 ) : (
-                  <AddMembersField members={members} participants={participants} addParticipant={addParticipant} />
+                  <AddMembersField participants={participants} addParticipant={addParticipant} />
                 )
               ) : null}
             </>

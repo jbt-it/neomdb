@@ -6,64 +6,53 @@ import { Dayjs } from "dayjs";
 import { MembersField } from "./membersTypes";
 
 /**
- * Type of a trainee
+ * Type of the trainee data received from the backend
  */
 export type Trainee = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
   generation: number;
+  mitgliedstatus: string;
+};
+
+export type TraineeAll = Trainee & {
   generationBezeichnung: string;
   internesprojekt: number;
   AngebotBeiEV: boolean;
   APgehalten: boolean;
   DLbeiEV: boolean;
   Projektmanagement: boolean;
-  RhetorikPräsenationstechnik: boolean;
+  Präsentationstechnik: boolean;
   AkquiseVerhandlungstechnik: boolean;
   FinanzenRecht: boolean;
   Netzwerke: boolean;
   Qualitätsmanagement: boolean;
+  Compliance: boolean;
   MSPowerpoint: boolean;
   StrategieOrganisation: boolean;
   Datenschutzschulung: boolean;
   Sicherheitsschulung: boolean;
   ExcelGrundlagen: boolean;
-};
-
-/**
- * Type of the trainee data received from the backend
- */
-export type TraineeShort = {
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-  generation: number;
+  BDSU: boolean;
 };
 
 export type InternalProject = {
-  internesprojektID: number;
+  internesProjektID: number;
   generation: number;
   projektname: string;
   kickoff: string;
   AngebotBeiEV: boolean;
-  ZPgehalten: boolean;
+  ZPBeiEV: boolean;
   APgehalten: string;
-  DLbeiEV: boolean;
+  DLBeiEV: boolean;
 };
 
-export type InternalProjectAll = {
-  internesProjektID: number;
-  generation: number;
-  projektname: string;
+export type InternalProjectAll = InternalProject & {
   kuerzel: string;
   kickoff: Date | null;
-  AngebotBeiEV: number;
-  ZPBeiEV: number;
   ZPGehalten: Date | null;
-  APBeiEV: number;
   APGehalten: Date | null;
-  DLBeiEV: number;
 };
 
 export type Generation = {

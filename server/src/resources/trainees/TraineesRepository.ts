@@ -60,12 +60,12 @@ class TraineesRepository {
           projektname: rowData.projektname,
           kuerzel: rowData.kuerzel,
           kickoff: rowData.kickoff,
-          AngebotBeiEV: rowData.AngebotBeiEV,
-          ZPBeiEV: rowData.ZPBeiEV,
+          AngebotBeiEV: rowData.AngebotBeiEV === 1 ? true : false,
+          ZPBeiEV: rowData.ZPBeiEV === 1 ? true : false,
           ZPGehalten: rowData.ZPGehalten,
-          APBeiEV: rowData.APBeiEV,
+          APBeiEV: rowData.APBeiEV === 1 ? true : false,
           APGehalten: rowData.APGehalten,
-          DLBeiEV: rowData.DLBeiEV,
+          DLBeiEV: rowData.DLBeiEV === 1 ? true : false,
           projektmitglieder: ipProjectMembersResult,
           qualitaetsmanager: ipQMsResult,
         } as InternalProject;
@@ -467,8 +467,9 @@ class TraineesRepository {
   getTrainees = async (connection?: mysql.PoolConnection): Promise<Trainee[]> => {
     try {
       const queryResult = await query(
-        `SELECT mitgliedID, vorname, nachname, generation
+        `SELECT mitgliedID, vorname, nachname, generation, bezeichnung as mitgliedstatus
         FROM mitglied
+        JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
         WHERE mitgliedstatus = 1 AND mitglied.generation = (SELECT max(generation) from internesprojekt) ORDER BY nachname`,
         [],
         connection
@@ -528,17 +529,20 @@ class TraineesRepository {
         mitglied.nachname, 
         mitglied.generation,
         mitglied.internesprojekt, 
+        mitgliedstatus.bezeichnung AS mitgliedstatus,
         internesprojekt.projektname, 
-        internesprojekt.kuerzel, 
+        internesprojekt.kuerzel,
+        internesprojekt.ZPgehalten,
+        internesprojekt.APgehalten,
+        internesprojekt.kickoff,
         CAST(COALESCE(internesprojekt.AngebotBeiEV, 0) AS SIGNED) AS AngebotBeiEV, 
         CAST(COALESCE(internesprojekt.ZPbeiEV, 0) AS SIGNED) AS ZPbeiEV, 
-        CAST(COALESCE(internesprojekt.ZPgehalten, 0) AS SIGNED) AS ZPgehalten, 
         CAST(COALESCE(internesprojekt.APbeiEV, 0) AS SIGNED) AS APbeiEV, 
-        CAST(COALESCE(internesprojekt.APgehalten, 0) AS SIGNED) AS APgehalten, 
         CAST(COALESCE(internesprojekt.DLbeiEV, 0) AS SIGNED) AS DLbeiEV
     FROM mitglied 
-    JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
-    WHERE mitglied.generation = ?  
+    LEFT JOIN internesprojekt ON mitglied.internesprojekt = internesprojekt.internesprojektID
+    INNER JOIN mitgliedstatus ON mitglied.mitgliedstatus = mitgliedstatus.mitgliedstatusID
+    WHERE mitglied.generation = ?
     ORDER BY mitglied.nachname ASC`,
         [generationID],
         connection
