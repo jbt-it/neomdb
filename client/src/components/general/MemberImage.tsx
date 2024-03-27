@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
@@ -25,6 +25,10 @@ interface MemberImageProps {
  */
 const MemberImage: React.FC<MemberImageProps> = ({ base64, mimeType, size, defaultImage, alt, onImageChange }) => {
   const [hover, setHover] = useState(false);
+  /**
+   * Reference to the file input element used to propagate the click event
+   */
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   /**
    * Handles the mouse enter event of the image
@@ -44,6 +48,17 @@ const MemberImage: React.FC<MemberImageProps> = ({ base64, mimeType, size, defau
     if (onImageChange) {
       setHover(false);
     }
+  };
+
+  /**
+   * Handles the click on the upload icon button
+   * such that the file input is clicked and the explorer is opened.
+   *
+   * -> This is necessary because the file input is hidden and cannot be clicked directly
+   * and positioning the file input inside the icon button is not compatible with all browsers
+   */
+  const handleIconButtonClick = () => {
+    inputFileRef.current?.click();
   };
 
   return (
@@ -77,18 +92,20 @@ const MemberImage: React.FC<MemberImageProps> = ({ base64, mimeType, size, defau
           filter: hover ? "brightness(50%)" : "none",
         }}
       />
-      {hover && (
-        <IconButton
-          color="secondary"
-          component="label"
-          sx={{
-            position: "absolute",
-          }}
-        >
-          <CloudUploadIcon fontSize="large" />
-          <input type="file" hidden onChange={onImageChange} accept="image/*" />
-        </IconButton>
-      )}
+      <input ref={inputFileRef} type="file" hidden onChange={onImageChange} accept="image/*" />
+      {hover ? (
+        <>
+          <IconButton
+            color="secondary"
+            onClick={handleIconButtonClick}
+            sx={{
+              position: "absolute",
+            }}
+          >
+            <CloudUploadIcon fontSize="large" />
+          </IconButton>
+        </>
+      ) : null}
     </Box>
   );
 };

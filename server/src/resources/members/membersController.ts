@@ -44,7 +44,7 @@ import { UnauthorizedError } from "../../types/Errors";
 @Route("members")
 export class MembersController extends Controller {
   private membersService: MembersService = new MembersService();
-  private assetsPath = process.env.ASSETS_PATH || process.env.NODE_ENV === "test" ? "./test/assets" : "./assets";
+  private assetsPath = process.env.ASSETS_PATH || (process.env.NODE_ENV === "test" ? "./test/assets" : "./assets");
 
   /**
    * Retrieves a list of all members
