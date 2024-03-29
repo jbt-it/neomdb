@@ -132,6 +132,189 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"Event": {
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": [
+							"WW",
+							"Netzwerk",
+							"JBT goes",
+							"Sonstige",
+							"Workshop",
+							"Pflichtworkshop"
+						]
+					},
+					"description": {
+						"type": "string"
+					},
+					"maxParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"registrationEnd": {
+						"type": "string",
+						"nullable": true
+					},
+					"registrationStart": {
+						"type": "string",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"name": {
+						"type": "string"
+					},
+					"eventID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"description",
+					"maxParticipants",
+					"registrationEnd",
+					"registrationStart",
+					"endTime",
+					"startTime",
+					"endDate",
+					"startDate",
+					"location",
+					"name",
+					"eventID"
+				],
+				"type": "object",
+				"description": "Type of the updated event"
+			},
+			"MemberField": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"nachname",
+					"vorname",
+					"name",
+					"memberID"
+				],
+				"type": "object",
+				"description": "Type for a member field"
+			},
+			"EventMember": {
+				"$ref": "#/components/schemas/MemberField",
+				"description": "Type of a member of an event"
+			},
+			"EventWWMember": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"kommentar": {
+						"type": "string"
+					},
+					"vegetarier": {
+						"type": "boolean"
+					},
+					"plaetze": {
+						"type": "number",
+						"format": "double"
+					},
+					"auto": {
+						"type": "boolean"
+					},
+					"abreise": {
+						"type": "string"
+					},
+					"anreise": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					},
+					"eventID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"kommentar",
+					"vegetarier",
+					"plaetze",
+					"auto",
+					"abreise",
+					"anreise",
+					"nachname",
+					"vorname",
+					"mitgliedID",
+					"eventID"
+				],
+				"type": "object",
+				"description": "Type of a member of an event that is a working weekend"
+			},
+			"EventOrganizer": {
+				"$ref": "#/components/schemas/MemberField",
+				"description": "Type of an organizer of an event"
+			},
+			"UpdateEventRequest": {
+				"properties": {
+					"organizers": {
+						"items": {
+							"$ref": "#/components/schemas/EventOrganizer"
+						},
+						"type": "array"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					}
+				},
+				"required": [
+					"organizers",
+					"event"
+				],
+				"type": "object",
+				"description": "Type of the request to update an event"
+			},
 			"MemberStatus": {
 				"type": "string",
 				"enum": [
@@ -1464,6 +1647,236 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/events/{eventID}": {
+			"get": {
+				"operationId": "GetEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Event"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the event with the given `eventID`",
+				"summary": "Retrieves the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateEvent",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Updates the event with the given `eventID` with the given `updatedEvent`",
+				"summary": "Updates the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to update",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEventRequest"
+							},
+							"example": {
+								"event": {
+									"eventID": 7,
+									"name": "Test Event",
+									"location": "Test Location",
+									"startDate": "2022-01-01",
+									"endDate": "2022-01-02",
+									"startTime": "12:00",
+									"endTime": "12:00",
+									"registrationStart": "2021-01-01",
+									"registrationEnd": "2021-01-02",
+									"maxParticipants": 100,
+									"description": "Test Description",
+									"type": "WW"
+								},
+								"organizers": [
+									{
+										"memberID": 8167,
+										"vorname": "Wolfgang",
+										"nachname": "Luft",
+										"status": "aktiv",
+										"name": "w.luft"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/events/{eventID}/members": {
+			"get": {
+				"operationId": "GetEventMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/EventMember"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the members of the event with the given `eventID`",
+				"summary": "Retrieves the members of the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve the members of",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/events/{eventID}/ww-members": {
+			"get": {
+				"operationId": "GetEventWWMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/EventWWMember"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the members of the working weekend event with the given `eventID`",
+				"summary": "Retrieves the members of the working weekend event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve the members of",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/events/{eventID}/organizers": {
+			"get": {
+				"operationId": "GetEventOrganizers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/EventMember"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the organizers of the event with the given `eventID`",
+				"summary": "Retrieves the organizers of the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve the organizers of",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/members": {
