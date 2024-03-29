@@ -284,7 +284,7 @@ class TraineesService {
     });
 
     // Adjust the names of the workshops
-    function adjustSchulungsname(name: string): string {
+    function adjustTrainingName(name: string): string {
       const replacements = {
         "Akquise & Verhandlungstechnik": "AkquiseVerhandlungstechnik",
         "Excel | Grundlagen": "ExcelGrundlagen",
@@ -302,7 +302,7 @@ class TraineesService {
       const { mitgliedID, ...rest } = item;
       const trainingData = mapMemberIDToTrainingData.get(mitgliedID) || {};
       const adjustedTrainingData = Object.keys(trainingData).reduce((acc, key) => {
-        const adjustedKey = adjustSchulungsname(key);
+        const adjustedKey = adjustTrainingName(key);
         acc[adjustedKey] = trainingData[key];
         return acc;
       }, {} as Record<string, number>);
