@@ -59,17 +59,18 @@ export const updateEventDetails = async (eventData: CommonEventType) => {
       description: eventData.description,
       startDate: eventData.startDate.format("YYYY-MM-DD HH:MM:ss"),
       endDate: eventData.endDate.format("YYYY-MM-DD HH:MM:ss"),
-      startTime: eventData.startTime ? eventData.startTime.format("HH:MM") : "",
-      endTime: eventData.endTime ? eventData.endTime.format("HH:MM") : "",
+      startTime: eventData.startTime ? eventData.startTime.format("HH:mm") : "",
+      endTime: eventData.endTime ? eventData.endTime.format("HH:mm") : "",
       location: eventData.location,
-      registrationStart: eventData.registrationStart?.format("YYYY-MM-DD HH:MM:ss"),
+      registrationStart: eventData.registrationStart?.format("YYYY-MM-DD HH:mm:ss"),
       registrationEnd: eventData.registrationEnd
-        ? eventData.registrationEnd.format("YYYY-MM-DD HH:MM:ss")
-        : eventData.startDate.format("YYYY-MM-DD HH:MM:ss"),
+        ? eventData.registrationEnd.format("YYYY-MM-DD HH:mm:ss")
+        : eventData.startDate.format("YYYY-MM-DD HH:mm:ss"),
       maxParticipants: eventData.maxParticipants,
       type: eventData.type,
     },
     organizers: organizers,
   };
+  console.log(updateEventDetails.event.endTime);
   return await api.put(`/events/${eventData.eventID}`, updateEventDetails);
 };

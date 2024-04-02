@@ -160,15 +160,20 @@ describe("Test events routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
       const updatedEvent: UpdateEventRequest = {
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: "2024-04-04",
-        endDate: "2025-05-05",
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: "2023-03-03",
-        registrationEnd: "2023-04-04",
-        maxParticipants: 200,
+        event: {
+          eventID: 7,
+          name: "Test Event Updated",
+          description: "Test Description Updated",
+          location: "Test Location Updated",
+          startDate: "2024-04-04",
+          endDate: "2025-05-05",
+          startTime: "14:00",
+          endTime: "15:00",
+          registrationStart: "2023-03-03",
+          registrationEnd: "2023-04-04",
+          maxParticipants: 200,
+          type: "JBT goes",
+        },
         organizers: [
           {
             memberID: 8167,
@@ -177,8 +182,6 @@ describe("Test events routes", () => {
             status: "aktives Mitglied",
           },
         ],
-        description: "Test Description Updated",
-        type: "WW",
       };
 
       // --- WHEN
@@ -197,15 +200,20 @@ describe("Test events routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
       const updatedEvent: UpdateEventRequest = {
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: "2024-04-04",
-        endDate: "2025-05-05",
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: "2023-03-03",
-        registrationEnd: "2023-04-04",
-        maxParticipants: 200,
+        event: {
+          eventID: 7,
+          name: "Test Event Updated",
+          location: "Test Location Updated",
+          startDate: "2024-04-04",
+          endDate: "2025-05-05",
+          startTime: "14:00",
+          endTime: "15:00",
+          registrationStart: "2023-03-03",
+          registrationEnd: "2023-04-04",
+          maxParticipants: 200,
+          description: "Test Description Updated",
+          type: "JBT goes",
+        },
         organizers: [
           {
             memberID: 8167,
@@ -214,8 +222,6 @@ describe("Test events routes", () => {
             status: "aktives Mitglied",
           },
         ],
-        description: "Test Description Updated",
-        type: "WW",
       };
 
       // --- WHEN
@@ -234,15 +240,20 @@ describe("Test events routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 999;
       const updatedEvent: UpdateEventRequest = {
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: "2024-04-04",
-        endDate: "2025-05-05",
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: "2023-03-03",
-        registrationEnd: "2023-04-04",
-        maxParticipants: 200,
+        event: {
+          eventID: 999,
+          name: "Test Event Updated",
+          location: "Test Location Updated",
+          startDate: "2024-04-04",
+          endDate: "2025-05-05",
+          startTime: "14:00",
+          endTime: "15:00",
+          registrationStart: "2023-03-03",
+          registrationEnd: "2023-04-04",
+          maxParticipants: 200,
+          description: "Test Description Updated",
+          type: "JBT goes",
+        },
         organizers: [
           {
             memberID: 8167,
@@ -257,8 +268,6 @@ describe("Test events routes", () => {
             status: "Senior",
           },
         ],
-        description: "Test Description Updated",
-        type: "WW",
       };
 
       // --- WHEN
@@ -277,15 +286,20 @@ describe("Test events routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
       const updatedEvent: UpdateEventRequest = {
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: "2024-04-04",
-        endDate: "2025-05-05",
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: "2023-03-03",
-        registrationEnd: "2023-04-04",
-        maxParticipants: 200,
+        event: {
+          eventID: 7,
+          name: "Test Event Updated",
+          description: "Test Description Updated",
+          location: "Test Location Updated",
+          startDate: "2024-04-04",
+          endDate: "2025-05-05",
+          startTime: "14:00",
+          endTime: "15:00",
+          registrationStart: "2023-03-03",
+          registrationEnd: "2023-04-04",
+          maxParticipants: 200,
+          type: "JBT goes",
+        },
         organizers: [
           {
             memberID: 8167,
@@ -300,8 +314,6 @@ describe("Test events routes", () => {
             status: "Senior",
           },
         ],
-        description: "Test Description Updated",
-        type: "WW",
       };
 
       // --- WHEN
