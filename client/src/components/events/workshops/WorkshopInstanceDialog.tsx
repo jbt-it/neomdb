@@ -4,6 +4,7 @@ import FieldSection, { Field } from "../../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { Workshop, WorkshopInstance } from "../../../types/eventTypes";
 import { MembersField } from "../../../types/membersTypes";
+import useMembers from "../../../hooks/members/useMembers";
 
 interface WorkshopInstanceDialogProps {
   open: boolean;
@@ -42,6 +43,7 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
 
   // mock members
   const mockMembers = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
+  const { members } = useMembers();
 
   function resetData() {
     setErrorDate(false);
@@ -214,6 +216,7 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
           label: "Referenten",
           type: "Autocomplete",
           state: internalInstructors,
+          options: members as MembersField[],
           width: "full",
           onChangeCallback: onChangeInternalInstructors,
         },

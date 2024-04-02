@@ -6,12 +6,14 @@ import { useContext } from "react";
 import { AuthContext } from "../context/auth-context/AuthContext";
 import {
   getEventDetails,
+  getEventOrganizers,
   getEventParticipants,
   getWWParticipants,
   updateEventDetails as updateEventDetailsApi,
 } from "../api/events";
 import { CommonEventType, EventParticipant, WorkingWeekendParticipant } from "../types/eventTypes";
 import dayjs from "dayjs";
+import { MembersField } from "../types/membersTypes";
 
 /**
  * Hook that handles the members api calls, uses react-query
@@ -89,6 +91,20 @@ const useEventDetails = (eventID: number) => {
   const eventParticipants = eventParticipantsData?.data as EventParticipant[] | undefined;
 
   // ----------------------------------------------------------------------------------
+  // getEventOrganizers query
+  const { data: eventOrganizersData } = useQuery({
+    queryKey: ["EventOrganizers", eventID],
+    queryFn: () => getEventOrganizers(eventID),
+    onError: (err: AxiosError) => {
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+  });
+
+  const eventOrganizers = eventOrganizersData?.data as MembersField[] | undefined;
+
+  // ----------------------------------------------------------------------------------
   // getWWParticipants query
   const {
     data: wwParticipantsData,
@@ -139,6 +155,7 @@ const useEventDetails = (eventID: number) => {
     isEventDetailsFetched,
     isEventDetailsError,
     eventParticipants,
+    eventOrganizers,
     wwParticipants,
     updateEventDetails,
   };

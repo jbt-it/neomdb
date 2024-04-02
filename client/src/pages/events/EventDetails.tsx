@@ -59,7 +59,9 @@ const EventDetails: React.FunctionComponent = () => {
   const [wwRegistrationData, setWWRegistrationData] = useState<WWRegistrationInfo | null>(null);
   const hasEventPermission = doesPermissionsHaveSomeOf(auth.permissions, [8]);
 
-  const { eventDetails, eventParticipants, wwParticipants, updateEventDetails } = useEventDetails(Number(id));
+  const { eventDetails, eventParticipants, eventOrganizers, wwParticipants, updateEventDetails } = useEventDetails(
+    Number(id)
+  );
 
   const isRegistrationOpen =
     (!eventDetails?.registrationStart && eventDetails?.registrationEnd && eventDetails.registrationEnd > dayjs()) ||
@@ -394,6 +396,7 @@ const EventDetails: React.FunctionComponent = () => {
           <EditEventDialog
             open={editDialogOpen}
             eventDetails={eventDetails}
+            eventOrganizers={eventOrganizers}
             onClose={handleDialogClose}
             onSubmit={updateEventDetails}
           />

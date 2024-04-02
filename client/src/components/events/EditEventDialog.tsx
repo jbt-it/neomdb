@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { Dialog, DialogActions, DialogTitle, DialogContent, Button, Divider, Typography } from "@mui/material";
 import FieldSection, { Field } from "../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
@@ -13,19 +13,20 @@ interface EditEventDialogProps {
   onClose: () => void;
   onSubmit: (eventDetails: CommonEventType) => void;
   eventDetails?: CommonEventType;
+  eventOrganizers?: any[];
   newEvent?: boolean;
 }
 
 interface State {
   name: string;
   location: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
-  registrationStart: Dayjs | null;
-  registrationEnd: Dayjs | null;
-  maxParticipants: number | null;
+  startDate: Dayjs | undefined;
+  endDate: Dayjs | undefined;
+  startTime: Dayjs | undefined;
+  endTime: Dayjs | undefined;
+  registrationStart: Dayjs | undefined;
+  registrationEnd: Dayjs | undefined;
+  maxParticipants: number | undefined;
   organizers: MembersField[];
   eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   description: string;
@@ -54,7 +55,14 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
  * @param param - open: boolean, onClose: function, onSubmit: function, eventDetails: CommonEventType, newEvent: boolean
  * @returns Dialog to edit or create an event
  */
-const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: EditEventDialogProps) => {
+const EditEventDialog = ({
+  open,
+  onClose,
+  onSubmit,
+  newEvent,
+  eventDetails,
+  eventOrganizers,
+}: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<
     "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   >(eventDetails?.type || "JBT goes");
@@ -71,14 +79,22 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
   const initialState: State = {
     name: eventDetails?.name || "",
     location: eventDetails?.location || "",
-    startDate: eventDetails?.startDate || null,
-    endDate: eventDetails?.endDate || null,
-    startTime: eventDetails?.startTime || null,
-    endTime: eventDetails?.endTime || null,
-    registrationStart: eventDetails?.registrationStart || null,
-    registrationEnd: eventDetails?.registrationEnd || null,
-    maxParticipants: eventDetails?.maxParticipants || null,
-    organizers: eventDetails?.organizers || [],
+    startDate: eventDetails?.startDate,
+    endDate: eventDetails?.endDate,
+    startTime: eventDetails?.startTime || undefined,
+    endTime: eventDetails?.endTime || undefined,
+    registrationStart: eventDetails?.registrationStart || undefined,
+    registrationEnd: eventDetails?.registrationEnd || undefined,
+    maxParticipants: eventDetails?.maxParticipants || undefined,
+    organizers:
+      eventOrganizers?.map((organizer) => {
+        return {
+          mitgliedID: organizer.memberID,
+          vorname: organizer.firstName,
+          nachname: organizer.lastName,
+          mitgliedstatus: organizer.status,
+        };
+      }) || [],
     eventType: eventDetails?.type || "JBT goes",
     description: eventDetails?.description || "",
   };
@@ -128,6 +144,25 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
   const [state, dispatch] = useReducer(reducer, initialState);
   const [errorState, errorDispatch] = useReducer(errorReducer, initialErrorState);
 
+  // set the organizers in the state when the eventOrganizers are loaded
+  useEffect(() => {
+    if (eventOrganizers) {
+      const organizers = eventOrganizers.map((organizer) => {
+        return {
+          mitgliedID: organizer.memberID,
+          vorname: organizer.firstName,
+          nachname: organizer.lastName,
+          mitgliedstatus: organizer.status,
+        };
+      });
+      dispatch({ type: "set", field: "organizers", value: organizers });
+    }
+  }, [eventOrganizers]);
+
+  /**
+   * Check if all necessary fields are filled out correctly
+   * @returns true if all necessary fields are filled out correctly, false otherwise
+   */
   const checkForm = () => {
     let complete = true;
     errorDispatch({ type: "reset" });
@@ -178,42 +213,78 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     return complete;
   };
 
+  /**
+   * Change the title of the event
+   * @param event - The event that triggered the change
+   */
   const onChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: "set", field: "name", value: event.target.value });
   };
 
+  /**
+   * Change the location of the event
+   * @param event - The event that triggered the change
+   */
   const onChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: "set", field: "location", value: event.target.value });
   };
 
+  /**
+   * Change the start date of the event
+   * @param value - The new start date
+   */
   const onChangeStartDate = (value: unknown) => {
     let startDate = value as Dayjs;
     startDate = startDate.startOf("day");
     dispatch({ type: "set", field: "startDate", value: startDate });
   };
 
+  /**
+   * Change the end date of the event
+   * @param value - The new end date
+   */
   const onChangeEndDate = (value: unknown) => {
     let endDate = value as Dayjs;
     endDate = endDate.endOf("day");
     dispatch({ type: "set", field: "endDate", value: endDate });
   };
 
+  /**
+   * Change the start time of the event
+   * @param value - The new start time
+   */
   const onChangeStartTime = (value: unknown) => {
     dispatch({ type: "set", field: "startTime", value: value as Dayjs });
   };
 
+  /**
+   * Change the end time of the event
+   * @param value - The new end time
+   */
   const onChangeEndTime = (value: unknown) => {
     dispatch({ type: "set", field: "endTime", value: value as Dayjs });
   };
 
+  /**
+   * Change the registration start date of the event
+   * @param value - The new registration start date
+   */
   const onChangeRegistrationStart = (value: unknown) => {
     dispatch({ type: "set", field: "registrationStart", value: value as Dayjs });
   };
 
+  /**
+   * Change the registration end date of the event
+   * @param value - The new registration end date
+   */
   const onChangeRegistrationEnd = (value: unknown) => {
     dispatch({ type: "set", field: "registrationEnd", value: value as Dayjs });
   };
 
+  /**
+   * Change the maximum number of participants of the event
+   * @param event - The event that triggered the change
+   */
   const onChangeMaxParticipants = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: "set",
@@ -222,14 +293,27 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     });
   };
 
+  /**
+   * Change the organizers of the event
+   * @param event - The event that triggered the change
+   * @param value - The new organizers
+   */
   const onChangeOrganizers = (event: React.ChangeEvent<object>, value: MembersField[] | MembersField) => {
     dispatch({ type: "set", field: "organizers", value });
   };
 
+  /**
+   * Change the description of the event
+   * @param event - The event that triggered the change
+   */
   const onChangeDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: "set", field: "description", value: event.target.value });
   };
 
+  /**
+   * Change the event type
+   * @param event - The event that triggered the change
+   */
   const handleChangeEventType = (event: React.ChangeEvent<HTMLInputElement>) => {
     switch (event.target.value) {
       case "JBT goes":
@@ -250,6 +334,11 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     }
   };
 
+  /**
+   * Submit the event details
+   * If all necessary fields are filled out correctly, the event details are submitted
+   * Otherwise, an error message is displayed
+   */
   const handleSubmit = () => {
     if (checkForm()) {
       if (state.startDate !== null) {
@@ -276,6 +365,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     }
   };
 
+  // Fields of the form for the different event types except WW
   const editFields: Array<Field> = [
     {
       label: "Name",
@@ -360,7 +450,8 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     },
     {
       label: "Organisatoren",
-      state: members,
+      state: state.organizers,
+      options: members as MembersField[],
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
       type: "Autocomplete",
@@ -375,6 +466,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     },
   ];
 
+  // Fields of the form for the WW event type
   const wwFields: Array<Field> = [
     {
       label: "Beginn",
@@ -421,6 +513,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     {
       label: "Organisatoren",
       state: state.organizers,
+      options: members as MembersField[],
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
       type: "Autocomplete",

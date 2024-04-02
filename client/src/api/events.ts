@@ -24,6 +24,15 @@ export const getEventParticipants = async (eventId: number) => {
 };
 
 /**
+ * Get all organizers of a specific event
+ * @param eventId - The ID of the event
+ * @returns An array of all organizers of type EventOrganizer
+ */
+export const getEventOrganizers = async (eventId: number) => {
+  return await api.get(`/events/${eventId}/organizers`);
+};
+
+/**
  * Get all participants of a specific working weekend
  * @param eventId - The ID of the event
  * @returns An array of all participants of type WorkingWeekendParticipant

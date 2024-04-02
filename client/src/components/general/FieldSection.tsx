@@ -85,6 +85,7 @@ type Field = {
   | {
       type: "Autocomplete";
       onChangeCallback: (event: React.ChangeEvent<object>, value: MembersField[] | MembersField) => void | null;
+      options: MembersField[] | null;
       error?: boolean;
       helperText?: string;
       disabled?: boolean;
@@ -253,10 +254,11 @@ const FieldSection = (props: Props) => {
             key={index}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             renderInput={(params) => <TextField variant="outlined" {...params} label={field.label} />}
-            options={field.state as MembersField[]}
+            options={field.options as MembersField[]}
             getOptionLabel={(option) => option.vorname + " " + option.nachname + ` (${option.mitgliedID})`}
             className={`${classes.fieldItem} ${classes.dropdownField}`}
             value={field.state as MembersField[] | undefined}
+            isOptionEqualToValue={(option, value) => option.mitgliedID === value.mitgliedID}
             size="medium"
             multiple
             disabled={field.disabled}
