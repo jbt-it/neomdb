@@ -4,41 +4,18 @@ import FieldSection, { Field } from "../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import useResponsive from "../../hooks/useResponsive";
+import { CommonEventType } from "../../types/eventTypes";
 
 interface EditEventDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (
-    title: string,
-    location: string,
-    startDate: Dayjs,
-    endDate: Dayjs,
-    startTime: Dayjs | null,
-    endTime: Dayjs | null,
-    registrationStart: Dayjs | null,
-    registrationEnd: Dayjs | null,
-    maxParticipants: number | null,
-    organizers: string[],
-    description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
-  ) => void;
+  onSubmit: (eventDetails: CommonEventType) => void;
+  eventDetails?: CommonEventType;
   newEvent?: boolean;
-  type?: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-  title?: string;
-  location?: string | null;
-  startDate?: Dayjs | null;
-  endDate?: Dayjs | null;
-  startTime?: Dayjs | null;
-  endTime?: Dayjs | null;
-  registrationStart?: Dayjs | null;
-  registrationEnd?: Dayjs | null;
-  maxParticipants?: number | null;
-  organizers?: string[];
-  description?: string;
 }
 
 interface State {
-  title: string;
+  name: string;
   location: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
@@ -55,7 +32,7 @@ interface State {
 type Action = { type: "set"; field: keyof State; value: any } | { type: "reset" };
 
 interface ErrorState {
-  title: boolean;
+  name: boolean;
   location: boolean;
   startDate: boolean;
   endDate: boolean;
@@ -74,10 +51,10 @@ type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type
  * Dialog to edit an event.
  * TODO: Correct the onChange functions for organizers.
  */
-const EditEventDialog = (props: EditEventDialogProps) => {
+const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<
     "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
-  >(props.type || "JBT goes");
+  >(eventDetails?.type || "JBT goes");
   const mobile = useResponsive("down", "md");
 
   const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
@@ -89,18 +66,18 @@ const EditEventDialog = (props: EditEventDialogProps) => {
       : "Working Weekend WiSe " + currentDate.format("YY") + "/" + currentDate.add(1, "year").format("YY");
 
   const initialState: State = {
-    title: props.title || "",
-    location: props.location || "",
-    startDate: props.startDate || null,
-    endDate: props.endDate || null,
-    startTime: props.startTime || null,
-    endTime: props.endTime || null,
-    registrationStart: props.registrationStart || null,
-    registrationEnd: props.registrationEnd || null,
-    maxParticipants: props.maxParticipants || null,
-    organizers: props.organizers || [],
-    eventType: props.type || "JBT goes",
-    description: props.description || "",
+    name: eventDetails?.name || "",
+    location: eventDetails?.location || "",
+    startDate: eventDetails?.startDate || null,
+    endDate: eventDetails?.endDate || null,
+    startTime: eventDetails?.startTime || null,
+    endTime: eventDetails?.endTime || null,
+    registrationStart: eventDetails?.registrationStart || null,
+    registrationEnd: eventDetails?.registrationEnd || null,
+    maxParticipants: eventDetails?.maxParticipants || null,
+    organizers: eventDetails?.organizers || [],
+    eventType: eventDetails?.type || "JBT goes",
+    description: eventDetails?.description || "",
   };
 
   function reducer(state: State, action: Action) {
@@ -118,7 +95,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
   }
 
   const initialErrorState: ErrorState = {
-    title: false,
+    name: false,
     location: false,
     startDate: false,
     endDate: false,
@@ -153,8 +130,8 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     errorDispatch({ type: "reset" });
 
     // title is necessary for all events and cannot be null
-    if (!state.title && eventType !== "WW") {
-      errorDispatch({ type: "set", field: "title", value: true });
+    if (!state.name && eventType !== "WW") {
+      errorDispatch({ type: "set", field: "name", value: true });
       complete = false;
     }
     // startDate is necessary for all events and cannot be null and cannot be more than 365 days in the past
@@ -199,7 +176,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
   };
 
   const onChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "set", field: "title", value: event.target.value });
+    dispatch({ type: "set", field: "name", value: event.target.value });
   };
 
   const onChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -270,15 +247,41 @@ const EditEventDialog = (props: EditEventDialogProps) => {
     }
   };
 
+  const handleSubmit = () => {
+    if (checkForm()) {
+      if (state.startDate !== null) {
+        const updatedEventDetails = {
+          ID: eventDetails?.ID || 0,
+          name: state.name,
+          location: state.location,
+          startDate: state.startDate,
+          endDate: state.endDate,
+          startTime: state.startTime,
+          endTime: state.endTime,
+          registrationStart: state.registrationStart,
+          registrationEnd: state.registrationEnd,
+          maxParticipants: state.maxParticipants,
+          organizers: state.organizers,
+          type: eventType,
+          description: state.description,
+        } as CommonEventType;
+        onSubmit(updatedEventDetails);
+        onClose();
+        dispatch({ type: "reset" });
+        errorDispatch({ type: "reset" });
+      }
+    }
+  };
+
   const editFields: Array<Field> = [
     {
       label: "Name",
-      state: state.title,
+      state: state.name,
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeTitle,
       type: "Text",
-      error: errorState.title,
-      helperText: errorState.title ? "Bitte gib einen Namen ein!" : undefined,
+      error: errorState.name,
+      helperText: errorState.name ? "Bitte gib einen Namen ein!" : undefined,
     },
     {
       label: "Ort",
@@ -431,9 +434,9 @@ const EditEventDialog = (props: EditEventDialogProps) => {
 
   return (
     <Dialog
-      open={props.open}
+      open={open}
       onClose={() => {
-        props.onClose();
+        onClose();
         dispatch({ type: "reset" });
         errorDispatch({ type: "reset" });
       }}
@@ -445,7 +448,7 @@ const EditEventDialog = (props: EditEventDialogProps) => {
         },
       }}
     >
-      <DialogTitle>{props.newEvent ? "Veranstaltung anlegen" : state.title + " bearbeiten"}</DialogTitle>
+      <DialogTitle>{newEvent ? "Veranstaltung anlegen" : state.name + " bearbeiten"}</DialogTitle>
       <DialogContent sx={{ height: "80%" }}>
         <FormControl sx={{ width: "100%" }}>
           <RadioGroup row sx={{ pl: 1 }} value={eventType} onChange={handleChangeEventType}>
@@ -476,39 +479,12 @@ const EditEventDialog = (props: EditEventDialogProps) => {
           onClick={() => {
             dispatch({ type: "reset" });
             errorDispatch({ type: "reset" });
-            props.onClose();
+            onClose();
           }}
         >
           Abbrechen
         </Button>
-        <Button
-          variant="contained"
-          fullWidth
-          color="primary"
-          onClick={() => {
-            if (checkForm()) {
-              if (state.startDate !== null) {
-                props.onSubmit(
-                  eventType === "WW" ? content : state.title,
-                  state.location,
-                  state.startDate,
-                  state.endDate ? state.endDate : state.startDate,
-                  state.startTime,
-                  state.endTime,
-                  state.registrationStart,
-                  state.registrationEnd ? state.registrationEnd : state.registrationStart ? state.startDate : null,
-                  state.maxParticipants,
-                  state.organizers,
-                  state.description,
-                  eventType
-                );
-                props.onClose();
-                dispatch({ type: "reset" });
-                errorDispatch({ type: "reset" });
-              }
-            }
-          }}
-        >
+        <Button variant="contained" fullWidth color="primary" onClick={handleSubmit}>
           Speichern
         </Button>
       </DialogActions>

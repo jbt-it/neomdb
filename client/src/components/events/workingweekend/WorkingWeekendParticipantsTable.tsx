@@ -1,35 +1,18 @@
 import React from "react";
-import { workingWeekendParticipants as participants } from "../../../mock/events/workingWeekendParticipants";
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { RemoveCircleOutline } from "@mui/icons-material";
+import { WorkingWeekendParticipant } from "../../../types/eventTypes";
+import { Link } from "react-router-dom";
 
-/**
- * @typedef WorkingWeekendParticipant
- */
-type WorkingWeekendParticipant = {
-  event_eventID: number;
-  mitglied_mitgliedID: number;
-  name: string;
-  anreise: string;
-  abreise: string;
-  auto: boolean;
-  plaetze: number;
-  vegetarier: boolean;
-  kommentar: string;
-  status: string;
+type Props = {
+  wwparticipants: WorkingWeekendParticipant[];
 };
 
 /**
  * Table for displaying the participants of the working weekend and their respective information.
  * @returns table with participants of the working weekend
  */
-const WorkingWeekendParticipantsTable: React.FunctionComponent = () => {
-  const [workingWeekendParticipants, setWorkingWeekendParticipants] = React.useState<WorkingWeekendParticipant[]>([]);
-
-  React.useEffect(() => {
-    setWorkingWeekendParticipants(participants);
-  }, []);
-
+const WorkingWeekendParticipantsTable: React.FunctionComponent<Props> = ({ wwparticipants }) => {
   // Function to map the arrival and departure of a participant to a string
   const mapAnUndAbreise = (tag: string, anreise: boolean): string => {
     switch (tag) {
@@ -106,9 +89,13 @@ const WorkingWeekendParticipantsTable: React.FunctionComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {workingWeekendParticipants.map((participant) => (
+          {wwparticipants.map((participant) => (
             <TableRow key={participant.mitglied_mitgliedID}>
-              <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0 }}>{participant.name}</TableCell>
+              <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0 }}>
+                <Link to={`/gesamtuebersicht/${participant.mitglied_mitgliedID}`}>
+                  {participant.vorname} {participant.nachname}
+                </Link>
+              </TableCell>
               <TableCell sx={{ border: "1px solid grey", borderTop: 0, borderLeft: 0, minWidth: 100 }}>
                 {mapAnUndAbreise(participant.anreise, true)}
               </TableCell>

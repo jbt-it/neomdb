@@ -28,15 +28,12 @@ import AddMembersField from "../../components/events/AddMembersField";
 
 import { CommonEventType, EventParticipant } from "../../types/eventTypes";
 
-import { events as mockEvents } from "../../mock/events/events";
-import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
-import { eventParticipants } from "../../mock/events/eventParticipants";
-import { workingWeekendParticipants } from "../../mock/events/workingWeekendParticipants";
 import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import WorkingWeekendParticipantsTable from "../../components/events/workingweekend/WorkingWeekendParticipantsTable";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import AddWorkingWeekendParticipant from "../../components/events/workingweekend/AddWorkingWeekendParticipant";
 import { Member } from "../../types/membersTypes";
+import useEventDetails from "../../hooks/useEventDetails";
 
 type WWRegistrationInfo = {
   anreise: string;
@@ -55,86 +52,23 @@ type WWRegistrationInfo = {
 const EventDetails: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
-  const [event, setEvent] = useState<CommonEventType | null>();
+  // const [event, setEvent] = useState<CommonEventType | null>();
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [wwRegistrationData, setWWRegistrationData] = useState<WWRegistrationInfo | null>(null);
   const hasEventPermission = doesPermissionsHaveSomeOf(auth.permissions, [8]);
 
+  const { eventDetails, eventParticipants, wwParticipants, updateEventDetails } = useEventDetails(Number(id));
+
   const isRegistrationOpen =
-    (!event?.registrationStart && event?.registrationDeadline && event.registrationDeadline > dayjs()) ||
-    (event?.registrationStart &&
-      event.registrationStart < dayjs() &&
-      event?.registrationDeadline &&
-      event.registrationDeadline > dayjs());
+    (!eventDetails?.registrationStart && eventDetails?.registrationEnd && eventDetails.registrationEnd > dayjs()) ||
+    (eventDetails?.registrationStart &&
+      eventDetails.registrationStart < dayjs() &&
+      eventDetails?.registrationEnd &&
+      eventDetails.registrationEnd > dayjs());
 
   const isMobile = useResponsive("down", "md");
-
-  // Mock participants since backend is not connected yet
-  const [participants, setParticipants] = useState<EventParticipant[]>(
-    eventParticipants
-      ? eventParticipants.map((participant) => ({ ...participant, anmeldedatum: dayjs(participant.anmeldedatum) }))
-      : []
-  );
-
-  /**
-   * Gets the event or workshop from the database
-   */
-  const getEvent = useCallback(
-    (id: number) => {
-      let event: CommonEventType | null = null;
-
-      const res = mockEvents.find((event) => event.eventID === id);
-      res
-        ? (event = {
-            ID: res.eventID,
-            name: res.eventName,
-            description: res.beschreibung,
-            date: dayjs(res.datum).locale("de"),
-            endDate: dayjs(res.ende).locale("de"),
-            startTime: dayjs(res.startZeit).locale("de"),
-            endTime: dayjs(res.endZeit).locale("de"),
-            location: res.ort,
-            registrationStart: res.anmeldungvon ? dayjs(res.anmeldungvon).locale("de") : null,
-            registrationDeadline: res.anmeldungbis ? dayjs(res.anmeldungbis).locale("de") : null,
-            participantsCount: res.teilnehmerZahl,
-            maximumParticipants: res.maximaleTeilnehmer,
-            type: res.ww ? "WW" : res.netzwerk ? "Netzwerk" : res.jbtgoes ? "JBT goes" : "Sonstige",
-          })
-        : null;
-      setEvent(event);
-
-      if (event?.type === "WW") {
-        workingWeekendParticipants
-          .filter((event) => event.event_eventID === id)
-          .some((event) => event.mitglied_mitgliedID === auth.userID)
-          ? setUserIsSignedUp(true)
-          : null;
-        setWWRegistrationData(
-          workingWeekendParticipants.find((event) => event.mitglied_mitgliedID === auth.userID) || null
-        );
-        setParticipants(
-          workingWeekendParticipants
-            .filter((event) => event.event_eventID === id)
-            .map((participant) => ({
-              mitgliedID: participant.mitglied_mitgliedID,
-              vorname: participant.name.split(" ")[0],
-              nachname: participant.name.split(" ")[1],
-              mitgliedstatus: participant.status,
-              anmeldedatum: dayjs(participant.anmeldedatum),
-            }))
-        );
-      } else {
-        mitglied_has_event
-          .filter((event) => event.event_eventID === id)
-          .some((event) => event.mitglied_mitgliedID === auth.userID)
-          ? setUserIsSignedUp(true)
-          : null;
-      }
-    },
-    [dispatchAuth]
-  );
 
   // Function to update the event
   const updateEvent = (
@@ -151,68 +85,66 @@ const EventDetails: React.FunctionComponent = () => {
     description: string,
     type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
   ) => {
-    setEvent((prevEvent) => {
-      if (prevEvent) {
-        return {
-          ...prevEvent,
-          name: title,
-          location: location,
-          date: startDate,
-          endDate: endDate,
-          startTime: startTime,
-          endTime: endTime,
-          registrationStart: registrationStart,
-          registrationDeadline: registrationEnd,
-          maximumParticipants: maxParticipants,
-          organizers: organizers,
-          description: description,
-          type: type,
-        };
-      }
-      return null;
-    });
+    // setEvent((prevEvent) => {
+    //   if (prevEvent) {
+    //     return {
+    //       ...prevEvent,
+    //       name: title,
+    //       location: location,
+    //       date: startDate,
+    //       endDate: endDate,
+    //       startTime: startTime,
+    //       endTime: endTime,
+    //       registrationStart: registrationStart,
+    //       registrationDeadline: registrationEnd,
+    //       maximumParticipants: maxParticipants,
+    //       organizers: organizers,
+    //       description: description,
+    //       type: type,
+    //     };
+    //   }
+    //   return null;
+    // });
   };
-
-  // Calls the getEvent and getMembers function
-  useEffect(() => {
-    getEvent(Number(id));
-  }, [id, getEvent]);
 
   // Fields for the display of event information
   const displayFields: Array<InformationField> = [
     {
       label: "Anmeldefrist",
-      value: event && event.registrationDeadline ? event.registrationDeadline.locale("de").format("DD.MM.YYYY") : null,
+      value:
+        eventDetails && eventDetails.registrationEnd
+          ? eventDetails.registrationEnd.locale("de").format("DD.MM.YYYY")
+          : null,
       type: "text",
     },
     {
       label: "Beginn",
-      value: event && event.date ? event.date.format("DD.MM.YYYY").toString() : null,
+      value: eventDetails && eventDetails.startDate ? eventDetails.startDate.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
       label: "Ende",
-      value: event && event.endDate ? event.endDate.format("DD.MM.YYYY").toString() : null,
+      value: eventDetails && eventDetails.endDate ? eventDetails.endDate.format("DD.MM.YYYY").toString() : null,
       type: "text",
     },
     {
       label: "Startzeit",
-      value: event && event.startTime ? event.startTime.format("HH:mm").toString() : null,
+      value: eventDetails && eventDetails.startTime ? eventDetails.startTime.format("HH:mm").toString() : null,
       type: "text",
     },
     {
       label: "Endzeit",
-      value: event && event.endTime ? event.endTime.format("HH:mm").toString() : null,
+      value: eventDetails && eventDetails.endTime ? eventDetails.endTime.format("HH:mm").toString() : null,
       type: "text",
     },
     {
       label: "Ort",
-      value: event ? event.location : null,
+      value: eventDetails ? eventDetails.location : null,
       type: "text",
     },
     {
       label: "Beschreibung",
-      value: event ? (event.description ? event.description : null) : null,
+      value: eventDetails ? (eventDetails.description ? eventDetails.description : null) : null,
       type: "multi",
     },
   ];
@@ -244,7 +176,7 @@ const EventDetails: React.FunctionComponent = () => {
     {
       label: "Anreise",
       value:
-        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+        userIsSignedUp && wwRegistrationData && eventDetails?.type === "WW"
           ? mapAnUndAbreise(wwRegistrationData.anreise, true)
           : null,
       type: "text",
@@ -252,7 +184,7 @@ const EventDetails: React.FunctionComponent = () => {
     {
       label: "Geplante Abreise",
       value:
-        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+        userIsSignedUp && wwRegistrationData && eventDetails?.type === "WW"
           ? mapAnUndAbreise(wwRegistrationData.abreise, false)
           : null,
       type: "text",
@@ -260,7 +192,7 @@ const EventDetails: React.FunctionComponent = () => {
     {
       label: "Auto",
       value:
-        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+        userIsSignedUp && wwRegistrationData && eventDetails?.type === "WW"
           ? wwRegistrationData.auto
             ? "Ja, " + wwRegistrationData.plaetze
             : "Nein"
@@ -270,7 +202,7 @@ const EventDetails: React.FunctionComponent = () => {
     {
       label: "Vegetarier",
       value:
-        userIsSignedUp && wwRegistrationData && event?.type === "WW"
+        userIsSignedUp && wwRegistrationData && eventDetails?.type === "WW"
           ? wwRegistrationData.vegetarier
             ? "Ja"
             : "Nein"
@@ -279,7 +211,7 @@ const EventDetails: React.FunctionComponent = () => {
     },
     {
       label: "Bemerkungen",
-      value: userIsSignedUp && wwRegistrationData && event?.type === "WW" ? wwRegistrationData.kommentar : null,
+      value: userIsSignedUp && wwRegistrationData && eventDetails?.type === "WW" ? wwRegistrationData.kommentar : null,
       type: "text",
     },
   ];
@@ -352,7 +284,7 @@ const EventDetails: React.FunctionComponent = () => {
    */
   const addParticipant = (participant: Member) => {
     alert(participant.vorname + " " + participant.nachname + " wurde hinzugefügt");
-    setParticipants((prevParticipants) => [...prevParticipants, { ...participant, anmeldedatum: dayjs() }]);
+    // setParticipants((prevParticipants) => [...prevParticipants, { ...participant, anmeldedatum: dayjs() }]);
   };
 
   /**
@@ -362,7 +294,7 @@ const EventDetails: React.FunctionComponent = () => {
    */
   const removeParticipant = (participant: EventParticipant) => {
     alert(participant.vorname + " " + participant.nachname + " wurde entfernt");
-    setParticipants(participants.filter((item) => item.mitgliedID !== participant.mitgliedID));
+    // setParticipants(participants.filter((item) => item.mitgliedID !== participant.mitgliedID));
   };
 
   /**
@@ -388,8 +320,8 @@ const EventDetails: React.FunctionComponent = () => {
       } else {
         return <Chip label="Abmelden" color="error" variant="outlined" disabled icon={<RemoveCircleOutline />} />;
       }
-    } else if (event?.type === "WW") {
-      return <WorkingWeekendSignUp ww={event} size="medium" />;
+    } else if (eventDetails?.type === "WW") {
+      return <WorkingWeekendSignUp ww={eventDetails} size="medium" />;
     } else if (isRegistrationOpen) {
       return <Chip label="Anmelden" color="success" icon={<AddCircle />} onClick={handleSignUp} />;
     } else {
@@ -402,7 +334,7 @@ const EventDetails: React.FunctionComponent = () => {
    */
   return (
     <Container maxWidth="lg" sx={{ ml: isMobile ? 0 : 1, maxWidth: isMobile ? "95%" : "100%" }}>
-      {event ? (
+      {eventDetails ? (
         <>
           <Stack
             direction={"row"}
@@ -411,7 +343,7 @@ const EventDetails: React.FunctionComponent = () => {
             sx={{ ml: isMobile ? 0 : 3, pb: 1 }}
           >
             <Typography fontWeight={"bold"} variant="h5">
-              Termininformationen - {event ? event.name : null}
+              Termininformationen - {eventDetails ? eventDetails.name : null}
             </Typography>
             {hasEventPermission ? (
               <Stack direction={"row"} spacing={2}>
@@ -430,12 +362,12 @@ const EventDetails: React.FunctionComponent = () => {
               <Typography variant="h6" color="primary" fontWeight={"bold"}>
                 Details
               </Typography>
-              <EventChip type={event ? event.type : "Sonstige"} sx={{ ml: 3 }} size="medium" />
+              <EventChip type={eventDetails ? eventDetails.type : "Sonstige"} sx={{ ml: 3 }} size="medium" />
             </Stack>
             <Box sx={{ ml: 3, mr: "auto", pt: 1, pb: 4, maxWidth: 600 }}>
               <InfoSection fields={displayFields} />
             </Box>
-            {userIsSignedUp && event.type === "WW" ? (
+            {userIsSignedUp && eventDetails.type === "WW" ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Box sx={{ ml: 3, mb: 3 }}>
@@ -453,22 +385,26 @@ const EventDetails: React.FunctionComponent = () => {
                 </Box>
               </>
             ) : null}
-            {participants.length > 0 ? (
+            {eventParticipants && eventParticipants.length > 0 ? (
               <>
                 <Divider light sx={{ width: "95%", margin: "auto", borderColor: "#f6891f" }} />
                 <Typography variant="h6" color="primary" fontWeight={"bold"} sx={{ pt: 2, ml: 3 }}>
-                  Teilnehmerliste ({participants.length})
+                  Teilnehmerliste ({eventParticipants.length})
                 </Typography>
-                {event.type === "WW" && hasEventPermission ? (
+                {eventDetails.type === "WW" && wwParticipants ? (
                   <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
-                    <WorkingWeekendParticipantsTable />
+                    <WorkingWeekendParticipantsTable wwparticipants={wwParticipants} />
                   </Box>
                 ) : (
                   <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
-                    <EventParticipants participants={participants} removeParticipant={removeParticipant} />
+                    <EventParticipants participants={eventParticipants} removeParticipant={removeParticipant} />
                   </Box>
                 )}
               </>
+            ) : wwParticipants && wwParticipants.length > 0 ? (
+              <Box sx={{ ml: 3, mr: 3, pb: 3, pt: 1 }}>
+                <WorkingWeekendParticipantsTable wwparticipants={wwParticipants} />
+              </Box>
             ) : null}
           </Paper>
           <Stack
@@ -483,59 +419,20 @@ const EventDetails: React.FunctionComponent = () => {
           >
             <SignUpButton />
             <>
-              {hasEventPermission ? (
-                event.type === "WW" ? (
-                  <AddWorkingWeekendParticipant participants={participants} ww={event} />
+              {hasEventPermission && eventParticipants ? (
+                eventDetails.type === "WW" ? (
+                  <AddWorkingWeekendParticipant participants={eventParticipants} ww={eventDetails} />
                 ) : (
-                  <AddMembersField participants={participants} addParticipant={addParticipant} />
+                  <AddMembersField participants={eventParticipants} addParticipant={addParticipant} />
                 )
               ) : null}
             </>
           </Stack>
           <EditEventDialog
             open={editDialogOpen}
+            eventDetails={eventDetails}
             onClose={handleDialogClose}
-            type={event.type}
-            title={event.name}
-            location={event.location}
-            startDate={event.date}
-            endDate={event.endDate}
-            startTime={event.startTime}
-            endTime={event.endTime}
-            registrationStart={event.registrationStart}
-            registrationEnd={event.registrationDeadline}
-            maxParticipants={10}
-            organizers={["Thomas", "Brigitte"]}
-            description={event.description}
-            onSubmit={(
-              title: string,
-              location: string | null,
-              startDate: Dayjs,
-              endDate: Dayjs,
-              startTime: Dayjs | null,
-              endTime: Dayjs | null,
-              registrationStart: Dayjs | null,
-              registrationEnd: Dayjs | null,
-              maxParticipants: number | null,
-              organizers: string[],
-              description: string,
-              type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
-            ) => {
-              updateEvent(
-                title,
-                location,
-                startDate,
-                endDate,
-                startTime,
-                endTime,
-                registrationStart,
-                registrationEnd,
-                maxParticipants,
-                organizers,
-                description,
-                type
-              );
-            }}
+            onSubmit={updateEventDetails}
           />
         </>
       ) : (

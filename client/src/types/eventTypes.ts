@@ -20,16 +20,16 @@ export type CommonEventType = {
   ID: number;
   name: string;
   description?: string;
-  date: Dayjs;
+  startDate: Dayjs;
   endDate: Dayjs;
   startTime: Dayjs | null;
   endTime: Dayjs | null;
   location: string | null;
   registrationStart: Dayjs | null;
-  registrationDeadline: Dayjs | null;
+  registrationEnd: Dayjs | null;
   organizers?: string[];
   participantsCount?: number | null;
-  maximumParticipants?: number | null;
+  maxParticipants?: number | null;
   type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
 };
 
@@ -115,4 +115,18 @@ export type WorkshopInstanceFeedback = {
     vorname: string;
     nachname: string;
   }[];
+};
+
+export type WorkingWeekendParticipant = {
+  event_eventID: number;
+  mitglied_mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  anreise: string;
+  abreise: string;
+  auto: boolean;
+  plaetze: number;
+  vegetarier: boolean;
+  kommentar: string;
+  status: string;
 };
