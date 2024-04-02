@@ -323,7 +323,6 @@ export type MemberStatus = "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus"
  */
 export type MembersField = {
   mitgliedID: number;
-  name: string;
   vorname: string;
   nachname: string;
   mitgliedstatus: MemberStatus;

@@ -115,9 +115,13 @@ const InfoSection = (props: Props) => {
                       sx={{ padding: 0.5, margin: 0 }}
                     >
                       <ListItemAvatar>
-                        <Avatar alt={item.name} {...stringAvatar(item.name)} className={classes.avatar} />
+                        <Avatar
+                          alt={item.vorname}
+                          {...stringAvatar(item.vorname, item.nachname)}
+                          className={classes.avatar}
+                        />
                       </ListItemAvatar>
-                      <ListItemText key={index} primary={item.name} sx={{ marginLeft: -2, color: "black" }} />
+                      <ListItemText key={index} primary={item.vorname} sx={{ marginLeft: -2, color: "black" }} />
                     </ListItem>
                   ))}
                 </List>

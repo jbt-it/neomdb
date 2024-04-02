@@ -74,16 +74,18 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
                     (member) =>
                       memberstatus.includes(member.mitgliedstatus) &&
                       !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID) &&
-                      member.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                      (member.vorname.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                        member.nachname.toLowerCase().includes(state.inputValue.toLowerCase()))
                   )
                 : options.filter(
                     (member) =>
                       !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID) &&
-                      member.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                      (member.vorname.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+                        member.nachname.toLowerCase().includes(state.inputValue.toLowerCase()))
                   );
               return result;
             }}
-            getOptionLabel={(option: MembersField) => option.name || ""}
+            getOptionLabel={(option: MembersField) => option.vorname + " " + option.nachname || ""}
             value={member}
             onChange={onChangeCallback}
             clearOnBlur={false}

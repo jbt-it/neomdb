@@ -5,6 +5,8 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import useResponsive from "../../hooks/useResponsive";
 import { CommonEventType } from "../../types/eventTypes";
+import { MembersField } from "../../types/membersTypes";
+import useMembers from "../../hooks/members/useMembers";
 
 interface EditEventDialogProps {
   open: boolean;
@@ -24,7 +26,7 @@ interface State {
   registrationStart: Dayjs | null;
   registrationEnd: Dayjs | null;
   maxParticipants: number | null;
-  organizers: string[];
+  organizers: MembersField[];
   eventType: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
   description: string;
 }
@@ -48,8 +50,9 @@ interface ErrorState {
 type ErrorAction = { type: "set"; field: keyof ErrorState; value: any } | { type: "reset" };
 
 /**
- * Dialog to edit an event.
- * TODO: Correct the onChange functions for organizers.
+ * Dialog to edit or create an event
+ * @param param - open: boolean, onClose: function, onSubmit: function, eventDetails: CommonEventType, newEvent: boolean
+ * @returns Dialog to edit or create an event
  */
 const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: EditEventDialogProps) => {
   const [eventType, setEventType] = useState<
@@ -57,7 +60,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
   >(eventDetails?.type || "JBT goes");
   const mobile = useResponsive("down", "md");
 
-  const members = ["Thomas", "Brigitte", "Hans", "Peter", "Marc", "Lukas", "Johannes", "Karl", "Hans"];
+  const { members } = useMembers();
 
   const currentDate = dayjs();
   const content =
@@ -219,7 +222,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     });
   };
 
-  const onChangeOrganizers = (event: React.ChangeEvent<object>, value: string[] | string) => {
+  const onChangeOrganizers = (event: React.ChangeEvent<object>, value: MembersField[] | MembersField) => {
     dispatch({ type: "set", field: "organizers", value });
   };
 
@@ -251,7 +254,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     if (checkForm()) {
       if (state.startDate !== null) {
         const updatedEventDetails = {
-          ID: eventDetails?.ID || 0,
+          eventID: eventDetails?.eventID || 0,
           name: state.name,
           location: state.location,
           startDate: state.startDate,
@@ -417,7 +420,7 @@ const EditEventDialog = ({ open, onClose, onSubmit, newEvent, eventDetails }: Ed
     },
     {
       label: "Organisatoren",
-      state: members,
+      state: state.organizers,
       width: mobile ? "full" : "half",
       onChangeCallback: onChangeOrganizers,
       type: "Autocomplete",

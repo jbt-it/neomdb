@@ -35,25 +35,32 @@ export const getWWParticipants = async (eventId: number) => {
 //----------------------------------------
 // UPDATE ROUTES
 export const updateEventDetails = async (eventData: CommonEventType) => {
+  const organizers = eventData.organizers?.map((organizer) => {
+    return {
+      memberID: organizer.mitgliedID,
+      vorname: organizer.vorname,
+      nachname: organizer.nachname,
+      status: organizer.mitgliedstatus,
+    };
+  });
   const updateEventDetails = {
     event: {
-      ID: eventData.ID,
+      eventID: eventData.eventID,
       name: eventData.name,
       description: eventData.description,
-      startDate: eventData.startDate.toJSON(),
-      endDate: eventData.endDate.toJSON(),
-      startTime: eventData.startTime ? eventData.startTime.hour() + ":" + eventData.startTime.minute() : "",
-      endTime: eventData.endTime
-        ? eventData.endTime.hour().toString() + ":" + eventData.endTime.minute().toString()
-        : "",
+      startDate: eventData.startDate.format("YYYY-MM-DD HH:MM:ss"),
+      endDate: eventData.endDate.format("YYYY-MM-DD HH:MM:ss"),
+      startTime: eventData.startTime ? eventData.startTime.format("HH:MM") : "",
+      endTime: eventData.endTime ? eventData.endTime.format("HH:MM") : "",
       location: eventData.location,
-      registrationStart: eventData.registrationStart?.toJSON(),
-      registrationEnd: eventData.registrationEnd?.toJSON(),
-      organizers: eventData.organizers,
+      registrationStart: eventData.registrationStart?.format("YYYY-MM-DD HH:MM:ss"),
+      registrationEnd: eventData.registrationEnd
+        ? eventData.registrationEnd.format("YYYY-MM-DD HH:MM:ss")
+        : eventData.startDate.format("YYYY-MM-DD HH:MM:ss"),
       maxParticipants: eventData.maxParticipants,
       type: eventData.type,
     },
+    organizers: organizers,
   };
-  console.log("updateEventDetails: ", updateEventDetails);
-  return await api.put(`/events/${eventData.ID}`, updateEventDetails);
+  return await api.put(`/events/${eventData.eventID}`, updateEventDetails);
 };

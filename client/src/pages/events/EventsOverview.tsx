@@ -122,7 +122,7 @@ const EventsOverview: React.FC = () => {
     // initialize the events constant with the mock data
     mockEvents.map((event) => {
       currentEvents.push({
-        ID: event.eventID,
+        eventID: event.eventID,
         name: event.eventName,
         startDate: dayjs(event.datum).locale("de"),
         endDate: event.ende ? dayjs(event.ende).locale("de") : dayjs(event.datum).locale("de"),
@@ -149,7 +149,7 @@ const EventsOverview: React.FC = () => {
     // initialize the workshops constant with the mock data
     mockWorkshops.map((event) => {
       currentWorkshops.push({
-        ID: event.schulungsinstanzID,
+        eventID: event.schulungsinstanzID,
         name: event.schulungsname,
         startDate: dayjs(event.datum).locale("de"),
         endDate: dayjs(event.datum).locale("de"),
@@ -177,7 +177,7 @@ const EventsOverview: React.FC = () => {
     // initialize the events the user is signed up for constant with the mock data
     mockEvents.map((event) => {
       currentEvents.push({
-        ID: event.eventID,
+        eventID: event.eventID,
         name: event.eventName,
         startDate: dayjs(event.datum),
         endDate: dayjs(event.ende),
@@ -192,7 +192,7 @@ const EventsOverview: React.FC = () => {
       });
     });
     const signedUp = mitglied_has_event.filter((event) => event.mitglied_mitgliedID === auth.userID);
-    setEventsSignedUp(currentEvents.filter((event) => signedUp.some((e) => e.event_eventID === event.ID)));
+    setEventsSignedUp(currentEvents.filter((event) => signedUp.some((e) => e.event_eventID === event.eventID)));
   }, [dispatchAuth]);
 
   /**
@@ -290,7 +290,7 @@ const EventsOverview: React.FC = () => {
    */
   const signOutFromEvent = useCallback(
     (event: CommonEventType) => {
-      const index = eventsSignedUp.findIndex((e) => e.ID === event.ID);
+      const index = eventsSignedUp.findIndex((e) => e.eventID === event.eventID);
       if (index !== -1) {
         const newEventsSignedUp = [...eventsSignedUp];
         newEventsSignedUp.splice(index, 1);
@@ -333,7 +333,7 @@ const EventsOverview: React.FC = () => {
    * @returns the button for sign up or sign out from event
    */
   const renderSignUpButton = (event: CommonEventType) => {
-    if (eventsSignedUp.some((e) => e.ID === event.ID)) {
+    if (eventsSignedUp.some((e) => e.eventID === event.eventID)) {
       if (event.registrationEnd ? event.registrationEnd > dayjs() : true) {
         return (
           <Chip
@@ -796,7 +796,7 @@ const EventsOverview: React.FC = () => {
           <TableBody>
             {/** Show Months of events? Or just display all events?*/}
             {rows.map((row, index) => (
-              <React.Fragment key={row.ID}>
+              <React.Fragment key={row.eventID}>
                 {displayMonths ? (
                   index === 0 || row.startDate.month() !== rows[index - 1].startDate.month() ? (
                     <TableRow>
@@ -810,12 +810,12 @@ const EventsOverview: React.FC = () => {
                 ) : null}
                 <TableRow>
                   <TableCell>
-                    <Link href={`#/veranstaltungen/${row.ID}`}>
+                    <Link href={`#/veranstaltungen/${row.eventID}`}>
                       <EventChip type={row.type} size="small" />
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>
+                    <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.eventID}`}>
                       {row.name}
                     </Link>
                   </TableCell>
@@ -893,7 +893,7 @@ const EventsOverview: React.FC = () => {
           <React.Fragment>
             {displayMonths ? (
               index === 0 || row.startDate.month() !== rows[index - 1].startDate.month() ? (
-                <ListItem sx={{ mb: 1, color: "#f6891f", borderBottom: 1 }} key={row.ID}>
+                <ListItem sx={{ mb: 1, color: "#f6891f", borderBottom: 1 }} key={row.eventID}>
                   <Typography fontWeight={"bold"} variant="body1" sx={{ ml: -2 }}>
                     {row.startDate.locale("de").format("MMMM YYYY")}
                   </Typography>
@@ -904,7 +904,7 @@ const EventsOverview: React.FC = () => {
               sx={{ p: 0.5, flexDirection: "column", alignItems: "flex-start", mb: 1, width: "100%" }}
               style={{ boxShadow: "none" }}
             >
-              <CardActionArea component={Link} href={`#/veranstaltungen/${row.ID}`}>
+              <CardActionArea component={Link} href={`#/veranstaltungen/${row.eventID}`}>
                 <CardContent sx={{ p: 0 }}>
                   <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
                     <EventChip type={row.type} size="small" sx={{ ml: -0.5, mr: 1 }} />

@@ -122,16 +122,14 @@ const useEventDetails = (eventID: number) => {
       showErrorMessage("Fehler beim Aktualisieren des Events");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["MemberDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["EventDetails", eventID] });
+      queryClient.invalidateQueries({ queryKey: ["EventParticipants", eventID] });
       showSuccessMessage("Event erfolgreich aktualisiert");
     },
   });
 
   const updateEventDetails = async (eventDetails: CommonEventType) => {
-    console.log("updated event details:", eventDetails);
-    const res = await mutateEventDetails(eventDetails);
-    console.log("updated event details response:", res);
-    return res;
+    return await mutateEventDetails(eventDetails);
   };
 
   // ----------------------------------------------------------------------------------

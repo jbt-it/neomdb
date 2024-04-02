@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback, FunctionComponent } from "react";
+import React, { useState, useContext, FunctionComponent } from "react";
 import { useParams } from "react-router-dom";
 import {
   Paper,
@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { AddCircle, Delete, Edit, RemoveCircleOutline } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import "dayjs/locale/de";
 import useResponsive from "../../hooks/useResponsive";
 
@@ -26,7 +26,7 @@ import EventChip from "../../components/events/EventChip";
 import EventParticipants from "../../components/events/EventParticipants";
 import AddMembersField from "../../components/events/AddMembersField";
 
-import { CommonEventType, EventParticipant } from "../../types/eventTypes";
+import { EventParticipant } from "../../types/eventTypes";
 
 import WorkingWeekendSignUp from "../../components/events/workingweekend/WorkingWeekendSignUp";
 import WorkingWeekendParticipantsTable from "../../components/events/workingweekend/WorkingWeekendParticipantsTable";
@@ -50,7 +50,7 @@ type WWRegistrationInfo = {
  * @returns the page to display the details of an event
  */
 const EventDetails: React.FunctionComponent = () => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
   // const [event, setEvent] = useState<CommonEventType | null>();
   const [userIsSignedUp, setUserIsSignedUp] = useState<boolean>(false);
@@ -69,43 +69,6 @@ const EventDetails: React.FunctionComponent = () => {
       eventDetails.registrationEnd > dayjs());
 
   const isMobile = useResponsive("down", "md");
-
-  // Function to update the event
-  const updateEvent = (
-    title: string,
-    location: string | null,
-    startDate: Dayjs,
-    endDate: Dayjs,
-    startTime: Dayjs | null,
-    endTime: Dayjs | null,
-    registrationStart: Dayjs | null,
-    registrationEnd: Dayjs | null,
-    maxParticipants: number | null,
-    organizers: string[],
-    description: string,
-    type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop"
-  ) => {
-    // setEvent((prevEvent) => {
-    //   if (prevEvent) {
-    //     return {
-    //       ...prevEvent,
-    //       name: title,
-    //       location: location,
-    //       date: startDate,
-    //       endDate: endDate,
-    //       startTime: startTime,
-    //       endTime: endTime,
-    //       registrationStart: registrationStart,
-    //       registrationDeadline: registrationEnd,
-    //       maximumParticipants: maxParticipants,
-    //       organizers: organizers,
-    //       description: description,
-    //       type: type,
-    //     };
-    //   }
-    //   return null;
-    // });
-  };
 
   // Fields for the display of event information
   const displayFields: Array<InformationField> = [

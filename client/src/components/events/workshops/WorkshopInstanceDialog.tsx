@@ -3,6 +3,7 @@ import { Dialog, DialogActions, DialogTitle, Button, DialogContent } from "@mui/
 import FieldSection, { Field } from "../../general/FieldSection";
 import dayjs, { Dayjs } from "dayjs";
 import { Workshop, WorkshopInstance } from "../../../types/eventTypes";
+import { MembersField } from "../../../types/membersTypes";
 
 interface WorkshopInstanceDialogProps {
   open: boolean;
@@ -119,7 +120,7 @@ const WorkshopInstanceDialog: React.FunctionComponent<WorkshopInstanceDialogProp
     setExternalInstructors(event.target.value);
   };
 
-  const onChangeInternalInstructors = (event: React.ChangeEvent<object>, value: string[] | string) => {
+  const onChangeInternalInstructors = (event: React.ChangeEvent<object>, value: MembersField[] | MembersField) => {
     console.log(value);
   };
 

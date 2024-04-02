@@ -2,6 +2,7 @@
  * Contains all event types for the frontend
  */
 import { Dayjs } from "dayjs";
+import { MembersField } from "./membersTypes";
 /**
  * Type of an event participant
  */
@@ -17,7 +18,7 @@ export type EventParticipant = {
  * Type of an event
  */
 export type CommonEventType = {
-  ID: number;
+  eventID: number;
   name: string;
   description?: string;
   startDate: Dayjs;
@@ -27,7 +28,7 @@ export type CommonEventType = {
   location: string | null;
   registrationStart: Dayjs | null;
   registrationEnd: Dayjs | null;
-  organizers?: string[];
+  organizers?: MembersField[];
   participantsCount?: number | null;
   maxParticipants?: number | null;
   type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";

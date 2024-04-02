@@ -294,7 +294,6 @@ export type Director = {
  */
 export type MemberField = {
   memberID: number;
-  name: string;
   vorname: string;
   nachname: string;
   status: string;

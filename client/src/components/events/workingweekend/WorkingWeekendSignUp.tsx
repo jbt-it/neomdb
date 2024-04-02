@@ -32,7 +32,7 @@ const WorkingWeekendSignUp: React.FunctionComponent<WorkingWeekendSignUpProps> =
     alert(
       "Anmeldung für " +
         ww.name +
-        ww.ID +
+        ww.eventID +
         " erfolgreich!" +
         "\n" +
         "Ankunft: " +

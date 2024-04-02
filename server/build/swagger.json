@@ -215,9 +215,6 @@
 					"vorname": {
 						"type": "string"
 					},
-					"name": {
-						"type": "string"
-					},
 					"memberID": {
 						"type": "number",
 						"format": "double"
@@ -227,7 +224,6 @@
 					"status",
 					"nachname",
 					"vorname",
-					"name",
 					"memberID"
 				],
 				"type": "object",

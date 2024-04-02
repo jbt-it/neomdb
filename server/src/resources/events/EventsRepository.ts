@@ -19,6 +19,7 @@ class EventsRepository {
     try {
       const eventQueryResult = await query(
         `SELECT
+        eventID AS eventID,
           eventname AS name,
           ort AS location,
           datum AS startDate,

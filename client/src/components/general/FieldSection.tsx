@@ -23,6 +23,7 @@ import {
   TimeValidationError,
 } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
+import { MembersField } from "../../types/membersTypes";
 
 type Field = {
   label: string;
@@ -83,7 +84,7 @@ type Field = {
     }
   | {
       type: "Autocomplete";
-      onChangeCallback: (event: React.ChangeEvent<object>, value: string[] | string) => void | null;
+      onChangeCallback: (event: React.ChangeEvent<object>, value: MembersField[] | MembersField) => void | null;
       error?: boolean;
       helperText?: string;
       disabled?: boolean;
@@ -252,8 +253,10 @@ const FieldSection = (props: Props) => {
             key={index}
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             renderInput={(params) => <TextField variant="outlined" {...params} label={field.label} />}
-            options={field.state as string[]}
+            options={field.state as MembersField[]}
+            getOptionLabel={(option) => option.vorname + " " + option.nachname + ` (${option.mitgliedID})`}
             className={`${classes.fieldItem} ${classes.dropdownField}`}
+            value={field.state as MembersField[] | undefined}
             size="medium"
             multiple
             disabled={field.disabled}

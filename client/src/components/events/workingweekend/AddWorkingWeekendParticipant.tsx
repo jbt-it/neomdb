@@ -45,7 +45,7 @@ const AddWorkingWeekendParticipant: React.FunctionComponent<AddWorkingWeekendPar
           "\n" +
           "Anmeldung für " +
           ww.name +
-          ww.ID +
+          ww.eventID +
           " erfolgreich!" +
           "\n" +
           "Ankunft: " +
