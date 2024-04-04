@@ -58,7 +58,7 @@ interface TabPanelProps {
  * Displays the events overview page, all events, all events the user is signed up for and the possibility to sign up or sign out from an event
  * @returns the events overview page
  */
-const DisplayEventsOverview: React.FC = () => {
+const EventsOverview: React.FC = () => {
   const { auth, dispatchAuth } = React.useContext(AuthContext);
   const hasEventPermissions = doesPermissionsHaveSomeOf(auth.permissions, [14]);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
@@ -1141,4 +1141,4 @@ const DisplayEventsOverview: React.FC = () => {
   );
 };
 
-export default DisplayEventsOverview;
+export default EventsOverview;
