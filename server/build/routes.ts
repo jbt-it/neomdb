@@ -68,9 +68,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"kommentar":{"dataType":"string","required":true},"vegetarier":{"dataType":"boolean","required":true},"plaetze":{"dataType":"double","required":true},"auto":{"dataType":"boolean","required":true},"abreise":{"dataType":"string","required":true},"anreise":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true},"eventID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EventOrganizer": {
+        "dataType": "refAlias",
+        "type": {"ref":"MemberField","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateEventRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"type":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["WW"]},{"dataType":"enum","enums":["Netzwerk"]},{"dataType":"enum","enums":["JBT goes"]},{"dataType":"enum","enums":["Sonstige"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Pflichtworkshop"]}],"required":true},"description":{"dataType":"string","required":true},"organizers":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberField"},"required":true},"maxParticipants":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"registrationEnd":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"registrationStart":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"startTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endDate":{"dataType":"string","required":true},"startDate":{"dataType":"string","required":true},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"name":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"organizers":{"dataType":"array","array":{"dataType":"refAlias","ref":"EventOrganizer"},"required":true},"event":{"ref":"Event","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberStatus": {
@@ -485,7 +490,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.patch('/api/events/:eventID',
+        app.put('/api/events/:eventID',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(EventsController)),
             ...(fetchMiddlewares<RequestHandler>(EventsController.prototype.updateEvent)),

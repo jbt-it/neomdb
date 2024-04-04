@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Path, Request, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
 import { Event, EventMember, EventWWMember, UpdateEventRequest } from "../../types/EventTypes";
 import EventsService from "./EventsService";
 import { JWTPayload } from "../../types/authTypes";
@@ -64,16 +64,21 @@ export class EventsController extends Controller {
    * @param eventID The ID of the event to update
    * @param updatedEvent The updated event
    * @example requestBody {
-   *  "name": "Test Event",
-   *  "location": "Test Location",
-   *  "startDate": "2022-01-01",
-   *  "endDate": "2022-01-02",
-   *  "startTime": "12:00",
-   *  "endTime": "12:00",
-   *  "registrationStart": "2021-01-01",
-   *  "registrationEnd": "2021-01-02",
-   *  "maxParticipants": 100,
-   *  "organizers": [
+   *  "event": {
+   *    "eventID": 7,
+   *    "name": "Test Event",
+   *    "location": "Test Location",
+   *    "startDate": "2022-01-01",
+   *    "endDate": "2022-01-02",
+   *    "startTime": "12:00",
+   *    "endTime": "12:00",
+   *    "registrationStart": "2021-01-01",
+   *    "registrationEnd": "2021-01-02",
+   *    "maxParticipants": 100,
+   *    "description": "Test Description",
+   *    "type": "WW"
+   * },
+   * "organizers": [
    *   {
    *    "memberID": 8167,
    *    "vorname": "Wolfgang",
@@ -81,21 +86,17 @@ export class EventsController extends Controller {
    *    "status": "aktiv",
    *    "name": "w.luft"
    *   }
-   *  ],
-   *  "description": "Test Description",
-   *  "type": "WW"
+   *  ]
    * }
    */
-  @Patch("{eventID}")
+  @Put("{eventID}")
   @Security("jwt")
   public async updateEvent(
     @Path() eventID: number,
     @Body() requestBody: UpdateEventRequest,
-    @Request() request
+    @Request() request: any
   ): Promise<void> {
-    // TODO: Needs testing after database changes are implemented!!
-
-    const { organizers, ...updatedEvent } = requestBody;
+    const { organizers, event: updatedEvent } = requestBody;
     const organizerIDs = organizers.map((organizer) => organizer.memberID);
     const currentOrganizers = await this.eventsService.getEventOrganizers(eventID);
 
@@ -109,6 +110,6 @@ export class EventsController extends Controller {
       throw new UnauthorizedError("You are not allowed to update this event");
     }
 
-    await this.eventsService.updateEvent(eventID, { ...updatedEvent, eventID }, organizerIDs);
+    await this.eventsService.updateEvent(eventID, updatedEvent, organizerIDs);
   }
 }

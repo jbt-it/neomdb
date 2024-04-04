@@ -292,76 +292,25 @@
 				"type": "object",
 				"description": "Type of a member of an event that is a working weekend"
 			},
+			"EventOrganizer": {
+				"$ref": "#/components/schemas/MemberField",
+				"description": "Type of an organizer of an event"
+			},
 			"UpdateEventRequest": {
 				"properties": {
-					"type": {
-						"type": "string",
-						"enum": [
-							"WW",
-							"Netzwerk",
-							"JBT goes",
-							"Sonstige",
-							"Workshop",
-							"Pflichtworkshop"
-						]
-					},
-					"description": {
-						"type": "string"
-					},
 					"organizers": {
 						"items": {
-							"$ref": "#/components/schemas/MemberField"
+							"$ref": "#/components/schemas/EventOrganizer"
 						},
 						"type": "array"
 					},
-					"maxParticipants": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"registrationEnd": {
-						"type": "string",
-						"nullable": true
-					},
-					"registrationStart": {
-						"type": "string",
-						"nullable": true
-					},
-					"endTime": {
-						"type": "string",
-						"nullable": true
-					},
-					"startTime": {
-						"type": "string",
-						"nullable": true
-					},
-					"endDate": {
-						"type": "string"
-					},
-					"startDate": {
-						"type": "string"
-					},
-					"location": {
-						"type": "string",
-						"nullable": true
-					},
-					"name": {
-						"type": "string"
+					"event": {
+						"$ref": "#/components/schemas/Event"
 					}
 				},
 				"required": [
-					"type",
-					"description",
 					"organizers",
-					"maxParticipants",
-					"registrationEnd",
-					"registrationStart",
-					"endTime",
-					"startTime",
-					"endDate",
-					"startDate",
-					"location",
-					"name"
+					"event"
 				],
 				"type": "object",
 				"description": "Type of the request to update an event"
@@ -1679,7 +1628,7 @@
 					}
 				]
 			},
-			"patch": {
+			"put": {
 				"operationId": "UpdateEvent",
 				"responses": {
 					"204": {
@@ -1716,15 +1665,20 @@
 								"$ref": "#/components/schemas/UpdateEventRequest"
 							},
 							"example": {
-								"name": "Test Event",
-								"location": "Test Location",
-								"startDate": "2022-01-01",
-								"endDate": "2022-01-02",
-								"startTime": "12:00",
-								"endTime": "12:00",
-								"registrationStart": "2021-01-01",
-								"registrationEnd": "2021-01-02",
-								"maxParticipants": 100,
+								"event": {
+									"eventID": 7,
+									"name": "Test Event",
+									"location": "Test Location",
+									"startDate": "2022-01-01",
+									"endDate": "2022-01-02",
+									"startTime": "12:00",
+									"endTime": "12:00",
+									"registrationStart": "2021-01-01",
+									"registrationEnd": "2021-01-02",
+									"maxParticipants": 100,
+									"description": "Test Description",
+									"type": "WW"
+								},
 								"organizers": [
 									{
 										"memberID": 8167,
@@ -1733,9 +1687,7 @@
 										"status": "aktiv",
 										"name": "w.luft"
 									}
-								],
-								"description": "Test Description",
-								"type": "WW"
+								]
 							}
 						}
 					}
