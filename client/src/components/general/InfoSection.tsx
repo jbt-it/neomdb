@@ -44,6 +44,9 @@ type InformationField = {
 
 interface Props {
   fields: Array<InformationField>;
+  sxAll?: React.CSSProperties;
+  sxLabel?: React.CSSProperties;
+  sxValue?: React.CSSProperties;
 }
 
 /**
@@ -64,10 +67,10 @@ const InfoSection = (props: Props) => {
       if (field.type === "text") {
         fieldContainer = (
           <Grid container xs={12} key={index}>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxLabel}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={12} md={8}>
+            <Grid xs={12} md={8} sx={props.sxValue}>
               {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
@@ -84,10 +87,10 @@ const InfoSection = (props: Props) => {
 
         fieldContainer = (
           <Grid container xs={12} key={index}>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxLabel}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxValue}>
               {field.value ? (
                 <List sx={{ listStyleType: "disc", pl: 2, marginTop: -1.5 }}>{listItems}</List>
               ) : (
@@ -127,10 +130,10 @@ const InfoSection = (props: Props) => {
       } else if (field.type === "checkbox") {
         fieldContainer = (
           <Grid container xs={12} key={index}>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxLabel}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxValue}>
               {field.value ? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}
             </Grid>
           </Grid>
@@ -138,10 +141,10 @@ const InfoSection = (props: Props) => {
       } else {
         fieldContainer = (
           <Grid container xs={12} key={index}>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={4} sx={props.sxLabel}>
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
-            <Grid xs={12} md={8} sx={{ maxWidth: "600px" }}>
+            <Grid xs={12} md={8} sx={{ ...props.sxValue, maxWidth: "600px" }}>
               {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
             </Grid>
           </Grid>
@@ -153,7 +156,7 @@ const InfoSection = (props: Props) => {
   };
 
   return (
-    <Grid container rowSpacing={0.5}>
+    <Grid container rowSpacing={0.5} sx={props.sxAll}>
       {renderFields(props.fields)}
     </Grid>
   );
