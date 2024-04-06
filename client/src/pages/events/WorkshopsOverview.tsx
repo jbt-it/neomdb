@@ -17,7 +17,7 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
  * Component to display a table or cards of all workshops
  * @returns Displays all workshops
  */
-const DisplayWorkshopsOverview: FunctionComponent = () => {
+const WorkshopsOverview: FunctionComponent = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const { auth } = useAuth();
   const { permissions } = auth;
@@ -63,4 +63,4 @@ const DisplayWorkshopsOverview: FunctionComponent = () => {
   );
 };
 
-export default DisplayWorkshopsOverview;
+export default WorkshopsOverview;

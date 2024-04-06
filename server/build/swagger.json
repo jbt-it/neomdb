@@ -1021,19 +1021,59 @@
 				"type": "object",
 				"description": "Type of a trainee (partial member)"
 			},
+			"MembersField": {
+				"properties": {
+					"mitgliedstatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the member field"
+			},
 			"InternalProject": {
 				"properties": {
+					"qualitaetsmanager": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"projektmitglieder": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
 					"DLBeiEV": {
 						"type": "boolean"
 					},
 					"APGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"APBeiEV": {
 						"type": "boolean"
 					},
 					"ZPGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"ZPBeiEV": {
 						"type": "boolean"
@@ -1042,12 +1082,16 @@
 						"type": "boolean"
 					},
 					"kickoff": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"kuerzel": {
 						"type": "string"
 					},
 					"projektname": {
+						"type": "string"
+					},
+					"generationsBezeichnung": {
 						"type": "string"
 					},
 					"generation": {
@@ -1060,6 +1104,8 @@
 					}
 				},
 				"required": [
+					"qualitaetsmanager",
+					"projektmitglieder",
 					"DLBeiEV",
 					"APGehalten",
 					"APBeiEV",
@@ -1069,6 +1115,7 @@
 					"kickoff",
 					"kuerzel",
 					"projektname",
+					"generationsBezeichnung",
 					"generation",
 					"internesProjektID"
 				],
@@ -2707,8 +2754,33 @@
 								"kickoff": "2021-01-01",
 								"kuerzel": "string",
 								"projektname": "string-long",
-								"generation": 3,
-								"internesProjektID": 62
+								"generationsBezeichnung": "Wintersemester 19/20",
+								"generation": 15,
+								"internesProjektID": 62,
+								"projektmitglieder": [
+									{
+										"mitgliedID": 8478,
+										"vorname": "Kellan",
+										"nachname": "Mclaughlin"
+									},
+									{
+										"mitgliedID": 8748,
+										"vorname": "Mason",
+										"nachname": "Vinson"
+									}
+								],
+								"qualitaetsmanager": [
+									{
+										"mitgliedID": 8320,
+										"vorname": "Radhika",
+										"nachname": "Norton"
+									},
+									{
+										"mitgliedID": 8333,
+										"vorname": "Miruna",
+										"nachname": "Decker"
+									}
+								]
 							}
 						}
 					}

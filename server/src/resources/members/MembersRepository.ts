@@ -577,7 +577,8 @@ class MembersRepository {
   };
 
   /**
-   * Updates the languages of a member by removing all existing languages and inserting the new ones
+   * Updates the languages of a member by removing all existing languages and inserting the new ones.
+   * Should only be used in combination with a transaction!
    * @param memberID The id of the member
    * @param updatedLanguages The updated languages
    * @throws QueryError if the query fails

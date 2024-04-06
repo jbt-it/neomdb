@@ -2,6 +2,9 @@
  * Contains all members types for the frontend
  */
 
+import { Dayjs } from "dayjs";
+import { MembersField } from "./membersTypes";
+
 /**
  * Type of a trainee
  */
@@ -26,6 +29,16 @@ export type Trainee = {
   Datenschutzschulung: boolean;
   Sicherheitsschulung: boolean;
   ExcelGrundlagen: boolean;
+};
+
+/**
+ * Type of the trainee data received from the backend
+ */
+export type TraineeShort = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  generation: number;
 };
 
 export type InternalProject = {
@@ -64,4 +77,24 @@ export type Pflichtworkshops = {
   schulungID: number;
   schulungsname: string;
   feedbackAbgegeben: boolean;
+};
+
+/**
+ * Type of the Ip Info
+ */
+export type InternalProjectDetails = {
+  internesProjektID: number;
+  projektname: string;
+  kuerzel: string;
+  generation: number;
+  generationsBezeichnung: string;
+  kickoff: Dayjs | null | undefined;
+  AngebotBeiEV: boolean | undefined;
+  ZPBeiEV: boolean | undefined;
+  ZPGehalten: Dayjs | null | undefined;
+  APBeiEV: boolean | undefined;
+  APGehalten: Dayjs | null | undefined;
+  DLBeiEV: boolean | undefined;
+  projektmitglieder: MembersField[];
+  qualitaetsmanager: MembersField[];
 };
