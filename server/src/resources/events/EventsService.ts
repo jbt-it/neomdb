@@ -73,22 +73,24 @@ class EventsService {
    * Updates the event with the given `eventID` with the given `updatedEvent`
    * @param eventID The ID of the event to update
    * @param updatedEvent The updated event
-   * @param eventMemberIDs The IDs of the members of the event
+   * @param eventOrganizerIDs The IDs of the organizers of the event
    * @throws NotFoundError if the event with the given `eventID` does not exist in the database
    */
-  public updateEvent = async (eventID: number, updatedEvent: Event, eventMemberIDs: number[]): Promise<void> => {
+  public updateEvent = async (eventID: number, updatedEvent: Event, eventOrganizerIDs: number[]): Promise<void> => {
     const currentEvent = await this.eventRepository.getEventByID(eventID);
 
     if (!currentEvent) {
       throw new Error(`Event with ID ${eventID} not found`);
     }
 
-    const currentEventMembers = await this.eventRepository.getEventMembersByEventID(eventID);
+    const currentEventOrganizers = await this.eventRepository.getEventOrganizersByEventID(eventID);
 
     // Create a list of members to add and to delete
-    const membersToAdd = eventMemberIDs.filter((id) => !currentEventMembers.some((member) => member.memberID === id));
-    const membersToDelete = currentEventMembers.filter(
-      (member) => !eventMemberIDs.some((id) => member.memberID === id)
+    const organizersToAdd = eventOrganizerIDs.filter(
+      (id) => !currentEventOrganizers.some((organizer) => organizer.memberID === id)
+    );
+    const organizersToDelete = currentEventOrganizers.filter(
+      (organizer) => !eventOrganizerIDs.some((id) => organizer.memberID === id)
     );
 
     const tasks = [];
@@ -96,15 +98,15 @@ class EventsService {
       func: this.eventRepository.updateEventByID,
       args: [eventID, updatedEvent],
     });
-    membersToAdd.forEach((memberID) => {
+    organizersToAdd.forEach((memberID) => {
       tasks.push({
-        func: this.eventRepository.addEventMemberByID,
+        func: this.eventRepository.addEventOrganizerByID,
         args: [eventID, memberID],
       });
     });
-    membersToDelete.forEach((member) => {
+    organizersToDelete.forEach((member) => {
       tasks.push({
-        func: this.eventRepository.deleteEventMemberByID,
+        func: this.eventRepository.deleteEventOrganizerByID,
         args: [eventID, member.memberID],
       });
     });

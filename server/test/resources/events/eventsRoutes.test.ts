@@ -154,7 +154,7 @@ describe("Test events routes", () => {
   });
 
   describe("PUT /events/{eventID}", () => {
-    test("Should return 200 OK and update the event (with Permission)", async () => {
+    test("Should return 204 OK and update the event (with Permission)", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -190,12 +190,18 @@ describe("Test events routes", () => {
         .put(`/api/events/${eventID}`)
         .send(updatedEvent)
         .set("Cookie", `token=${token}`);
+      // Second request to check if providing the same data again will still return 204
+      const response2 = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(204);
+      expect(response2.status).toBe(204);
     });
 
-    test("Should return 200 OK and update the event (as Organizer)", async () => {
+    test("Should return 204 OK and update the event (as Organizer)", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
