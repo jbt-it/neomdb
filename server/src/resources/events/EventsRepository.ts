@@ -142,9 +142,9 @@ class EventsRepository {
       const eventMembersQueryResult = await query(
         `SELECT
           mitglied_has_event.event_eventID AS eventID,
-          mitglied.mitgliedID as memberID,
-          mitglied.vorname as firstName,
-          mitglied.nachname as lastName,
+          mitglied.mitgliedID,
+          mitglied.vorname,
+          mitglied.nachname,
           mitgliedstatus.bezeichnung AS status
         FROM
           mitglied_has_event INNER JOIN mitglied ON mitglied_has_event.mitglied_mitgliedID = mitglied.mitgliedID
@@ -233,8 +233,9 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
+      // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES (?, ?, ?, NOW())`,
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
         [eventID, memberID, "Organisator"],
         connection
       );
@@ -283,8 +284,9 @@ class EventsRepository {
     connection?: mysql.PoolConnection
   ): Promise<void> => {
     try {
+      // TODO: Add attributes!!!
       await query(
-        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES (?, ?, ?, NOW())`,
+        `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle, anmeldezeitpunkt) VALUES ?, ?, ?, NOW()`,
         [eventID, memberID, "Teilnehmer"],
         connection
       );
@@ -294,6 +296,154 @@ class EventsRepository {
         `Caught error while adding member with id ${memberID} to event with id ${eventID}: ${error}`
       );
     }
+  };
+
+  public getMemberEventsByMemberId = async (memberId: number): Promise<Event[]> => {
+    try {
+      const queryResult = await query(
+        `
+        SELECT
+          e.eventID,
+          e.eventname AS name,
+          e.beschreibung AS description,
+          e.datum AS startDate,
+          e.ende AS endDate,
+          e.anmeldungVon AS registrationStart,
+          e.anmeldungBis AS registrationEnd,
+          e.ort AS location,
+          e.startzeit AS startTime,
+          e.endzeit AS endTime,
+          e.ww,
+          e.netzwerk,
+          e.maximaleTeilnehmer AS maxParticipants,
+          e.jbtgoes,
+          e.sonstige
+        FROM mitglied_has_event mhe
+        JOIN event e ON mhe.event_eventID = e.eventID
+        WHERE mhe.mitglied_mitgliedID = ?
+      `,
+        [memberId]
+      );
+
+      if (!Array.isArray(queryResult) || queryResult.length === 0) {
+        return [];
+      }
+
+      // Transform the result into the expected Event array
+      const transformedEvents = queryResult.map((row) => {
+        const eventType = row.ww
+          ? "WW"
+          : row.netzwerk
+          ? "Netzwerk"
+          : row.jbtgoes
+          ? "JBT goes"
+          : row.sonstige
+          ? "Sonstige"
+          : "Workshop"; // Default to "Workshop" if none of the flags are set
+
+        return {
+          eventID: row.eventID,
+          name: row.name,
+          description: row.description,
+          startDate: row.startDate ? row.startDate.toISOString().split("T")[0] : null,
+          endDate: row.endDate ? row.endDate.toISOString().split("T")[0] : null,
+          registrationStart: row.registrationStart ? row.registrationStart.toISOString() : null,
+          registrationEnd: row.registrationEnd ? row.registrationEnd.toISOString() : null,
+          location: row.location,
+          startTime: row.startTime,
+          endTime: row.endTime,
+          maxParticipants: row.maxParticipants,
+          type: eventType as "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop", // Cast to the union type
+        };
+      });
+
+      return transformedEvents;
+    } catch (error) {
+      logger.error(`Caught error while retrieving member events by memberID ${memberId}: ${error}`);
+      throw new QueryError(`Caught error while retrieving member events by memberID ${memberId}: ${error}`);
+    }
+  };
+
+  public getAllEvents = async (): Promise<Event[]> => {
+    try {
+      const queryResult = await query(
+        `
+        SELECT
+          eventID,
+          eventname AS name,
+          beschreibung AS description,
+          datum AS startDate,
+          ende AS endDate,
+          anmeldungVon AS registrationStart,
+          anmeldungBis AS registrationEnd,
+          ort AS location,
+          startzeit AS startTime,
+          endzeit AS endTime,
+          ww,
+          netzwerk,
+          maximaleTeilnehmer AS maxParticipants,
+          jbtgoes,
+          sonstige
+        FROM events
+        `,
+        [] // Empty array as a placeholder for query parameters
+      );
+
+      // Check if the queryResult is an array
+      if (Array.isArray(queryResult)) {
+        // Transform the query results into the frontend format
+        return queryResult.map(
+          (row): Event => ({
+            eventID: row.eventID,
+            name: row.name,
+            description: row.description,
+            startDate: row.startDate ? row.startDate.toISOString().split("T")[0] : null,
+            endDate: row.endDate ? row.endDate.toISOString().split("T")[0] : null,
+            registrationStart: row.registrationStart ? row.registrationStart.toISOString() : null,
+            registrationEnd: row.registrationEnd ? row.registrationEnd.toISOString() : null,
+            location: row.location,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            maxParticipants: row.maxParticipants,
+            type: row.ww
+              ? "WW"
+              : row.netzwerk
+              ? "Netzwerk"
+              : row.jbtgoes
+              ? "JBT goes"
+              : row.sonstige
+              ? "Sonstige"
+              : "Workshop", // Assuming "Workshop" is the default type if none of the others apply
+          })
+        );
+      } else {
+        throw new Error("Unexpected query result format");
+      }
+    } catch (error) {
+      logger.error(`Caught error while retrieving all events: ${error}`);
+      throw new QueryError(`Unable to fetch events: ${error}`);
+    }
+  };
+
+  public addMemberToEvent = async (eventId: number, memberId: number): Promise<void> => {
+    const exists = await this.checkMemberEventExists(eventId, memberId);
+    if (exists) {
+      throw new Error("Member is already registered for the event.");
+    }
+
+    await query(
+      `INSERT INTO mitglied_has_event (event_eventID, mitglied_mitgliedID, rolle) VALUES (?, ?, ?)`,
+      [eventId, memberId, "Teilnehmer"] // Assuming 'Teilnehmer' role, if this information is relevant
+    );
+  };
+
+  // Helper method to check if the member is already registered
+  private checkMemberEventExists = async (eventId: number, memberId: number): Promise<boolean> => {
+    const result = await query(
+      `SELECT COUNT(*) AS count FROM member_has_event WHERE event_eventID = ? AND mitglied_mitgliedID = ?`,
+      [eventId, memberId]
+    );
+    return result[0].count > 0;
   };
 
   /**
@@ -320,6 +470,8 @@ class EventsRepository {
       );
     }
   };
+
+  // TODO: Add ww members and delete ww members?
 }
 
 export default EventsRepository;

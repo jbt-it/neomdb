@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Patch, Path, Request, Route, Security, Tags } from "tsoa";
 import { Event, EventMember, EventWWMember, UpdateEventRequest } from "../../types/EventTypes";
 import EventsService from "./EventsService";
 import { JWTPayload } from "../../types/authTypes";
@@ -14,6 +14,12 @@ import { doesPermissionsInclude } from "../../utils/authUtils";
 export class EventsController extends Controller {
   private eventsService = new EventsService();
 
+  @Get("")
+  @Security("jwt")
+  public async getEvents(): Promise<Event[]> {
+    return this.eventsService.getAllEvents();
+  }
+
   /**
    * Retrieves the event with the given `eventID`
    * @summary Retrieves the event
@@ -23,6 +29,13 @@ export class EventsController extends Controller {
   @Security("jwt")
   public async getEvent(@Path() eventID: number): Promise<Event> {
     return this.eventsService.getEvent(eventID);
+  }
+
+  // EventsController.ts
+  @Get("members/{memberId}/events")
+  @Security("jwt")
+  public async getMemberEvents(@Path() memberId: number): Promise<Event[]> {
+    return this.eventsService.getMemberEvents(memberId);
   }
 
   /**
@@ -64,21 +77,16 @@ export class EventsController extends Controller {
    * @param eventID The ID of the event to update
    * @param updatedEvent The updated event
    * @example requestBody {
-   *  "event": {
-   *    "eventID": 7,
-   *    "name": "Test Event",
-   *    "location": "Test Location",
-   *    "startDate": "2022-01-01",
-   *    "endDate": "2022-01-02",
-   *    "startTime": "12:00",
-   *    "endTime": "12:00",
-   *    "registrationStart": "2021-01-01",
-   *    "registrationEnd": "2021-01-02",
-   *    "maxParticipants": 100,
-   *    "description": "Test Description",
-   *    "type": "WW"
-   * },
-   * "organizers": [
+   *  "name": "Test Event",
+   *  "location": "Test Location",
+   *  "startDate": "2022-01-01",
+   *  "endDate": "2022-01-02",
+   *  "startTime": "12:00",
+   *  "endTime": "12:00",
+   *  "registrationStart": "2021-01-01",
+   *  "registrationEnd": "2021-01-02",
+   *  "maxParticipants": 100,
+   *  "organizers": [
    *   {
    *    "memberID": 8167,
    *    "vorname": "Wolfgang",
@@ -86,17 +94,21 @@ export class EventsController extends Controller {
    *    "status": "aktiv",
    *    "name": "w.luft"
    *   }
-   *  ]
+   *  ],
+   *  "description": "Test Description",
+   *  "type": "WW"
    * }
    */
-  @Put("{eventID}")
+  @Patch("{eventID}")
   @Security("jwt")
   public async updateEvent(
     @Path() eventID: number,
     @Body() requestBody: UpdateEventRequest,
-    @Request() request: any
+    @Request() request
   ): Promise<void> {
-    const { organizers, event: updatedEvent } = requestBody;
+    // TODO: Needs testing after database changes are implemented!!
+
+    const { organizers, ...updatedEvent } = requestBody;
     const organizerIDs = organizers.map((organizer) => organizer.memberID);
     const currentOrganizers = await this.eventsService.getEventOrganizers(eventID);
 
@@ -109,7 +121,10 @@ export class EventsController extends Controller {
     ) {
       throw new UnauthorizedError("You are not allowed to update this event");
     }
-
-    await this.eventsService.updateEvent(eventID, updatedEvent, organizerIDs);
+  }
+  @Post("{eventId}/add/member/{memberId}")
+  @Security("jwt")
+  public async addMemberToEvent(@Path() eventId: number, @Path() memberId: number): Promise<void> {
+    await this.eventsService.registerMemberForEvent(eventId, memberId);
   }
 }
