@@ -15,10 +15,10 @@ class EventsRepository {
    * @returns The event with the given `eventID` or `null` if no event with the given `eventID` exists
    */
   public getEventByID = async (eventID: number, connection?: mysql.PoolConnection): Promise<Event> => {
-    // TODO: Add anmeldungVon
     try {
       const eventQueryResult = await query(
         `SELECT
+          eventID,
           eventname AS name,
           ort AS location,
           datum AS startDate,
