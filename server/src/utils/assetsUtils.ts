@@ -17,7 +17,7 @@ export const getPathOfImage = async (basePath: string, imageName: string) => {
   });
 
   if (mimeType === null) {
-    return null;
+    return { imagePath: null, mimeType: null };
   }
 
   const imagePath = path.join(basePath, path.basename(`${imageName}.${mimeType}`));
