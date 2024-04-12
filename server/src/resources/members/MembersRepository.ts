@@ -17,6 +17,7 @@ import {
   NewMember,
   Value,
   MemberDirectorPositions,
+  AddDirectorPositionRequest,
 } from "../../types/membersTypes";
 import getStatusChangeDate from "../../utils/repositoryUtils";
 import logger from "../../logger";
@@ -474,6 +475,87 @@ class MembersRepository {
     } catch (error) {
       logger.error(`Caught error while retrieving director positions: ${error}`);
       throw new QueryError(`Error retrieving director positions`);
+    }
+  };
+
+  /**
+   * Deletes the director position of the member
+   * @param mitgliedID The member id
+   * @param evpostenID The director position
+   * @param connection
+   */
+  deleteDirectorPositions = async (
+    mitgliedID: number,
+    evpostenID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    try {
+      await query(
+        `DELETE FROM mitglied_has_evposten WHERE mitglied_mitgliedID = ? AND evposten_evpostenID = ?`,
+        [mitgliedID, evpostenID],
+        connection
+      );
+    } catch (error) {
+      logger.error(`Caught error while deleting director position: ${error}`);
+      throw new QueryError(`Error deleting director position`);
+    }
+  };
+
+  /**
+   * Adds a new director position to the member
+   * @param mitgliedID The member id
+   * @param evpostenID The director position
+   * @param requestBody The request body including von and bis date
+   * @param connection
+   */
+  addDirectorPosition = async (
+    mitgliedID: number,
+    evpostenID: number,
+    requestBody: AddDirectorPositionRequest,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    if (new Date(requestBody.von) > new Date(requestBody.bis)) {
+      logger.error(`Caught error while changing director position date: Von date cannot be later than bis date`);
+      throw new QueryError(`Von date cannot be later than bis date`);
+    }
+    try {
+      await query(
+        `INSERT INTO mitglied_has_evposten (mitglied_mitgliedID, evposten_evpostenID, von, bis) VALUES (?, ?, ?, ?)`,
+        [mitgliedID, evpostenID, requestBody.von, requestBody.bis],
+        connection
+      );
+    } catch (error) {
+      logger.error(`Caught error while adding director position: ${error}`);
+      throw new QueryError(`Error adding director position`);
+    }
+  };
+
+  /**
+   * Updates the date of a director entry of the member
+   * @param mitgliedID The member id
+   * @param evpostenID The director position
+   * @param requestBody The request body including von and bis date
+   * @param connection
+   */
+  updateDirectorPosition = async (
+    mitgliedID: number,
+    evpostenID: number,
+    requestBody: AddDirectorPositionRequest,
+    connection?: mysql.PoolConnection
+  ): Promise<void> => {
+    if (new Date(requestBody.von) > new Date(requestBody.bis)) {
+      logger.error(`Caught error while changing director position date: Von date cannot be later than bis date`);
+      throw new QueryError(`Von date cannot be later than bis date`);
+    }
+    try {
+      await query(
+        `UPDATE mitglied_has_evposten SET von = ?, bis = ? WHERE mitglied_mitgliedID = ? AND evposten_evpostenID = ?`,
+        [requestBody.von, requestBody.bis, mitgliedID, evpostenID],
+        connection
+      );
+    } catch (error) {
+      logger.error(`Caught error while changing director position date: ${error}`);
+      throw new QueryError(`Error changing director position date`);
     }
   };
 

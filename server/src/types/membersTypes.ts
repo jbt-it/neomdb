@@ -153,6 +153,11 @@ export type MemberDetails = {
   mentor?: Mentor | null;
 };
 
+export type AddDirectorPositionRequest = {
+  von: string;
+  bis: string;
+};
+
 /**
  * Type of the request to create a member
  */
@@ -277,6 +282,7 @@ export type MemberDirectorPositions = {
  * Type of director position
  */
 export type DirectorPosition = {
+  kuerzel: string;
   evpostenID: number;
   bezeichnung_maennlich: string;
   bezeichnung_weiblich: string;

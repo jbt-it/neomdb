@@ -22,7 +22,8 @@ const MemberProfile: React.FunctionComponent = () => {
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [directorPositions, setDirectorPositions] = useState<MemberDirectorPositions[]>([]);
+  const [memberDirectorPositions, setMemberDirectorPositions] = useState<MemberDirectorPositions[]>([]);
+  const [directorPositions, setDirectorPositions] = useState<membersTypes.DirectorPosition[]>([]);
 
   /**
    * Retrieves all members
@@ -173,14 +174,39 @@ const MemberProfile: React.FunctionComponent = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get(`/members/${params.id}/director-positions?current=true`, {
+      .get(`/members/director-positions?includeDirectorMembers=false`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            console.log(res.data);
             setDirectorPositions(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const getMemberDirectorPositions: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/members/${params.id}/director-positions?current=false`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMemberDirectorPositions(res.data);
           }
         }
       })
@@ -240,14 +266,104 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
+  useEffect(() => getMemberDirectorPositions(), [getMemberDirectorPositions]);
   useEffect(() => getDirectorPositions(), [getDirectorPositions]);
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
+
+  const addDirectorPosition = async (evpostenID: number, mitgliedID: number, von: string, bis: string) => {
+    return new Promise<void>((resolve, reject) => {
+      if (evpostenID >= 0 && von && bis) {
+        const data = { von, bis };
+        api
+          .post(`/members/${mitgliedID}/director-positions/${evpostenID}`, data, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          })
+          .then((res) => {
+            if (res.status === 201) {
+              resolve(); // Resolve the promise when the operation is successful
+            } else {
+              reject(new Error("Failed to add director position")); // Reject the promise if the status is not 201
+            }
+          })
+          .catch((err) => {
+            if (err.response && err.response.status === 401) {
+              dispatchAuth({ type: authReducerActionType.deauthenticate });
+            }
+            reject(err); // Reject the promise if there is an error
+          });
+      } else {
+        reject(new Error("Invalid parameters")); // Reject the promise if parameters are invalid
+      }
+    });
+  };
+
+  /**
+   * Deletes the director position from the member
+   * @param evpostenID
+   * @param mitgliedID
+   */
+  const deleteDirectorPosition = (evpostenID: number, mitgliedID: number) => {
+    return new Promise<void>((resolve, reject) => {
+      api
+        .delete(`/members/${mitgliedID}/director-positions/${evpostenID}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          if (res.status === 204) {
+            resolve(); // Resolve the promise when the operation is successful
+          } else {
+            reject(new Error("Failed to delete director position")); // Reject the promise if the status is not 204
+          }
+        })
+        .catch((err) => {
+          if (err.response && err.response.status === 401) {
+            dispatchAuth({ type: authReducerActionType.deauthenticate });
+          }
+          reject(err); // Reject the promise if there is an error
+        });
+    });
+  };
+
+  /**
+   * Changes the director position of the member
+   * @param evpostenID
+   * @param mitgliedID
+   * @param von
+   * @param bis
+   */
+  const changeDirectorPosition = async (evpostenID: number, mitgliedID: number, von: string, bis: string) => {
+    return new Promise<void>((resolve, reject) => {
+      if (evpostenID >= 0 && von && bis) {
+        const data = { von, bis };
+        api
+          .patch(`/members/${mitgliedID}/director-positions/${evpostenID}`, data, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              resolve(); // Resolve the promise when the operation is successful
+            } else {
+              reject(new Error("Failed to add director position")); // Reject the promise if the status is not 201
+            }
+          })
+          .catch((err) => {
+            if (err.response && err.response.status === 401) {
+              dispatchAuth({ type: authReducerActionType.deauthenticate });
+            }
+            reject(err); // Reject the promise if there is an error
+          });
+      } else {
+        reject(new Error("Invalid parameters")); // Reject the promise if parameters are invalid
+      }
+    });
+  };
 
   return (
     <div>
       <div className="content-page">
         {memberDetails ? (
           <DisplayMemberDetails
+            mitgliedID={parseInt(params.id!, 10)}
             members={members}
             listOfPermissions={auth.permissions}
             departments={departments}
@@ -257,7 +373,12 @@ const MemberProfile: React.FunctionComponent = () => {
             isOwner={isOwner}
             getMemberDetails={getMemberDetails}
             updateMemberDetails={updateMemberDetails}
+            memberDirectorPositions={memberDirectorPositions}
             directorPositions={directorPositions}
+            deleteDirectorPosition={deleteDirectorPosition}
+            addDirectorPosition={addDirectorPosition}
+            changeDirectorPosition={changeDirectorPosition}
+            getMemberDirectorPositions={getMemberDirectorPositions}
           />
         ) : null}
       </div>

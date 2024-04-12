@@ -1,4 +1,5 @@
 import {
+  AddDirectorPositionRequest,
   CreateMemberRequest,
   EdvSkill,
   Language,
@@ -92,6 +93,9 @@ class MembersService {
     return directors;
   };
 
+  /**
+   * Retrieves all director positions of the member
+   */
   getMemberDirectorPositions = async (memberID: number, current: boolean) => {
     const memberDirectorPositions = this.membersRepository.getMemberDirectorPositions(memberID, current);
     if (memberDirectorPositions === null) {
@@ -107,6 +111,24 @@ class MembersService {
     const directorPositions = await this.membersRepository.getDirectorPositions(includeDirectorMembers);
 
     return directorPositions;
+  };
+
+  /**
+   * Deletes the director position of the member
+   */
+  deleteDirectorPositions = async (mitgliedID: number, evpostenID: number) => {
+    return await this.membersRepository.deleteDirectorPositions(mitgliedID, evpostenID);
+  };
+
+  /**
+   * Adds the director position to the member
+   */
+  addDirectorPosition = async (mitgliedID: number, evpostenID: number, requestBody: AddDirectorPositionRequest) => {
+    return await this.membersRepository.addDirectorPosition(mitgliedID, evpostenID, requestBody);
+  };
+
+  updateDirectorPosition = async (mitgliedID: number, evpostenID: number, requestBody: AddDirectorPositionRequest) => {
+    return await this.membersRepository.updateDirectorPosition(mitgliedID, evpostenID, requestBody);
   };
 
   /**

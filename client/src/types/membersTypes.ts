@@ -64,6 +64,24 @@ export type DepartmentDetails = {
 };
 
 /**
+ * Type of director position
+ */
+export type DirectorPosition = {
+  kuerzel: string;
+  evpostenID: number;
+  bezeichnung_maennlich: string;
+  bezeichnung_weiblich: string;
+  ressortID: number;
+  jbt_email: string;
+  kurzvorstellung: string;
+  inhalt: string;
+  reihenfolge: number;
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+};
+
+/**
  * Type of the directors
  */
 export type Director = {

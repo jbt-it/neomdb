@@ -2,15 +2,17 @@
  * The DislpayMemberDetails-Component displays details of a member
  */
 
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import { makeStyles, createStyles } from "@mui/styles";
 import {
+  Checkbox,
   Grid,
   Typography,
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
+  Divider,
   TextField,
   Button,
   FormControl,
@@ -20,25 +22,62 @@ import {
   createFilterOptions,
   Autocomplete,
   Theme,
+  Modal,
+  Paper,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
 } from "@mui/material";
-import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, AddCircleOutline, Clear, Delete, Add, Edit } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
 import {
   transformSQLStringToGermanDate,
   transformGermanDateToSQLString,
   transformStringToSQLString,
+  transfromDateToSQLDate,
 } from "../../../utils/dateUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 
 /**
  * Function which proivdes the styles of the MemberPage
  */
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    modalPaper: {
+      overflowY: "auto",
+      position: "absolute",
+      margin: "auto",
+      top: "20%",
+      left: "10%",
+      right: "10%",
+      bottom: "20%",
+      width: "60%",
+      display: "flex",
+      justifyContent: "center",
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+    tableContainer: {
+      maxHeight: (window.screen.height - 75) * 0.8,
+    },
+    tableHeadCell: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    },
+    paperHeaderText: {
+      marginLeft: theme.spacing(1),
+      marginTop: theme.spacing(1),
+    },
     displayMemberDetailsRoot: {
       flexGrow: 1,
     },
@@ -171,13 +210,29 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
+    vorstandSubmitButton: {
+      margin: theme.spacing(1, 1, 0, 0),
+      maxHeight: "37px",
+    },
+    vorstandCancelButton: {
+      margin: theme.spacing(1, 0, 0, 0),
+      maxHeight: "37px",
+    },
+    tableSecondLastRow: {
+      borderBottomWidth: "1px",
+      borderBottomColor: theme.palette.primary.main,
+      borderBottomStyle: "solid",
+    },
   })
 );
+
+type EditedMemberDirectorPositions = membersTypes.MemberDirectorPositions & { delete: boolean };
 
 /**
  * Interface for the props of the DisplayMemberDetails
  */
 interface DisplayMemberDetailsProps {
+  mitgliedID: number;
   members: membersTypes.Member[];
   listOfPermissions: globalTypes.Permission[];
   departments: membersTypes.Department[];
@@ -185,8 +240,13 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.EDVSkill[];
   memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
-  directorPositions: membersTypes.MemberDirectorPositions[];
+  memberDirectorPositions: membersTypes.MemberDirectorPositions[];
+  directorPositions: membersTypes.DirectorPosition[];
+  deleteDirectorPosition: (evpostenID: number, mitgliedID: number) => void;
+  addDirectorPosition: (evpostenID: number, mitgliedID: number, von: string, bis: string) => void;
+  changeDirectorPosition: (evpostenID: number, mitgliedID: number, von: string, bis: string) => void;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
+  getMemberDirectorPositions: () => void;
   getMemberDetails: () => void;
 }
 
@@ -199,10 +259,32 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
 
-  // Filter of languages for the autocomplete component
+  // Filter of languages for the autocomplete componentvonValuedate
   const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
 
-  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails, directorPositions } = props;
+  const {
+    mitgliedID,
+    members,
+    departments,
+    listOfLanguages,
+    listOfEDVSkills,
+    memberDetails,
+    memberDirectorPositions,
+    directorPositions,
+    deleteDirectorPosition,
+    addDirectorPosition,
+    changeDirectorPosition,
+    getMemberDirectorPositions,
+  } = props;
+
+  const [isEditingEVPosition, setIsEditingEVPosition] = useState(false);
+  const [editedMemberDirectorPositions, setEditedMemberDirectorPositions] = useState<EditedMemberDirectorPositions[]>(
+    []
+  );
+  const [vonValue, setVonValue] = useState<Dayjs | null>(dayjs());
+  const [bisValue, setBisValue] = useState<Dayjs | null>(dayjs());
+  const [evPosition, setEVPosition] = useState(-1);
+  const [kuerzelValue, setKuerzelValue] = useState("");
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.nachname);
@@ -445,78 +527,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.sprachen || []);
   const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails?.edvkenntnisse || []);
 
-  /**
-   * Submits the changed data
-   * @param event FormEvent
-   */
-  const submit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    // Data which will be submitted
-    const data = {
-      mitgliedID: memberDetails.mitgliedID,
-      nachname: lastname,
-      vorname: name,
-      geschlecht: memberDetails.geschlecht,
-      geburtsdatum: transformGermanDateToSQLString(birthday),
-      handy: smartphone,
-      jbt_email: jbtMail,
-      mitgliedstatus: memberState,
-      generation: memberDetails.generation,
-      internesprojekt: memberDetails.internesprojekt,
-      mentor: mentorState,
-      trainee_seit: transformGermanDateToSQLString(traineeSince),
-      mitglied_seit: transformGermanDateToSQLString(memberSince),
-      alumnus_seit: transformGermanDateToSQLString(alumniSince),
-      senior_seit: transformGermanDateToSQLString(seniorSince),
-      aktiv_seit: transformStringToSQLString(memberDetails.aktiv_seit),
-      passiv_seit: transformGermanDateToSQLString(passiveSince),
-      ausgetreten_seit: memberDetails.ausgetreten_seit,
-      ressort: department,
-      arbeitgeber: employer,
-      strasse1: street1,
-      plz1: plz1State ? parseInt(plz1State, 10) : null,
-      ort1: placeOfResidence1,
-      tel1: parseInt(telephone1, 10),
-      email1: email1State,
-      strasse2: street2,
-      plz2: plz2State ? parseInt(plz2State, 10) : null,
-      ort2: placeOfResidence2,
-      tel2: parseInt(telephone2, 10),
-      email2: email2State,
-      hochschule: university,
-      studiengang: courseOfStudy,
-      studienbeginn: transformGermanDateToSQLString(startOfStudy),
-      studienende: transformGermanDateToSQLString(endOfStudy),
-      vertiefungen: speciality,
-      ausbildung: apprenticeship,
-      kontoinhaber: accountHolder,
-      iban: ibanState,
-      bic: bicState,
-      engagement: engagementState,
-      canPL: transformStringToSQLString(memberDetails.canPL),
-      canQM: transformStringToSQLString(memberDetails.canQM),
-      lastchange: "",
-      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
-      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
-      sprachen: languages,
-      mentees: menteeList,
-      edvkenntnisse: edvSkills,
-    };
-    props.updateMemberDetails(data);
-    handleGeneralInfoDialogClose();
-    handleClubInfoDialogClose();
-    handleStudyInfoDialogClose();
-    handleQualificationInfoDialogClose();
-    handlePaymentInfoDialogClose();
-  };
-
-  /**
-   * Toogles the career area
-   */
-  const toggleCareerState: VoidFunction = () => {
-    setCareerOpen(!careerOpen);
-  };
+  useEffect(() => {
+    setEditedMemberDirectorPositions(props.memberDirectorPositions.map((position) => ({ ...position, delete: false })));
+  }, [props.memberDirectorPositions]);
 
   /**
    * Handles the click on the edit button of the general information section
@@ -604,6 +617,79 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   /**
+   * Submits the changed data
+   * @param event FormEvent
+   */
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Data which will be submitted
+    const data = {
+      mitgliedID: memberDetails.mitgliedID,
+      nachname: lastname,
+      vorname: name,
+      geschlecht: memberDetails.geschlecht,
+      geburtsdatum: transformGermanDateToSQLString(birthday),
+      handy: smartphone,
+      jbt_email: jbtMail,
+      mitgliedstatus: memberState,
+      generation: memberDetails.generation,
+      internesprojekt: memberDetails.internesprojekt,
+      mentor: mentorState,
+      trainee_seit: transformGermanDateToSQLString(traineeSince),
+      mitglied_seit: transformGermanDateToSQLString(memberSince),
+      alumnus_seit: transformGermanDateToSQLString(alumniSince),
+      senior_seit: transformGermanDateToSQLString(seniorSince),
+      aktiv_seit: transformStringToSQLString(memberDetails.aktiv_seit),
+      passiv_seit: transformGermanDateToSQLString(passiveSince),
+      ausgetreten_seit: memberDetails.ausgetreten_seit,
+      ressort: department,
+      arbeitgeber: employer,
+      strasse1: street1,
+      plz1: plz1State ? parseInt(plz1State, 10) : null,
+      ort1: placeOfResidence1,
+      tel1: parseInt(telephone1, 10),
+      email1: email1State,
+      strasse2: street2,
+      plz2: plz2State ? parseInt(plz2State, 10) : null,
+      ort2: placeOfResidence2,
+      tel2: parseInt(telephone2, 10),
+      email2: email2State,
+      hochschule: university,
+      studiengang: courseOfStudy,
+      studienbeginn: transformGermanDateToSQLString(startOfStudy),
+      studienende: transformGermanDateToSQLString(endOfStudy),
+      vertiefungen: speciality,
+      ausbildung: apprenticeship,
+      kontoinhaber: accountHolder,
+      iban: ibanState,
+      bic: bicState,
+      engagement: engagementState,
+      canPL: transformStringToSQLString(memberDetails.canPL),
+      canQM: transformStringToSQLString(memberDetails.canQM),
+      lastchange: "",
+      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
+      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
+      sprachen: languages,
+      mentees: menteeList,
+      edvkenntnisse: edvSkills,
+    };
+    props.updateMemberDetails(data);
+    handleGeneralInfoDialogClose();
+    handleClubInfoDialogClose();
+    handleStudyInfoDialogClose();
+    handleQualificationInfoDialogClose();
+    handlePaymentInfoDialogClose();
+  };
+
+  /**
+   * Toogles the career area
+   */
+  const toggleCareerState: VoidFunction = () => {
+    setCareerOpen(!careerOpen);
+  };
+
+  /**
    * Returns the string representation of the niveau number of a language
    * @param niveau A number which represents the niveau of a language
    * @returns A string representation of the niveau
@@ -656,23 +742,383 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
-          {directorPositions.map((position) => {
-            return (
-              <Typography>
-                <i>{`${position.kuerzel}`}</i>
-              </Typography>
-            );
+          {memberDirectorPositions.map((position, index) => {
+            if (new Date(position.von) <= new Date() && new Date(position.bis) >= new Date()) {
+              return (
+                <Typography key={index}>
+                  <i>{`${position.kuerzel}`}</i>
+                </Typography>
+              );
+            } else {
+              return;
+            }
           })}
           <Typography>
             <i>{`${memberDetails.mitgliedstatus}`}</i>
           </Typography>
           {doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) && (
-            <Button variant="contained" onClick={() => console.log("Open")}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setIsEditingEVPosition(true);
+              }}
+            >
               EV Posten
             </Button>
           )}
         </div>
       </div>
+    );
+  };
+
+  const setEVEintragVon = (mitgliedID: number, evpostenID: number, von: Dayjs | null) => {
+    if (von === null) {
+      return;
+    }
+
+    const stringVon = transfromDateToSQLDate(von.toDate());
+
+    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided mitgliedID and evpostenID
+        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+          if (von > dayjs(position.bis)) {
+            showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
+            return position;
+          } else {
+            // If it matches, update the von and bis properties
+            return {
+              ...position,
+              bis: transfromDateToSQLDate(dayjs(position.bis).toDate()),
+              von: stringVon,
+            };
+          }
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  const setEVEintragBis = (mitgliedID: number, evpostenID: number, bis: Dayjs | null) => {
+    if (bis === null) {
+      return;
+    }
+    const stringBis = transfromDateToSQLDate(bis.toDate());
+
+    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided mitgliedID and evpostenID
+        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+          if (dayjs(position.von) > bis) {
+            showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
+            return position;
+          } else {
+            // If it matches, update the von and bis properties
+            return {
+              ...position,
+              bis: stringBis,
+              von: transfromDateToSQLDate(dayjs(position.von).toDate()),
+            };
+          }
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  /**
+   * Removes an entry to the list of ev posten
+   * @param mitgliedID
+   * @param evpostenID
+   * @param del
+   */
+  const setEVEintragDelete = (mitgliedID: number, evpostenID: number, del: boolean) => {
+    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided mitgliedID and evpostenID
+        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+          // If it matches, update the von and bis properties
+          return {
+            ...position,
+            delete: del,
+          };
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  /**
+   * Adds a new entry to the list of ev posten
+   * @param mitgliedID
+   * @param evpostenID
+   * @param von
+   * @param bis
+   * @returns
+   */
+  const addEVEintrag = (mitgliedID: number, evpostenID: number, von: Dayjs | null, bis: Dayjs | null) => {
+    if (bis === null || von === null) {
+      return;
+    }
+
+    let posExists = false;
+    memberDirectorPositions.forEach((position) => {
+      if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+        posExists = true;
+        return;
+      }
+    });
+
+    if (posExists) {
+      showErrorMessage("Ein Mitglied kann jeden EV Posten nur einmal belegen.");
+      return;
+    }
+
+    let kuerzel = "";
+    directorPositions.forEach((position) => {
+      if (position.evpostenID === evpostenID) {
+        kuerzel = position.kuerzel;
+        return;
+      }
+    });
+
+    if (kuerzel === "") {
+      return;
+    }
+
+    const stringBis = transfromDateToSQLDate(bis.toDate());
+    const stringVon = transfromDateToSQLDate(von.toDate());
+
+    const newEntry: EditedMemberDirectorPositions = {
+      evpostenID,
+      mitgliedID,
+      kuerzel,
+      von: stringVon,
+      bis: stringBis,
+      delete: false,
+    };
+
+    setEditedMemberDirectorPositions((prevState) => [...prevState, newEntry]);
+  };
+
+  /**
+   * Loops through all entries of ev posten and checks which need to be updated, deleted or added
+   * and adds them to the database
+   */
+  const saveEVPosten = async () => {
+    let rowsChanged = 0;
+
+    // Use map to create an array of promises
+    const promises = editedMemberDirectorPositions.map(async (editedPosition) => {
+      let foundValue = false;
+      let update = false;
+      memberDirectorPositions.forEach((oldPosition) => {
+        if (
+          editedPosition.evpostenID === oldPosition.evpostenID &&
+          editedPosition.mitgliedID === oldPosition.mitgliedID
+        ) {
+          foundValue = true;
+          if (editedPosition.bis !== oldPosition.bis || editedPosition.von !== oldPosition.von) {
+            update = true;
+            return;
+          }
+        }
+      });
+
+      if (!foundValue) {
+        if (!editedPosition.delete) {
+          await addDirectorPosition(
+            editedPosition.evpostenID,
+            editedPosition.mitgliedID,
+            editedPosition.von,
+            editedPosition.bis
+          );
+        }
+        rowsChanged += 1;
+      } else if (editedPosition.delete) {
+        await deleteDirectorPosition(editedPosition.evpostenID, editedPosition.mitgliedID);
+        rowsChanged += 1;
+      } else if (update) {
+        await changeDirectorPosition(
+          editedPosition.evpostenID,
+          editedPosition.mitgliedID,
+          editedPosition.von,
+          editedPosition.bis
+        );
+        rowsChanged += 1;
+      }
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(promises);
+
+    if (rowsChanged > 0) {
+      // Retrieve edited page
+      await getMemberDirectorPositions();
+      showSuccessMessage("Änderungen erfolgreich gespeichert.");
+    } else {
+      showErrorMessage("Es wurden keine Änderungen vorgenommen.");
+    }
+  };
+
+  // Closes the edit ev posten modal without saving
+  const cancelEditEVPosten = () => {
+    setIsEditingEVPosition(false);
+    setEditedMemberDirectorPositions(props.memberDirectorPositions.map((position) => ({ ...position, delete: false })));
+  };
+
+  /**
+   * Renders the modal that displays all director posts that the member has and lets the user make changes
+   */
+  const renderEVPosten: VoidFunction = () => {
+    return (
+      <Modal
+        open={isEditingEVPosition}
+        onClose={() => cancelEditEVPosten()}
+        aria-labelledby="EV Posten zuweisen"
+        aria-describedby="Zuweisung eines EV Posten"
+      >
+        <Paper className={classes.modalPaper}>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h5" className={classes.paperHeaderText}>
+                Vorstandsämter bearbeiten
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6" className={classes.paperHeaderText}>
+                Jedes Mitglied kann ein bestimmtes Vorstandsamt nur einmal besetzen.
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TableContainer component={Paper} className={classes.tableContainer}>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.tableHeadCell}>EV Amt von</TableCell>
+                      <TableCell className={classes.tableHeadCell}>EV Amt bis</TableCell>
+                      <TableCell className={classes.tableHeadCell}>EV Amt</TableCell>
+                      <TableCell className={classes.tableHeadCell}>Löschen</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {editedMemberDirectorPositions.map((position, index) => {
+                      return (
+                        <TableRow hover key={index}>
+                          <TableCell
+                            className={
+                              index === editedMemberDirectorPositions.length - 1 ? classes.tableSecondLastRow : ""
+                            }
+                          >
+                            <DatePicker
+                              label="von"
+                              value={dayjs(position.von)}
+                              onChange={(newValue) =>
+                                setEVEintragVon(position.mitgliedID, position.evpostenID, newValue)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell
+                            className={
+                              index === editedMemberDirectorPositions.length - 1 ? classes.tableSecondLastRow : ""
+                            }
+                          >
+                            <DatePicker
+                              label="bis"
+                              value={dayjs(position.bis)}
+                              onChange={(newValue) =>
+                                setEVEintragBis(position.mitgliedID, position.evpostenID, newValue)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell
+                            className={
+                              index === editedMemberDirectorPositions.length - 1 ? classes.tableSecondLastRow : ""
+                            }
+                          >
+                            {position.kuerzel}
+                          </TableCell>
+                          <TableCell
+                            className={
+                              index === editedMemberDirectorPositions.length - 1 ? classes.tableSecondLastRow : ""
+                            }
+                          >
+                            <Checkbox
+                              color="primary"
+                              checked={position.delete}
+                              onChange={(event) =>
+                                setEVEintragDelete(position.mitgliedID, position.evpostenID, event.target.checked)
+                              }
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    <TableRow hover key={999}>
+                      <TableCell>
+                        <DatePicker label="von" value={vonValue} onChange={(newValue) => setVonValue(newValue)} />
+                      </TableCell>
+                      <TableCell>
+                        <DatePicker label="bis" value={bisValue} onChange={(newValue) => setBisValue(newValue)} />
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          label="EV Position"
+                          defaultValue={-1}
+                          value={evPosition}
+                          onChange={(event) => setEVPosition(event.target.value as number)}
+                        >
+                          {directorPositions.map((position, index) => {
+                            return (
+                              <MenuItem key={index} value={position.evpostenID}>
+                                {position.kuerzel}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          aria-label="add"
+                          disabled={evPosition < 0 || !vonValue || !bisValue}
+                          onClick={() => addEVEintrag(mitgliedID, evPosition, vonValue, bisValue)}
+                        >
+                          <Add />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+            <Button
+              className={classes.vorstandSubmitButton}
+              variant="contained"
+              color="primary"
+              onClick={() => saveEVPosten()}
+            >
+              Änderungen speichern
+            </Button>
+            <Button
+              className={classes.vorstandCancelButton}
+              variant="contained"
+              color="secondary"
+              onClick={() => cancelEditEVPosten()}
+            >
+              Abbrechen
+            </Button>
+          </Grid>
+        </Paper>
+      </Modal>
     );
   };
 
@@ -1764,6 +2210,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   return (
     <div className={classes.displayMemberDetailsRoot}>
       <Grid container spacing={3}>
+        {renderEVPosten()}
         {renderImage()}
         {renderGeneralInformation()}
         {renderGeneralInformationDialog()}

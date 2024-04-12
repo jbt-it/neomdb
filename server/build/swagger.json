@@ -283,6 +283,9 @@
 					"evpostenID": {
 						"type": "number",
 						"format": "double"
+					},
+					"kuerzel": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -296,10 +299,26 @@
 					"ressortID",
 					"bezeichnung_weiblich",
 					"bezeichnung_maennlich",
-					"evpostenID"
+					"evpostenID",
+					"kuerzel"
 				],
 				"type": "object",
 				"description": "Type of director position"
+			},
+			"AddDirectorPositionRequest": {
+				"properties": {
+					"bis": {
+						"type": "string"
+					},
+					"von": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"bis",
+					"von"
+				],
+				"type": "object"
 			},
 			"StatusOverview": {
 				"properties": {
@@ -1686,6 +1705,156 @@
 						}
 					}
 				]
+			}
+		},
+		"/members/{id}/director-positions/{directorPositionID}": {
+			"delete": {
+				"operationId": "DeleteDirectorPositions",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Deletes the director position of the member. If the member has multiple director positions with the same id, all are deleted.",
+				"summary": "Deletes the director position of the member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "The member id",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The director position id",
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddDirectorPosition",
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"description": "Adds a new director position to the member",
+				"summary": "Adds a new director position",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to update",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The id of the director role",
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The dates of the director position to add",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddDirectorPositionRequest",
+								"description": "The dates of the director position to add"
+							},
+							"example": {
+								"von": "2024-01-01",
+								"bis": "2024-12-12"
+							}
+						}
+					}
+				}
+			},
+			"patch": {
+				"operationId": "UpdateDirectorPosition",
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddDirectorPositionRequest"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/members/{id}/status": {

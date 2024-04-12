@@ -2,6 +2,7 @@ import MembersService from "./MembersService";
 import {
   AssignPermissionToMemberRequest,
   DirectorPosition,
+  AddDirectorPositionRequest,
   CreateMemberRequest,
   CreateMemberResponse,
   Department,
@@ -98,6 +99,53 @@ export class MembersController extends Controller {
     const directorPositions = await this.membersService.getDirectorPositions(includeDirectorMembers);
 
     return directorPositions;
+  }
+
+  /**
+   * Deletes the director position of the member. If the member has multiple director positions with the same id, all are deleted.
+   * @summary Deletes the director position of the member
+   * @param id The member id
+   * @param directorPositionID The director position id
+   */
+  @Delete("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  public async deleteDirectorPositions(@Path() id: number, @Path() directorPositionID: number): Promise<void> {
+    return await this.membersService.deleteDirectorPositions(id, directorPositionID);
+  }
+
+  /**
+   * Adds a new director position to the member
+   * @summary Adds a new director position
+   *
+   * @param id The id of the member to update
+   * @param directorPositionID The id of the director role
+   * @param requestBody The dates of the director position to add
+   *
+   * @example requestBody {
+   *   "von": "2024-01-01",
+   *   "bis": "2024-12-12"
+   * }
+   */
+  @Post("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  @SuccessResponse("201")
+  public async addDirectorPosition(
+    @Path() id: number,
+    @Path() directorPositionID: number,
+    @Body() requestBody: AddDirectorPositionRequest
+  ): Promise<void> {
+    return await this.membersService.addDirectorPosition(id, directorPositionID, requestBody);
+  }
+
+  @Patch("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  @SuccessResponse("200")
+  public async updateDirectorPosition(
+    @Path() id: number,
+    @Path() directorPositionID: number,
+    @Body() requestBody: AddDirectorPositionRequest
+  ): Promise<void> {
+    return await this.membersService.updateDirectorPosition(id, directorPositionID, requestBody);
   }
 
   /**
