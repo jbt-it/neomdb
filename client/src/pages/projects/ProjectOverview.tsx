@@ -22,7 +22,7 @@ const ProjectOverview = () => {
 
   return (
     <TabContext value={value}>
-      <Box sx={{ display: "flex", borderBottom: 1, borderColor: "divider", justifyContent: "space-between" }}>
+      <Box sx={{ display: "flex", borderBottom: 1, borderColor: "divider", marginLeft: "auto", marginRight: "auto" }}>
         <TabList onChange={handleChangeTab} variant="scrollable">
           <Tab label="Projektausschreibungen" value="projectTenders" />
           <Tab label="Meine Projekte" value="myProjects" />
