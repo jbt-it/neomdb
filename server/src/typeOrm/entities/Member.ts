@@ -373,8 +373,8 @@ export class Member {
 
   @ManyToMany(() => Mmtracking, (mmtracking) => mmtracking.members)
   @JoinTable({
-    name: "mmtracking_has_member",
-    joinColumns: [{ name: "member_memberID", referencedColumnName: "memberId" }],
+    name: "mmtracking_has_mitglied",
+    joinColumns: [{ name: "mitglied_mitgliedID", referencedColumnName: "memberId" }],
     inverseJoinColumns: [{ name: "mmtracking_mmtrackingID", referencedColumnName: "mmtrackingId" }],
     schema: "mdb",
   })
