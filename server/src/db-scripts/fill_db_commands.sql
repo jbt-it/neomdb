@@ -131,17 +131,16 @@ INSERT INTO `edvkenntnisse` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 -- Daten für Tabelle `event`
 --
 
-INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungsfrist`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`) VALUES
-(5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-12 20:00:00', 'Nähe Gleislingen an der Steige (Freibad)', NULL, NULL, 1, 0),
-(7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-12-09 22:00:00', 'Euro Meuro Forum Morum', '18:00', '09:00', 0, 0),
-(8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0),
-(10, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2014-05-02', '2014-05-04', '2014-04-30 20:00:00', 'Sulz am Neckar', NULL, NULL, 1, 0),
-(20, 'TED Mannheim', '', '2014-04-11', '2014-04-12', '2014-03-30 10:00:00', NULL, '10:00', '15.00', 0, 0),
-(33, 'JBT goes Public Viewing', '', '2014-06-16', '2014-06-16', '2014-06-13 18:00:00', NULL, '18:00', '22:00', 0, 0),
-(143, 'Young Business Network', 'Die Veranstaltungsreihe „Young Business Husslers“ ist als Erfahrungsaustausch für Existenzgründer und Junghussler konzipiert.\n\nNeben ausgewählten Fachvorträgen besteht die Möglichkeit, beim Elevator-Pitch das eigene Unternehmen vorzustellen und Fragen an die Teilnehmer zu richten.\n\nUnseren „Ich suche/Ich biete-Marktplatz“ können Sie nutzen, um erste Geschäftskontakte zu knüpfen und diese beim anschließenden gemütlichen Ausklang zu vertiefen.\n\nNatürlich bleibt genügend Zeit für den Erfahrungsaustausch und das persönliche Networken. Wir freuen uns auf einen spannenden und ergebnisreichen Abend mit Ihnen.', '2016-05-30', '2016-05-30', '2016-05-28 16:00:00', 'FKK Stuttgart City, Freiwedelstraße 5, 70537 Stuttgart Muttgart', '19:00', '22:00', 0, 1),
-(266, 'Working-Weekend', '', '2018-11-16', '2018-11-18', '2018-11-14 23:59:00', 'Party Straße 12, 97846 Husslerstatt', NULL, NULL, 1, 0),
-(295, 'JBT goes Sprungbude', 'Wir möchten mit Euch in die weltweit größte Trampolinhalle gehen', '2019-05-31', '2019-05-31', '2019-05-27 21:30:00', '\"Jump Mump Foldo\" / Im Supergau 16, 84995 Fildi', '15:30', NULL, 0, 0);
-
+INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
+(5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-01 19:23:00', '2013-11-12 20:00:00', 'Nähe Geislingen an der Steige (Freizeitheim Stötten)', NULL, NULL, 1, 0, 58, 0, 0),
+(7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-11-28 21:23:00', '2013-12-09 22:00:00', 'Euro Forum Katharinasaal/TMS', '18:00', '09:00', 0, 0, 50, 0, 0),
+(8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-11-29 19:23:00', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0, 50, 0, 0),
+(10, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2014-05-02', '2014-05-04', '2014-04-19 19:23:00', '2014-04-30 20:00:00', 'Sulz am Neckar', NULL, NULL, 1, 0, 51, 0, 0),
+(20, 'TED Mannheim', '', '2014-04-11', '2014-04-12', '2014-03-19 09:23:00', '2014-03-30 10:00:00', NULL, '10:00', '15.00', 0, 0, 45, 0, 0),
+(33, 'JBT goes Public Viewing', '', '2014-06-16', '2014-06-16', '2014-06-02 17:23:00', '2014-06-13 18:00:00', NULL, '18:00', '22:00', 0, 0, 48, 0, 0),
+(143, 'Young Business Network', 'Die Veranstaltungsreihe „Young Business Husslers“ ist als Erfahrungsaustausch für Existenzgründer und Jungunternehmer konzipiert.\r\n\r\nNeben ausgewählten Fachvorträgen besteht die Möglichkeit, beim Elevator-Pitch das eigene Unternehmen vorzustellen und Fragen an die Teilnehmer zu richten.\r\n\r\nUnseren „Ich suche/Ich biete-Marktplatz“ können Sie nutzen, um erste Geschäftskontakte zu knüpfen und diese beim anschließenden gemütlichen Ausklang zu vertiefen.\r\n\r\nNatürlich bleibt genügend Zeit für den Erfahrungsaustausch und das persönliche Networken. Wir freuen uns auf einen spannenden und ergebnisreichen Abend mit Ihnen.', '2016-05-30', '2016-05-30', '2016-05-17 15:23:00', '2016-05-28 16:00:00', 'IHK Region Stuttgart Langestraße 4 70987 Stuttgart', '19:00', '22:00', 0, 1, 57, 0, 0),
+(266, 'Working-Weekend', '', '2018-11-16', '2018-11-18', '2018-11-03 23:22:00', '2018-11-14 23:59:00', 'Tübinger Straße 12, 61482 Blockhausen', NULL, NULL, 1, 0, 15, 0, 0),
+(295, 'JBT goes Sprungbude', 'Wir möchten mit Euch in die weltweit größte Trampolinhalle gehen', '2019-05-31', '2019-05-31', '2019-05-16 20:53:00', '2019-05-27 21:30:00', '\"Sprungbude Filderstadt\" / Im Supergau 16, 70354 Filderstadt', '15:30', NULL, 0, 0, 43, 0, 0);
 
 --
 -- Daten für Tabelle `evposten`
@@ -426,17 +425,17 @@ INSERT INTO `mitglied_has_berechtigung` (`mitglied_mitgliedID`, `berechtigung_be
 -- Daten für Tabelle `mitglied_has_event`
 --
 
-INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`) VALUES
-(7, 8111),
-(7, 8222),
-(7, 8324),
-(7, 8478),
-(8, 8111),
-(8, 8320),
-(20, 8324),
-(33, 8167),
-(143, 8167),
-(295, 8748);
+INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle`) VALUES
+(7, 8111, 'Organisator'),
+(7, 8222, 'Teilnehmer'),
+(7, 8324, 'Organisator'),
+(7, 8478, 'Teilnehmer'),
+(8, 8111, 'Teilnehmer'),
+(8, 8320, 'Organisator'),
+(20, 8324, 'Teilnehmer'),
+(33, 8167, 'Teilnehmer'),
+(143, 8167, 'Organisator'),
+(295, 8748, 'Teilnehmer');
 
 
 --
@@ -2644,16 +2643,16 @@ INSERT INTO `schulungsfeedback_has_mitglied` (`schulungsfeedback_schulungsfeedba
 -- Daten für Tabelle `schulungsinstanz`
 --
 
-INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`) VALUES
-(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL),
-(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL),
-(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL),
-(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL),
-(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL),
-(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL),
-(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS88', 30, NULL, NULL),
-(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL),
-(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL);
+INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
+(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
+(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
+(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
+(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
+(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
+(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
+(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS11', 30, NULL, NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
+(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
+(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
 
 
 --
