@@ -1,0 +1,95 @@
+type WorkshopSuggestion = {
+  workshopId: number,
+  workshopName: string,
+  workshopSelected: boolean
+}
+
+
+// get suggestions
+{
+  "suggestions": {
+    "ITSkills": string[],
+    "trainingAndWorkshops":"WorkshopSuggestion[]",
+    "activitiesInJBT":"string[]",
+    "conductedWorkshops":"string[]"
+},
+ "externProjectExperience":[
+      {
+      "projectName":"String",
+      "projectDuration":"String",
+      "earnedBT":"Number",
+      "statusOfMember":"String"
+    }
+    ]
+}
+
+
+// post application
+{
+  "applicantData": {
+    "internship": "String",
+    "apprenticeship": "String",
+	  "workingStudentPosition": "String",
+    "seminarPapers":"String",
+    "trainingAndWorkshops":"WorkshopSuggestion[]",
+    "Motivation":"String",
+    "confidentialityAgreementSignature":"Boolean",
+    "availabilitySchedule":"Boolean",
+    "reasonForTimeConstrains":"String"
+    "boardActivity": "Boolean",
+    "teamLeader": "Boolean",
+    "extraordinaryClubCommitment":"String"
+    "initialContact": "Boolean",
+    "writingTheProposal": "Boolean"
+  },
+}
+
+// get application information
+
+{
+  memberDetails: {
+    memberID: number,
+    givenName: string,
+    surname: string,
+    courseOfStudy: string,
+    semester: number,
+    specialization: string,
+  },
+  "applicantData": {
+    "internship": "String",
+    "apprenticeship": "String",
+	  "workingStudentPosition": "String",
+    "seminarPapers":"String",
+    "trainingAndWorkshops":"WorkshopSuggestion[]",
+    "Motivation":"String",
+    "confidentialityAgreementSignature":"Boolean",
+    "availabilitySchedule":"Boolean",
+    "reasonForTimeConstrains":"String"
+    "boardActivity": "Boolean",
+    "teamLeader": "Boolean",
+    "extraordinaryClubCommitment":"String"
+    "initialContact": "Boolean",
+    "writingTheProposal": "Boolean"
+  },
+    "externProjectExperience":[
+      {
+      "projectName":"String",
+      "projectDuration":"String",
+      "earnedBT":"Number",
+      "statusOfMember":"String"
+    }
+    ]
+
+}
+
+// get previous application
+previousApplication: {
+  [
+    {
+      memberID: number,
+      projectID: number,
+      projectName: string,
+      applicationStatus: string
+    }
+    ]
+}

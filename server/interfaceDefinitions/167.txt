@@ -1,0 +1,46 @@
+
+// getProjectDetails
+{
+  "projectDetails": {
+    "projectID": "Number",
+    "projectName": "String",
+    "projectStatus": "String",
+    "location": "String",
+    "applicationStartDate": "Date",
+    "applicationDeadline": "Date",
+    "start": "Date",
+    "duration": "String",
+    "conditions": "String",
+    "conditionsRange": "String",
+    "minConsultingDays": "Number",
+    "maxConsultingDays": "Number",
+    "minProjectMembers": "Number",
+    "maxProjectMembers": "Number",
+    "applicationStart": "Date",
+    "kickOff": "Date",
+    "descriptionFilePath": "String"
+    "characteristics": "String",
+    "core competencies": "String",
+	  "requirementsProfile":"String",
+	  "referenceProjects": "String",
+    "dateOfSignature": "Date",
+    "staffingCommittee": MemberField[],
+    "projectMembers": MemberField[],
+    "initialSituationAndObjective": string,
+    "soldBT": string,
+    "soldExpenses": string,
+    "soldConditions": string,
+  },
+  "customerDetails": {
+    "customerID": "Number",
+    "industry": "String",
+    "description": "String",
+    "street": string,
+    "postalCode": string,
+    "city": string,
+    "website": string,
+    "customerType": string,
+    "acquisitor": string,
+    "acqusitionChannel": string,
+  }
+}
