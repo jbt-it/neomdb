@@ -21,6 +21,7 @@ const MemberProfile: React.FunctionComponent = () => {
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
+  const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [memberDirectorPositions, setMemberDirectorPositions] = useState<MemberDirectorPositions[]>([]);
   const [directorPositions, setDirectorPositions] = useState<membersTypes.DirectorPosition[]>([]);
@@ -97,6 +98,35 @@ const MemberProfile: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             setLanguages(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /**
+   * Retrieves the image of the member
+   */
+  const getMemberImage: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/members/${params.id}/image`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setMemberImage(res.data);
           }
         }
       })
@@ -256,6 +286,54 @@ const MemberProfile: React.FunctionComponent = () => {
     };
   };
 
+  /**
+   * Saves the member image
+   * @param file The image file
+   */
+  const saveMemberImage = (file: File) => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    // Extract file type (the part of the file name after the last dot)
+    const mimeType = file.name.split(".").pop();
+
+    // Transform file to base64 string
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const base64 = reader.result?.toString().split(",")[1];
+      api
+        .post(
+          `/members/${params.id}/image`,
+          { base64, mimeType },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        )
+        .then((res) => {
+          if (res.status === 204) {
+            if (mounted) {
+              showSuccessMessage("Bild wurde erfolgreich hochgeladen!");
+              getMemberImage();
+            }
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            dispatchAuth({ type: authReducerActionType.deauthenticate });
+          } else if (err.response.status === 403) {
+            showErrorMessage("Du hast nicht die Berechtigung dies zu tun!");
+          } else if (err.response.status === 500) {
+            showErrorMessage("Hochladen ist fehlgeschlagen!");
+          }
+        });
+    };
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
   useEffect(
     () =>
       // Checks if the user is the owner of the member page
@@ -269,6 +347,7 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(() => getMemberDirectorPositions(), [getMemberDirectorPositions]);
   useEffect(() => getDirectorPositions(), [getDirectorPositions]);
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
+  useEffect(getMemberImage, [params.id, dispatchAuth]);
 
   const addDirectorPosition = async (evpostenID: number, mitgliedID: number, von: string, bis: string) => {
     return new Promise<void>((resolve, reject) => {
@@ -357,6 +436,7 @@ const MemberProfile: React.FunctionComponent = () => {
       }
     });
   };
+  useEffect(getMemberImage, [params.id, dispatchAuth]);
 
   return (
     <div>
@@ -372,6 +452,7 @@ const MemberProfile: React.FunctionComponent = () => {
             memberDetails={memberDetails}
             isOwner={isOwner}
             getMemberDetails={getMemberDetails}
+            memberImage={memberImage}
             updateMemberDetails={updateMemberDetails}
             memberDirectorPositions={memberDirectorPositions}
             directorPositions={directorPositions}
@@ -379,6 +460,7 @@ const MemberProfile: React.FunctionComponent = () => {
             addDirectorPosition={addDirectorPosition}
             changeDirectorPosition={changeDirectorPosition}
             getMemberDirectorPositions={getMemberDirectorPositions}
+            saveMemberImage={saveMemberImage}
           />
         ) : null}
       </div>

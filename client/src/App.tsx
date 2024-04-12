@@ -8,6 +8,7 @@ import ProtectedRoutes from "./components/routing/ProtectedRoutes";
 // MUI imports
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/de";
 
 /**
  * page imports
@@ -28,12 +29,23 @@ import DirectorsHistory from "./pages/members/DirectorsHistory";
 // trainee pages
 import TraineePreferences from "./pages/trainees/TraineePreferences";
 import AssignTrainees from "./pages/trainees/AssignTrainees";
+import TraineeSection from "./pages/trainees/TraineeSection";
+import InternalProject from "./pages/trainees/InternalProject";
+
+// events and workshop pages
+import WorkshopsOverview from "./pages/events/WorkshopsOverview";
+import WorkshopDetails from "./pages/events/WorkshopDetails";
+import EventDetails from "./pages/events/EventDetails";
+import EventsOverview from "./pages/events/EventsOverview";
 
 // other pages
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import FieldSectionTest from "./pages/FieldSectionTest";
 import InfoSectionTest from "./pages/InfoSectionTest";
+import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
+import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
+import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
 
 /**
  * This component is responsible for rendering the app.
@@ -42,7 +54,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 
 const App: React.FunctionComponent = () => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
       <HashRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
@@ -60,13 +72,27 @@ const App: React.FunctionComponent = () => {
             <Route path="ressorts" element={<DepartmentOverview />} />
             <Route path="vorstand" element={<BoardOverview />} />
             <Route path="ewigervorstand" element={<DirectorsHistory />} />
-            <Route path="traineebereich" element={<Dashboard />} />
+            <Route path="traineebereich" element={<TraineeSection />} />
             <Route path="traineepraeferenzen" element={<TraineePreferences />} />
             <Route path="traineezuteilung" element={<AssignTrainees />} />
+            <Route path="internes-projekt/:id" element={<InternalProject />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
             <Route path="projekte" element={<Dashboard />} />
-            <Route path="veranstaltungen" element={<Dashboard />} />
+            <Route path="veranstaltungen" element={<EventsOverview />} />
+            <Route path="veranstaltungen/:id" element={<EventDetails />} />
+            <Route path="workshops" element={<WorkshopsOverview />} />
+            <Route path="workshops/:id" element={<WorkshopDetails />} />
+            <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
+            <Route path="workshops/:workshopID/:workshopInstanceID/feedback/" element={<WorkshopInstanceFeedback />} />
+            <Route
+              path="workshops/:workshopID/:workshopInstanceID/feedbackauswertung"
+              element={
+                <ProtectedRoutes permissionIDs={[4]}>
+                  <WorkshopInstanceEvaluation />
+                </ProtectedRoutes>
+              }
+            />
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />

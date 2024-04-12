@@ -1,5 +1,4 @@
-# Only for local testing of the development and production builds
-# This file should not be used in the production environment!
+# For creating the test environment
 
 version: "3.8"
 
@@ -9,16 +8,14 @@ networks:
 
 services:
   client:
-    build:
-      context: ../client
-      dockerfile: Dockerfile
-      args:
-        - REACT_APP_ENV=testing # Is used to indicate to react, that it should use the env variables regarding testing
+    image: jbtit/neomdb:client${CLIENT_VERSION}
     networks:
       - neomdb_network
 
   database:
     image: mysql
+    ports:
+      - 5306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
@@ -28,51 +25,35 @@ services:
     secrets:
       - db_root_password
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    links:
-      - database:db
-    networks:
-      - neomdb_network
-
   server:
-    build:
-      context: ../server
-      dockerfile: Dockerfile
+    image: jbtit/neomdb:server${SERVER_VERSION}
     depends_on:
       - database
     networks:
       - neomdb_network
     environment:
-      IS_PRODUCTION: "true"
+      NODE_ENV: "production"
       ORIGIN_PROD: "${ORIGIN_PROD}"
       DB_PASSWORD_PROD_FILE: /run/secrets/db_neomdb_password
       DB_HOST_PROD: "${DB_HOST_PROD}"
       DB_PORT_PROD: "${DB_PORT_PROD}"
+      ASSETS_PATH: "./assets"
+      LOGS_PATH: "./logs"
+    volumes:
+      - ./assets:/app/assets
+      - ./logs:/app/logs
     secrets:
       - db_neomdb_password
 
   nginx-app:
     image: nginx:latest
     ports:
-      - 9000:80
+      - 9002:80
     depends_on:
       - client
       - server
     volumes:
       - ../nginx/default-app.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - neomdb_network
-
-  nginx-db:
-    image: nginx:latest
-    ports:
-      - 9001:80
-    depends_on:
-      - database
-      - phpmyadmin
-    volumes:
-      - ../nginx/default-db.conf:/etc/nginx/conf.d/default.conf
     networks:
       - neomdb_network
 

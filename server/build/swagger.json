@@ -132,6 +132,17 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"MemberStatus": {
+				"type": "string",
+				"enum": [
+					"Trainee",
+					"aktives Mitglied",
+					"Senior",
+					"Alumnus",
+					"passives Mitglied",
+					"Ausgetretene"
+				]
+			},
 			"MemberPartial": {
 				"properties": {
 					"lastchange": {
@@ -141,7 +152,7 @@
 						"type": "string"
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -168,6 +179,22 @@
 				],
 				"type": "object",
 				"description": "Type of the partial member"
+			},
+			"MemberImage": {
+				"properties": {
+					"mimeType": {
+						"type": "string"
+					},
+					"base64": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"mimeType",
+					"base64"
+				],
+				"type": "object",
+				"description": "Type of the member image"
 			},
 			"DepartmentMember": {
 				"properties": {
@@ -817,7 +844,7 @@
 						"nullable": true
 					},
 					"mitgliedstatus": {
-						"type": "string"
+						"$ref": "#/components/schemas/MemberStatus"
 					},
 					"jbt_email": {
 						"type": "string"
@@ -942,19 +969,59 @@
 				"type": "object",
 				"description": "Type of a trainee (partial member)"
 			},
+			"MembersField": {
+				"properties": {
+					"mitgliedstatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nachname",
+					"vorname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the member field"
+			},
 			"InternalProject": {
 				"properties": {
+					"qualitaetsmanager": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"projektmitglieder": {
+						"items": {
+							"$ref": "#/components/schemas/MembersField"
+						},
+						"type": "array",
+						"nullable": true
+					},
 					"DLBeiEV": {
 						"type": "boolean"
 					},
 					"APGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"APBeiEV": {
 						"type": "boolean"
 					},
 					"ZPGehalten": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"ZPBeiEV": {
 						"type": "boolean"
@@ -963,12 +1030,16 @@
 						"type": "boolean"
 					},
 					"kickoff": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"kuerzel": {
 						"type": "string"
 					},
 					"projektname": {
+						"type": "string"
+					},
+					"generationsBezeichnung": {
 						"type": "string"
 					},
 					"generation": {
@@ -981,6 +1052,8 @@
 					}
 				},
 				"required": [
+					"qualitaetsmanager",
+					"projektmitglieder",
 					"DLBeiEV",
 					"APGehalten",
 					"APBeiEV",
@@ -990,6 +1063,7 @@
 					"kickoff",
 					"kuerzel",
 					"projektname",
+					"generationsBezeichnung",
 					"generation",
 					"internesProjektID"
 				],
@@ -1542,7 +1616,7 @@
 				"parameters": []
 			},
 			"post": {
-				"operationId": "CreeateMember",
+				"operationId": "CreateMember",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1588,6 +1662,98 @@
 								"generation": 3,
 								"traineeSeit": "2020-01-01",
 								"email": "m.mustermann@email.de"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/{id}/image": {
+			"get": {
+				"operationId": "GetMemberImage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"mimeType": {},
+										"base64": {}
+									},
+									"required": [
+										"mimeType",
+										"base64"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the image of a member with the given `id`.\r\nReturns null with status code 204 if no image was found.",
+				"summary": "Get image of member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to retrieve the image from",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SaveImage",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Saves the image of a member with the given `id`",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to save the image to",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The image to save",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberImage",
+								"description": "The image to save"
+							},
+							"example": {
+								"base64": "test",
+								"mimeType": "jpg"
 							}
 						}
 					}
@@ -1897,7 +2063,7 @@
 							"schema": {
 								"properties": {
 									"mitgliedstatus": {
-										"type": "string"
+										"$ref": "#/components/schemas/MemberStatus"
 									}
 								},
 								"required": [
@@ -2575,8 +2741,33 @@
 								"kickoff": "2021-01-01",
 								"kuerzel": "string",
 								"projektname": "string-long",
-								"generation": 3,
-								"internesProjektID": 62
+								"generationsBezeichnung": "Wintersemester 19/20",
+								"generation": 15,
+								"internesProjektID": 62,
+								"projektmitglieder": [
+									{
+										"mitgliedID": 8478,
+										"vorname": "Kellan",
+										"nachname": "Mclaughlin"
+									},
+									{
+										"mitgliedID": 8748,
+										"vorname": "Mason",
+										"nachname": "Vinson"
+									}
+								],
+								"qualitaetsmanager": [
+									{
+										"mitgliedID": 8320,
+										"vorname": "Radhika",
+										"nachname": "Norton"
+									},
+									{
+										"mitgliedID": 8333,
+										"vorname": "Miruna",
+										"nachname": "Decker"
+									}
+								]
 							}
 						}
 					}
@@ -2694,9 +2885,7 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"14"
-						]
+						"jwt": []
 					}
 				],
 				"parameters": []
@@ -3075,6 +3264,40 @@
 				"parameters": [
 					{
 						"description": "id of the generation",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/trainees/admission/{id}": {
+			"post": {
+				"operationId": "AdmitTrainee",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Admits a trainee which sets the active since state of the member to the current date and\r\nupdates the member status",
+				"summary": "Admit a trainee",
+				"tags": [
+					"Trainees"
+				],
+				"security": [
+					{
+						"jwt": [
+							"18"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "id of the trainee",
 						"in": "path",
 						"name": "id",
 						"required": true,

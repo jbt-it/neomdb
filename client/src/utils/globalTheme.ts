@@ -23,6 +23,24 @@ export default createTheme({
       main: "#aeb0b2",
       contrastText: "#000000",
     },
+    success: {
+      main: "#388e3c",
+      contrastText: "#ffffff",
+    },
+    error: {
+      main: "#d32f2f",
+      contrastText: "#ffffff",
+    },
+    warning: {
+      // Ci-yellow as hex
+      main: "#f5b400",
+      contrastText: "#ffffff",
+    },
+    info: {
+      // Ci-blue as hex
+      main: "#00798C",
+      contrastText: "#ffffff",
+    },
   },
 });
 

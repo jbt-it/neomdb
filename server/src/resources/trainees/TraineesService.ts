@@ -13,6 +13,7 @@ import {
 } from "../../types/traineesTypes";
 import { Mentor } from "../../types/membersTypes";
 import MembersRepository from "../members/MembersRepository";
+import { executeInTransaction } from "../../database";
 
 class TraineesService {
   traineesRepository = new TraineesRepository();
@@ -58,8 +59,50 @@ class TraineesService {
     if (ip === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
+    const ipMemberIDs = updatedIp.projektmitglieder.map((member) => member.mitgliedID);
+    const oldIPMemberIDs = ip.projektmitglieder
+      .filter((member) => ipMemberIDs.includes(member.mitgliedID) === false)
+      .map((member) => member.mitgliedID);
+    const ipQmIDs = updatedIp.qualitaetsmanager.map((qm) => qm.mitgliedID);
+    const oldIPQmIDs = ip.qualitaetsmanager
+      .filter((qm) => ipQmIDs.includes(qm.mitgliedID) === false)
+      .map((qm) => qm.mitgliedID);
 
-    await this.traineesRepository.updateIPByID(id, updatedIp);
+    // Fill tasks to be executed in transaction
+    const tasks = [];
+
+    // Task to update the internal project details
+    tasks.push({
+      func: this.traineesRepository.updateIPDetailsByID,
+      args: [id, updatedIp],
+    });
+
+    // Task to add new trainees to an internal project
+    tasks.push({
+      func: this.traineesRepository.updateIPMembers,
+      args: [id, ipMemberIDs],
+    });
+
+    // Task to remove trainees from an internal project
+    tasks.push({
+      func: this.traineesRepository.updateIPMembers,
+      args: [null, oldIPMemberIDs],
+    });
+
+    // Task to add new quality managers to an internal project
+    tasks.push({
+      func: this.traineesRepository.updateIPQMs,
+      args: [id, ipQmIDs],
+    });
+
+    // Task to remove quality managers from an internal project
+    tasks.push({
+      func: this.traineesRepository.updateIPQMs,
+      args: [id, oldIPQmIDs],
+    });
+
+    // Execute all tasks in transaction
+    await executeInTransaction(tasks);
   };
 
   /**

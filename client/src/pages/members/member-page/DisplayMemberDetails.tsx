@@ -47,6 +47,7 @@ import InfoCard from "../../../components/general/InfoCard";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
+import MemberImage from "../../../components/general/MemberImage";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -94,15 +95,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
-    },
-    memberImage: {
-      backgroundColor: "white",
-      borderRadius: "50%",
-      border: "3px solid var(--white,#fff)",
-      boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-      width: "40%",
-      marginLeft: "20px",
-      marginTop: "20px",
     },
     category: {
       color: theme.palette.text.secondary,
@@ -240,6 +232,7 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.EDVSkill[];
   memberDetails: membersTypes.MemberDetails;
   isOwner: boolean;
+  memberImage: membersTypes.MemberImage | null;
   memberDirectorPositions: membersTypes.MemberDirectorPositions[];
   directorPositions: membersTypes.DirectorPosition[];
   deleteDirectorPosition: (evpostenID: number, mitgliedID: number) => void;
@@ -247,6 +240,7 @@ interface DisplayMemberDetailsProps {
   changeDirectorPosition: (evpostenID: number, mitgliedID: number, von: string, bis: string) => void;
   updateMemberDetails: (data: membersTypes.MemberDetails) => void;
   getMemberDirectorPositions: () => void;
+  saveMemberImage: (file: File) => void;
   getMemberDetails: () => void;
 }
 
@@ -335,6 +329,17 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
   const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
+
+  /**
+   * Saves the changes of the image
+   * @param event ChangeEvent
+   */
+  const saveImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      props.saveMemberImage(file);
+    }
+  };
 
   /**
    * Checks if there would be a duplicate value in languages if value would be added
@@ -739,7 +744,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderImage: VoidFunction = () => {
     return (
       <div className={classes.imageSection}>
-        <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
+        <MemberImage
+          base64={props.memberImage?.base64}
+          mimeType={props.memberImage?.mimeType}
+          defaultImage={JBTLogoBlack}
+          alt="Member Image"
+          size={240}
+          onImageChange={props.isOwner ? saveImage : undefined}
+        />
         <div className={classes.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
           {memberDirectorPositions.map((position, index) => {
@@ -1259,9 +1271,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Mentees:</Typography>
                 <div className={classes.categoryItemList}>
-                  {menteeList.map((mentee) => {
+                  {menteeList.map((mentee, index) => {
                     return (
-                      <Typography className={classes.categoryLine}>{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                      <Typography
+                        className={classes.categoryLine}
+                        key={index}
+                      >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
                     );
                   })}
                 </div>
@@ -1889,6 +1904,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
@@ -2006,6 +2022,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           md={6}
                           lg={4}
                           className={classes.dialogListItem}
+                          key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete

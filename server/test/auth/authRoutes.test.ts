@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeAll, beforeEach, afterEach, jest, afterAll } from "@jest/globals";
-import * as request from "supertest";
+import request from "supertest";
 import app from "../../src/app";
 import MemberTestUtils from "../utils/memberTestUtils";
 import AuthTestUtils from "../utils/authTestUtils";

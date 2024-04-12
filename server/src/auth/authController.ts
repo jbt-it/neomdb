@@ -44,7 +44,6 @@ export class AuthController extends Controller {
   /**
    * Sends the user data of the currently logged in user to the client
    * @summary Retrieves own user data
-   *
    */
   @Get("me")
   @Security("jwt")
