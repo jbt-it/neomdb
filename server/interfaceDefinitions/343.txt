@@ -1,0 +1,17 @@
+// get table of all projects with status "Abrechnung" or "Durchführung"
+
+  {
+    projectID: number,
+    projectName: string,
+    status: string,
+    APda: boolean,
+    APmm: boolean,
+    EE: boolean,
+    DL: boolean,
+    An: boolean,
+    BV: boolean,
+    TV: boolean,
+    QM: boolean,
+    VfM: boolean,
+    GÜ: boolean
+  }
