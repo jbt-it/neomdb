@@ -131,17 +131,16 @@ INSERT INTO `edvkenntnisse` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 -- Daten für Tabelle `event`
 --
 
-INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungsfrist`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`) VALUES
-(5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-12 20:00:00', 'Nähe Gleislingen an der Steige (Freibad)', NULL, NULL, 1, 0),
-(7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-12-09 22:00:00', 'Euro Meuro Forum Morum', '18:00', '09:00', 0, 0),
-(8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0),
-(10, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2014-05-02', '2014-05-04', '2014-04-30 20:00:00', 'Sulz am Neckar', NULL, NULL, 1, 0),
-(20, 'TED Mannheim', '', '2014-04-11', '2014-04-12', '2014-03-30 10:00:00', NULL, '10:00', '15.00', 0, 0),
-(33, 'JBT goes Public Viewing', '', '2014-06-16', '2014-06-16', '2014-06-13 18:00:00', NULL, '18:00', '22:00', 0, 0),
-(143, 'Young Business Network', 'Die Veranstaltungsreihe „Young Business Husslers“ ist als Erfahrungsaustausch für Existenzgründer und Junghussler konzipiert.\n\nNeben ausgewählten Fachvorträgen besteht die Möglichkeit, beim Elevator-Pitch das eigene Unternehmen vorzustellen und Fragen an die Teilnehmer zu richten.\n\nUnseren „Ich suche/Ich biete-Marktplatz“ können Sie nutzen, um erste Geschäftskontakte zu knüpfen und diese beim anschließenden gemütlichen Ausklang zu vertiefen.\n\nNatürlich bleibt genügend Zeit für den Erfahrungsaustausch und das persönliche Networken. Wir freuen uns auf einen spannenden und ergebnisreichen Abend mit Ihnen.', '2016-05-30', '2016-05-30', '2016-05-28 16:00:00', 'FKK Stuttgart City, Freiwedelstraße 5, 70537 Stuttgart Muttgart', '19:00', '22:00', 0, 1),
-(266, 'Working-Weekend', '', '2018-11-16', '2018-11-18', '2018-11-14 23:59:00', 'Party Straße 12, 97846 Husslerstatt', NULL, NULL, 1, 0),
-(295, 'JBT goes Sprungbude', 'Wir möchten mit Euch in die weltweit größte Trampolinhalle gehen', '2019-05-31', '2019-05-31', '2019-05-27 21:30:00', '\"Jump Mump Foldo\" / Im Supergau 16, 84995 Fildi', '15:30', NULL, 0, 0);
-
+INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
+(5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-01 19:23:00', '2013-11-12 20:00:00', 'Nähe Geislingen an der Steige (Freizeitheim Stötten)', NULL, NULL, 1, 0, 58, 0, 0),
+(7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-11-28 21:23:00', '2013-12-09 22:00:00', 'Euro Forum Katharinasaal/TMS', '18:00', '09:00', 0, 0, 50, 0, 0),
+(8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-11-29 19:23:00', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0, 50, 0, 0),
+(10, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2014-05-02', '2014-05-04', '2014-04-19 19:23:00', '2014-04-30 20:00:00', 'Sulz am Neckar', NULL, NULL, 1, 0, 51, 0, 0),
+(20, 'TED Mannheim', '', '2014-04-11', '2014-04-12', '2014-03-19 09:23:00', '2014-03-30 10:00:00', NULL, '10:00', '15.00', 0, 0, 45, 0, 0),
+(33, 'JBT goes Public Viewing', '', '2014-06-16', '2014-06-16', '2014-06-02 17:23:00', '2014-06-13 18:00:00', NULL, '18:00', '22:00', 0, 0, 48, 0, 0),
+(143, 'Young Business Network', 'Die Veranstaltungsreihe „Young Business Husslers“ ist als Erfahrungsaustausch für Existenzgründer und Jungunternehmer konzipiert.\r\n\r\nNeben ausgewählten Fachvorträgen besteht die Möglichkeit, beim Elevator-Pitch das eigene Unternehmen vorzustellen und Fragen an die Teilnehmer zu richten.\r\n\r\nUnseren „Ich suche/Ich biete-Marktplatz“ können Sie nutzen, um erste Geschäftskontakte zu knüpfen und diese beim anschließenden gemütlichen Ausklang zu vertiefen.\r\n\r\nNatürlich bleibt genügend Zeit für den Erfahrungsaustausch und das persönliche Networken. Wir freuen uns auf einen spannenden und ergebnisreichen Abend mit Ihnen.', '2016-05-30', '2016-05-30', '2016-05-17 15:23:00', '2016-05-28 16:00:00', 'IHK Region Stuttgart Langestraße 4 70987 Stuttgart', '19:00', '22:00', 0, 1, 57, 0, 0),
+(266, 'Working-Weekend', '', '2018-11-16', '2018-11-18', '2018-11-03 23:22:00', '2018-11-14 23:59:00', 'Tübinger Straße 12, 61482 Blockhausen', NULL, NULL, 1, 0, 15, 0, 0),
+(295, 'JBT goes Sprungbude', 'Wir möchten mit Euch in die weltweit größte Trampolinhalle gehen', '2019-05-31', '2019-05-31', '2019-05-16 20:53:00', '2019-05-27 21:30:00', '\"Sprungbude Filderstadt\" / Im Supergau 16, 70354 Filderstadt', '15:30', NULL, 0, 0, 43, 0, 0);
 
 --
 -- Daten für Tabelle `evposten`
@@ -325,6 +324,13 @@ INSERT INTO `internesprojekt` (`internesprojektID`, `generation`, `projektname`,
 (62, 15, 'IPv6 Analyse', 'IPv6A', '2019-12-04', 1, 0, NULL, 0, NULL, 0),
 (63, 15, 'IPv6 Strategy', 'IPv6S', '2019-11-27', 1, 0, NULL, 0, NULL, 0);
 
+--
+-- Daten für Tabelle `internesprojekt_has_qm`
+--
+
+INSERT INTO `internesprojekt_has_qm` (`internesprojekt_internesprojektID`, `mitglied_mitgliedID`) VALUES
+(62, 8320),
+(62, 8324);
 
 --
 -- Daten für Tabelle `kernkompetenz`
@@ -367,8 +373,8 @@ INSERT INTO `mitglied` (`mitgliedID`, `vorname`, `nachname`, `name`, `passwordHa
 (8331, 'Jorja', 'Bautista', 'j.bautista', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', 'f668fa3c5a2648', 0, '1987-06-05', '0176/6547935', NULL, 'j.bautista@studentische-beratung.de', 5, NULL, NULL, 'Messekonzept (Projektleiterin)', NULL, '2009-11-01', '2010-05-05', '2016-01-18', '2012-12-01', '2010-05-05', '2015-06-18', NULL, 4, NULL, 'Chausseestr. 30', '17081', 'Altentreptow', NULL, 'j.bautista@studentische-beratung.de', 'Hoher-Baumweg 9', '72202', 'Nagold', '07452/67528', 'jorjabautista@web.de', 'Universität Stuttgart', 'Mathematik, Beifach BWL', '2006-10-01', NULL, NULL, NULL, 'b4c80d202fdf3dcd919a3dd36e302b77c2e73355e5ce2c5fdf2aad6bdd1525b5de2e943264d998653483dcd9db7eb32d6fbcf15cfcdd83ceb80220de1287cd64', 'eda82a0dc6aa3284462f308c2e2e29fe3ff15e14a5f85027e7723325de543b5931c7d4f446bb6190f5256b8e40e88bb93c3384a563f5bddf51eb1cc694410d0a', 'd658ff58c5dca9d5a88cfd8e732a84f0ad114c13df414e68c184b7da931b89e15f756ed30e4a02d0ba7af4c32eca2acdaab1d3ba8cc52d180dbca1f18e067907', 0x95815ed4c46ed7321452b1c809e38a2a4f4ac283992babb675b3d7dcd7f1cd8e, 0x1855bccfb3bf38bb8ab0583cd844ec87b58da7b6c1860f24bf43cb3b2c29a6c9, 0x76c2f865316b7b4c5f5039730fb49cc32bb00aa23d8c25fd33db3bf41b614eac, 0x8fc1d55dc8a8d4eb44d79c5471b46177fe22ba56a57a7811145a9a862f4056bd, 0x8a165a13bd0018b51c43160bda3de568f8faf0cbb94b0b035e5ede7d0e54f98b, 0xc1659649969810253bd929e18fefb3a1e4a3f56282d0e20467e5d832d7f54192, NULL, '-Projektakquise\r\n-Mitgestaltung JBT-Leistungsportfolio\r\n-Case Betreuung/Bewertung am JBT-Bewerberwochenende', NULL, NULL, '.jpg', '2010-06-01', '2013-01-15', NULL, 'Aktien HCW<br />\r\nFinancial Worklife-Sleep-Balance<br />\r\nAngebotsworkshop<br />\r\n', 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (8338, 'Mariana', 'Macdonald', 'm.macdonald', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', 'b4dfcc855d99b47', 1, '1984-10-06', '0170/987423', NULL, 'm.macdonald@studentische-beratung.de', 5, NULL, NULL, 'Jahresbericht 2007', NULL, '2007-05-01', '2007-12-01', '2011-11-01', NULL, '2007-12-01', NULL, NULL, 7, 'Bad Reichenhaller', 'Langenhorner Chaussee 26', '83295', 'Traunreut', '0151/1349756', 'mariana-macdonald@reichenhaller.com', 'Schmarjestrasse 40', '04892', 'Falkenberg', '0170/123648', 'm.macdonald@gmail.com', 'Universität Hohenheim', 'Wirtschaftswissenschaften', '2005-10-01', '2011-11-01', 'Rechnungswesen &amp; Finanzierung, \r\nBanklehre, \r\nWirtschaftsethik', NULL, 'a1fe60679c2965b58f7114844b2e5319b640c2840942c8094068dedd188dda6651eff860919a96a0a395ebce737d9d4dad2828c495b5202e31c0c4150985ecdc', 'dfdd871773d0daee49e479412e78e1cbd77184b48cda187b5e52caad059729ea7cb68ee8e8049e4b63143e6b51afe815dd0348cd9d932478b9ea7941c638a3d2', 'd664d2b9e276345155097b8959baadc18bad5fc9fea9fd9257d42a205958bc61f36694e37fb9f4dcfa8ee8ea69c0478a8ab74712dc4cb5d88bf38db32e8d94fe', 0xbbd4d8eae1f9c4974d9f9597374de566a9b2e6e8cb27371d7ffc0b800c8f888c, 0xe7b269d773881523ca680324f2aa5ce829aea4a96f4419bc27cf9c3a0260cd1d, 0x36690722064fafaafcfcb34cb8c5d4a0b50caf7bb5bcb866098349c47dc36148, 0x8db9d517efc644228058681eb8f67c53343f2d658c290bb69194d7c984c8329f, 0x2a20e8ea9e4f1bd443188bb215d246d1b8f5596ca1bac2b82fb37b026fd98a60, 0x0f0ff0dc47e04bd295b466d274ca258be1166cf1c330349a154440519da2c2cf, NULL, '1. Vorstand 2008', '', NULL, '.jpg', '2010-03-01', '2010-07-26', NULL, 'Jaguar F-Type<br />\r\nZeitmanagement<br />\r\nAlumni Workshop - Strategic Consulting Skills<br />\r\nAlumni Workshop - Teamwork & Personal Development<br />\r\nRPG - Self-Assessment - Assessment - Feedback<br />\r\nPeperoni - M&M Fallstudie<br />\r\nMcNugges Case Contest 2008<br />\r\nTeambuilding II<br />\r\nBoss Consulting Group - Firmenvortrag: Risikomanagement im Finanzdiensleistungssektor<br />\r\nHusslérs & Partners - Projektmanagement<br />\r\nFitness Center Hohenheim - Moderations Workshop<br />\r\nA.T.u.T. Kidney - Post Merger Integration<br />\r\nRPG IT Advisory - Synergien durch IT Shared Service Center nach einem Merger<br />\r\nThe Boss Consulting Group - Indien gibt Gas<br />\r\nAlumnus Workshop - Proposal Training<br />\r\nExcel Schulung WW WS0809<br />\r\nStruktur Management Partner - Federleicht GmbH Turnaround Konzept<br />\r\nRPG Advisory - Marktanalyse/Research WS', 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (8364, 'Jimmie', 'O\'Brien', 'j.obrien', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', 'ebf270b1765', 0, NULL, '0157/316469', NULL, 'j.obrien@studentische-beratung.de', 6, NULL, NULL, 'Pro Bono / Soziales Engagement', NULL, '2009-11-01', '2010-07-21', NULL, NULL, '2010-07-21', NULL, NULL, 2, NULL, 'Knesebeckstrasse 42', '57641', 'Oberlahr', NULL, 'jimmie@obrien.de', 'Scharnweberstrasse 74', '69221', 'Dossenheim', '07195/646985', 'jimmie.obrien@gmx.de', 'Universität Hohenheim', 'M. Sc. Kommunikationsmanagement', '2013-10-01', '2016-03-01', 'Public Relations, Kommunikationsstrategien & -Planung, Kommunikations-Controlling, interaktive Medien- und Online-Kommunikation', NULL, NULL, NULL, NULL, 0xa2a3cf23ba57a06869fd6ffbd1c8a33e48f417c863292ce125cf2c7ffc27ee42, 0xab8d8978b49db8782e6a1ddaf98962683d828c8f39a8167f004a64c2f1474ec4, 0x9db1d0e15990e0ed893e15bde6d6f81e084a31b608faf3e233b6f546dcb959b5, 0xa1e299513ddd10a3337785372b8f85a4c7ef0486dc96a795bcce89a705f28bbe, 0xeb5d067c637ccb337ed2ecd73db9a59eaa9d012ed1455ce7db9e9a4c2a245d5c, 0xcf58e139463ae395e16601184d7eff0604ea6caad6229c688c23912473cdeabf, NULL, 'verantwortlich für Pressemitteilungen, Pressekontakte und Interviews (seit Januar 2010 bis Mitte 2011)', 'Letzte Ressortzugehörigkeit: MAR', NULL, '.jpg', NULL, NULL, NULL, 'Pressemitteilung (Prof. Ast)<br />\r\nAngebots- und Vertriebsworkshop (JBT)<br />\r\nInnovationsmanagement (Unreal AG)<br />\r\nStrategiefindung im Electronic Games Market (EA)', 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(8478, 'Kellan', 'Mclaughlin', 'k.mclaughlin', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', 'ebf270b17152', 0, '1984-06-28', '0176/3364520', NULL, 'k.mclaughlin@studentische-beratung.de', 5, NULL, NULL, 'Quick Check', NULL, '2012-05-01', '2012-11-01', NULL, NULL, '2012-11-01', NULL, NULL, 5, 'Brum Brum DrivingAcademy', 'Grolmanstraße 55', '28759', 'Bremen Sankt Magnus', NULL, NULL, 'Grolmanstraße 55', '28759', 'Bremen Sankt Magnus', NULL, 'kellan.mclaughlin@gmx.net', 'Universität Hohenheim', 'Wirtschaftswissenschaften', '2009-10-01', '2013-03-01', 'Interne Managementfunktionen\r\nRechnungswesen\r\nFinanzwissenschaften\r\nSteuerlehre', 'Bankkauffrau', 'ee2c02855f50da2a6227de9109ddef8a692ce5271583d3217217f9b34df57b654d8f2e008f81a642bcf721c6a9afee125806a62cec4a4c566a3d91f19a61213c', '93b6b46119ebff6e612e9d69fb1a94480765fa08e81ba66e0eb8b4ee730fbf330026021f267129f8bc67bc41ab1d4e472e81b9787a9dd04f8ab30f6e723a66f9', '1aade515841b24c32bc0b6170887dc31a0d82d481e8c75471c4602d6c850106891a0627ab9749e42e6998248e033e0207f075cbc960ed7727fe99fa52bae853f', 0x85e17d792c404e0276925c1da8f2c76c4f4e1627713c33919f9caf9aa6b37b63, 0x4eaa9058e1ed84c5a0a6681b8b2341ab76125657d32db9fdffe210de66a3a3a7, 0x9b3e79b0d38fa251710a2e8ffd8b94d37eb290f19e3ab85ada738f850ddb02c3, 0x9e115b59415477760927fcdd4b9c65d7b689fcd78aade509113be44bdef4398f, 0x9f1a35c0c7c091f59346d3b4d381b542487762a018f6fa89b35a8f19d2fe1692, 0x8b3bdda8bb3bee916f8e66df5cefe09a3ce023db1be791015d0663a4ed52c238, NULL, 'Letzte Ressortzugehörigkeit: MIT', NULL, NULL, '.jpg', '2013-12-23', NULL, NULL, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(8748, 'Mason', 'Vinson', 'm.vinson', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', '17c0d8291ca698', 1, NULL, '0172/316492', NULL, 'm.vinson@studentische-beratung.de', 6, 14, NULL, NULL, NULL, '2019-04-29', NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'mason.vinson@gmail.com', 'Uni Stuttgart', 'Softwaretechnik', '2015-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '.jpeg', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 8634, 8634, 8705, 8698, 57, 56, 'Gerne würde ich als Pro Bono Projekt einer gemeinnützigen Organisation helfen.', 57, '-', 58, '-', 3, 4, 3, 7, NULL);
+(8478, 'Kellan', 'Mclaughlin', 'k.mclaughlin', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', 'ebf270b17152', 0, '1984-06-28', '0176/3364520', NULL, 'k.mclaughlin@studentische-beratung.de', 1, 14, 62, 'Quick Check', NULL, '2012-05-01', '2012-11-01', NULL, NULL, '2012-11-01', NULL, NULL, 5, 'Brum Brum DrivingAcademy', 'Grolmanstraße 55', '28759', 'Bremen Sankt Magnus', NULL, NULL, 'Grolmanstraße 55', '28759', 'Bremen Sankt Magnus', NULL, 'kellan.mclaughlin@gmx.net', 'Universität Hohenheim', 'Wirtschaftswissenschaften', '2009-10-01', '2013-03-01', 'Interne Managementfunktionen\r\nRechnungswesen\r\nFinanzwissenschaften\r\nSteuerlehre', 'Bankkauffrau', 'ee2c02855f50da2a6227de9109ddef8a692ce5271583d3217217f9b34df57b654d8f2e008f81a642bcf721c6a9afee125806a62cec4a4c566a3d91f19a61213c', '93b6b46119ebff6e612e9d69fb1a94480765fa08e81ba66e0eb8b4ee730fbf330026021f267129f8bc67bc41ab1d4e472e81b9787a9dd04f8ab30f6e723a66f9', '1aade515841b24c32bc0b6170887dc31a0d82d481e8c75471c4602d6c850106891a0627ab9749e42e6998248e033e0207f075cbc960ed7727fe99fa52bae853f', 0x85e17d792c404e0276925c1da8f2c76c4f4e1627713c33919f9caf9aa6b37b63, 0x4eaa9058e1ed84c5a0a6681b8b2341ab76125657d32db9fdffe210de66a3a3a7, 0x9b3e79b0d38fa251710a2e8ffd8b94d37eb290f19e3ab85ada738f850ddb02c3, 0x9e115b59415477760927fcdd4b9c65d7b689fcd78aade509113be44bdef4398f, 0x9f1a35c0c7c091f59346d3b4d381b542487762a018f6fa89b35a8f19d2fe1692, 0x8b3bdda8bb3bee916f8e66df5cefe09a3ce023db1be791015d0663a4ed52c238, NULL, 'Letzte Ressortzugehörigkeit: MIT', NULL, NULL, '.jpg', '2013-12-23', NULL, NULL, '', 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8748, 'Mason', 'Vinson', 'm.vinson', '$2a$12$/4OHURoKD6FUk3hSg2u4yeAS.tdQADr/VIpA1G.je.uz3S8D915sy', 's3cre7', '17c0d8291ca698', 1, NULL, '0172/316492', NULL, 'm.vinson@studentische-beratung.de', 1, 14, 62, NULL, NULL, '2019-04-29', NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'mason.vinson@gmail.com', 'Uni Stuttgart', 'Softwaretechnik', '2015-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '.jpeg', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 8634, 8634, 8705, 8698, 57, 56, 'Gerne würde ich als Pro Bono Projekt einer gemeinnützigen Organisation helfen.', 57, '-', 58, '-', 3, 4, 3, 7, NULL);
 
 
 --
@@ -415,48 +421,21 @@ INSERT INTO `mitglied_has_berechtigung` (`mitglied_mitgliedID`, `berechtigung_be
 (8167, 24),
 (8167, 100);
 
-
---
--- Daten für Tabelle `mitglied_has_bueroraumreservierung`
---
-
-INSERT INTO `mitglied_has_bueroraumreservierung` (`mitglied_has_bueroraumreservierungID`, `bueroraum_bueroraumID`, `mitglied_mitgliedID`, `datum`, `ende`, `startzeit`, `endzeit`, `beschreibung`) VALUES
-(40, 1, 8167, '2015-03-03', '2015-03-03', '16:45', '19:00', 'Bottleflip Campus Challenge'),
-(46, 2, 8167, '2015-02-20', '2015-02-20', '19:30', '22:30', 'EP Bank AG'),
-(47, 2, 8167, '2015-02-23', '2015-02-23', '16:00', '23:00', 'EP Bank AG'),
-(50, 2, 8167, '2015-02-24', '2015-02-24', '09:30', '12:00', 'EP Bank AG'),
-(56, 1, 8167, '2015-03-10', '2015-03-10', '09:00', '17:00', 'EP Bank AG'),
-(62, 3, 8167, '2015-03-10', '2015-03-10', '09:30', '16:00', 'EP Bank AG'),
-(63, 2, 8167, '2015-03-10', '2015-03-10', '09:30', '16:00', 'EP Bank AG'),
-(65, 2, 8167, '2015-03-09', '2015-03-09', '14:00', '20:00', 'EP Bank AG'),
-(92, 2, 8167, '2015-03-30', '2015-03-30', '08:00', '19:00', 'EP Bank'),
-(97, 2, 8167, '2015-04-15', '2015-04-15', '13:00', '17:30', 'EP Bank'),
-(105, 1, 8167, '2015-04-18', '2015-04-18', '10:00', '19:00', 'EP Bank'),
-(106, 1, 8167, '2015-04-19', '2015-04-19', '10:00', '20:00', 'EP Bank'),
-(118, 2, 8167, '2015-04-22', '2015-04-22', '16:00', '20:00', 'EP Bank'),
-(124, 2, 8167, '2015-04-21', '2015-04-21', '18:00', '22:00', 'EP Bank'),
-(132, 2, 8167, '2015-04-24', '2015-04-24', '19:00', '20:30', ''),
-(197, 2, 8167, '2015-06-17', '2015-06-17', '18:30', '22:00', ''),
-(205, 2, 8167, '2015-06-18', '2015-06-18', '16:00', '22:00', ''),
-(259, 1, 8167, '2015-07-23', '2015-07-23', '08:30', '22:00', 'EP'),
-(590, 2, 8167, '2016-08-02', '2016-08-02', '10:00', '13:00', 'EP');
-
-
 --
 -- Daten für Tabelle `mitglied_has_event`
 --
 
-INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`) VALUES
-(7, 8111),
-(7, 8222),
-(7, 8324),
-(7, 8478),
-(8, 8111),
-(8, 8320),
-(20, 8324),
-(33, 8167),
-(143, 8167),
-(295, 8748);
+INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle`) VALUES
+(7, 8111, 'Organisator'),
+(7, 8222, 'Teilnehmer'),
+(7, 8324, 'Organisator'),
+(7, 8478, 'Teilnehmer'),
+(8, 8111, 'Teilnehmer'),
+(8, 8320, 'Organisator'),
+(20, 8324, 'Teilnehmer'),
+(33, 8167, 'Teilnehmer'),
+(143, 8167, 'Organisator'),
+(295, 8748, 'Teilnehmer');
 
 
 --
@@ -2664,16 +2643,16 @@ INSERT INTO `schulungsfeedback_has_mitglied` (`schulungsfeedback_schulungsfeedba
 -- Daten für Tabelle `schulungsinstanz`
 --
 
-INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`) VALUES
-(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL),
-(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL),
-(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL),
-(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL),
-(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL),
-(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL),
-(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS88', 30, NULL, NULL),
-(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL),
-(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL);
+INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
+(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
+(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
+(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
+(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
+(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
+(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
+(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS11', 30, NULL, NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
+(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
+(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
 
 
 --

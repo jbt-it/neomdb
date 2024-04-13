@@ -1,0 +1,5 @@
+# Ignore json files when checking prettier rules
+**/*.html
+**/*.json
+**/*.md
+**/*.css
