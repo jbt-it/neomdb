@@ -419,7 +419,7 @@ const MemberProfile: React.FunctionComponent = () => {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           })
           .then((res) => {
-            if (res.status === 200) {
+            if (res.status === 204) {
               resolve(); // Resolve the promise when the operation is successful
             } else {
               reject(new Error("Failed to add director position")); // Reject the promise if the status is not 201

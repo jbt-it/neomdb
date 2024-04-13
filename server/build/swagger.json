@@ -1977,7 +1977,7 @@
 			"patch": {
 				"operationId": "UpdateDirectorPosition",
 				"responses": {
-					"200": {
+					"204": {
 						"description": ""
 					}
 				},

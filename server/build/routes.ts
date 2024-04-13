@@ -612,7 +612,7 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.updateDirectorPosition.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, 200, next);
+              promiseHandler(controller, promise, response, 204, next);
             } catch (err) {
                 return next(err);
             }

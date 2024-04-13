@@ -301,6 +301,60 @@ describe("Test member routes", () => {
     });
   });
 
+  describe("GET /director-positions", () => {
+    test("should return 200 for getting director positions not including director members", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .get("/api/members/director-positions?includeDirectorMembers=false")
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(9);
+      expect(Object.keys(response.body[0])).toHaveLength(9);
+    });
+
+    test("should return 200 for getting director positions not including director members", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .get("/api/members/director-positions?includeDirectorMembers=true")
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(9);
+      expect(Object.keys(response.body[0])).toHaveLength(12);
+    });
+  });
+
+  describe("GET /:id/director-positions", () => {
+    test("should return 200 for getting all directoy roles of the user", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .get("/api/members/8222/director-positions?current=false")
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(1);
+    });
+  });
+
   // -----------------------POST ROUTES-----------------------
 
   describe("POST / create member", () => {
@@ -477,6 +531,66 @@ describe("Test member routes", () => {
       expect(JSON.parse(response.text).message).toBe("Permission cannot be delegated!");
     });
   });
+
+  describe("POST /:id/director-positions/{directorPositionID}", () => {
+    test("should return 201 for adding a director positions to the member", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const newPosition = {
+        von: "2023-03-01",
+        bis: "2026-03-01",
+      };
+      const response = await request(app)
+        .post("/api/members/8324/director-positions/2")
+        .send(newPosition)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(201);
+    });
+
+    test("should return 500 for adding a director positions to the member", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const newPosition = {
+        von: "2026-03-01",
+        bis: "2023-03-01",
+      };
+      const response = await request(app)
+        .post("/api/members/8324/director-positions/2")
+        .send(newPosition)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(500);
+    });
+
+    test("should return 403 for adding a director positions to the member", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const newPosition = {
+        von: "2023-03-01",
+        bis: "2026-03-01",
+      };
+      const response = await request(app)
+        .post("/api/members/8324/director-positions/2")
+        .send(newPosition)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+  });
+
   // -----------------------PATCH ROUTES-----------------------
   describe("PUT /departments/:id", () => {
     test("should return 204 for director changes own departement info", async () => {
@@ -736,6 +850,110 @@ describe("Test member routes", () => {
       const response = await request(app)
         .patch(`/api/members/${mitgliedID}/status`)
         .send({ mitgliedstatus })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+  });
+
+  describe("PATCH /:id/director-positions/:directorPositionID", () => {
+    test("should return 204 for update director position", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8324;
+      const evpostenID = 1;
+      const posten = {
+        von: "2023-03-01",
+        bis: "2026-03-01",
+      };
+
+      const response = await request(app)
+        .patch(`/api/members/${mitgliedID}/director-positions/${evpostenID}`)
+        .send(posten)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(204);
+    });
+
+    test("should return 500 for malformatted date", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8324;
+      const evpostenID = 1;
+      const posten = {
+        von: "2026-03-01",
+        bis: "2023-03-01",
+      };
+
+      const response = await request(app)
+        .patch(`/api/members/${mitgliedID}/director-positions/${evpostenID}`)
+        .send(posten)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(500);
+    });
+
+    test("should return 403 for unautherized user", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8324;
+      const evpostenID = 1;
+      const posten = {
+        von: "2023-03-01",
+        bis: "2026-03-01",
+      };
+
+      const response = await request(app)
+        .patch(`/api/members/${mitgliedID}/director-positions/${evpostenID}`)
+        .send(posten)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+  });
+
+  describe("DELETE /director-positions", () => {
+    test("should return 204 for delete member's director position with permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const evpostenID = 1;
+      const response = await request(app)
+        .delete(`/api/members/${mitgliedID}/director-positions/${evpostenID}`)
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(204);
+    });
+
+    test("should return 403 for delete member's director position with permission", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const mitgliedID = 8167;
+      const evpostenID = 1;
+      const response = await request(app)
+        .delete(`/api/members/${mitgliedID}/director-positions/${evpostenID}`)
+        .send()
         .set("Cookie", `token=${token}`);
 
       // --- THEN

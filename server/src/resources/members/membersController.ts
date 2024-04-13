@@ -180,7 +180,7 @@ export class MembersController extends Controller {
 
   @Patch("{id}/director-positions/{directorPositionID}")
   @Security("jwt", ["1"])
-  @SuccessResponse("200")
+  @SuccessResponse("204")
   public async updateDirectorPosition(
     @Path() id: number,
     @Path() directorPositionID: number,
