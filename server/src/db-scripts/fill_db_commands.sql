@@ -425,17 +425,17 @@ INSERT INTO `mitglied_has_berechtigung` (`mitglied_mitgliedID`, `berechtigung_be
 -- Daten für Tabelle `mitglied_has_event`
 --
 
-INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle`) VALUES
-(7, 8111, 'Organisator'),
-(7, 8222, 'Teilnehmer'),
-(7, 8324, 'Organisator'),
-(7, 8478, 'Teilnehmer'),
-(8, 8111, 'Teilnehmer'),
-(8, 8320, 'Organisator'),
-(20, 8324, 'Teilnehmer'),
-(33, 8167, 'Teilnehmer'),
-(143, 8167, 'Organisator'),
-(295, 8748, 'Teilnehmer');
+INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `teilnehmer`, `organisator`) VALUES
+(7, 8111, 0, 1),
+(7, 8222, 1, 0),
+(7, 8324, 0, 1),
+(7, 8478, 0, 1),
+(8, 8111, 1, 0),
+(8, 8320, 1, 1),
+(20, 8324, 1, 1),
+(33, 8167, 1, 0),
+(143, 8167, 1, 0),
+(295, 8748, 1, 0);
 
 
 --

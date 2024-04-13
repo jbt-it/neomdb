@@ -644,7 +644,8 @@ CREATE TABLE `mitglied_has_bueroraumreservierung` (
 CREATE TABLE `mitglied_has_event` (
   `event_eventID` int NOT NULL,
   `mitglied_mitgliedID` int NOT NULL,
-  `rolle` enum('Teilnehmer','Organisator') NOT NULL,
+  `teilnehmer` tinyint(1) NOT NULL DEFAULT 1,
+  `organisator` tinyint(1) NOT NULL DEFAULT 0,
   `anmeldezeitpunkt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
