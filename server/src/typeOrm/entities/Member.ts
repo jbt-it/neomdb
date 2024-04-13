@@ -318,7 +318,7 @@ export class Member {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
-  @JoinColumn([{ name: "memberStatus", referencedColumnName: "memberStatusId" }])
+  @JoinColumn([{ name: "mitgliedstatus", referencedColumnName: "memberStatusId" }])
   memberStatus: MemberStatus;
 
   @ManyToOne(() => Department, (department) => department.members, {

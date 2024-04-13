@@ -2,6 +2,7 @@ import { QueryBuilder } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
+import { Department } from "typeOrm/entities/Department";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -72,6 +73,9 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns The member with the mentor, mentees, languages and itSkills relation or null if no member was found
    */
   getMemberDetailsByID(memberID: number): Promise<Member | null> {
-    return this.findOne({ where: { memberId: memberID }, relations: ["mentor", "mentees", "languages", "itSkills"] });
+    return this.findOne({
+      where: { memberId: memberID },
+      relations: ["mentor", "mentees", "languages", "itSkills", "department", "memberStatus"],
+    });
   },
 });

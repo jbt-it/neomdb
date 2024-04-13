@@ -35,7 +35,7 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
-import { MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
+import { DepartmentMemberDto, MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
 
 /**
  * Controller for the members module
@@ -103,7 +103,7 @@ export class MembersController extends Controller {
   // TODO: Change route name
   @Get("department-members")
   @Security("jwt")
-  public async getMembersOfDepartments(): Promise<DepartmentMember[]> {
+  public async getMembersOfDepartments(): Promise<DepartmentMemberDto[]> {
     const membersOfDepartments = await this.membersService.getMembersOfDepartments();
 
     return membersOfDepartments;

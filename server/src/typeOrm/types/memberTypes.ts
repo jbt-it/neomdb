@@ -73,9 +73,9 @@ export type MemberDetailsDto = {
   alumnusSince: Date | null;
   seniorSince: Date | null;
   activeSince: Date | null;
-  passivSince: Date | null;
+  passiveSince: Date | null;
   exitedSince: Date | null;
-  departmentName: string;
+  department: DepartmentPartialDto | null;
   employer: string | null;
   street1: string;
   postalCode1: string | null;

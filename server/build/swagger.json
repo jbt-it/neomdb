@@ -3297,31 +3297,27 @@
 				"type": "object",
 				"description": "Type of the member image"
 			},
-			"DepartmentMember": {
+			"DepartmentMemberDto": {
 				"properties": {
-					"bezeichnung": {
+					"department": {
+						"$ref": "#/components/schemas/DepartmentPartialDto"
+					},
+					"lastname": {
 						"type": "string"
 					},
-					"ressort": {
+					"firstname": {
 						"type": "string"
 					},
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"bezeichnung",
-					"ressort",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"department",
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of a member of a department (partial member with department information)"
@@ -3686,15 +3682,20 @@
 						"type": "string",
 						"nullable": true
 					},
-					"departmentName": {
-						"type": "string"
+					"department": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/DepartmentPartialDto"
+							}
+						],
+						"nullable": true
 					},
 					"exitedSince": {
 						"type": "string",
 						"format": "date-time",
 						"nullable": true
 					},
-					"passivSince": {
+					"passiveSince": {
 						"type": "string",
 						"format": "date-time",
 						"nullable": true
@@ -3789,9 +3790,9 @@
 					"postalCode1",
 					"street1",
 					"employer",
-					"departmentName",
+					"department",
 					"exitedSince",
-					"passivSince",
+					"passiveSince",
 					"activeSince",
 					"seniorSince",
 					"alumnusSince",
@@ -4772,7 +4773,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/DepartmentMember"
+										"$ref": "#/components/schemas/DepartmentMemberDto"
 									},
 									"type": "array"
 								}
