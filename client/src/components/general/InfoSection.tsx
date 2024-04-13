@@ -111,7 +111,7 @@ const InfoSection = (props: Props) => {
                   {field.value.map((item, index) => (
                     <ListItem
                       component={Link}
-                      to={`/gesamtuebersicht/${item.mitgliedID}`}
+                      to={`/gesamtuebersicht/${item.memberId}`}
                       sx={{ padding: 0.5, margin: 0 }}
                     >
                       <ListItemAvatar>

@@ -143,7 +143,7 @@ const MemberOverview: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  const [members, setMembers] = useState<membersTypes.MemberPartialDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -217,29 +217,29 @@ const MemberOverview: React.FunctionComponent = () => {
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = (): membersTypes.Member[] => {
+  const getFilteredAndSortedMembers = (): membersTypes.MemberPartialDto[] => {
     let filteredMembers = members;
 
     // Filters by status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.mitgliedstatus.toString() === statusFilter;
+        return member.memberStatus.toString() === statusFilter;
       });
     }
 
     // Filters by ressort
     if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.ressort === ressortFilter;
+        return member.department?.name === ressortFilter;
       });
     }
 
     // Filters by search input
     filteredMembers = filteredMembers.filter((member) => {
       return (
-        member.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        member.nachname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        member.handy.toLowerCase().includes(searchFilter.toLowerCase())
+        member.firstname.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        member.lastname.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        member.mobile.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
 
@@ -248,8 +248,8 @@ const MemberOverview: React.FunctionComponent = () => {
     // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return -1;
@@ -263,8 +263,8 @@ const MemberOverview: React.FunctionComponent = () => {
       // Sorts by last changed in descending order
     } else if (sortOption === "lastchange DESC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return 1;
@@ -279,12 +279,12 @@ const MemberOverview: React.FunctionComponent = () => {
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return a.nachname.localeCompare(b.nachname);
+        return a.lastname.localeCompare(b.lastname);
       });
       // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return -a.nachname.localeCompare(b.nachname);
+        return -a.lastname.localeCompare(b.lastname);
       });
     }
     return sortedMembers;
@@ -475,14 +475,14 @@ const MemberOverview: React.FunctionComponent = () => {
                       <Link
                         color="textPrimary"
                         underline="hover"
-                        href={`#/gesamtuebersicht/${member.mitgliedID}`}
-                      >{`${member.vorname}.${member.nachname}`}</Link>
+                        href={`#/gesamtuebersicht/${member.memberId}`}
+                      >{`${member.firstname}.${member.lastname}`}</Link>
                     </Typography>
                   </TableCell>
-                  <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.jbt_email}</TableCell>
-                  <TableCell>{member.mitgliedstatus}</TableCell>
-                  {<TableCell>{member.ressort}</TableCell>}
+                  <TableCell>{member.mobile}</TableCell>
+                  <TableCell>{member.jbtEmail}</TableCell>
+                  <TableCell>{member.memberStatus}</TableCell>
+                  {<TableCell>{member.department?.shortName}</TableCell>}
                 </TableRow>
               ))}
             </TableBody>

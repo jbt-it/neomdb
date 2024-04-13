@@ -5,8 +5,8 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 
-import { Member } from "../../types/membersTypes";
-import { Trainee, InternalProjectAll, Generation } from "../../types/traineesTypes";
+import { MemberPartialDto } from "../../types/membersTypes";
+import { Trainee, InternalProject, Generation } from "../../types/traineesTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 
 import PageBar from "../../components/navigation/PageBar";
@@ -26,8 +26,8 @@ import GenerationSelection from "../../components/members/trainees/GenerationSel
 const TraineeSection: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [internalProjects, setInternalProjects] = useState<InternalProjectAll[]>([]);
+  const [members, setMembers] = useState<MemberPartialDto[]>([]);
+  const [internalProjects, setInternalProjects] = useState<InternalProject[]>([]);
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
@@ -169,7 +169,7 @@ const TraineeSection: React.FunctionComponent = () => {
           if (mounted) {
             setInternalProjects(
               res.data.filter(
-                (item: InternalProjectAll) =>
+                (item: InternalProject) =>
                   item.generation ===
                   generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
               )
@@ -233,9 +233,9 @@ const TraineeSection: React.FunctionComponent = () => {
                 trainees={trainees}
                 members={members.filter(
                   (member) =>
-                    member.generation != generations[0].generationID &&
-                    member.mitgliedstatus != "Alumnus" &&
-                    member.mitgliedstatus != "Ausgetretene"
+                    member.generationId != generations[0].generationID &&
+                    member.memberStatus?.name != "Alumnus" &&
+                    member.memberStatus?.name != "Ausgetretene"
                 )}
               />
             )
@@ -254,7 +254,7 @@ const TraineeSection: React.FunctionComponent = () => {
           <InternalProjectCard
             internalProject={internalProject}
             trainees={trainees.filter((trainee) => {
-              return trainee.internesprojekt === internalProject.internesProjektID;
+              return trainee.internesprojekt === internalProject.internalProjectId;
             })}
           />
         ))}

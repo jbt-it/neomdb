@@ -24,7 +24,7 @@ import EditInternalProjectDialog from "../../components/members/trainees/EditInt
 import dayjs from "dayjs";
 import api from "../../utils/api";
 import { authReducerActionType } from "../../types/globalTypes";
-import { Member, MembersField } from "../../types/membersTypes";
+import { MemberPartialDto, MembersField } from "../../types/membersTypes";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import axios, { AxiosError } from "axios";
 
@@ -95,6 +95,7 @@ const InternalProject: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
+            /* TODO: Check implementation */
             const internalProject: InternalProjectDetails = {
               internesProjektID: res.data.internesProjektID,
               projektname: res.data.projektname,
@@ -108,19 +109,19 @@ const InternalProject: React.FunctionComponent = () => {
               APBeiEV: res.data.APBeiEV === 1 ? true : false,
               APGehalten: res.data.APGehalten ? dayjs(res.data.APGehalten) : null,
               DLBeiEV: res.data.DLBeiEV === 1 ? true : false,
-              projektmitglieder: res.data.projektmitglieder.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                name: `${member.vorname} ${member.nachname}`,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
+              projektmitglieder: res.data.projektmitglieder.map((member: MemberPartialDto) => ({
+                mitgliedID: member.memberId,
+                name: `${member.firstname} ${member.lastname}`,
+                vorname: member.firstname,
+                nachname: member.lastname,
+                mitgliedstatus: member.memberStatus,
               })),
-              qualitaetsmanager: res.data.qualitaetsmanager.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                name: `${member.vorname} ${member.nachname}`,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
+              qualitaetsmanager: res.data.qualitaetsmanager.map((member: MemberPartialDto) => ({
+                mitgliedID: member.memberId,
+                name: `${member.firstname} ${member.lastname}`,
+                vorname: member.firstname,
+                nachname: member.lastname,
+                mitgliedstatus: member.memberStatus,
               })),
             };
             setInternalProjectDetails(internalProject);
@@ -157,15 +158,15 @@ const InternalProject: React.FunctionComponent = () => {
             setSelectableQMs(
               res.data
                 .map((member: MembersField) => ({
-                  mitgliedID: member.mitgliedID,
-                  name: `${member.vorname} ${member.nachname}`,
-                  vorname: member.vorname,
-                  nachname: member.nachname,
-                  mitgliedstatus: member.mitgliedstatus,
+                  memberId: member.memberId,
+                  name: `${member.firstname} ${member.lastname}`,
+                  firstname: member.firstname,
+                  lastname: member.lastname,
+                  memberStatusName: member.memberStatus?.name,
                 }))
                 .filter(
                   (member: MembersField) =>
-                    member.mitgliedstatus !== "Trainee" && member.mitgliedstatus !== "Ausgetretene"
+                    member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene"
                 )
             );
           }
@@ -203,7 +204,7 @@ const InternalProject: React.FunctionComponent = () => {
                   nachname: trainee.nachname,
                   mitgliedstatus: "Trainee",
                 }))
-                .filter((trainee: MembersField) => trainee.mitgliedstatus !== "Ausgetretene")
+                .filter((trainee: MembersField) => trainee.memberStatus?.name !== "Ausgetretene")
             );
           }
         }
@@ -247,14 +248,14 @@ const InternalProject: React.FunctionComponent = () => {
         : null,
       DLBeiEV: updatedInternalProjectDetails.DLBeiEV,
       projektmitglieder: updatedInternalProjectDetails.projektmitglieder.map((member: MembersField) => ({
-        mitgliedID: member.mitgliedID,
-        vorname: member.vorname,
-        nachname: member.nachname,
+        memberId: member.memberId,
+        firstname: member.firstname,
+        lastname: member.lastname,
       })),
       qualitaetsmanager: updatedInternalProjectDetails.qualitaetsmanager.map((member: MembersField) => ({
-        mitgliedID: member.mitgliedID,
-        vorname: member.vorname,
-        nachname: member.nachname,
+        memberId: member.memberId,
+        firstname: member.firstname,
+        lastname: member.lastname,
       })),
     };
 

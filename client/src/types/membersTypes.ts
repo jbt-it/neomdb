@@ -1,21 +1,24 @@
 /**
  * Contains all members types for the frontend
  */
+import { InternalProject } from "./traineesTypes";
 
 /**
  * Type of the language of a member
  */
 export type LanguageOfMember = {
-  wert: string;
-  niveau: string;
+  memberId: number;
+  value: string;
+  level: string;
 };
 
 /**
- * Type of the edv skill of a member
+ * Type of the it skill of a member
  */
-export type EDVSkillOfMember = {
-  wert: string;
-  niveau: string;
+export type ItSkillOfMember = {
+  memberId: number;
+  value: string;
+  level: string;
 };
 
 /**
@@ -27,28 +30,33 @@ export type Language = {
    * It is only used for filtering
    */
   inputValue?: string;
-  wert: string;
+  value: string;
 };
 
 /**
  * Type of an edv skill
  */
-export type EDVSkill = {
+export type ItSkill = {
   /*
    * Additional attribute which is needed for the Automplece Component
    * It is only used for filtering
    */
   inputValue?: string;
-  wert: string;
+  value: string;
+};
+
+export type MemberStatus = {
+  memberStatusId: number;
+  name: "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus" | "passives Mitglied" | "Ausgetretene";
 };
 
 /**
- * Type of a department
+ * Type of the partial department dto used for the member list
  */
-export type Department = {
-  ressortID: number;
-  bezeichnung: string;
-  kuerzel: string;
+export type DepartmentPartialDto = {
+  departmentId: number;
+  name: string;
+  shortName: string;
 };
 
 /**
@@ -75,36 +83,36 @@ export type Director = {
 };
 
 /**
- * Type of a mentor
+ * Type of the mentor (partial member)
  */
-export type Mentor = {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
+export type MentorDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
 };
 
 /**
- * Type of a mentee
+ * Type of the mentee (partial member)
  */
-export type Mentee = {
-  mitgliedID: number | null;
-  vorname: string;
-  nachname: string;
+export type MenteeDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
 };
 
 /**
- * Type of the member
+ * Type of the partial member dto used for the member list
  */
-export type Member = {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  generation: number;
-  handy: string;
-  jbt_email: string;
-  ressort: string;
-  mitgliedstatus: string;
-  lastchange: string;
+export type MemberPartialDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  generationId: number;
+  mobile: string;
+  jbtEmail: string;
+  memberStatus: MemberStatus;
+  department: DepartmentPartialDto;
+  lastChange: Date;
 };
 
 /**
@@ -127,57 +135,59 @@ export type MemberImage = {
 };
 
 /**
- * Type of the member details
+ * Type of the member details dto used for the member details page
  */
-export type MemberDetails = {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  geschlecht: string;
-  geburtsdatum: string | null;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
+export type MemberDetailsDto = {
+  memberId: number;
+  lastname: string;
+  firstname: string;
+  gender: boolean;
+  birthday: Date | null;
+  mobile: string;
+  jbtEmail: string;
+  memberStatus: MemberStatus;
   generation: number | null;
-  internesprojekt: number | null;
-  trainee_seit: string | null;
-  mitglied_seit: string | null;
-  alumnus_seit: string | null;
-  senior_seit: string | null;
-  aktiv_seit: string | null;
-  passiv_seit: string | null;
-  ausgetreten_seit: string | null;
-  ressort: string | null;
-  arbeitgeber: string | null;
-  strasse1: string;
-  plz1: number | null;
-  ort1: string;
-  tel1: number;
+  internalProject: InternalProject | null;
+  traineeSince: Date | null;
+  memberSince: Date | null;
+  alumnusSince: Date | null;
+  seniorSince: Date | null;
+  activeSince: Date | null;
+  passiveSince: Date | null;
+  exitedSince: Date | null;
+  department: DepartmentPartialDto | null;
+  employer: string | null;
+  street1: string;
+  postalCode1: string | null;
+  city1: string;
+  phone1: string | null;
   email1: string | null;
-  strasse2: string | null;
-  plz2: number | null;
-  ort2: string | null;
-  tel2: number | null;
+  street2: string | null;
+  postalCode2: string | null;
+  city2: string | null;
+  phone2: string | null;
   email2: string | null;
-  hochschule: string;
-  studiengang: string;
-  studienbeginn: string | null;
-  studienende: string | null;
-  vertiefungen: string | null;
-  ausbildung: string | null;
-  engagement: string | null;
-  canPL: string | null;
-  canQM: string | null;
-  lastchange: string;
-  fuehrerschein: boolean;
-  ersthelferausbildung: boolean;
-  kontoinhaber?: string;
+  university: string;
+  courseOfStudy: string;
+  studyStart: Date | null;
+  studyEnd: Date | null;
+  specializations: string | null;
+  apprenticeship: string | null;
+  commitment: string | null;
+  canPL: Date | null;
+  canQM: Date | null;
+  lastChange: Date;
+  drivingLicense: number;
+  firstAidTraining: boolean;
+  // Optional attributes only viewable with specific permissions (of if the user is the member)
+  accountHolder?: string;
   iban?: string;
   bic?: string;
-  sprachen?: LanguageOfMember[];
-  mentees?: Mentee[];
-  edvkenntnisse?: EDVSkillOfMember[];
-  mentor?: Mentor | null;
+  // Additional attributes
+  languages?: LanguageOfMember[];
+  itSkills?: ItSkillOfMember[];
+  mentees?: MenteeDto[];
+  mentor?: MentorDto | null;
 };
 
 /**
@@ -246,79 +256,77 @@ export type languagesReducerAction =
     };
 
 /**
- * Enum for the differents types of actions for the edv skills reducer function
+ * Enum for the differents types of actions for the it skills reducer function
  */
-export enum edvSkillsReducerActionType {
+export enum itSkillsReducerActionType {
   /**
-   * Action type for adding the value of an edv skill in string format
+   * Action type for adding the value of an it skill in string format
    */
-  addNewEdvSkillWithValueAsString = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-STRING",
+  addNewItSkillWithValueAsString = "ADD-NEW-IT-SKILL-WITH-VALUE-AS-STRING",
 
   /**
-   * Action type for adding the value of an edv skill in an object format
+   * Action type for adding the value of an it skill in an object format
    */
-  addNewEdvSkillWithValueAsObject = "ADD-NEW-EDV-SKILL-WITH-VALUE-AS-OBJECT",
+  addNewItSkillWithValueAsObject = "ADD-NEW-IT-SKILL-WITH-VALUE-AS-OBJECT",
 
   /**
-   * Action type for adding the niveau of an edv skill
+   * Action type for adding the niveau of an it skill
    */
-  addNewEdvSkillWithNiveau = "ADD-NEW-EDV-SKILL-WITH-NIVEAU",
+  addNewItSkillWithNiveau = "ADD-NEW-IT-SKILL-WITH-LEVEL",
 
   /**
-   * Action type for adding an empty edv skill (with empty value and niveau fields)
+   * Action type for adding an empty it skill (with empty value and niveau fields)
    */
-  addEmptyEdvSkill = "ADD-EMPTY-EDV-SKILL",
+  addEmptyItSkill = "ADD-EMPTY-IT-SKILL",
 
   /**
-   * Action type for deleting an edv skill
+   * Action type for deleting an it skill
    */
-  deleteEdvSkill = "DELETE-EDV-SKILL",
+  deleteItSkill = "DELETE-IT-SKILL",
 }
 
 /**
  * Type of the different actions for the edv skills
  */
-export type edvSkillsReducerAction =
+export type itSkillsReducerAction =
   | {
-      type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject;
+      type: itSkillsReducerActionType.addNewItSkillWithValueAsObject;
       payload: {
         index: number;
-        edvSkill: EDVSkill;
+        itSkill: ItSkill;
       };
     }
   | {
-      type: edvSkillsReducerActionType.addNewEdvSkillWithValueAsString;
+      type: itSkillsReducerActionType.addNewItSkillWithValueAsString;
       payload: {
         index: number;
         value: string;
       };
     }
   | {
-      type: edvSkillsReducerActionType.addNewEdvSkillWithNiveau;
+      type: itSkillsReducerActionType.addNewItSkillWithNiveau;
       payload: {
         index: number;
-        niveau: string;
+        level: string;
       };
     }
   | {
-      type: edvSkillsReducerActionType.deleteEdvSkill;
+      type: itSkillsReducerActionType.deleteItSkill;
       payload: {
-        edvSkill: EDVSkill;
+        itSkill: ItSkill;
       };
     }
   | {
-      type: edvSkillsReducerActionType.addEmptyEdvSkill;
+      type: itSkillsReducerActionType.addEmptyItSkill;
     };
-
-export type MemberStatus = "Trainee" | "aktives Mitglied" | "Senior" | "Alumnus" | "passives Mitglied" | "Ausgetretene";
 
 /**
  * Type of the Member for projects
  */
 export type MembersField = {
-  mitgliedID: number;
+  memberId: number;
   name: string;
-  vorname: string;
-  nachname: string;
-  mitgliedstatus: MemberStatus;
+  firstname: string;
+  lastname: string;
+  memberStatus: MemberStatus;
 };

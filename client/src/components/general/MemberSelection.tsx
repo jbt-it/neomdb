@@ -51,11 +51,11 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
   const options: MembersField[] = memberstatus
     ? selectableMembers.filter(
         (member) =>
-          memberstatus.includes(member.mitgliedstatus) &&
-          !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID)
+          memberstatus.includes(member.memberStatus?.name) &&
+          !selectedMembers.some((selectedMember) => selectedMember.memberId === member.memberId)
       )
     : selectableMembers.filter(
-        (member) => !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID)
+        (member) => !selectedMembers.some((selectedMember) => selectedMember.memberId === member.memberId)
       );
 
   return (
@@ -72,13 +72,13 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
               const result = memberstatus
                 ? options.filter(
                     (member) =>
-                      memberstatus.includes(member.mitgliedstatus) &&
-                      !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID) &&
+                      memberstatus.includes(member.memberStatus?.name) &&
+                      !selectedMembers.some((selectedMember) => selectedMember.memberId === member.memberId) &&
                       member.name.toLowerCase().includes(state.inputValue.toLowerCase())
                   )
                 : options.filter(
                     (member) =>
-                      !selectedMembers.some((selectedMember) => selectedMember.mitgliedID === member.mitgliedID) &&
+                      !selectedMembers.some((selectedMember) => selectedMember.memberId === member.memberId) &&
                       member.name.toLowerCase().includes(state.inputValue.toLowerCase())
                   );
               return result;
@@ -87,11 +87,11 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
             value={member}
             onChange={onChangeCallback}
             clearOnBlur={false}
-            isOptionEqualToValue={(option: MembersField, value: MembersField) => option.mitgliedID === value.mitgliedID}
+            isOptionEqualToValue={(option: MembersField, value: MembersField) => option.memberId === value.memberId}
             renderInput={(params) => <TextField {...params} label="Name" variant="outlined" data-id={index} />}
             noOptionsText={"Keine Auswahl verfügbar"}
           />
-          <IconButton onClick={() => removeMember(member.mitgliedID)} aria-label="delete" color="primary">
+          <IconButton onClick={() => removeMember(member.memberId)} aria-label="delete" color="primary">
             <Clear />
           </IconButton>
         </Stack>

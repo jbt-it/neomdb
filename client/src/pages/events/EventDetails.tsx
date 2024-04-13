@@ -28,7 +28,7 @@ import EventParticipants from "../../components/events/EventParticipants";
 import AddMembersField from "../../components/events/AddMembersField";
 
 import { CommonEventType, EventParticipant } from "../../types/eventTypes";
-import { Member } from "../../types/membersTypes";
+import { MemberPartialDto } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 
 import { events as mockEvents } from "../../mock/events/events";
@@ -155,11 +155,11 @@ const EventDetails: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             setMembers(
-              res.data.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
+              res.data.map((member: MemberPartialDto) => ({
+                mitgliedID: member.memberId,
+                vorname: member.firstname,
+                nachname: member.lastname,
+                mitgliedstatus: member.memberStatus,
               }))
             );
           }

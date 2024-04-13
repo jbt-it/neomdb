@@ -208,8 +208,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   };
 
   // Function to remove a member from the list of members
-  const removeMember = (mitgliedID: number) => {
-    const updatedMembers = projektmitglieder.filter((member) => member.mitgliedID !== mitgliedID);
+  const removeMember = (memberId: number) => {
+    const updatedMembers = projektmitglieder.filter((member) => member.memberId !== memberId);
     setProjektmitglieder(updatedMembers);
   };
 
@@ -229,8 +229,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   };
 
   // Function to remove a member from the list of QMs
-  const removeQM = (mitgliedID: number) => {
-    const updatedQMs = qualitaetsmanager.filter((member) => member.mitgliedID !== mitgliedID);
+  const removeQM = (memberId: number) => {
+    const updatedQMs = qualitaetsmanager.filter((member) => member.memberId !== memberId);
     setQualitaetsmanager(updatedQMs);
   };
 

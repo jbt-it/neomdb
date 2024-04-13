@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Card,
-  CardActionArea,
   CardContent,
   TableContainer,
   Table,
@@ -13,13 +12,13 @@ import {
   Stack,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { InternalProjectAll } from "../../../types/traineesTypes";
+import { InternalProject } from "../../../types/traineesTypes";
 import dayjs from "dayjs";
 import { stringAvatar } from "../../../utils/stringUtils";
 import { Trainee } from "../../../types/traineesTypes";
 
 interface Props {
-  internalProject: InternalProjectAll;
+  internalProject: InternalProject;
   trainees: Trainee[];
 }
 
@@ -29,36 +28,32 @@ interface Props {
  * @returns - Card with internal project information
  */
 const InternalProjectCard = (props: Props) => {
-  const { internesProjektID, projektname } = props.internalProject;
+  const { internalProjectId, projectName } = props.internalProject;
   const kickoff = props.internalProject.kickoff ? dayjs(props.internalProject.kickoff).format("DD.MM.YYYY") : "Nein";
-  const ZPGehalten = props.internalProject.ZPGehalten
-    ? dayjs(props.internalProject.ZPGehalten).format("DD.MM.YYYY")
-    : "Nein";
-  const APGehalten = props.internalProject.APGehalten
-    ? dayjs(props.internalProject.APGehalten).format("DD.MM.YYYY")
-    : "Nein";
+  const zpHeld = props.internalProject.zpHeld ? dayjs(props.internalProject.zpHeld).format("DD.MM.YYYY") : "Nein";
+  const apHeld = props.internalProject.apHeld ? dayjs(props.internalProject.apHeld).format("DD.MM.YYYY") : "Nein";
 
-  const AngebotBeiEV = props.internalProject.AngebotBeiEV === 1 ? "Ja" : "Nein";
-  const DLBeiEV = props.internalProject.DLBeiEV === 1 ? "Ja" : "Nein";
-  const ZPBeiEV = props.internalProject.ZPBeiEV === 1 ? "Ja" : "Nein";
+  const offerAtEv = props.internalProject.offerAtEv ? "Ja" : "Nein";
+  const dlAtEv = props.internalProject.dlAtEv ? "Ja" : "Nein";
+  const zpAtEv = props.internalProject.zpAtEv ? "Ja" : "Nein";
   const trainees = props.trainees;
 
   // rows for the table
   const rows = [
     { label: "Kick-Off:", value: kickoff },
-    { label: "Angebot:", value: AngebotBeiEV },
-    { label: "AP:", value: APGehalten },
-    { label: "ZP:", value: ZPGehalten },
-    { label: "DL:", value: DLBeiEV },
+    { label: "Angebot:", value: offerAtEv },
+    { label: "AP:", value: apHeld },
+    { label: "ZP:", value: zpHeld },
+    { label: "DL:", value: dlAtEv },
   ];
 
   return (
-    <Card sx={(theme) => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internesProjektID}>
+    <Card sx={(theme) => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectId}>
       <CardContent>
         <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
-          <Link to={`/internes-projekt/${internesProjektID}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link to={`/internes-projekt/${internalProjectId}`} style={{ textDecoration: "none", color: "inherit" }}>
             <Typography fontSize={16} fontWeight={"bold"} sx={{ mb: 1, mt: 1 }}>
-              {projektname}
+              {projectName}
             </Typography>
           </Link>
           <Stack direction={"column"} alignItems={"start"} spacing={0.5}>
