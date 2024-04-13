@@ -278,7 +278,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [vonValue, setVonValue] = useState<Dayjs | null>(dayjs());
   const [bisValue, setBisValue] = useState<Dayjs | null>(dayjs());
   const [evPosition, setEVPosition] = useState(-1);
-  const [kuerzelValue, setKuerzelValue] = useState("");
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.nachname);
@@ -783,6 +782,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     );
   };
 
+  /**
+   * Changes the von value of the director position to be inserted
+   * @param mitgliedID
+   * @param evpostenID
+   * @param von
+   * @returns
+   */
   const setEVEintragVon = (mitgliedID: number, evpostenID: number, von: Dayjs | null) => {
     if (von === null) {
       return;
@@ -814,6 +820,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     );
   };
 
+  /**
+   * Changes the bis value of the director position to be inserted
+   * @param mitgliedID
+   * @param evpostenID
+   * @param bis
+   * @returns
+   */
   const setEVEintragBis = (mitgliedID: number, evpostenID: number, bis: Dayjs | null) => {
     if (bis === null) {
       return;

@@ -200,6 +200,9 @@ const MemberProfile: React.FunctionComponent = () => {
     };
   };
 
+  /**
+   * Get list of possible director positions
+   */
   const getDirectorPositions: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
@@ -226,6 +229,9 @@ const MemberProfile: React.FunctionComponent = () => {
     };
   }, []);
 
+  /**
+   * Get director positions of the current member
+   */
   const getMemberDirectorPositions: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
@@ -349,6 +355,14 @@ const MemberProfile: React.FunctionComponent = () => {
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
   useEffect(getMemberImage, [params.id, dispatchAuth]);
 
+  /**
+   * Adds a new director position to the member
+   * @param evpostenID
+   * @param mitgliedID
+   * @param von
+   * @param bis
+   * @returns
+   */
   const addDirectorPosition = async (evpostenID: number, mitgliedID: number, von: string, bis: string) => {
     return new Promise<void>((resolve, reject) => {
       if (evpostenID >= 0 && von && bis) {
