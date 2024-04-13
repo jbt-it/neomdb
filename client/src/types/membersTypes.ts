@@ -60,15 +60,25 @@ export type DepartmentPartialDto = {
 };
 
 /**
- * Type of the department details
+ * Type of the department
  */
-export type DepartmentDetails = {
-  ressortID: number;
-  bezeichnung: string;
-  kuerzel: string;
-  jbt_email: string;
-  linkZielvorstellung: string;
-  linkOrganigramm: string;
+// @JanMueller31 -> Former DepartmentDetails TODO: Delete this comment line after type is used
+export type DepartmentDetailsDto = {
+  departmentId: number;
+  name: string;
+  shortName: string;
+  jbtEmail: string;
+  linkObjectivePresentation: string;
+  linkOrganigram: string;
+};
+
+/**
+ * Type of the request to update a department
+ */
+// @JanMueller31 -> Can be used for the update of a department TODO: Delete this comment line after type is used
+export type UpdateDepartmentDto = {
+  linkObjectivePresentation: string;
+  linkOrganigram: string;
 };
 
 /**

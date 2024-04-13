@@ -11,7 +11,6 @@ import {
   MemberPartial,
   MemberStatus,
   StatusOverview,
-  UpdateDepartmentRequest,
   Value,
 } from "../../types/membersTypes";
 import {
@@ -35,7 +34,14 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
-import { DepartmentMemberDto, DirectorDto, MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
+import {
+  DepartmentDetailsDto,
+  DepartmentMemberDto,
+  DirectorDto,
+  MemberDetailsDto,
+  MemberPartialDto,
+  UpdateDepartmentDto,
+} from "../../typeOrm/types/memberTypes";
 
 /**
  * Controller for the members module
@@ -221,16 +227,25 @@ export class MembersController extends Controller {
    */
   @Get("departments")
   @Security("jwt")
-  public async getDepartments(): Promise<Department[]> {
+  public async getDepartments(): Promise<DepartmentDetailsDto[]> {
     const departments = await this.membersService.getDepartments();
 
     return departments;
   }
 
+  /**
+   * Updates the information of an existing department
+   * @summary Update a department
+   * @param id The id of the department to update
+   * @example requestBody {
+   * "linkObjectivePresentation": "https://example.com",
+   * "linkOrganigram": "https://example.com"
+   * }
+   */
   @Put("departments/{id}")
   @Security("jwt")
   @Middlewares(checkDepartmentAccess)
-  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentRequest): Promise<void> {
+  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentDto): Promise<void> {
     await this.membersService.updateDepartment(id, requestBody);
   }
 

@@ -20,6 +20,27 @@ export type MentorDto = {
   firstname: string;
   lastname: string;
 };
+
+/**
+ * Type of the request to update a department
+ */
+export type UpdateDepartmentDto = {
+  linkObjectivePresentation: string;
+  linkOrganigram: string;
+};
+
+/**
+ * Type of the department
+ */
+export type DepartmentDetailsDto = {
+  departmentId: number;
+  name: string;
+  shortName: string;
+  jbtEmail: string;
+  linkObjectivePresentation: string;
+  linkOrganigram: string;
+};
+
 /**
  * Type of the partial department dto used for the member list
  */

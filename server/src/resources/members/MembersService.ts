@@ -1,32 +1,31 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
+import path from "path";
+import AuthRepository from "../../auth/AuthRepository";
+import { executeInTransaction } from "../../database";
+import { NotFoundError, QueryError } from "../../types/Errors";
+import { Permission, User } from "../../types/authTypes";
 import {
   CreateMemberRequest,
   EdvSkill,
   Language,
   Member,
-  MemberDetails,
-  MemberPartial,
   MemberStatus,
-  Mentee,
   Mentor,
   NewMember,
   StatusOverview,
-  UpdateDepartmentRequest,
+  UpdateDepartmentDto,
 } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
-import AuthRepository from "../../auth/AuthRepository";
-import { executeInTransaction } from "../../database";
-import { NotFoundError, QueryError } from "../../types/Errors";
-import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import TraineesRepository from "../trainees/TraineesRepository";
-import MembersRepository from "./MembersRepository";
-import path from "path";
-import { MembersRepository_typeORM } from "./MembersRepository_typeORM";
+import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
 import { MemberMapper } from "./MemberMapper";
+import MembersRepository from "./MembersRepository";
+import { MembersRepository_typeORM } from "./MembersRepository_typeORM";
+import { DepartmentMapper } from "./DepartmentMapper";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -123,27 +122,27 @@ class MembersService {
    * Retrieves all departments
    */
   getDepartments = async () => {
-    const departments = await this.membersRepository.getDepartments();
+    const departments = await DepartmentRepository_typeORM.getDepartments();
 
-    return departments;
+    return departments.map((department) => DepartmentMapper.mapDepartmentToDepartmentDetailsDto(department));
   };
 
   /**
    * Updates the department with the given id
    * @throws NotFoundError if no department was found
    */
-  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentRequest) => {
-    const department = await this.membersRepository.getDepartmentByID(departmentID);
+  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentDto) => {
+    const department = await DepartmentRepository_typeORM.getDepartmentById(departmentID);
 
     if (department === null) {
       throw new NotFoundError(`Department with id ${departmentID} not found`);
     }
 
-    await this.membersRepository.updateDepartmentByID(
-      departmentID,
-      updateDepartmentRequest.linkOrganigramm,
-      updateDepartmentRequest.linkZielvorstellung
-    );
+    // Update department data
+    department.linkObjectivePresentation = updateDepartmentRequest.linkObjectivePresentation;
+    department.linkOrganigram = updateDepartmentRequest.linkOrganigram;
+
+    await DepartmentRepository_typeORM.saveDepartment(department);
   };
 
   /**

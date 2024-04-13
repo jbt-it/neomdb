@@ -3483,18 +3483,51 @@
 				"type": "object",
 				"description": "Type of the request to create a member"
 			},
-			"UpdateDepartmentRequest": {
+			"DepartmentDetailsDto": {
 				"properties": {
-					"linkOrganigramm": {
+					"linkOrganigram": {
 						"type": "string"
 					},
-					"linkZielvorstellung": {
+					"linkObjectivePresentation": {
+						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"linkOrganigram",
+					"linkObjectivePresentation",
+					"jbtEmail",
+					"shortName",
+					"name",
+					"departmentId"
+				],
+				"type": "object",
+				"description": "Type of the department"
+			},
+			"UpdateDepartmentDto": {
+				"properties": {
+					"linkOrganigram": {
+						"type": "string"
+					},
+					"linkObjectivePresentation": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"linkOrganigramm",
-					"linkZielvorstellung"
+					"linkOrganigram",
+					"linkObjectivePresentation"
 				],
 				"type": "object",
 				"description": "Type of the request to update a department"
@@ -4944,7 +4977,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Department"
+										"$ref": "#/components/schemas/DepartmentDetailsDto"
 									},
 									"type": "array"
 								}
@@ -4973,6 +5006,8 @@
 						"description": "No content"
 					}
 				},
+				"description": "Updates the information of an existing department",
+				"summary": "Update a department",
 				"tags": [
 					"Members"
 				],
@@ -4983,6 +5018,7 @@
 				],
 				"parameters": [
 					{
+						"description": "The id of the department to update",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -4997,7 +5033,11 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateDepartmentRequest"
+								"$ref": "#/components/schemas/UpdateDepartmentDto"
+							},
+							"example": {
+								"linkObjectivePresentation": "https://example.com",
+								"linkOrganigram": "https://example.com"
 							}
 						}
 					}
