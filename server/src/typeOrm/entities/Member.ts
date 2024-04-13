@@ -67,7 +67,7 @@ export class Member {
   gender: boolean | null;
 
   @Column("date", { name: "geburtsdatum", nullable: true })
-  birthDate: Date | null;
+  birthday: Date | null;
 
   @Column("varchar", { name: "handy", nullable: true, length: 20 })
   mobile: string | null;
@@ -186,24 +186,8 @@ export class Member {
   @Column("varchar", { name: "bic", nullable: true, length: 2048 })
   bic: string | null;
 
-  // Legacy fields
-  /*
-  @Column("blob", { name: "kontoinhaber_alt", nullable: true })
-  kontoinhaberAlt: Buffer | null;
-  @Column("blob", { name: "kontonummer_alt", nullable: true })
-  kontonummerAlt: Buffer | null;
-  @Column("blob", { name: "bankleitzahl_alt", nullable: true })
-  bankleitzahlAlt: Buffer | null;
-  @Column("blob", { name: "kreditinstitut_alt", nullable: true })
-  kreditinstitutAlt: Buffer | null;
-  @Column("blob", { name: "iban_alt", nullable: true })
-  ibanAlt: Buffer | null;
-  @Column("blob", { name: "bic_alt", nullable: true })
-  bicAlt: Buffer | null;
-  */
-
   @Column("text", { name: "engagement", nullable: true })
-  engagement: string | null;
+  commitment: string | null;
 
   @Column("text", { name: "bemerkungen", nullable: true })
   remarks: string | null;
@@ -320,7 +304,7 @@ export class Member {
   @JoinColumn([{ name: "generation", referencedColumnName: "generationId" }])
   generation: Generation;
 
-  @ManyToOne(() => Member, (member) => member.members, {
+  @ManyToOne(() => Member, (member) => member.mentees, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
@@ -328,7 +312,7 @@ export class Member {
   mentor: Member;
 
   @OneToMany(() => Member, (member) => member.mentor)
-  members: Member[];
+  mentees: Member[];
 
   @ManyToOne(() => MemberStatus, (memberStatus) => memberStatus.members, {
     onDelete: "NO ACTION",
@@ -341,7 +325,7 @@ export class Member {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
-  @JoinColumn([{ name: "department", referencedColumnName: "departmentId" }])
+  @JoinColumn([{ name: "ressort", referencedColumnName: "departmentId" }])
   department: Department;
 
   @OneToMany(() => MemberHasOtherPosition, (memberHasOtherPosition) => memberHasOtherPosition.member)

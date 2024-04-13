@@ -35,6 +35,7 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
+import { MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
 
 /**
  * Controller for the members module
@@ -52,7 +53,7 @@ export class MembersController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getMembers(): Promise<MemberPartial[]> {
+  public async getMembers(): Promise<MemberPartialDto[]> {
     const members = await this.membersService.getMemberList();
     return members;
   }
@@ -385,7 +386,7 @@ export class MembersController extends Controller {
    */
   @Get("{id}")
   @Security("jwt")
-  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetails> {
+  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetailsDto> {
     const user = request.user;
     let userCanViewFinancialData = false;
 
@@ -394,7 +395,7 @@ export class MembersController extends Controller {
     if (id === user.mitgliedID || doesPermissionsInclude(user.permissions, [6])) {
       userCanViewFinancialData = true;
     }
-    const member: MemberDetails = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
+    const member = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
     return member;
   }
 

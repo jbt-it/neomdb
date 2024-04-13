@@ -2,19 +2,19 @@ import { Column, Entity, Index, OneToMany, OneToOne, PrimaryGeneratedColumn } fr
 import { Director } from "./Director";
 import { Member } from "./Member";
 
-@Index("Bezeichnung_UNIQUE", ["designation"], { unique: true })
+@Index("Bezeichnung_UNIQUE", ["name"], { unique: true })
 @Index("ressortID_UNIQUE", ["departmentId"], { unique: true })
-@Index("kuerzel_UNIQUE", ["abbreviation"], { unique: true })
+@Index("kuerzel_UNIQUE", ["shortName"], { unique: true })
 @Entity("ressort", { schema: "mdb" })
 export class Department {
   @PrimaryGeneratedColumn({ type: "int", name: "ressortID" })
   departmentId: number;
 
   @Column("varchar", { name: "bezeichnung", unique: true, length: 45 })
-  designation: string;
+  name: string;
 
   @Column("varchar", { name: "kuerzel", unique: true, length: 10 })
-  abbreviation: string;
+  shortName: string;
 
   @Column("varchar", { name: "jbt_email", length: 45 })
   jbtEmail: string;

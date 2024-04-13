@@ -12,10 +12,10 @@ export class MemberHasDirectorPosition {
   directorId: number;
 
   @Column("date", { name: "von" })
-  from: string;
+  from: Date;
 
   @Column("date", { name: "bis", nullable: true })
-  until: string | null;
+  until: Date | null;
 
   @ManyToOne(() => Director, (director) => director.memberHasDirectorPositions, {
     onDelete: "NO ACTION",

@@ -13,7 +13,7 @@ import {
   NewMember,
   StatusOverview,
   UpdateDepartmentRequest,
-} from "types/membersTypes";
+} from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
 import AuthRepository from "../../auth/AuthRepository";
 import { executeInTransaction } from "../../database";
@@ -25,6 +25,8 @@ import { getRandomString } from "../../utils/stringUtils";
 import TraineesRepository from "../trainees/TraineesRepository";
 import MembersRepository from "./MembersRepository";
 import path from "path";
+import { MembersRepository_typeORM } from "./MembersRepository_typeORM";
+import { MemberMapper } from "./MemberMapper";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -38,9 +40,8 @@ class MembersService {
    * Retrieves a list of all members
    */
   getMemberList = async () => {
-    const memberList: MemberPartial[] = await this.membersRepository.getMembers();
-
-    return memberList;
+    const memberList = await MembersRepository_typeORM.getMembersWithDepartment();
+    return memberList.map((member) => MemberMapper.memberToMemberPartialDto(member));
   };
 
   /**
@@ -48,34 +49,12 @@ class MembersService {
    * @throws NotFoundError if no member was found
    */
   getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
-    const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
-
-    if (member === null) {
+    const memberDetails = await MembersRepository_typeORM.getMemberDetailsByID(memberID);
+    if (memberDetails === null) {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    const languagesQuery: Promise<Language[]> = this.membersRepository.getLanguagesByMemberID(memberID);
-    const edvSkillsQuery: Promise<EdvSkill[]> = this.membersRepository.getEdvSkillsByMemberID(memberID);
-    const mentorQuery: Promise<Mentor> = this.membersRepository.getMentorByMemberID(memberID);
-    const menteesQuers: Promise<Mentee[]> = this.membersRepository.getMenteesByMemberID(memberID);
-
-    // Executing all queries concurrently
-    const results = await Promise.all([languagesQuery, edvSkillsQuery, mentorQuery, menteesQuers]);
-
-    const languages = results[0];
-    const edvSkills = results[1];
-    const mentor = results[2];
-    const mentees = results[3];
-
-    // Combine the four parts for the complete member dto
-    const memberDto: MemberDetails = {
-      ...member,
-      mentor,
-      mentees,
-      sprachen: languages,
-      edvkenntnisse: edvSkills,
-    };
-    return memberDto;
+    return MemberMapper.membertoMemberDetailsDto(memberDetails, withFinancialData);
   };
 
   /**
@@ -121,9 +100,9 @@ class MembersService {
    * Retrieves a list of all members grouped by their department
    */
   getMembersOfDepartments = async () => {
-    const membersOfDepartments = await this.membersRepository.getMembersGroupedByDepartment();
-
-    return membersOfDepartments;
+    const membersOfDepartments2 =
+      await MembersRepository_typeORM.getActiveMembersWithDepartmentAndWithDirectorPositions();
+    return membersOfDepartments2.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
   };
 
   /**

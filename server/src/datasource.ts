@@ -1,5 +1,7 @@
 import { DataSource } from "typeorm";
 
+const isTest = process.env.NODE_ENV === "test";
+
 /**
  * Data source that connects to the database.
  */
@@ -11,6 +13,6 @@ export const AppDataSource = new DataSource({
   password: "passw0rd",
   database: "mdb",
   entities: [__dirname + "/typeOrm/entities/*.ts"],
-  synchronize: true,
+  synchronize: isTest,
   logging: false,
 });

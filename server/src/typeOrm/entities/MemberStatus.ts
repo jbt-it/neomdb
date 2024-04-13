@@ -9,7 +9,7 @@ export class MemberStatus {
   memberStatusId: number;
 
   @Column("varchar", { name: "bezeichnung", length: 45 })
-  description: string;
+  name: string;
 
   @OneToMany(() => Member, (member) => member.memberStatus)
   members: Member[];
