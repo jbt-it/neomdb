@@ -9,7 +9,7 @@ import api from "../../utils/api";
 import { NavLink } from "react-router-dom";
 import InfoCard from "../../components/general/InfoCard";
 import DepartmentDialog from "../../components/members/DepartmentDialog";
-import { DepartmentDetails, DepartmentMember, Director } from "../../types/membersTypes";
+import { DepartmentDetails, DepartmentMemberDto, DirectorDto } from "../../types/membersTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { doesRolesHaveSomeOf } from "../../utils/authUtils";
@@ -54,9 +54,9 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const classes = useStyles();
   const { auth } = useContext(AuthContext);
 
-  const [members, setMembers] = useState<DepartmentMember[]>([]);
+  const [members, setMembers] = useState<DepartmentMemberDto[]>([]);
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
-  const [directors, setDirectors] = useState<Director[]>([]);
+  const [directors, setDirectors] = useState<DirectorDto[]>([]);
   const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
   const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
   const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
@@ -156,7 +156,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    */
   const getMembersOfDeparment = (departmentID: number) => {
     return members.filter((member) => {
-      return member.ressort === departmentID;
+      return member.department?.departmentId === departmentID;
     });
   };
 
@@ -166,7 +166,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    */
   const getDirectorOfDepartment = (departmentID: number) => {
     return directors.filter((director) => {
-      return director.ressortID === departmentID;
+      return director.department?.departmentId === departmentID;
     })[0];
   };
 
@@ -178,7 +178,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @returns false if the director of the given department is undefined
    */
   const isDepartmentEditable = (departmentID: number) => {
-    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.evpostenID;
+    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.directorId;
     if (directorIDofDepartment === undefined) {
       return false;
     }
@@ -303,7 +303,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @returns The rendered director information
    * @returns null if the director is undefined
    */
-  const renderDirector = (department: DepartmentDetails, director: Director) => {
+  const renderDirector = (department: DepartmentDetails, director: DirectorDto) => {
     return (
       <div>
         <Typography variant="h6">
@@ -314,8 +314,8 @@ const DepartmentOverview: React.FunctionComponent = () => {
             <h3>
               <NavLink
                 className={classes.navLink}
-                to={`/gesamtuebersicht/${director.mitgliedID}`}
-              >{`${director.vorname} ${director.nachname}`}</NavLink>
+                to={`/gesamtuebersicht/${director.memberId}`}
+              >{`${director.firstname} ${director.lastname}`}</NavLink>
             </h3>
           </div>
         ) : null}
@@ -368,8 +368,8 @@ const DepartmentOverview: React.FunctionComponent = () => {
                       <h3>
                         <NavLink
                           className={classes.navLink}
-                          to={`/gesamtuebersicht/${member.mitgliedID}`}
-                        >{`${member.vorname} ${member.nachname}`}</NavLink>
+                          to={`/gesamtuebersicht/${member.memberId}`}
+                        >{`${member.firstname} ${member.lastname}`}</NavLink>
                       </h3>
                     </Grid>
                   ))}

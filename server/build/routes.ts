@@ -861,6 +861,11 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"department":{"ref":"DepartmentPartialDto","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"designationMale":{"dataType":"string","required":true},"designationFemale":{"dataType":"string","required":true},"gender":{"dataType":"boolean","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"directorId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StatusOverview": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wikiErrorMsg":{"dataType":"string","required":true},"wikiSuccesful":{"dataType":"boolean","required":true},"nextcloudErrorMsg":{"dataType":"string","required":true},"nextcloudSuccesful":{"dataType":"boolean","required":true},"mailListErrorMsg":{"dataType":"string","required":true},"mailListSuccesful":{"dataType":"boolean","required":true},"mailErrorMsg":{"dataType":"string","required":true},"mailSuccesful":{"dataType":"boolean","required":true},"queryErrorMsg":{"dataType":"string","required":true},"querySuccesful":{"dataType":"boolean","required":true}},"validators":{}},

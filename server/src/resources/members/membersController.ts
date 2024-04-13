@@ -35,7 +35,7 @@ import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTy
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
-import { DepartmentMemberDto, MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
+import { DepartmentMemberDto, DirectorDto, MemberDetailsDto, MemberPartialDto } from "../../typeOrm/types/memberTypes";
 
 /**
  * Controller for the members module
@@ -116,7 +116,7 @@ export class MembersController extends Controller {
    */
   @Get("directors")
   @Security("jwt")
-  public async getDirectors(@Query("current") current: boolean): Promise<Director[]> {
+  public async getDirectors(@Query("current") current: boolean): Promise<DirectorDto[]> {
     // Query parameter to specify if only the current directors should be retrieved
     const directors = await this.membersService.getDirectors(current);
 

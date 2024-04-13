@@ -109,9 +109,14 @@ class MembersService {
    * Retrieves all directors or only the current directors if `onlyCurrent` is true
    */
   getDirectors = async (onlyCurrent: boolean) => {
-    const directors = await this.membersRepository.getDirectors(onlyCurrent);
+    let directors = [];
+    if (onlyCurrent) {
+      directors = await MembersRepository_typeORM.getCurrentDirectors();
+    } else {
+      directors = await MembersRepository_typeORM.getAllDirectors();
+    }
 
-    return directors;
+    return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 
   /**

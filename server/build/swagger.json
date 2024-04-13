@@ -3322,6 +3322,48 @@
 				"type": "object",
 				"description": "Type of a member of a department (partial member with department information)"
 			},
+			"DirectorDto": {
+				"properties": {
+					"designationMale": {
+						"type": "string"
+					},
+					"designationFemale": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "boolean"
+					},
+					"department": {
+						"$ref": "#/components/schemas/DepartmentPartialDto"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"designationMale",
+					"designationFemale",
+					"gender",
+					"department",
+					"directorId",
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the director (partial member with department and role information)"
+			},
 			"StatusOverview": {
 				"properties": {
 					"wikiErrorMsg": {
@@ -4804,7 +4846,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Director"
+										"$ref": "#/components/schemas/DirectorDto"
 									},
 									"type": "array"
 								}

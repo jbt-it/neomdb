@@ -1,6 +1,7 @@
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
+  DirectorDto,
   MemberDetailsDto,
   MemberPartialDto,
   MenteeDto,
@@ -13,6 +14,8 @@ import { Department } from "../../typeOrm/entities/Department";
  * Provides methods to map a member to a dto (data transfer object)
  */
 export class MemberMapper {
+  // --- To DTO mapper functions
+
   static memberToMenteeDto(member: Member): MenteeDto {
     return {
       memberId: member.memberId,
@@ -56,6 +59,18 @@ export class MemberMapper {
       memberStatus: member.memberStatus,
       department: this.departmentToDepartmentPartialDto(member.department),
       lastChange: member.lastChange,
+    };
+  }
+  static memberToDirectorDto(member: Member): DirectorDto {
+    return {
+      memberId: member.memberId,
+      firstname: member.firstName,
+      lastname: member.lastName,
+      gender: member.gender,
+      department: this.departmentToDepartmentPartialDto(member.department),
+      designationMale: member.memberHasDirectorPositions[0]?.director.designationMale,
+      designationFemale: member.memberHasDirectorPositions[0]?.director.designationFemale,
+      directorId: member.memberHasDirectorPositions[0]?.director.directorId,
     };
   }
   static membertoMemberDetailsDto(member: Member, withFinancialData: boolean): MemberDetailsDto {
@@ -161,4 +176,6 @@ export class MemberMapper {
       };
     }
   }
+
+  // --- From DTO mapper functions
 }

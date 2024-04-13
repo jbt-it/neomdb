@@ -78,4 +78,30 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
       relations: ["mentor", "mentees", "languages", "itSkills", "department", "memberStatus"],
     });
   },
+
+  /**
+   * Retrieves all members that are or were directors
+   * @returns A list of members that are or were directors
+   */
+  getAllDirectors(): Promise<Member[]> {
+    return this.createQueryBuilder("member")
+      .innerJoinAndSelect("member.memberHasDirectorPositions", "memberHasDirectorPositions")
+      .innerJoinAndSelect("memberHasDirectorPositions.director", "director")
+      .innerJoinAndSelect("member.department", "department")
+      .getMany();
+  },
+
+  /**
+   * Retrieves the members that are currently directors
+   * @returns A list of members that are currently directors
+   */
+  getCurrentDirectors(): Promise<Member[]> {
+    return this.createQueryBuilder("member")
+      .innerJoinAndSelect("member.memberHasDirectorPositions", "memberHasDirectorPositions")
+      .innerJoinAndSelect("memberHasDirectorPositions.director", "director")
+      .innerJoinAndSelect("member.department", "department")
+      .where("memberHasDirectorPositions.from < :currentDate", { currentDate: new Date() })
+      .andWhere("memberHasDirectorPositions.until > :currentDate", { currentDate: new Date() })
+      .getMany();
+  },
 });

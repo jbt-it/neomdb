@@ -55,6 +55,20 @@ export type DepartmentMemberDto = {
 };
 
 /**
+ * Type of the director (partial member with department and role information)
+ */
+export type DirectorDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  directorId: number;
+  department: DepartmentPartialDto;
+  gender: boolean;
+  designationFemale: string;
+  designationMale: string;
+};
+
+/**
  * Type of the member details dto used for the member details page
  */
 export type MemberDetailsDto = {

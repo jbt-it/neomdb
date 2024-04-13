@@ -72,14 +72,17 @@ export type DepartmentDetails = {
 };
 
 /**
- * Type of the directors
+ * Type of the director (partial member with department and role information)
  */
-export type Director = {
-  evpostenID: number;
-  ressortID: number;
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
+export type DirectorDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  directorId: number;
+  department: DepartmentPartialDto;
+  gender: boolean;
+  designationFemale: string;
+  designationMale: string;
 };
 
 /**
@@ -116,14 +119,13 @@ export type MemberPartialDto = {
 };
 
 /**
- * Type of the department member
+ * Type of a member of a department (partial member with department information)
  */
-export type DepartmentMember = {
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-  ressort: number;
-  bezeichnung: string;
+export type DepartmentMemberDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  department: DepartmentPartialDto;
 };
 
 /**
