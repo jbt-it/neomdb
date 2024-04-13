@@ -3,7 +3,7 @@ import { Member } from "./Member";
 
 @Index("fk_Sprachen_mitglied1", ["memberId"], {})
 @Entity("sprachen", { schema: "mdb" })
-export class Languages {
+export class Language {
   @Column("int", { primary: true, name: "mitglied_mitgliedID" })
   memberId: number;
 

@@ -1,6 +1,6 @@
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { ItSkills } from "../../typeOrm/entities/ItSkills";
-import { Languages } from "../../typeOrm/entities/Language";
+import { ItSkill } from "../../typeOrm/entities/ItSkills";
+import { Language } from "../../typeOrm/entities/Language";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 
 /**
@@ -27,6 +27,20 @@ export type MentorDto = {
 export type UpdateDepartmentDto = {
   linkObjectivePresentation: string;
   linkOrganigram: string;
+};
+
+/**
+ * Value type for languages
+ */
+export type LanguageValue = {
+  language: string;
+};
+
+/**
+ * Value type for it skills
+ */
+export type ItSkillsValue = {
+  itSkill: string;
 };
 
 /**
@@ -139,8 +153,8 @@ export type MemberDetailsDto = {
   iban?: string;
   bic?: string;
   // Additional attributes
-  languages?: Languages[];
-  itSkills?: ItSkills[];
+  languages?: Language[];
+  itSkills?: ItSkill[];
   mentees?: MenteeDto[];
   mentor?: MentorDto | null;
 };

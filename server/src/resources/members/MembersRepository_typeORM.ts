@@ -1,8 +1,7 @@
-import { QueryBuilder } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { Department } from "typeOrm/entities/Department";
+import { Language } from "../../typeOrm/entities/Language";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -103,5 +102,25 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
       .where("memberHasDirectorPositions.from < :currentDate", { currentDate: new Date() })
       .andWhere("memberHasDirectorPositions.until > :currentDate", { currentDate: new Date() })
       .getMany();
+  },
+});
+
+export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language).extend({
+  /**
+   * Retrieves the all distinct values of the languages
+   * @returns A list of distinct language values
+   */
+  getLanguageValues() {
+    return this.createQueryBuilder("language").select("language.value").distinct(true).getMany();
+  },
+});
+
+export const ItSkillsRepository_typeORM = AppDataSource.getRepository(Language).extend({
+  /**
+   * Retrieves the all distinct values of the itSkills
+   * @returns A list of distinct itSkill values
+   */
+  getItSkillValues() {
+    return this.createQueryBuilder("itSkill").select("itSkill.value").distinct(true).getMany();
   },
 });

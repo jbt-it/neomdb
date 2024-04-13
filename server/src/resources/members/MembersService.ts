@@ -24,7 +24,11 @@ import TraineesRepository from "../trainees/TraineesRepository";
 import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
 import { MemberMapper } from "./MemberMapper";
 import MembersRepository from "./MembersRepository";
-import { MembersRepository_typeORM } from "./MembersRepository_typeORM";
+import {
+  ItSkillsRepository_typeORM,
+  LanguagesRepository_typeORM,
+  MembersRepository_typeORM,
+} from "./MembersRepository_typeORM";
 import { DepartmentMapper } from "./DepartmentMapper";
 
 /**
@@ -149,8 +153,7 @@ class MembersService {
    * Retrieves all language values
    */
   getLanguageValues = async () => {
-    const languageValues = await this.membersRepository.getLanguageValues();
-
+    const languageValues = await LanguagesRepository_typeORM.getLanguageValues();
     return languageValues;
   };
 
@@ -158,7 +161,7 @@ class MembersService {
    * Retrieves all edv skill values
    */
   getEdvSkillValues = async () => {
-    const edvSkillValues = await this.membersRepository.getEdvSkillValues();
+    const edvSkillValues = await ItSkillsRepository_typeORM.getItSkillValues();
 
     return edvSkillValues;
   };

@@ -10,7 +10,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ItSkills } from "./ItSkills";
+import { ItSkill } from "./ItSkills";
 import { Generation } from "./Generation";
 import { InternalProject } from "./InternalProject";
 import { Department } from "./Department";
@@ -27,7 +27,7 @@ import { WorkshopFeedbackHasMember } from "./WorkshopFeedbackHasMitglied";
 import { TraineeApplicant } from "./TraineeApplicant";
 import { MemberHasDirectorPosition } from "./MemberHasDirectorPosition";
 import { MemberHasProject } from "./MemberHasProject";
-import { Languages } from "./Language";
+import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
 
@@ -288,8 +288,8 @@ export class Member {
 
   // RELATIONS
 
-  @OneToMany(() => ItSkills, (itSkills) => itSkills.member)
-  itSkills: ItSkills[];
+  @OneToMany(() => ItSkill, (itSkills) => itSkills.member)
+  itSkills: ItSkill[];
 
   @ManyToMany(() => Generation, (generation) => generation.members)
   generations: Generation[];
@@ -373,8 +373,8 @@ export class Member {
   @OneToMany(() => WorkshopFeedbackHasMember, (WorkshopFeedbackHasMember) => WorkshopFeedbackHasMember.member)
   workshopFeedbackHasMembers: WorkshopFeedbackHasMember[];
 
-  @OneToMany(() => Languages, (languages) => languages.member)
-  languages: Languages[];
+  @OneToMany(() => Language, (languages) => languages.member)
+  languages: Language[];
 
   @OneToMany(() => TraineeApplicant, (traineeApplicant) => traineeApplicant.admittedMember)
   traineeApplicants: TraineeApplicant[];

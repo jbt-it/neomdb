@@ -455,7 +455,7 @@
 					},
 					"itSkills": {
 						"items": {
-							"$ref": "#/components/schemas/ItSkills"
+							"$ref": "#/components/schemas/ItSkill"
 						},
 						"type": "array"
 					},
@@ -566,7 +566,7 @@
 					},
 					"languages": {
 						"items": {
-							"$ref": "#/components/schemas/Languages"
+							"$ref": "#/components/schemas/Language"
 						},
 						"type": "array"
 					},
@@ -679,7 +679,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ItSkills": {
+			"ItSkill": {
 				"properties": {
 					"memberId": {
 						"type": "number",
@@ -3187,7 +3187,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Languages": {
+			"Language": {
 				"properties": {
 					"memberId": {
 						"type": "number",
@@ -3647,13 +3647,13 @@
 					},
 					"itSkills": {
 						"items": {
-							"$ref": "#/components/schemas/ItSkills"
+							"$ref": "#/components/schemas/ItSkill"
 						},
 						"type": "array"
 					},
 					"languages": {
 						"items": {
-							"$ref": "#/components/schemas/Languages"
+							"$ref": "#/components/schemas/Language"
 						},
 						"type": "array"
 					},
@@ -3886,23 +3886,6 @@
 				],
 				"type": "object",
 				"description": "Type of the member details dto used for the member details page"
-			},
-			"Language": {
-				"properties": {
-					"niveau": {
-						"type": "number",
-						"format": "double"
-					},
-					"wert": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"niveau",
-					"wert"
-				],
-				"type": "object",
-				"description": "Type of the language of a member"
 			},
 			"EdvSkill": {
 				"properties": {

@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { Member } from "./Member";
 
 @Entity("edvkenntnisse", { schema: "mdb" })
-export class ItSkills {
+export class ItSkill {
   @Column("int", { primary: true, name: "mitglied_mitgliedID" })
   memberId: number;
 
