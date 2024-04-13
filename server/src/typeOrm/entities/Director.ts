@@ -22,7 +22,7 @@ export class Director {
   departmentId: number | null;
 
   @Column("varchar", { name: "kuerzel", length: 10 })
-  abbreviation: string;
+  shortName: string;
 
   @Column("varchar", { name: "jbt_email", length: 45 })
   jbtEmail: string;

@@ -1,7 +1,9 @@
+import { ItSkillsValue, LanguageValue } from "typeOrm/types/memberTypes";
 import { AppDataSource } from "../../datasource";
+import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { Language } from "../../typeOrm/entities/Language";
+import { Permission } from "../../typeOrm/entities/Permission";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -110,7 +112,7 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
    * Retrieves the all distinct values of the languages
    * @returns A list of distinct language values
    */
-  getLanguageValues() {
+  getLanguageValues(): Promise<LanguageValue[]> {
     return this.createQueryBuilder("language").select("language.value").distinct(true).getMany();
   },
 });
@@ -120,7 +122,25 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(Language).
    * Retrieves the all distinct values of the itSkills
    * @returns A list of distinct itSkill values
    */
-  getItSkillValues() {
+  getItSkillValues(): Promise<ItSkillsValue[]> {
     return this.createQueryBuilder("itSkill").select("itSkill.value").distinct(true).getMany();
+  },
+});
+
+export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permission).extend({
+  /**
+   * Retrieves all permissions as a list
+   * @returns A list of permissions
+   */
+  getPermissions(): Permission[] {
+    return this.find();
+  },
+
+  /**
+   * Retrieves all permission with the assigned members and directors
+   * @returns A list of permissions with the assigned members and directors
+   */
+  async getPermissionWithAssignments(): Promise<Permission[]> {
+    return this.find({ relations: ["directorHasPermissions", "directorHasPermissions.director", "members"] });
   },
 });

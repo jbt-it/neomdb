@@ -381,7 +381,7 @@ const models: TsoaRoute.Models = {
             "designationMale": {"dataType":"string","required":true},
             "designationFemale": {"dataType":"string","required":true},
             "departmentId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
-            "abbreviation": {"dataType":"string","required":true},
+            "shortName": {"dataType":"string","required":true},
             "jbtEmail": {"dataType":"string","required":true},
             "shortIntroduction": {"dataType":"string","required":true},
             "content": {"dataType":"string","required":true},
@@ -891,14 +891,29 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigram":{"dataType":"string","required":true},"linkObjectivePresentation":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Value": {
+    "LanguageValue": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wert":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"language":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PermissionAssignment": {
+    "ItSkillsValue": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"canDelegate":{"dataType":"boolean","required":true},"permissionID":{"dataType":"double","required":true},"mitgliedID":{"dataType":"double","required":true},"name":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"itSkill":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberPermissionAssignmentDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorPositionDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shortName":{"dataType":"string","required":true},"canDelegate":{"dataType":"boolean","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PermissionAssignmentDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directors":{"dataType":"array","array":{"dataType":"refAlias","ref":"DirectorPositionDto"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberPermissionAssignmentDto"},"required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AssignPermissionToMemberRequest": {
@@ -1475,33 +1490,6 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.getPermissions.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/members/:id/permissions',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(MembersController)),
-            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getPermissionsByMemberID)),
-
-            function MembersController_getPermissionsByMemberID(request: any, response: any, next: any) {
-            const args = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new MembersController();
-
-
-              const promise = controller.getPermissionsByMemberID.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

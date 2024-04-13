@@ -28,8 +28,10 @@ import {
   ItSkillsRepository_typeORM,
   LanguagesRepository_typeORM,
   MembersRepository_typeORM,
+  PermissionsRepository_typeORM,
 } from "./MembersRepository_typeORM";
 import { DepartmentMapper } from "./DepartmentMapper";
+import { PermissionMapper } from "./PermissionMapper";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -128,7 +130,7 @@ class MembersService {
   getDepartments = async () => {
     const departments = await DepartmentRepository_typeORM.getDepartments();
 
-    return departments.map((department) => DepartmentMapper.mapDepartmentToDepartmentDetailsDto(department));
+    return departments.map((department) => DepartmentMapper.departmentToDepartmentDetailsDto(department));
   };
 
   /**
@@ -170,7 +172,7 @@ class MembersService {
    * Retrieves all permissions
    */
   getPermissions = async () => {
-    const permissions = await this.membersRepository.getPermissions();
+    const permissions = await PermissionsRepository_typeORM.getPermissions();
 
     return permissions;
   };
@@ -179,9 +181,8 @@ class MembersService {
    * Retrieves all permission assignments
    */
   getPermissionAssignments = async () => {
-    const permissionAssignments = await this.membersRepository.getPermissionAssignments();
-
-    return permissionAssignments;
+    const permissionAssignments = await PermissionsRepository_typeORM.getPermissionWithAssignments();
+    return permissionAssignments.map((permission) => PermissionMapper.permissionToPermissionAssignment(permission));
   };
 
   /**

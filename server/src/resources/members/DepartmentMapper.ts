@@ -2,7 +2,7 @@ import { Department } from "typeOrm/entities/Department";
 import { DepartmentDetailsDto } from "typeOrm/types/memberTypes";
 
 export class DepartmentMapper {
-  static mapDepartmentToDepartmentDetailsDto(department: Department): DepartmentDetailsDto {
+  static departmentToDepartmentDetailsDto(department: Department): DepartmentDetailsDto {
     return {
       departmentId: department.departmentId,
       name: department.name,

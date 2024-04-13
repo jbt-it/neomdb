@@ -1,47 +1,46 @@
-import MembersService from "./MembersService";
-import {
-  AssignPermissionToMemberRequest,
-  CreateMemberRequest,
-  CreateMemberResponse,
-  Department,
-  DepartmentMember,
-  Director,
-  MemberDetails,
-  MemberImage,
-  MemberPartial,
-  MemberStatus,
-  StatusOverview,
-  Value,
-} from "../../types/membersTypes";
 import {
   Body,
+  Controller,
   Delete,
+  Get,
   Middlewares,
   Patch,
+  Path,
   Post,
   Put,
-  Get,
-  Route,
-  Controller,
-  Security,
-  Tags,
-  Request,
-  Path,
   Query,
+  Request,
+  Route,
+  Security,
   SuccessResponse,
+  Tags,
 } from "@tsoa/runtime";
-import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTypes";
-import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import { checkDepartmentAccess } from "../../middleware/authorization";
-import { UnauthorizedError } from "../../types/Errors";
+import { Permission } from "../../typeOrm/entities/Permission";
+import { PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
 import {
   DepartmentDetailsDto,
   DepartmentMemberDto,
   DirectorDto,
+  ItSkillsValue,
+  LanguageValue,
   MemberDetailsDto,
   MemberPartialDto,
   UpdateDepartmentDto,
 } from "../../typeOrm/types/memberTypes";
+import { UnauthorizedError } from "../../types/Errors";
+import { JWTPayload } from "../../types/authTypes";
+import {
+  AssignPermissionToMemberRequest,
+  CreateMemberRequest,
+  CreateMemberResponse,
+  MemberDetails,
+  MemberImage,
+  MemberStatus,
+  StatusOverview,
+} from "../../types/membersTypes";
+import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
+import MembersService from "./MembersService";
 
 /**
  * Controller for the members module
@@ -255,7 +254,7 @@ export class MembersController extends Controller {
    */
   @Get("languages")
   @Security("jwt")
-  public async getLanguages(): Promise<Value[]> {
+  public async getLanguages(): Promise<LanguageValue[]> {
     const languages = await this.membersService.getLanguageValues();
 
     return languages;
@@ -267,7 +266,7 @@ export class MembersController extends Controller {
    */
   @Get("edv-skills")
   @Security("jwt")
-  public async getEDVSkills(): Promise<Value[]> {
+  public async getEDVSkills(): Promise<ItSkillsValue[]> {
     const edvSkills = await this.membersService.getEdvSkillValues();
 
     return edvSkills;
@@ -279,7 +278,7 @@ export class MembersController extends Controller {
    */
   @Get("permission-assignments")
   @Security("jwt")
-  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignment[]> {
+  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignmentDto[]> {
     const user = request.user as JWTPayload;
     const userHasAnyPermission = user.permissions.length > 0;
     if (!userHasAnyPermission) {
@@ -313,7 +312,7 @@ export class MembersController extends Controller {
    * @summary Get permissions by member id
    * @param id The id of the member to retrieve the permissions from
    */
-  @Get("{id}/permissions")
+  /*  @Get("{id}/permissions")
   @Security("jwt")
   public async getPermissionsByMemberID(
     @Path() id: number,
@@ -327,7 +326,7 @@ export class MembersController extends Controller {
     const permissions = await this.membersService.getPermissionsByMemberID(id);
 
     return permissions;
-  }
+  } */
 
   /**
    * Create new permission for member

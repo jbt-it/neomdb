@@ -1546,7 +1546,7 @@
 						"format": "double",
 						"nullable": true
 					},
-					"abbreviation": {
+					"shortName": {
 						"type": "string"
 					},
 					"jbtEmail": {
@@ -1589,7 +1589,7 @@
 					"designationMale",
 					"designationFemale",
 					"departmentId",
-					"abbreviation",
+					"shortName",
 					"jbtEmail",
 					"shortIntroduction",
 					"content",
@@ -3532,40 +3532,103 @@
 				"type": "object",
 				"description": "Type of the request to update a department"
 			},
-			"Value": {
+			"LanguageValue": {
 				"properties": {
-					"wert": {
+					"language": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"wert"
+					"language"
 				],
 				"type": "object",
-				"description": "Value type used for languages and edv skills"
+				"description": "Value type for languages"
 			},
-			"PermissionAssignment": {
+			"ItSkillsValue": {
 				"properties": {
+					"itSkill": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"itSkill"
+				],
+				"type": "object",
+				"description": "Value type for it skills"
+			},
+			"MemberPermissionAssignmentDto": {
+				"properties": {
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the member permission asignment dto used for the permission page"
+			},
+			"DirectorPositionDto": {
+				"properties": {
+					"shortName": {
+						"type": "string"
+					},
 					"canDelegate": {
 						"type": "boolean"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"shortName",
+					"canDelegate",
+					"directorId"
+				],
+				"type": "object",
+				"description": "Type of the director position dto"
+			},
+			"PermissionAssignmentDto": {
+				"properties": {
+					"directors": {
+						"items": {
+							"$ref": "#/components/schemas/DirectorPositionDto"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/MemberPermissionAssignmentDto"
+						},
+						"type": "array"
+					},
+					"description": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
 					},
 					"permissionID": {
 						"type": "number",
 						"format": "double"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
 					}
 				},
 				"required": [
-					"canDelegate",
-					"permissionID",
-					"mitgliedID",
-					"name"
+					"directors",
+					"members",
+					"description",
+					"name",
+					"permissionID"
 				],
 				"type": "object",
 				"description": "Type of the permission assignment (permission of a member or a director)"
@@ -5037,7 +5100,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Value"
+										"$ref": "#/components/schemas/LanguageValue"
 									},
 									"type": "array"
 								}
@@ -5068,7 +5131,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Value"
+										"$ref": "#/components/schemas/ItSkillsValue"
 									},
 									"type": "array"
 								}
@@ -5099,7 +5162,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/PermissionAssignment"
+										"$ref": "#/components/schemas/PermissionAssignmentDto"
 									},
 									"type": "array"
 								}
@@ -5157,8 +5220,8 @@
 						"description": ""
 					}
 				},
-				"description": "Create new permission for member",
-				"summary": "Create permission",
+				"description": "Retrieves a list of all permissions of the member with the given ID",
+				"summary": "Get permissions by member id",
 				"tags": [
 					"Members"
 				],
@@ -5176,10 +5239,6 @@
 							"schema": {
 								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
 								"description": "The permission to create"
-							},
-							"example": {
-								"memberID": 8167,
-								"permissionID": 8
 							}
 						}
 					}
@@ -5219,56 +5278,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/members/{id}/permissions": {
-			"get": {
-				"operationId": "GetPermissionsByMemberID",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"permissions": {
-											"items": {
-												"$ref": "#/components/schemas/Permission"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"permissions"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "Retrieves a list of all permissions of the member with the given ID",
-				"summary": "Get permissions by member id",
-				"tags": [
-					"Members"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"description": "The id of the member to retrieve the permissions from",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
 			}
 		},
 		"/members/{id}": {

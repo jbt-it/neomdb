@@ -1,14 +1,17 @@
+import { DirectorHasPermission } from "typeOrm/entities/DirectorHasPermission";
+import { Department } from "../../typeOrm/entities/Department";
+import { Member } from "../../typeOrm/entities/Member";
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
   DirectorDto,
+  DirectorPositionDto,
   MemberDetailsDto,
   MemberPartialDto,
+  MemberPermissionAssignmentDto,
   MenteeDto,
   MentorDto,
 } from "../../typeOrm/types/memberTypes";
-import { Member } from "../../typeOrm/entities/Member";
-import { Department } from "../../typeOrm/entities/Department";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -46,6 +49,20 @@ export class MemberMapper {
       firstname: member.firstName,
       lastname: member.lastName,
       department: this.departmentToDepartmentPartialDto(member.department),
+    };
+  }
+  static directorHasPermissionToDirectorPositionDto(directorHasPermission: DirectorHasPermission): DirectorPositionDto {
+    return {
+      directorId: directorHasPermission.directorId,
+      shortName: directorHasPermission.director.shortName,
+      canDelegate: directorHasPermission.canDelegate,
+    };
+  }
+  static memberToMemberPermissionAssignmentDto(member: Member): MemberPermissionAssignmentDto {
+    return {
+      memberId: member.memberId,
+      firstname: member.firstName,
+      lastname: member.lastName,
     };
   }
   static memberToMemberPartialDto(member: Member): MemberPartialDto {
