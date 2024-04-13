@@ -425,7 +425,7 @@ INSERT INTO `mitglied_has_berechtigung` (`mitglied_mitgliedID`, `berechtigung_be
 -- Daten für Tabelle `mitglied_has_event`
 --
 
-INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `teilnehmer`, `organisator`) VALUES
+INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `ist_teilnehmer`, `ist_organisator`) VALUES
 (7, 8111, 0, 1),
 (7, 8222, 1, 0),
 (7, 8324, 0, 1),
