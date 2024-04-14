@@ -129,6 +129,35 @@ export type MemberPartialDto = {
 };
 
 /**
+ * Type of the member permission asignment dto used for the permission page
+ */
+export type MemberPermissionAssignmentDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+};
+
+/**
+ * Type of the director position dto
+ */
+export type DirectorPositionDto = {
+  directorId: number;
+  canDelegate: boolean;
+  shortName: string;
+};
+
+/**
+ * Type of the permission assignment (permission of a member or a director)
+ */
+export type PermissionAssignmentDto = {
+  permissionID: number;
+  name: string;
+  description: string;
+  members: MemberPermissionAssignmentDto[];
+  directors: DirectorPositionDto[];
+};
+
+/**
  * Type of a member of a department (partial member with department information)
  */
 export type DepartmentMemberDto = {
