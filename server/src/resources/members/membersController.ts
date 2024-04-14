@@ -308,27 +308,6 @@ export class MembersController extends Controller {
   }
 
   /**
-   * Retrieves a list of all permissions of the member with the given ID
-   * @summary Get permissions by member id
-   * @param id The id of the member to retrieve the permissions from
-   */
-  /*  @Get("{id}/permissions")
-  @Security("jwt")
-  public async getPermissionsByMemberID(
-    @Path() id: number,
-    @Request() request: any
-  ): Promise<{ permissions: Permission[] }> {
-    const user = request.user as JWTPayload;
-    const userHasAnyPermission = user.permissions.length > 0;
-    if (!userHasAnyPermission) {
-      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
-    }
-    const permissions = await this.membersService.getPermissionsByMemberID(id);
-
-    return permissions;
-  } */
-
-  /**
    * Create new permission for member
    * @summary Create permission
    * @param requestBody The permission to create

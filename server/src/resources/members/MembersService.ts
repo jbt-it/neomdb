@@ -186,24 +186,6 @@ class MembersService {
   };
 
   /**
-   * Retrieves permissions of a member with the given `memberID`
-   */
-  getPermissionsByMemberID = async (memberID: number) => {
-    const user: User = await this.authRepository.getUserByID(memberID);
-
-    if (user === null) {
-      throw new NotFoundError(`No member found with id ${memberID}`);
-    }
-
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(memberID);
-
-    const payload = createUserDataPayload(user, directorPermissions);
-    const permissions = { permissions: payload.permissions };
-
-    return permissions;
-  };
-
-  /**
    * Adds a permission to a member
    * @throws NotFoundError if the member or the permission does not exist
    */
@@ -227,9 +209,10 @@ class MembersService {
   };
 
   /**
-   * Retrieves all permissions of a member
+   * Deletes a permission from a member
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
+    // TODO: Add error handling
     await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
   };
 

@@ -5220,8 +5220,8 @@
 						"description": ""
 					}
 				},
-				"description": "Retrieves a list of all permissions of the member with the given ID",
-				"summary": "Get permissions by member id",
+				"description": "Create new permission for member",
+				"summary": "Create permission",
 				"tags": [
 					"Members"
 				],
@@ -5239,6 +5239,10 @@
 							"schema": {
 								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
 								"description": "The permission to create"
+							},
+							"example": {
+								"memberID": 8167,
+								"permissionID": 8
 							}
 						}
 					}
