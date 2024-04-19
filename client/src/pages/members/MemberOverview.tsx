@@ -16,7 +16,6 @@ import {
   IconButton,
   Grid,
   Typography,
-  Link,
   useTheme,
   Box,
   styled,
@@ -27,6 +26,7 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { useContext } from "react";
 import * as membersTypes from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
+import { Link } from "react-router-dom";
 
 // styled form component
 const StyledForm = styled("form")(({ theme }) => ({
@@ -141,6 +141,14 @@ const MemberOverview: React.FunctionComponent = () => {
       },
     },
   };
+
+  const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+    &:hover {
+      text-decoration: underline;
+    }
+  `;
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [members, setMembers] = useState<membersTypes.Member[]>([]);
@@ -463,11 +471,9 @@ const MemberOverview: React.FunctionComponent = () => {
               <TableRow hover key={index}>
                 <TableCell component="th" scope="row">
                   <Typography color="secondary">
-                    <Link
-                      color="textPrimary"
-                      underline="hover"
-                      href={`/gesamtuebersicht/${member.mitgliedID}`}
-                    >{`${member.vorname}.${member.nachname}`}</Link>
+                    <StyledLink
+                      to={`/gesamtuebersicht/${member.mitgliedID}`}
+                    >{`${member.vorname}.${member.nachname}`}</StyledLink>
                   </Typography>
                 </TableCell>
                 <TableCell>{member.handy}</TableCell>

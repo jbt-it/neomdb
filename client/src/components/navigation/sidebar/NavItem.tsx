@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import { Box, ListItemButton, Collapse, List } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -89,7 +89,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
             {item.children.map((child: NavItemChildProps) =>
               child.permissions && auth.permissions.length === 0 ? null : (
                 <ListItemButton
-                  component={Link}
+                  component={NavLink}
                   to={child.path}
                   key={child.title}
                   sx={{
@@ -101,7 +101,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
                     color: "text.secondary",
                     textTransform: "capitalize",
                     fontWeight: "fontWeightMedium",
-                    ...(child.path === pathname.replace("/#", "").split("/").slice(0, 2).join("/") && {
+                    ...(child.path === pathname.split("/").slice(0, 2).join("/") && {
                       color: "primary.main",
                       fontWeight: "fontWeightSemiBold",
                       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
@@ -122,7 +122,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   } else if (item.path !== undefined) {
     return (
       <ListItemButton
-        component={Link}
+        component={NavLink}
         to={item.path}
         key={item.title}
         sx={{

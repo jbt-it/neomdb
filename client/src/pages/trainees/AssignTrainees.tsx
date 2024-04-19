@@ -4,7 +4,6 @@
 import React, { useState } from "react";
 import {
   Paper,
-  Link,
   Divider,
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
 } from "@mui/material";
 import { showErrorMessage } from "../../utils/toastUtils";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
+import { Link } from "react-router-dom";
 
 type TraineeType = {
   mitgliedID: number;
@@ -118,6 +118,7 @@ const AssignTrainees: React.FunctionComponent = () => {
     linkText: {
       textDecoration: "none",
       boxShadow: "none",
+      color: "black",
     },
     motivationalTextPaper: {
       overflowY: "auto",
@@ -273,9 +274,8 @@ const AssignTrainees: React.FunctionComponent = () => {
               <TableCell component="th" scope="row">
                 <Typography color="secondary">
                   <Link
-                    color="textPrimary"
-                    underline="hover"
-                    href={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                    to={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                    style={styles.linkText}
                   >{`${trainee.vorname} ${trainee.nachname}`}</Link>
                 </Typography>
               </TableCell>

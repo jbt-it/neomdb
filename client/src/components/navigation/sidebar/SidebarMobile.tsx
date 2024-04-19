@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SwipeableDrawer, Box, Avatar, Typography, Divider } from "@mui/material";
 import JBTLogo from "../../../assets/jbt-logo.svg";
-import navConfig from "../navConfig";
+import navConfig from "./navConfig";
 import NavItem from "./NavItem";
 
 interface SidebarMobileProps {

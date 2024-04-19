@@ -22,7 +22,6 @@ import {
   MenuItem,
   Checkbox,
   ListItemText,
-  Link,
   Container,
   List,
   ListItem,
@@ -48,6 +47,7 @@ import { CommonEventType } from "../../types/eventTypes";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
+import { Link } from "react-router-dom";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -852,12 +852,12 @@ const EventsOverview: React.FC = () => {
                 ) : null}
                 <TableRow>
                   <TableCell>
-                    <Link href={`/veranstaltungen/${row.ID}`}>
+                    <Link to={`/veranstaltungen/${row.ID}`}>
                       <EventChip type={row.type} size="small" />
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Link color="textPrimary" underline="hover" href={`/veranstaltungen/${row.ID}`}>
+                    <Link style={{ textDecoration: "none", color: "black" }} to={`/veranstaltungen/${row.ID}`}>
                       {row.name}
                     </Link>
                   </TableCell>
@@ -946,7 +946,7 @@ const EventsOverview: React.FC = () => {
               sx={{ p: 0.5, flexDirection: "column", alignItems: "flex-start", mb: 1, width: "100%" }}
               style={{ boxShadow: "none" }}
             >
-              <CardActionArea component={Link} href={`/veranstaltungen/${row.ID}`}>
+              <CardActionArea component={Link} to={`/veranstaltungen/${row.ID}`}>
                 <CardContent sx={{ p: 0 }}>
                   <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
                     <EventChip type={row.type} size="small" sx={{ ml: -0.5, mr: 1 }} />

@@ -332,11 +332,23 @@ const DepartmentOverview: React.FunctionComponent = () => {
             key={index}
           >
             <Box sx={styles.buttonGroup}>
-              <Button sx={styles.button} variant="contained" href={department.linkZielvorstellung} target="_blank">
+              <Button
+                sx={styles.button}
+                variant="contained"
+                component={Link}
+                to={department.linkZielvorstellung}
+                target="_blank"
+              >
                 Zu den Zielen
               </Button>
               <Box sx={styles.spacing}></Box>
-              <Button sx={styles.button} variant="contained" href={department.linkOrganigramm} target="_blank">
+              <Button
+                sx={styles.button}
+                variant="contained"
+                component={Link}
+                to={department.linkOrganigramm}
+                target="_blank"
+              >
                 Zur Organisation
               </Button>
             </Box>

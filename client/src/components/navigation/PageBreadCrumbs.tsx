@@ -1,7 +1,7 @@
 import React from "react";
-import { Breadcrumbs, Link, Typography, Box, Stack, IconButton } from "@mui/material";
+import { Breadcrumbs, Typography, Box, Stack, IconButton } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
 import { Info } from "@mui/icons-material";
 
@@ -23,6 +23,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   innovationsmanagement: "Innovationsmanagement",
   kvp: "KVP",
   "passwort-aendern": "Passwort ändern",
+  feedbackauswertung: "Feedbackauswertung",
 };
 
 const PageBreadCrumbs = () => {
@@ -42,10 +43,11 @@ const PageBreadCrumbs = () => {
     } else if (value.match(/^\d+$/) && array[index - 1] === "veranstaltungen") {
       displayName = "Veranstaltungsdetails"; // For dynamic event pages under Veranstaltungen
     } else if (value.match(/^\d+$/) && array[index - 1] === "internes-projekt") {
-      displayName = "Details Internes Projekt"; // For dynamic event pages under Internes Projekt
+      displayName = "Details Internes Projekt"; // For dynamic ip pages under Internes Projekt
     } else {
       displayName = staticPathToNameMap[value] || value; // Use mapped name or raw value
     }
+
     // Return link or text element based on whether it's the last element
     return last ? (
       <Stack direction={"row"} alignItems={"center"}>
@@ -57,7 +59,7 @@ const PageBreadCrumbs = () => {
         </IconButton>
       </Stack>
     ) : (
-      <Link key={to} color="inherit" href={to} fontSize={16} style={{ textDecoration: "none" }}>
+      <Link key={to} to={to} style={{ color: "inherit", fontSize: 16, textDecoration: "none" }}>
         {displayName}
       </Link>
     );
@@ -65,8 +67,8 @@ const PageBreadCrumbs = () => {
 
   return (
     <Box sx={{ ml: isMobile ? 3 : 1 }}>
-      <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-        <Link color="inherit" href="/" style={{ textDecoration: "none" }}>
+      <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb" maxItems={2}>
+        <Link color="inherit" to="/" style={{ color: "inherit", textDecoration: "none" }}>
           <Typography fontSize={16} color="inherit">
             Dashboard
           </Typography>

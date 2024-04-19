@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, List, Stack } from "@mui/material";
-import navConfig from "../navConfig";
+import navConfig from "./navConfig";
 import NavItem from "./NavItem";
 
 const SidebarDesktop = () => {
