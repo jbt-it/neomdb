@@ -7,6 +7,7 @@ import PageBreadCrumbs from "../navigation/PageBreadCrumbs";
 import useResponsive from "../../hooks/useResponsive";
 import SidebarMobile from "../navigation/sidebar/SidebarMobile";
 import SidebarDesktop from "../navigation/sidebar/SidebarDesktop";
+import usePathname from "../../hooks/usePathname";
 
 /**
  * This component is responsible for rendering the app.
@@ -17,6 +18,7 @@ import SidebarDesktop from "../navigation/sidebar/SidebarDesktop";
 const Layout = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const isMobile = useResponsive("down", "lg");
+  const isDashboard = usePathname() === "/";
 
   return (
     <>
@@ -52,20 +54,22 @@ const Layout = () => {
             pl: { xs: 0, lg: 2 },
           }}
         >
-          <Box
-            sx={{
-              position: "fixed",
-              bgcolor: "white",
-              zIndex: 800,
-              width: 1,
-              ml: isMobile ? -1 : -1.9,
-              pl: isMobile ? 0 : 2,
-              mt: isMobile ? -1 : 0,
-            }}
-          >
-            <PageBreadCrumbs />
-          </Box>
-          <Box sx={{ ml: isMobile ? 0 : 1, mr: isMobile ? 0 : 1, paddingTop: isMobile ? 7 : 5 }}>
+          {isDashboard ? null : (
+            <Box
+              sx={{
+                position: "fixed",
+                bgcolor: "white",
+                zIndex: 800,
+                width: 1,
+                ml: isMobile ? -1 : -1.9,
+                pl: isMobile ? 0 : 2,
+                mt: isMobile ? -1 : 0,
+              }}
+            >
+              <PageBreadCrumbs />
+            </Box>
+          )}
+          <Box sx={{ ml: isMobile ? 0 : 1, mr: isMobile ? 0 : 1, paddingTop: isDashboard ? 0 : isMobile ? 7 : 5 }}>
             <Outlet />
           </Box>
         </Box>
