@@ -56,9 +56,10 @@ const Layout = () => {
             sx={{
               position: "fixed",
               bgcolor: "white",
-              zIndex: 900,
+              zIndex: 800,
               width: 1,
-              ml: isMobile ? -1 : 0,
+              ml: isMobile ? -1 : -1.9,
+              pl: isMobile ? 0 : 2,
               mt: isMobile ? -1 : 0,
             }}
           >
