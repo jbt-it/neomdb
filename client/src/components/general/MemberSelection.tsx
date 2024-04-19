@@ -62,7 +62,7 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
           <Autocomplete
             disablePortal
             autoSelect
-            className={`${styles.fieldItem} `}
+            sx={styles.fieldItem}
             id={`members-${index}`}
             options={selectableMembers}
             filterOptions={(options, state) => {

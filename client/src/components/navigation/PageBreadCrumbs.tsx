@@ -67,7 +67,11 @@ const PageBreadCrumbs = () => {
 
   return (
     <Box sx={{ ml: isMobile ? 3 : 1 }}>
-      <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb" maxItems={2}>
+      <Breadcrumbs
+        separator={<NavigateNextIcon fontSize="small" />}
+        aria-label="breadcrumb"
+        maxItems={isMobile ? 2 : 4}
+      >
         <Link color="inherit" to="/" style={{ color: "inherit", textDecoration: "none" }}>
           <Typography fontSize={16} color="inherit">
             Dashboard
