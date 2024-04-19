@@ -146,7 +146,7 @@ const WorkshopInstanceFeedbackForm: React.FunctionComponent<WorkshopInstanceFeed
           </Grid>
         ))}
         <Grid item xs={6} sx={{ mt: 2 }}>
-          <Button variant="contained" fullWidth href={`/#/`}>
+          <Button variant="contained" fullWidth href={`/`}>
             Abbrechen
           </Button>
         </Grid>

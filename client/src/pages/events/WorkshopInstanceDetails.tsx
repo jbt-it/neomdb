@@ -193,7 +193,7 @@ const WorkshopInstanceDetails = () => {
     ) : workshopInstance.status === "Feedback" || workshopInstance.status === "Abgeschlossen" ? (
       <Button
         variant="contained"
-        href={`/#/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
+        href={`/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
         sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
         color="info"
         startIcon={<Grade />}
@@ -247,7 +247,7 @@ const WorkshopInstanceDetails = () => {
   ];
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 3 }}>
+    <Container>
       {isRegistraionClosing ? (
         <WorkshopInstanceAdmissionClosingTable
           participants={participants}

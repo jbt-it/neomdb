@@ -1,29 +1,13 @@
-import React, { useState } from "react";
-
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  Box,
-  Stack,
-  SwipeableDrawer,
-  ListItemButton,
-  Collapse,
-  List,
-  Avatar,
-  Typography,
-  Divider,
-} from "@mui/material";
+import { Box, ListItemButton, Collapse, List } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-import { Permission } from "../../types/globalTypes";
-import { useAuth } from "../../hooks/useAuth";
-import usePathname from "../../hooks/usePathname";
-import useResponsive from "../../hooks/useResponsive";
-
-import JBTLogo from "../../assets/jbt-logo.svg";
-import navConfig from "./navConfig";
+import { Permission } from "../../../types/globalTypes";
+import { useAuth } from "../../../hooks/useAuth";
+import usePathname from "../../../hooks/usePathname";
 
 interface NavItemProps {
   item: {
@@ -46,12 +30,6 @@ interface NavItemChildProps {
   permissions?: Permission[];
 }
 
-interface NavProps {
-  openDrawer: boolean;
-  onCloseDrawer: () => void;
-  onOpenDrawer: () => void;
-}
-
 /**
  * The NavItem-Component displays a single item in the sidebar
  * For Each Item we render a ListItemButton with an icon and a title
@@ -66,9 +44,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   useEffect(() => {
     if (item.children !== undefined) {
       setActiveChild(
-        item.children.some(
-          (child: NavItemChildProps) => child.path === pathname.replace("/#", "").split("/").slice(0, 2).join("/")
-        )
+        item.children.some((child: NavItemChildProps) => child.path === pathname.split("/").slice(0, 2).join("/"))
       );
     }
   }, [item.children, pathname]);
@@ -79,6 +55,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
     const handleCollpaseClick = () => {
       setOpenItem(!openItem);
     };
+
     return (
       <>
         <ListItemButton
@@ -193,141 +170,4 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   }
 };
 
-/**
- * The Sidebar-Component displays the sidebar on the left side of the screen
- * We render the account information and the navigation items
- */
-const Sidebar = ({ openDrawer, onCloseDrawer, onOpenDrawer }: NavProps) => {
-  const pathname = usePathname();
-  const upLg = useResponsive("up", "lg");
-  const navWidth = { width: 280 };
-
-  useEffect(() => {
-    if (openDrawer) {
-      onCloseDrawer();
-    }
-  }, [pathname]);
-
-  const [openMitglieder, setOpenMitglieder] = useState(false);
-  const [openTools, setOpenTools] = useState(false);
-  const [openEvents, setOpenEvents] = useState(false);
-
-  const handleOpenMitglieder = () => {
-    setOpenMitglieder(!openMitglieder);
-    if (openTools) {
-      setOpenTools(false);
-    }
-    if (openEvents) {
-      setOpenEvents(false);
-    }
-  };
-
-  const handleOpenTools = () => {
-    setOpenTools(!openTools);
-    if (openMitglieder) {
-      setOpenMitglieder(false);
-    }
-    if (openEvents) {
-      setOpenEvents(false);
-    }
-  };
-
-  const handleOpenEvents = () => {
-    setOpenEvents(!openEvents);
-    if (openMitglieder) {
-      setOpenMitglieder(false);
-    }
-    if (openTools) {
-      setOpenTools(false);
-    }
-  };
-
-  /**
-   * Renders the navigation items
-   * We map over the navConfig and render a NavItem for each item
-   * We also render a logout button at the bottom
-   */
-  const renderNavigationMenu = () => (
-    <Stack component="nav" spacing={0.5} sx={{ px: 2, mt: 2 }}>
-      {navConfig.map((item) => (
-        <NavItem
-          key={item.title}
-          item={item}
-          openItem={
-            item.title === "Mitglieder"
-              ? openMitglieder
-              : item.title === "Tools"
-              ? openTools
-              : item.title === "Veranstaltungen"
-              ? openEvents
-              : undefined
-          }
-          setOpenItem={
-            item.title === "Mitglieder"
-              ? handleOpenMitglieder
-              : item.title === "Tools"
-              ? handleOpenTools
-              : item.title === "Veranstaltungen"
-              ? handleOpenEvents
-              : undefined
-          }
-        />
-      ))}
-    </Stack>
-  );
-
-  return (
-    <Box
-      sx={{
-        flexShrink: { lg: 0 },
-        width: { lg: navWidth.width },
-      }}
-    >
-      {upLg ? (
-        <Box
-          sx={{
-            mt: -2,
-            position: "fixed",
-            height: "100%",
-            width: { lg: navWidth.width },
-            borderRight: { lg: "1px solid rgba(0, 0, 0, 0.12)" },
-          }}
-        >
-          {renderNavigationMenu()}
-        </Box>
-      ) : (
-        <SwipeableDrawer
-          open={openDrawer}
-          onClose={onCloseDrawer}
-          onOpen={onOpenDrawer}
-          PaperProps={{
-            sx: {
-              width: navWidth.width,
-            },
-          }}
-        >
-          <Box
-            sx={{
-              py: 2,
-              px: 2.5,
-              mt: 1,
-              display: "flex",
-              justifyContent: "flex-start",
-              borderRadius: 1.5,
-              alignItems: "center",
-            }}
-          >
-            <Avatar src={JBTLogo} alt="photoURL" />
-            <Typography ml={2} variant="h6" color={"text.secondary"}>
-              neoMDB
-            </Typography>
-          </Box>
-          <Divider />
-          <Box sx={{ mt: 1 }}>{renderNavigationMenu()}</Box>
-        </SwipeableDrawer>
-      )}
-    </Box>
-  );
-};
-
-export default Sidebar;
+export default NavItem;
