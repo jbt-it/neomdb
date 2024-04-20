@@ -190,7 +190,8 @@ class MembersService {
    * @throws NotFoundError if the member or the permission does not exist
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = this.membersRepository.getMemberByID(memberID, false);
+    // TODO: Adjust error handling
+    /*     const memberQuery = this.membersRepository.getMemberByID(memberID, false);
     const permissionQuery = this.membersRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
@@ -205,7 +206,9 @@ class MembersService {
       throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
     }
 
-    await this.membersRepository.addPermissionToMember(memberID, permissionID);
+    await this.membersRepository.addPermissionToMember(memberID, permissionID); */
+
+    await PermissionsRepository_typeORM.addPermissionToMember(memberID, permissionID);
   };
 
   /**

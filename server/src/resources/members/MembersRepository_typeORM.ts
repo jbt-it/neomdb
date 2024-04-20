@@ -4,6 +4,7 @@ import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 import { Permission } from "../../typeOrm/entities/Permission";
+import { add } from "winston";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -142,5 +143,15 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
    */
   async getPermissionWithAssignments(): Promise<Permission[]> {
     return this.find({ relations: ["directorHasPermissions", "directorHasPermissions.director", "members"] });
+  },
+
+  /**
+   * Adds a permission to a member
+   * @param memberID The id of the member
+   * @param permissionID The id of the permission
+   * @returns void
+   */
+  async addPermissionToMember(memberID: number, permissionID: number): Promise<void> {
+    return this.createQueryBuilder().relation(Member, "permissions").of(memberID).add(permissionID);
   },
 });
