@@ -4,6 +4,7 @@
 
 import { Dayjs } from "dayjs";
 import { MembersField } from "./membersTypes";
+import { MemberPartialDto } from "./membersTypes";
 
 /**
  * Type of a trainee
@@ -42,28 +43,18 @@ export type TraineeShort = {
 };
 
 export type InternalProject = {
-  internesprojektID: number;
+  internalProjectId: number;
   generation: number;
-  projektname: string;
-  kickoff: string;
-  AngebotBeiEV: boolean;
-  ZPgehalten: boolean;
-  APgehalten: string;
-  DLbeiEV: boolean;
-};
-
-export type InternalProjectAll = {
-  internesProjektID: number;
-  generation: number;
-  projektname: string;
-  kuerzel: string;
+  projectName: string;
+  abbreviation: string;
   kickoff: Date | null;
-  AngebotBeiEV: number;
-  ZPBeiEV: number;
-  ZPGehalten: Date | null;
-  APBeiEV: number;
-  APGehalten: Date | null;
-  DLBeiEV: number;
+  offerAtEv: boolean;
+  zpAtEv: boolean;
+  zpHeld: Date | null;
+  apAtEv: boolean;
+  apHeld: Date | null;
+  dlAtEv: boolean;
+  members: MemberPartialDto[];
 };
 
 export type Generation = {

@@ -1,30 +1,37 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
+import path from "path";
+import AuthRepository from "../../auth/AuthRepository";
+import { executeInTransaction } from "../../database";
+import { NotFoundError, QueryError } from "../../types/Errors";
+import { Permission, User } from "../../types/authTypes";
 import {
   CreateMemberRequest,
   EdvSkill,
   Language,
   Member,
-  MemberDetails,
-  MemberPartial,
   MemberStatus,
-  Mentee,
   Mentor,
   NewMember,
   StatusOverview,
-  UpdateDepartmentRequest,
-} from "types/membersTypes";
+  UpdateDepartmentDto,
+} from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
-import AuthRepository from "../../auth/AuthRepository";
-import { executeInTransaction } from "../../database";
-import { NotFoundError, QueryError } from "../../types/Errors";
-import { Permission, User } from "../../types/authTypes";
 import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import TraineesRepository from "../trainees/TraineesRepository";
+import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
+import { MemberMapper } from "./MemberMapper";
 import MembersRepository from "./MembersRepository";
-import path from "path";
+import {
+  ItSkillsRepository_typeORM,
+  LanguagesRepository_typeORM,
+  MembersRepository_typeORM,
+  PermissionsRepository_typeORM,
+} from "./MembersRepository_typeORM";
+import { DepartmentMapper } from "./DepartmentMapper";
+import { PermissionMapper } from "./PermissionMapper";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -38,9 +45,8 @@ class MembersService {
    * Retrieves a list of all members
    */
   getMemberList = async () => {
-    const memberList: MemberPartial[] = await this.membersRepository.getMembers();
-
-    return memberList;
+    const memberList = await MembersRepository_typeORM.getMembersWithDepartment();
+    return memberList.map((member) => MemberMapper.memberToMemberPartialDto(member));
   };
 
   /**
@@ -48,34 +54,12 @@ class MembersService {
    * @throws NotFoundError if no member was found
    */
   getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
-    const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
-
-    if (member === null) {
+    const memberDetails = await MembersRepository_typeORM.getMemberDetailsByID(memberID);
+    if (memberDetails === null) {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    const languagesQuery: Promise<Language[]> = this.membersRepository.getLanguagesByMemberID(memberID);
-    const edvSkillsQuery: Promise<EdvSkill[]> = this.membersRepository.getEdvSkillsByMemberID(memberID);
-    const mentorQuery: Promise<Mentor> = this.membersRepository.getMentorByMemberID(memberID);
-    const menteesQuers: Promise<Mentee[]> = this.membersRepository.getMenteesByMemberID(memberID);
-
-    // Executing all queries concurrently
-    const results = await Promise.all([languagesQuery, edvSkillsQuery, mentorQuery, menteesQuers]);
-
-    const languages = results[0];
-    const edvSkills = results[1];
-    const mentor = results[2];
-    const mentees = results[3];
-
-    // Combine the four parts for the complete member dto
-    const memberDto: MemberDetails = {
-      ...member,
-      mentor,
-      mentees,
-      sprachen: languages,
-      edvkenntnisse: edvSkills,
-    };
-    return memberDto;
+    return MemberMapper.membertoMemberDetailsDto(memberDetails, withFinancialData);
   };
 
   /**
@@ -121,53 +105,57 @@ class MembersService {
    * Retrieves a list of all members grouped by their department
    */
   getMembersOfDepartments = async () => {
-    const membersOfDepartments = await this.membersRepository.getMembersGroupedByDepartment();
-
-    return membersOfDepartments;
+    const membersOfDepartments2 =
+      await MembersRepository_typeORM.getActiveMembersWithDepartmentAndWithDirectorPositions();
+    return membersOfDepartments2.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
   };
 
   /**
    * Retrieves all directors or only the current directors if `onlyCurrent` is true
    */
   getDirectors = async (onlyCurrent: boolean) => {
-    const directors = await this.membersRepository.getDirectors(onlyCurrent);
+    let directors = [];
+    if (onlyCurrent) {
+      directors = await MembersRepository_typeORM.getCurrentDirectors();
+    } else {
+      directors = await MembersRepository_typeORM.getAllDirectors();
+    }
 
-    return directors;
+    return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 
   /**
    * Retrieves all departments
    */
   getDepartments = async () => {
-    const departments = await this.membersRepository.getDepartments();
+    const departments = await DepartmentRepository_typeORM.getDepartments();
 
-    return departments;
+    return departments.map((department) => DepartmentMapper.departmentToDepartmentDetailsDto(department));
   };
 
   /**
    * Updates the department with the given id
    * @throws NotFoundError if no department was found
    */
-  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentRequest) => {
-    const department = await this.membersRepository.getDepartmentByID(departmentID);
+  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentDto) => {
+    const department = await DepartmentRepository_typeORM.getDepartmentById(departmentID);
 
     if (department === null) {
       throw new NotFoundError(`Department with id ${departmentID} not found`);
     }
 
-    await this.membersRepository.updateDepartmentByID(
-      departmentID,
-      updateDepartmentRequest.linkOrganigramm,
-      updateDepartmentRequest.linkZielvorstellung
-    );
+    // Update department data
+    department.linkObjectivePresentation = updateDepartmentRequest.linkObjectivePresentation;
+    department.linkOrganigram = updateDepartmentRequest.linkOrganigram;
+
+    await DepartmentRepository_typeORM.saveDepartment(department);
   };
 
   /**
    * Retrieves all language values
    */
   getLanguageValues = async () => {
-    const languageValues = await this.membersRepository.getLanguageValues();
-
+    const languageValues = await LanguagesRepository_typeORM.getLanguageValues();
     return languageValues;
   };
 
@@ -175,7 +163,7 @@ class MembersService {
    * Retrieves all edv skill values
    */
   getEdvSkillValues = async () => {
-    const edvSkillValues = await this.membersRepository.getEdvSkillValues();
+    const edvSkillValues = await ItSkillsRepository_typeORM.getItSkillValues();
 
     return edvSkillValues;
   };
@@ -184,7 +172,7 @@ class MembersService {
    * Retrieves all permissions
    */
   getPermissions = async () => {
-    const permissions = await this.membersRepository.getPermissions();
+    const permissions = await PermissionsRepository_typeORM.getPermissions();
 
     return permissions;
   };
@@ -193,27 +181,8 @@ class MembersService {
    * Retrieves all permission assignments
    */
   getPermissionAssignments = async () => {
-    const permissionAssignments = await this.membersRepository.getPermissionAssignments();
-
-    return permissionAssignments;
-  };
-
-  /**
-   * Retrieves permissions of a member with the given `memberID`
-   */
-  getPermissionsByMemberID = async (memberID: number) => {
-    const user: User = await this.authRepository.getUserByID(memberID);
-
-    if (user === null) {
-      throw new NotFoundError(`No member found with id ${memberID}`);
-    }
-
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(memberID);
-
-    const payload = createUserDataPayload(user, directorPermissions);
-    const permissions = { permissions: payload.permissions };
-
-    return permissions;
+    const permissionAssignments = await PermissionsRepository_typeORM.getPermissionWithAssignments();
+    return permissionAssignments.map((permission) => PermissionMapper.permissionToPermissionAssignment(permission));
   };
 
   /**
@@ -240,9 +209,10 @@ class MembersService {
   };
 
   /**
-   * Retrieves all permissions of a member
+   * Deletes a permission from a member
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
+    // TODO: Add error handling
     await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
   };
 

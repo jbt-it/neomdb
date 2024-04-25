@@ -16,7 +16,7 @@ import { eventParticipants } from "../../mock/events/eventParticipants";
 import useResponsive from "../../hooks/useResponsive";
 import { AddCircle, CheckCircle, RemoveCircleOutline, Group, Grade } from "@mui/icons-material";
 import api from "../../utils/api";
-import { Member } from "../../types/membersTypes";
+import { MemberPartialDto } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
@@ -76,11 +76,11 @@ const WorkshopInstanceDetails = () => {
         if (res.status === 200) {
           if (mounted) {
             setMembers(
-              res.data.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
+              res.data.map((member: MemberPartialDto) => ({
+                memberId: member.memberId,
+                firstname: member.firstname,
+                lastname: member.lastname,
+                memberStatus: member.memberStatus,
               }))
             );
           }

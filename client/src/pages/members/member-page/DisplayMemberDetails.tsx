@@ -24,16 +24,12 @@ import {
 import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
-import {
-  transformSQLStringToGermanDate,
-  transformGermanDateToSQLString,
-  transformStringToSQLString,
-} from "../../../utils/dateUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
 import MemberImage from "../../../components/general/MemberImage";
+import { stringToDate } from "../../../utils/dateUtils";
 
 /**
  * Function which proivdes the styles of the MemberPage
@@ -170,15 +166,15 @@ const useStyles = makeStyles((theme: Theme) =>
  * Interface for the props of the DisplayMemberDetails
  */
 interface DisplayMemberDetailsProps {
-  members: membersTypes.Member[];
+  members: membersTypes.MemberPartialDto[];
   listOfPermissions: globalTypes.Permission[];
-  departments: membersTypes.Department[];
+  departments: membersTypes.DepartmentPartialDto[];
   listOfLanguages: membersTypes.Language[];
-  listOfEDVSkills: membersTypes.EDVSkill[];
-  memberDetails: membersTypes.MemberDetails;
+  listOfEDVSkills: membersTypes.ItSkill[];
+  memberDetails: membersTypes.MemberDetailsDto;
   isOwner: boolean;
   memberImage: membersTypes.MemberImage | null;
-  updateMemberDetails: (data: membersTypes.MemberDetails) => void;
+  updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
   getMemberDetails: () => void;
 }
@@ -187,65 +183,70 @@ interface DisplayMemberDetailsProps {
  * Displays the member details
  */
 const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
+  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
   const classes = useStyles();
 
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
 
   // Filter of languages for the autocomplete component
-  const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
-
-  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
+  const itFilter = createFilterOptions<membersTypes.ItSkill>();
 
   const [careerOpen, setCareerOpen] = useState(false);
-  const [lastname] = useState(memberDetails.nachname);
-  const [name] = useState<string>(memberDetails.vorname);
-  const [birthday, setBirthday] = useState<string>(transformSQLStringToGermanDate(memberDetails.geburtsdatum));
-  const [smartphone, setSmartphone] = useState<string>(memberDetails.handy ? memberDetails.handy : "");
-  const [jbtMail, setJbtMail] = useState<string>(memberDetails.jbt_email);
-  const [memberState] = useState<string>(memberDetails.mitgliedstatus);
-  const [department, setDepartment] = useState<string | null>(memberDetails.ressort);
-  const [mentorState, setMentorState] = useState<membersTypes.Mentor | null>(
+  const [lastname] = useState(memberDetails.lastname);
+  const [name] = useState<string>(memberDetails.firstname);
+  const [birthday, setBirthday] = useState<Date | null>(memberDetails.birthday);
+  const [smartphone, setSmartphone] = useState<string>(memberDetails.mobile ? memberDetails.mobile : "");
+  const [jbtMail, setJbtMail] = useState<string>(memberDetails.jbtEmail);
+  const [memberState] = useState<membersTypes.MemberStatus>(memberDetails.memberStatus);
+  const [department, setDepartment] = useState<membersTypes.DepartmentPartialDto | null>(memberDetails.department);
+  const [mentorState, setMentorState] = useState<membersTypes.MentorDto | null>(
     memberDetails.mentor ? memberDetails.mentor : null
   );
-  const [employer, setEmployer] = useState<string>(memberDetails.arbeitgeber ? memberDetails.arbeitgeber : "");
-  const [street1, setStreet1] = useState<string>(memberDetails.strasse1 ? memberDetails.strasse1 : "");
-  const [plz1State, setPlz1State] = useState<string>(memberDetails.plz1 ? memberDetails.plz1.toString() : "");
-  const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.ort1 ? memberDetails.ort1 : "");
-  const [telephone1] = useState<string>(memberDetails.tel1 ? memberDetails.tel1.toString() : "");
+  const [employer, setEmployer] = useState<string>(memberDetails.employer ? memberDetails.employer : "");
+  const [street1, setStreet1] = useState<string>(memberDetails.street1 ? memberDetails.street1 : "");
+  const [plz1State, setPlz1State] = useState<string>(
+    memberDetails.postalCode1 ? memberDetails.postalCode1.toString() : ""
+  );
+  const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.city1 ? memberDetails.city1 : "");
+  const [telephone1] = useState<string>(memberDetails.phone1 ? memberDetails.phone1.toString() : "");
   const [email1State] = useState<string>(memberDetails.email1 || "");
-  const [street2] = useState<string>(memberDetails.strasse2 ? memberDetails.strasse2 : "");
-  const [plz2State] = useState<string>(memberDetails.plz2 ? memberDetails.plz2.toString() : "");
-  const [placeOfResidence2] = useState<string>(memberDetails.ort2 ? memberDetails.ort2 : "");
-  const [telephone2] = useState<string>(memberDetails.tel2 ? memberDetails.tel2.toString() : "");
+  const [street2] = useState<string>(memberDetails.street2 ? memberDetails.street2 : "");
+  const [plz2State] = useState<string>(memberDetails.postalCode2 ? memberDetails.postalCode2.toString() : "");
+  const [placeOfResidence2] = useState<string>(memberDetails.city2 ? memberDetails.city2 : "");
+  const [telephone2] = useState<string>(memberDetails.phone2 ? memberDetails.phone2.toString() : "");
   const [email2State] = useState<string>(memberDetails.email2 ? memberDetails.email2 : "");
-  const [university, setUniversity] = useState<string>(memberDetails.hochschule);
-  const [courseOfStudy, setCourseOfStudy] = useState<string>(memberDetails.studiengang);
-  const [startOfStudy, setStartOfStudy] = useState<string>(transformSQLStringToGermanDate(memberDetails.studienbeginn));
-  const [endOfStudy, setEndOfStudy] = useState<string>(transformSQLStringToGermanDate(memberDetails.studienende));
-  const [speciality, setSpeciality] = useState<string>(memberDetails.vertiefungen ? memberDetails.vertiefungen : "");
+  const [university, setUniversity] = useState<string>(memberDetails.university ? memberDetails.university : "");
+  const [courseOfStudy, setCourseOfStudy] = useState<string>(
+    memberDetails.courseOfStudy ? memberDetails.courseOfStudy : ""
+  );
+  const [startOfStudy, setStartOfStudy] = useState<Date | null>(memberDetails.studyStart);
+  const [endOfStudy, setEndOfStudy] = useState<Date | null>(memberDetails.studyEnd);
+  const [speciality, setSpeciality] = useState<string>(
+    memberDetails.specializations ? memberDetails.specializations : ""
+  );
   const [apprenticeship, setApprenticeship] = useState<string>(
-    memberDetails.ausbildung ? memberDetails.ausbildung : ""
+    memberDetails.apprenticeship ? memberDetails.apprenticeship : ""
   );
   const [accountHolder, setAccountHolder] = useState<string>(
-    memberDetails.kontoinhaber ? memberDetails.kontoinhaber : ""
+    memberDetails.accountHolder ? memberDetails.accountHolder : ""
   );
   const [ibanState, setIbanState] = useState<string>(memberDetails?.iban || "");
   const [bicState, setBicState] = useState<string>(memberDetails?.bic || "");
-  const [engagementState] = useState<string>(memberDetails.engagement ? memberDetails.engagement : "");
-  const [driversLicense] = useState<boolean>(memberDetails.fuehrerschein);
-  const [firstAid] = useState<boolean>(memberDetails.ersthelferausbildung);
-  const [traineeSince, setTraineeSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.trainee_seit));
-  const [memberSince, setMemberSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.mitglied_seit));
-  const [seniorSince, setSeniorSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.senior_seit));
-  const [alumniSince, setAlumniSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.alumnus_seit));
-  const [passiveSince, setPassiveSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.passiv_seit));
+  const [commitmentState] = useState<string>(memberDetails.commitment ? memberDetails.commitment : "");
+  const [driversLicense] = useState<boolean>(memberDetails.drivingLicense > 0);
+  const [firstAid] = useState<boolean>(memberDetails.firstAidTraining);
+  const [traineeSince, setTraineeSince] = useState<Date | null>(memberDetails.traineeSince);
+  const [memberSince, setMemberSince] = useState<Date | null>(memberDetails.memberSince);
+  const [seniorSince, setSeniorSince] = useState<Date | null>(memberDetails.seniorSince);
+  const [alumniSince, setAlumniSince] = useState<Date | null>(memberDetails.alumnusSince);
+  const [passiveSince, setPassiveSince] = useState<Date | null>(memberDetails.passiveSince);
   const [generalInfoDialogOpen, setGeneralInfoDialogOpen] = useState<boolean>(false);
   const [clubInfoDialogOpen, setClubInfoDialogOpen] = useState<boolean>(false);
   const [studyInfoDialogOpen, setStudyInfoDialogOpen] = useState<boolean>(false);
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
-  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
+  const [menteeList] = useState<membersTypes.MenteeDto[]>(memberDetails?.mentees || []);
 
   /**
    * Saves the changes of the image
@@ -265,7 +266,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @returns true it there would be a duplicate
    */
   const checkLanguagesForDuplicates = (list: membersTypes.LanguageOfMember[], value: string) => {
-    return list.filter((language) => language.wert === value).length !== 0;
+    return list.filter((language) => language.value === value).length !== 0;
   };
 
   /**
@@ -289,7 +290,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          wert: value,
+          value: value,
         };
         newList[index] = updatedLanguage;
         return newList;
@@ -298,7 +299,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          niveau: value,
+          level: value,
         };
         newList[index] = updatedLanguage;
         return newList;
@@ -329,11 +330,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             return state;
           }
           return updateLanguages(state, action.payload.index, action.payload.lang.inputValue, "WERT");
-        } else if (action.payload.lang.wert) {
-          if (checkLanguagesForDuplicates(state, action.payload.lang.wert)) {
+        } else if (action.payload.lang.value) {
+          if (checkLanguagesForDuplicates(state, action.payload.lang.value)) {
             return state;
           }
-          return updateLanguages(state, action.payload.index, action.payload.lang.wert, "WERT");
+          return updateLanguages(state, action.payload.index, action.payload.lang.value, "WERT");
         } else {
           return state;
         }
@@ -342,10 +343,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         return updateLanguages(state, action.payload.index, action.payload.niveau, "NIVEAU");
       }
       case membersTypes.languagesReducerActionType.addEmptyLanguage: {
-        return [...state, { wert: "", niveau: "" }];
+        return [...state, { memberId: memberDetails.memberId, value: "", level: "" }];
       }
       case membersTypes.languagesReducerActionType.deleteLanguage: {
-        return state.filter((value) => !(value.wert === action.payload.lang.wert));
+        return state.filter((value) => !(value.value === action.payload.lang.value));
       }
       default:
         return state;
@@ -358,8 +359,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param value the new value that should be inserted
    * @returns true it there would be a duplicate
    */
-  const checkEdvSkillsForDuplicates = (list: membersTypes.EDVSkillOfMember[], value: string) => {
-    return list.filter((edvSkill) => edvSkill.wert === value).length !== 0;
+  const checkEdvSkillsForDuplicates = (list: membersTypes.ItSkillOfMember[], value: string) => {
+    return list.filter((itSkill) => itSkill.value === value).length !== 0;
   };
 
   /**
@@ -370,29 +371,24 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param typeOfValue specifies which type the value is and what attribute of edv skill should be updated
    * @returns An updated list of languages
    */
-  const updateEdvSkills = (
-    list: membersTypes.EDVSkillOfMember[],
-    index: number,
-    value: string,
-    typeOfValue: string
-  ) => {
+  const updateEdvSkills = (list: membersTypes.ItSkillOfMember[], index: number, value: string, typeOfValue: string) => {
     // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
         // Updates the language
-        const updatedEdvSkill: membersTypes.EDVSkillOfMember = {
+        const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          wert: value,
+          value: value,
         };
         newList[index] = updatedEdvSkill;
         return newList;
       }
       case "NIVEAU": {
         // Updates the language
-        const updatedEdvSkill: membersTypes.EDVSkillOfMember = {
+        const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          niveau: value,
+          level: value,
         };
         newList[index] = updatedEdvSkill;
         return newList;
@@ -409,45 +405,45 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param action the action that should be performed
    * @returns the new state of the edvSkills
    */
-  const edvSkillsReducer = (state: membersTypes.EDVSkillOfMember[], action: membersTypes.edvSkillsReducerAction) => {
+  const itSkillsReducer = (state: membersTypes.ItSkillOfMember[], action: membersTypes.itSkillsReducerAction) => {
     switch (action.type) {
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsString: {
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsString: {
         if (checkEdvSkillsForDuplicates(state, action.payload.value)) {
           return state;
         }
         return updateEdvSkills(state, action.payload.index, action.payload.value, "WERT");
       }
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject: {
-        if (action.payload.edvSkill.inputValue) {
-          if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.inputValue)) {
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsObject: {
+        if (action.payload.itSkill.inputValue) {
+          if (checkEdvSkillsForDuplicates(state, action.payload.itSkill.inputValue)) {
             return state;
           }
-          return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.inputValue, "WERT");
-        } else if (action.payload.edvSkill.wert) {
-          if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.wert)) {
+          return updateEdvSkills(state, action.payload.index, action.payload.itSkill.inputValue, "WERT");
+        } else if (action.payload.itSkill.value) {
+          if (checkEdvSkillsForDuplicates(state, action.payload.itSkill.value)) {
             return state;
           }
-          return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.wert, "WERT");
+          return updateEdvSkills(state, action.payload.index, action.payload.itSkill.value, "WERT");
         } else {
           return state;
         }
       }
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithNiveau: {
-        return updateEdvSkills(state, action.payload.index, action.payload.niveau, "NIVEAU");
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithNiveau: {
+        return updateEdvSkills(state, action.payload.index, action.payload.level, "NIVEAU");
       }
-      case membersTypes.edvSkillsReducerActionType.addEmptyEdvSkill: {
-        return [...state, { wert: "", niveau: "" }];
+      case membersTypes.itSkillsReducerActionType.addEmptyItSkill: {
+        return [...state, { memberId: memberDetails.memberId, value: "", level: "" }];
       }
-      case membersTypes.edvSkillsReducerActionType.deleteEdvSkill: {
-        return state.filter((value) => !(value.wert === action.payload.edvSkill.wert));
+      case membersTypes.itSkillsReducerActionType.deleteItSkill: {
+        return state.filter((value) => !(value.value === action.payload.itSkill.value));
       }
       default:
         return state;
     }
   };
 
-  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.sprachen || []);
-  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails?.edvkenntnisse || []);
+  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.languages || []);
+  const [itSkills, dispatchItSkills] = useReducer(itSkillsReducer, memberDetails?.itSkills || []);
 
   /**
    * Submits the changed data
@@ -457,55 +453,55 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     event.preventDefault();
 
     // Data which will be submitted
-    const data = {
-      mitgliedID: memberDetails.mitgliedID,
-      nachname: lastname,
-      vorname: name,
-      geschlecht: memberDetails.geschlecht,
-      geburtsdatum: transformGermanDateToSQLString(birthday),
-      handy: smartphone,
-      jbt_email: jbtMail,
-      mitgliedstatus: memberState,
+    const data: membersTypes.MemberDetailsDto = {
+      memberId: memberDetails.memberId,
+      lastname: lastname,
+      firstname: name,
+      gender: memberDetails.gender,
+      birthday: birthday,
+      mobile: smartphone,
+      jbtEmail: jbtMail,
+      memberStatus: memberState,
       generation: memberDetails.generation,
-      internesprojekt: memberDetails.internesprojekt,
-      mentor: mentorState,
-      trainee_seit: transformGermanDateToSQLString(traineeSince),
-      mitglied_seit: transformGermanDateToSQLString(memberSince),
-      alumnus_seit: transformGermanDateToSQLString(alumniSince),
-      senior_seit: transformGermanDateToSQLString(seniorSince),
-      aktiv_seit: transformStringToSQLString(memberDetails.aktiv_seit),
-      passiv_seit: transformGermanDateToSQLString(passiveSince),
-      ausgetreten_seit: memberDetails.ausgetreten_seit,
-      ressort: department,
-      arbeitgeber: employer,
-      strasse1: street1,
-      plz1: plz1State ? parseInt(plz1State, 10) : null,
-      ort1: placeOfResidence1,
-      tel1: parseInt(telephone1, 10),
+      internalProject: memberDetails.internalProject,
+      traineeSince: traineeSince,
+      memberSince: memberSince,
+      alumnusSince: alumniSince,
+      seniorSince: seniorSince,
+      activeSince: memberDetails.activeSince,
+      passiveSince: passiveSince,
+      exitedSince: memberDetails.exitedSince,
+      department: department,
+      employer: employer,
+      street1: street1,
+      postalCode1: plz1State,
+      city1: placeOfResidence1,
+      phone1: telephone1,
       email1: email1State,
-      strasse2: street2,
-      plz2: plz2State ? parseInt(plz2State, 10) : null,
-      ort2: placeOfResidence2,
-      tel2: parseInt(telephone2, 10),
+      street2: street2,
+      postalCode2: plz2State,
+      city2: placeOfResidence2,
+      phone2: telephone2,
       email2: email2State,
-      hochschule: university,
-      studiengang: courseOfStudy,
-      studienbeginn: transformGermanDateToSQLString(startOfStudy),
-      studienende: transformGermanDateToSQLString(endOfStudy),
-      vertiefungen: speciality,
-      ausbildung: apprenticeship,
-      kontoinhaber: accountHolder,
+      university: university,
+      courseOfStudy: courseOfStudy,
+      studyStart: startOfStudy,
+      studyEnd: endOfStudy,
+      specializations: speciality,
+      apprenticeship: apprenticeship,
+      commitment: commitmentState,
+      canPL: memberDetails.canPL,
+      canQM: memberDetails.canQM,
+      lastChange: new Date(),
+      drivingLicense: driversLicense ? 1 : 0, // drivingLicense is a number in the database
+      firstAidTraining: firstAid,
+      accountHolder: accountHolder,
       iban: ibanState,
       bic: bicState,
-      engagement: engagementState,
-      canPL: transformStringToSQLString(memberDetails.canPL),
-      canQM: transformStringToSQLString(memberDetails.canQM),
-      lastchange: "",
-      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
-      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
-      sprachen: languages,
+      languages: languages,
+      itSkills: itSkills,
       mentees: menteeList,
-      edvkenntnisse: edvSkills,
+      mentor: mentorState,
     };
     props.updateMemberDetails(data);
     handleGeneralInfoDialogClose();
@@ -666,9 +662,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           onImageChange={props.isOwner ? saveImage : undefined}
         />
         <div className={classes.imageSectionText}>
-          <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+          <Typography variant="h6">{`${memberDetails.firstname} ${memberDetails.lastname}`}</Typography>
           <Typography>
-            <i>{`${memberDetails.mitgliedstatus}`}</i>
+            <i>{`${memberDetails.memberStatus?.name}`}</i>
           </Typography>
         </div>
       </div>
@@ -693,25 +689,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           <div className={classes.category}>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
-              </Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.birthday?.toString()}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.handy}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.mobile}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.jbt_email}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.jbtEmail}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.strasse1}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.street1}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.plz1}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.postalCode1}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
@@ -719,7 +713,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.arbeitgeber}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.employer}</Typography>
             </div>
           </div>
         </InfoCard>
@@ -733,44 +727,44 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderCareerItems: VoidFunction = () => {
     return (
       <div>
-        {memberDetails.passiv_seit ? (
+        {memberDetails.passiveSince ? (
           <div>
             <Typography className={classes.categoryItem}>
               <strong>{"Passives Mitglied"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.passiv_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.passiveSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.alumnus_seit ? (
+        {memberDetails.alumnusSince ? (
           <div>
             <Typography className={classes.categoryItem}>
               <strong>{"Alumna*Alumnus"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.alumnus_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.alumnusSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.senior_seit ? (
+        {memberDetails.seniorSince ? (
           <div>
             <Typography className={classes.categoryItem}>
               <strong>{"Senior"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.senior_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.seniorSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.mitglied_seit ? (
+        {memberDetails.memberSince ? (
           <div>
             <Typography className={classes.categoryItem}>
               <strong>{"Aktives Mitglied"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.mitglied_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.memberSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.trainee_seit ? (
+        {memberDetails.traineeSince ? (
           <div>
             <Typography className={classes.categoryItem}>
               <strong>{"Trainee"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.trainee_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.traineeSince.toString()}`}</Typography>
           </div>
         ) : null}
         <hr />
@@ -797,13 +791,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.category}>
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.ressort}</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.department?.name}</Typography>
               </div>
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
-                {memberDetails.mentor && memberDetails.mentor.vorname && memberDetails.mentor.nachname ? (
-                  <NavLink to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`} className={classes.categoryLine}>
-                    {`${memberDetails.mentor.vorname} ${memberDetails.mentor.nachname}`}
+                {memberDetails.mentor && memberDetails.mentor.firstname && memberDetails.mentor.lastname ? (
+                  <NavLink to={`/gesamtuebersicht/${memberDetails.mentor.memberId}`} className={classes.categoryLine}>
+                    {`${memberDetails.mentor.firstname} ${memberDetails.mentor.lastname}`}
                   </NavLink>
                 ) : (
                   ""
@@ -817,7 +811,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                       <Typography
                         className={classes.categoryLine}
                         key={index}
-                      >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                      >{`${mentee.firstname} ${mentee.lastname}`}</Typography>
                     );
                   })}
                 </div>
@@ -858,27 +852,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           <div className={classes.category}>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.hochschule}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.university}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.studiengang}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.courseOfStudy}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
-              </Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.studyStart?.toString()}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.studienende)}
-              </Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.studyEnd?.toString()}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.vertiefungen}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.specializations}</Typography>
             </div>
           </div>
         </InfoCard>
@@ -904,7 +894,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.category}>
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.kontoinhaber}</Typography>
+                <Typography className={classes.categoryLine}>{memberDetails.accountHolder}</Typography>
               </div>
               <div className={classes.categoryItem}>
                 <Typography className={classes.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
@@ -940,15 +930,15 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           <div className={classes.category}>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.ausbildung}</Typography>
+              <Typography className={classes.categoryLine}>{memberDetails.apprenticeship}</Typography>
             </div>
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>Sprachen:</Typography>
               <div className={classes.categoryItemList}>
-                {(memberDetails?.sprachen || []).map((language) => {
+                {(memberDetails?.languages || []).map((language) => {
                   return (
                     <Typography className={classes.categoryLine}>
-                      {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
+                      {`${language.value}: ${getLanguageNiveauLabel(parseInt(language.level, 10))}`}
                     </Typography>
                   );
                 })}
@@ -957,10 +947,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <div className={classes.categoryItem}>
               <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
               <div className={classes.categoryItemList}>
-                {(memberDetails?.edvkenntnisse || []).map((edv) => {
+                {(memberDetails?.itSkills || []).map((it) => {
                   return (
                     <Typography className={classes.categoryLine}>
-                      {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
+                      {`${it.value}: ${getEDVNiveauLabel(parseInt(it.level, 10))}`}
                     </Typography>
                   );
                 })}
@@ -1033,6 +1023,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           <form autoComplete="off" onSubmit={submit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use DatePicker */}
                 <TextField
                   className={classes.fullWidth}
                   required
@@ -1043,7 +1034,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={birthday}
                   onChange={(event) => {
-                    setBirthday(event.target.value);
+                    setBirthday(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
@@ -1177,11 +1168,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   options={departments}
                   onChange={(event, newDepartment) => {
                     if (newDepartment) {
-                      setDepartment(newDepartment.bezeichnung);
+                      setDepartment(newDepartment);
                     }
                   }}
-                  defaultValue={departments.filter((dep) => dep.bezeichnung === department)[0]}
-                  getOptionLabel={(dep) => `${dep.bezeichnung}`}
+                  /* TODO: Check waht happens if department is null! */
+                  defaultValue={departments.filter((dep) => dep.name === department?.name)[0]}
+                  getOptionLabel={(dep) => `${dep.name}`}
                   className={classes.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Ressort" variant="outlined" />}
                 />
@@ -1194,19 +1186,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   onChange={(event, newMentor) => {
                     if (newMentor) {
                       setMentorState({
-                        mitgliedID: newMentor.mitgliedID,
-                        vorname: newMentor.vorname,
-                        nachname: newMentor.nachname,
+                        memberId: newMentor.memberId,
+                        firstname: newMentor.firstname,
+                        lastname: newMentor.lastname,
                       });
                     }
                   }}
-                  defaultValue={members.filter((memb) => memb.mitgliedID === mentorState?.mitgliedID)[0]}
-                  getOptionLabel={(member) => `${member.vorname} ${member.nachname}`}
+                  defaultValue={members.filter((memb) => memb.memberId === mentorState?.memberId)[0]}
+                  getOptionLabel={(member) => `${member.firstname} ${member.lastname}`}
                   className={classes.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Mentor" variant="outlined" />}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1216,11 +1209,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={passiveSince}
                   onChange={(event) => {
-                    setPassiveSince(event.target.value);
+                    setPassiveSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1230,11 +1224,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={alumniSince}
                   onChange={(event) => {
-                    setAlumniSince(event.target.value);
+                    setAlumniSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1244,11 +1239,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={seniorSince}
                   onChange={(event) => {
-                    setSeniorSince(event.target.value);
+                    setSeniorSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1258,11 +1254,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={memberSince}
                   onChange={(event) => {
-                    setMemberSince(event.target.value);
+                    setMemberSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1272,7 +1269,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={traineeSince}
                   onChange={(event) => {
-                    setTraineeSince(event.target.value);
+                    setTraineeSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
@@ -1340,6 +1337,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1349,11 +1347,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={startOfStudy}
                   onChange={(event) => {
-                    setStartOfStudy(event.target.value);
+                    setStartOfStudy(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
                   className={classes.fullWidth}
                   color="primary"
@@ -1363,7 +1362,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={endOfStudy}
                   onChange={(event) => {
-                    setEndOfStudy(event.target.value);
+                    setEndOfStudy(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
@@ -1449,7 +1448,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         >
                           <Grid item xs={5}>
                             <Autocomplete
-                              value={language.wert}
+                              value={language.value}
                               onChange={(event, newValue) => {
                                 if (typeof newValue === "string") {
                                   dispatchLanguages({
@@ -1470,7 +1469,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (params.inputValue !== "") {
                                   filtered.push({
                                     inputValue: params.inputValue,
-                                    wert: `"${params.inputValue}" hinzufügen`,
+                                    value: `"${params.inputValue}" hinzufügen`,
                                   });
                                 }
                                 return filtered;
@@ -1482,7 +1481,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (typeof option === "string") {
                                   return option;
                                 }
-                                return option.wert;
+                                return option.value;
                               }}
                               freeSolo
                               renderInput={(params) => <TextField {...params} label="Sprache" variant="outlined" />}
@@ -1493,7 +1492,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                               <InputLabel id="language-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="language-niveau-select-label"
-                                value={language.niveau}
+                                value={language.level}
                                 onChange={(event) => {
                                   dispatchLanguages({
                                     type: membersTypes.languagesReducerActionType.addNewLanguageWithNiveau,
@@ -1534,7 +1533,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={languages.some((lang) => lang.wert === "" || lang.niveau === "")}
+                        disabled={languages.some((lang) => lang.value === "" || lang.level === "")}
                         onClick={() =>
                           dispatchLanguages({
                             type: membersTypes.languagesReducerActionType.addEmptyLanguage,
@@ -1552,7 +1551,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                       <Typography>EDV-Kenntnisse:</Typography>
                     </Grid>
-                    {edvSkills.map((edv, index) => {
+                    {itSkills.map((edv, index) => {
                       return (
                         <Grid
                           item
@@ -1567,28 +1566,28 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         >
                           <Grid item xs={5}>
                             <Autocomplete
-                              value={edv.wert}
+                              value={edv.value}
                               onChange={(event, newValue) => {
                                 if (typeof newValue === "string") {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsString,
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsString,
                                     payload: { index, value: newValue },
                                   });
                                 } else if ((newValue && newValue.inputValue) || newValue) {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject,
-                                    payload: { index, edvSkill: newValue },
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsObject,
+                                    payload: { index, itSkill: newValue },
                                   });
                                 }
                               }}
                               filterOptions={(options, params) => {
-                                const filtered = edvFilter(options, params);
+                                const filtered = itFilter(options, params);
 
                                 // Suggest the creation of a new value
                                 if (params.inputValue !== "") {
                                   filtered.push({
                                     inputValue: params.inputValue,
-                                    wert: `"${params.inputValue}" hinzufügen`,
+                                    value: `"${params.inputValue}" hinzufügen`,
                                   });
                                 }
                                 return filtered;
@@ -1600,7 +1599,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (typeof option === "string") {
                                   return option;
                                 }
-                                return option.wert;
+                                return option.value;
                               }}
                               freeSolo
                               renderInput={(params) => (
@@ -1613,13 +1612,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                               <InputLabel id="edv-skill-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="edv-skill-niveau-select-label"
-                                value={edv.niveau}
+                                value={edv.level}
                                 onChange={(event) => {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithNiveau,
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithNiveau,
                                     payload: {
                                       index,
-                                      niveau: "" + event.target.value,
+                                      level: "" + event.target.value,
                                     },
                                   });
                                 }}
@@ -1635,9 +1634,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                               aria-label="delete"
                               color="primary"
                               onClick={() =>
-                                dispatchEdvSkills({
-                                  type: membersTypes.edvSkillsReducerActionType.deleteEdvSkill,
-                                  payload: { edvSkill: edv },
+                                dispatchItSkills({
+                                  type: membersTypes.itSkillsReducerActionType.deleteItSkill,
+                                  payload: { itSkill: edv },
                                 })
                               }
                               size="large"
@@ -1652,10 +1651,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={edvSkills.some((edv) => edv.wert === "" || edv.niveau === "")}
+                        disabled={itSkills.some((edv) => edv.value === "" || edv.level === "")}
                         onClick={() => {
-                          dispatchEdvSkills({
-                            type: membersTypes.edvSkillsReducerActionType.addEmptyEdvSkill,
+                          dispatchItSkills({
+                            type: membersTypes.itSkillsReducerActionType.addEmptyItSkill,
                           });
                         }}
                         size="large"
@@ -1782,7 +1781,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         {renderPaymentInformation()}
         {renderPaymentInformationDialog()}
         <Grid item>
-          <strong>Letzte Änderung: {transformSQLStringToGermanDate(memberDetails.lastchange)}</strong>
+          <strong>Letzte Änderung: {memberDetails.lastChange}</strong>
         </Grid>
       </Grid>
     </div>

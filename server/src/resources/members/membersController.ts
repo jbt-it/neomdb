@@ -1,40 +1,46 @@
-import MembersService from "./MembersService";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Middlewares,
+  Patch,
+  Path,
+  Post,
+  Put,
+  Query,
+  Request,
+  Route,
+  Security,
+  SuccessResponse,
+  Tags,
+} from "@tsoa/runtime";
+import { checkDepartmentAccess } from "../../middleware/authorization";
+import { Permission } from "../../typeOrm/entities/Permission";
+import { PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
+import {
+  DepartmentDetailsDto,
+  DepartmentMemberDto,
+  DirectorDto,
+  ItSkillsValue,
+  LanguageValue,
+  MemberDetailsDto,
+  MemberPartialDto,
+  UpdateDepartmentDto,
+} from "../../typeOrm/types/memberTypes";
+import { UnauthorizedError } from "../../types/Errors";
+import { JWTPayload } from "../../types/authTypes";
 import {
   AssignPermissionToMemberRequest,
   CreateMemberRequest,
   CreateMemberResponse,
-  Department,
-  DepartmentMember,
-  Director,
   MemberDetails,
   MemberImage,
-  MemberPartial,
   MemberStatus,
   StatusOverview,
-  UpdateDepartmentRequest,
-  Value,
 } from "../../types/membersTypes";
-import {
-  Body,
-  Delete,
-  Middlewares,
-  Patch,
-  Post,
-  Put,
-  Get,
-  Route,
-  Controller,
-  Security,
-  Tags,
-  Request,
-  Path,
-  Query,
-  SuccessResponse,
-} from "@tsoa/runtime";
-import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
-import { checkDepartmentAccess } from "../../middleware/authorization";
-import { UnauthorizedError } from "../../types/Errors";
+import MembersService from "./MembersService";
 
 /**
  * Controller for the members module
@@ -52,7 +58,7 @@ export class MembersController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getMembers(): Promise<MemberPartial[]> {
+  public async getMembers(): Promise<MemberPartialDto[]> {
     const members = await this.membersService.getMemberList();
     return members;
   }
@@ -102,7 +108,7 @@ export class MembersController extends Controller {
   // TODO: Change route name
   @Get("department-members")
   @Security("jwt")
-  public async getMembersOfDepartments(): Promise<DepartmentMember[]> {
+  public async getMembersOfDepartments(): Promise<DepartmentMemberDto[]> {
     const membersOfDepartments = await this.membersService.getMembersOfDepartments();
 
     return membersOfDepartments;
@@ -115,7 +121,7 @@ export class MembersController extends Controller {
    */
   @Get("directors")
   @Security("jwt")
-  public async getDirectors(@Query("current") current: boolean): Promise<Director[]> {
+  public async getDirectors(@Query("current") current: boolean): Promise<DirectorDto[]> {
     // Query parameter to specify if only the current directors should be retrieved
     const directors = await this.membersService.getDirectors(current);
 
@@ -220,16 +226,25 @@ export class MembersController extends Controller {
    */
   @Get("departments")
   @Security("jwt")
-  public async getDepartments(): Promise<Department[]> {
+  public async getDepartments(): Promise<DepartmentDetailsDto[]> {
     const departments = await this.membersService.getDepartments();
 
     return departments;
   }
 
+  /**
+   * Updates the information of an existing department
+   * @summary Update a department
+   * @param id The id of the department to update
+   * @example requestBody {
+   * "linkObjectivePresentation": "https://example.com",
+   * "linkOrganigram": "https://example.com"
+   * }
+   */
   @Put("departments/{id}")
   @Security("jwt")
   @Middlewares(checkDepartmentAccess)
-  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentRequest): Promise<void> {
+  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentDto): Promise<void> {
     await this.membersService.updateDepartment(id, requestBody);
   }
 
@@ -239,7 +254,7 @@ export class MembersController extends Controller {
    */
   @Get("languages")
   @Security("jwt")
-  public async getLanguages(): Promise<Value[]> {
+  public async getLanguages(): Promise<LanguageValue[]> {
     const languages = await this.membersService.getLanguageValues();
 
     return languages;
@@ -251,7 +266,7 @@ export class MembersController extends Controller {
    */
   @Get("edv-skills")
   @Security("jwt")
-  public async getEDVSkills(): Promise<Value[]> {
+  public async getEDVSkills(): Promise<ItSkillsValue[]> {
     const edvSkills = await this.membersService.getEdvSkillValues();
 
     return edvSkills;
@@ -263,7 +278,7 @@ export class MembersController extends Controller {
    */
   @Get("permission-assignments")
   @Security("jwt")
-  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignment[]> {
+  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignmentDto[]> {
     const user = request.user as JWTPayload;
     const userHasAnyPermission = user.permissions.length > 0;
     if (!userHasAnyPermission) {
@@ -293,27 +308,6 @@ export class MembersController extends Controller {
   }
 
   /**
-   * Retrieves a list of all permissions of the member with the given ID
-   * @summary Get permissions by member id
-   * @param id The id of the member to retrieve the permissions from
-   */
-  @Get("{id}/permissions")
-  @Security("jwt")
-  public async getPermissionsByMemberID(
-    @Path() id: number,
-    @Request() request: any
-  ): Promise<{ permissions: Permission[] }> {
-    const user = request.user as JWTPayload;
-    const userHasAnyPermission = user.permissions.length > 0;
-    if (!userHasAnyPermission) {
-      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
-    }
-    const permissions = await this.membersService.getPermissionsByMemberID(id);
-
-    return permissions;
-  }
-
-  /**
    * Create new permission for member
    * @summary Create permission
    * @param requestBody The permission to create
@@ -333,11 +327,13 @@ export class MembersController extends Controller {
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
-    // Checks if the member is allowed to delegate the permission
+    // Checks if the member is allowed to delegate the permission (if they are not an admin)
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be delegated!");
     }
@@ -364,11 +360,13 @@ export class MembersController extends Controller {
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
-    // Checks if the member is allowed to delete the permission
+    // Checks if the member is allowed to delete the permission (if they are not an admin)
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be deleted!");
     }
@@ -385,7 +383,7 @@ export class MembersController extends Controller {
    */
   @Get("{id}")
   @Security("jwt")
-  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetails> {
+  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetailsDto> {
     const user = request.user;
     let userCanViewFinancialData = false;
 
@@ -394,7 +392,7 @@ export class MembersController extends Controller {
     if (id === user.mitgliedID || doesPermissionsInclude(user.permissions, [6])) {
       userCanViewFinancialData = true;
     }
-    const member: MemberDetails = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
+    const member = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
     return member;
   }
 
