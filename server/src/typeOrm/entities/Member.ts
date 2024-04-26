@@ -294,7 +294,7 @@ export class Member {
   @ManyToMany(() => Generation, (generation) => generation.members)
   generations: Generation[];
 
-  @ManyToMany(() => InternalProject, (internalProject) => internalProject.members)
+  @ManyToMany(() => InternalProject, (internalProject) => internalProject.qualityManagers)
   internalProjects: InternalProject[];
 
   @ManyToOne(() => Generation, (generation) => generation.members, {

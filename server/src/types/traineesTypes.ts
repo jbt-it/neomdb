@@ -21,6 +21,26 @@ export type InternalProject = {
 };
 
 /**
+ * Type of the internal project of a member
+ */
+export type InternalProjectDto = {
+  internalProjectID: number;
+  generation: number;
+  generationName: string;
+  projectName: string;
+  abbreviation: string;
+  kickoff: Date | null;
+  offerAtEv: boolean;
+  zpAtEv: boolean;
+  zpHeld: Date | null;
+  apAtEv: boolean;
+  apHeld: Date | null;
+  dlAtEv: boolean;
+  members: MembersField[] | null;
+  qualityManagers: MembersField[] | null;
+};
+
+/**
  * Type of the generation
  */
 export type Generation = {

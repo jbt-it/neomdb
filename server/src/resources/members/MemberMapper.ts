@@ -11,7 +11,9 @@ import {
   MemberPermissionAssignmentDto,
   MenteeDto,
   MentorDto,
+  MembersFieldDto,
 } from "../../typeOrm/types/memberTypes";
+import { TraineeDto } from "../../typeOrm/types/traineeTypes";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -31,6 +33,14 @@ export class MemberMapper {
       memberId: member.memberId,
       lastname: member.lastName,
       firstname: member.firstName,
+    };
+  }
+  static memberToMemberFieldDto(member: Member): MembersFieldDto {
+    return {
+      memberId: member.memberId,
+      lastname: member.lastName,
+      firstname: member.firstName,
+      memberStatus: member.memberStatus,
     };
   }
   static departmentToDepartmentPartialDto(department: Department): DepartmentPartialDto {

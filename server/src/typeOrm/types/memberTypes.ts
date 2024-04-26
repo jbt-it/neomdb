@@ -22,6 +22,16 @@ export type MentorDto = {
 };
 
 /**
+ * Type of the member field
+ */
+export type MembersFieldDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  memberStatus?: MemberStatus;
+};
+
+/**
  * Type of the request to update a department
  */
 export type UpdateDepartmentDto = {

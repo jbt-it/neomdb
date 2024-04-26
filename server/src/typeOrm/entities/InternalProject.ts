@@ -37,7 +37,7 @@ export class InternalProject {
   @Column("tinyint", { name: "DLbeiEV", width: 1, default: () => "'0'" })
   dlAtEv: boolean;
 
-  @ManyToMany(() => Member, (member) => member.internalProjects)
+  @ManyToMany(() => Member)
   @JoinTable({
     name: "internesprojekt_has_qm",
     joinColumns: [
@@ -49,5 +49,5 @@ export class InternalProject {
     inverseJoinColumns: [{ name: "mitglied_mitgliedID", referencedColumnName: "memberId" }],
     schema: "mdb",
   })
-  members: Member[];
+  qualityManagers: Member[];
 }

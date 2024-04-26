@@ -1420,7 +1420,7 @@
 					"dlAtEv": {
 						"type": "boolean"
 					},
-					"members": {
+					"qualityManagers": {
 						"items": {
 							"$ref": "#/components/schemas/Member"
 						},
@@ -1439,7 +1439,7 @@
 					"apAtEv",
 					"apHeld",
 					"dlAtEv",
-					"members"
+					"qualityManagers"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4250,109 +4250,213 @@
 				"type": "object",
 				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
 			},
-			"Trainee": {
+			"TraineeDto": {
 				"properties": {
-					"generation": {
+					"generationId": {
 						"type": "number",
 						"format": "double"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberID": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"generation",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"generationId",
+					"lastname",
+					"firstname",
+					"memberID"
 				],
 				"type": "object",
 				"description": "Type of a trainee (partial member)"
 			},
-			"TraineeChoice": {
+			"MembersFieldDto": {
 				"properties": {
-					"wahl_ressort3": {
-						"type": "number",
-						"format": "double"
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatus"
 					},
-					"wahl_ressort2": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_ressort1": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_ressort": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_internesprojekt3": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_internesprojekt2": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_internesprojekt1": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_internesprojekt": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_mentor3": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_mentor2": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_mentor1": {
-						"type": "number",
-						"format": "double"
-					},
-					"wahl_mentor": {
-						"type": "number",
-						"format": "double"
-					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"wahl_ressort3",
-					"wahl_ressort2",
-					"wahl_ressort1",
-					"wahl_ressort",
-					"wahl_internesprojekt3",
-					"wahl_internesprojekt2",
-					"wahl_internesprojekt1",
-					"wahl_internesprojekt",
-					"wahl_mentor3",
-					"wahl_mentor2",
-					"wahl_mentor1",
-					"wahl_mentor",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the member field"
+			},
+			"InternalProjectDto": {
+				"properties": {
+					"qualityManagers": {
+						"items": {
+							"$ref": "#/components/schemas/MembersFieldDto"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/MembersFieldDto"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"dlAtEv": {
+						"type": "boolean"
+					},
+					"apHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apAtEv": {
+						"type": "boolean"
+					},
+					"zpHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"zpAtEv": {
+						"type": "boolean"
+					},
+					"offerAtEv": {
+						"type": "boolean"
+					},
+					"kickoff": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"abbreviation": {
+						"type": "string"
+					},
+					"projectName": {
+						"type": "string"
+					},
+					"generationName": {
+						"type": "string"
+					},
+					"generation": {
+						"type": "number",
+						"format": "double"
+					},
+					"internalProjectID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"qualityManagers",
+					"members",
+					"dlAtEv",
+					"apHeld",
+					"apAtEv",
+					"zpHeld",
+					"zpAtEv",
+					"offerAtEv",
+					"kickoff",
+					"abbreviation",
+					"projectName",
+					"generationName",
+					"generation",
+					"internalProjectID"
+				],
+				"type": "object",
+				"description": "Type of the internal project of a member"
+			},
+			"TraineeChoiceDto": {
+				"properties": {
+					"choice_department3": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_department2": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_department1": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_department": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_internalProject3": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_internalProject2": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_internalProject1": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_internalProject": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_mentor3": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_mentor2": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_mentor1": {
+						"type": "number",
+						"format": "double"
+					},
+					"choice_mentor": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"choice_department3",
+					"choice_department2",
+					"choice_department1",
+					"choice_department",
+					"choice_internalProject3",
+					"choice_internalProject2",
+					"choice_internalProject1",
+					"choice_internalProject",
+					"choice_mentor3",
+					"choice_mentor2",
+					"choice_mentor1",
+					"choice_mentor",
+					"lastname",
+					"firstname",
+					"memberID"
 				],
 				"type": "object",
 				"description": "Type of the trainee choice of a member"
@@ -5444,7 +5548,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Trainee"
+										"$ref": "#/components/schemas/TraineeDto"
 									},
 									"type": "array"
 								}
@@ -5474,7 +5578,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/InternalProject"
+									"$ref": "#/components/schemas/InternalProjectDto"
 								}
 							}
 						}
@@ -5596,7 +5700,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeChoice"
+										"$ref": "#/components/schemas/TraineeChoiceDto"
 									},
 									"type": "array"
 								}

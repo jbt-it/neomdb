@@ -5,13 +5,12 @@ import {
   Generation,
   InternalProject,
   JBTMail,
-  Trainee,
   TraineeAssignment,
-  TraineeChoice,
   TraineeMotivation,
   TraineeProgress,
   UpdateVotingDeadlinesRequest,
 } from "../../types/traineesTypes";
+import { InternalProjectDto, TraineeDto, TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
 import MembersService from "../members/MembersService";
 
 /**
@@ -31,7 +30,7 @@ export class TraineesController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getTrainees(): Promise<Trainee[]> {
+  public async getTrainees(): Promise<TraineeDto[]> {
     const trainees = await this.traineesService.getTrainees();
 
     return trainees;
@@ -44,7 +43,7 @@ export class TraineesController extends Controller {
    */
   @Get("ip/{id}")
   @Security("jwt")
-  public async getIP(@Path() id: number): Promise<InternalProject> {
+  public async getIP(@Path() id: number): Promise<InternalProjectDto> {
     const ip = this.traineesService.getIPByID(id);
 
     return ip;
@@ -57,7 +56,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/trainee-choices")
   @Security("jwt", ["14"])
-  public async getTraineeChoicesOfGeneration(@Path() id: number): Promise<TraineeChoice[]> {
+  public async getTraineeChoicesOfGeneration(@Path() id: number): Promise<TraineeChoiceDto[]> {
     const choices = await this.traineesService.getTraineeChoicesByGenerationID(id);
 
     return choices;
