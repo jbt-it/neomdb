@@ -1,17 +1,8 @@
 import { Member } from "../../typeOrm/entities/Member";
-import { TraineeDto, TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
+import { TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
 
 export class TraineeMapper {
   // --- To DTO mapper functions
-
-  static memberToTraineeDto(member: Member): TraineeDto {
-    return {
-      memberID: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
-      generationId: member.generationId,
-    };
-  }
 
   static memberToTraineeChoiceDto(member: Member): TraineeChoiceDto {
     return {

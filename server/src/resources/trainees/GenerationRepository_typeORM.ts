@@ -10,4 +10,16 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
   getGenerationByID(generationId: number): Promise<Generation | null> {
     return this.findOne({ where: { generationId: generationId } });
   },
+
+  getGenerations(): Promise<Generation[]> {
+    return this.find();
+  },
+
+  async getCurrentGenerationId(): Promise<number> {
+    const result = await AppDataSource.getRepository(Generation)
+      .createQueryBuilder("generation")
+      .select("MAX(generation.generationID)", "maxGenerationId")
+      .getRawOne();
+    return result.maxGenerationId;
+  },
 });

@@ -87,8 +87,8 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
 
   // create options for the trainees Autocomplete components
   const traineeOptions: MemberOption[] = trainees.map((trainee) => ({
-    name: `${trainee.vorname} ${trainee.nachname}`,
-    id: trainee.mitgliedID,
+    name: `${trainee.firstname} ${trainee.lastname}`,
+    id: trainee.memberId,
   }));
 
   // create options for the qms Autocomplete components

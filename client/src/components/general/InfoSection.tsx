@@ -6,7 +6,7 @@ import { Typography, ListItem, List, ListItemText, ListItemAvatar, Avatar } from
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import Grid from "@mui/material/Unstable_Grid2";
-import { MembersField } from "../../types/membersTypes";
+import { MembersFieldDto } from "../../types/membersTypes";
 import { Link } from "react-router-dom";
 import { stringAvatar } from "../../utils/stringUtils";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -38,7 +38,7 @@ type InformationField = {
     }
   | {
       type?: "memberList";
-      value: Array<MembersField> | undefined;
+      value: Array<MembersFieldDto> | undefined;
     }
 );
 
@@ -115,9 +115,17 @@ const InfoSection = (props: Props) => {
                       sx={{ padding: 0.5, margin: 0 }}
                     >
                       <ListItemAvatar>
-                        <Avatar alt={item.name} {...stringAvatar(item.name)} className={classes.avatar} />
+                        <Avatar
+                          alt={`${item.firstname} ${item.lastname}`}
+                          {...stringAvatar(`${item.firstname} ${item.lastname}`)}
+                          className={classes.avatar}
+                        />
                       </ListItemAvatar>
-                      <ListItemText key={index} primary={item.name} sx={{ marginLeft: -2, color: "black" }} />
+                      <ListItemText
+                        key={index}
+                        primary={`${item.firstname} ${item.lastname}`}
+                        sx={{ marginLeft: -2, color: "black" }}
+                      />
                     </ListItem>
                   ))}
                 </List>

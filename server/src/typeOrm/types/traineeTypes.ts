@@ -21,16 +21,6 @@ export type InternalProjectDto = {
 };
 
 /**
- * Type of a trainee (partial member)
- */
-export type TraineeDto = {
-  memberID: number;
-  firstname: string;
-  lastname: string;
-  generationId: number;
-};
-
-/**
  * Type of the trainee choice of a member
  */
 export type TraineeChoiceDto = {

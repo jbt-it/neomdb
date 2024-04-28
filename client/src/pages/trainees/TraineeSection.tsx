@@ -6,7 +6,7 @@ import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 
 import { MemberPartialDto } from "../../types/membersTypes";
-import { Trainee, InternalProject, Generation } from "../../types/traineesTypes";
+import { Trainee, InternalProjectDto, Generation } from "../../types/traineesTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 
 import PageBar from "../../components/navigation/PageBar";
@@ -27,7 +27,7 @@ const TraineeSection: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
   const [members, setMembers] = useState<MemberPartialDto[]>([]);
-  const [internalProjects, setInternalProjects] = useState<InternalProject[]>([]);
+  const [internalProjects, setInternalProjects] = useState<InternalProjectDto[]>([]);
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
@@ -49,8 +49,8 @@ const TraineeSection: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setGenerations(res.data);
-            setSelectedGeneration(res.data[0].bezeichnung);
+            setGenerations(res.data.reverse());
+            setSelectedGeneration(res.data[0].description);
             setIsLoadingGenerations(false);
           }
         }
@@ -83,11 +83,11 @@ const TraineeSection: React.FunctionComponent = () => {
           if (mounted) {
             //const to add generation value to trainee, because api call currently doesn't get generation
             const generationID = generations.find(
-              (generation) => generation.bezeichnung === selectedGeneration
-            )?.generationID;
+              (generation) => generation.description === selectedGeneration
+            )?.generationId;
             //manually add values for testing until route in backend is fixed
             const traineesTmp = res.data
-              .filter((trainee: Trainee) => trainee.generation === generationID)
+              .filter((trainee: Trainee) => trainee.generationId === generationID)
               .map((trainee: Trainee) => {
                 return {
                   ...trainee,
@@ -169,9 +169,9 @@ const TraineeSection: React.FunctionComponent = () => {
           if (mounted) {
             setInternalProjects(
               res.data.filter(
-                (item: InternalProject) =>
+                (item: InternalProjectDto) =>
                   item.generation ===
-                  generations.find((generation) => generation.bezeichnung === selectedGeneration)?.generationID
+                  generations.find((generation) => generation.description === selectedGeneration)?.generationId
               )
             );
           }
@@ -226,14 +226,14 @@ const TraineeSection: React.FunctionComponent = () => {
         />
         {generations[0]
           ? hasPermissionInternalProject &&
-            selectedGeneration === generations[0].bezeichnung && (
+            selectedGeneration === generations[0].description && (
               <AddInternalProjectButton
                 generationName={selectedGeneration}
                 addInternalProject={addInternalProject}
                 trainees={trainees}
                 members={members.filter(
                   (member) =>
-                    member.generationId != generations[0].generationID &&
+                    member.generationId != generations[0].generationId &&
                     member.memberStatus?.name != "Alumnus" &&
                     member.memberStatus?.name != "Ausgetretene"
                 )}
@@ -251,12 +251,7 @@ const TraineeSection: React.FunctionComponent = () => {
         })}
       >
         {internalProjects.map((internalProject) => (
-          <InternalProjectCard
-            internalProject={internalProject}
-            trainees={trainees.filter((trainee) => {
-              return trainee.internesprojekt === internalProject.internalProjectId;
-            })}
-          />
+          <InternalProjectCard internalProject={internalProject} />
         ))}
       </Box>
 

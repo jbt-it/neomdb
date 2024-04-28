@@ -1,7 +1,7 @@
 /**
  * Contains all members types for the frontend
  */
-import { InternalProject } from "./traineesTypes";
+import { InternalProjectDto } from "./traineesTypes";
 
 /**
  * Type of the language of a member
@@ -188,7 +188,7 @@ export type MemberDetailsDto = {
   jbtEmail: string;
   memberStatus: MemberStatus;
   generation: number | null;
-  internalProject: InternalProject | null;
+  internalProject: InternalProjectDto | null;
   traineeSince: Date | null;
   memberSince: Date | null;
   alumnusSince: Date | null;
@@ -362,12 +362,11 @@ export type itSkillsReducerAction =
     };
 
 /**
- * Type of the Member for projects
+ * Type of the member field
  */
-export type MembersField = {
+export type MembersFieldDto = {
   memberId: number;
-  name: string;
   firstname: string;
   lastname: string;
-  memberStatus: MemberStatus;
+  memberStatus?: MemberStatus;
 };

@@ -1,7 +1,6 @@
 import { NotFoundError } from "../../types/Errors";
 import TraineesRepository from "./TraineesRepository";
 import {
-  Generation,
   InternalProject,
   JBTMail,
   TraineeMotivation,
@@ -12,13 +11,15 @@ import {
 import { Mentor } from "../../types/membersTypes";
 import MembersRepository from "../members/MembersRepository";
 import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
-import { executeInTransaction } from "../../database";
 import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
 import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
 import { InteralProjectMapper } from "./InteralProjectMapper";
-import { TraineeChoiceDto, TraineeDto } from "../../typeOrm/types/traineeTypes";
+import { TraineeChoiceDto, InternalProjectDto } from "../../typeOrm/types/traineeTypes";
 import { MemberMapper } from "../../resources/members/MemberMapper";
 import { TraineeMapper } from "./TraineeMapper";
+import { MembersRepository_typeORM } from "../../resources/members/MembersRepository_typeORM";
+import { MembersFieldDto } from "typeOrm/types/memberTypes";
+import { Generation } from "../../typeOrm/entities/Generation";
 
 class TraineesService {
   traineesRepository = new TraineesRepository();
@@ -65,56 +66,36 @@ class TraineesService {
    * Update an internal project by its id
    * @throws NotFoundError if the internal project does not exist
    */
-  updateIPByID = async (id: number, updatedIp: InternalProject): Promise<void> => {
-    const ip = await this.traineesRepository.getIPByID(id);
+  updateIPByID = async (id: number, updatedIp: InternalProjectDto): Promise<void> => {
+    const ip = await InternalProjectRepository_typeORM.getIPByID(id);
+    const ipMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(id);
 
     if (ip === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
-    const ipMemberIDs = updatedIp.projektmitglieder.map((member) => member.mitgliedID);
-    const oldIPMemberIDs = ip.projektmitglieder
-      .filter((member) => ipMemberIDs.includes(member.mitgliedID) === false)
-      .map((member) => member.mitgliedID);
-    const ipQmIDs = updatedIp.qualitaetsmanager.map((qm) => qm.mitgliedID);
-    const oldIPQmIDs = ip.qualitaetsmanager
-      .filter((qm) => ipQmIDs.includes(qm.mitgliedID) === false)
-      .map((qm) => qm.mitgliedID);
 
-    // Fill tasks to be executed in transaction
-    const tasks = [];
+    const ipMemberIDs = updatedIp.members.map((member) => member.memberId);
+    const oldIPMemberIDs = ipMembers
+      .filter((member) => ipMemberIDs.includes(member.memberId) === false)
+      .map((member) => member.memberId);
 
-    // Task to update the internal project details
-    tasks.push({
-      func: this.traineesRepository.updateIPDetailsByID,
-      args: [id, updatedIp],
-    });
+    const newQms = updatedIp.qualityManagers.map((qm) => MembersRepository_typeORM.getMemberByID(qm.memberId));
 
-    // Task to add new trainees to an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPMembers,
-      args: [id, ipMemberIDs],
-    });
+    ip.projectName = updatedIp.projectName;
+    ip.abbreviation = updatedIp.abbreviation;
+    ip.kickoff = updatedIp.kickoff;
+    ip.offerAtEv = updatedIp.offerAtEv;
+    ip.zpAtEv = updatedIp.zpAtEv;
+    ip.zpHeld = updatedIp.zpHeld;
+    ip.apAtEv = updatedIp.apAtEv;
+    ip.apHeld = updatedIp.apHeld;
+    ip.dlAtEv = updatedIp.dlAtEv;
+    ip.generation = updatedIp.generation;
+    ip.qualityManagers = await Promise.all(newQms);
 
-    // Task to remove trainees from an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPMembers,
-      args: [null, oldIPMemberIDs],
-    });
-
-    // Task to add new quality managers to an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPQMs,
-      args: [id, ipQmIDs],
-    });
-
-    // Task to remove quality managers from an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPQMs,
-      args: [id, oldIPQmIDs],
-    });
-
-    // Execute all tasks in transaction
-    await executeInTransaction(tasks);
+    InternalProjectRepository_typeORM.updateIPDetailsByID(ip);
+    oldIPMemberIDs.map((memberID) => TraineeRepository_typeORM.updateIPMembers(null, memberID));
+    ipMemberIDs.map((memberID) => TraineeRepository_typeORM.updateIPMembers(id, memberID));
   };
 
   /**
@@ -153,7 +134,7 @@ class TraineesService {
    * Get all generations
    */
   getGenerations = async (): Promise<Generation[]> => {
-    const generations = await this.traineesRepository.getGenerations();
+    const generations = await GenerationRepository_typeORM.getGenerations();
 
     return generations;
   };
@@ -259,20 +240,39 @@ class TraineesService {
   /**
    * Get all trainees
    */
-  getTrainees = async (): Promise<TraineeDto[]> => {
+  getTrainees = async (): Promise<MembersFieldDto[]> => {
     const trainees = await TraineeRepository_typeORM.getTrainees();
 
-    return trainees.map((trainee) => TraineeMapper.memberToTraineeDto(trainee));
+    return trainees.map((trainee) => MemberMapper.memberToMemberFieldDto(trainee));
   };
 
   /**
    * Get all internal projects
    * @param onlyCurrent if true, only the current internal projects are returned
    */
-  getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProject[]> => {
-    const ips = await this.traineesRepository.getInternalProjects(onlyCurrent);
+  getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProjectDto[]> => {
+    const currentGeneration = await GenerationRepository_typeORM.getCurrentGenerationId();
+    const ips = onlyCurrent
+      ? await InternalProjectRepository_typeORM.getInternalProjects(currentGeneration)
+      : await InternalProjectRepository_typeORM.getInternalProjects();
 
-    return ips;
+    const internalProjects = await Promise.all(
+      ips.map(async (internalProject) => {
+        const internalProjectMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(
+          internalProject.internalProjectId
+        );
+        const generation = await GenerationRepository_typeORM.getGenerationByID(internalProject.generation);
+
+        const ip = InteralProjectMapper.internalProjectToInternalProjectDto(
+          internalProject,
+          generation,
+          internalProjectMembers
+        );
+        return ip;
+      })
+    );
+
+    return internalProjects;
   };
 
   /**

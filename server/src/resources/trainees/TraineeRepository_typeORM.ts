@@ -27,4 +27,14 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
   getTraineeChoicesByGenerationID(generationId: number): Promise<Member[]> {
     return this.find({ where: { generationId: generationId } });
   },
+
+  /**
+   * Updates the members of an internal project
+   * @param internalProjectId The id of the internal project
+   * @param memberIds The ids of the members
+   * @returns A promise that resolves when the update is done
+   */
+  updateIPMembers(internalProjectId: number, memberId: number): Promise<void> {
+    return this.update(memberId, { internalProjectId: internalProjectId });
+  },
 });

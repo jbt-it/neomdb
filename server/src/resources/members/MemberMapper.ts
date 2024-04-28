@@ -13,7 +13,6 @@ import {
   MentorDto,
   MembersFieldDto,
 } from "../../typeOrm/types/memberTypes";
-import { TraineeDto } from "../../typeOrm/types/traineeTypes";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -80,7 +79,8 @@ export class MemberMapper {
       memberId: member.memberId,
       firstname: member.firstName,
       lastname: member.lastName,
-      generationId: member.generation?.generationId,
+      generationId: member.generationId,
+      internalProjectId: member.internalProjectId,
       mobile: member.mobile,
       jbtEmail: member.jbtEmail,
       memberStatus: member.memberStatus,

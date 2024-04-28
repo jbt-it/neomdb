@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { InternalProjectDetails, TraineeShort } from "../../types/traineesTypes";
+import { InternalProjectDto } from "../../types/traineesTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
@@ -24,7 +24,7 @@ import EditInternalProjectDialog from "../../components/members/trainees/EditInt
 import dayjs from "dayjs";
 import api from "../../utils/api";
 import { authReducerActionType } from "../../types/globalTypes";
-import { MemberPartialDto, MembersField } from "../../types/membersTypes";
+import { MembersFieldDto } from "../../types/membersTypes";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import axios, { AxiosError } from "axios";
 
@@ -47,9 +47,9 @@ const InternalProject: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
-  const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectDetails | null>(null);
-  const [selectableQMs, setSelectableQMs] = useState<MembersField[]>([]);
-  const [trainees, setTrainees] = useState<MembersField[]>([]);
+  const [internalProjectDetails, setInternalProjectDetails] = useState<InternalProjectDto | null>(null);
+  const [selectableQMs, setSelectableQMs] = useState<MembersFieldDto[]>([]);
+  const [trainees, setTrainees] = useState<MembersFieldDto[]>([]);
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
@@ -96,35 +96,35 @@ const InternalProject: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             /* TODO: Check implementation */
-            const internalProject: InternalProjectDetails = {
-              internesProjektID: res.data.internesProjektID,
-              projektname: res.data.projektname,
-              kuerzel: res.data.kuerzel,
-              generation: res.data.generation,
-              generationsBezeichnung: res.data.generationsBezeichnung,
-              kickoff: res.data.kickoff ? dayjs(res.data.kickoff) : null,
-              AngebotBeiEV: res.data.AngebotBeiEV === 1 ? true : false,
-              ZPBeiEV: res.data.ZPBeiEV === 1 ? true : false,
-              ZPGehalten: res.data.ZPGehalten ? dayjs(res.data.ZPGehalten) : null,
-              APBeiEV: res.data.APBeiEV === 1 ? true : false,
-              APGehalten: res.data.APGehalten ? dayjs(res.data.APGehalten) : null,
-              DLBeiEV: res.data.DLBeiEV === 1 ? true : false,
-              projektmitglieder: res.data.projektmitglieder.map((member: MemberPartialDto) => ({
-                mitgliedID: member.memberId,
-                name: `${member.firstname} ${member.lastname}`,
-                vorname: member.firstname,
-                nachname: member.lastname,
-                mitgliedstatus: member.memberStatus,
-              })),
-              qualitaetsmanager: res.data.qualitaetsmanager.map((member: MemberPartialDto) => ({
-                mitgliedID: member.memberId,
-                name: `${member.firstname} ${member.lastname}`,
-                vorname: member.firstname,
-                nachname: member.lastname,
-                mitgliedstatus: member.memberStatus,
-              })),
-            };
-            setInternalProjectDetails(internalProject);
+            // const internalProject: InternalProjectDto = {
+            //   internesProjektID: res.data.internesProjektID,
+            //   projektname: res.data.projektname,
+            //   kuerzel: res.data.kuerzel,
+            //   generation: res.data.generation,
+            //   generationsBezeichnung: res.data.generationsBezeichnung,
+            //   kickoff: res.data.kickoff ? dayjs(res.data.kickoff).toDate() : null,
+            //   AngebotBeiEV: res.data.AngebotBeiEV === 1 ? true : false,
+            //   ZPBeiEV: res.data.ZPBeiEV === 1 ? true : false,
+            //   ZPGehalten: res.data.ZPGehalten ? dayjs(res.data.ZPGehalten) : null,
+            //   APBeiEV: res.data.APBeiEV === 1 ? true : false,
+            //   APGehalten: res.data.APGehalten ? dayjs(res.data.APGehalten) : null,
+            //   DLBeiEV: res.data.DLBeiEV === 1 ? true : false,
+            //   projektmitglieder: res.data.projektmitglieder.map((member: MemberPartialDto) => ({
+            //     mitgliedID: member.memberId,
+            //     name: `${member.firstname} ${member.lastname}`,
+            //     vorname: member.firstname,
+            //     nachname: member.lastname,
+            //     mitgliedstatus: member.memberStatus,
+            //   })),
+            //   qualitaetsmanager: res.data.qualitaetsmanager.map((member: MemberPartialDto) => ({
+            //     mitgliedID: member.memberId,
+            //     name: `${member.firstname} ${member.lastname}`,
+            //     vorname: member.firstname,
+            //     nachname: member.lastname,
+            //     mitgliedstatus: member.memberStatus,
+            //   })),
+            // };
+            setInternalProjectDetails(res.data);
           }
         }
       })
@@ -157,15 +157,14 @@ const InternalProject: React.FunctionComponent = () => {
           if (mounted) {
             setSelectableQMs(
               res.data
-                .map((member: MembersField) => ({
+                .map((member: MembersFieldDto) => ({
                   memberId: member.memberId,
-                  name: `${member.firstname} ${member.lastname}`,
                   firstname: member.firstname,
                   lastname: member.lastname,
-                  memberStatusName: member.memberStatus?.name,
+                  memberStatus: member.memberStatus?.name,
                 }))
                 .filter(
-                  (member: MembersField) =>
+                  (member: MembersFieldDto) =>
                     member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene"
                 )
             );
@@ -195,17 +194,7 @@ const InternalProject: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setTrainees(
-              res.data
-                .map((trainee: TraineeShort) => ({
-                  mitgliedID: trainee.mitgliedID,
-                  name: `${trainee.vorname} ${trainee.nachname}`,
-                  vorname: trainee.vorname,
-                  nachname: trainee.nachname,
-                  mitgliedstatus: "Trainee",
-                }))
-                .filter((trainee: MembersField) => trainee.memberStatus?.name !== "Ausgetretene")
-            );
+            setTrainees(res.data.filter((trainee: MembersFieldDto) => trainee.memberStatus?.name !== "Ausgetretene"));
           }
         }
       })
@@ -225,42 +214,42 @@ const InternalProject: React.FunctionComponent = () => {
    * Updates the internal project details
    * @param updatedInternalProjectDetails - The updated internal project details
    */
-  const updateInternalProjectDetails = (updatedInternalProjectDetails: InternalProjectDetails) => {
+  const updateInternalProjectDetails = (updatedInternalProjectDetails: InternalProjectDto) => {
     event?.preventDefault();
 
-    const newInternalProjectDetails = {
-      internesProjektID: updatedInternalProjectDetails.internesProjektID,
-      projektname: updatedInternalProjectDetails.projektname,
-      kuerzel: updatedInternalProjectDetails.kuerzel,
-      generation: updatedInternalProjectDetails.generation,
-      generationsBezeichnung: updatedInternalProjectDetails.generationsBezeichnung,
-      kickoff: updatedInternalProjectDetails.kickoff
-        ? updatedInternalProjectDetails.kickoff.format("YYYY-MM-DD")
-        : null,
-      AngebotBeiEV: updatedInternalProjectDetails.AngebotBeiEV,
-      ZPBeiEV: updatedInternalProjectDetails.ZPBeiEV,
-      ZPGehalten: updatedInternalProjectDetails.ZPGehalten
-        ? updatedInternalProjectDetails.ZPGehalten.format("YYYY-MM-DD")
-        : null,
-      APBeiEV: updatedInternalProjectDetails.APBeiEV,
-      APGehalten: updatedInternalProjectDetails.APGehalten
-        ? updatedInternalProjectDetails.APGehalten.format("YYYY-MM-DD")
-        : null,
-      DLBeiEV: updatedInternalProjectDetails.DLBeiEV,
-      projektmitglieder: updatedInternalProjectDetails.projektmitglieder.map((member: MembersField) => ({
-        memberId: member.memberId,
-        firstname: member.firstname,
-        lastname: member.lastname,
-      })),
-      qualitaetsmanager: updatedInternalProjectDetails.qualitaetsmanager.map((member: MembersField) => ({
-        memberId: member.memberId,
-        firstname: member.firstname,
-        lastname: member.lastname,
-      })),
-    };
+    // const newInternalProjectDetails = {
+    //   internesProjektID: updatedInternalProjectDetails.internalProjectID,
+    //   projektname: updatedInternalProjectDetails.projectName,
+    //   kuerzel: updatedInternalProjectDetails.abbreviation,
+    //   generation: updatedInternalProjectDetails.generation,
+    //   generationsBezeichnung: updatedInternalProjectDetails.generationName,
+    //   kickoff: updatedInternalProjectDetails.kickoff
+    //     ? updatedInternalProjectDetails.kickoff.format("YYYY-MM-DD")
+    //     : null,
+    //   AngebotBeiEV: updatedInternalProjectDetails.AngebotBeiEV,
+    //   ZPBeiEV: updatedInternalProjectDetails.ZPBeiEV,
+    //   ZPGehalten: updatedInternalProjectDetails.ZPGehalten
+    //     ? updatedInternalProjectDetails.ZPGehalten.format("YYYY-MM-DD")
+    //     : null,
+    //   APBeiEV: updatedInternalProjectDetails.APBeiEV,
+    //   APGehalten: updatedInternalProjectDetails.APGehalten
+    //     ? updatedInternalProjectDetails.APGehalten.format("YYYY-MM-DD")
+    //     : null,
+    //   DLBeiEV: updatedInternalProjectDetails.DLBeiEV,
+    //   projektmitglieder: updatedInternalProjectDetails.projektmitglieder.map((member: MembersFieldDto) => ({
+    //     memberId: member.memberId,
+    //     firstname: member.firstname,
+    //     lastname: member.lastname,
+    //   })),
+    //   qualitaetsmanager: updatedInternalProjectDetails.qualitaetsmanager.map((member: MembersFieldDto) => ({
+    //     memberId: member.memberId,
+    //     firstname: member.firstname,
+    //     lastname: member.lastname,
+    //   })),
+    // };
 
     api
-      .put(`/trainees/ip/${updatedInternalProjectDetails.internesProjektID}`, newInternalProjectDetails)
+      .put(`/trainees/ip/${updatedInternalProjectDetails.internalProjectID}`, updatedInternalProjectDetails)
       .then((res) => {
         if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");
@@ -316,62 +305,62 @@ const InternalProject: React.FunctionComponent = () => {
   const internalProjectDetailsFields: Array<InformationField> = [
     {
       label: "Internesprojekt",
-      value: internalProjectDetails?.projektname,
+      value: internalProjectDetails?.projectName,
       type: "text",
     },
     {
       label: "Kürzel",
-      value: internalProjectDetails?.kuerzel,
+      value: internalProjectDetails?.abbreviation,
       type: "text",
     },
     {
       label: "Traineegeneration",
-      value: internalProjectDetails?.generationsBezeichnung,
+      value: internalProjectDetails?.generationName,
       type: "text",
     },
     {
       label: "Kickoff",
-      value: internalProjectDetails?.kickoff ? internalProjectDetails?.kickoff.format("DD.MM.YYYY") : "",
+      value: internalProjectDetails?.kickoff ? dayjs(internalProjectDetails?.kickoff).format("DD.MM.YYYY") : "",
       type: "text",
     },
     {
       label: "Angebot abgegeben",
-      value: internalProjectDetails?.AngebotBeiEV ? true : false,
+      value: internalProjectDetails?.offerAtEv,
       type: "checkbox",
     },
     {
       label: "ZP abgegeben",
-      value: internalProjectDetails?.ZPBeiEV ? true : false,
+      value: internalProjectDetails?.zpAtEv,
       type: "checkbox",
     },
     {
       label: "ZP Datum",
-      value: internalProjectDetails?.ZPGehalten ? internalProjectDetails?.ZPGehalten.format("DD.MM.YYYY") : "",
+      value: internalProjectDetails?.zpHeld ? dayjs(internalProjectDetails?.zpHeld).format("DD.MM.YYYY") : "",
       type: "text",
     },
     {
       label: "AP abgegeben",
-      value: internalProjectDetails?.APBeiEV ? true : false,
+      value: internalProjectDetails?.apAtEv,
       type: "checkbox",
     },
     {
       label: "AP Datum",
-      value: internalProjectDetails?.APGehalten ? internalProjectDetails?.APGehalten.format("DD.MM.YYYY") : "",
+      value: internalProjectDetails?.apHeld ? dayjs(internalProjectDetails?.apHeld).format("DD.MM.YYYY") : "",
       type: "text",
     },
     {
       label: "DL abgegeben",
-      value: internalProjectDetails?.DLBeiEV ? true : false,
+      value: internalProjectDetails?.dlAtEv,
       type: "checkbox",
     },
     {
       label: "Projektmitglieder",
-      value: internalProjectDetails?.projektmitglieder,
+      value: internalProjectDetails?.members || [],
       type: "memberList",
     },
     {
       label: "Qualitätsmanager",
-      value: internalProjectDetails?.qualitaetsmanager,
+      value: internalProjectDetails?.qualityManagers || [],
       type: "memberList",
     },
   ];
@@ -419,7 +408,7 @@ const InternalProject: React.FunctionComponent = () => {
                 <DialogTitle>Internes Projekt löschen</DialogTitle>
                 <DialogContent>
                   <Typography>
-                    Bist Du sicher, dass Du das interne Projekt <strong>"{internalProjectDetails?.projektname}"</strong>{" "}
+                    Bist Du sicher, dass Du das interne Projekt <strong>"{internalProjectDetails?.projectName}"</strong>{" "}
                     löschen möchtest?
                   </Typography>
                 </DialogContent>

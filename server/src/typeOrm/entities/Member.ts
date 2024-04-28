@@ -378,4 +378,7 @@ export class Member {
 
   @OneToMany(() => TraineeApplicant, (traineeApplicant) => traineeApplicant.admittedMember)
   traineeApplicants: TraineeApplicant[];
+
+  @ManyToMany(() => InternalProject, (internalProject) => internalProject.qualityManagers)
+  qualityManagers: InternalProject[];
 }

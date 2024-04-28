@@ -82,6 +82,7 @@ export type MemberPartialDto = {
   firstname: string;
   lastname: string;
   generationId: number;
+  internalProjectId: number;
   mobile: string;
   jbtEmail: string;
   memberStatus: MemberStatus;

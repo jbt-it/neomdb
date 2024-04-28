@@ -575,6 +575,12 @@
 							"$ref": "#/components/schemas/TraineeApplicant"
 						},
 						"type": "array"
+					},
+					"qualityManagers": {
+						"items": {
+							"$ref": "#/components/schemas/InternalProject"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -674,7 +680,8 @@
 					"internships",
 					"workshopFeedbackHasMembers",
 					"languages",
-					"traineeApplicants"
+					"traineeApplicants",
+					"qualityManagers"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3252,6 +3259,10 @@
 					"mobile": {
 						"type": "string"
 					},
+					"internalProjectId": {
+						"type": "number",
+						"format": "double"
+					},
 					"generationId": {
 						"type": "number",
 						"format": "double"
@@ -3273,6 +3284,7 @@
 					"memberStatus",
 					"jbtEmail",
 					"mobile",
+					"internalProjectId",
 					"generationId",
 					"lastname",
 					"firstname",
@@ -4250,32 +4262,6 @@
 				"type": "object",
 				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
 			},
-			"TraineeDto": {
-				"properties": {
-					"generationId": {
-						"type": "number",
-						"format": "double"
-					},
-					"lastname": {
-						"type": "string"
-					},
-					"firstname": {
-						"type": "string"
-					},
-					"memberID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"generationId",
-					"lastname",
-					"firstname",
-					"memberID"
-				],
-				"type": "object",
-				"description": "Type of a trainee (partial member)"
-			},
 			"MembersFieldDto": {
 				"properties": {
 					"memberStatus": {
@@ -4460,18 +4446,6 @@
 				],
 				"type": "object",
 				"description": "Type of the trainee choice of a member"
-			},
-			"JBTMail": {
-				"properties": {
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email"
-				],
-				"type": "object",
-				"description": "Type of the jbt mail of a member"
 			},
 			"TraineeMotivation": {
 				"properties": {
@@ -5548,7 +5522,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeDto"
+										"$ref": "#/components/schemas/MembersFieldDto"
 									},
 									"type": "array"
 								}
@@ -5644,7 +5618,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/InternalProject",
+								"$ref": "#/components/schemas/InternalProjectDto",
 								"description": "updated internal project"
 							},
 							"example": {
@@ -5723,48 +5697,6 @@
 				"parameters": [
 					{
 						"description": "id of the generation",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/trainees/ip/{id}/mails": {
-			"get": {
-				"operationId": "GetIPTeamMails",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/JBTMail"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "Retrieves the mails for the specified internal projects",
-				"summary": "Get ip team mails",
-				"tags": [
-					"Trainees"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"description": "id of the internal project",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -6095,7 +6027,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}
@@ -6126,7 +6058,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}

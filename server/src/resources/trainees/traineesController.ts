@@ -2,16 +2,16 @@ import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } 
 import TraineesService from "./TraineesService";
 import { Mentor } from "../../types/membersTypes";
 import {
-  Generation,
   InternalProject,
-  JBTMail,
   TraineeAssignment,
   TraineeMotivation,
   TraineeProgress,
   UpdateVotingDeadlinesRequest,
 } from "../../types/traineesTypes";
-import { InternalProjectDto, TraineeDto, TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
+import { InternalProjectDto, TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
 import MembersService from "../members/MembersService";
+import { MembersFieldDto } from "../../typeOrm/types/memberTypes";
+import { Generation } from "../../typeOrm/entities/Generation";
 
 /**
  * Controller for the trainees
@@ -30,9 +30,8 @@ export class TraineesController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getTrainees(): Promise<TraineeDto[]> {
+  public async getTrainees(): Promise<MembersFieldDto[]> {
     const trainees = await this.traineesService.getTrainees();
-
     return trainees;
   }
 
@@ -110,21 +109,8 @@ export class TraineesController extends Controller {
    */
   @Put("ip/{id}")
   @Security("jwt", ["15"])
-  public async updateIP(@Path() id: number, @Body() requestBody: InternalProject): Promise<void> {
+  public async updateIP(@Path() id: number, @Body() requestBody: InternalProjectDto): Promise<void> {
     await this.traineesService.updateIPByID(id, requestBody);
-  }
-
-  /**
-   * Retrieves the mails for the specified internal projects
-   * @summary Get ip team mails
-   * @param id id of the internal project
-   */
-  @Get("ip/{id}/mails")
-  @Security("jwt")
-  public async getIPTeamMails(@Path() id: number): Promise<JBTMail[]> {
-    const mails = await this.traineesService.getTraineeMailsByIpID(id);
-
-    return mails;
   }
 
   /**
@@ -233,7 +219,7 @@ export class TraineesController extends Controller {
    */
   @Get("ips/current")
   @Security("jwt")
-  public async getCurrentIPs(): Promise<InternalProject[]> {
+  public async getCurrentIPs(): Promise<InternalProjectDto[]> {
     const ips = await this.traineesService.getInternalProjects(true);
 
     return ips;
@@ -245,7 +231,7 @@ export class TraineesController extends Controller {
    */
   @Get("ips/all")
   @Security("jwt")
-  public async getAllIPs(): Promise<InternalProject[]> {
+  public async getAllIPs(): Promise<InternalProjectDto[]> {
     const ips = await this.traineesService.getInternalProjects(false);
 
     return ips;
