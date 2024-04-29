@@ -1,6 +1,5 @@
 import { AppDataSource } from "../../datasource";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
 
 export const InternalProjectRepository_typeORM = AppDataSource.getRepository(InternalProject).extend({
   /**

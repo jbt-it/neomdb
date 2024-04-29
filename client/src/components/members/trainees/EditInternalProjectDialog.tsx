@@ -104,11 +104,15 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   const errorName = projectName === "";
   const errorAbbreviation = abbreviation === "";
 
+  const errorEmptyMembers = projectMembers.some((member) => Object.keys(member).length === 0);
+  const errorEmptyQMs = qualityManagers.some((member) => Object.keys(member).length === 0);
+
   // Function to update the internal project details
   const handleUpdateInternalProjectDetails = () => {
-    if (errorAP || errorZP || errorName || errorAbbreviation) {
+    if (errorAP || errorZP || errorName || errorAbbreviation || errorEmptyMembers || errorEmptyQMs) {
       return;
     }
+
     const data: InternalProjectDto = {
       internalProjectID: internalProjectDetails?.internalProjectID,
       generation: internalProjectDetails.generation,
@@ -327,23 +331,29 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
         </div>
         <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
           <Typography variant="subtitle1">Projektmitglieder</Typography>
+          {errorEmptyMembers ? (
+            <Typography color="error">Bitte füge ein Projektmitglied hinzu oder lösche das leere Feld</Typography>
+          ) : null}
           <MemberSelection
             selectedMembers={projectMembers}
             addMember={addMember}
             onChangeCallback={handleMemberSelection}
             removeMember={removeMember}
             selectableMembers={selectableTrainees}
-          ></MemberSelection>
+          />
         </div>
         <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
           <Typography variant="subtitle1">Qualitätsmanager</Typography>
+          {errorEmptyQMs ? (
+            <Typography color="error">Bitte füge ein Qualitätsmanager hinzu oder lösche das leere Feld</Typography>
+          ) : null}
           <MemberSelection
             selectedMembers={qualityManagers}
             addMember={addQM}
             removeMember={removeQM}
             onChangeCallback={handleQMSelection}
             selectableMembers={selectableQMs}
-          ></MemberSelection>
+          />
         </div>
       </DialogContent>
       <DialogActions>
