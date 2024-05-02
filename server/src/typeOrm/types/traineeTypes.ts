@@ -68,11 +68,17 @@ export type TraineeAssignmentDto = {
   departmentID: number;
 };
 
+/**
+ * Type of mandatory workshop feedback
+ */
 export type mandatoryWorkshopFeedback = {
   workshopId: number;
   feedbackGiven: boolean;
 };
 
+/**
+ * Type of the trainee progress with the internal project milestones and mandatory workshops feedback
+ */
 export type TraineeProgressDto = {
   memberID: number;
   firstname: string;

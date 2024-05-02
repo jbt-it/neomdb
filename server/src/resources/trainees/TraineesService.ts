@@ -1,6 +1,5 @@
 import { NotFoundError } from "../../types/Errors";
 import TraineesRepository from "./TraineesRepository";
-import { InternalProjectAndTrainee, Workshop } from "../../types/traineesTypes";
 import MembersRepository from "../members/MembersRepository";
 import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
 import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
@@ -60,6 +59,7 @@ class TraineesService {
    * @throws NotFoundError if the internal project does not exist
    */
   updateIPByID = async (id: number, updatedIp: InternalProjectDto): Promise<void> => {
+    // Update the internal project in a transaction
     await AppDataSource.transaction(async (transactionalEntityManager) => {
       const ip = await InternalProjectRepository_typeORM.getIPByID(id);
       const ipMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(id);
@@ -68,14 +68,17 @@ class TraineesService {
         throw new NotFoundError(`IP with id ${id} not found`);
       }
 
+      // Get the memberIDs of the updated and old internal project
       const ipMemberIDs = updatedIp.members.map((member) => member.memberId);
       const oldIPMemberIDs = ipMembers
         .filter((member) => ipMemberIDs.includes(member.memberId) === false)
         .map((member) => member.memberId);
 
+      // Fetch for the new members and quality managers of the internal project the respective Member objects
       const newQms = updatedIp.qualityManagers.map((qm) => MembersRepository_typeORM.getMemberByID(qm.memberId));
       const newMembers = updatedIp.members.map((member) => MembersRepository_typeORM.getMemberByID(member.memberId));
 
+      // Change the internal project details based on the updated IP
       ip.projectName = updatedIp.projectName;
       ip.abbreviation = updatedIp.abbreviation;
       ip.kickoff = updatedIp.kickoff;
@@ -250,6 +253,8 @@ class TraineesService {
    */
   getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProjectDto[]> => {
     const currentGeneration = await GenerationRepository_typeORM.getCurrentGenerationId();
+
+    // Get all internal projects or only the current ones
     const ips = onlyCurrent
       ? await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(currentGeneration)
       : await InternalProjectRepository_typeORM.getAllInternalProjects();

@@ -11,10 +11,18 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
     return this.findOne({ where: { generationId: generationId }, relations: ["members", "mentors"] });
   },
 
+  /**
+   * Retrieves all generations
+   * @returns The generations
+   */
   getGenerations(): Promise<Generation[]> {
     return this.find();
   },
 
+  /**
+   * Retrieves the ID of the current generation
+   * @returns The ID of the current generation
+   */
   async getCurrentGenerationId(): Promise<number> {
     const result = await AppDataSource.getRepository(Generation)
       .createQueryBuilder("generation")
@@ -23,10 +31,23 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
     return result.maxGenerationId;
   },
 
-  updateVotingDeadline(generationId: number, electionStart: Date, electionEnd: Date): Promise<Generation> {
+  /**
+   * Updates the election deadlines of a generation
+   * @param generationId - The id of the generation
+   * @param electionStart - The new election start date
+   * @param electionEnd - The new election end date
+   * @returns The updated generation
+   */
+  updateElectionDeadline(generationId: number, electionStart: Date, electionEnd: Date): Promise<Generation> {
     return this.update(generationId, { electionStart: electionStart, electionEnd: electionEnd });
   },
 
+  /**
+   * Adds a mentor to a generation
+   * @param generationId - The id of the generation
+   * @param mentorId - The id of the mentor
+   * @returns The updated generation
+   */
   addMentorToGeneration(generationId: number, mentorId: number): Promise<Generation> {
     return this.createQueryBuilder().relation(Generation, "mentors").of(generationId).add(mentorId);
   },

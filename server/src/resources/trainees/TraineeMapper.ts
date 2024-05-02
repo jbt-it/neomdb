@@ -1,4 +1,3 @@
-import { Generation } from "typeOrm/entities/Generation";
 import { Member } from "../../typeOrm/entities/Member";
 import {
   TraineeChoiceDto,

@@ -15,10 +15,19 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
     });
   },
 
+  /**
+   * Get all internal projects
+   * @returns all internal projects
+   */
   getAllInternalProjects(): Promise<InternalProject[]> {
     return this.find({ relations: ["qualityManagers", "members", "generation"] });
   },
 
+  /**
+   * Get all internal projects of a generation
+   * @param generationId id of the generation
+   * @returns all internal projects of the generation
+   */
   getInternalProjectsByGenerationId(generationId: number): Promise<InternalProject[]> {
     return this.find({
       where: { generationId: generationId },
@@ -26,6 +35,12 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
     });
   },
 
+  /**
+   * Update the details of an internal project
+   * @param internalProject The internal project to be updated
+   * @param transactionalEntityManager The transactional entity manager
+   * @returns The updated internal project
+   */
   updateIPDetailsByID(
     internalProject: InternalProject,
     transactionalEntityManager: EntityManager

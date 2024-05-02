@@ -67,6 +67,11 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
     });
   },
 
+  /**
+   * Checks for all mandatory workshops if feedback was given by a member
+   * @param memberId The id of the member
+   * @returns An array of mandatory workshop feedbacks with the workshop id and if feedback was given
+   */
   async checkFeedbackForMandatoryWorkshops(memberId: number): Promise<mandatoryWorkshopFeedback[]> {
     const MemberHasWorkshopInstanceRepository = AppDataSource.getRepository(MemberHasWorkshopInstance);
 
