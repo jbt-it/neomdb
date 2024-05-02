@@ -1,7 +1,5 @@
 import { InternalProjectDto } from "../../typeOrm/types/traineeTypes";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { Generation } from "../../typeOrm/entities/Generation";
-import { Member } from "../../typeOrm/entities/Member";
 import { MemberMapper } from "../../resources/members/MemberMapper";
 
 /**
@@ -10,15 +8,11 @@ import { MemberMapper } from "../../resources/members/MemberMapper";
 export class InteralProjectMapper {
   // --- To DTO mapper functions
 
-  static internalProjectToInternalProjectDto(
-    internalProject: InternalProject,
-    generation: Generation,
-    members: Member[]
-  ): InternalProjectDto {
+  static internalProjectToInternalProjectDto(internalProject: InternalProject): InternalProjectDto {
     return {
       internalProjectID: internalProject.internalProjectId,
-      generation: internalProject.generation,
-      generationName: generation.description,
+      generation: internalProject.generationId,
+      generationName: internalProject.generation.description,
       projectName: internalProject.projectName,
       abbreviation: internalProject.abbreviation,
       kickoff: internalProject.kickoff,
@@ -28,7 +22,7 @@ export class InteralProjectMapper {
       apAtEv: internalProject.apAtEv,
       apHeld: internalProject.apHeld,
       dlAtEv: internalProject.dlAtEv,
-      members: members.map((member) => MemberMapper.memberToMemberFieldDto(member)),
+      members: internalProject.members.map((member) => MemberMapper.memberToMemberFieldDto(member)),
       qualityManagers: internalProject.qualityManagers.map((qualityManager) =>
         MemberMapper.memberToMemberFieldDto(qualityManager)
       ),

@@ -146,8 +146,8 @@ export type Workshop = {
  * Type of the request to update the voting deadlines of a generation
  */
 export type UpdateVotingDeadlinesRequest = {
-  votingStart: string; // TODO: Date
-  votingEnd: string; // TODO: Date
+  electionStart: Date;
+  electionEnd: Date;
 };
 
 /**

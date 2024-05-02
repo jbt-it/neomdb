@@ -1,5 +1,9 @@
+import { EntityManager, UpdateResult } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Member } from "../../typeOrm/entities/Member";
+import { Department } from "../../typeOrm/entities/Department";
+import { MemberHasWorkshopInstance } from "../../typeOrm/entities/MemberHasWorkshopInstance";
+import { mandatoryWorkshopFeedback } from "../../typeOrm/types/traineeTypes";
 
 export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -34,7 +38,57 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param memberIds The ids of the members
    * @returns A promise that resolves when the update is done
    */
-  updateIPMembers(internalProjectId: number, memberId: number): Promise<void> {
-    return this.update(memberId, { internalProjectId: internalProjectId });
+  updateIPMembers(
+    internalProjectId: number,
+    memberId: number,
+    transactionalEntityManager: EntityManager
+  ): Promise<UpdateResult> {
+    return transactionalEntityManager.update(Member, { memberId: memberId }, { internalProjectId: internalProjectId });
+  },
+
+  /**
+   * Assigns a mentor, internal project and department to a trainee
+   * @param memberId The id of the member
+   * @param ipId The id of the internal project
+   * @param mentor The mentor
+   * @param department The department
+   * @returns A promise that resolves when the update is done
+   */
+  updateAssignmentByMemberID(
+    memberId: number,
+    ipId: number,
+    mentor: Member,
+    department: Department
+  ): Promise<UpdateResult> {
+    return this.update(memberId, {
+      internalProjectId: ipId,
+      mentor: mentor,
+      departmentId: department,
+    });
+  },
+
+  async checkFeedbackForMandatoryWorkshops(memberId: number): Promise<mandatoryWorkshopFeedback[]> {
+    const MemberHasWorkshopInstanceRepository = AppDataSource.getRepository(MemberHasWorkshopInstance);
+
+    const instances = await MemberHasWorkshopInstanceRepository.find({
+      relations: {
+        workshopInstance: {
+          workshop: true,
+        },
+      },
+      where: {
+        memberId: memberId,
+        type: "Teilnehmer",
+        workshopInstance: {
+          workshop: { type: "Pflichtworkshop" },
+        },
+      },
+    });
+    return instances.map((instance) => {
+      return {
+        workshopId: instance.workshopInstance.workshop.workshopId,
+        feedbackGiven: instance.feedbackGiven,
+      };
+    });
   },
 });

@@ -1,14 +1,25 @@
-import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Member } from "./Member";
+import { Generation } from "./Generation";
 
-@Index("fk_IP_Generation", ["generation"], {})
+@Index("fk_IP_Generation", ["generationId"], {})
 @Entity("internesprojekt", { schema: "mdb" })
 export class InternalProject {
   @PrimaryGeneratedColumn({ type: "int", name: "internesprojektID" })
   internalProjectId: number;
 
   @Column("int", { name: "generation" })
-  generation: number;
+  generationId: number;
 
   @Column("varchar", { name: "projektname", length: 150 })
   projectName: string;
@@ -50,4 +61,11 @@ export class InternalProject {
     schema: "mdb",
   })
   qualityManagers: Member[];
+
+  @OneToMany(() => Member, (member) => member.internalProject, { cascade: true })
+  members: Member[];
+
+  @ManyToOne(() => Generation, (generation) => generation.internalProjects)
+  @JoinColumn({ name: "generation", referencedColumnName: "generationId" })
+  generation: Generation;
 }

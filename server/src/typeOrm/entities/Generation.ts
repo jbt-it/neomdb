@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Member } from "./Member";
 import { TraineeApplicant } from "./TraineeApplicant";
+import { InternalProject } from "./InternalProject";
 
 @Index("generationID_UNIQUE", ["generationId"], { unique: true })
 @Index("bezeichnung_UNIQUE", ["description"], { unique: true })
@@ -50,4 +51,7 @@ export class Generation {
 
   @OneToMany(() => TraineeApplicant, (traineeApplicant) => traineeApplicant.generation)
   traineeApplicants: TraineeApplicant[];
+
+  @OneToMany(() => InternalProject, (internalProject) => internalProject.generation)
+  internalProjects: InternalProject[];
 }

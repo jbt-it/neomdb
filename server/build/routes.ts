@@ -147,6 +147,7 @@ const models: TsoaRoute.Models = {
             "languages": {"dataType":"array","array":{"dataType":"refObject","ref":"Language"},"required":true},
             "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
             "qualityManagers": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
+            "internalProject": {"ref":"InternalProject","required":true},
         },
         "additionalProperties": false,
     },
@@ -178,6 +179,7 @@ const models: TsoaRoute.Models = {
             "mentors": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
             "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
             "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
+            "internalProjects": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -332,7 +334,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "internalProjectId": {"dataType":"double","required":true},
-            "generation": {"dataType":"double","required":true},
+            "generationId": {"dataType":"double","required":true},
             "projectName": {"dataType":"string","required":true},
             "abbreviation": {"dataType":"string","required":true},
             "kickoff": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
@@ -343,6 +345,8 @@ const models: TsoaRoute.Models = {
             "apHeld": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
             "dlAtEv": {"dataType":"boolean","required":true},
             "qualityManagers": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "generation": {"ref":"Generation","required":true},
         },
         "additionalProperties": false,
     },
@@ -972,14 +976,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"choice_department3":{"dataType":"double","required":true},"choice_department2":{"dataType":"double","required":true},"choice_department1":{"dataType":"double","required":true},"choice_department":{"dataType":"double","required":true},"choice_internalProject3":{"dataType":"double","required":true},"choice_internalProject2":{"dataType":"double","required":true},"choice_internalProject1":{"dataType":"double","required":true},"choice_internalProject":{"dataType":"double","required":true},"choice_mentor3":{"dataType":"double","required":true},"choice_mentor2":{"dataType":"double","required":true},"choice_mentor1":{"dataType":"double","required":true},"choice_mentor":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeMotivation": {
+    "TraineeMotivationDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_internesprojekt3_motivation":{"dataType":"string","required":true},"wahl_internesprojekt2_motivation":{"dataType":"string","required":true},"wahl_internesprojekt1_motivation":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"internalProject3Motivation":{"dataType":"string","required":true},"internalProject2Motivation":{"dataType":"string","required":true},"internalProject1Motivation":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateVotingDeadlinesRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"votingEnd":{"dataType":"string","required":true},"votingStart":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"datetime","required":true},"electionStart":{"dataType":"datetime","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TraineeAssignment": {
@@ -987,14 +991,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InternalProjectAndTrainee": {
+    "TraineeProgressDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"DLbeiEV":{"dataType":"boolean","required":true},"APgehalten":{"dataType":"string","required":true},"APbeiEV":{"dataType":"boolean","required":true},"ZPgehalten":{"dataType":"string","required":true},"ZPbeiEV":{"dataType":"boolean","required":true},"AngebotBeiEV":{"dataType":"boolean","required":true},"kuerzel":{"dataType":"string","required":true},"projektname":{"dataType":"string","required":true},"internesprojekt":{"dataType":"double","required":true},"generation":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeProgress": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"InternalProjectAndTrainee"},{"ref":"Workshop"}],"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"excelBasics":{"dataType":"boolean","required":true},"safetyTraining":{"dataType":"boolean","required":true},"dataPrivacyTraining":{"dataType":"boolean","required":true},"strategyAndOrganisation":{"dataType":"boolean","required":true},"msPowerpoint":{"dataType":"boolean","required":true},"departmentQualityManagement":{"dataType":"boolean","required":true},"departmentNetwork":{"dataType":"boolean","required":true},"departmentFinanceAndLaw":{"dataType":"boolean","required":true},"acquisitionNegotiationTechnique":{"dataType":"boolean","required":true},"rhetoricPresentationTechnique":{"dataType":"boolean","required":true},"projectManagement":{"dataType":"boolean","required":true},"dlAtEv":{"dataType":"boolean","required":true},"apHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"apAtEv":{"dataType":"boolean","required":true},"zpHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"zpAtEv":{"dataType":"boolean","required":true},"offerAtEv":{"dataType":"boolean","required":true},"abbreviation":{"dataType":"string","required":true},"projectName":{"dataType":"string","required":true},"internalProjectID":{"dataType":"double","required":true},"generationID":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -1764,9 +1763,9 @@ export function RegisterRoutes(app: Router) {
         app.post('/api/trainees/generations/:id/set-deadline',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setVotingDeadline)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setElectionDeadline)),
 
-            function TraineesController_setVotingDeadline(request: any, response: any, next: any) {
+            function TraineesController_setElectionDeadline(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequest"},
@@ -1781,7 +1780,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new TraineesController();
 
 
-              const promise = controller.setVotingDeadline.apply(controller, validatedArgs as any);
+              const promise = controller.setElectionDeadline.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

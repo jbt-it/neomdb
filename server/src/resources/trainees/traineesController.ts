@@ -1,16 +1,15 @@
 import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
 import TraineesService from "./TraineesService";
-import { Mentor } from "../../types/membersTypes";
+import { TraineeAssignment, TraineeProgress } from "../../types/traineesTypes";
 import {
-  InternalProject,
-  TraineeAssignment,
-  TraineeMotivation,
-  TraineeProgress,
+  InternalProjectDto,
+  TraineeChoiceDto,
+  TraineeMotivationDto,
+  TraineeProgressDto,
   UpdateVotingDeadlinesRequest,
-} from "../../types/traineesTypes";
-import { InternalProjectDto, TraineeChoiceDto } from "../../typeOrm/types/traineeTypes";
+} from "../../typeOrm/types/traineeTypes";
 import MembersService from "../members/MembersService";
-import { MembersFieldDto } from "../../typeOrm/types/memberTypes";
+import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
 import { Generation } from "../../typeOrm/entities/Generation";
 
 /**
@@ -132,7 +131,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/motivation")
   @Security("jwt", ["14"])
-  public async getTraineeMotivation(@Path() id: number): Promise<TraineeMotivation[]> {
+  public async getTraineeMotivation(@Path() id: number): Promise<TraineeMotivationDto[]> {
     const motivation = await this.traineesService.getTraineeMotivationsByGenerationID(id);
 
     return motivation;
@@ -145,14 +144,17 @@ export class TraineesController extends Controller {
    * @param requestBody start and end date of the voting
    *
    * @example requestBody {
-   * "votingStart": "2021-01-01",
-   * "votingEnd": "2021-01-01"
+   * "electionStart": "2021-01-01 18:00:00",
+   * "electionEnd": "2021-01-31 20:00:00"
    * }
    */
   @Post("generations/{id}/set-deadline")
   @Security("jwt", ["14"])
-  public async setVotingDeadline(@Path() id: number, @Body() requestBody: UpdateVotingDeadlinesRequest): Promise<void> {
-    await this.traineesService.updateVotingDeadline(id, requestBody.votingStart, requestBody.votingEnd);
+  public async setElectionDeadline(
+    @Path() id: number,
+    @Body() requestBody: UpdateVotingDeadlinesRequest
+  ): Promise<void> {
+    await this.traineesService.updateElectionDeadline(id, requestBody.electionStart, requestBody.electionEnd);
   }
 
   /**
@@ -162,7 +164,6 @@ export class TraineesController extends Controller {
    * @param requestBody assignment of the trainee
    *
    * @example requestBody {
-   * "memberID": 8167,
    * "ipID": 62,
    * "mentorID": 8167,
    * "departmentID": 1
@@ -182,7 +183,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/mentors")
   @Security("jwt", ["14"])
-  public async getMentorsOfGeneration(@Path() id: number): Promise<Mentor[]> {
+  public async getMentorsOfGeneration(@Path() id: number): Promise<MentorDto[]> {
     const mentors = await this.traineesService.getMentorsByGenerationID(id);
 
     return mentors;
@@ -207,7 +208,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/internal-projects")
   @Security("jwt", ["14"])
-  public async getInternalProjectsOfGeneration(@Path() id: number): Promise<InternalProject[]> {
+  public async getInternalProjectsOfGeneration(@Path() id: number): Promise<InternalProjectDto[]> {
     const internalProjects = await this.traineesService.getInternalProjectsByGenerationID(id);
 
     return internalProjects;
@@ -244,7 +245,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/trainee-progress")
   @Security("jwt", ["14"])
-  public async getTraineeProgress(@Path() id: number): Promise<TraineeProgress[]> {
+  public async getTraineeProgress(@Path() id: number): Promise<TraineeProgressDto[]> {
     const ips = await this.traineesService.getTraineeProgress(id);
 
     return ips;

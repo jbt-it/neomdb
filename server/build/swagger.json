@@ -581,6 +581,9 @@
 							"$ref": "#/components/schemas/InternalProject"
 						},
 						"type": "array"
+					},
+					"internalProject": {
+						"$ref": "#/components/schemas/InternalProject"
 					}
 				},
 				"required": [
@@ -681,7 +684,8 @@
 					"workshopFeedbackHasMembers",
 					"languages",
 					"traineeApplicants",
-					"qualityManagers"
+					"qualityManagers",
+					"internalProject"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -775,6 +779,12 @@
 							"$ref": "#/components/schemas/TraineeApplicant"
 						},
 						"type": "array"
+					},
+					"internalProjects": {
+						"items": {
+							"$ref": "#/components/schemas/InternalProject"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -790,7 +800,8 @@
 					"electionEnd",
 					"mentors",
 					"members",
-					"traineeApplicants"
+					"traineeApplicants",
+					"internalProjects"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1390,7 +1401,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"generation": {
+					"generationId": {
 						"type": "number",
 						"format": "double"
 					},
@@ -1432,11 +1443,20 @@
 							"$ref": "#/components/schemas/Member"
 						},
 						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"generation": {
+						"$ref": "#/components/schemas/Generation"
 					}
 				},
 				"required": [
 					"internalProjectId",
-					"generation",
+					"generationId",
 					"projectName",
 					"abbreviation",
 					"kickoff",
@@ -1446,7 +1466,9 @@
 					"apAtEv",
 					"apHeld",
 					"dlAtEv",
-					"qualityManagers"
+					"qualityManagers",
+					"members",
+					"generation"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4447,43 +4469,45 @@
 				"type": "object",
 				"description": "Type of the trainee choice of a member"
 			},
-			"TraineeMotivation": {
+			"TraineeMotivationDto": {
 				"properties": {
-					"wahl_internesprojekt3_motivation": {
+					"internalProject3Motivation": {
 						"type": "string"
 					},
-					"wahl_internesprojekt2_motivation": {
+					"internalProject2Motivation": {
 						"type": "string"
 					},
-					"wahl_internesprojekt1_motivation": {
+					"internalProject1Motivation": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberID": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"wahl_internesprojekt3_motivation",
-					"wahl_internesprojekt2_motivation",
-					"wahl_internesprojekt1_motivation",
-					"mitgliedID"
+					"internalProject3Motivation",
+					"internalProject2Motivation",
+					"internalProject1Motivation",
+					"memberID"
 				],
 				"type": "object",
-				"description": "Type of the trainee motivation written by a trainee to explain the choice of an internal project"
+				"description": "Type of the motivation of a trainee"
 			},
 			"UpdateVotingDeadlinesRequest": {
 				"properties": {
-					"votingEnd": {
-						"type": "string"
+					"electionEnd": {
+						"type": "string",
+						"format": "date-time"
 					},
-					"votingStart": {
-						"type": "string"
+					"electionStart": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
-					"votingEnd",
-					"votingStart"
+					"electionEnd",
+					"electionStart"
 				],
 				"type": "object",
 				"description": "Type of the request to update the voting deadlines of a generation"
@@ -4511,79 +4535,115 @@
 				"type": "object",
 				"description": "Type of the assignment of a trainee to an internal project, mentor and department"
 			},
-			"InternalProjectAndTrainee": {
+			"TraineeProgressDto": {
 				"properties": {
-					"DLbeiEV": {
+					"excelBasics": {
 						"type": "boolean"
 					},
-					"APgehalten": {
-						"type": "string"
-					},
-					"APbeiEV": {
+					"safetyTraining": {
 						"type": "boolean"
 					},
-					"ZPgehalten": {
-						"type": "string"
-					},
-					"ZPbeiEV": {
+					"dataPrivacyTraining": {
 						"type": "boolean"
 					},
-					"AngebotBeiEV": {
+					"strategyAndOrganisation": {
 						"type": "boolean"
 					},
-					"kuerzel": {
+					"msPowerpoint": {
+						"type": "boolean"
+					},
+					"departmentQualityManagement": {
+						"type": "boolean"
+					},
+					"departmentNetwork": {
+						"type": "boolean"
+					},
+					"departmentFinanceAndLaw": {
+						"type": "boolean"
+					},
+					"acquisitionNegotiationTechnique": {
+						"type": "boolean"
+					},
+					"rhetoricPresentationTechnique": {
+						"type": "boolean"
+					},
+					"projectManagement": {
+						"type": "boolean"
+					},
+					"dlAtEv": {
+						"type": "boolean"
+					},
+					"apHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apAtEv": {
+						"type": "boolean"
+					},
+					"zpHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"zpAtEv": {
+						"type": "boolean"
+					},
+					"offerAtEv": {
+						"type": "boolean"
+					},
+					"abbreviation": {
 						"type": "string"
 					},
-					"projektname": {
+					"projectName": {
 						"type": "string"
 					},
-					"internesprojekt": {
+					"internalProjectID": {
 						"type": "number",
 						"format": "double"
 					},
-					"generation": {
+					"generationID": {
 						"type": "number",
 						"format": "double"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberID": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"DLbeiEV",
-					"APgehalten",
-					"APbeiEV",
-					"ZPgehalten",
-					"ZPbeiEV",
-					"AngebotBeiEV",
-					"kuerzel",
-					"projektname",
-					"internesprojekt",
-					"generation",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"excelBasics",
+					"safetyTraining",
+					"dataPrivacyTraining",
+					"strategyAndOrganisation",
+					"msPowerpoint",
+					"departmentQualityManagement",
+					"departmentNetwork",
+					"departmentFinanceAndLaw",
+					"acquisitionNegotiationTechnique",
+					"rhetoricPresentationTechnique",
+					"projectManagement",
+					"dlAtEv",
+					"apHeld",
+					"apAtEv",
+					"zpHeld",
+					"zpAtEv",
+					"offerAtEv",
+					"abbreviation",
+					"projectName",
+					"internalProjectID",
+					"generationID",
+					"lastname",
+					"firstname",
+					"memberID"
 				],
-				"type": "object",
-				"description": "Type of the milestones during internal project for trainee"
-			},
-			"TraineeProgress": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/InternalProjectAndTrainee"
-					},
-					{
-						"$ref": "#/components/schemas/Workshop"
-					}
-				],
-				"description": "Type of the progress of a trainee (consists of internal project, trainee and workshop)"
+				"type": "object"
 			}
 		},
 		"securitySchemes": {
@@ -5749,7 +5809,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeMotivation"
+										"$ref": "#/components/schemas/TraineeMotivationDto"
 									},
 									"type": "array"
 								}
@@ -5785,7 +5845,7 @@
 		},
 		"/trainees/generations/{id}/set-deadline": {
 			"post": {
-				"operationId": "SetVotingDeadline",
+				"operationId": "SetElectionDeadline",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -5825,8 +5885,8 @@
 								"description": "start and end date of the voting"
 							},
 							"example": {
-								"votingStart": "2021-01-01",
-								"votingEnd": "2021-01-01"
+								"electionStart": "2021-01-01 18:00:00",
+								"electionEnd": "2021-01-31 20:00:00"
 							}
 						}
 					}
@@ -5875,7 +5935,6 @@
 								"description": "assignment of the trainee"
 							},
 							"example": {
-								"memberID": 8167,
 								"ipID": 62,
 								"mentorID": 8167,
 								"departmentID": 1
@@ -5895,7 +5954,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Mentor"
+										"$ref": "#/components/schemas/MentorDto"
 									},
 									"type": "array"
 								}
@@ -5983,7 +6042,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}
@@ -6089,7 +6148,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeProgress"
+										"$ref": "#/components/schemas/TraineeProgressDto"
 									},
 									"type": "array"
 								}

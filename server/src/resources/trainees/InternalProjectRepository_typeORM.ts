@@ -1,3 +1,4 @@
+import { EntityManager } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
 
@@ -8,18 +9,28 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
    * @throws QueryError if the query fails
    */
   getIPByID(internalProjectId: number): Promise<InternalProject | null> {
-    return this.findOne({ where: { internalProjectId: internalProjectId }, relations: ["qualityManagers"] });
+    return this.findOne({
+      where: { internalProjectId: internalProjectId },
+      relations: ["qualityManagers", "members", "generation"],
+    });
   },
 
-  getInternalProjects(currentGeneration?: number): Promise<InternalProject[]> {
-    if (currentGeneration) {
-      return this.find({ where: { generation: currentGeneration }, relations: ["qualityManagers"] });
-    }
-    return this.find({ relations: ["qualityManagers"] });
+  getAllInternalProjects(): Promise<InternalProject[]> {
+    return this.find({ relations: ["qualityManagers", "members", "generation"] });
   },
 
-  updateIPDetailsByID(internalProject: InternalProject): Promise<InternalProject> {
-    return this.save(internalProject);
+  getInternalProjectsByGenerationId(generationId: number): Promise<InternalProject[]> {
+    return this.find({
+      where: { generationId: generationId },
+      relations: ["qualityManagers", "members", "generation"],
+    });
+  },
+
+  updateIPDetailsByID(
+    internalProject: InternalProject,
+    transactionalEntityManager: EntityManager
+  ): Promise<InternalProject> {
+    return transactionalEntityManager.save(internalProject);
   },
 });
 

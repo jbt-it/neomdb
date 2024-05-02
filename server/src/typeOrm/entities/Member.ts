@@ -381,4 +381,8 @@ export class Member {
 
   @ManyToMany(() => InternalProject, (internalProject) => internalProject.qualityManagers)
   qualityManagers: InternalProject[];
+
+  @ManyToOne(() => InternalProject, (internalProject) => internalProject.members)
+  @JoinColumn({ name: "internesprojekt", referencedColumnName: "internalProjectId" })
+  internalProject: InternalProject;
 }

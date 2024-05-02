@@ -8,7 +8,7 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
    * @returns The generation or null if no generation was found
    */
   getGenerationByID(generationId: number): Promise<Generation | null> {
-    return this.findOne({ where: { generationId: generationId } });
+    return this.findOne({ where: { generationId: generationId }, relations: ["members", "mentors"] });
   },
 
   getGenerations(): Promise<Generation[]> {
@@ -21,5 +21,13 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
       .select("MAX(generation.generationID)", "maxGenerationId")
       .getRawOne();
     return result.maxGenerationId;
+  },
+
+  updateVotingDeadline(generationId: number, electionStart: Date, electionEnd: Date): Promise<Generation> {
+    return this.update(generationId, { electionStart: electionStart, electionEnd: electionEnd });
+  },
+
+  addMentorToGeneration(generationId: number, mentorId: number): Promise<Generation> {
+    return this.createQueryBuilder().relation(Generation, "mentors").of(generationId).add(mentorId);
   },
 });
