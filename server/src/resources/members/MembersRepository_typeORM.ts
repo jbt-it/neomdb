@@ -4,6 +4,7 @@ import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 import { Permission } from "../../typeOrm/entities/Permission";
+import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -56,7 +57,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns The member or null if no member was found
    */
   getMemberByID(memberID: number): Promise<Member | null> {
-    return this.findOne({ where: { memberId: memberID } });
+    return this.findOne({ where: { memberId: memberID }, relations: { memberStatus: true } });
   },
 
   /**
@@ -105,8 +106,43 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
       .andWhere("memberHasDirectorPositions.until > :currentDate", { currentDate: new Date() })
       .getMany();
   },
+
+  /**
+   * Updates the status of a member and sets the lastChanged date
+   * @param memberID The id of the member
+   * @param statusId The id of the new status
+   * @returns A promise that resolves when the update is done
+   */
+  updateMemberStatus(memberID: number, statusId: number): Promise<void> {
+    return this.update(memberID, { memberStatusId: statusId, lastChange: new Date() });
+  },
+
+  /**
+   * Saves a member
+   * @param member The member to save
+   * @returns The saved member
+   */
+  saveMember(member: Member): Promise<Member> {
+    return this.save(member);
+  },
 });
 
+/**
+ * Creates and exports the MemberStatus Repository
+ */
+export const MemberStatusRespository_typeORM = AppDataSource.getRepository(MemberStatus).extend({
+  /**
+   * Retrieves all member statuses as a list
+   * @returns A list of member statuses
+   */
+  getMemberStatusByName(statusName: string): Promise<MemberStatus> {
+    return this.findOne({ where: { name: statusName } });
+  },
+});
+
+/**
+ * Creates and exports the Language Repository
+ */
 export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language).extend({
   /**
    * Retrieves the all distinct values of the languages
@@ -117,6 +153,9 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
   },
 });
 
+/**
+ * Creates and exports the ItSkills Repository
+ */
 export const ItSkillsRepository_typeORM = AppDataSource.getRepository(Language).extend({
   /**
    * Retrieves the all distinct values of the itSkills
@@ -127,6 +166,9 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(Language).
   },
 });
 
+/**
+ * Creates and exports the Permission Repository
+ */
 export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permission).extend({
   /**
    * Retrieves all permissions as a list

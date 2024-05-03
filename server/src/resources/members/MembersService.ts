@@ -27,6 +27,7 @@ import MembersRepository from "./MembersRepository";
 import {
   ItSkillsRepository_typeORM,
   LanguagesRepository_typeORM,
+  MemberStatusRespository_typeORM,
   MembersRepository_typeORM,
   PermissionsRepository_typeORM,
 } from "./MembersRepository_typeORM";
@@ -423,18 +424,23 @@ class MembersService {
    */
   updateMemberStatus = async (memberID: number, status: MemberStatus) => {
     // Check if member exists
-    const member = await this.membersRepository.getMemberByID(memberID, false);
+    const member = await MembersRepository_typeORM.getMemberByID(memberID);
+    const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByName(status);
+
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
 
-    if (member.mitgliedstatus === status) {
+    if (!memberStatus) {
+      throw new Error("Status not found.");
+    }
+
+    if (member.memberStatus.name === status) {
       // Member already has the new status
       return;
     }
 
-    const lastChangeTime = createCurrentTimestamp();
-    await this.membersRepository.updateMemberStatusByID(memberID, lastChangeTime, status);
+    await MembersRepository_typeORM.updateMemberStatus(member.memberId, memberStatus.memberStatusId);
   };
 }
 
