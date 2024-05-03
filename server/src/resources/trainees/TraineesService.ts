@@ -15,7 +15,7 @@ import {
 import { MemberMapper } from "../../resources/members/MemberMapper";
 import { TraineeMapper } from "./TraineeMapper";
 import { MembersRepository_typeORM } from "../../resources/members/MembersRepository_typeORM";
-import { MembersFieldDto, MentorDto } from "typeOrm/types/memberTypes";
+import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
 import { Generation } from "../../typeOrm/entities/Generation";
 import { AppDataSource } from "../../datasource";
 import { DepartmentRepository_typeORM } from "../../resources/members/DepartmentRepository_typeORM";
@@ -163,7 +163,7 @@ class TraineesService {
       throw new Error("The election start date must be before the election end date");
     }
 
-    await GenerationRepository_typeORM.updateVotingDeadline(generationID, electionStart, electionEnd);
+    await GenerationRepository_typeORM.updateElectionDeadline(generationID, electionStart, electionEnd);
   };
 
   /**

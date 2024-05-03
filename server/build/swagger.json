@@ -4643,7 +4643,8 @@
 					"firstname",
 					"memberID"
 				],
-				"type": "object"
+				"type": "object",
+				"description": "Type of the trainee progress with the internal project milestones and mandatory workshops feedback"
 			}
 		},
 		"securitySchemes": {
