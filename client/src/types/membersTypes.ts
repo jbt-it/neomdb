@@ -89,6 +89,8 @@ export type DirectorDto = {
   firstname: string;
   lastname: string;
   directorId: number;
+  from: Date;
+  until: Date;
   department: DepartmentPartialDto;
   gender: boolean;
   designationFemale: string;

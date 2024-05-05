@@ -127,6 +127,8 @@ export type DirectorDto = {
   lastname: string;
   directorId: number;
   department: DepartmentPartialDto;
+  from: Date;
+  until: Date;
   gender: boolean;
   designationFemale: string;
   designationMale: string;

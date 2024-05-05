@@ -122,7 +122,6 @@ class MembersService {
     } else {
       directors = await MembersRepository_typeORM.getAllDirectors();
     }
-
     return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 
@@ -192,15 +191,13 @@ class MembersService {
    * @throws NotFoundError if the member or the permission does not exist
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = MembersRepository_typeORM.getMemberByID(memberID);
+    const memberQuery = MembersRepository_typeORM.getMemberByIDWithPermissions(memberID);
     const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
     const member = results[0];
     const permission = results[1];
-
-    console.log(member, permission);
 
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
@@ -209,15 +206,31 @@ class MembersService {
       throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
     }
 
-    await this.membersRepository.addPermissionToMember(memberID, permissionID);
+    member.permissions.push(permission);
+    await MembersRepository_typeORM.saveMember(member);
   };
 
   /**
    * Deletes a permission from a member
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
-    // TODO: Add error handling
-    await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
+    const memberQuery = MembersRepository_typeORM.getMemberByIDWithPermissions(memberID);
+    const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
+    // Executing both queries concurrently
+    const results = await Promise.all([memberQuery, permissionQuery]);
+
+    const member = results[0];
+    const permission = results[1];
+
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+    if (permission === null) {
+      throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
+    }
+
+    member.permissions = member.permissions.filter((p) => p.permissionId !== permissionID);
+    await MembersRepository_typeORM.saveMember(member);
   };
 
   /**

@@ -94,6 +94,8 @@ export class MemberMapper {
       firstname: member.firstName,
       lastname: member.lastName,
       gender: member.gender,
+      from: member.memberHasDirectorPositions[0].from,
+      until: member.memberHasDirectorPositions[0].until,
       department: this.departmentToDepartmentPartialDto(member.department),
       designationMale: member.memberHasDirectorPositions[0]?.director.designationMale,
       designationFemale: member.memberHasDirectorPositions[0]?.director.designationFemale,

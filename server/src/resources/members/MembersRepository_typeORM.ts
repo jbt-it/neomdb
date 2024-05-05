@@ -16,6 +16,15 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
+   * Retrieves the member with its permissions
+   * @param memberID The id of the member
+   * @returns The member with its permissions or null if no member was found
+   */
+  getMemberByIDWithPermissions(memberID: number): Promise<Member | null> {
+    return this.findOne({ where: { memberId: memberID }, relations: ["permissions"] });
+  },
+
+  /**
    * Retrieves all active members as a list with department information
    * @returns A list of members with the department
    */
@@ -118,13 +127,22 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
-   * Saves a member
-   * @param member The member to save
+   * Creates a member
+   * @param member The details of the new member to create
    * @returns The saved member's memberId
    */
   async createMember(member: NewMember): Promise<number> {
     const savedMember = await this.save(member);
     return savedMember.memberId;
+  },
+
+  /**
+   * Saves a member
+   * @param member The member to save
+   * @returns The saved member's memberId
+   */
+  async saveMember(member: Member): Promise<Member> {
+    return this.save(member);
   },
 });
 

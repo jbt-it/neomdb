@@ -3367,6 +3367,14 @@
 					"gender": {
 						"type": "boolean"
 					},
+					"until": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
 					"department": {
 						"$ref": "#/components/schemas/DepartmentPartialDto"
 					},
@@ -3389,6 +3397,8 @@
 					"designationMale",
 					"designationFemale",
 					"gender",
+					"until",
+					"from",
 					"department",
 					"directorId",
 					"lastname",

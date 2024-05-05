@@ -868,7 +868,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DirectorDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"designationMale":{"dataType":"string","required":true},"designationFemale":{"dataType":"string","required":true},"gender":{"dataType":"boolean","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"directorId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"designationMale":{"dataType":"string","required":true},"designationFemale":{"dataType":"string","required":true},"gender":{"dataType":"boolean","required":true},"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"directorId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StatusOverview": {

@@ -223,7 +223,7 @@ const MemberOverview: React.FunctionComponent = () => {
     // Filters by status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.memberStatus.toString() === statusFilter;
+        return member.memberStatus.name === statusFilter;
       });
     }
 
@@ -481,7 +481,7 @@ const MemberOverview: React.FunctionComponent = () => {
                   </TableCell>
                   <TableCell>{member.mobile}</TableCell>
                   <TableCell>{member.jbtEmail}</TableCell>
-                  <TableCell>{member.memberStatus}</TableCell>
+                  <TableCell>{member.memberStatus.name}</TableCell>
                   {<TableCell>{member.department?.shortName}</TableCell>}
                 </TableRow>
               ))}
