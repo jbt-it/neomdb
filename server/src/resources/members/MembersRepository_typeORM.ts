@@ -1,4 +1,4 @@
-import { ItSkillsValue, LanguageValue } from "typeOrm/types/memberTypes";
+import { ItSkillsValue, LanguageValue, NewMember } from "typeOrm/types/memberTypes";
 import { AppDataSource } from "../../datasource";
 import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
@@ -12,7 +12,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns A list of members
    */
   getMembersWithDepartment(): Promise<Member[]> {
-    return this.find({ relations: ["department"] });
+    return this.find({ relations: ["department", "memberStatus"] });
   },
 
   /**
@@ -120,10 +120,11 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   /**
    * Saves a member
    * @param member The member to save
-   * @returns The saved member
+   * @returns The saved member's memberId
    */
-  saveMember(member: Member): Promise<Member> {
-    return this.save(member);
+  async createMember(member: NewMember): Promise<number> {
+    const savedMember = await this.save(member);
+    return savedMember.memberId;
   },
 });
 
@@ -176,6 +177,15 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
    */
   getPermissions(): Permission[] {
     return this.find();
+  },
+
+  /**
+   * Retrieves a permission by its id
+   * @param permissionID The id of the permission
+   * @returns The permission or null if no permission was found
+   */
+  getPermissionByID(permissionID: number): Promise<Permission | null> {
+    return this.findOne({ where: { permissionId: permissionID } });
   },
 
   /**

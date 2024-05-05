@@ -3465,28 +3465,23 @@
 			},
 			"CreateMemberRequest": {
 				"properties": {
-					"traineeSeit": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"generation": {
+					"generationId": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
 					},
-					"geschlecht": {
+					"gender": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
 					},
-					"handy": {
+					"mobile": {
 						"type": "string",
 						"nullable": true
 					},
-					"geburtsdatum": {
+					"birthday": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"email": {
@@ -3495,24 +3490,22 @@
 					"name": {
 						"type": "string"
 					},
-					"nachname": {
+					"lastName": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstName": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"traineeSeit",
-					"password",
-					"generation",
-					"geschlecht",
-					"handy",
-					"geburtsdatum",
+					"generationId",
+					"gender",
+					"mobile",
+					"birthday",
 					"email",
 					"name",
-					"nachname",
-					"vorname"
+					"lastName",
+					"firstName"
 				],
 				"type": "object",
 				"description": "Type of the request to create a member"
@@ -5134,18 +5127,18 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"mitgliedstatus": {
-										"$ref": "#/components/schemas/MemberStatus"
+									"memberStatus": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"mitgliedstatus"
+									"memberStatus"
 								],
 								"type": "object",
 								"description": "The new status of the member"
 							},
 							"example": {
-								"mitgliedstatus": "aktives Mitglied"
+								"memberStatus": "aktives Mitglied"
 							}
 						}
 					}

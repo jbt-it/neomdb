@@ -26,6 +26,7 @@ import { showSuccessMessage, showErrorMessage } from "../../utils/toastUtils";
 import { transfromDateToSQLDate } from "../../utils/dateUtils";
 import { replaceSpecialCharacters } from "../../utils/stringUtils";
 import { makeStyles, createStyles } from "@mui/styles";
+import { MemberPartialDto } from "../../types/membersTypes";
 
 /**
  * Function which proivdes the styles of the MemberManagement
@@ -157,17 +158,6 @@ const useStyles = makeStyles((theme: Theme) =>
 /**
  * Interface for the member object
  */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  ressort: string;
-  lastchange: string;
-}
-
 /**
  * Options to create a new member and to change the status of members
  */
@@ -175,7 +165,7 @@ const MemberManagement: React.FunctionComponent = () => {
   const classes = useStyles();
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberPartialDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -247,20 +237,20 @@ const MemberManagement: React.FunctionComponent = () => {
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = (): Member[] => {
+  const getFilteredAndSortedMembers = (): MemberPartialDto[] => {
     let filteredMembers = members;
 
     // Filters by status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.mitgliedstatus.toString() === statusFilter;
+        return member.memberStatus.name.toString() === statusFilter;
       });
     }
 
     // Filters by ressort
     if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.ressort === ressortFilter;
+        return member.department.name === ressortFilter;
       });
     }
 
@@ -268,9 +258,9 @@ const MemberManagement: React.FunctionComponent = () => {
     filteredMembers = filteredMembers.filter((member) => {
       return (
         searchFilter === null ||
-        (member.vorname !== null && member.vorname.toLowerCase().includes(searchFilter.toLowerCase())) ||
-        (member.nachname !== null && member.nachname.toLowerCase().includes(searchFilter.toLowerCase())) ||
-        (member.handy !== null && member.handy.includes(searchFilter))
+        (member.firstname !== null && member.firstname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.lastname !== null && member.lastname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.mobile !== null && member.mobile.includes(searchFilter))
       );
     });
 
@@ -279,8 +269,8 @@ const MemberManagement: React.FunctionComponent = () => {
     // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return -1;
@@ -294,8 +284,8 @@ const MemberManagement: React.FunctionComponent = () => {
       // Sorts by last changed in descending order
     } else if (sortOption === "lastchange DESC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return 1;
@@ -310,12 +300,12 @@ const MemberManagement: React.FunctionComponent = () => {
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return a.nachname.localeCompare(b.nachname);
+        return a.lastname.localeCompare(b.lastname);
       });
       // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return -a.nachname.localeCompare(b.nachname);
+        return -a.lastname.localeCompare(b.lastname);
       });
     }
     return sortedMembers;
@@ -372,9 +362,8 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const changeMemberStatus = (id: number, status: string) => {
     const payload = {
-      mitgliedstatus: status,
+      memberStatus: status,
     };
-
     api
       .patch(`/members/${id}/status`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -409,19 +398,16 @@ const MemberManagement: React.FunctionComponent = () => {
       return;
     }
 
-    const password = Math.random().toString(36).slice(2, 11);
     const firstNameSanitized = replaceSpecialCharacters(firstName.trim().replace(" ", "-")).toLowerCase();
     const lastNameSanitized = replaceSpecialCharacters(lastName.trim().replace(" ", "-")).toLowerCase();
     const payload = {
       name: firstNameSanitized + "." + lastNameSanitized,
-      password: password,
-      vorname: firstName.trim(),
-      nachname: lastName.trim(),
-      geburtsdatum: null,
-      handy: null,
-      geschlecht: null,
-      generation: null,
-      traineeSeit: transfromDateToSQLDate(new Date()),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      birthday: null,
+      mobile: null,
+      gender: null,
+      generationId: null,
       email: email,
     };
 
@@ -671,19 +657,19 @@ const MemberManagement: React.FunctionComponent = () => {
           {getFilteredAndSortedMembers().map((member, index) => (
             <TableRow hover key={index}>
               <TableCell component="th" scope="row">
-                {`${member.vorname} ${member.nachname}`}
+                {`${member.firstname} ${member.lastname}`}
               </TableCell>
-              <TableCell>{member.handy}</TableCell>
-              <TableCell>{member.jbt_email}</TableCell>
+              <TableCell>{member.mobile}</TableCell>
+              <TableCell>{member.jbtEmail}</TableCell>
               <TableCell>
                 <TextField
                   label="Status"
                   className={classes.filterElement}
                   color="primary"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    changeMemberStatus(member.mitgliedID, event.target.value);
+                    changeMemberStatus(member.memberId, event.target.value);
                   }}
-                  value={member.mitgliedstatus}
+                  value={member.memberStatus.name}
                   select
                 >
                   <MenuItem value={"Trainee"}>Trainee</MenuItem>
@@ -695,7 +681,7 @@ const MemberManagement: React.FunctionComponent = () => {
                   <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
                 </TextField>
               </TableCell>
-              <TableCell>{member.ressort}</TableCell>
+              <TableCell>{member.department.name}</TableCell>
             </TableRow>
           ))}
         </TableBody>

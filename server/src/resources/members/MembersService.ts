@@ -6,7 +6,6 @@ import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
 import { Permission, User } from "../../types/authTypes";
 import {
-  CreateMemberRequest,
   EdvSkill,
   Language,
   Member,
@@ -33,6 +32,8 @@ import {
 } from "./MembersRepository_typeORM";
 import { DepartmentMapper } from "./DepartmentMapper";
 import { PermissionMapper } from "./PermissionMapper";
+import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
+import { CreateMemberRequest } from "../../typeOrm/types/memberTypes";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -191,13 +192,15 @@ class MembersService {
    * @throws NotFoundError if the member or the permission does not exist
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = this.membersRepository.getMemberByID(memberID, false);
-    const permissionQuery = this.membersRepository.getPermissionByID(permissionID);
+    const memberQuery = MembersRepository_typeORM.getMemberByID(memberID);
+    const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
     const member = results[0];
     const permission = results[1];
+
+    console.log(member, permission);
 
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
@@ -292,36 +295,36 @@ class MembersService {
     let memberID = null;
     // Create member in database
     try {
-      const { password: newPassword, ...member } = newMemberRequest;
-      const passwordHash = await bcrypt.hash(newPassword, 10);
+      const { ...member } = newMemberRequest;
+      const password = Math.random().toString(36).slice(2, 11);
+      const passwordHash = await bcrypt.hash(password, 10);
       const departmentID = 8; // Default department "Ohne Ressort"
       const statusID = 1; // Default status of member is "trainee"
 
       let newMember = member;
-      if (member.generation !== null) {
+      if (member.generationId !== null) {
         // Check if the generation exists
-        const generation = await this.traineesRepository.getGenerationByID(member.generation);
+        const generation = await GenerationRepository_typeORM.getGenerationByID(member.generationId);
         if (generation === null) {
-          throw new NotFoundError(`Generation with id ${member.generation} does not exist`);
+          throw new NotFoundError(`Generation with id ${member.generationId} does not exist`);
         }
       } else {
         // Retrieve the generations and select the newest one
-        const generations = await this.traineesRepository.getGenerations();
-        // Because the generations are sorted descending by date, the first element is the newest one
-        const newestGeneration = generations[0];
+        const currentGenerationId = await GenerationRepository_typeORM.getCurrentGenerationId();
         // Add the generation to the member
-        newMember = { ...member, generation: newestGeneration.generationID };
+        newMember = { ...member, generationId: currentGenerationId };
       }
-
-      memberID = await this.membersRepository.createMember(
-        newMember as NewMember,
-        newUserName,
-        passwordHash,
-        statusID,
-        getRandomString(16),
-        jbtMail,
-        departmentID
-      );
+      memberID = await MembersRepository_typeORM.createMember({
+        ...newMember,
+        name: newUserName,
+        passwordHash: passwordHash,
+        memberStatusId: statusID,
+        jbtEmail: jbtMail,
+        email2: newMember.email,
+        departmentId: departmentID,
+        icalToken: getRandomString(16),
+        traineeSince: new Date(),
+      });
       statusOverview.querySuccesful = true;
 
       // TODO: Add mail account creation
@@ -349,6 +352,7 @@ class MembersService {
         statusOverview.queryErrorMsg = error.message;
       }
     }
+    console.log(memberID);
     return { memberID, statusOverview };
   };
 
@@ -422,7 +426,7 @@ class MembersService {
    * Updates the status of a member
    * @throws NotFoundError if the member does not exist
    */
-  updateMemberStatus = async (memberID: number, status: MemberStatus) => {
+  updateMemberStatus = async (memberID: number, status: string) => {
     // Check if member exists
     const member = await MembersRepository_typeORM.getMemberByID(memberID);
     const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByName(status);

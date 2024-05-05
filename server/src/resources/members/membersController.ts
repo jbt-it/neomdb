@@ -27,12 +27,12 @@ import {
   MemberDetailsDto,
   MemberPartialDto,
   UpdateDepartmentDto,
+  CreateMemberRequest,
 } from "../../typeOrm/types/memberTypes";
 import { UnauthorizedError } from "../../types/Errors";
 import { JWTPayload } from "../../types/authTypes";
 import {
   AssignPermissionToMemberRequest,
-  CreateMemberRequest,
   CreateMemberResponse,
   MemberDetails,
   MemberImage,
@@ -191,7 +191,6 @@ export class MembersController extends Controller {
       newMember,
       statusOverview
     );
-
     this.setStatus(createMemberResponse.statusOverview.querySuccesful ? 201 : 500);
     return createMemberResponse;
   }
@@ -206,17 +205,14 @@ export class MembersController extends Controller {
    * @param requestBody The new status of the member
    *
    * @example requestBody {
-   *  "mitgliedstatus": "aktives Mitglied"
+   *  "memberStatus": "aktives Mitglied"
    * }
    */
   // TODO: Change route name
   @Patch("{id}/status")
   @Security("jwt", ["1"])
-  public async updateMemberStatus(
-    @Path() id: number,
-    @Body() requestBody: { mitgliedstatus: MemberStatus }
-  ): Promise<void> {
-    const status = requestBody.mitgliedstatus;
+  public async updateMemberStatus(@Path() id: number, @Body() requestBody: { memberStatus: string }): Promise<void> {
+    const status = requestBody.memberStatus;
     await this.membersService.updateMemberStatus(id, status);
   }
 

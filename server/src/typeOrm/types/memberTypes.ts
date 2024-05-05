@@ -187,3 +187,35 @@ export type MemberDetailsDto = {
   mentees?: MenteeDto[];
   mentor?: MentorDto | null;
 };
+
+/**
+ * Type of the request to create a member
+ */
+export type CreateMemberRequest = {
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  birthday: Date | null;
+  mobile: string | null;
+  gender: number | null;
+  generationId: number | null;
+};
+
+export type NewMember = {
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  email2: string;
+  birthday: Date | null;
+  mobile: string | null;
+  gender: number | null;
+  generationId: number | null;
+  jbtEmail: string;
+  memberStatusId: number;
+  departmentId: number;
+  icalToken: string;
+  passwordHash: string;
+  traineeSince: Date | null;
+};

@@ -252,11 +252,11 @@ class TraineesService {
    * @param onlyCurrent if true, only the current internal projects are returned
    */
   getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProjectDto[]> => {
-    const currentGeneration = await GenerationRepository_typeORM.getCurrentGenerationId();
+    const currentGenerationId = await GenerationRepository_typeORM.getCurrentGenerationId();
 
     // Get all internal projects or only the current ones
     const ips = onlyCurrent
-      ? await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(currentGeneration)
+      ? await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(currentGenerationId)
       : await InternalProjectRepository_typeORM.getAllInternalProjects();
 
     const internalProjects = ips.map((ip) => {
