@@ -25,9 +25,7 @@ class AuthService {
       throw new UnauthenticatedError("Credentials incomplete");
     }
 
-    const member = await MembersRepository_typeORM.getMemberByName(userLogin.username);
-
-    const user: User = MemberMapper.memberToUser(member);
+    const user = await MembersRepository_typeORM.getMemberWithPermissionsAndDirectorPositionsByName(userLogin.username);
 
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
@@ -40,11 +38,7 @@ class AuthService {
       throw new UnauthenticatedError("Username or password wrong");
     }
 
-    const directorPermissions: PermissionDTO[] = await MembersRepository_typeORM.getDirectorPermissionsByMemberID(
-      user.memberId
-    );
-
-    const payload: JWTPayload = createUserDataPayload(user, directorPermissions);
+    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user);
     return payload;
   };
 

@@ -33,7 +33,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    */
   getActiveMembersWithDepartmentAndWithDirectorPositions(): Promise<Member[]> {
     /*
-     * Correspons to following query:
+     * Corresponds to following query:
      *    SELECT mitgliedID, vorname, nachname, ressort, bezeichnung
      *      FROM mitglied, ressort
      *      WHERE ressort = ressortID AND mitgliedstatus <= 3
@@ -69,7 +69,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns The member or null if no member was found
    */
   getMemberByID(memberID: number): Promise<Member | null> {
-    return this.findOne({ where: { memberId: memberID }, relations: { memberStatus: true } });
+    return this.findOne({ where: { memberId: memberID }, relations: ["memberStatus"] });
   },
 
   /**
@@ -78,7 +78,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns The member or null if no member was found
    */
   getMemberByName(name: string): Promise<Member | null> {
-    return this.findOne({ where: { name: name }, relations: { Permissions: true } });
+    return this.findOne({ where: { name: name }, relations: ["permissions"] });
   },
 
   /**
@@ -86,19 +86,44 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @throws QueryError if the query fails
    * @returns The director permissions of a member or null if no permissions were found
    */
+  getMemberWithPermissionsAndDirectorPositionsByName(name: string): Promise<Member | null> {
+    return (
+      this.createQueryBuilder("member")
+        .leftJoinAndSelect("member.permissions", "permissions")
+        .leftJoinAndSelect("member.memberHasDirectorPositions", "memberHasDirectorPositions")
+        .leftJoinAndSelect("memberHasDirectorPositions.director", "director")
+        .leftJoinAndSelect("director.directorHasPermissions", "directorHasPermissions")
+        .where("member.name = :name", { name })
+        // TODO: Caught unknown error for /api/auth/login: TypeError: Cannot read properties of null (reading 'memberHasDirectorPositions')
+        .andWhere("memberHasDirectorPositions.from <= NOW()")
+        .andWhere("memberHasDirectorPositions.until >= NOW()")
+        .getOne()
+    );
+  },
+
   getDirectorPermissionsByMemberID(memberID: number): Promise<PermissionDTO[]> {
     try {
-      const directorPermissions = this.createQueryBuilder("mhe")
+      /**
+       * SELECT berechtigung_berechtigungID AS permissionID, canDelegate, mitglied_has_evposten.evposten_evpostenID as directorID
+        FROM mitglied_has_evposten
+        LEFT JOIN evposten_has_berechtigung ON mitglied_has_evposten.evposten_evpostenID = evposten_has_berechtigung.evposten_evpostenID
+        WHERE mitglied_has_evposten.mitglied_mitgliedID = ? AND mitglied_has_evposten.von <= NOW() AND mitglied_has_evposten.bis >= NOW();
+       */
+      const directorPermissions = this.createQueryBuilder("memberHasDirector")
         .select([
-          "eb.berechtigung_berechtigungID AS permissionId",
-          "eb.canDelegate",
-          "mhe.evposten_evpostenID AS directorId",
+          "permission.berechtigung_berechtigungID AS permissionID",
+          "permission.canDelegate",
+          "memberHasDirector.evposten_evpostenID AS directorID",
         ])
-        .leftJoin("mhe.evpostenHasBerechtigungen", "eb")
-        .where("mhe.mitglied_mitgliedID = :memberID", { memberID })
-        .andWhere("mhe.von <= NOW()")
-        .andWhere("mhe.bis >= NOW()")
-        .getRawMany(); // Use getRawMany to match the structure of raw SQL results.
+        .leftJoin(
+          "memberHasDirector.directorHasPermission",
+          "permission",
+          "memberHasDirector.evposten_evpostenID = permission.evposten_evpostenID"
+        )
+        .where("memberHasDirector.mitglied_mitgliedID = :memberId", { memberID })
+        .andWhere("memberHasDirector.von <= NOW()")
+        .andWhere("memberHasDirector.bis >= NOW()")
+        .getMany();
 
       return directorPermissions;
     } catch (error) {

@@ -14,6 +14,7 @@ import {
   MembersFieldDto,
 } from "../../typeOrm/types/memberTypes";
 import { User } from "../../typeOrm/types/authTypes";
+import { JWTPayload } from "../../typeOrm/types/authTypes";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -21,6 +22,31 @@ import { User } from "../../typeOrm/types/authTypes";
 export class MemberMapper {
   // --- To DTO mapper functions
 
+  static memberToJWTPayload(member: Member): JWTPayload {
+    return {
+      memberId: member.memberId,
+      name: member.name,
+      permissions: [
+        // First: Iterate over the permissions of the member and map them to the PermissionDTO
+        ...member.permissions.map((permission) => ({
+          permissionId: permission.permissionId,
+          canDelegate: false,
+        })),
+        // Second: Iterate over the director positions of the member and then over the permissions of the director position and map them to the PermissionDTO
+        ...member.memberHasDirectorPositions
+          .map((memberHasDirectorPosition) =>
+            memberHasDirectorPosition.director.directorHasPermissions.map((directorPermission) => ({
+              permissionId: directorPermission.permissionId,
+              canDelegate: directorPermission.canDelegate,
+            }))
+          )
+          .flat(),
+      ],
+      roles: member.memberHasDirectorPositions.map(
+        (directorHasPermission) => directorHasPermission.director.directorId
+      ),
+    };
+  }
   static memberToMenteeDto(member: Member): MenteeDto {
     return {
       memberId: member.memberId,
