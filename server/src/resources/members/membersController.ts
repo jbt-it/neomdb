@@ -17,7 +17,7 @@ import {
 } from "@tsoa/runtime";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { Permission } from "../../typeOrm/entities/Permission";
-import { PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
+import { JWTPayload, PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
 import {
   DepartmentDetailsDto,
   DepartmentMemberDto,
@@ -30,13 +30,11 @@ import {
   CreateMemberRequest,
 } from "../../typeOrm/types/memberTypes";
 import { UnauthorizedError } from "../../types/Errors";
-import { JWTPayload } from "../../types/authTypes";
 import {
   AssignPermissionToMemberRequest,
   CreateMemberResponse,
   MemberDetails,
   MemberImage,
-  MemberStatus,
   StatusOverview,
 } from "../../types/membersTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
@@ -90,7 +88,7 @@ export class MembersController extends Controller {
   public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: any) {
     const user = request.user as JWTPayload;
     // The user can only save the image if he is the member himself
-    if (id !== user.mitgliedID) {
+    if (id !== user.memberId) {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }
 
@@ -479,10 +477,10 @@ export class MembersController extends Controller {
     const { mentor, sprachen: languages, edvkenntnisse: edvSkills, ...member } = requestBody;
     const user = request.user as JWTPayload;
 
-    if (id === user.mitgliedID && doesPermissionsInclude(user.permissions, [1])) {
+    if (id === user.memberId && doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to all fields if member is himself and has additional permission
       await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, true);
-    } else if (id === user.mitgliedID) {
+    } else if (id === user.memberId) {
       // Grants access to non critical fields to the member himself
       await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, false, true);
     } else if (doesPermissionsInclude(user.permissions, [1])) {

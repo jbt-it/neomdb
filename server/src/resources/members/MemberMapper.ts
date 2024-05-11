@@ -13,6 +13,7 @@ import {
   MentorDto,
   MembersFieldDto,
 } from "../../typeOrm/types/memberTypes";
+import { User } from "../../typeOrm/types/authTypes";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -204,6 +205,15 @@ export class MemberMapper {
         mentor: this.memberToMentorDto(member),
       };
     }
+  }
+
+  static memberToUser(member: Member): User {
+    return {
+      memberId: member.memberId,
+      name: member.name,
+      passwordHash: member.passwordHash,
+      permissions: member.permissions,
+    };
   }
 
   // --- From DTO mapper functions

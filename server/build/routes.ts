@@ -16,14 +16,14 @@ import type { RequestHandler, Router } from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Permission": {
+    "PermissionDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directorID":{"dataType":"double"},"canDelegate":{"dataType":"boolean","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directorId":{"dataType":"double"},"canDelegate":{"dataType":"boolean","required":true},"permissionId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "JWTPayload": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"roles":{"dataType":"array","array":{"dataType":"double"},"required":true},"permissions":{"dataType":"array","array":{"dataType":"refAlias","ref":"Permission"},"required":true},"name":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"roles":{"dataType":"array","array":{"dataType":"double"},"required":true},"permissions":{"dataType":"array","array":{"dataType":"refAlias","ref":"PermissionDTO"},"required":true},"name":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserLoginRequest": {
@@ -132,7 +132,7 @@ const models: TsoaRoute.Models = {
             "memberStatus": {"ref":"MemberStatus","required":true},
             "department": {"ref":"Department","required":true},
             "memberHasOtherPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasOtherPosition"},"required":true},
-            "permissions": {"dataType":"array","array":{"dataType":"refAlias","ref":"Permission"},"required":true},
+            "permissions": {"dataType":"array","array":{"dataType":"refObject","ref":"Permission"},"required":true},
             "memberHasEvents": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEvent"},"required":true},
             "memberHasEventwws": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEventWw"},"required":true},
             "memberHasDirectorPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasDirectorPosition"},"required":true},
@@ -379,6 +379,30 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorHasPermission": {
+        "dataType": "refObject",
+        "properties": {
+            "directorId": {"dataType":"double","required":true},
+            "permissionId": {"dataType":"double","required":true},
+            "canDelegate": {"dataType":"boolean","required":true},
+            "permission": {"ref":"Permission","required":true},
+            "director": {"ref":"Director","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Permission": {
+        "dataType": "refObject",
+        "properties": {
+            "permissionId": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "directorHasPermissions": {"dataType":"array","array":{"dataType":"refObject","ref":"DirectorHasPermission"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Director": {
         "dataType": "refObject",
         "properties": {
@@ -395,18 +419,6 @@ const models: TsoaRoute.Models = {
             "directorHasPermissions": {"dataType":"array","array":{"dataType":"refObject","ref":"DirectorHasPermission"},"required":true},
             "memberHasDirectorPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasDirectorPosition"},"required":true},
             "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DirectorHasPermission": {
-        "dataType": "refObject",
-        "properties": {
-            "directorId": {"dataType":"double","required":true},
-            "permissionId": {"dataType":"double","required":true},
-            "canDelegate": {"dataType":"boolean","required":true},
-            "permission": {"ref":"Permission","required":true},
-            "director": {"ref":"Director","required":true},
         },
         "additionalProperties": false,
     },

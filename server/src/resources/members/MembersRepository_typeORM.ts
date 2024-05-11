@@ -5,6 +5,9 @@ import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
+import { QueryError } from "../../types/Errors";
+import logger from "../../logger";
+import { PermissionDTO } from "../../typeOrm/types/authTypes";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -67,6 +70,41 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    */
   getMemberByID(memberID: number): Promise<Member | null> {
     return this.findOne({ where: { memberId: memberID }, relations: { memberStatus: true } });
+  },
+
+  /**
+   * Retrieves a member by its username
+   * @param name The username of the member
+   * @returns The member or null if no member was found
+   */
+  getMemberByName(name: string): Promise<Member | null> {
+    return this.findOne({ where: { name: name }, relations: { Permissions: true } });
+  },
+
+  /**
+   * Retrieves the director permissions of a member
+   * @throws QueryError if the query fails
+   * @returns The director permissions of a member or null if no permissions were found
+   */
+  getDirectorPermissionsByMemberID(memberID: number): Promise<PermissionDTO[]> {
+    try {
+      const directorPermissions = this.createQueryBuilder("mhe")
+        .select([
+          "eb.berechtigung_berechtigungID AS permissionId",
+          "eb.canDelegate",
+          "mhe.evposten_evpostenID AS directorId",
+        ])
+        .leftJoin("mhe.evpostenHasBerechtigungen", "eb")
+        .where("mhe.mitglied_mitgliedID = :memberID", { memberID })
+        .andWhere("mhe.von <= NOW()")
+        .andWhere("mhe.bis >= NOW()")
+        .getRawMany(); // Use getRawMany to match the structure of raw SQL results.
+
+      return directorPermissions;
+    } catch (error) {
+      logger.error(`Caught error while retrieving director permissions for member with id ${memberID}: ${error}`);
+      throw new QueryError(`Error retrieving director permissions for member with id ${memberID}`);
+    }
   },
 
   /**

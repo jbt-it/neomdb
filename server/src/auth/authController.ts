@@ -1,7 +1,6 @@
 import AuthService from "./AuthService";
 import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "@tsoa/runtime";
 import {
-  JWTPayload,
   UserChangePasswordRequest,
   UserForgotPasswordRequest,
   UserLoginRequest,
@@ -11,6 +10,7 @@ import { generateJWT } from "../utils/jwtUtils";
 import { getCookieOptionsAsString } from "./cookieConfig";
 import { UnauthorizedError } from "../types/Errors";
 import * as nodemailer from "nodemailer";
+import { JWTPayload } from "../typeOrm/types/authTypes";
 
 /**
  * Controller for the authentication

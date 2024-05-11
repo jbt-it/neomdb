@@ -1,12 +1,15 @@
 import { createCurrentTimestamp } from "../utils/dateUtils";
 import MembersRepository from "../resources/members/MembersRepository";
-import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
+import { UserChangePasswordRequest } from "../types/authTypes";
 import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
 import { createUserDataPayload } from "../utils/authUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import AuthRepository from "./AuthRepository";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "node:crypto";
+import { UserLoginRequest, User, JWTPayload, PermissionDTO } from "../typeOrm/types/authTypes";
+import { MembersRepository_typeORM } from "../resources/members/MembersRepository_typeORM";
+import { MemberMapper } from "../resources/members/MemberMapper";
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -22,7 +25,9 @@ class AuthService {
       throw new UnauthenticatedError("Credentials incomplete");
     }
 
-    const user: User = await this.authRepository.getUserByName(userLogin.username);
+    const member = await MembersRepository_typeORM.getMemberByName(userLogin.username);
+
+    const user: User = MemberMapper.memberToUser(member);
 
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
@@ -35,8 +40,8 @@ class AuthService {
       throw new UnauthenticatedError("Username or password wrong");
     }
 
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
-      user.mitgliedID
+    const directorPermissions: PermissionDTO[] = await MembersRepository_typeORM.getDirectorPermissionsByMemberID(
+      user.memberId
     );
 
     const payload: JWTPayload = createUserDataPayload(user, directorPermissions);
@@ -48,14 +53,14 @@ class AuthService {
    * @throws NotFoundError if no user was found
    */
   getUserData = async (username: string): Promise<JWTPayload> => {
-    const user: User = await this.authRepository.getUserByName(username);
+    const user: User = await MembersRepository_typeORM.getMemberByName(username);
 
     if (user === null) {
       throw new NotFoundError(`No user found with name ${username}`);
     }
 
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
-      user.mitgliedID
+    const directorPermissions: PermissionDTO[] = await MembersRepository_typeORM.getDirectorPermissionsByMemberID(
+      user.memberId
     );
 
     const payload = createUserDataPayload(user, directorPermissions);

@@ -6,23 +6,23 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Permission": {
+			"PermissionDTO": {
 				"properties": {
-					"directorID": {
+					"directorId": {
 						"type": "number",
 						"format": "double"
 					},
 					"canDelegate": {
 						"type": "boolean"
 					},
-					"permissionID": {
+					"permissionId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"canDelegate",
-					"permissionID"
+					"permissionId"
 				],
 				"type": "object",
 				"description": "Type of the permission"
@@ -38,14 +38,14 @@
 					},
 					"permissions": {
 						"items": {
-							"$ref": "#/components/schemas/Permission"
+							"$ref": "#/components/schemas/PermissionDTO"
 						},
 						"type": "array"
 					},
 					"name": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
@@ -54,7 +54,7 @@
 					"roles",
 					"permissions",
 					"name",
-					"mitgliedID"
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the payload if the jason web token"
@@ -1558,6 +1558,72 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DirectorHasPermission": {
+				"properties": {
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"canDelegate": {
+						"type": "boolean"
+					},
+					"permission": {
+						"$ref": "#/components/schemas/Permission"
+					},
+					"director": {
+						"$ref": "#/components/schemas/Director"
+					}
+				},
+				"required": [
+					"directorId",
+					"permissionId",
+					"canDelegate",
+					"permission",
+					"director"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Permission": {
+				"properties": {
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"directorHasPermissions": {
+						"items": {
+							"$ref": "#/components/schemas/DirectorHasPermission"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"permissionId",
+					"name",
+					"description",
+					"directorHasPermissions",
+					"members"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Director": {
 				"properties": {
 					"directorId": {
@@ -1627,36 +1693,6 @@
 					"directorHasPermissions",
 					"memberHasDirectorPositions",
 					"projects"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DirectorHasPermission": {
-				"properties": {
-					"directorId": {
-						"type": "number",
-						"format": "double"
-					},
-					"permissionId": {
-						"type": "number",
-						"format": "double"
-					},
-					"canDelegate": {
-						"type": "boolean"
-					},
-					"permission": {
-						"$ref": "#/components/schemas/Permission"
-					},
-					"director": {
-						"$ref": "#/components/schemas/Director"
-					}
-				},
-				"required": [
-					"directorId",
-					"permissionId",
-					"canDelegate",
-					"permission",
-					"director"
 				],
 				"type": "object",
 				"additionalProperties": false
