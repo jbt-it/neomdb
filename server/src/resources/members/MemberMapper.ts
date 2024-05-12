@@ -13,7 +13,7 @@ import {
   MentorDto,
   MembersFieldDto,
 } from "../../typeOrm/types/memberTypes";
-import { User } from "../../typeOrm/types/authTypes";
+import { PermissionDTO, User } from "../../typeOrm/types/authTypes";
 import { JWTPayload } from "../../typeOrm/types/authTypes";
 
 /**
@@ -22,25 +22,18 @@ import { JWTPayload } from "../../typeOrm/types/authTypes";
 export class MemberMapper {
   // --- To DTO mapper functions
 
-  static memberToJWTPayload(member: Member): JWTPayload {
+  static memberToJWTPayload(member: Member, directorPermissions: PermissionDTO[]): JWTPayload {
     return {
       memberId: member.memberId,
       name: member.name,
+      // Combines the permissions of the member and the director permissions
       permissions: [
-        // First: Iterate over the permissions of the member and map them to the PermissionDTO
+        // Iterate over the permissions of the member and map them to the PermissionDTO
         ...member.permissions.map((permission) => ({
           permissionId: permission.permissionId,
           canDelegate: false,
         })),
-        // Second: Iterate over the director positions of the member and then over the permissions of the director position and map them to the PermissionDTO
-        ...member.memberHasDirectorPositions
-          .map((memberHasDirectorPosition) =>
-            memberHasDirectorPosition.director.directorHasPermissions.map((directorPermission) => ({
-              permissionId: directorPermission.permissionId,
-              canDelegate: directorPermission.canDelegate,
-            }))
-          )
-          .flat(),
+        ...directorPermissions,
       ],
       roles: member.memberHasDirectorPositions.map(
         (directorHasPermission) => directorHasPermission.director.directorId

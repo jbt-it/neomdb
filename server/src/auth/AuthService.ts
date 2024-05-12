@@ -1,15 +1,17 @@
-import { createCurrentTimestamp } from "../utils/dateUtils";
-import MembersRepository from "../resources/members/MembersRepository";
-import { UserChangePasswordRequest } from "../types/authTypes";
-import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
-import { createUserDataPayload } from "../utils/authUtils";
-import { sleepRandomly } from "../utils/timeUtils";
-import AuthRepository from "./AuthRepository";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "node:crypto";
-import { UserLoginRequest, User, JWTPayload, PermissionDTO } from "../typeOrm/types/authTypes";
-import { MembersRepository_typeORM } from "../resources/members/MembersRepository_typeORM";
 import { MemberMapper } from "../resources/members/MemberMapper";
+import MembersRepository from "../resources/members/MembersRepository";
+import {
+  MemberHasDirectorPositionRepository_typeORM,
+  MembersRepository_typeORM,
+} from "../resources/members/MembersRepository_typeORM";
+import { JWTPayload, PermissionDTO, UserLoginRequest } from "../typeOrm/types/authTypes";
+import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
+import { UserChangePasswordRequest } from "../types/authTypes";
+import { createCurrentTimestamp } from "../utils/dateUtils";
+import { sleepRandomly } from "../utils/timeUtils";
+import AuthRepository from "./AuthRepository";
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -25,7 +27,7 @@ class AuthService {
       throw new UnauthenticatedError("Credentials incomplete");
     }
 
-    const user = await MembersRepository_typeORM.getMemberWithPermissionsAndDirectorPositionsByName(userLogin.username);
+    const user = await MembersRepository_typeORM.getMemberByNameWithPermissions(userLogin.username);
 
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
@@ -38,7 +40,10 @@ class AuthService {
       throw new UnauthenticatedError("Username or password wrong");
     }
 
-    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user);
+    const directorPermissions: PermissionDTO[] =
+      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
+
+    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
   };
 
@@ -47,19 +52,20 @@ class AuthService {
    * @throws NotFoundError if no user was found
    */
   getUserData = async (username: string): Promise<JWTPayload> => {
-    const user: User = await MembersRepository_typeORM.getMemberByName(username);
+    const user = await MembersRepository_typeORM.getMemberByNameWithPermissions(username);
 
     if (user === null) {
       throw new NotFoundError(`No user found with name ${username}`);
     }
 
-    const directorPermissions: PermissionDTO[] = await MembersRepository_typeORM.getDirectorPermissionsByMemberID(
-      user.memberId
-    );
+    const directorPermissions: PermissionDTO[] =
+      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
 
-    const payload = createUserDataPayload(user, directorPermissions);
+    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
   };
+
+  // TODO: Adjsut the following methods to the new typeORM structure
 
   /**
    * Compares the old password with the passwordHash of the user and updates
