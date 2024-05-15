@@ -1,6 +1,4 @@
 import { NotFoundError } from "../../types/Errors";
-import TraineesRepository from "./TraineesRepository";
-import MembersRepository from "../members/MembersRepository";
 import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
 import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
 import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
@@ -21,9 +19,6 @@ import { AppDataSource } from "../../datasource";
 import { DepartmentRepository_typeORM } from "../../resources/members/DepartmentRepository_typeORM";
 
 class TraineesService {
-  traineesRepository = new TraineesRepository();
-  memberRepository = new MembersRepository();
-
   /**
    * Get an internal project by its id
    * @throws NotFoundError if the internal project does not exist

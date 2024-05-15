@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
 import TraineesService from "./TraineesService";
-import { TraineeAssignment, TraineeProgress } from "../../types/traineesTypes";
 import {
   InternalProjectDto,
   TraineeChoiceDto,
   TraineeMotivationDto,
   TraineeProgressDto,
   UpdateVotingDeadlinesRequest,
+  TraineeAssignmentDto,
 } from "../../typeOrm/types/traineeTypes";
 import MembersService from "../members/MembersService";
 import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
@@ -172,7 +172,7 @@ export class TraineesController extends Controller {
   // TODO: Use @Post("{id}/assignment") instead of @Patch("{id}/assignment")
   @Patch("{id}/assignment")
   @Security("jwt", ["14"])
-  public async setTraineeAssignment(@Path() id: number, @Body() requestBody: TraineeAssignment): Promise<void> {
+  public async setTraineeAssignment(@Path() id: number, @Body() requestBody: TraineeAssignmentDto): Promise<void> {
     await this.traineesService.updateAssignmentByMemberID(id, requestBody);
   }
 

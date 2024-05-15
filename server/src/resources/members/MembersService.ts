@@ -1,14 +1,12 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import path from "path";
-import AuthRepository from "../../auth/AuthRepository";
 import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
 import { EdvSkill, Language, Member, Mentor, StatusOverview, UpdateDepartmentDto } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
-import TraineesRepository from "../trainees/TraineesRepository";
 import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
 import { MemberMapper } from "./MemberMapper";
 import MembersRepository from "./MembersRepository";
@@ -29,8 +27,6 @@ import { CreateMemberRequest } from "../../typeOrm/types/memberTypes";
  */
 class MembersService {
   membersRepository = new MembersRepository();
-  traineesRepository = new TraineesRepository();
-  authRepository = new AuthRepository();
 
   /**
    * Retrieves a list of all members
@@ -235,7 +231,7 @@ class MembersService {
     let newUserName = "";
 
     // Search for memberName to check if it already exists
-    const resultFirstQuery = await this.authRepository.getUserByName(memberName);
+    const resultFirstQuery = await MembersRepository_typeORM.getMemberByName(memberName);
     // Check if memberName already exists
     if (resultFirstQuery === null) {
       newUserName = memberName;
@@ -245,7 +241,7 @@ class MembersService {
     let duplicateCounter = 1;
     // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
     while (newUserName === "") {
-      const result = await this.authRepository.getUserByName(memberName + duplicateCounter);
+      const result = await MembersRepository_typeORM.getMemberByName(memberName + duplicateCounter);
       // Check if the member with the new name already exists
       if (result === null) {
         newUserName = memberName + duplicateCounter;
@@ -379,7 +375,7 @@ class MembersService {
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = await this.membersRepository.getMemberByID(memberID, false);
+    const member = await MembersRepository_typeORM.getMemberByID(memberID);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }

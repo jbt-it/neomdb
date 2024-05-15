@@ -998,7 +998,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"datetime","required":true},"electionStart":{"dataType":"datetime","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeAssignment": {
+    "TraineeAssignmentDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true}},"validators":{}},
     },
@@ -1807,7 +1807,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_setTraineeAssignment(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineeAssignment"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineeAssignmentDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

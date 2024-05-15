@@ -4568,7 +4568,7 @@
 				"type": "object",
 				"description": "Type of the request to update the voting deadlines of a generation"
 			},
-			"TraineeAssignment": {
+			"TraineeAssignmentDto": {
 				"properties": {
 					"departmentID": {
 						"type": "number",
@@ -5988,7 +5988,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TraineeAssignment",
+								"$ref": "#/components/schemas/TraineeAssignmentDto",
 								"description": "assignment of the trainee"
 							},
 							"example": {
