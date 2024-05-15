@@ -5,8 +5,6 @@ import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
-import { QueryError } from "../../types/Errors";
-import logger from "../../logger";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
@@ -149,8 +147,8 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param newPasswordHash The new password hash
    * @returns A promise that resolves when the update is done
    */
-  updateUserPasswordByUserNameAndUserID(memberID: number, newPasswordHash: string): Promise<void> {
-    return this.update(memberID, { passwordHash: newPasswordHash });
+  updateUserPasswordByUserNameAndUserID(name: string, memberID: number, newPasswordHash: string): Promise<void> {
+    return this.update({ memberId: memberID, name: name }, { passwordHash: newPasswordHash });
   },
 
   /**

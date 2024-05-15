@@ -65,7 +65,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     event.preventDefault(); // Prevents the page from reloading
 
     // Given department object with changed goal and organisation links
-    const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
+    const editedDepartment = { ...department, linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
     api
       .put(`/members/departments/${editedDepartment.departmentId}`, editedDepartment)
       .then((res: AxiosResponse) => {

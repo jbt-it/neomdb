@@ -4,19 +4,8 @@ import path from "path";
 import AuthRepository from "../../auth/AuthRepository";
 import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import { Permission, User } from "../../types/authTypes";
-import {
-  EdvSkill,
-  Language,
-  Member,
-  MemberStatus,
-  Mentor,
-  NewMember,
-  StatusOverview,
-  UpdateDepartmentDto,
-} from "../../types/membersTypes";
+import { EdvSkill, Language, Member, Mentor, StatusOverview, UpdateDepartmentDto } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
-import { createUserDataPayload } from "../../utils/authUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import TraineesRepository from "../trainees/TraineesRepository";

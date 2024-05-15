@@ -35,8 +35,12 @@ export type MembersFieldDto = {
  * Type of the request to update a department
  */
 export type UpdateDepartmentDto = {
+  departmentId: number;
+  jbtEmail: string;
   linkObjectivePresentation: string;
   linkOrganigram: string;
+  name: string;
+  shortName: string;
 };
 
 /**

@@ -73,7 +73,6 @@ export class AuthController extends Controller {
   @Patch("change-password")
   @Security("jwt")
   public async changePassword(@Body() requestBody: UserChangePasswordRequest, @Request() request: any): Promise<void> {
-    console.log(requestBody);
     const user = request.user;
     if (user.name !== requestBody.userName) {
       throw new UnauthorizedError("You are not allowed to change the password of another user");
@@ -133,7 +132,7 @@ export class AuthController extends Controller {
         "Dein Ressort IT",
     };
     // TODO: Handle Errors
-    transport.sendMail(mailOptions);
+    // transport.sendMail(mailOptions);
   }
 
   /**

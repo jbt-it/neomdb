@@ -21,6 +21,16 @@ export type UserLoginRequest = {
 };
 
 /**
+ * Type of the request to change the password of a user
+ */
+export type UserChangePasswordRequest = {
+  userID: number;
+  userName: string;
+  oldPassword: string;
+  newPassword: string;
+};
+
+/**
  * Type for the user of the application
  * A user is a member abstracted to the details needed for authentication
  */

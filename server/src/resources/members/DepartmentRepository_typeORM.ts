@@ -28,4 +28,20 @@ export const DepartmentRepository_typeORM = AppDataSource.getRepository(Departme
   saveDepartment(department: Department): Promise<Department> {
     return this.save(department);
   },
+
+  /**
+   * Retrieves departments by their directorIds
+   * @param roles The directorIds of the departments
+   * @returns A list of departments
+   */
+  getDepartmentsByRoles(roles: number[]): Promise<Department[]> {
+    return this.find({
+      relation: ["director"],
+      where: {
+        director: {
+          directorId: roles,
+        },
+      },
+    });
+  },
 });

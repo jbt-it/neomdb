@@ -3591,16 +3591,33 @@
 			},
 			"UpdateDepartmentDto": {
 				"properties": {
+					"shortName": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
 					"linkOrganigram": {
 						"type": "string"
 					},
 					"linkObjectivePresentation": {
 						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
+					"shortName",
+					"name",
 					"linkOrganigram",
-					"linkObjectivePresentation"
+					"linkObjectivePresentation",
+					"jbtEmail",
+					"departmentId"
 				],
 				"type": "object",
 				"description": "Type of the request to update a department"

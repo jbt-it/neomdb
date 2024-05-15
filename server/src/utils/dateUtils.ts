@@ -31,3 +31,12 @@ export const createCurrentTimestamp = () => {
 };
 
 export default formatDate;
+
+export const getDateDifferenceInDays = (date1: Date, date2: Date) => {
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+
+  const timeDiff = date1.getTime() - date2.getTime();
+  const daysDiff = Math.floor(timeDiff / millisecondsPerDay);
+
+  return parseFloat(daysDiff.toFixed(1));
+};

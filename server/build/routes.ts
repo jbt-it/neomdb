@@ -905,7 +905,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateDepartmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigram":{"dataType":"string","required":true},"linkObjectivePresentation":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shortName":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"linkOrganigram":{"dataType":"string","required":true},"linkObjectivePresentation":{"dataType":"string","required":true},"jbtEmail":{"dataType":"string","required":true},"departmentId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LanguageValue": {
