@@ -75,7 +75,7 @@ class AuthService {
    */
   changeUserPassword = async (userChangePasswordRequest: UserChangePasswordRequest): Promise<void> => {
     // const userPassword = await getUserPasswordByName(userChangePasswordRequest.userName);
-    const user = await this.authRepository.getUserByName(userChangePasswordRequest.userName);
+    const user = await MembersRepository_typeORM.getMemberByName(userChangePasswordRequest.userName);
 
     if (user === null) {
       throw new UnauthenticatedError("User does not exist");
@@ -89,8 +89,7 @@ class AuthService {
 
     const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
 
-    await this.authRepository.updateUserPasswordByUserNameAndUserID(
-      userChangePasswordRequest.userName,
+    await MembersRepository_typeORM.updateUserPasswordByUserNameAndUserID(
       userChangePasswordRequest.userID,
       newPasswordHash
     );

@@ -144,6 +144,16 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
+   * Updates the passwordHash of a member
+   * @param memberID The id of the member
+   * @param newPasswordHash The new password hash
+   * @returns A promise that resolves when the update is done
+   */
+  updateUserPasswordByUserNameAndUserID(memberID: number, newPasswordHash: string): Promise<void> {
+    return this.update(memberID, { passwordHash: newPasswordHash });
+  },
+
+  /**
    * Updates the status of a member and sets the lastChanged date
    * @param memberID The id of the member
    * @param statusId The id of the new status

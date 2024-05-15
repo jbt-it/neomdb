@@ -79,7 +79,7 @@ const Login: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          const userID = res.data.mitgliedID;
+          const userID = res.data.memberId;
           const userName = res.data.name;
           const permissions = res.data.permissions;
           const roles = res.data.roles;
