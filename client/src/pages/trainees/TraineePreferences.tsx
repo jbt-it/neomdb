@@ -1,12 +1,18 @@
 /**
- * The TraineePreferences-Component lets admins manually add members and change the status of existing members
+ * The TraineePreferences-Component lets trainees give preferences on their mentor, ip and ressort choice
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button } from "@mui/material";
 import PageBar from "../../components/navigation/PageBar";
 import api from "../../utils/api";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import { authReducerActionType } from "../../types/globalTypes";
+
 import { makeStyles, createStyles } from "@mui/styles";
-import { showErrorMessage } from "../../utils/toastUtils";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
+import { Generation, InternalProject, TraineePreference } from "../../types/traineesTypes";
+import { Department, Member, Mentor } from "../../types/membersTypes";
+import { AxiosError } from "axios";
 
 /**
  * Function which proivdes the styles of the TraineePreferences
@@ -64,21 +70,13 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const TraineePreferences: React.FunctionComponent = () => {
   const classes = useStyles();
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
-  const [ressortFirst, setRessortFirst] = useState<string>("");
-  const [ressortSecond, setRessortSecond] = useState<string>("");
-  const [ressortThird, setRessortThird] = useState<string>("");
-
-  const [mentorFirst, setMentorFirst] = useState<string>("");
-  const [mentorSecond, setMentorSecond] = useState<string>("");
-  const [mentorThird, setMentorThird] = useState<string>("");
-
-  const [ipFirst, setIPFirst] = useState<string>("");
-  const [ipSecond, setIPSecond] = useState<string>("");
-  const [ipThird, setIPThird] = useState<string>("");
-  const [ipMotivationFirst, setIPMotivationFirst] = useState<string>("");
-  const [ipMotivationSecond, setIPMotivationSecond] = useState<string>("");
-  const [ipMotivationThird, setIPMotivationThird] = useState<string>("");
+  const [traineePreferences, setTraineePreferences] = useState<TraineePreference>();
+  const [generation, setGeneration] = useState<Generation>();
+  const [departements, setDepartements] = useState<Department[]>([]);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [internalprojects, setInternalprojects] = useState<InternalProject[]>([]);
 
   // Test data
   const endDate = new Date();
@@ -87,19 +85,173 @@ const TraineePreferences: React.FunctionComponent = () => {
   const dateArray = dateString.split("-");
   dateString = dateArray[2] + "." + dateArray[1] + "." + dateArray[0];
 
-  const ressorts = ["Mitglieder", "Marketing", "Firmenkontakte", "IT", "Finanzen & Recht"];
-  const mentors = ["W. Luft", "Test1", "Test2", "Test3", "Test4"];
-  const ips = ["IP 1", "IP 2", "IP 3", "IP 4"];
+  /**
+   * Retrieves all internal projects of this generation generations/{id}/internal-projects
+   */
+  const getInternalProjects = (generationID: number) => {
+    api
+      .get(`/trainees/generations/${generationID}/internal-projects`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setInternalprojects(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
+  };
+
+  /**
+   * Retrieves all internal projects of this generation generations/{id}/internal-projects
+   */
+  const getMentors = (generationID: number) => {
+    api
+      .get(`/trainees/generations/${generationID}/mentors`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setMentors(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Mentoren");
+      });
+  };
+
+  /**
+   * Retrieves the preferences
+   */
+  const getPreferences: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get(`/trainees/${auth.userID}/trainee-choices`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            const prefs: TraineePreference = res.data;
+            setTraineePreferences(prefs);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  /**
+   * Retrieves all departements
+   */
+  const getDepartements: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/members/departments", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setDepartements(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Ressorts");
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  /**
+   * Retrieves the newest trainee generation
+   */
+  const getTraineeGeneration: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+
+    api
+      .get(`/members/${auth.userID}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            console.log(res.data);
+            const memberData: Member = res.data;
+            getInternalProjects(memberData.generation);
+            getMentors(memberData.generation);
+          }
+        }
+      })
+
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  useEffect(() => getTraineeGeneration(), [getTraineeGeneration]);
+  useEffect(() => getDepartements(), [getDepartements]);
+  useEffect(() => getPreferences(), [getPreferences]);
 
   /**
    * Handles the change event on the first departement preference
    * @param event
    */
   const handleRessortFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortSecond !== event.target.value && ressortThird !== event.target.value)) {
-      setRessortFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const departement = departements.find((departement) => departement.ressortID === newValue);
+    if (!departement?.kuerzel) {
+      showErrorMessage("Ungültige Präferenz");
+      return;
+    }
+    const newKuerzel = departement.kuerzel;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_ressort2 === newValue || traineePreferences.wahl_ressort3 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+        return;
+      } else {
+        const newPrefs: TraineePreference = {
+          ...traineePreferences,
+          wahl_ressort1: newValue,
+          wahl_ressort1_kuerzel: newKuerzel,
+        };
+        setTraineePreferences(newPrefs);
+      }
     }
   };
 
@@ -108,10 +260,20 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleRessortSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortThird !== event.target.value)) {
-      setRessortSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const departement = departements.find((departement) => departement.ressortID === newValue);
+    if (!departement?.kuerzel) {
+      showErrorMessage("Ungültige Präferenz");
+      return;
+    }
+    const newKuerzel = departement.kuerzel;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort3 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({ ...traineePreferences, wahl_ressort2: newValue, wahl_ressort2_kuerzel: newKuerzel });
+      }
     }
   };
 
@@ -120,10 +282,20 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleRessortThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ressortFirst !== event.target.value && ressortSecond !== event.target.value)) {
-      setRessortThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const departement = departements.find((departement) => departement.ressortID === newValue);
+    if (!departement?.kuerzel) {
+      showErrorMessage("Ungültige Präferenz");
+      return;
+    }
+    const newKuerzel = departement.kuerzel;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort2 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({ ...traineePreferences, wahl_ressort3: newValue, wahl_ressort3_kuerzel: newKuerzel });
+      }
     }
   };
 
@@ -132,10 +304,27 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleIPFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipSecond !== event.target.value && ipThird !== event.target.value)) {
-      setIPFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
+    if (!internalProject?.kuerzel) {
+      showErrorMessage("Ungültiges Internes Projekt");
+      return;
+    }
+    const newKuerzel = internalProject.kuerzel;
+
+    if (traineePreferences) {
+      if (
+        traineePreferences.wahl_internesprojekt2 === newValue ||
+        traineePreferences.wahl_internesprojekt3 === newValue
+      ) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({
+          ...traineePreferences,
+          wahl_internesprojekt1: newValue,
+          wahl_internesprojekt1_kuerzel: newKuerzel,
+        });
+      }
     }
   };
 
@@ -144,10 +333,27 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleIPSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipFirst !== event.target.value && ipThird !== event.target.value)) {
-      setIPSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
+    if (!internalProject?.kuerzel) {
+      showErrorMessage("Ungültiges Internes Projekt");
+      return;
+    }
+    const newKuerzel = internalProject.kuerzel;
+
+    if (traineePreferences) {
+      if (
+        traineePreferences.wahl_internesprojekt1 === newValue ||
+        traineePreferences.wahl_internesprojekt3 === newValue
+      ) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({
+          ...traineePreferences,
+          wahl_internesprojekt2: newValue,
+          wahl_internesprojekt2_kuerzel: newKuerzel,
+        });
+      }
     }
   };
 
@@ -156,10 +362,27 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleIPThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (ipFirst !== event.target.value && ipSecond !== event.target.value)) {
-      setIPThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
+    if (!internalProject?.kuerzel) {
+      showErrorMessage("Ungültiges Internes Projekt");
+      return;
+    }
+    const newKuerzel = internalProject.kuerzel;
+
+    if (traineePreferences) {
+      if (
+        traineePreferences.wahl_internesprojekt1 === newValue ||
+        traineePreferences.wahl_internesprojekt2 === newValue
+      ) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({
+          ...traineePreferences,
+          wahl_internesprojekt3: newValue,
+          wahl_internesprojekt3_kuerzel: newKuerzel,
+        });
+      }
     }
   };
 
@@ -168,10 +391,20 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleMentorFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorSecond !== event.target.value && mentorThird !== event.target.value)) {
-      setMentorFirst(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
+    if (!mentor?.name) {
+      showErrorMessage("Ungültiger Mentor");
+      return;
+    }
+    const newName = mentor.name;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_mentor2 === newValue || traineePreferences.wahl_mentor3 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({ ...traineePreferences, wahl_mentor1: newValue, wahl_mentor1_name: newName });
+      }
     }
   };
 
@@ -180,10 +413,20 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleMentorSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorThird !== event.target.value)) {
-      setMentorSecond(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
+    if (!mentor?.name) {
+      showErrorMessage("Ungültiger Mentor");
+      return;
+    }
+    const newName = mentor.name;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor3 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({ ...traineePreferences, wahl_mentor2: newValue, wahl_mentor2_name: newName });
+      }
     }
   };
 
@@ -192,10 +435,20 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleMentorThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.value === "-" || (mentorFirst !== event.target.value && mentorSecond !== event.target.value)) {
-      setMentorThird(event.target.value);
-    } else {
-      showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+    const newValue = parseInt(event.target.value);
+    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
+    if (!mentor?.name) {
+      showErrorMessage("Ungültiger Mentor");
+      return;
+    }
+    const newName = mentor.name;
+
+    if (traineePreferences) {
+      if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor2 === newValue) {
+        showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
+      } else {
+        setTraineePreferences({ ...traineePreferences, wahl_mentor3: newValue, wahl_mentor3_name: newName });
+      }
     }
   };
 
@@ -204,7 +457,9 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleFirstIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationFirst(event.target.value);
+    if (traineePreferences) {
+      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt1_motivation: event.target.value });
+    }
   };
 
   /**
@@ -212,7 +467,9 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleSecondIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationSecond(event.target.value);
+    if (traineePreferences) {
+      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt2_motivation: event.target.value });
+    }
   };
 
   /**
@@ -220,7 +477,26 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @param event
    */
   const handleThirdIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setIPMotivationThird(event.target.value);
+    if (traineePreferences) {
+      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt3_motivation: event.target.value });
+    }
+  };
+
+  const savePreferences = () => {
+    api
+      .put(`/trainees/${auth.userID}/trainee-choices`, traineePreferences)
+      .then((res) => {
+        if (res.status === 204) {
+          showSuccessMessage("Deine Präferenzen wurden gespeichert.");
+        }
+      })
+      .catch((err: AxiosError) => {
+        if (err.response?.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        } else if (err.response?.status === 500) {
+          showErrorMessage("Präferenzen konnten nicht gespeichert werden!");
+        }
+      });
   };
 
   /**
@@ -228,10 +504,12 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @returns A map of jsx elements
    */
   const renderRessortItems = () => {
-    const res = [...ressorts];
-    res.unshift("-");
-    return res.map((ressort) => {
-      return <MenuItem value={ressort}>{ressort}</MenuItem>;
+    return departements.map((departement) => {
+      return (
+        <MenuItem key={departement.ressortID} value={departement.ressortID}>
+          {departement.bezeichnung}
+        </MenuItem>
+      );
     });
   };
 
@@ -250,7 +528,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleRessortFirstChange}
-          value={ressortFirst}
+          value={traineePreferences?.wahl_ressort1 || ""}
           select
         >
           {renderRessortItems()}
@@ -260,7 +538,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleRessortSecondChange}
-          value={ressortSecond}
+          value={traineePreferences?.wahl_ressort2 || ""}
           select
         >
           {renderRessortItems()}
@@ -270,7 +548,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleRessortThirdChange}
-          value={ressortThird}
+          value={traineePreferences?.wahl_ressort3 || ""}
           select
         >
           {renderRessortItems()}
@@ -284,10 +562,14 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @returns A map of jsx elements
    */
   const renderMentorItems = () => {
-    const men = [...mentors];
-    men.unshift("-");
-    return men.map((mentor) => {
-      return <MenuItem value={mentor}>{mentor}</MenuItem>;
+    return mentors.map((mentor) => {
+      if (mentor.mitgliedID) {
+        return (
+          <MenuItem key={mentor.mitgliedID} value={mentor.mitgliedID}>
+            {mentor.vorname + " " + mentor.nachname}
+          </MenuItem>
+        );
+      }
     });
   };
 
@@ -306,7 +588,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleMentorFirstChange}
-          value={mentorFirst}
+          value={traineePreferences?.wahl_mentor1 || ""}
           select
         >
           {renderMentorItems()}
@@ -316,7 +598,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleMentorSecondChange}
-          value={mentorSecond}
+          value={traineePreferences?.wahl_mentor2 || ""}
           select
         >
           {renderMentorItems()}
@@ -326,7 +608,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           className={classes.selectionElement}
           onChange={handleMentorThirdChange}
-          value={mentorThird}
+          value={traineePreferences?.wahl_mentor3 || ""}
           select
         >
           {renderMentorItems()}
@@ -340,10 +622,12 @@ const TraineePreferences: React.FunctionComponent = () => {
    * @returns A map of jsx elements
    */
   const renderIPItems = () => {
-    const internal = [...ips];
-    internal.unshift("-");
-    return internal.map((ip) => {
-      return <MenuItem value={ip}>{ip}</MenuItem>;
+    return internalprojects.map((internalproject) => {
+      return (
+        <MenuItem key={internalproject.internesProjektID} value={internalproject.internesProjektID}>
+          {internalproject.projektname}
+        </MenuItem>
+      );
     });
   };
 
@@ -363,7 +647,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             className={classes.selectionElement}
             onChange={handleIPFirstChange}
-            value={ipFirst}
+            value={traineePreferences?.wahl_internesprojekt1 || ""}
             select
           >
             {renderIPItems()}
@@ -378,7 +662,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleFirstIPMotivationChange}
-            value={ipMotivationFirst}
+            value={traineePreferences?.wahl_internesprojekt1_motivation}
           ></TextField>
         </Grid>
         <Divider className={classes.paperHeaderDivider} />
@@ -388,7 +672,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             className={classes.selectionElement}
             onChange={handleIPSecondChange}
-            value={ipSecond}
+            value={traineePreferences?.wahl_internesprojekt2 || ""}
             select
           >
             {renderIPItems()}
@@ -403,7 +687,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleSecondIPMotivationChange}
-            value={ipMotivationSecond}
+            value={traineePreferences?.wahl_internesprojekt2_motivation}
           ></TextField>
         </Grid>
         <Divider className={classes.paperHeaderDivider} />
@@ -413,7 +697,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             className={classes.selectionElement}
             onChange={handleIPThirdChange}
-            value={ipThird}
+            value={traineePreferences?.wahl_internesprojekt3 || ""}
             select
           >
             {renderIPItems()}
@@ -428,7 +712,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleThirdIPMotivationChange}
-            value={ipMotivationThird}
+            value={traineePreferences?.wahl_internesprojekt3_motivation}
           ></TextField>
         </Grid>
         <Divider className={classes.paperHeaderDivider} />
@@ -455,7 +739,7 @@ const TraineePreferences: React.FunctionComponent = () => {
               {renderMentorSelection()}
               <Divider className={classes.paperHeaderDivider} />
               {renderIPSelection()}
-              <Button variant="outlined" color="primary" className={classes.inputButton}>
+              <Button variant="contained" color="primary" className={classes.inputButton} onClick={savePreferences}>
                 Präferenzen Speichern
               </Button>
             </Grid>

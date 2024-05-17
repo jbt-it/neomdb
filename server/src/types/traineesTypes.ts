@@ -37,24 +37,36 @@ export type Generation = {
 };
 
 /**
- * Type of the trainee choice of a member
+ * Type of trainee choice
  */
-export type TraineeChoice = {
+export type TraineePreference = {
   mitgliedID: number;
   vorname: string;
   nachname: string;
-  wahl_mentor: number;
-  wahl_mentor1: number;
-  wahl_mentor2: number;
-  wahl_mentor3: number;
-  wahl_internesprojekt: number;
-  wahl_internesprojekt1: number;
-  wahl_internesprojekt2: number;
-  wahl_internesprojekt3: number;
-  wahl_ressort: number;
-  wahl_ressort1: number;
-  wahl_ressort2: number;
-  wahl_ressort3: number;
+  wahl_mentor: number | null;
+  wahl_mentor1: number | null;
+  wahl_mentor1_name: string | null;
+  wahl_mentor2: number | null;
+  wahl_mentor2_name: string | null;
+  wahl_mentor3: number | null;
+  wahl_mentor3_name: string | null;
+  wahl_ressort: number | null;
+  wahl_ressort1: number | null;
+  wahl_ressort1_kuerzel: string | null;
+  wahl_ressort2: number | null;
+  wahl_ressort2_kuerzel: string | null;
+  wahl_ressort3: number | null;
+  wahl_ressort3_kuerzel: string | null;
+  wahl_internesprojekt: number | null;
+  wahl_internesprojekt1: number | null;
+  wahl_internesprojekt1_kuerzel: string | null;
+  wahl_internesprojekt2: number | null;
+  wahl_internesprojekt2_kuerzel: string | null;
+  wahl_internesprojekt3: number | null;
+  wahl_internesprojekt3_kuerzel: string | null;
+  wahl_internesprojekt1_motivation: string | null;
+  wahl_internesprojekt2_motivation: string | null;
+  wahl_internesprojekt3_motivation: string | null;
 };
 
 /**
@@ -88,9 +100,9 @@ export type Trainee = {
  * Type of the assignment of a trainee to an internal project, mentor and department
  */
 export type TraineeAssignment = {
-  ipID: number;
-  mentorID: number;
-  departmentID: number;
+  ipID: number | null;
+  mentorID: number | null;
+  departmentID: number | null;
 };
 
 /**

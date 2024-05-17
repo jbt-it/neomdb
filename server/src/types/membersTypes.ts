@@ -95,6 +95,7 @@ export type EdvSkill = {
  */
 export type Mentor = {
   mitgliedID: number;
+  name?: string;
   vorname?: string;
   nachname?: string;
   generationID?: number;

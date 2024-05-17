@@ -43,7 +43,7 @@ const TraineeSection: React.FunctionComponent = () => {
     setIsLoadingGenerations(true);
     let mounted = true;
     api
-      .get("/trainees/generations", {
+      .get("/trainees/generations?current=false", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

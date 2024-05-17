@@ -1195,6 +1195,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                     if (newMentor) {
                       setMentorState({
                         mitgliedID: newMentor.mitgliedID,
+                        name: newMentor.vorname.charAt(0) + newMentor.nachname,
                         vorname: newMentor.vorname,
                         nachname: newMentor.nachname,
                       });

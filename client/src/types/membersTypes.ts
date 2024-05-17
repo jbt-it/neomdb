@@ -79,6 +79,7 @@ export type Director = {
  */
 export type Mentor = {
   mitgliedID: number | null;
+  name: string;
   vorname: string;
   nachname: string;
 };

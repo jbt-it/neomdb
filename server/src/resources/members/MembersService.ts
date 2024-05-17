@@ -44,6 +44,14 @@ class MembersService {
   };
 
   /**
+   * Retrieves a member by its id
+   * @param memberID The id of the member
+   */
+  getMemberByID = async (memberID: number) => {
+    return await this.membersRepository.getMemberByID(memberID, false);
+  };
+
+  /**
    * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
    * @throws NotFoundError if no member was found
    */
@@ -335,7 +343,7 @@ class MembersService {
         }
       } else {
         // Retrieve the generations and select the newest one
-        const generations = await this.traineesRepository.getGenerations();
+        const generations = await this.traineesRepository.getGenerations(true);
         // Because the generations are sorted descending by date, the first element is the newest one
         const newestGeneration = generations[0];
         // Add the generation to the member

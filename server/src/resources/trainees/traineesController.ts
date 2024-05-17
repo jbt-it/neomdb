@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
+import { Body, Controller, Get, Patch, Path, Query, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
 import TraineesService from "./TraineesService";
 import { Mentor } from "../../types/membersTypes";
 import {
@@ -7,7 +7,7 @@ import {
   JBTMail,
   Trainee,
   TraineeAssignment,
-  TraineeChoice,
+  TraineePreference,
   TraineeMotivation,
   TraineeProgress,
   UpdateVotingDeadlinesRequest,
@@ -57,10 +57,37 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/trainee-choices")
   @Security("jwt", ["14"])
-  public async getTraineeChoicesOfGeneration(@Path() id: number): Promise<TraineeChoice[]> {
-    const choices = await this.traineesService.getTraineeChoicesByGenerationID(id);
+  public async getTraineePreferencesOfGeneration(@Path() id: number): Promise<TraineePreference[]> {
+    const choices = await this.traineesService.getTraineePreferencesByGenerationID(id);
 
     return choices;
+  }
+
+  /**
+   * Retrieves choices of mentor, internal project and department by a member id
+   * @summary Get trainee choices
+   * @param id id of the trainee
+   */
+  @Get("/{id}/trainee-choices")
+  @Security("jwt")
+  public async getTraineePreferencesOfMember(@Path() id: number): Promise<TraineePreference> {
+    const choices = await this.traineesService.getTraineePreferencesByMemberID(id);
+
+    return choices;
+  }
+
+  /**
+   * Retrieves choices of mentor, internal project and department by a member id
+   * @summary Get trainee choices
+   * @param id id of the trainee
+   */
+  @Put("/{id}/trainee-choices")
+  @Security("jwt")
+  public async setTraineePreferencesOfMember(
+    @Path() id: number,
+    @Body() requestBody: TraineePreference
+  ): Promise<void> {
+    await this.traineesService.setTraineePreferencesByMemberID(id, requestBody);
   }
 
   /**
@@ -134,8 +161,8 @@ export class TraineesController extends Controller {
    */
   @Get("generations")
   @Security("jwt")
-  public async getGenerations(): Promise<Generation[]> {
-    const generations = await this.traineesService.getGenerations();
+  public async getGenerations(@Query("current") current: boolean): Promise<Generation[]> {
+    const generations = await this.traineesService.getGenerations(current);
 
     return generations;
   }
@@ -177,7 +204,6 @@ export class TraineesController extends Controller {
    * @param requestBody assignment of the trainee
    *
    * @example requestBody {
-   * "memberID": 8167,
    * "ipID": 62,
    * "mentorID": 8167,
    * "departmentID": 1
@@ -191,8 +217,8 @@ export class TraineesController extends Controller {
   }
 
   /**
-   * Retrieves all internal projects of a generation
-   * @summary Get internal projects
+   * Retrieves all mentors of a generation
+   * @summary Get mentors
    * @param id id of the generation
    */
   @Get("generations/{id}/mentors")

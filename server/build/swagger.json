@@ -562,6 +562,9 @@
 					"vorname": {
 						"type": "string"
 					},
+					"name": {
+						"type": "string"
+					},
 					"mitgliedID": {
 						"type": "number",
 						"format": "double"
@@ -939,55 +942,115 @@
 				"type": "object",
 				"description": "Type of the internal project of a member"
 			},
-			"TraineeChoice": {
+			"TraineePreference": {
 				"properties": {
-					"wahl_ressort3": {
-						"type": "number",
-						"format": "double"
+					"wahl_internesprojekt3_motivation": {
+						"type": "string",
+						"nullable": true
 					},
-					"wahl_ressort2": {
-						"type": "number",
-						"format": "double"
+					"wahl_internesprojekt2_motivation": {
+						"type": "string",
+						"nullable": true
 					},
-					"wahl_ressort1": {
-						"type": "number",
-						"format": "double"
+					"wahl_internesprojekt1_motivation": {
+						"type": "string",
+						"nullable": true
 					},
-					"wahl_ressort": {
-						"type": "number",
-						"format": "double"
+					"wahl_internesprojekt3_kuerzel": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_internesprojekt3": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_internesprojekt2_kuerzel": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_internesprojekt2": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_internesprojekt1_kuerzel": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_internesprojekt1": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"wahl_internesprojekt": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_ressort3_kuerzel": {
+						"type": "string",
+						"nullable": true
+					},
+					"wahl_ressort3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_ressort2_kuerzel": {
+						"type": "string",
+						"nullable": true
+					},
+					"wahl_ressort2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_ressort1_kuerzel": {
+						"type": "string",
+						"nullable": true
+					},
+					"wahl_ressort1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_ressort": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_mentor3_name": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_mentor3": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_mentor2_name": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_mentor2": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
+					},
+					"wahl_mentor1_name": {
+						"type": "string",
+						"nullable": true
 					},
 					"wahl_mentor1": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"wahl_mentor": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"nachname": {
 						"type": "string"
@@ -1001,16 +1064,28 @@
 					}
 				},
 				"required": [
-					"wahl_ressort3",
-					"wahl_ressort2",
-					"wahl_ressort1",
-					"wahl_ressort",
+					"wahl_internesprojekt3_motivation",
+					"wahl_internesprojekt2_motivation",
+					"wahl_internesprojekt1_motivation",
+					"wahl_internesprojekt3_kuerzel",
 					"wahl_internesprojekt3",
+					"wahl_internesprojekt2_kuerzel",
 					"wahl_internesprojekt2",
+					"wahl_internesprojekt1_kuerzel",
 					"wahl_internesprojekt1",
 					"wahl_internesprojekt",
+					"wahl_ressort3_kuerzel",
+					"wahl_ressort3",
+					"wahl_ressort2_kuerzel",
+					"wahl_ressort2",
+					"wahl_ressort1_kuerzel",
+					"wahl_ressort1",
+					"wahl_ressort",
+					"wahl_mentor3_name",
 					"wahl_mentor3",
+					"wahl_mentor2_name",
 					"wahl_mentor2",
+					"wahl_mentor1_name",
 					"wahl_mentor1",
 					"wahl_mentor",
 					"nachname",
@@ -1018,7 +1093,7 @@
 					"mitgliedID"
 				],
 				"type": "object",
-				"description": "Type of the trainee choice of a member"
+				"description": "Type of trainee choice"
 			},
 			"JBTMail": {
 				"properties": {
@@ -1132,15 +1207,18 @@
 				"properties": {
 					"departmentID": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"mentorID": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"ipID": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -2376,7 +2454,7 @@
 		},
 		"/trainees/generations/{id}/trainee-choices": {
 			"get": {
-				"operationId": "GetTraineeChoicesOfGeneration",
+				"operationId": "GetTraineePreferencesOfGeneration",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2384,7 +2462,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeChoice"
+										"$ref": "#/components/schemas/TraineePreference"
 									},
 									"type": "array"
 								}
@@ -2416,6 +2494,85 @@
 						}
 					}
 				]
+			}
+		},
+		"/trainees/{id}/trainee-choices": {
+			"get": {
+				"operationId": "GetTraineePreferencesOfMember",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TraineePreference"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves choices of mentor, internal project and department by a member id",
+				"summary": "Get trainee choices",
+				"tags": [
+					"Trainees"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "id of the trainee",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "SetTraineePreferencesOfMember",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Retrieves choices of mentor, internal project and department by a member id",
+				"summary": "Get trainee choices",
+				"tags": [
+					"Trainees"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "id of the trainee",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TraineePreference"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/trainees/ip/{id}/mails": {
@@ -2488,7 +2645,16 @@
 						"jwt": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "current",
+						"required": true,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
 			}
 		},
 		"/trainees/generations/{id}/motivation": {
@@ -2627,7 +2793,6 @@
 								"description": "assignment of the trainee"
 							},
 							"example": {
-								"memberID": 8167,
 								"ipID": 62,
 								"mentorID": 8167,
 								"departmentID": 1
@@ -2655,8 +2820,8 @@
 						}
 					}
 				},
-				"description": "Retrieves all internal projects of a generation",
-				"summary": "Get internal projects",
+				"description": "Retrieves all mentors of a generation",
+				"summary": "Get mentors",
 				"tags": [
 					"Trainees"
 				],

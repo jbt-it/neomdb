@@ -128,7 +128,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Mentor": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationID":{"dataType":"double"},"nachname":{"dataType":"string"},"vorname":{"dataType":"string"},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationID":{"dataType":"double"},"nachname":{"dataType":"string"},"vorname":{"dataType":"string"},"name":{"dataType":"string"},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberDetails": {
@@ -151,9 +151,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"qualitaetsmanager":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersField"}},{"dataType":"enum","enums":[null]}],"required":true},"projektmitglieder":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersField"}},{"dataType":"enum","enums":[null]}],"required":true},"DLBeiEV":{"dataType":"boolean","required":true},"APGehalten":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"APBeiEV":{"dataType":"boolean","required":true},"ZPGehalten":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ZPBeiEV":{"dataType":"boolean","required":true},"AngebotBeiEV":{"dataType":"boolean","required":true},"kickoff":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"kuerzel":{"dataType":"string","required":true},"projektname":{"dataType":"string","required":true},"generationsBezeichnung":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"internesProjektID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeChoice": {
+    "TraineePreference": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_ressort3":{"dataType":"double","required":true},"wahl_ressort2":{"dataType":"double","required":true},"wahl_ressort1":{"dataType":"double","required":true},"wahl_ressort":{"dataType":"double","required":true},"wahl_internesprojekt3":{"dataType":"double","required":true},"wahl_internesprojekt2":{"dataType":"double","required":true},"wahl_internesprojekt1":{"dataType":"double","required":true},"wahl_internesprojekt":{"dataType":"double","required":true},"wahl_mentor3":{"dataType":"double","required":true},"wahl_mentor2":{"dataType":"double","required":true},"wahl_mentor1":{"dataType":"double","required":true},"wahl_mentor":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_internesprojekt3_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt3_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort3_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort2_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort1_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor3_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor2_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor1_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "JBTMail": {
@@ -178,7 +178,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TraineeAssignment": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"ipID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InternalProjectAndTrainee": {
@@ -886,9 +886,9 @@ export function RegisterRoutes(app: Router) {
         app.get('/api/trainees/generations/:id/trainee-choices',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineeChoicesOfGeneration)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineePreferencesOfGeneration)),
 
-            function TraineesController_getTraineeChoicesOfGeneration(request: any, response: any, next: any) {
+            function TraineesController_getTraineePreferencesOfGeneration(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
@@ -902,7 +902,60 @@ export function RegisterRoutes(app: Router) {
                 const controller = new TraineesController();
 
 
-              const promise = controller.getTraineeChoicesOfGeneration.apply(controller, validatedArgs as any);
+              const promise = controller.getTraineePreferencesOfGeneration.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/trainees/:id/trainee-choices',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineePreferencesOfMember)),
+
+            function TraineesController_getTraineePreferencesOfMember(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new TraineesController();
+
+
+              const promise = controller.getTraineePreferencesOfMember.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/trainees/:id/trainee-choices',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setTraineePreferencesOfMember)),
+
+            function TraineesController_setTraineePreferencesOfMember(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineePreference"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new TraineesController();
+
+
+              const promise = controller.setTraineePreferencesOfMember.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -969,6 +1022,7 @@ export function RegisterRoutes(app: Router) {
 
             function TraineesController_getGenerations(request: any, response: any, next: any) {
             const args = {
+                    current: {"in":"query","name":"current","required":true,"dataType":"boolean"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

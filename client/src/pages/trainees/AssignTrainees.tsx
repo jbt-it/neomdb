@@ -1,7 +1,7 @@
 /**
  * The AssignTraineePreferences-Component lets admins manually add members and change the status of existing members
  */
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   Paper,
   Link,
@@ -19,12 +19,20 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
+  TextField,
+  MenuItem,
   Modal,
 } from "@mui/material";
 import PageBar from "../../components/navigation/PageBar";
 import { makeStyles, createStyles } from "@mui/styles";
-import { showErrorMessage } from "../../utils/toastUtils";
+import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
+import { TraineePreference, Generation, InternalProject, TraineeAssignment, Trainee } from "../../types/traineesTypes";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import { authReducerActionType } from "../../types/globalTypes";
+import api from "../../utils/api";
+import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
+import { Department, Mentor } from "../../types/membersTypes";
 
 /**
  * Function which proivdes the styles of the AssignTraineePreferences
@@ -81,6 +89,14 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.primary.contrastText,
     },
+    attachementCell: {
+      padding: "10px 8px 10px 8px",
+      marginRight: "16px",
+      minWidth: "16px",
+    },
+    tableCell: {
+      padding: "16px 8px 16px 8px",
+    },
     tableHeadSortBtn: {
       display: "flex",
       alignItems: "center",
@@ -103,6 +119,9 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
+    otherSelect: {
+      minWidth: "80px",
+    },
   })
 );
 
@@ -112,108 +131,151 @@ const useStyles = makeStyles((theme: Theme) =>
 const AssignTrainees: React.FunctionComponent = () => {
   const classes = useStyles();
 
+  const { dispatchAuth } = useContext(AuthContext);
+
   const [showMotivationalTexts, setShowMotivationalTexts] = useState<boolean>(false);
-  const [openedTrainee, setOpenedTrainee] = useState<null | TraineeType>(null);
+  const [openedTrainee, setOpenedTrainee] = useState<null | TraineePreference>(null);
+  const [traineePreferences, setTraineePreferences] = useState<TraineePreference[]>([]);
+  const [generation, setGeneration] = useState<Generation>();
+  const [departements, setDepartements] = useState<Department[]>([]);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [internalprojects, setInternalprojects] = useState<InternalProject[]>([]);
 
-  // Test data
-  const startDateString = "01.01.2024";
-  const endDateString = "15.01.2024";
-
-  type TraineeType = {
-    mitgliedID: number;
-    vorname: string;
-    nachname: string;
-    wahl_mentor1: number;
-    wahl_mentor1_name: string;
-    wahl_mentor2: number;
-    wahl_mentor2_name: string;
-    wahl_mentor3: number;
-    wahl_mentor3_name: string;
-    wahl_ressort1: number;
-    wahl_ressort1_kuerzel: string;
-    wahl_ressort2: number;
-    wahl_ressort2_kuerzel: string;
-    wahl_ressort3: number;
-    wahl_ressort3_kuerzel: string;
-    wahl_internesprojekt1: number;
-    wahl_internesprojekt1_kuerzel: string;
-    wahl_internesprojekt2: number;
-    wahl_internesprojekt2_kuerzel: string;
-    wahl_internesprojekt3: number;
-    wahl_internesprojekt3_kuerzel: string;
-    wahl_internesprojekt1_motivation: string;
-    wahl_internesprojekt2_motivation: string;
-    wahl_internesprojekt3_motivation: string;
+  /**
+   * Retrieves all internal projects of this generation generations/{id}/internal-projects
+   */
+  const getInternalProjects = (generationID: number) => {
+    api
+      .get(`/trainees/generations/${generationID}/internal-projects`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setInternalprojects(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
   };
 
-  const preferences = [
-    {
-      mitgliedID: 7,
-      vorname: "Henry",
-      nachname: "larry",
-      wahl_mentor1: 8,
-      wahl_mentor1_name: "M.Lewa",
-      wahl_mentor2: 9,
-      wahl_mentor2_name: "S.KESr",
-      wahl_mentor3: 10,
-      wahl_mentor3_name: "T.sdafas",
-      wahl_ressort1: 1,
-      wahl_ressort1_kuerzel: "MAR",
-      wahl_ressort2: 2,
-      wahl_ressort2_kuerzel: "FK",
-      wahl_ressort3: 3,
-      wahl_ressort3_kuerzel: "IT",
-      wahl_internesprojekt1: 1,
-      wahl_internesprojekt1_kuerzel: "LEWS",
-      wahl_internesprojekt1_motivation: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lacus sed viverra tellus in hac habitasse platea dictumst. Eget mi proin sed libero enim sed faucibus turpis in. Tempor orci dapibus ultrices in iaculis. Parturient montes nascetur ridiculus mus mauris vitae. Mi in nulla posuere sollicitudin aliquam. Et ultrices neque ornare aenean. Mauris sit amet massa vitae tortor condimentum lacinia quis vel. Turpis massa sed elementum tempus egestas sed sed. Orci nulla pellentesque dignissim enim sit amet venenatis. Eget nullam non nisi est sit amet facilisis magna etiam. Enim eu turpis egestas pretium aenean pharetra magna ac. Aliquet risus feugiat in ante metus dictum. Tincidunt eget nullam non nisi est. Sagittis vitae et leo duis ut. Sed vulputate odio ut enim blandit volutpat. Augue lacus viverra vitae congue eu consequat ac felis donec. Interdum velit laoreet id donec ultrices tincidunt arcu non. Morbi blandit cursus risus at ultrices mi tempus.
-      Nullam ac tortor vitae purus faucibus ornare suspendisse sed. Mattis aliquam faucibus purus in massa. Urna nunc id cursus metus aliquam eleifend mi in. Egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam. Condimentum mattis pellentesque id nibh tortor id. Laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean. Convallis posuere morbi leo urna molestie at elementum eu. Viverra tellus in hac habitasse platea. Dis parturient montes nascetur ridiculus mus mauris vitae. Elementum sagittis vitae et leo duis ut. Ac turpis egestas sed tempus urna. Urna molestie at elementum eu.
-      Varius quam quisque id diam vel. Lacus suspendisse faucibus interdum posuere lorem ipsum dolor. Id volutpat lacus laoreet non curabitur gravida arcu ac. Mattis nunc sed blandit libero volutpat sed. Eros donec ac odio tempor orci. Integer vitae justo eget magna fermentum iaculis eu non diam. Id velit ut tortor pretium viverra suspendisse. Mollis aliquam ut porttitor leo a diam. Sit amet facilisis magna etiam tempor orci eu lobortis. Enim praesent elementum facilisis leo vel fringilla est. Cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris. Aliquet bibendum enim facilisis gravida neque convallis. Et ultrices neque ornare aenean euismod elementum. Sed pulvinar proin gravida hendrerit. Laoreet sit amet cursus sit. Gravida cum sociis natoque penatibus et magnis dis. Accumsan lacus vel facilisis volutpat est velit egestas.
-      Vitae purus faucibus ornare suspendisse sed nisi. Faucibus nisl tincidunt eget nullam non nisi est sit amet. Justo donec enim diam vulputate. Nec nam aliquam sem et tortor consequat. Facilisi etiam dignissim diam quis enim lobortis scelerisque. Vulputate dignissim suspendisse in est ante. Mauris in aliquam sem fringilla ut morbi tincidunt augue. Pellentesque dignissim enim sit amet venenatis urna cursus eget. Molestie nunc non blandit massa enim nec dui nunc. At quis risus sed vulputate. Nulla facilisi cras fermentum odio eu feugiat pretium. Interdum varius sit amet mattis vulputate enim nulla aliquet. Egestas pretium aenean pharetra magna ac placerat. Quisque id diam vel quam elementum pulvinar etiam non. Diam ut venenatis tellus in metus vulputate. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec. Faucibus interdum posuere lorem ipsum dolor sit amet consectetur. Suspendisse faucibus interdum posuere lorem ipsum dolor.
-      Facilisi morbi tempus iaculis urna id volutpat lacus laoreet non. Integer malesuada nunc vel risus commodo. Sed blandit libero volutpat sed cras ornare arcu dui vivamus. Quis auctor elit sed vulputate mi sit amet mauris commodo. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum. Leo urna molestie at elementum eu facilisis sed. Sagittis eu volutpat odio facilisis mauris sit amet. Tristique nulla aliquet enim tortor at auctor urna nunc. Nulla facilisi nullam vehicula ipsum a. Tempor orci dapibus ultrices in iaculis nunc sed. Sem viverra aliquet eget sit amet tellus cras adipiscing enim. Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Aliquam sem fringilla ut morbi tincidunt augue interdum. In arcu cursus euismod quis viverra nibh cras pulvinar mattis. In mollis nunc sed id semper risus in hendrerit gravida.`,
-      wahl_internesprojekt2: 2,
-      wahl_internesprojekt2_kuerzel: "REKS",
-      wahl_internesprojekt2_motivation: "MotivasJ AJSDFJ ASLLDJFL AKSJDFLKJADJSNF ",
-      wahl_internesprojekt3: 3,
-      wahl_internesprojekt3_kuerzel: "BEKS",
-      wahl_internesprojekt3_motivation: "skdajflakjsdf jasdfj laksdjf ajdsa",
-    },
-    {
-      mitgliedID: 7,
-      vorname: "Behi",
-      nachname: "Sammy",
-      wahl_mentor1: 8,
-      wahl_mentor1_name: "M.Lewa",
-      wahl_mentor2: 9,
-      wahl_mentor2_name: "S.KESr",
-      wahl_mentor3: 10,
-      wahl_mentor3_name: "T.sdafas",
-      wahl_ressort1: 1,
-      wahl_ressort1_kuerzel: "MAR",
-      wahl_ressort2: 2,
-      wahl_ressort2_kuerzel: "FK",
-      wahl_ressort3: 3,
-      wahl_ressort3_kuerzel: "IT",
-      wahl_internesprojekt1: 1,
-      wahl_internesprojekt1_kuerzel: "LEWS",
-      wahl_internesprojekt1_motivation: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lacus sed viverra tellus in hac habitasse platea dictumst. Eget mi proin sed libero enim sed faucibus turpis in. Tempor orci dapibus ultrices in iaculis. Parturient montes nascetur ridiculus mus mauris vitae. Mi in nulla posuere sollicitudin aliquam. Et ultrices neque ornare aenean. Mauris sit amet massa vitae tortor condimentum lacinia quis vel. Turpis massa sed elementum tempus egestas sed sed. Orci nulla pellentesque dignissim enim sit amet venenatis. Eget nullam non nisi est sit amet facilisis magna etiam. Enim eu turpis egestas pretium aenean pharetra magna ac. Aliquet risus feugiat in ante metus dictum. Tincidunt eget nullam non nisi est. Sagittis vitae et leo duis ut. Sed vulputate odio ut enim blandit volutpat. Augue lacus viverra vitae congue eu consequat ac felis donec. Interdum velit laoreet id donec ultrices tincidunt arcu non. Morbi blandit cursus risus at ultrices mi tempus.
-      Nullam ac tortor vitae purus faucibus ornare suspendisse sed. Mattis aliquam faucibus purus in massa. Urna nunc id cursus metus aliquam eleifend mi in. Egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam. Condimentum mattis pellentesque id nibh tortor id. Laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean. Convallis posuere morbi leo urna molestie at elementum eu. Viverra tellus in hac habitasse platea. Dis parturient montes nascetur ridiculus mus mauris vitae. Elementum sagittis vitae et leo duis ut. Ac turpis egestas sed tempus urna. Urna molestie at elementum eu.
-      Varius quam quisque id diam vel. Lacus suspendisse faucibus interdum posuere lorem ipsum dolor. Id volutpat lacus laoreet non curabitur gravida arcu ac. Mattis nunc sed blandit libero volutpat sed. Eros donec ac odio tempor orci. Integer vitae justo eget magna fermentum iaculis eu non diam. Id velit ut tortor pretium viverra suspendisse. Mollis aliquam ut porttitor leo a diam. Sit amet facilisis magna etiam tempor orci eu lobortis. Enim praesent elementum facilisis leo vel fringilla est. Cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris. Aliquet bibendum enim facilisis gravida neque convallis. Et ultrices neque ornare aenean euismod elementum. Sed pulvinar proin gravida hendrerit. Laoreet sit amet cursus sit. Gravida cum sociis natoque penatibus et magnis dis. Accumsan lacus vel facilisis volutpat est velit egestas.
-      Vitae purus faucibus ornare suspendisse sed nisi. Faucibus nisl tincidunt eget nullam non nisi est sit amet. Justo donec enim diam vulputate. Nec nam aliquam sem et tortor consequat. Facilisi etiam dignissim diam quis enim lobortis scelerisque. Vulputate dignissim suspendisse in est ante. Mauris in aliquam sem fringilla ut morbi tincidunt augue. Pellentesque dignissim enim sit amet venenatis urna cursus eget. Molestie nunc non blandit massa enim nec dui nunc. At quis risus sed vulputate. Nulla facilisi cras fermentum odio eu feugiat pretium. Interdum varius sit amet mattis vulputate enim nulla aliquet. Egestas pretium aenean pharetra magna ac placerat. Quisque id diam vel quam elementum pulvinar etiam non. Diam ut venenatis tellus in metus vulputate. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec. Faucibus interdum posuere lorem ipsum dolor sit amet consectetur. Suspendisse faucibus interdum posuere lorem ipsum dolor.
-      Facilisi morbi tempus iaculis urna id volutpat lacus laoreet non. Integer malesuada nunc vel risus commodo. Sed blandit libero volutpat sed cras ornare arcu dui vivamus. Quis auctor elit sed vulputate mi sit amet mauris commodo. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum. Leo urna molestie at elementum eu facilisis sed. Sagittis eu volutpat odio facilisis mauris sit amet. Tristique nulla aliquet enim tortor at auctor urna nunc. Nulla facilisi nullam vehicula ipsum a. Tempor orci dapibus ultrices in iaculis nunc sed. Sem viverra aliquet eget sit amet tellus cras adipiscing enim. Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Aliquam sem fringilla ut morbi tincidunt augue interdum. In arcu cursus euismod quis viverra nibh cras pulvinar mattis. In mollis nunc sed id semper risus in hendrerit gravida.`,
-      wahl_internesprojekt2: 2,
-      wahl_internesprojekt2_kuerzel: "REKS",
-      wahl_internesprojekt2_motivation: "MotivasJ AJSDFJ ASLLDJFL AKSJDFLKJADJSNF ",
-      wahl_internesprojekt3: 3,
-      wahl_internesprojekt3_kuerzel: "BEKS",
-      wahl_internesprojekt3_motivation: "skdajflakjsdf jasdfj laksdjf ajdsa",
-    },
-  ];
+  /**
+   * Retrieves all internal projects of this generation generations/{id}/internal-projects
+   */
+  const getMentors = (generationID: number) => {
+    api
+      .get(`/trainees/generations/${generationID}/mentors`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setMentors(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Mentoren");
+      });
+  };
+
+  /**
+   * Retrieves the preferences
+   */
+  const getPreferences = (generationID: number) => {
+    api
+      .get("/trainees/generations/14/trainee-choices", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          const prefs: TraineePreference[] = res.data;
+          setTraineePreferences(prefs);
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
+  };
+
+  /**
+   * Retrieves the newest trainee generation
+   */
+  const getTraineeGeneration: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/trainees/generations?current=true", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setGeneration(res.data[0]);
+            getInternalProjects(res.data[0].generationID);
+            getMentors(res.data[0].generationID);
+            getPreferences(res.data[0].generationID);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Trainee Zuteilung");
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  /**
+   * Retrieves all departements
+   */
+  const getDepartements: VoidFunction = useCallback(() => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    api
+      .get("/members/departments", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            setDepartements(res.data);
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          dispatchAuth({ type: authReducerActionType.deauthenticate });
+        }
+        showErrorMessage("Fehler beim Laden der Ressorts");
+      });
+
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  }, [dispatchAuth]);
+
+  useEffect(() => getTraineeGeneration(), [getTraineeGeneration]);
+  useEffect(() => getDepartements(), [getDepartements]);
 
   const closeMotivationalTexts = () => {
     setShowMotivationalTexts(false);
   };
 
-  const openMotivationalTexts = (trainee: TraineeType) => {
+  const openMotivationalTexts = (trainee: TraineePreference) => {
     if (trainee) {
       setOpenedTrainee(trainee);
       setShowMotivationalTexts(true);
@@ -224,23 +286,142 @@ const AssignTrainees: React.FunctionComponent = () => {
     }
   };
 
+  const savePreference = (traineeID: number, assignment: TraineeAssignment) => {
+    api
+      .patch(`/trainees/${traineeID}/assignment`, assignment)
+      .then((res) => {
+        console.log("saved successfully");
+      })
+      .catch((error) => {
+        showErrorMessage("Die Zuteilung konnte nicht gespeichert werden, bitte lade die Seite neu.");
+      });
+  };
+
+  const changeRessortChoice = (mitgliedID: number, newValue: string) => {
+    let id: number | null = null;
+    if (newValue !== null) {
+      id = parseInt(newValue);
+    }
+    setTraineePreferences((prevPreferences) => {
+      const updatedPreferences = prevPreferences.map((preference) => {
+        if (preference.mitgliedID === mitgliedID) {
+          if (preference.wahl_ressort === id) {
+            const assignment: TraineeAssignment = {
+              ipID: preference.wahl_internesprojekt,
+              mentorID: preference.wahl_mentor,
+              departmentID: null,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_ressort: null };
+          } else {
+            const assignment: TraineeAssignment = {
+              ipID: preference.wahl_internesprojekt,
+              mentorID: preference.wahl_mentor,
+              departmentID: id,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_ressort: id };
+          }
+        } else {
+          return preference;
+        }
+      });
+      return updatedPreferences;
+    });
+  };
+
+  const changeMentorChoice = (mitgliedID: number, newValue: string) => {
+    let id: number | null = null;
+    if (newValue !== null) {
+      id = parseInt(newValue);
+    }
+    setTraineePreferences((prevPreferences) => {
+      const updatedPreferences = prevPreferences.map((preference) => {
+        if (preference.mitgliedID === mitgliedID) {
+          if (preference.wahl_mentor === id) {
+            const assignment: TraineeAssignment = {
+              ipID: preference.wahl_internesprojekt,
+              mentorID: null,
+              departmentID: preference.wahl_ressort,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_mentor: null };
+          } else {
+            const assignment: TraineeAssignment = {
+              ipID: preference.wahl_internesprojekt,
+              mentorID: id,
+              departmentID: preference.wahl_ressort,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_mentor: id };
+          }
+        } else {
+          return preference;
+        }
+      });
+      return updatedPreferences;
+    });
+  };
+
+  const changeInternesProjektChoice = (mitgliedID: number, newValue: string) => {
+    let id: number | null = null;
+    if (newValue !== null) {
+      id = parseInt(newValue);
+    }
+    setTraineePreferences((prevPreferences) => {
+      const updatedPreferences = prevPreferences.map((preference) => {
+        if (preference.mitgliedID === mitgliedID) {
+          if (preference.wahl_internesprojekt === id) {
+            const assignment: TraineeAssignment = {
+              ipID: null,
+              mentorID: preference.wahl_mentor,
+              departmentID: preference.wahl_ressort,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_internesprojekt: null };
+          } else {
+            const assignment: TraineeAssignment = {
+              ipID: id,
+              mentorID: preference.wahl_mentor,
+              departmentID: preference.wahl_ressort,
+            };
+            savePreference(preference.mitgliedID, assignment);
+            return { ...preference, wahl_internesprojekt: id };
+          }
+        } else {
+          return preference;
+        }
+      });
+      return updatedPreferences;
+    });
+  };
+
   const renderMotivationalTexts = (
     <Modal open={showMotivationalTexts} onClose={closeMotivationalTexts}>
       <Paper className={classes.motivationalTextPaper}>
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h5" className={classes.paperHeaderText}>
-              Motivation für {openedTrainee?.wahl_internesprojekt1_kuerzel}
+              Motivation für{" "}
+              {openedTrainee?.wahl_internesprojekt1_kuerzel === null
+                ? "n/a"
+                : openedTrainee?.wahl_internesprojekt1_kuerzel}
             </Typography>
             <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt1_motivation}</Typography>
             <Divider className={classes.paperHeaderDivider} />
             <Typography variant="h5" className={classes.paperHeaderText}>
-              Motivation für {openedTrainee?.wahl_internesprojekt2_kuerzel}
+              Motivation für{" "}
+              {openedTrainee?.wahl_internesprojekt2_kuerzel === null
+                ? "n/a"
+                : openedTrainee?.wahl_internesprojekt2_kuerzel}
             </Typography>
             <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt2_motivation}</Typography>
             <Divider className={classes.paperHeaderDivider} />
             <Typography variant="h5" className={classes.paperHeaderText}>
-              Motivation für {openedTrainee?.wahl_internesprojekt3_kuerzel}
+              Motivation für{" "}
+              {openedTrainee?.wahl_internesprojekt3_kuerzel === null
+                ? "n/a"
+                : openedTrainee?.wahl_internesprojekt3_kuerzel}
             </Typography>
             <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt3_motivation}</Typography>
             <Divider className={classes.paperHeaderDivider} />
@@ -273,9 +454,9 @@ const AssignTrainees: React.FunctionComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {preferences.map((trainee, index) => (
+          {traineePreferences.map((trainee, index) => (
             <TableRow hover key={index}>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" className={classes.tableCell}>
                 <Typography color="secondary">
                   <Link
                     color="textPrimary"
@@ -284,65 +465,256 @@ const AssignTrainees: React.FunctionComponent = () => {
                   >{`${trainee.vorname} ${trainee.nachname}`}</Link>
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell className={classes.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
-                    value={trainee.wahl_ressort1}
-                    control={<Radio />}
-                    label={trainee.wahl_ressort1_kuerzel}
+                    disabled={trainee.wahl_ressort1 === null}
+                    checked={trainee.wahl_ressort1 === trainee.wahl_ressort && trainee.wahl_ressort1 !== null}
+                    value={trainee.wahl_ressort1 === null ? "" : trainee.wahl_ressort1}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeRessortChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_ressort1_kuerzel === null ? "n/a" : trainee.wahl_ressort1_kuerzel}
                   />
                   <FormControlLabel
-                    value={trainee.wahl_ressort2}
-                    control={<Radio />}
-                    label={trainee.wahl_ressort2_kuerzel}
+                    disabled={trainee.wahl_ressort2 === null}
+                    checked={trainee.wahl_ressort2 === trainee.wahl_ressort && trainee.wahl_ressort2 !== null}
+                    value={trainee.wahl_ressort2 === null ? "" : trainee.wahl_ressort2}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeRessortChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_ressort2_kuerzel === null ? "n/a" : trainee.wahl_ressort2_kuerzel}
                   />
                   <FormControlLabel
-                    value={trainee.wahl_ressort3}
-                    control={<Radio />}
-                    label={trainee.wahl_ressort3_kuerzel}
+                    disabled={trainee.wahl_ressort3 === null}
+                    checked={trainee.wahl_ressort3 === trainee.wahl_ressort && trainee.wahl_ressort3 !== null}
+                    value={trainee.wahl_ressort3 === null ? "" : trainee.wahl_ressort3}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeRessortChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_ressort3_kuerzel === null ? "n/a" : trainee.wahl_ressort3_kuerzel}
+                  />
+                  <FormControlLabel
+                    checked={
+                      trainee.wahl_ressort !== null &&
+                      trainee.wahl_ressort1 !== trainee.wahl_ressort &&
+                      trainee.wahl_ressort2 !== trainee.wahl_ressort &&
+                      trainee.wahl_ressort3 !== trainee.wahl_ressort
+                    }
+                    control={<Radio onClick={() => changeRessortChoice(trainee.mitgliedID, "")} />}
+                    label={
+                      <TextField
+                        select
+                        className={classes.otherSelect}
+                        label="Andere"
+                        value={
+                          trainee.wahl_ressort !== null &&
+                          trainee.wahl_ressort1 !== trainee.wahl_ressort &&
+                          trainee.wahl_ressort2 !== trainee.wahl_ressort &&
+                          trainee.wahl_ressort3 !== trainee.wahl_ressort
+                            ? trainee.wahl_ressort
+                            : ""
+                        }
+                        onChange={(event) => changeRessortChoice(trainee.mitgliedID, event.target.value.toString())}
+                      >
+                        {departements.map((departement) => {
+                          return (
+                            <MenuItem key={departement.ressortID} value={departement.ressortID}>
+                              {departement.kuerzel}
+                            </MenuItem>
+                          );
+                        })}
+                      </TextField>
+                    }
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell>
+              <TableCell className={classes.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
-                    value={trainee.wahl_mentor1}
-                    control={<Radio />}
-                    label={trainee.wahl_mentor1_name}
+                    disabled={trainee.wahl_mentor1 === null}
+                    checked={trainee.wahl_mentor1 === trainee.wahl_mentor && trainee.wahl_mentor1 !== null}
+                    value={trainee.wahl_mentor1 === null ? "" : trainee.wahl_mentor1}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeMentorChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_mentor1_name === null ? "n/a" : trainee.wahl_mentor1_name}
                   />
                   <FormControlLabel
-                    value={trainee.wahl_mentor2}
-                    control={<Radio />}
-                    label={trainee.wahl_mentor2_name}
+                    disabled={trainee.wahl_mentor2 === null}
+                    checked={trainee.wahl_mentor2 === trainee.wahl_mentor && trainee.wahl_mentor2 !== null}
+                    value={trainee.wahl_mentor2 === null ? "" : trainee.wahl_mentor2}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeMentorChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_mentor2_name === null ? "n/a" : trainee.wahl_mentor2_name}
                   />
                   <FormControlLabel
-                    value={trainee.wahl_mentor3}
-                    control={<Radio />}
-                    label={trainee.wahl_mentor3_name}
+                    disabled={trainee.wahl_mentor3 === null}
+                    checked={trainee.wahl_mentor3 === trainee.wahl_mentor && trainee.wahl_mentor3 !== null}
+                    value={trainee.wahl_mentor3 === null ? "" : trainee.wahl_mentor3}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeMentorChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={trainee.wahl_mentor3_name === null ? "n/a" : trainee.wahl_mentor3_name}
+                  />
+                  <FormControlLabel
+                    checked={
+                      trainee.wahl_mentor !== null &&
+                      trainee.wahl_mentor1 !== trainee.wahl_mentor &&
+                      trainee.wahl_mentor2 !== trainee.wahl_mentor &&
+                      trainee.wahl_mentor3 !== trainee.wahl_mentor
+                    }
+                    control={<Radio onClick={() => changeMentorChoice(trainee.mitgliedID, "")} />}
+                    label={
+                      <TextField
+                        select
+                        className={classes.otherSelect}
+                        label="Andere"
+                        value={
+                          trainee.wahl_mentor !== null &&
+                          trainee.wahl_mentor1 !== trainee.wahl_mentor &&
+                          trainee.wahl_mentor2 !== trainee.wahl_mentor &&
+                          trainee.wahl_mentor3 !== trainee.wahl_mentor
+                            ? trainee.wahl_mentor
+                            : ""
+                        }
+                        onChange={(event) => changeMentorChoice(trainee.mitgliedID, event.target.value.toString())}
+                      >
+                        {mentors.map((mentor) => {
+                          if (mentor.mitgliedID) {
+                            return (
+                              <MenuItem key={mentor.mitgliedID} value={mentor.mitgliedID}>
+                                {mentor.name}
+                              </MenuItem>
+                            );
+                          }
+                        })}
+                      </TextField>
+                    }
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell>
+              <TableCell className={classes.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
-                    value={trainee.wahl_internesprojekt1}
-                    control={<Radio />}
-                    label={trainee.wahl_internesprojekt1_kuerzel}
+                    disabled={trainee.wahl_internesprojekt1 === null}
+                    checked={
+                      trainee.wahl_internesprojekt1 === trainee.wahl_internesprojekt &&
+                      trainee.wahl_internesprojekt1 !== null
+                    }
+                    value={trainee.wahl_internesprojekt1 === null ? "" : trainee.wahl_internesprojekt1}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeInternesProjektChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={
+                      trainee.wahl_internesprojekt1_kuerzel === null ? "n/a" : trainee.wahl_internesprojekt1_kuerzel
+                    }
                   />
                   <FormControlLabel
-                    value={trainee.wahl_internesprojekt2}
-                    control={<Radio />}
-                    label={trainee.wahl_internesprojekt2_kuerzel}
+                    disabled={trainee.wahl_internesprojekt2 === null}
+                    checked={
+                      trainee.wahl_internesprojekt2 === trainee.wahl_internesprojekt &&
+                      trainee.wahl_internesprojekt2 !== null
+                    }
+                    value={trainee.wahl_internesprojekt2 === null ? "" : trainee.wahl_internesprojekt2}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeInternesProjektChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={
+                      trainee.wahl_internesprojekt2_kuerzel === null ? "n/a" : trainee.wahl_internesprojekt2_kuerzel
+                    }
                   />
                   <FormControlLabel
-                    value={trainee.wahl_internesprojekt3}
-                    control={<Radio />}
-                    label={trainee.wahl_internesprojekt3_kuerzel}
+                    disabled={trainee.wahl_internesprojekt3 === null}
+                    checked={
+                      trainee.wahl_internesprojekt3 === trainee.wahl_internesprojekt &&
+                      trainee.wahl_internesprojekt3 !== null
+                    }
+                    value={trainee.wahl_internesprojekt3 === null ? "" : trainee.wahl_internesprojekt3}
+                    control={
+                      <Radio
+                        onClick={(event) =>
+                          changeInternesProjektChoice(trainee.mitgliedID, (event.target as HTMLInputElement).value)
+                        }
+                      />
+                    }
+                    label={
+                      trainee.wahl_internesprojekt3_kuerzel === null ? "n/a" : trainee.wahl_internesprojekt3_kuerzel
+                    }
+                  />
+                  <FormControlLabel
+                    checked={
+                      trainee.wahl_internesprojekt !== null &&
+                      trainee.wahl_internesprojekt1 !== trainee.wahl_internesprojekt &&
+                      trainee.wahl_internesprojekt2 !== trainee.wahl_internesprojekt &&
+                      trainee.wahl_internesprojekt3 !== trainee.wahl_internesprojekt
+                    }
+                    control={<Radio onClick={() => changeInternesProjektChoice(trainee.mitgliedID, "")} />}
+                    label={
+                      <TextField
+                        select
+                        className={classes.otherSelect}
+                        label="Andere"
+                        value={
+                          trainee.wahl_internesprojekt !== null &&
+                          trainee.wahl_internesprojekt1 !== trainee.wahl_internesprojekt &&
+                          trainee.wahl_internesprojekt2 !== trainee.wahl_internesprojekt &&
+                          trainee.wahl_internesprojekt3 !== trainee.wahl_internesprojekt
+                            ? trainee.wahl_internesprojekt
+                            : ""
+                        }
+                        onChange={(event) =>
+                          changeInternesProjektChoice(trainee.mitgliedID, event.target.value.toString())
+                        }
+                      >
+                        {internalprojects.map((project) => {
+                          return (
+                            <MenuItem key={project.internesProjektID} value={project.internesProjektID}>
+                              {project.kuerzel}
+                            </MenuItem>
+                          );
+                        })}
+                      </TextField>
+                    }
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell>
+              <TableCell className={classes.attachementCell}>
                 <Button
+                  className={classes.attachementCell}
                   onClick={() => {
                     openMotivationalTexts(trainee);
                   }}
@@ -365,21 +737,23 @@ const AssignTrainees: React.FunctionComponent = () => {
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="h5" className={classes.paperHeaderText}>
-                Trainee-Zuteilung
+                Trainee-Zuteilung {generation?.bezeichnung}
               </Typography>
               <Typography className={classes.paperText}>
                 Hier können die Präferenzen für die Wahl von Ressort, Mentor und Internem Projekt der Trainees zugeteilt
                 werden.<br></br>
-                Startdatum Präferenzwahlen: <b>{startDateString}</b>
+                Die Daten werden bei Änderung automatisch zwischengespeichert.<br></br>
+                Sobald eine neue Traineegeneration angelegt wird, können die Zuteilungen nicht mehr geändert werden.
                 <br></br>
-                Enddatum Präferenzwahlen: <b>{endDateString}</b>
+                Startdatum Präferenzwahlen:{" "}
+                <b>{generation ? transformSQLStringToGermanDate(generation.wahl_start.toString()) : ""}</b>
+                <br></br>
+                Enddatum Präferenzwahlen:{" "}
+                <b>{generation ? transformSQLStringToGermanDate(generation.wahl_ende.toString()) : ""}</b>
                 <br></br>
               </Typography>
               <Divider className={classes.paperHeaderDivider} />
               {renderPreferences}
-              <Button variant="outlined" color="primary" className={classes.inputButton}>
-                Präferenzen Zuteilung speichern
-              </Button>
             </Grid>
           </Grid>
         </Paper>

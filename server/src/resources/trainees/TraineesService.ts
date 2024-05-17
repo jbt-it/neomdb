@@ -5,7 +5,7 @@ import {
   InternalProject,
   JBTMail,
   Trainee,
-  TraineeChoice,
+  TraineePreference,
   TraineeMotivation,
   TraineeAssignment,
   InternalProjectAndTrainee,
@@ -37,16 +37,38 @@ class TraineesService {
    * Get the choices of all trainees of a generation
    * @throws NotFoundError if the generation does not exist
    */
-  getTraineeChoicesByGenerationID = async (generationID: number): Promise<TraineeChoice[]> => {
+  getTraineePreferencesByGenerationID = async (generationID: number): Promise<TraineePreference[]> => {
     const generation = await this.traineesRepository.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    const choices = await this.traineesRepository.getTraineeChoicesByGenerationID(generationID);
+    const choices = await this.traineesRepository.getTraineePreferencesByGenerationID(generationID);
 
     return choices;
+  };
+
+  /**
+   * Get the choices of trainee by id
+   * @throws NotFoundError if the trainee does not exist
+   */
+  getTraineePreferencesByMemberID = async (memberID: number): Promise<TraineePreference> => {
+    // check whether the user is trying to get data of himself
+
+    const member = await this.memberRepository.getMemberByID(memberID, false);
+
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} not found`);
+    }
+
+    const choices = await this.traineesRepository.getTraineePreferencesByMemberID(memberID);
+
+    return choices;
+  };
+
+  setTraineePreferencesByMemberID = async (memberID: number, preferences: TraineePreference): Promise<void> => {
+    await this.traineesRepository.setTraineePreferencesByMemberID(memberID, preferences);
   };
 
   /**
@@ -140,8 +162,8 @@ class TraineesService {
   /**
    * Get all generations
    */
-  getGenerations = async (): Promise<Generation[]> => {
-    const generations = await this.traineesRepository.getGenerations();
+  getGenerations = async (current: boolean): Promise<Generation[]> => {
+    const generations = await this.traineesRepository.getGenerations(current);
 
     return generations;
   };
@@ -187,22 +209,28 @@ class TraineesService {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    // Check if the mentor exists
-    const mentor = await this.memberRepository.getMemberByID(assignment.mentorID, false);
-    if (mentor === null) {
-      throw new NotFoundError(`Mentor with id ${assignment.mentorID} not found`);
+    if (assignment.mentorID !== null) {
+      // Check if the mentor exists
+      const mentor = await this.memberRepository.getMemberByID(assignment.mentorID, false);
+      if (mentor === null) {
+        throw new NotFoundError(`Mentor with id ${assignment.mentorID} not found`);
+      }
     }
 
-    // Check if the internal project exists
-    const ip = await this.traineesRepository.getIPByID(assignment.ipID);
-    if (ip === null) {
-      throw new NotFoundError(`IP with id ${assignment.ipID} not found`);
+    if (assignment.ipID !== null) {
+      // Check if the internal project exists
+      const ip = await this.traineesRepository.getIPByID(assignment.ipID);
+      if (ip === null) {
+        throw new NotFoundError(`IP with id ${assignment.ipID} not found`);
+      }
     }
 
-    // Check if the department exists
-    const department = await this.memberRepository.getDepartmentByID(assignment.departmentID);
-    if (department === null) {
-      throw new NotFoundError(`Department with id ${assignment.departmentID} not found`);
+    if (assignment.departmentID !== null) {
+      // Check if the department exists
+      const department = await this.memberRepository.getDepartmentByID(assignment.departmentID);
+      if (department === null) {
+        throw new NotFoundError(`Department with id ${assignment.departmentID} not found`);
+      }
     }
 
     await this.traineesRepository.updateAssignmentByMemberID(memberID, assignment);

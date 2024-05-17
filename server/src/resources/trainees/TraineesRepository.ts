@@ -6,7 +6,7 @@ import {
   InternalProject,
   JBTMail,
   Trainee,
-  TraineeChoice,
+  TraineePreference,
   TraineeMotivation,
   TraineeAssignment,
   InternalProjectAndTrainee,
@@ -110,25 +110,33 @@ class TraineesRepository {
    * @param generationID id of the generation
    * @throws QueryError if the query fails
    */
-  getTraineeChoicesByGenerationID = async (
+  getTraineePreferencesByGenerationID = async (
     generationID: number,
     connection?: mysql.PoolConnection
-  ): Promise<TraineeChoice[]> => {
+  ): Promise<TraineePreference[]> => {
     try {
       const choicesQueryResult = await query(
-        `SELECT mitgliedID, vorname, nachname,
-      wahl_mentor, wahl_mentor1, wahl_mentor2, wahl_mentor3,
-      wahl_internesprojekt, wahl_internesprojekt1, wahl_internesprojekt2, wahl_internesprojekt3,
-      wahl_ressort, wahl_ressort1, wahl_ressort2, wahl_ressort3
-      FROM  mitglied
-      INNER JOIN generation
-      ON mitglied.generation = generation.generationID
-      WHERE  generation.generationID = ?`,
+        `SELECT m.mitgliedID, m.vorname, m.nachname,
+        m.wahl_mentor, m.wahl_mentor1, m.wahl_mentor2, m.wahl_mentor3, mentor1.name AS wahl_mentor1_name, mentor2.name AS wahl_mentor2_name, mentor3.name AS wahl_mentor3_name,
+        m.wahl_internesprojekt, m.wahl_internesprojekt1, m.wahl_internesprojekt2, m.wahl_internesprojekt3, pro1.kuerzel AS wahl_internesprojekt1_kuerzel, pro2.kuerzel AS wahl_internesprojekt2_kuerzel, pro3.kuerzel AS wahl_internesprojekt3_kuerzel,
+        m.wahl_ressort, m.wahl_ressort1, m.wahl_ressort2, m.wahl_ressort3, res1.kuerzel AS wahl_ressort1_kuerzel, res2.kuerzel AS wahl_ressort2_kuerzel, res3.kuerzel AS wahl_ressort3_kuerzel
+      FROM  mitglied m
+      INNER JOIN generation gen ON m.generation = gen.generationID
+      LEFT JOIN mitglied mentor1 ON m.wahl_mentor1 = mentor1.mitgliedID
+      LEFT JOIN mitglied mentor2 ON m.wahl_mentor2 = mentor2.mitgliedID
+      LEFT JOIN mitglied mentor3 ON m.wahl_mentor3 = mentor3.mitgliedID
+      LEFT JOIN internesprojekt pro1 ON m.wahl_internesprojekt1 = pro1.internesprojektID
+      LEFT JOIN internesprojekt pro2 ON m.wahl_internesprojekt2 = pro2.internesprojektID
+      LEFT JOIN internesprojekt pro3 ON m.wahl_internesprojekt3 = pro3.internesprojektID
+      LEFT JOIN ressort res1 ON m.wahl_ressort1 = res1.ressortID
+      LEFT JOIN ressort res2 ON m.wahl_ressort2 = res2.ressortID
+      LEFT JOIN ressort res3 ON m.wahl_ressort3 = res3.ressortID
+      WHERE gen.generationID = ?`,
         [generationID],
         connection
       );
       if (Array.isArray(choicesQueryResult)) {
-        const choices = choicesQueryResult as TraineeChoice[];
+        const choices = choicesQueryResult as TraineePreference[];
         return choices;
       }
 
@@ -136,6 +144,88 @@ class TraineesRepository {
     } catch (error) {
       logger.error(`Error while retrieving choices of generation with id ${generationID}: ${error}`);
       throw new QueryError(`Error while retrieving choices of generation with id ${generationID}`);
+    }
+  };
+
+  /**
+   * Get all choices of trainees of a generation
+   * @param generationID id of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineePreferencesByMemberID = async (
+    memberID: number,
+    connection?: mysql.PoolConnection
+  ): Promise<TraineePreference> => {
+    try {
+      const choicesQueryResult = await query(
+        `SELECT m.mitgliedID, m.vorname, m.nachname,
+        m.wahl_mentor, m.wahl_mentor1, m.wahl_mentor2, m.wahl_mentor3, mentor1.name AS wahl_mentor1_name, mentor2.name AS wahl_mentor2_name, mentor3.name AS wahl_mentor3_name,
+        m.wahl_internesprojekt, m.wahl_internesprojekt1, m.wahl_internesprojekt2, m.wahl_internesprojekt3, m.wahl_internesprojekt1_motivation, m.wahl_internesprojekt2_motivation, m.wahl_internesprojekt3_motivation, pro1.kuerzel AS wahl_internesprojekt1_kuerzel, pro2.kuerzel AS wahl_internesprojekt2_kuerzel, pro3.kuerzel AS wahl_internesprojekt3_kuerzel,
+        m.wahl_ressort, m.wahl_ressort1, m.wahl_ressort2, m.wahl_ressort3, res1.kuerzel AS wahl_ressort1_kuerzel, res2.kuerzel AS wahl_ressort2_kuerzel, res3.kuerzel AS wahl_ressort3_kuerzel
+      FROM  mitglied m
+      INNER JOIN generation gen ON m.generation = gen.generationID
+      LEFT JOIN mitglied mentor1 ON m.wahl_mentor1 = mentor1.mitgliedID
+      LEFT JOIN mitglied mentor2 ON m.wahl_mentor2 = mentor2.mitgliedID
+      LEFT JOIN mitglied mentor3 ON m.wahl_mentor3 = mentor3.mitgliedID
+      LEFT JOIN internesprojekt pro1 ON m.wahl_internesprojekt1 = pro1.internesprojektID
+      LEFT JOIN internesprojekt pro2 ON m.wahl_internesprojekt2 = pro2.internesprojektID
+      LEFT JOIN internesprojekt pro3 ON m.wahl_internesprojekt3 = pro3.internesprojektID
+      LEFT JOIN ressort res1 ON m.wahl_ressort1 = res1.ressortID
+      LEFT JOIN ressort res2 ON m.wahl_ressort2 = res2.ressortID
+      LEFT JOIN ressort res3 ON m.wahl_ressort3 = res3.ressortID
+      WHERE m.mitgliedID = ?`,
+        [memberID],
+        connection
+      );
+      if (Array.isArray(choicesQueryResult)) {
+        const choices = choicesQueryResult[0] as TraineePreference;
+        return choices;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`Error while retrieving choices of member with id ${memberID}: ${error}`);
+      throw new QueryError(`Error while retrieving choices of member with id ${memberID}`);
+    }
+  };
+
+  setTraineePreferencesByMemberID = async (memberID: number, preferences: TraineePreference) => {
+    try {
+      await query(
+        `UPDATE mitglied
+         SET
+         wahl_mentor1 = ?,
+         wahl_mentor2 = ?,
+         wahl_mentor3 = ?,
+         wahl_internesprojekt1 = ?,
+         wahl_internesprojekt2 = ?,
+         wahl_internesprojekt3 = ?,
+         wahl_internesprojekt1_motivation = ?,
+         wahl_internesprojekt2_motivation = ?,
+         wahl_internesprojekt3_motivation = ?,
+         wahl_ressort1 = ?,
+         wahl_ressort2 = ?,
+         wahl_ressort3 = ?
+         WHERE mitgliedID = ?`,
+        [
+          preferences.wahl_mentor1,
+          preferences.wahl_mentor2,
+          preferences.wahl_mentor3,
+          preferences.wahl_internesprojekt1,
+          preferences.wahl_internesprojekt2,
+          preferences.wahl_internesprojekt3,
+          preferences.wahl_internesprojekt1_motivation,
+          preferences.wahl_internesprojekt2_motivation,
+          preferences.wahl_internesprojekt3_motivation,
+          preferences.wahl_ressort1,
+          preferences.wahl_ressort2,
+          preferences.wahl_ressort3,
+          preferences.mitgliedID,
+        ]
+      );
+    } catch (error) {
+      logger.error(`Error while updating trainee preferences of member with id ${memberID}: ${error}`);
+      throw new QueryError(`Error while updating trainee preferences of member with id ${memberID}`);
     }
   };
 
@@ -153,7 +243,7 @@ class TraineesRepository {
     try {
       await query(
         `UPDATE internesprojekt
-          SET  generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
+          SET generation = ?, projektname = ?, kuerzel = ?, kickoff = ?, AngebotBeiEV = ?, ZPBeiEV = ?, ZPGehalten = ?, APBeiEV = ?, APGehalten = ?, DLBeiEV = ?
           WHERE internesProjektID = ?`,
         [
           updatedIp.generation,
@@ -293,17 +383,32 @@ class TraineesRepository {
    * Get all generations
    * @throws QueryError if the query fails
    */
-  getGenerations = async (connection?: mysql.PoolConnection): Promise<Generation[]> => {
+  getGenerations = async (current: boolean, connection?: mysql.PoolConnection): Promise<Generation[]> => {
     try {
-      const generationsQueryResult = await query(
-        `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
-      auswahlWETermin, infoabendBesucher,
-      tuercode, wahl_start, wahl_ende
-      FROM generation
-      ORDER BY bewerbung_start DESC`,
-        [],
-        connection
-      );
+      let generationsQueryResult;
+      if (current) {
+        generationsQueryResult = await query(
+          `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
+        auswahlWETermin, infoabendBesucher,
+        tuercode, wahl_start, wahl_ende
+        FROM generation
+        ORDER BY bewerbung_start DESC
+        LIMIT 1`,
+          [],
+          connection
+        );
+      } else {
+        generationsQueryResult = await query(
+          `SELECT generationID, bezeichnung, bewerbung_start, bewerbung_ende, wwTermin,
+        auswahlWETermin, infoabendBesucher,
+        tuercode, wahl_start, wahl_ende
+        FROM generation
+        ORDER BY bewerbung_start DESC`,
+          [],
+          connection
+        );
+      }
+
       if (Array.isArray(generationsQueryResult)) {
         const generations = generationsQueryResult as Generation[];
         return generations;
@@ -324,7 +429,7 @@ class TraineesRepository {
   getMentorsByGenerationID = async (generationID: number, connection?: mysql.PoolConnection): Promise<Mentor[]> => {
     try {
       const mentorsQueryResult = await query(
-        `SELECT mitgliedID, vorname, nachname, generation_generationID as generationID
+        `SELECT mitgliedID, vorname, nachname, name, generation_generationID as generationID
           FROM mitglied
           INNER JOIN generation_has_mentor
           ON generation_has_mentor.mitglied_mitgliedID = mitglied.mitgliedID

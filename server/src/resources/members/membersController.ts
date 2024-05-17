@@ -6,6 +6,7 @@ import {
   Department,
   DepartmentMember,
   Director,
+  Member,
   MemberDetails,
   MemberImage,
   MemberPartial,
@@ -55,6 +56,16 @@ export class MembersController extends Controller {
   public async getMembers(): Promise<MemberPartial[]> {
     const members = await this.membersService.getMemberList();
     return members;
+  }
+
+  /**
+   * Retrieves a member by its id
+   * @param id The member id
+   */
+  @Get("{id}")
+  @Security("jwt")
+  public async getMemberByID(@Path() id: number): Promise<Member> {
+    return await this.membersService.getMemberByID(id);
   }
 
   /**
