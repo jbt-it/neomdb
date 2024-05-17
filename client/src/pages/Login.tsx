@@ -10,6 +10,17 @@ import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
 import { useAuth } from "../hooks/useAuth";
 
+/**
+ * The styled form component
+ */
+const StyledForm = styled("form")<{ children?: React.ReactNode }>(({ theme }) => ({
+  width: "65%",
+  marginTop: theme.spacing(1),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}));
+
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
   const { dispatchAuth } = useAuth();
@@ -61,14 +72,6 @@ const Login: React.FunctionComponent = () => {
     },
   };
 
-  const StyledForm = styled("form")<{ children?: React.ReactNode }>(({ theme }) => ({
-    width: "65%",
-    marginTop: theme.spacing(1),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  }));
-
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [capslock, setCapslock] = useState<boolean>(false);
@@ -107,44 +110,6 @@ const Login: React.FunctionComponent = () => {
   };
 
   /**
-   * Gets the password correct state of the password field, depending on if a previous login attempt failed
-   */
-  const getPasswordField: VoidFunction = () => {
-    if (failedLogin) {
-      return (
-        <TextField
-          error
-          sx={styles.inputfield}
-          id="password"
-          label="Passwort"
-          type="password"
-          helperText="Passwort oder Benutzername sind nicht korrekt"
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
-          onKeyUp={handleKeyUp}
-          fullWidth
-        />
-      );
-    }
-    return (
-      <TextField
-        sx={styles.inputfield}
-        id="password"
-        label="Passwort"
-        type="password"
-        value={password}
-        onChange={(event) => {
-          setPassword(event.target.value);
-        }}
-        onKeyUp={handleKeyUp}
-        fullWidth
-      />
-    );
-  };
-
-  /**
    * Check if Capslock is enabled
    */
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -173,34 +138,47 @@ const Login: React.FunctionComponent = () => {
               login(event);
             }}
           >
-            <>
-              <TextField
-                sx={styles.inputfield}
-                id="username"
-                label="Benutzername"
-                type="text"
-                value={username}
-                onChange={(event) => {
-                  setUsername(event.target.value);
-                }}
-                onKeyUp={handleKeyUp}
-                fullWidth
-              />
-              {getPasswordField()}
-              <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
-                Login
-              </Button>
-              <Grid container>
-                <Grid item xs sx={styles.linkItem}>
-                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
-                </Grid>
-                <Grid item xs sx={styles.warningItem}>
-                  <Link id="capswarning" variant="body2" sx={styles.warningText}>
-                    {setCapsLockWaring()}
-                  </Link>
-                </Grid>
+            <TextField
+              error={failedLogin}
+              sx={styles.inputfield}
+              id="username"
+              label="Benutzername"
+              autoComplete="username"
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
+              }}
+              onKeyUp={handleKeyUp}
+              fullWidth
+            />
+            <TextField
+              error={failedLogin}
+              sx={styles.inputfield}
+              id="password"
+              label="Passwort"
+              type="password"
+              autoComplete="current-password"
+              helperText={failedLogin ? "Passwort oder Benutzername sind nicht korrekt" : ""}
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+              onKeyUp={handleKeyUp}
+              fullWidth
+            />
+            <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
+              Login
+            </Button>
+            <Grid container>
+              <Grid item xs sx={styles.linkItem}>
+                <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
               </Grid>
-            </>
+              <Grid item xs sx={styles.warningItem}>
+                <Link id="capswarning" variant="body2" sx={styles.warningText}>
+                  {setCapsLockWaring()}
+                </Link>
+              </Grid>
+            </Grid>
           </StyledForm>
         </Paper>
       </Grid>
