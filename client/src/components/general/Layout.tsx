@@ -69,7 +69,14 @@ const Layout = () => {
               <PageBreadCrumbs />
             </Box>
           )}
-          <Box sx={{ ml: isMobile ? 0 : 1, mr: isMobile ? 0 : 1, paddingTop: isDashboard ? 0 : isMobile ? 7 : 5 }}>
+          <Box
+            sx={{
+              ml: isMobile ? 0 : 1,
+              mr: isMobile ? 0 : 1,
+              paddingTop: isDashboard ? 0 : isMobile ? 7 : 5,
+              mt: isMobile ? 1 : 3,
+            }}
+          >
             <Outlet />
           </Box>
         </Box>

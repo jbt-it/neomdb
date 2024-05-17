@@ -5,6 +5,9 @@ import { Link, useLocation } from "react-router-dom";
 import useResponsive from "../../hooks/useResponsive";
 import { Info } from "@mui/icons-material";
 
+/**
+ * Static path to name mapping
+ */
 const staticPathToNameMap: { [key: string]: string } = {
   gesamtuebersicht: "Mitgliederübersicht",
   veranstaltungen: "Veranstaltungen",
@@ -26,11 +29,18 @@ const staticPathToNameMap: { [key: string]: string } = {
   feedbackauswertung: "Feedbackauswertung",
 };
 
+/**
+ * The PageBreadCrumbs component
+ */
 const PageBreadCrumbs = () => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
   const isMobile = useResponsive("down", "lg");
 
+  /**
+   * Generate the breadcrumb items depending on the pathnames
+   * @returns The breadcrumb items
+   */
   const breadcrumbItems = pathnames.map((value, index, array) => {
     const last = index === pathnames.length - 1;
     const to = `/${pathnames.slice(0, index + 1).join("/")}`;
@@ -66,7 +76,7 @@ const PageBreadCrumbs = () => {
   });
 
   return (
-    <Box sx={{ ml: isMobile ? 3 : 1 }}>
+    <Box sx={{ ml: isMobile ? 3 : 1, paddingTop: 3 }}>
       <Breadcrumbs
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
