@@ -13,26 +13,13 @@ import {
   DialogTitle,
   Box,
   Typography,
-  Theme,
   Stack,
   Link,
+  useTheme,
 } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
 import { AddCircleOutline, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { Trainee } from "../../../types/traineesTypes";
 import { Link as RouterLink } from "react-router-dom";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    tableHeader: {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      textAlign: "center",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-    },
-  })
-);
 
 // all columns of the table
 const columns = [
@@ -105,7 +92,17 @@ interface Props {
  * @returns the table to display the trainees of a generation
  */
 const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
-  const classes = useStyles();
+  const theme = useTheme();
+
+  const styles = {
+    tableHeader: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+      textAlign: "center",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+    },
+  };
   const [openAdmissionDialog, setOpenAdmissionDialog] = React.useState(false);
   const [selectedTrainee, setSelectedTrainee] = React.useState<Trainee | undefined>();
   const { trainees } = props;
@@ -123,7 +120,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
         trainee={selectedTrainee}
       />
       <Table size="small" component={Paper} sx={{ maxWidth: 1200 }}>
-        <TableHead className={classes.tableHeader}>
+        <TableHead sx={styles.tableHeader}>
           <TableRow sx={{ height: 300, verticalAlign: "bottom" }}>
             <TableCell sx={{ minWidth: 130, width: 150, border: 1, borderColor: "#fff" }}>
               <Typography color={"white"} fontWeight={"bold"}>

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import FieldSection, { Field } from "../../general/FieldSection";
 import MemberSelection from "../../general/MemberSelection";
@@ -6,50 +6,6 @@ import { InternalProjectDetails } from "../../../types/traineesTypes";
 import { MembersField } from "../../../types/membersTypes";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
-import { makeStyles } from "@mui/styles";
-
-const useStyles = makeStyles((theme) => ({
-  submit: {
-    margin: theme.spacing(3, 0, 1),
-    color: "white",
-  },
-  fieldSectionBox: {
-    margin: theme.spacing(1),
-  },
-  button: {
-    padding: "6px 12px",
-    textAlign: "center",
-    textDecoration: "none",
-    display: "inline-block",
-    margin: "4px 2px",
-    cursor: "pointer",
-    backgroundColor: "white",
-    color: "black",
-    border: "none",
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  submitContainer: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  cancelButton: {
-    margin: theme.spacing(1, 1, 1, 1),
-  },
-  submitButton: {
-    margin: theme.spacing(1, 0, 1, 1),
-    color: "white",
-  },
-  projectMembers: {
-    flexGrow: 1,
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(1),
-  },
-}));
 
 /**
  * Interface for the edit internal project dialog
@@ -81,7 +37,50 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   selectableQMs,
   updateInternalProjectDetails,
 }: EditInternalProjectDialogProps) => {
-  const classes = useStyles();
+  const theme = useTheme();
+
+  const styles = {
+    submit: {
+      margin: theme.spacing(3, 0, 1),
+      color: "white",
+    },
+    fieldSectionBox: {
+      margin: theme.spacing(1),
+    },
+    button: {
+      padding: "6px 12px",
+      textAlign: "center",
+      textDecoration: "none",
+      display: "inline-block",
+      margin: "4px 2px",
+      cursor: "pointer",
+      backgroundColor: "white",
+      color: "black",
+      border: "none",
+    },
+    fullWidth: {
+      width: "100%",
+    },
+    submitContainer: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+    },
+    cancelButton: {
+      margin: theme.spacing(1, 1, 1, 1),
+    },
+    submitButton: {
+      margin: theme.spacing(1, 0, 1, 1),
+      color: "white",
+    },
+    projectMembers: {
+      flexGrow: 1,
+      marginTop: theme.spacing(1),
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(1),
+    },
+  };
   const isMobile = useResponsive("down", "sm");
   const [projektname, setProjektName] = useState<string>(internalProjectDetails.projektname);
   const [kuerzel, setKuerzel] = useState<string>(internalProjectDetails.kuerzel);
@@ -319,13 +318,13 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     <Dialog open={open} onClose={handleInternalProjectInfoDialogClose}>
       <DialogTitle>{internalProjectDetails.projektname} bearbeiten</DialogTitle>
       <DialogContent dividers={true}>
-        <div className={classes.fieldSectionBox}>
+        <Box sx={styles.fieldSectionBox}>
           <FieldSection title={"Details"} fields={internalProjectDialogFields}></FieldSection>
-        </div>
-        <div className={classes.fieldSectionBox}>
+        </Box>
+        <Box sx={styles.fieldSectionBox}>
           <FieldSection title={"Dokumente"} fields={fieldDocuments}></FieldSection>
-        </div>
-        <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
+        </Box>
+        <Box sx={styles.fieldSectionBox && styles.projectMembers}>
           <Typography variant="subtitle1">Projektmitglieder</Typography>
           <MemberSelection
             selectedMembers={projektmitglieder}
@@ -334,8 +333,8 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             removeMember={removeMember}
             selectableMembers={selectableTrainees}
           ></MemberSelection>
-        </div>
-        <div className={`${classes.fieldSectionBox} ${classes.projectMembers}`}>
+        </Box>
+        <Box sx={styles.fieldSectionBox && styles.projectMembers}>
           <Typography variant="subtitle1">Qualitätsmanager</Typography>
           <MemberSelection
             selectedMembers={qualitaetsmanager}
@@ -344,11 +343,11 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             onChangeCallback={handleQMSelection}
             selectableMembers={selectableQMs}
           ></MemberSelection>
-        </div>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button
-          className={classes.cancelButton}
+          sx={styles.cancelButton}
           variant="contained"
           fullWidth
           color="primary"
@@ -357,7 +356,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
           Abbrechen
         </Button>
         <Button
-          className={classes.submitButton}
+          sx={styles.submitButton}
           variant="contained"
           fullWidth
           color="primary"

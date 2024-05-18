@@ -16,7 +16,7 @@ interface WorkshopsOverviewTableProps {
  */
 const WorkshopsOverviewTable = ({ workshops }: WorkshopsOverviewTableProps) => {
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: "98%" }}>
+    <TableContainer component={Paper}>
       <Table size="small">
         <TableHead>
           <TableRow sx={{ backgroundColor: "primary.main" }}>
