@@ -6,7 +6,6 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 
 import { InternalProjectAll } from "../../types/traineesTypes";
 
-import PageBar from "../../components/navigation/PageBar";
 import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
 import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
 import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSectionSkeleton";
@@ -122,7 +121,6 @@ const TraineeSection: React.FunctionComponent = () => {
           <TraineeSectionTable trainees={traineeProgress} />
         </>
       ) : null}
-      <PageBar pageTitle="Traineebereich" />
     </>
   );
 };

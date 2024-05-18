@@ -614,9 +614,9 @@ describe("PUT /ip/:id", () => {
           nachname: "Norton",
         },
         {
-          mitgliedID: 8333,
-          vorname: "Miruna",
-          nachname: "Decker",
+          mitgliedID: 8222,
+          vorname: "Talha",
+          nachname: "Driscoll",
         },
       ],
       DLBeiEV: true,

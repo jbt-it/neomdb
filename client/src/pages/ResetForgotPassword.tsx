@@ -3,8 +3,7 @@
  *
  */
 import React, { useState } from "react";
-import { Paper, Button, TextField, Grid } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Paper, Button, TextField, Grid, useTheme, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -13,10 +12,12 @@ import useAuth from "../hooks/useAuth";
  * Functions that allows the user to reset the password with the sent reset link
  */
 const ResetForgotPassword: React.FunctionComponent = () => {
+  const theme = useTheme();
+
   /**
    * Function which proivdes the styles of the MenuDrawer
    */
-  const useStyles = makeStyles((theme) => ({
+  const styles = {
     inputfield: {},
     forgotPassword: {
       width: "65%",
@@ -52,9 +53,8 @@ const ResetForgotPassword: React.FunctionComponent = () => {
       textDecoration: "none",
       color: "white",
     },
-  }));
+  };
 
-  const classes = useStyles();
   const [email, setEmail] = useState<string>("");
   const { key }: any = useParams();
   const [newPassword, setNewPassword] = useState<string>("");
@@ -95,7 +95,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
       return (
         <TextField
           error
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpassword"
           label="Neues Passwort"
           type="password"
@@ -110,7 +110,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
     } else {
       return (
         <TextField
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpassword"
           label="Neues Passwort"
           type="password"
@@ -131,7 +131,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
     if (newPassword === newPasswordValidation) {
       return (
         <TextField
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpasswordvalidation"
           label="Neues Passwort wiederholen"
           type="password"
@@ -146,7 +146,7 @@ const ResetForgotPassword: React.FunctionComponent = () => {
       return (
         <TextField
           error
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpasswordvalidation"
           label="Neues Passwort wiederholen"
           type="password"
@@ -186,10 +186,10 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   const resResponse200Field = () => {
     if (resResponse200) {
       return (
-        <Paper className={classes.paper}>
+        <Paper sx={styles.paper}>
           <p>Das Passwort wurde geändert, falls die E-Mail korrekt war</p>
-          <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-            <NavLink to="/login" className={classes.loginLink}>
+          <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
+            <NavLink to="/login" style={styles.loginLink}>
               Login
             </NavLink>
           </Button>
@@ -201,46 +201,44 @@ const ResetForgotPassword: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="forgotPassword">
-      <Grid container spacing={0} alignItems="center" justifyContent="center">
-        <Grid item xs={10} sm={8} md={6} lg={4}>
-          <Paper className={classes.paper}>
-            <p>
-              Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen Klein- und einen Großbuchstaben
-              enthalten.
-            </p>
-          </Paper>
-          <Paper className={classes.paper}>
-            <form id="resetForgotPW" onSubmit={postResetPassword}>
-              <div>
-                {getNewPasswordField()}
-                {getNewPasswordFieldValidation()}
-              </div>
-              <div>
-                <TextField
-                  className={classes.inputfield}
-                  id="email"
-                  label="E-Mail"
-                  type="text"
-                  value={email}
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                  }}
-                  fullWidth
-                />
-                <p className={classes.warningText}>{invalidEmailWarning()}</p>
-              </div>
-              <div>
-                <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                  Neues Passwort speichern
-                </Button>
-              </div>
-            </form>
-          </Paper>
-          {resResponse200Field()}
-        </Grid>
+    <Grid container spacing={0} alignItems="center" justifyContent="center">
+      <Grid item xs={10} sm={8} md={6} lg={4}>
+        <Paper sx={styles.paper}>
+          <p>
+            Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen Klein- und einen Großbuchstaben
+            enthalten.
+          </p>
+        </Paper>
+        <Paper sx={styles.paper}>
+          <form id="resetForgotPW" onSubmit={postResetPassword}>
+            <div>
+              {getNewPasswordField()}
+              {getNewPasswordFieldValidation()}
+            </div>
+            <div>
+              <TextField
+                sx={styles.inputfield}
+                id="email"
+                label="E-Mail"
+                type="text"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                }}
+                fullWidth
+              />
+              <Box sx={styles.warningText}>{invalidEmailWarning()}</Box>
+            </div>
+            <div>
+              <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
+                Neues Passwort speichern
+              </Button>
+            </div>
+          </form>
+        </Paper>
+        {resResponse200Field()}
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

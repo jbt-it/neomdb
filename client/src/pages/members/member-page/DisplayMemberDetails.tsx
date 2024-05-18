@@ -3,7 +3,6 @@
  */
 
 import React, { useReducer, useState } from "react";
-import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Typography,
@@ -19,10 +18,10 @@ import {
   MenuItem,
   createFilterOptions,
   Autocomplete,
-  Theme,
+  useTheme,
+  Box,
 } from "@mui/material";
 import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
-import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
 import {
   transformSQLStringToGermanDate,
@@ -34,12 +33,34 @@ import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
 import MemberImage from "../../../components/general/MemberImage";
+import { Link } from "react-router-dom";
 
 /**
- * Function which proivdes the styles of the MemberPage
+ * Interface for the props of the DisplayMemberDetails
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+interface DisplayMemberDetailsProps {
+  members: membersTypes.Member[];
+  listOfPermissions: globalTypes.Permission[];
+  departments: membersTypes.Department[];
+  listOfLanguages: membersTypes.Language[];
+  listOfEDVSkills: membersTypes.EDVSkill[];
+  memberDetails: membersTypes.MemberDetails;
+  isOwner: boolean;
+  memberImage: membersTypes.MemberImage | null;
+  updateMemberDetails: (data: membersTypes.MemberDetails) => void;
+  saveMemberImage: (file: File) => void;
+}
+
+/**
+ * Displays the member details
+ */
+const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the MemberPage
+   */
+  const styles = {
     displayMemberDetailsRoot: {
       flexGrow: 1,
     },
@@ -163,30 +184,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
-  })
-);
-
-/**
- * Interface for the props of the DisplayMemberDetails
- */
-interface DisplayMemberDetailsProps {
-  members: membersTypes.Member[];
-  listOfPermissions: globalTypes.Permission[];
-  departments: membersTypes.Department[];
-  listOfLanguages: membersTypes.Language[];
-  listOfEDVSkills: membersTypes.EDVSkill[];
-  memberDetails: membersTypes.MemberDetails;
-  isOwner: boolean;
-  memberImage: membersTypes.MemberImage | null;
-  updateMemberDetails: (data: membersTypes.MemberDetails) => void;
-  saveMemberImage: (file: File) => void;
-}
-
-/**
- * Displays the member details
- */
-const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
-  const classes = useStyles();
+  };
 
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
@@ -655,7 +653,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const renderImage: VoidFunction = () => {
     return (
-      <div className={classes.imageSection}>
+      <Box sx={styles.imageSection}>
         <MemberImage
           base64={props.memberImage?.base64}
           mimeType={props.memberImage?.mimeType}
@@ -664,13 +662,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           size={240}
           onImageChange={props.isOwner ? saveImage : undefined}
         />
-        <div className={classes.imageSectionText}>
+        <Box sx={styles.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
           <Typography>
             <i>{`${memberDetails.mitgliedstatus}`}</i>
           </Typography>
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   };
 
@@ -689,38 +687,38 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
           handleEdit={handleGeneralInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>
                 {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
               </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.handy}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.jbt_email}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.strasse1}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.plz1}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{"PLATZHALTER"}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.arbeitgeber}</Typography>
-            </div>
-          </div>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.handy}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.jbt_email}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.strasse1}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.plz1}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{"PLATZHALTER"}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.arbeitgeber}</Typography>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -734,7 +732,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       <div>
         {memberDetails.passiv_seit ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Passives Mitglied"}</strong>
             </Typography>
             <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.passiv_seit)}`}</Typography>
@@ -742,7 +740,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         ) : null}
         {memberDetails.alumnus_seit ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Alumna*Alumnus"}</strong>
             </Typography>
             <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.alumnus_seit)}`}</Typography>
@@ -750,7 +748,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         ) : null}
         {memberDetails.senior_seit ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Senior"}</strong>
             </Typography>
             <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.senior_seit)}`}</Typography>
@@ -758,7 +756,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         ) : null}
         {memberDetails.mitglied_seit ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Aktives Mitglied"}</strong>
             </Typography>
             <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.mitglied_seit)}`}</Typography>
@@ -766,7 +764,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         ) : null}
         {memberDetails.trainee_seit ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Trainee"}</strong>
             </Typography>
             <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.trainee_seit)}`}</Typography>
@@ -792,49 +790,54 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
           handleEdit={handleClubInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.ressort}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
+          <Box sx={styles.category}>
+            <Box sx={styles.category}>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.ressort}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
                 {memberDetails.mentor && memberDetails.mentor.vorname && memberDetails.mentor.nachname ? (
-                  <NavLink to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`} className={classes.categoryLine}>
+                  <Link
+                    to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`}
+                    style={{ paddingTop: "12.5px", paddingBottom: "11.5px", textAlign: "right" }}
+                  >
                     {`${memberDetails.mentor.vorname} ${memberDetails.mentor.nachname}`}
-                  </NavLink>
+                  </Link>
                 ) : (
                   ""
                 )}
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Mentees:</Typography>
-                <div className={classes.categoryItemList}>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Mentees:</Typography>
+                <Box sx={styles.categoryItemList}>
                   {menteeList.map((mentee, index) => {
                     return (
                       <Typography
-                        className={classes.categoryLine}
+                        sx={styles.categoryLine}
                         key={index}
                       >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
                     );
                   })}
-                </div>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
             <div>
               <div>
-                <div className={classes.subCategoryHeader}>
-                  <Typography>Werdegang</Typography>
-                  <IconButton aria-label="expand career" onClick={toggleCareerState} size="large">
-                    {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-                  </IconButton>
-                </div>
-                <hr />
-                {careerOpen ? renderCareerItems() : null}
+                <>
+                  <Box sx={styles.subCategoryHeader}>
+                    <Typography>Werdegang</Typography>
+                    <IconButton aria-label="expand career" onClick={toggleCareerState} size="large">
+                      {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+                    </IconButton>
+                  </Box>
+                  <hr />
+                  {careerOpen ? renderCareerItems() : null}
+                </>
               </div>
             </div>
-          </div>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -854,32 +857,32 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner}
           handleEdit={handleStudyInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.hochschule}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.studiengang}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.hochschule}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.studiengang}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>
                 {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
               </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>
                 {transformSQLStringToGermanDate(memberDetails.studienende)}
               </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.vertiefungen}</Typography>
-            </div>
-          </div>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.vertiefungen}</Typography>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -900,20 +903,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             isEditable={props.isOwner}
             handleEdit={handlePaymentInfoDialogOpen}
           >
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.kontoinhaber}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.iban}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.bic}</Typography>
-              </div>
-            </div>
+            <Box sx={styles.category}>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.kontoinhaber}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.iban}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.bic}</Typography>
+              </Box>
+            </Box>
           </InfoCard>
         </Grid>
       );
@@ -936,36 +939,36 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner}
           handleEdit={handleQualificationInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.ausbildung}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Sprachen:</Typography>
-              <div className={classes.categoryItemList}>
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.ausbildung}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Sprachen:</Typography>
+              <Box sx={styles.categoryItemList}>
                 {(memberDetails?.sprachen || []).map((language) => {
                   return (
-                    <Typography className={classes.categoryLine}>
+                    <Typography sx={styles.categoryLine}>
                       {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
                     </Typography>
                   );
                 })}
-              </div>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
-              <div className={classes.categoryItemList}>
+              </Box>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>EDV-Kenntnisse:</Typography>
+              <Box sx={styles.categoryItemList}>
                 {(memberDetails?.edvkenntnisse || []).map((edv) => {
                   return (
-                    <Typography className={classes.categoryLine}>
+                    <Typography sx={styles.categoryLine}>
                       {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
                     </Typography>
                   );
                 })}
-              </div>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -978,17 +981,17 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     return (
       <Grid item xs={12} sm={12}>
         <InfoCard title={"Projekte (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
-          <div className={classes.category}>
+          <Box sx={styles.category}>
             <div>
-              <Typography className={classes.categoryItem}>
+              <Typography sx={styles.categoryItem}>
                 <strong>{"Name des Projekts"}</strong>
               </Typography>
-              <Typography className={classes.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
-              <Typography className={classes.categoryItem}>{`Rolle: ${""}`}</Typography>
-              <Typography className={classes.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Rolle: ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
             </div>
             <hr />
-          </div>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -1001,14 +1004,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     return (
       <Grid item xs={12} sm={12}>
         <InfoCard title={"Workshops (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
-          <div className={classes.category}>
-            <div className={classes.workshopItem}>
+          <Box sx={styles.category}>
+            <Box sx={styles.workshopItem}>
               <Typography>{`${"DATUM"}`}</Typography>
               <Typography>{`${"ART DES WS"}`}</Typography>
               <Typography>{`${"NAME"}`}</Typography>
               <Typography>{`${"GEHALTEN"}`}</Typography>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -1033,7 +1036,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled
@@ -1048,7 +1051,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1063,7 +1066,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   required
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
@@ -1078,7 +1081,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1093,7 +1096,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1108,7 +1111,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1123,7 +1126,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="employer-field"
@@ -1138,11 +1141,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleGeneralInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleGeneralInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1181,7 +1184,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   }}
                   defaultValue={departments.filter((dep) => dep.bezeichnung === department)[0]}
                   getOptionLabel={(dep) => `${dep.bezeichnung}`}
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Ressort" variant="outlined" />}
                 />
               </Grid>
@@ -1201,13 +1204,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   }}
                   defaultValue={members.filter((memb) => memb.mitgliedID === mentorState?.mitgliedID)[0]}
                   getOptionLabel={(member) => `${member.vorname} ${member.nachname}`}
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Mentor" variant="outlined" />}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="passive-member-field"
@@ -1221,7 +1224,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="alumni-field"
@@ -1235,7 +1238,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="senior-field"
@@ -1249,7 +1252,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="member-field"
@@ -1263,7 +1266,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="trainee-field"
@@ -1278,11 +1281,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleClubInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleClubInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1312,7 +1315,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="uni-field"
@@ -1326,7 +1329,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="course-of-study-field"
@@ -1340,7 +1343,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="start-of-study-field"
@@ -1354,7 +1357,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="end-of-study-field"
@@ -1368,7 +1371,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="speciality-field"
@@ -1383,11 +1386,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleStudyInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleStudyInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1417,7 +1420,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="account-holder-field"
@@ -1443,7 +1446,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           sm={8}
                           md={6}
                           lg={4}
-                          className={classes.dialogListItem}
+                          sx={styles.dialogListItem}
                           key={index}
                         >
                           <Grid item xs={5}>
@@ -1488,7 +1491,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             />
                           </Grid>
                           <Grid item xs={5}>
-                            <FormControl className={classes.fullWidth}>
+                            <FormControl sx={styles.fullWidth}>
                               <InputLabel id="language-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="language-niveau-select-label"
@@ -1529,7 +1532,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         </Grid>
                       );
                     })}
-                    <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                    <Grid item xs={12} sm={2} md={2} lg={2} sx={styles.addListItemBtn}>
                       <IconButton
                         aria-label="add"
                         color="primary"
@@ -1561,7 +1564,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           sm={8}
                           md={6}
                           lg={4}
-                          className={classes.dialogListItem}
+                          sx={styles.dialogListItem}
                           key={index}
                         >
                           <Grid item xs={5}>
@@ -1608,7 +1611,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             />
                           </Grid>
                           <Grid item xs={5}>
-                            <FormControl className={classes.fullWidth}>
+                            <FormControl sx={styles.fullWidth}>
                               <InputLabel id="edv-skill-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="edv-skill-niveau-select-label"
@@ -1647,7 +1650,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         </Grid>
                       );
                     })}
-                    <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                    <Grid item xs={12} sm={2} md={2} lg={2} sx={styles.addListItemBtn}>
                       <IconButton
                         aria-label="add"
                         color="primary"
@@ -1668,15 +1671,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button
-                  className={classes.cancelButton}
-                  variant="contained"
-                  onClick={handleQualificationInfoDialogClose}
-                >
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleQualificationInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1706,7 +1705,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="account-holder-field"
@@ -1720,7 +1719,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="iban-field"
@@ -1734,7 +1733,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="bic-field"
@@ -1749,11 +1748,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handlePaymentInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handlePaymentInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1765,26 +1764,28 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   return (
-    <div className={classes.displayMemberDetailsRoot}>
+    <Box sx={styles.displayMemberDetailsRoot}>
       <Grid container spacing={3}>
-        {renderImage()}
-        {renderGeneralInformation()}
-        {renderGeneralInformationDialog()}
-        {renderClubInformation()}
-        {renderClubInformationDialog()}
-        {renderProjectList()}
-        {renderWorkshopList()}
-        {renderQualificationInformation()}
-        {renderQualificationInformationDialog()}
-        {renderStudyInformation()}
-        {renderStudyInformationDialog()}
-        {renderPaymentInformation()}
-        {renderPaymentInformationDialog()}
+        <>
+          {renderImage()}
+          {renderGeneralInformation()}
+          {renderGeneralInformationDialog()}
+          {renderClubInformation()}
+          {renderClubInformationDialog()}
+          {renderProjectList()}
+          {renderWorkshopList()}
+          {renderQualificationInformation()}
+          {renderQualificationInformationDialog()}
+          {renderStudyInformation()}
+          {renderStudyInformationDialog()}
+          {renderPaymentInformation()}
+          {renderPaymentInformationDialog()}
+        </>
         <Grid item>
           <strong>Letzte Änderung: {transformSQLStringToGermanDate(memberDetails.lastchange)}</strong>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

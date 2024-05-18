@@ -1,30 +1,24 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import App from "./App";
-import { ThemeProvider, Theme, StyledEngineProvider } from "@mui/material/styles";
-import globalTheme from "./utils/globalTheme";
 import { AuthProvider } from "./context/auth-context/AuthContext";
-import "./css/app.css";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
-
-declare module "@mui/styles/defaultTheme" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
+import { createRoot } from "react-dom/client";
+import { ThemeProvider } from "@mui/material";
+import globalTheme from "./utils/globalTheme";
+import "./css/app.css";
 
 const queryClient = new QueryClient();
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container!);
+root.render(
   <AuthProvider>
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={globalTheme}>
-        <QueryClientProvider client={queryClient}>
-          <App />
-          <Toaster position="bottom-center" reverseOrder={true} />
-        </QueryClientProvider>
-      </ThemeProvider>
-    </StyledEngineProvider>
-  </AuthProvider>,
-  document.getElementById("root")
+    <ThemeProvider theme={globalTheme}>
+      <QueryClientProvider client={queryClient}>
+        <App />
+        <Toaster position="bottom-center" reverseOrder={true} />
+      </QueryClientProvider>
+    </ThemeProvider>
+  </AuthProvider>
 );

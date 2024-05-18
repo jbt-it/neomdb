@@ -1,7 +1,6 @@
 /**
  * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
-
 import React, { useState } from "react";
 import {
   Paper,
@@ -15,22 +14,39 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  Theme,
   Typography,
-  Link,
+  useTheme,
+  Box,
+  styled,
 } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import PageBar from "../../components/navigation/PageBar";
+import { Link } from "react-router-dom";
 import * as membersTypes from "../../types/membersTypes";
 import LoadingCircle from "../../components/general/LoadingCircle";
 import useMembers from "../../hooks/members/useMembers";
 
+// styled form component
+const StyledForm = styled("form")(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  [theme.breakpoints.down("xl")]: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
+
 /**
- * Function which proivdes the styles of the MemberOverview
+ * Depicts a table with all members and a filter section to filter the members
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const MemberOverview: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the MemberOverview
+   */
+  const styles = {
     amountOfEntries: {
       marginBottom: "10px",
       padding: "7px",
@@ -39,16 +55,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     filterContainer: {
       marginBottom: "10px",
-    },
-    filters: {
-      [theme.breakpoints.up("md")]: {
-        display: "flex",
-        alignItems: "flex-end",
-      },
-      [theme.breakpoints.down("xl")]: {
-        display: "flex",
-        alignItems: "center",
-      },
     },
     filterElement: {
       [theme.breakpoints.up("md")]: {
@@ -131,14 +137,15 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "block",
       },
     },
-  })
-);
+  };
 
-/**
- * Depicts a table with all members and a filter section to filter the members
- */
-const MemberOverview: React.FunctionComponent = () => {
-  const classes = useStyles();
+  const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+    &:hover {
+      text-decoration: underline;
+    }
+  `;
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   // const [members, setMembers] = useState<membersTypes.Member[]>([]);
@@ -310,10 +317,10 @@ const MemberOverview: React.FunctionComponent = () => {
   // The additional filters
   const additionalFilters = (
     <div>
-      <Grid item xs={6} sm={3} className={classes.statusFilterAdditional}>
+      <Grid item xs={6} sm={3} sx={styles.statusFilterAdditional}>
         <TextField
           label="Status"
-          className={classes.filterElement}
+          sx={styles.filterElement}
           color="primary"
           onChange={handleStatusChange}
           value={statusFilter}
@@ -327,10 +334,10 @@ const MemberOverview: React.FunctionComponent = () => {
           <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
         </TextField>
       </Grid>
-      <Grid item xs={6} sm={3} className={classes.ressortFilterAdditional}>
+      <Grid item xs={6} sm={3} sx={styles.ressortFilterAdditional}>
         <TextField
           label="Ressort"
-          className={classes.filterElement}
+          sx={styles.filterElement}
           color="primary"
           onChange={handleRessortChange}
           value={ressortFilter}
@@ -347,7 +354,7 @@ const MemberOverview: React.FunctionComponent = () => {
         </TextField>
       </Grid>
       <TextField
-        className={classes.sortElement}
+        sx={styles.sortElement}
         color="primary"
         onChange={handleSortOptionChange}
         value={sortOption}
@@ -363,106 +370,93 @@ const MemberOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        <Paper className={classes.filterContainer}>
-          <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container spacing={8}>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  label="Name/Mail/..."
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleSearchInput}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
-                <TextField
-                  label="Status"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleStatusChange}
-                  value={statusFilter}
-                  select
-                >
-                  <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"Trainee"}>Trainee</MenuItem>
-                  <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-                  <MenuItem value={"Senior"}>Senior</MenuItem>
-                  <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-                  <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
-                <TextField
-                  label="Ressort"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleRessortChange}
-                  value={ressortFilter}
-                  select
-                >
-                  <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"NET"}>NET</MenuItem>
-                  <MenuItem value={"QM"}>QM</MenuItem>
-                  <MenuItem value={"F&R"}>F&R</MenuItem>
-                  <MenuItem value={"FK"}>FK</MenuItem>
-                  <MenuItem value={"MIT"}>MIT</MenuItem>
-                  <MenuItem value={"MAR"}>MAR</MenuItem>
-                  <MenuItem value={"IT"}>IT</MenuItem>
-                </TextField>
-              </Grid>
+      <Paper sx={styles.filterContainer}>
+        <StyledForm noValidate autoComplete="off">
+          <Grid container spacing={8}>
+            <Grid item xs={6} sm={3}>
+              <TextField label="Name/Mail/..." sx={styles.filterElement} color="primary" onChange={handleSearchInput} />
             </Grid>
-            <IconButton
-              aria-label="more filter options"
-              className={classes.filterBtn}
-              onClick={toggleFilters}
-              size="large"
-            >
-              {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-            </IconButton>
-          </form>
-          {additionalFiltersState ? additionalFilters : null}
-          <div className={classes.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</div>
-        </Paper>
-        <TableContainer component={Paper} className={classes.tableContainer}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableHeadCell}>
-                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+            <Grid item xs={6} sm={3} sx={styles.statusFilterMain}>
+              <TextField
+                label="Status"
+                sx={styles.filterElement}
+                color="primary"
+                onChange={handleStatusChange}
+                value={statusFilter}
+                select
+              >
+                <MenuItem value={""}>-</MenuItem>
+                <MenuItem value={"Trainee"}>Trainee</MenuItem>
+                <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
+                <MenuItem value={"Senior"}>Senior</MenuItem>
+                <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
+                <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={6} sm={3} sx={styles.ressortFilterMain}>
+              <TextField
+                label="Ressort"
+                sx={styles.filterElement}
+                color="primary"
+                onChange={handleRessortChange}
+                value={ressortFilter}
+                select
+              >
+                <MenuItem value={""}>-</MenuItem>
+                <MenuItem value={"NET"}>NET</MenuItem>
+                <MenuItem value={"QM"}>QM</MenuItem>
+                <MenuItem value={"F&R"}>F&R</MenuItem>
+                <MenuItem value={"FK"}>FK</MenuItem>
+                <MenuItem value={"MIT"}>MIT</MenuItem>
+                <MenuItem value={"MAR"}>MAR</MenuItem>
+                <MenuItem value={"IT"}>IT</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
+          <IconButton aria-label="more filter options" sx={styles.filterBtn} onClick={toggleFilters} size="large">
+            {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+          </IconButton>
+        </StyledForm>
+        {additionalFiltersState ? additionalFilters : null}
+        <Box sx={styles.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</Box>
+      </Paper>
+      <TableContainer component={Paper} sx={styles.tableContainer}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={toggleNameSort}>
+                  <>
                     Name
                     {getNameSortIcon()}
-                  </div>
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>Handy</TableCell>
+              <TableCell sx={styles.tableHeadCell}>Mail</TableCell>
+              <TableCell sx={styles.tableHeadCell}>Status</TableCell>
+              <TableCell sx={styles.tableHeadCell}>Ressort</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getFilteredAndSortedMembers().map((member, index) => (
+              <TableRow hover key={index}>
+                <TableCell component="th" scope="row">
+                  <Typography color="secondary">
+                    <StyledLink
+                      to={`/gesamtuebersicht/${member.mitgliedID}`}
+                    >{`${member.vorname}.${member.nachname}`}</StyledLink>
+                  </Typography>
                 </TableCell>
-                <TableCell className={classes.tableHeadCell}>Handy</TableCell>
-                <TableCell className={classes.tableHeadCell}>Mail</TableCell>
-                <TableCell className={classes.tableHeadCell}>Status</TableCell>
-                <TableCell className={classes.tableHeadCell}>Ressort</TableCell>
+                <TableCell>{member.handy}</TableCell>
+                <TableCell>{member.jbt_email}</TableCell>
+                <TableCell>{member.mitgliedstatus}</TableCell>
+                {<TableCell>{member.ressort}</TableCell>}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {getFilteredAndSortedMembers().map((member, index) => (
-                <TableRow hover key={index}>
-                  <TableCell component="th" scope="row">
-                    <Typography color="secondary">
-                      <Link
-                        color="textPrimary"
-                        underline="hover"
-                        href={`#/gesamtuebersicht/${member.mitgliedID}`}
-                      >{`${member.vorname}.${member.nachname}`}</Link>
-                    </Typography>
-                  </TableCell>
-                  <TableCell>{member.handy}</TableCell>
-                  <TableCell>{member.jbt_email}</TableCell>
-                  <TableCell>{member.mitgliedstatus}</TableCell>
-                  {<TableCell>{member.ressort}</TableCell>}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <PageBar pageTitle="Mitgliederübersicht" />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

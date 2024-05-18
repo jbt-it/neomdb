@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
-import PageBar from "../../../components/navigation/PageBar";
 import { useParams } from "react-router-dom";
 import LoadingCircle from "../../../components/general/LoadingCircle";
 import useMembers from "../../../hooks/members/useMembers";
@@ -22,12 +21,10 @@ const MemberProfile: React.FunctionComponent = () => {
     Number(id)
   );
 
-  useEffect(
-    () =>
-      // Checks if the user is the owner of the member page
-      setIsOwner(auth.userID === Number(id)),
-    [id, auth.userID]
-  );
+  useEffect(() => {
+    // Checks if the user is the owner of the member page
+    setIsOwner(auth.userID === Number(id));
+  }, [id, auth.userID]);
 
   if (isMembersLoading || isMemberDetailsLoading) {
     return <LoadingCircle />;
@@ -35,21 +32,22 @@ const MemberProfile: React.FunctionComponent = () => {
 
   return (
     <div>
-      {memberDetails && members && memberDetails && (
-        <DisplayMemberDetails
-          members={members}
-          listOfPermissions={auth.permissions}
-          departments={departments}
-          listOfLanguages={languages}
-          listOfEDVSkills={edvSkills}
-          memberDetails={memberDetails}
-          isOwner={isOwner}
-          memberImage={memberImage}
-          updateMemberDetails={updateMemberDetails}
-          saveMemberImage={saveMemberImage}
-        />
-      )}
-      <PageBar pageTitle="Profilseite" />
+      <div className="content-page">
+        {memberDetails ? (
+          <DisplayMemberDetails
+            members={members}
+            listOfPermissions={auth.permissions}
+            departments={departments}
+            listOfLanguages={languages}
+            listOfEDVSkills={edvSkills}
+            memberDetails={memberDetails}
+            isOwner={isOwner}
+            memberImage={memberImage}
+            updateMemberDetails={updateMemberDetails}
+            saveMemberImage={saveMemberImage}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };

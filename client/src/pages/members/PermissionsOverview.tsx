@@ -1,10 +1,8 @@
 /**
  * The PermissionsOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
-
 import React, { useContext } from "react";
-import { Paper, Grid, Theme, Typography, Divider, Box, TextField, Chip } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
+import { Paper, Grid, Typography, Divider, Box, TextField, Chip, useTheme } from "@mui/material";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import useMembers from "../../hooks/members/useMembers";
@@ -18,10 +16,15 @@ interface AllNames {
 }
 
 /**
- * Function which proivdes the styles of the PermissionsOverview
+ * Implements Overview of permissions.
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const PermissionsOverview: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the PermissionsOverview
+   */
+  const styles = {
     paperRoot: {
       padding: theme.spacing(2),
       display: "inline-block",
@@ -78,17 +81,10 @@ const useStyles = makeStyles((theme: Theme) =>
     closeIcon: {
       color: "white",
     },
-  })
-);
+  };
 
-/**
- * Implements Overview of permissions.
- */
-const PermissionsOverview: React.FunctionComponent = () => {
-  const classes = useStyles();
   const { auth } = useContext(AuthContext);
   const { permissions, permissionAssignments, createPermission, deletePermission } = useMembers();
-  let tmp: AllNames[] = [];
 
   /**
    * Check if clicked event added or removed entity from autocomplete
@@ -120,38 +116,37 @@ const PermissionsOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        <Box component="div" display="inline">
-          <Paper className={classes.paperRoot}>
+      <Box component="div" display="inline">
+        <Paper sx={styles.paperRoot}>
+          <Grid container spacing={0}>
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={styles.paperHeaderText}>
+                Berechtigungen
+              </Typography>
+              <Divider sx={styles.paperHeaderDivider} />
+            </Grid>
             <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Berechtigungen
-                </Typography>
-                <Divider className={classes.paperHeaderDivider} />
-              </Grid>
-              <Grid container spacing={0}>
-                {permissions.map((permissions) => (
-                  <Grid item container spacing={0} className={classes.contentContainer} key={permissions.bezeichnung}>
+              {permissions.map((permission) => {
+                const tmp: AllNames[] = [];
+
+                permissionAssignments.forEach((memberP) => {
+                  if (permission.berechtigungID === memberP.permission) {
+                    tmp.push({
+                      name: memberP.name,
+                      memberID: memberP.memberID,
+                    });
+                  }
+                });
+
+                return (
+                  <Grid item container spacing={0} sx={styles.contentContainer} key={permission.bezeichnung}>
                     <Grid item xs={6}>
                       <Grid item xs={12}>
-                        <Typography>{permissions.bezeichnung}</Typography>
+                        <Typography>{permission.bezeichnung}</Typography>
                       </Grid>
                     </Grid>
                     <Grid container spacing={0}>
-                      {permissionAssignments.map((memberP) => {
-                        if (permissions.berechtigungID === memberP.permission) {
-                          if (
-                            permissionAssignments.map((entry) => memberP.permission === entry.permission).length > 0
-                          ) {
-                            tmp.push({
-                              name: memberP.name,
-                              memberID: memberP.memberID,
-                            });
-                          }
-                        }
-                      })}
-                      {tmp.length >= 1 ? (
+                      {tmp.length >= 1 && (
                         <Grid item xs>
                           <Autocomplete
                             multiple
@@ -177,9 +172,9 @@ const PermissionsOverview: React.FunctionComponent = () => {
                             }
                             getOptionLabel={(options) => options.name}
                             defaultValue={tmp}
-                            disabled={checkDisable(permissions.berechtigungID)}
+                            disabled={checkDisable(permission.berechtigungID)}
                             onChange={(event, newValue, reason, details) => {
-                              handleOnChange(newValue, details, permissions.berechtigungID);
+                              handleOnChange(newValue, details, permission.berechtigungID);
                             }}
                             getOptionDisabled={(option) => option.memberID === -1}
                             renderTags={(tagValue, getTagProps) =>
@@ -187,11 +182,10 @@ const PermissionsOverview: React.FunctionComponent = () => {
                                 <Chip
                                   label={option.name}
                                   {...getTagProps({ index })}
-                                  disabled={checkDisable(permissions.berechtigungID) || option.memberID < 0}
+                                  disabled={checkDisable(permission.berechtigungID) || option.memberID < 0}
                                 />
                               ))
                             }
-                            {...(tmp = [])}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
@@ -203,17 +197,15 @@ const PermissionsOverview: React.FunctionComponent = () => {
                             )}
                           />
                         </Grid>
-                      ) : (
-                        (tmp = [])
                       )}
                     </Grid>
                   </Grid>
-                ))}
-              </Grid>
+                );
+              })}
             </Grid>
-          </Paper>
-        </Box>
-      </div>
+          </Grid>
+        </Paper>
+      </Box>
     </div>
   );
 };

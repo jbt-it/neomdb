@@ -49,11 +49,11 @@ function stringToColor(string: string) {
  * @param name The name to get the initials from
  * @returns The initials of the name
  */
-export function stringAvatar(name: string) {
+export function stringAvatar(name: string, sx?: any) {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      fontSize: "5rem",
+      ...sx,
     },
     children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
   };

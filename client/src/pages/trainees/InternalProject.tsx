@@ -18,7 +18,6 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
 import LoadingCircle from "../../components/general/LoadingCircle";
-import PageBar from "../../components/navigation/PageBar";
 import EditInternalProjectDialog from "../../components/members/trainees/EditInternalProjectDialog";
 import { Member, MemberStatus, MembersField } from "../../types/membersTypes";
 import useMembers from "../../hooks/members/useMembers";
@@ -27,7 +26,6 @@ import useInternalProjectDetails from "../../hooks/useInternalProjectDetails";
 
 // Styling for the paper element
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  marginTop: theme.spacing(2),
   padding: theme.spacing(4),
   display: "flex",
   flexDirection: "column",
@@ -232,7 +230,6 @@ const InternalProject: React.FunctionComponent = () => {
           <InfoSection fields={internalProjectDetailsFields} />
         </Box>
       </StyledPaper>
-      <PageBar pageTitle="Internesprojekt" />
     </div>
   ) : (
     <LoadingCircle />

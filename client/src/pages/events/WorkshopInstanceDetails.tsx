@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from "@mui/material";
 
 import { Workshop, WorkshopInstance, EventParticipant } from "../../types/eventTypes";
@@ -152,7 +152,8 @@ const WorkshopInstanceDetails = () => {
     ) : workshopInstance.status === "Feedback" || workshopInstance.status === "Abgeschlossen" ? (
       <Button
         variant="contained"
-        href={`/#/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
+        component={Link}
+        to={`/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
         sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
         color="info"
         startIcon={<Grade />}
@@ -206,7 +207,7 @@ const WorkshopInstanceDetails = () => {
   ];
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 3 }}>
+    <Container>
       {isRegistraionClosing ? (
         <WorkshopInstanceAdmissionClosingTable
           participants={participants}

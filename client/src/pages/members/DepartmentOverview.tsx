@@ -2,10 +2,8 @@
  * The DepartmentOverview-Component displays all members of a ressort/department and the actual leaders in a grid.
  */
 import React, { useState, useContext } from "react";
-import { Button, Grid, Typography, Theme } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
-import PageBar from "../../components/navigation/PageBar";
-import { NavLink } from "react-router-dom";
+import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
+import { Link } from "react-router-dom";
 import InfoCard from "../../components/general/InfoCard";
 import DepartmentDialog from "../../components/members/DepartmentDialog";
 import { DepartmentDetails, Director } from "../../types/membersTypes";
@@ -14,10 +12,16 @@ import { doesRolesHaveSomeOf } from "../../utils/authUtils";
 import useMembers from "../../hooks/members/useMembers";
 
 /**
- * Function which proivdes the styles of the DepartmentOverview
+ * Displays cards for every department
+ * @returns Cards with department information and buttons
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const DepartmentOverview: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the DepartmentOverview
+   */
+  const styles = {
     spacing: {
       margin: "10px",
     },
@@ -42,15 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.primary.main,
       },
     },
-  })
-);
-
-/**
- * Displays cards for every department
- * @returns Cards with department information and buttons
- */
-const DepartmentOverview: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
   const { auth } = useContext(AuthContext);
 
   const { departments, departmentMembers, currentDirectors } = useMembers();
@@ -224,10 +220,10 @@ const DepartmentOverview: React.FunctionComponent = () => {
         {director ? (
           <div key={`director-${department.bezeichnung}`}>
             <h3>
-              <NavLink
-                className={classes.navLink}
+              <Link
+                style={styles.navLink}
                 to={`/gesamtuebersicht/${director.mitgliedID}`}
-              >{`${director.vorname} ${director.nachname}`}</NavLink>
+              >{`${director.vorname} ${director.nachname}`}</Link>
             </h3>
           </div>
         ) : null}
@@ -237,68 +233,67 @@ const DepartmentOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        {departments.map((department, index) => (
-          <div key={department.kuerzel}>
-            <InfoCard
-              title={department.bezeichnung}
-              isEditable={isDepartmentEditable(department.ressortID)}
-              handleEdit={(event) => handleDialogOpen(event, department.kuerzel)}
-              defaultExpanded={false}
-              isExpandable={false}
-              key={index}
-            >
-              <div className={classes.buttonGroup}>
-                <Button
-                  className={classes.button}
-                  variant="contained"
-                  href={department.linkZielvorstellung}
-                  target="_blank"
-                >
-                  Zu den Zielen
-                </Button>
-                <div className={classes.spacing}></div>
-                <Button
-                  className={classes.button}
-                  variant="contained"
-                  href={department.linkOrganigramm}
-                  target="_blank"
-                >
-                  Zur Organisation
-                </Button>
-              </div>
-              <br></br>
-              {renderDirector(department, getDirectorOfDepartment(department.ressortID))}
-              <br></br>
-              <div>
-                <Typography variant="h6">
-                  <strong>Mitglieder:</strong>
-                </Typography>
-                <Grid container spacing={1} className={classes.memberArea}>
-                  {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
-                    <Grid item key={`member-${membIndex}`}>
-                      <h3>
-                        <NavLink
-                          className={classes.navLink}
-                          to={`/gesamtuebersicht/${member.mitgliedID}`}
-                        >{`${member.vorname} ${member.nachname}`}</NavLink>
-                      </h3>
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
-            </InfoCard>
-            <DepartmentDialog
-              title={department.bezeichnung}
-              isOpen={getDialogState(department.kuerzel)}
-              onClose={() => getDialogStateChangeFunction(department.kuerzel)}
-              department={department}
-            />
+      {departments.map((department, index) => (
+        <div key={department.kuerzel}>
+          <InfoCard
+            title={department.bezeichnung}
+            isEditable={isDepartmentEditable(department.ressortID)}
+            handleEdit={(event) => handleDialogOpen(event, department.kuerzel)}
+            defaultExpanded={false}
+            isExpandable={false}
+            key={index}
+          >
+            <Box sx={styles.buttonGroup}>
+              <Button
+                sx={styles.button}
+                variant="contained"
+                component={Link}
+                to={department.linkZielvorstellung}
+                target="_blank"
+              >
+                Zu den Zielen
+              </Button>
+              <Box sx={styles.spacing}></Box>
+              <Button
+                sx={styles.button}
+                variant="contained"
+                component={Link}
+                to={department.linkOrganigramm}
+                target="_blank"
+              >
+                Zur Organisation
+              </Button>
+            </Box>
             <br></br>
-          </div>
-        ))}
-      </div>
-      <PageBar pageTitle="Ressorts" />
+            {renderDirector(department, getDirectorOfDepartment(department.ressortID))}
+            <br></br>
+            <div>
+              <Typography variant="h6">
+                <strong>Mitglieder:</strong>
+              </Typography>
+              <Grid container spacing={1} sx={{ marginTop: -3 }}>
+                {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
+                  <Grid item key={`member-${membIndex}`}>
+                    <h3>
+                      <Link
+                        style={styles.navLink}
+                        to={`/gesamtuebersicht/${member.mitgliedID}`}
+                      >{`${member.vorname} ${member.nachname}`}</Link>
+                    </h3>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </InfoCard>
+          <DepartmentDialog
+            title={department.bezeichnung}
+            isOpen={getDialogState(department.kuerzel)}
+            onClose={() => getDialogStateChangeFunction(department.kuerzel)}
+            department={department}
+          />
+          <br></br>
+        </div>
+      ))}
     </div>
   );
 };
