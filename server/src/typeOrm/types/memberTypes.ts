@@ -1,5 +1,5 @@
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { ItSkill } from "../../typeOrm/entities/ItSkills";
+import { ItSkill } from "../entities/ItSkill";
 import { Language } from "../../typeOrm/entities/Language";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 

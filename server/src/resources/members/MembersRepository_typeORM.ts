@@ -7,6 +7,7 @@ import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
 import { LessThan, MoreThan } from "typeorm";
+import { ItSkill } from "../../typeOrm/entities/ItSkill";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -43,23 +44,24 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
      *        )
      *      ORDER BY ressortID;
      */
-    return this.createQueryBuilder("member")
-      .leftJoinAndSelect("member.department", "department")
-      .where("member.memberStatusId <= :status", { status: 3 })
-      .andWhere((qb) => {
-        // Subquery for NOT EXISTS
-        const subQuery = qb
-          .subQuery()
-          .select("mhdp.memberId")
-          .from(MemberHasDirectorPosition, "mhdp")
-          .where("mhdp.from < :currentDate", { currentDate: new Date() })
-          .andWhere("mhdp.until > :currentDate", { currentDate: new Date() })
-          .andWhere("mhdp.memberId = member.memberId")
-          .getQuery();
-        return "NOT EXISTS " + subQuery;
-      })
-      .orderBy("department.departmentId")
-      .getMany();
+
+    return (
+      this.createQueryBuilder("member")
+        .leftJoinAndSelect("member.department", "department")
+        .leftJoin("member.memberHasDirectorPositions", "memberHasDirectorPositions")
+        // Applying NOT EXISTS with a subquery
+        .where(
+          `NOT EXISTS (
+      SELECT 1 FROM mitglied_has_evposten 
+      WHERE von < CURRENT_DATE() 
+      AND CURRENT_DATE() < bis 
+      AND mitglied_mitgliedID = mitgliedID
+    )`
+        )
+        .orderBy("department.departmentId")
+        .andWhere("member.memberStatus <= :status", { status: 3 })
+        .getMany()
+    );
   },
 
   /**
@@ -174,18 +176,18 @@ export const MemberStatusRespository_typeORM = AppDataSource.getRepository(Membe
  */
 export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language).extend({
   /**
-   * Retrieves the all distinct values of the languages
+   * Retrieves all the distinct values of the languages
    * @returns A list of distinct language values
    */
   getLanguageValues(): Promise<LanguageValue[]> {
-    return this.createQueryBuilder("language").select("language.value").distinct(true).getMany();
+    return this.createQueryBuilder("language").select("language.value").distinct(true).getRawMany();
   },
 });
 
 /**
  * Creates and exports the ItSkills Repository
  */
-export const ItSkillsRepository_typeORM = AppDataSource.getRepository(Language).extend({
+export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).extend({
   /**
    * Retrieves the all distinct values of the itSkills
    * @returns A list of distinct itSkill values

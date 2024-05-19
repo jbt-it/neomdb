@@ -93,9 +93,10 @@ class MembersService {
    * Retrieves a list of all members grouped by their department
    */
   getMembersOfDepartments = async () => {
-    const membersOfDepartments2 =
+    const membersOfDepartments =
       await MembersRepository_typeORM.getActiveMembersWithDepartmentAndWithDirectorPositions();
-    return membersOfDepartments2.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
+
+    return membersOfDepartments.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
   };
 
   /**

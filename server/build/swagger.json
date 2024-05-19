@@ -5097,7 +5097,7 @@
 						}
 					}
 				},
-				"description": "Retrieves all members of the departments (this does not invclude the director of a department)",
+				"description": "Retrieves all members of the departments (this does not include the director of a department)",
 				"summary": "Get all members of departments",
 				"tags": [
 					"Members"

@@ -100,7 +100,7 @@ export class MembersController extends Controller {
   }
 
   /**
-   * Retrieves all members of the departments (this does not invclude the director of a department)
+   * Retrieves all members of the departments (this does not include the director of a department)
    * @summary Get all members of departments
    */
   // TODO: Change route name
@@ -108,7 +108,6 @@ export class MembersController extends Controller {
   @Security("jwt")
   public async getMembersOfDepartments(): Promise<DepartmentMemberDto[]> {
     const membersOfDepartments = await this.membersService.getMembersOfDepartments();
-
     return membersOfDepartments;
   }
 

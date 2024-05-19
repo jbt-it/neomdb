@@ -10,7 +10,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ItSkill } from "./ItSkills";
+import { ItSkill } from "./ItSkill";
 import { Generation } from "./Generation";
 import { InternalProject } from "./InternalProject";
 import { Department } from "./Department";
