@@ -15,6 +15,7 @@ import {
 } from "../../typeOrm/types/memberTypes";
 import { PermissionDTO, User } from "../../typeOrm/types/authTypes";
 import { JWTPayload } from "../../typeOrm/types/authTypes";
+import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -108,18 +109,18 @@ export class MemberMapper {
       lastChange: member.lastChange,
     };
   }
-  static memberToDirectorDto(member: Member): DirectorDto {
+  static memberToDirectorDto(member: MemberHasDirectorPosition): DirectorDto {
     return {
       memberId: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
-      gender: member.gender,
-      from: member.memberHasDirectorPositions[0].from,
-      until: member.memberHasDirectorPositions[0].until,
-      department: this.departmentToDepartmentPartialDto(member.department),
-      designationMale: member.memberHasDirectorPositions[0]?.director.designationMale,
-      designationFemale: member.memberHasDirectorPositions[0]?.director.designationFemale,
-      directorId: member.memberHasDirectorPositions[0]?.director.directorId,
+      firstname: member.member.firstName,
+      lastname: member.member.lastName,
+      gender: member.member.gender,
+      from: member.from,
+      until: member.until,
+      department: this.departmentToDepartmentPartialDto(member.member.department),
+      designationMale: member.director.designationMale,
+      designationFemale: member.director.designationFemale,
+      directorId: member.director.directorId,
     };
   }
   static membertoMemberDetailsDto(member: Member, withFinancialData: boolean): MemberDetailsDto {

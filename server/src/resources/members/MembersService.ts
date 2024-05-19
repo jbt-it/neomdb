@@ -13,6 +13,7 @@ import MembersRepository from "./MembersRepository";
 import {
   ItSkillsRepository_typeORM,
   LanguagesRepository_typeORM,
+  MemberHasDirectorPositionRepository_typeORM,
   MemberStatusRespository_typeORM,
   MembersRepository_typeORM,
   PermissionsRepository_typeORM,
@@ -103,10 +104,11 @@ class MembersService {
   getDirectors = async (onlyCurrent: boolean) => {
     let directors = [];
     if (onlyCurrent) {
-      directors = await MembersRepository_typeORM.getCurrentDirectors();
+      directors = await MemberHasDirectorPositionRepository_typeORM.getCurrentDirectors();
     } else {
-      directors = await MembersRepository_typeORM.getAllDirectors();
+      directors = await MemberHasDirectorPositionRepository_typeORM.getAllDirectors();
     }
+
     return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 

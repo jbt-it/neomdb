@@ -6,6 +6,7 @@ import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirec
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
+import { LessThan, MoreThan } from "typeorm";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -113,32 +114,6 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
       where: { memberId: memberID },
       relations: ["mentor", "mentees", "languages", "itSkills", "department", "memberStatus"],
     });
-  },
-
-  /**
-   * Retrieves all members that are or were directors
-   * @returns A list of members that are or were directors
-   */
-  getAllDirectors(): Promise<Member[]> {
-    return this.createQueryBuilder("member")
-      .innerJoinAndSelect("member.memberHasDirectorPositions", "memberHasDirectorPositions")
-      .innerJoinAndSelect("memberHasDirectorPositions.director", "director")
-      .innerJoinAndSelect("member.department", "department")
-      .getMany();
-  },
-
-  /**
-   * Retrieves the members that are currently directors
-   * @returns A list of members that are currently directors
-   */
-  getCurrentDirectors(): Promise<Member[]> {
-    return this.createQueryBuilder("member")
-      .innerJoinAndSelect("member.memberHasDirectorPositions", "memberHasDirectorPositions")
-      .innerJoinAndSelect("memberHasDirectorPositions.director", "director")
-      .innerJoinAndSelect("member.department", "department")
-      .where("memberHasDirectorPositions.from < :currentDate", { currentDate: new Date() })
-      .andWhere("memberHasDirectorPositions.until > :currentDate", { currentDate: new Date() })
-      .getMany();
   },
 
   /**
@@ -253,6 +228,28 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
 export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepository(
   MemberHasDirectorPosition
 ).extend({
+  /**
+   * Retrieves all members that are or were directors
+   * @returns A list of members that are or were directors
+   */
+  getAllDirectors(): Promise<MemberHasDirectorPosition[]> {
+    return this.find({ relations: ["director", "member"] });
+  },
+
+  /**
+   * Retrieves the members that are currently directors
+   * @returns A list of members that are currently directors
+   */
+  getCurrentDirectors(): Promise<MemberHasDirectorPosition[]> {
+    return this.find({
+      where: {
+        from: LessThan(new Date()), // 'from' date should be less than the current date
+        until: MoreThan(new Date()), // 'until' date should be more than the current date
+      },
+      relations: ["director", "member"],
+    });
+  },
+
   /**
    * Retrieves the director permissions of a member
    * @param memberID The id of the member
