@@ -4,32 +4,39 @@ import app from "../../../src/app";
 import MemberTestUtils from "../../utils/memberTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
+import { AppDataSource } from "../../../src/datasource";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
 
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-beforeAll(() => {
-  //try {
-  return memberTestUtils.initMemberData();
-  // await setupMemberData();
-  // } catch (error) {
-  //console.log(error);
-  // } // Executes after every test
-  // await initMemberData(); // Executes before the first test
-  // await setupMemberData();
+beforeAll(async () => {
+  // Initialize the data source
+  await AppDataSource.initialize();
 });
 
-beforeEach(() => {
-  return memberTestUtils.setupMemberData(); // Executes before every test
+beforeEach(async () => {
+  // Populate the database with test data before each test
+  await memberTestUtils.initMemberData();
+  await memberTestUtils.setupMemberData();
 });
 
-afterEach(() => {
-  return memberTestUtils.clearMemberData();
+afterEach(async () => {
+  // Clean up the database after each test
+  const source = AppDataSource;
+  const entities = source.entityMetadatas;
+
+  await source.query(`SET FOREIGN_KEY_CHECKS = 0;`);
+  for (const entity of entities) {
+    const repository = source.getRepository(entity.name);
+    await repository.query(`DELETE FROM ${entity.tableName}`);
+  }
+  await source.query(`SET FOREIGN_KEY_CHECKS = 1;`);
 });
 
-afterAll(() => {
-  return memberTestUtils.clearInitMemberData();
+afterAll(async () => {
+  // Close the data source
+  await AppDataSource.destroy();
 });
 
 describe("Test member routes", () => {
@@ -223,14 +230,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8222;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8222;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).not.toBeNull();
       expect(response.body.kontoinhaber).not.toBeNull();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
+      expect(response.body.memberId).toBe(memberId);
     });
 
     test("should return 200 for admin user on other profile", async () => {

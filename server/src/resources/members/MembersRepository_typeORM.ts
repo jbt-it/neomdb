@@ -3,8 +3,8 @@ import { AppDataSource } from "../../datasource";
 import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { Permission } from "../../typeOrm/entities/Permission";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
+import { Permission } from "../../typeOrm/entities/Permission";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
 
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({

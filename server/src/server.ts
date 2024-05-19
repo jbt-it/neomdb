@@ -13,6 +13,7 @@ const server = http.createServer(app);
 
 AppDataSource.initialize()
   .then(() => {
+    // Only if the connection is successful, start the server
     server.listen(process.env.PORT, () => {
       logger.info("Listening on port " + process.env.PORT + " | Environment: " + process.env.NODE_ENV);
     });
