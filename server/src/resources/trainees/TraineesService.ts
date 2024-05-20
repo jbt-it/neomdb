@@ -29,7 +29,6 @@ class TraineesService {
     if (internalProject === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
-
     return InteralProjectMapper.internalProjectToInternalProjectDto(internalProject);
   };
 
@@ -38,15 +37,11 @@ class TraineesService {
    * @throws NotFoundError if the generation does not exist
    */
   getTraineeChoicesByGenerationID = async (generationID: number): Promise<TraineeChoiceDto[]> => {
-    const generation = GenerationRepository_typeORM.getGenerationByID(generationID);
-
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
-
-    const choices = await TraineeRepository_typeORM.getTraineeChoicesByGenerationID(generationID);
-
-    return choices.map((choice) => TraineeMapper.memberToTraineeChoiceDto(choice));
+    return generation.members.map((choice) => TraineeMapper.memberToTraineeChoiceDto(choice));
   };
 
   /**
@@ -57,12 +52,12 @@ class TraineesService {
     // Update the internal project in a transaction
     await AppDataSource.transaction(async (transactionalEntityManager) => {
       const ip = await InternalProjectRepository_typeORM.getIPByID(id);
-      const ipMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(id);
 
       if (ip === null) {
         throw new NotFoundError(`IP with id ${id} not found`);
       }
 
+      const ipMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(id);
       // Get the memberIDs of the updated and old internal project
       const ipMemberIDs = updatedIp.members.map((member) => member.memberId);
       const oldIPMemberIDs = ipMembers
@@ -88,12 +83,13 @@ class TraineesService {
       ip.members = await Promise.all(newMembers);
 
       // Update the IP details with members and qms
-      InternalProjectRepository_typeORM.updateIPDetailsByID(ip, transactionalEntityManager);
+      await InternalProjectRepository_typeORM.updateIPDetailsByID(ip, transactionalEntityManager);
 
       // Remove the old members from the IP
-      oldIPMemberIDs.map((memberID) =>
+      const removeOldMembersPromises = oldIPMemberIDs.map((memberID) =>
         TraineeRepository_typeORM.updateIPMembers(null, memberID, transactionalEntityManager)
       );
+      await Promise.all(removeOldMembersPromises);
     });
   };
 

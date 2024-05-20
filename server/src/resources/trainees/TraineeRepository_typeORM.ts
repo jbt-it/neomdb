@@ -24,15 +24,6 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
-   * Retrieves choices of mentor, internal project and department of all trainees of given generation
-   * @param generationId The id of the generation
-   * @returns The trainee choices
-   */
-  getTraineeChoicesByGenerationID(generationId: number): Promise<Member[]> {
-    return this.find({ where: { generationId: generationId } });
-  },
-
-  /**
    * Updates the members of an internal project
    * @param internalProjectId The id of the internal project
    * @param memberIds The ids of the members

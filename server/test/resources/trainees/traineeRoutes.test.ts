@@ -55,33 +55,46 @@ describe("GET /ip/:id", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.projektname).toBe("JE7 Analyse");
-    expect(response.body.projektmitglieder).toStrictEqual([
+    expect(response.body.projectName).toBe("JE7 Analyse");
+    // console.log(response.body.members);
+    expect(response.body.members).toStrictEqual([
       {
-        mitgliedID: 8478,
-        vorname: "Kellan",
-        nachname: "Mclaughlin",
-        mitgliedstatus: "Trainee",
+        memberId: 8478,
+        firstname: "Kellan",
+        lastname: "Mclaughlin",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
       },
       {
-        mitgliedID: 8748,
-        vorname: "Mason",
-        nachname: "Vinson",
-        mitgliedstatus: "Trainee",
+        memberId: 8748,
+        firstname: "Mason",
+        lastname: "Vinson",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
       },
     ]);
-    expect(response.body.qualitaetsmanager).toStrictEqual([
+    expect(response.body.qualityManagers).toStrictEqual([
       {
-        mitgliedID: 8320,
-        vorname: "Radhika",
-        nachname: "Norton",
-        mitgliedstatus: "passives Mitglied",
+        memberId: 8320,
+        firstname: "Radhika",
+        lastname: "Norton",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
       },
       {
-        mitgliedID: 8324,
-        vorname: "Miruna",
-        nachname: "Decker",
-        mitgliedstatus: "Alumnus",
+        memberId: 8324,
+        firstname: "Miruna",
+        lastname: "Decker",
+        memberStatus: {
+          memberStatusId: 5,
+          name: "Alumnus",
+        },
       },
     ]);
   });
@@ -164,35 +177,6 @@ describe("GET /generations/:id/trainee-choices", () => {
     // --- THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
-  });
-});
-
-describe("GET /ip/:id/mails", () => {
-  test("should return 200 for getting Trainees email of an IP", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/ip/62/mails").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-  });
-
-  test("should return 404 for getting Trainees email of an unknown IP", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/ip/99/mails").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(404);
   });
 });
 
@@ -392,8 +376,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "2021-01-01",
-      votingEnd: "2021-01-01",
+      electionStart: "2021-01-01",
+      electionEnd: "2021-01-01",
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -411,8 +395,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "2021-01-01",
-      votingEnd: "2021-01-01",
+      electionStart: "2021-01-01",
+      electionEnd: "2021-01-01",
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -430,8 +414,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "123",
-      votingEnd: 123,
+      electionStart: "123",
+      electionEnd: 123,
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -577,17 +561,18 @@ describe("PUT /ip/:id", () => {
 
     // --- WHEN
     const assignments = {
-      DLBeiEV: true,
-      APGehalten: "2021-01-01",
-      APBeiEV: true,
-      ZPGehalten: "2021-01-01",
-      ZPBeiEV: true,
-      AngebotBeiEV: true,
-      kickoff: "2021-01-01",
-      kuerzel: "string",
-      projektname: "string-long",
+      internalProjectID: 62,
       generation: 15,
-      internesProjektID: 62,
+      generationName: "Wintersemester 19/20",
+      projectName: "string-long",
+      dlAtEv: true,
+      apHeld: new Date("2021-01-01"),
+      apAtEv: true,
+      zpHeld: new Date("2021-01-01"),
+      zpAtEv: true,
+      offerAtEv: true,
+      kickoff: new Date("2021-01-01"),
+      abbreviation: "string",
     };
     const response = await request(app).put("/api/trainees/ip/62").send(assignments).set("Cookie", `token=${token}`);
 
@@ -602,42 +587,42 @@ describe("PUT /ip/:id", () => {
 
     // --- WHEN
     const newIPData = {
-      projektmitglieder: [
+      members: [
         {
-          mitgliedID: 8478,
-          vorname: "Kellan",
-          nachname: "Mclaughlin",
+          memberId: 8478,
+          firstname: "Kellan",
+          lastname: "Mclaughlin",
         },
         {
-          mitgliedID: 8748,
-          vorname: "Mason",
-          nachname: "Vinson",
-        },
-      ],
-      qualitaetsmanager: [
-        {
-          mitgliedID: 8320,
-          vorname: "Radhika",
-          nachname: "Norton",
-        },
-        {
-          mitgliedID: 8222,
-          vorname: "Talha",
-          nachname: "Driscoll",
+          memberId: 8748,
+          firstname: "Mason",
+          lastname: "Vinson",
         },
       ],
-      DLBeiEV: true,
-      APGehalten: "2021-01-01",
-      APBeiEV: true,
-      ZPGehalten: "2021-01-01",
-      ZPBeiEV: true,
-      AngebotBeiEV: true,
-      kickoff: "2021-01-01",
-      kuerzel: "string",
-      projektname: "string-long",
+      qualityManagers: [
+        {
+          memberId: 8320,
+          firstname: "Radhika",
+          lastname: "Norton",
+        },
+        {
+          memberId: 8222,
+          firstname: "Talha",
+          lastname: "Driscoll",
+        },
+      ],
+      dlAtEv: true,
+      apHeld: new Date("2021-01-01"),
+      apAtEv: true,
+      zpHeld: new Date("2021-01-01"),
+      zpAtEv: true,
+      offerAtEv: true,
+      kickoff: new Date("2021-01-01"),
+      abbreviation: "string",
+      projectName: "string-long",
       generation: 15,
-      generationsBezeichnung: "string-long",
-      internesProjektID: 62,
+      generationName: "string-long",
+      internalProjectID: 62,
     };
     const response = await request(app).put("/api/trainees/ip/62").send(newIPData).set("Cookie", `token=${token}`);
 

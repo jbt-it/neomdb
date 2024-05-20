@@ -11,7 +11,7 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
   getIPByID(internalProjectId: number): Promise<InternalProject | null> {
     return this.findOne({
       where: { internalProjectId: internalProjectId },
-      relations: ["qualityManagers", "members", "generation"],
+      relations: ["qualityManagers", "members", "generation", "members.memberStatus", "qualityManagers.memberStatus"],
     });
   },
 
