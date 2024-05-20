@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import { EdvSkill, Language, Member, Mentor, StatusOverview, UpdateDepartmentDto } from "../../types/membersTypes";
+import { EdvSkill, Language, Member, Mentor, StatusOverview } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
 import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
@@ -21,7 +21,7 @@ import {
 import { DepartmentMapper } from "./DepartmentMapper";
 import { PermissionMapper } from "./PermissionMapper";
 import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
-import { CreateMemberRequest } from "../../typeOrm/types/memberTypes";
+import { CreateMemberRequest, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -109,7 +109,6 @@ class MembersService {
     } else {
       directors = await MemberHasDirectorPositionRepository_typeORM.getAllDirectors();
     }
-
     return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 

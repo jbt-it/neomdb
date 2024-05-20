@@ -1,4 +1,4 @@
-import { Not } from "typeorm";
+import { In, Not } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Department } from "../../typeOrm/entities/Department";
 
@@ -39,7 +39,7 @@ export const DepartmentRepository_typeORM = AppDataSource.getRepository(Departme
       relation: ["director"],
       where: {
         director: {
-          directorId: roles,
+          directorId: In(roles),
         },
       },
     });

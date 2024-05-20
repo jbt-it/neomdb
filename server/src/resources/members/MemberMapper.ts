@@ -117,7 +117,7 @@ export class MemberMapper {
       gender: member.member.gender,
       from: member.from,
       until: member.until,
-      department: this.departmentToDepartmentPartialDto(member.member.department),
+      department: this.departmentToDepartmentPartialDto(member.director.department),
       designationMale: member.director.designationMale,
       designationFemale: member.director.designationFemale,
       directorId: member.director.directorId,

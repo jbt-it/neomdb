@@ -248,7 +248,7 @@ export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepo
         from: LessThan(new Date()), // 'from' date should be less than the current date
         until: MoreThan(new Date()), // 'until' date should be more than the current date
       },
-      relations: ["director", "member"],
+      relations: ["director", "member", "director.department"],
     });
   },
 

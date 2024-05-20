@@ -247,14 +247,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8222;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8222;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).not.toBeNull();
       expect(response.body.kontoinhaber).not.toBeNull();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
+      expect(response.body.memberId).toBe(memberId);
     });
 
     test("should return 200 for getting normal user on other profile", async () => {
@@ -263,14 +263,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8364;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8364;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).toBeUndefined();
       expect(response.body.kontoinhaber).toBeUndefined();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
+      expect(response.body.memberId).toBe(memberId);
     });
   });
 
@@ -281,9 +281,9 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8324;
+      const memberId = 8324;
       const response = await request(app)
-        .get(`/api/members/${mitgliedID}/permissions`)
+        .get(`/api/members/${memberId}/permissions`)
         .send()
         .set("Cookie", `token=${token}`);
 
@@ -319,15 +319,13 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "j.pinkman",
-        geburtsdatum: "2000-04-01",
-        password: "s3cre7",
-        handy: "0176/123456",
-        geschlecht: "1",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 1,
+        generationId: 15,
         email: "j.pinkman@lethimcook.com",
       };
       const response = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
@@ -350,15 +348,13 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "j.pinkman",
-        geburtsdatum: "2000-04-01",
-        password: "s3cre7",
-        handy: "0176/123456",
-        geschlecht: "1",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 1,
+        generationId: 15,
         email: "j.pinkman@lethimcook.com",
       };
       const response = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
@@ -375,16 +371,14 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "jesse.pinkman",
-        geburtsdatum: "2000-05-01",
-        password: "s3cre7",
-        handy: "0176/1234567",
-        geschlecht: "0",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
-        email: "j.pinkman@cookpot.com",
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 0,
+        generationId: 15,
+        email: "j.pinkman@lethimcook.com",
       };
       const firstResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
       const secondResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
@@ -431,7 +425,7 @@ describe("Test member routes", () => {
       expect(response.status).toBe(201);
     });
 
-    test("should return 403 for deligate without havig permission", async () => {
+    test("should return 403 for deligate without having permission", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -494,12 +488,12 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const departmentID = 1;
-      const linkZielvorstellung =
+      const linkObjectivePresentation =
         "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/hwekfoiwfjGFHCkhdllewlj12Q?e=JHVUZFZU";
-      const linkOrganigramm = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
+      const linkOrganigram = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
       const response = await request(app)
         .put(`/api/members/departments/${departmentID}`)
-        .send({ linkZielvorstellung, linkOrganigramm })
+        .send({ linkObjectivePresentation, linkOrganigram })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -705,11 +699,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8167;
-      const mitgliedstatus = "passives Mitglied";
+      const memberId = 8167;
+      const memberStatus = "passives Mitglied";
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}/status`)
-        .send({ mitgliedstatus })
+        .patch(`/api/members/${memberId}/status`)
+        .send({ memberStatus })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -739,11 +733,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8167;
-      const mitgliedstatus = "unbekannt";
+      const memberId = 8167;
+      const memberStatus = "unbekannt";
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}/status`)
-        .send({ mitgliedstatus })
+        .patch(`/api/members/${memberId}/status`)
+        .send({ memberStatus })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
