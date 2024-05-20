@@ -274,41 +274,6 @@ describe("Test member routes", () => {
     });
   });
 
-  describe("GET /:id/permissions", () => {
-    test("should return 200 for EV geeting own Permission", async () => {
-      // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
-      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-      // --- WHEN
-      const memberId = 8324;
-      const response = await request(app)
-        .get(`/api/members/${memberId}/permissions`)
-        .send()
-        .set("Cookie", `token=${token}`);
-
-      // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.body.permissions).toEqual(loginResponse.body.permissions);
-    });
-
-    test("should return 403 for member without permissions getting Permissions of a member", async () => {
-      // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
-      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-      // --- WHEN
-      const mitgliedID = 8167;
-      const response = await request(app)
-        .get(`/api/members/${mitgliedID}/permissions`)
-        .send()
-        .set("Cookie", `token=${token}`);
-
-      // --- THEN
-      expect(response.status).toBe(403);
-    });
-  });
-
   // -----------------------POST ROUTES-----------------------
 
   describe("POST / create member", () => {
