@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { alpha } from "@mui/material/styles";
 import { MenuItem, Typography, IconButton, Avatar, Popover, Box, Divider } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
 import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { authReducerActionType } from "../../types/globalTypes";
 import { stringToColor } from "../../utils/stringUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 interface MenuOption {
   label: string;
@@ -18,7 +18,7 @@ interface MenuOption {
  */
 const AccountPopover = () => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
-  const { auth, dispatchAuth } = useAuth();
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const MENU_OPTIONS: MenuOption[] = [

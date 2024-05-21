@@ -1,13 +1,13 @@
 /**
  * Component that handles the login process
  */
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
 import { Paper, Grid, Button, TextField, useTheme, styled, Typography } from "@mui/material";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
-import { useAuth } from "../hooks/useAuth";
+import { AuthContext } from "../context/auth-context/AuthContext";
 
 /**
  * The styled form component
@@ -22,7 +22,7 @@ const StyledForm = styled("form")<{ children?: React.ReactNode }>(({ theme }) =>
 
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
 
   const theme = useTheme();
 

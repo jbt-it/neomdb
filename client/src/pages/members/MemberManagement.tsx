@@ -1,7 +1,7 @@
 /**
  * The MemberManagement-Component lets admins manually add members and change the status of existing members
  */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Divider,
@@ -26,6 +26,7 @@ import api from "../../utils/api";
 import { showSuccessMessage, showErrorMessage } from "../../utils/toastUtils";
 import { replaceSpecialCharacters } from "../../utils/stringUtils";
 import { MemberPartialDto } from "../../types/membersTypes";
+import useMembers from "../../hooks/members/useMembers";
 
 // Create a styed form component
 const StyledForm = styled("form")(({ theme }) => ({
@@ -161,7 +162,6 @@ const MemberManagement: React.FunctionComponent = () => {
   };
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<MemberPartialDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -171,33 +171,7 @@ const MemberManagement: React.FunctionComponent = () => {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
-  // Retrieves the members
-  const getMembers: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Laden der Benutzer fehlgeschlagen");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  useEffect(() => getMembers(), []);
-
+  const { members } = useMembers();
   /**
    * Handles the change event on the search filter input
    * @param event
@@ -366,7 +340,6 @@ const MemberManagement: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 204) {
-          getMembers();
           showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
         } else {
           showErrorMessage("Mitgliedsstatus Änderung fehlgeschlagen");
@@ -413,7 +386,6 @@ const MemberManagement: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 201) {
-          getMembers();
           showSuccessMessage("Mitglied erfolgreich hinzugefügt");
         } else {
           showErrorMessage("Mitglied konnte nicht hinzugefügt werden");
