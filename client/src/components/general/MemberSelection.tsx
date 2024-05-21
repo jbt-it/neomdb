@@ -1,21 +1,8 @@
 import React from "react";
-import { Autocomplete, IconButton, Stack, TextField, Theme } from "@mui/material";
+import { Autocomplete, IconButton, Stack, TextField, useTheme } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Clear from "@mui/icons-material/Clear";
-import { makeStyles, createStyles } from "@mui/styles";
 import { MembersFieldDto } from "../../types/membersTypes";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fieldItem: {
-      flexGrow: 1,
-      marginTop: theme.spacing(1),
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
-  })
-);
-
 /**
  * The props of the MemberSelection component
  */
@@ -47,7 +34,6 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
   addMember,
   removeMember,
 }: MemberSelectionProps) => {
-  const classes = useStyles();
   const options: MembersFieldDto[] = selectableMembers.filter((member) => {
     // Exclude members that are already selected
     const isAlreadySelected = selectedMembers.some((selectedMember) => selectedMember.memberId === member.memberId);
@@ -64,6 +50,16 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
     // If memberstatus is not defined, include all members
     return true;
   });
+  const theme = useTheme();
+
+  const styles = {
+    fieldItem: {
+      flexGrow: 1,
+      marginTop: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
+  };
 
   return (
     <div>
@@ -72,7 +68,7 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
           <Autocomplete
             disablePortal
             autoSelect
-            className={`${classes.fieldItem} `}
+            sx={styles.fieldItem}
             id={`members-${index}`}
             options={selectableMembers}
             filterOptions={(options, state) => {

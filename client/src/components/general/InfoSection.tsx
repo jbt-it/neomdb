@@ -9,17 +9,14 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { MembersFieldDto } from "../../types/membersTypes";
 import { Link } from "react-router-dom";
 import { stringAvatar } from "../../utils/stringUtils";
-import { makeStyles, createStyles } from "@mui/styles";
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    avatar: {
-      fontSize: "0.75rem",
-      width: 30,
-      height: 30,
-    },
-  })
-);
+const styles = {
+  avatar: {
+    fontSize: "0.75rem",
+    width: 30,
+    height: 30,
+  },
+};
 
 type InformationField = {
   label: string;
@@ -59,8 +56,6 @@ interface Props {
  * If the type is "memberList" the value is displayed as a list of members with an avatar and a link to the respective profile.
  */
 const InfoSection = (props: Props) => {
-  const classes = useStyles();
-
   const renderFields = (fields: InformationField[]) => {
     return fields.map((field: InformationField, index) => {
       let fieldContainer: React.JSX.Element;
@@ -118,7 +113,7 @@ const InfoSection = (props: Props) => {
                         <Avatar
                           alt={`${item.firstname} ${item.lastname}`}
                           {...stringAvatar(`${item.firstname} ${item.lastname}`)}
-                          className={classes.avatar}
+                          sx={styles.avatar}
                         />
                       </ListItemAvatar>
                       <ListItemText
@@ -153,7 +148,13 @@ const InfoSection = (props: Props) => {
               <Typography sx={{ fontWeight: "bold" }}>{field.label}:</Typography>
             </Grid>
             <Grid xs={12} md={8} sx={{ ...props.sxValue, maxWidth: "600px" }}>
-              {field.value ? <Typography>{field.value}</Typography> : <Typography>-</Typography>}
+              {field.value ? (
+                <Typography>
+                  <>{field.value}</>
+                </Typography>
+              ) : (
+                <Typography>-</Typography>
+              )}
             </Grid>
           </Grid>
         );

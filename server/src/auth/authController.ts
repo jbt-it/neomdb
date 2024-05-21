@@ -124,7 +124,7 @@ export class AuthController extends Controller {
         "Es gab eine Anfrage, dein Passwort für die MDB zu ändern! \n" +
         "Falls du diese Anfrage nicht gestellt haben, ignoriere bitte diese E-Mail oder wende dich an das Ressort IT. \n" +
         "Andernfalls verwende bitte die folgende URL, um dein Passwort zu ändern: \n\n" +
-        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+        "http://localhost:3000/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
         token +
         "\n\n" +
         "\n\n" +

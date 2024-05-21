@@ -3,33 +3,13 @@
  */
 
 import React, { useState, useEffect, useContext } from "react";
-import { Paper, Grid, Theme, Typography, Divider, Box, TextField, Chip } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
+import { Paper, Grid, Typography, Divider, Box, TextField, Chip, useTheme } from "@mui/material";
 import api from "../../utils/api";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { MemberPartialDto, MemberPermissionAssignmentDto, PermissionAssignmentDto } from "../../types/membersTypes";
+import { MemberPartialDto, PermissionAssignmentDto } from "../../types/membersTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-
-/**
- * Interface of route get permission-assignments
- */
-interface MemberPermissions {
-  name: string;
-  permission: number;
-  canDelegate: number;
-  memberID: number;
-}
-
-/**
- * Interface of route get permissions
- */
-interface Permissions {
-  bezeichnung: string;
-  beschreibung: string;
-  berechtigungID: number;
-}
 
 /**
  * Interface used for autocomplete
@@ -40,10 +20,15 @@ interface AutocompleteValue {
 }
 
 /**
- * Function which proivdes the styles of the PermissionsOverview
+ * Implements Overview of permissions.
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const PermissionsOverview: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the PermissionsOverview
+   */
+  const styles = {
     paperRoot: {
       padding: theme.spacing(2),
       display: "inline-block",
@@ -100,15 +85,7 @@ const useStyles = makeStyles((theme: Theme) =>
     closeIcon: {
       color: "white",
     },
-  })
-);
-
-/**
- * Implements Overview of permissions.
- */
-const PermissionsOverview: React.FunctionComponent = () => {
-  const classes = useStyles();
-  const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
+  };
   const [permissionAssignments, setPermissionAssignments] = useState<PermissionAssignmentDto[]>([]);
   const [membersForAutocomplete, setMembersForAutocomplete] = useState<AutocompleteValue[]>([]);
   const [autocompleteValues, setAutocompleteValues] = useState<AutocompleteValue[]>([]); // State for the values of the autocomplete
@@ -318,26 +295,32 @@ const PermissionsOverview: React.FunctionComponent = () => {
   useEffect(() => initAutocompleteValues(), [membersForAutocomplete, directorPositionsForAutocomplete]);
 
   return (
-    <div>
-      <div className="content-page">
-        <Box component="div" display="inline">
-          <Paper className={classes.paperRoot}>
+    <Box component="div" display="inline">
+      <Paper sx={styles.paperRoot}>
+        <Grid container spacing={0}>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Berechtigungen
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+          </Grid>
+          <Grid container spacing={0}>
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={styles.paperHeaderText}>
+                Berechtigungen
+              </Typography>
+              <Divider sx={styles.paperHeaderDivider} />
+            </Grid>
             <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Berechtigungen
-                </Typography>
-                <Divider className={classes.paperHeaderDivider} />
-              </Grid>
-              <Grid container spacing={0}>
-                {permissionAssignments.map((permissionAssignment) => (
-                  <Grid item container spacing={0} className={classes.contentContainer} key={permissionAssignment.name}>
-                    <Grid item xs={6}>
-                      <Grid item xs={12}>
-                        <Typography>{permissionAssignment.name}</Typography>
-                      </Grid>
+              {permissionAssignments.map((permissionAssignment) => (
+                <Grid item container spacing={0} sx={styles.contentContainer} key={permissionAssignment.name}>
+                  <Grid item xs={6}>
+                    <Grid item xs={12}>
+                      <Typography>{permissionAssignment.name}</Typography>
                     </Grid>
-                    <Grid container spacing={0}>
+                  </Grid>
+                  <Grid container spacing={0}>
+                    <>
                       {/* Iterates over all directors that are assigned to the permission */}
                       {permissionAssignment.directors.map((director) => {
                         tmp.push({
@@ -409,15 +392,15 @@ const PermissionsOverview: React.FunctionComponent = () => {
                       ) : (
                         (tmp = [])
                       )}
-                    </Grid>
+                    </>
                   </Grid>
-                ))}
-              </Grid>
+                </Grid>
+              ))}
             </Grid>
-          </Paper>
-        </Box>
-      </div>
-    </div>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Box>
   );
 };
 export default PermissionsOverview;

@@ -14,22 +14,39 @@ import {
   TextField,
   MenuItem,
   Grid,
-  Theme,
+  useTheme,
+  styled,
+  Box,
 } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import PageBar from "../../components/navigation/PageBar";
 import api from "../../utils/api";
 import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
 import { showErrorMessage } from "../../utils/toastUtils";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { DirectorDto } from "../../types/membersTypes";
 
+// Create a styled component with the form
+const StyledForm = styled("form")(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  [theme.breakpoints.down("xl")]: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
+
 /**
- * Function which proivdes the styles of the DirectorHistory
+ * Depicts a table with all directors and a filter section to filter the directors
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const DirectorsHistory: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the DirectorHistory
+   */
+  const styles = {
     amountOfEntries: {
       marginBottom: "10px",
       padding: "7px",
@@ -124,14 +141,7 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "block",
       },
     },
-  })
-);
-
-/**
- * Depicts a table with all directors and a filter section to filter the directors
- */
-const DirectorsHistory: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
   const [directors, setdirectors] = useState<DirectorDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
@@ -254,74 +264,68 @@ const DirectorsHistory: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        <Paper className={classes.filterContainer}>
-          <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container spacing={8}>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  label="Name"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleSearchInput}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.kuerzelFilterMain}>
-                <TextField
-                  label="Vorstandsposten"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handlekuerzelChange}
-                  value={kuerzelFilter}
-                  select
-                >
-                  <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"RL NET"}>NET</MenuItem>
-                  <MenuItem value={"RL QM"}>QM</MenuItem>
-                  <MenuItem value={"RL F&R"}>F&R</MenuItem>
-                  <MenuItem value={"RL FK"}>FK</MenuItem>
-                  <MenuItem value={"RL MIT"}>MIT</MenuItem>
-                  <MenuItem value={"RL MAR"}>MAR</MenuItem>
-                  <MenuItem value={"RL IT"}>IT</MenuItem>
-                  <MenuItem value={"1V"}>1V</MenuItem>
-                </TextField>
-              </Grid>
+      <Paper sx={styles.filterContainer}>
+        <StyledForm noValidate autoComplete="off">
+          <Grid container spacing={8}>
+            <Grid item xs={6} sm={3}>
+              <TextField label="Name" sx={styles.filterElement} color="primary" onChange={handleSearchInput} />
             </Grid>
-          </form>
-        </Paper>
-        <TableContainer component={Paper} className={classes.tableContainer}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableHeadCell}>
-                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+            <Grid item xs={6} sm={3} sx={styles.kuerzelFilterMain}>
+              <TextField
+                label="Vorstandsposten"
+                sx={styles.filterElement}
+                color="primary"
+                onChange={handlekuerzelChange}
+                value={kuerzelFilter}
+                select
+              >
+                <MenuItem value={""}>-</MenuItem>
+                <MenuItem value={"RL NET"}>NET</MenuItem>
+                <MenuItem value={"RL QM"}>QM</MenuItem>
+                <MenuItem value={"RL F&R"}>F&R</MenuItem>
+                <MenuItem value={"RL FK"}>FK</MenuItem>
+                <MenuItem value={"RL MIT"}>MIT</MenuItem>
+                <MenuItem value={"RL MAR"}>MAR</MenuItem>
+                <MenuItem value={"RL IT"}>IT</MenuItem>
+                <MenuItem value={"1V"}>1V</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
+        </StyledForm>
+      </Paper>
+      <TableContainer component={Paper} sx={styles.tableContainer}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={toggleNameSort}>
+                  <>
                     Name
                     {getNameSortIcon()}
-                  </div>
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>Vorstandsposten</TableCell>
+              <TableCell sx={styles.tableHeadCell}>von</TableCell>
+              <TableCell sx={styles.tableHeadCell}>bis</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getFilteredandSortedDirectors().map((director, index) => (
+              <TableRow hover key={index}>
+                <TableCell component="th" scope="row">
+                  <Link
+                    to={`/gesamtuebersicht/${director.memberId}`}
+                  >{`${director.firstname} ${director.lastname}`}</Link>
                 </TableCell>
-                <TableCell className={classes.tableHeadCell}>Vorstandsposten</TableCell>
-                <TableCell className={classes.tableHeadCell}>von</TableCell>
-                <TableCell className={classes.tableHeadCell}>bis</TableCell>
+                <TableCell>{director.department.shortName}</TableCell>
+                <TableCell>{transformSQLStringToGermanDate(director.from.toString())}</TableCell>
+                {<TableCell>{transformSQLStringToGermanDate(director.until.toString())}</TableCell>}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {getFilteredandSortedDirectors().map((director, index) => (
-                <TableRow hover key={index}>
-                  <TableCell component="th" scope="row">
-                    <NavLink
-                      to={`/gesamtuebersicht/${director.memberId}`}
-                    >{`${director.firstname} ${director.lastname}`}</NavLink>
-                  </TableCell>
-                  <TableCell>{director.department.shortName}</TableCell>
-                  <TableCell>{transformSQLStringToGermanDate(director.from.toString())}</TableCell>
-                  {<TableCell>{transformSQLStringToGermanDate(director.until.toString())}</TableCell>}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <PageBar pageTitle="Ewige EV-Liste" />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

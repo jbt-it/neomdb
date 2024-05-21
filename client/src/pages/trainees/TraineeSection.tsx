@@ -9,7 +9,6 @@ import { MemberPartialDto } from "../../types/membersTypes";
 import { Trainee, InternalProjectDto, Generation } from "../../types/traineesTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 
-import PageBar from "../../components/navigation/PageBar";
 import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
 import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
 import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSectionSkeleton";
@@ -261,7 +260,6 @@ const TraineeSection: React.FunctionComponent = () => {
           <TraineeSectionTable trainees={trainees} />
         </>
       ) : null}
-      <PageBar pageTitle="Traineebereich" />
     </>
   );
 };

@@ -82,7 +82,7 @@ const WorkshopButton: FunctionComponent<WorkshopButtonProps> = ({
           variant="contained"
           startIcon={edit ? <Edit /> : <Event />}
           color={edit ? "primary" : "info"}
-          sx={{ fontWeight: 600, mr: 2 }}
+          sx={{ fontWeight: 600 }}
           onClick={handleDialogOpen}
           size="small"
         >

@@ -46,7 +46,7 @@ const InternalProjectCard = (props: Props) => {
   ];
 
   return (
-    <Card sx={(theme) => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectID}>
+    <Card sx={() => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectID}>
       <CardContent>
         <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
           <Link to={`/internes-projekt/${internalProjectID}`} style={{ textDecoration: "none", color: "inherit" }}>
