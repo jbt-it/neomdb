@@ -10,6 +10,7 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { MemberPartialDto, PermissionAssignmentDto } from "../../types/membersTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * Interface used for autocomplete
@@ -87,43 +88,17 @@ const PermissionsOverview: React.FunctionComponent = () => {
     },
   };
   const [permissionAssignments, setPermissionAssignments] = useState<PermissionAssignmentDto[]>([]);
-  const [membersForAutocomplete, setMembersForAutocomplete] = useState<AutocompleteValue[]>([]);
   const [autocompleteValues, setAutocompleteValues] = useState<AutocompleteValue[]>([]); // State for the values of the autocomplete
   const [directorPositionsForAutocomplete, setDirectorPositionsForAutocomplete] = useState<AutocompleteValue[]>([]); // State for the director positions -> TODO: Change to directorPosition type?
 
   const [isAdmin, setIsAdmin] = useState<boolean>(false); // State for checking if the user is admin
   const { auth } = useContext(AuthContext);
   let tmp: AutocompleteValue[] = [];
-
-  /**
-   * Retrieves all members
-   */
-  const getMembers: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            const tmpMembers: AutocompleteValue[] = res.data.map((member: MemberPartialDto) => ({
-              name: member.firstname + " " + member.lastname,
-              memberID: member.memberId,
-            }));
-            setMembersForAutocomplete(tmpMembers);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Mitglieder konnten nicht geladen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
+  const { members } = useMembers();
+  const membersForAutocomplete: AutocompleteValue[] = members.map((member: MemberPartialDto) => ({
+    name: member.firstname + " " + member.lastname,
+    memberId: member.memberId,
+  }));
 
   /**
    * Retrieves the director positions
@@ -290,7 +265,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
   // useEffect(() => getPermissions(), []);
   useEffect(() => checkAdmin(), []);
   useEffect(() => getPermissionAssignments(), []);
-  useEffect(() => getMembers(), []);
   useEffect(() => getDirectorPositions(), []);
   useEffect(() => initAutocompleteValues(), [membersForAutocomplete, directorPositionsForAutocomplete]);
 

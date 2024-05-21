@@ -10,10 +10,10 @@ import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils"
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
 import { useParams } from "react-router-dom";
+import useMembers from "../../../hooks/members/useMembers";
 
 const MemberProfile: React.FunctionComponent = () => {
   const params = useParams();
-  const [members, setMembers] = useState<membersTypes.MemberPartialDto[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [departments, setDepartments] = useState<membersTypes.DepartmentPartialDto[]>([]);
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
@@ -22,34 +22,7 @@ const MemberProfile: React.FunctionComponent = () => {
   const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
-  /**
-   * Retrieves all members
-   */
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/members`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
+  const { members } = useMembers();
 
   /**
    * Retrieves all departments
@@ -284,7 +257,6 @@ const MemberProfile: React.FunctionComponent = () => {
       setIsOwner(auth.userID === parseInt(params.id!, 10)),
     [params.id, auth.userID]
   );
-  useEffect(() => getMembers(), [getMembers]);
   useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
