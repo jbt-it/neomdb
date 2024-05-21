@@ -64,8 +64,11 @@ const InternalProjectCard = (props: Props) => {
                     <Stack direction={"row"} alignItems={"center"} spacing={1} key={index}>
                       <Avatar
                         alt={`${trainee.firstname} ${trainee.lastname}`}
-                        {...stringAvatar(`${trainee.firstname} ${trainee.lastname}`)}
-                        sx={{ fontSize: "0.5rem", width: 15, height: 15 }}
+                        {...stringAvatar(`${trainee.firstname} ${trainee.lastname}`, {
+                          fontSize: "0.5rem",
+                          width: 16,
+                          height: 16,
+                        })}
                       />
                       <Typography variant="body1" color="text.secondary" fontSize={14}>
                         {`${trainee.firstname} ${trainee.lastname}`}

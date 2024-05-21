@@ -472,7 +472,7 @@ const MemberOverview: React.FunctionComponent = () => {
                 <TableCell component="th" scope="row">
                   <Typography color="secondary">
                     <StyledLink
-                      to={`#/gesamtuebersicht/${member.memberId}`}
+                      to={`/gesamtuebersicht/${member.memberId}`}
                     >{`${member.firstname}.${member.lastname}`}</StyledLink>
                   </Typography>
                 </TableCell>

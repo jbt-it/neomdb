@@ -198,7 +198,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
     // Filters by kuerzel
     if (kuerzelFilter !== "") {
       filtereddirectors = filtereddirectors.filter((director) => {
-        return director.department.shortName === kuerzelFilter;
+        return director.department?.shortName === kuerzelFilter;
       });
     }
 
@@ -315,10 +315,11 @@ const DirectorsHistory: React.FunctionComponent = () => {
               <TableRow hover key={index}>
                 <TableCell component="th" scope="row">
                   <Link
+                    style={{ color: "black", textDecoration: "none" }}
                     to={`/gesamtuebersicht/${director.memberId}`}
                   >{`${director.firstname} ${director.lastname}`}</Link>
                 </TableCell>
-                <TableCell>{director.department.shortName}</TableCell>
+                <TableCell>{director.department?.shortName}</TableCell>
                 <TableCell>{transformSQLStringToGermanDate(director.from.toString())}</TableCell>
                 {<TableCell>{transformSQLStringToGermanDate(director.until.toString())}</TableCell>}
               </TableRow>

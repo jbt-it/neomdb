@@ -341,7 +341,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
             selectableMembers={selectableTrainees}
           />
         </Box>
-        <Box className={`${styles.fieldSectionBox} ${styles.projectMembers}`}>
+        <Box sx={styles.fieldSectionBox && styles.projectMembers}>
           <Typography variant="subtitle1">Qualitätsmanager</Typography>
           {errorEmptyQMs ? (
             <Typography color="error">Bitte füge ein Qualitätsmanager hinzu oder lösche das leere Feld</Typography>

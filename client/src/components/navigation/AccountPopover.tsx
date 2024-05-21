@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { authReducerActionType } from "../../types/globalTypes";
+import { stringToColor } from "../../utils/stringUtils";
 
 interface MenuOption {
   label: string;
@@ -68,6 +69,7 @@ const AccountPopover = () => {
           sx={{
             width: 36,
             height: 36,
+            bgcolor: stringToColor(auth.userName ? auth.userName.toString() : ""),
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >

@@ -302,18 +302,17 @@ const DepartmentOverview: React.FunctionComponent = () => {
   const renderDirector = (department: DepartmentDetailsDto, director: DirectorDto) => {
     return (
       <div>
-        <Typography variant="h6">
-          <strong>Ressortleitung:</strong>
+        <Typography variant="h6" fontWeight={"bold"}>
+          Ressortleitung:
         </Typography>
         {director ? (
-          <div key={`director-${department.name}`}>
-            <h3>
-              <Link
-                style={styles.navLink}
-                to={`/gesamtuebersicht/${director.memberId}`}
-              >{`${director.firstname} ${director.lastname}`}</Link>
-            </h3>
-          </div>
+          <Typography
+            variant="h6"
+            fontWeight={"bold"}
+            component={Link}
+            style={styles.navLink}
+            to={`/gesamtuebersicht/${director.memberId}`}
+          >{`${director.firstname} ${director.lastname}`}</Typography>
         ) : null}
       </div>
     );
@@ -322,7 +321,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
   return (
     <div>
       {departments.map((department, index) => (
-        <Box key={department.shortName}>
+        <Box key={department.shortName} sx={{ marginBottom: 3 }}>
           <InfoCard
             title={department.name}
             isEditable={isDepartmentEditable(department.departmentId)}
@@ -359,15 +358,16 @@ const DepartmentOverview: React.FunctionComponent = () => {
               <Typography variant="h6">
                 <strong>Mitglieder:</strong>
               </Typography>
-              <Grid container spacing={1} sx={{ marginTop: -3 }}>
+              <Grid spacing={1} container>
                 {getMembersOfDeparment(department.departmentId).map((member, membIndex) => (
                   <Grid item key={`member-${membIndex}`}>
-                    <h3>
-                      <Link
-                        style={styles.navLink}
-                        to={`/gesamtuebersicht/${member.memberId}`}
-                      >{`${member.firstname} ${member.lastname}`}</Link>
-                    </h3>
+                    <Typography
+                      component={Link}
+                      variant="h6"
+                      fontWeight={"bold"}
+                      style={styles.navLink}
+                      to={`/gesamtuebersicht/${member.memberId}`}
+                    >{`${member.firstname} ${member.lastname}`}</Typography>
                   </Grid>
                 ))}
               </Grid>

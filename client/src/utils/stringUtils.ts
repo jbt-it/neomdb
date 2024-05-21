@@ -27,7 +27,7 @@ export const replaceSpecialCharacters = (str: string) => {
  * @param string The string to get the color from
  * @returns The color
  */
-function stringToColor(string: string) {
+export function stringToColor(string: string) {
   let hash = 0;
   let i;
 

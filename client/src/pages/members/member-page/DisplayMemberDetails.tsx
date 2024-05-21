@@ -796,7 +796,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {memberDetails.mentor && memberDetails.mentor.firstname && memberDetails.mentor.lastname ? (
                   <Link
                     to={`/gesamtuebersicht/${memberDetails.mentor.memberId}`}
-                    style={{ paddingTop: "12.5px", paddingBottom: "11.5px", textAlign: "right" }}
+                    style={{
+                      paddingTop: "12.5px",
+                      paddingBottom: "11.5px",
+                      textAlign: "right",
+                      textDecoration: "none",
+                      color: theme.palette.text.secondary,
+                    }}
                   >
                     {`${memberDetails.mentor.firstname} ${memberDetails.mentor.lastname}`}
                   </Link>
@@ -1782,7 +1788,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           {renderPaymentInformationDialog()}
         </>
         <Grid item>
-          <strong>Letzte Änderung: {memberDetails.lastChange.toString()}</strong>
+          <strong>Letzte Änderung: {memberDetails.lastChange?.toString()}</strong>
         </Grid>
       </Grid>
     </Box>

@@ -10,14 +10,6 @@ import { MembersFieldDto } from "../../types/membersTypes";
 import { Link } from "react-router-dom";
 import { stringAvatar } from "../../utils/stringUtils";
 
-const styles = {
-  avatar: {
-    fontSize: "0.75rem",
-    width: 30,
-    height: 30,
-  },
-};
-
 type InformationField = {
   label: string;
 } & (
@@ -112,8 +104,11 @@ const InfoSection = (props: Props) => {
                       <ListItemAvatar>
                         <Avatar
                           alt={`${item.firstname} ${item.lastname}`}
-                          {...stringAvatar(`${item.firstname} ${item.lastname}`)}
-                          sx={styles.avatar}
+                          {...stringAvatar(`${item.firstname} ${item.lastname}`, {
+                            fontSize: "0.75rem",
+                            width: 30,
+                            height: 30,
+                          })}
                         />
                       </ListItemAvatar>
                       <ListItemText

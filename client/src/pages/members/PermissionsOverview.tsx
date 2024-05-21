@@ -277,12 +277,12 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Retuns true if user can deligate permissionID else false
    */
-  const checkDelegation = (permissionID: number) => {
+  const checkDelegation = (permissionId: number) => {
     if (isAdmin) {
       return true;
     }
     return (
-      auth.permissions.filter((permission) => permission.permissionID === permissionID && permission.canDelegate)
+      auth.permissions.filter((permission) => permission.permissionId === permissionId && permission.canDelegate)
         .length > 0
     );
   };
@@ -305,98 +305,90 @@ const PermissionsOverview: React.FunctionComponent = () => {
             <Divider sx={styles.paperHeaderDivider} />
           </Grid>
           <Grid container spacing={0}>
-            <Grid item xs={12}>
-              <Typography variant="h5" sx={styles.paperHeaderText}>
-                Berechtigungen
-              </Typography>
-              <Divider sx={styles.paperHeaderDivider} />
-            </Grid>
-            <Grid container spacing={0}>
-              {permissionAssignments.map((permissionAssignment) => (
-                <Grid item container spacing={0} sx={styles.contentContainer} key={permissionAssignment.name}>
-                  <Grid item xs={6}>
-                    <Grid item xs={12}>
-                      <Typography>{permissionAssignment.name}</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={0}>
-                    <>
-                      {/* Iterates over all directors that are assigned to the permission */}
-                      {permissionAssignment.directors.map((director) => {
-                        tmp.push({
-                          name: director.shortName,
-                          memberId: -1,
-                        });
-                      })}
-                      {/* Iterates over all members that are assigned to the permission */}
-                      {permissionAssignment.members.map((member) => {
-                        tmp.push({
-                          name: member.firstname + " " + member.lastname,
-                          memberId: member.memberId,
-                        });
-                      })}
-                      {tmp.length >= 1 ? (
-                        <Grid item xs>
-                          <Autocomplete
-                            multiple
-                            disableClearable
-                            filterSelectedOptions
-                            id="tags-standard"
-                            color="primary"
-                            isOptionEqualToValue={(option, value) => {
-                              // Compare member ID of entities if not director else name
-                              if (value.memberId !== -1) {
-                                return option.memberId === value.memberId;
-                              } else {
-                                return option.name === value.name;
-                              }
-                            }}
-                            options={
-                              // Remove duplicated options
-                              autocompleteValues.filter(
-                                (value, index, self) =>
-                                  index ===
-                                  self.findIndex((t) => {
-                                    return t.memberId === value.memberId && t.name === value.name;
-                                  })
-                              )
-                            }
-                            getOptionLabel={(options) => options.name}
-                            defaultValue={tmp}
-                            disabled={checkDelegation(permissionAssignment.permissionID)}
-                            onChange={(event, newValue, reason, details) => {
-                              handleOnChange(newValue, details, permissionAssignment.permissionID);
-                            }}
-                            getOptionDisabled={(option) => option.memberId === -1}
-                            renderTags={(tagValue, getTagProps) =>
-                              tagValue.map((option, index) => (
-                                <Chip
-                                  label={option.name}
-                                  {...getTagProps({ index })}
-                                  disabled={checkDelegation(permissionAssignment.permissionID) || option.memberId < 0}
-                                />
-                              ))
-                            }
-                            {...(tmp = [])}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                variant="standard"
-                                color="primary"
-                                label=""
-                                placeholder="Hinzufügen"
-                              />
-                            )}
-                          />
-                        </Grid>
-                      ) : (
-                        (tmp = [])
-                      )}
-                    </>
+            {permissionAssignments.map((permissionAssignment) => (
+              <Grid item container spacing={0} sx={styles.contentContainer} key={permissionAssignment.name}>
+                <Grid item xs={6}>
+                  <Grid item xs={12}>
+                    <Typography>{permissionAssignment.name}</Typography>
                   </Grid>
                 </Grid>
-              ))}
-            </Grid>
+                <Grid container spacing={0}>
+                  <>
+                    {/* Iterates over all directors that are assigned to the permission */}
+                    {permissionAssignment.directors.map((director) => {
+                      tmp.push({
+                        name: director.shortName,
+                        memberId: -1,
+                      });
+                    })}
+                    {/* Iterates over all members that are assigned to the permission */}
+                    {permissionAssignment.members.map((member) => {
+                      tmp.push({
+                        name: member.firstname + " " + member.lastname,
+                        memberId: member.memberId,
+                      });
+                    })}
+                    {tmp.length >= 1 ? (
+                      <Grid item xs>
+                        <Autocomplete
+                          multiple
+                          disableClearable
+                          filterSelectedOptions
+                          id="tags-standard"
+                          color="primary"
+                          isOptionEqualToValue={(option, value) => {
+                            // Compare member ID of entities if not director else name
+                            if (value.memberId !== -1) {
+                              return option.memberId === value.memberId;
+                            } else {
+                              return option.name === value.name;
+                            }
+                          }}
+                          options={
+                            // Remove duplicated options
+                            autocompleteValues.filter(
+                              (value, index, self) =>
+                                index ===
+                                self.findIndex((t) => {
+                                  return t.memberId === value.memberId && t.name === value.name;
+                                })
+                            )
+                          }
+                          getOptionLabel={(options) => options.name}
+                          defaultValue={tmp}
+                          disabled={checkDelegation(permissionAssignment.permissionID)}
+                          onChange={(event, newValue, reason, details) => {
+                            handleOnChange(newValue, details, permissionAssignment.permissionID);
+                          }}
+                          getOptionDisabled={(option) => option.memberId === -1}
+                          renderTags={(tagValue, getTagProps) =>
+                            tagValue.map((option, index) => (
+                              <Chip
+                                label={option.name}
+                                {...getTagProps({ index })}
+                                disabled={checkDelegation(permissionAssignment.permissionID) || option.memberId < 0}
+                              />
+                            ))
+                          }
+                          {...(tmp = [])}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant="standard"
+                              color="primary"
+                              label=""
+                              placeholder="Hinzufügen"
+                            />
+                          )}
+                        />
+                      </Grid>
+                    ) : (
+                      (tmp = [])
+                    )}
+                  </>
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Paper>
