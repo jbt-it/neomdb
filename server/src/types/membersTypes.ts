@@ -321,6 +321,6 @@ export type MWApiResult = {
 };
 
 export type AssignPermissionToMemberRequest = {
-  memberID: number;
+  memberId: number;
   permissionID: number;
 };

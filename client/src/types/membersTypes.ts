@@ -140,6 +140,14 @@ export type MemberPermissionAssignmentDto = {
 };
 
 /**
+ * Type of the assign permission dto
+ */
+export type AssignPermissionToMemberRequest = {
+  memberId: number;
+  permissionID: number;
+};
+
+/**
  * Type of the director position dto
  */
 export type DirectorPositionDto = {

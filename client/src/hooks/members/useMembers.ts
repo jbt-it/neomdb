@@ -24,7 +24,7 @@ const useMembers = () => {
     isLoading: isMembersLoading,
     isError: isMembersError,
   } = useQuery({
-    queryKey: ["Members"],
+    queryKey: ["members"],
     queryFn: getMembers,
   });
 

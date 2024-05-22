@@ -3712,14 +3712,14 @@
 						"type": "number",
 						"format": "double"
 					},
-					"memberID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"permissionID",
-					"memberID"
+					"memberId"
 				],
 				"type": "object"
 			},

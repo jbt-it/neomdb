@@ -11,11 +11,11 @@ import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
 import { useParams } from "react-router-dom";
 import useMembers from "../../../hooks/members/useMembers";
+import useDepartments from "../../../hooks/members/useDepartments";
 
 const MemberProfile: React.FunctionComponent = () => {
   const params = useParams();
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [departments, setDepartments] = useState<membersTypes.DepartmentPartialDto[]>([]);
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
   const [edvSkills, setEdvSkills] = useState<membersTypes.ItSkill[]>([]);
   const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetailsDto>();
@@ -23,35 +23,7 @@ const MemberProfile: React.FunctionComponent = () => {
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   const { members } = useMembers();
-
-  /**
-   * Retrieves all departments
-   */
-  const getDepartments: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/members/departments`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setDepartments(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
+  const { departments } = useDepartments();
 
   /**
    * Retrieves all languages
@@ -257,7 +229,6 @@ const MemberProfile: React.FunctionComponent = () => {
       setIsOwner(auth.userID === parseInt(params.id!, 10)),
     [params.id, auth.userID]
   );
-  useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getLanguages(), [getLanguages]);
   useEffect(() => getEdvSkills(), [getEdvSkills]);
   useEffect(getMemberDetails, [params.id, dispatchAuth]);
