@@ -223,7 +223,7 @@ export type StatusOverview = {
  * Type of the response after creating a member
  */
 export type CreateMemberResponse = {
-  memberID: number;
+  memberId: number;
   statusOverview: StatusOverview;
 };
 

@@ -22,9 +22,6 @@ import {
   styled,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import api from "../../utils/api";
-import { showSuccessMessage, showErrorMessage } from "../../utils/toastUtils";
-import { replaceSpecialCharacters } from "../../utils/stringUtils";
 import { MemberPartialDto } from "../../types/membersTypes";
 import useMembers from "../../hooks/members/useMembers";
 
@@ -171,7 +168,7 @@ const MemberManagement: React.FunctionComponent = () => {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
-  const { members } = useMembers();
+  const { members, updateMemberStatus, addMember } = useMembers();
   /**
    * Handles the change event on the search filter input
    * @param event
@@ -331,69 +328,7 @@ const MemberManagement: React.FunctionComponent = () => {
    * @param status The status
    */
   const changeMemberStatus = (id: number, status: string) => {
-    const payload = {
-      memberStatus: status,
-    };
-    api
-      .patch(`/members/${id}/status`, payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 204) {
-          showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
-        } else {
-          showErrorMessage("Mitgliedsstatus Änderung fehlgeschlagen");
-        }
-      })
-      .catch((error) => {
-        showErrorMessage(error.message);
-      });
-  };
-
-  /**
-   * Creates a new member
-   */
-  const addMember = () => {
-    if (firstName.trim().length <= 0) {
-      showErrorMessage("Der Vorname darf nicht leer sein");
-      return;
-    }
-    if (lastName.trim().length <= 0) {
-      showErrorMessage("Der Nachname darf nicht leer sein");
-      return;
-    }
-    if (email.trim().length <= 0) {
-      showErrorMessage("Die E-Mail darf nicht leer sein");
-      return;
-    }
-
-    const firstNameSanitized = replaceSpecialCharacters(firstName.trim().replace(" ", "-")).toLowerCase();
-    const lastNameSanitized = replaceSpecialCharacters(lastName.trim().replace(" ", "-")).toLowerCase();
-    const payload = {
-      name: firstNameSanitized + "." + lastNameSanitized,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      birthday: null,
-      mobile: null,
-      gender: null,
-      generationId: null,
-      email: email,
-    };
-
-    api
-      .post("members/", payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          showSuccessMessage("Mitglied erfolgreich hinzugefügt");
-        } else {
-          showErrorMessage("Mitglied konnte nicht hinzugefügt werden");
-        }
-      })
-      .catch((error) => {
-        showErrorMessage(error.message);
-      });
+    updateMemberStatus(id, status);
   };
 
   /**
@@ -418,6 +353,13 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const handleEmail = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
+  };
+
+  const handleAddMember = () => {
+    addMember(firstName, lastName, email);
+    setFirstName("");
+    setLastName("");
+    setEmail("");
   };
 
   /**
@@ -462,7 +404,7 @@ const MemberManagement: React.FunctionComponent = () => {
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12}>
-          <Button variant="outlined" color="primary" sx={styles.inputButton} onClick={addMember}>
+          <Button variant="outlined" color="primary" sx={styles.inputButton} onClick={handleAddMember}>
             Benutzer anlegen
           </Button>
         </Grid>

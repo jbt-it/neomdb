@@ -320,6 +320,7 @@ export class MembersController extends Controller {
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberId, permissionID } = requestBody;
+
     const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
     // Checks if the member is allowed to delegate the permission (if they are not an admin)
