@@ -51,9 +51,16 @@ const InternalProject: React.FunctionComponent = () => {
   const { internalProjectDetails, isInternalProjectDetailsFetched, updateInternalProjectDetails } =
     useInternalProjectDetails(Number(id));
 
-  const selectableQMs = members.filter(
-    (member) => member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene"
-  );
+  const selectableQMs = members
+    .filter((member) => member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene")
+    .map((member) => {
+      return {
+        memberId: member.memberId,
+        firstname: member.firstname,
+        lastname: member.lastname,
+        memberStatus: member.memberStatus,
+      };
+    });
   const selectableTrainees = trainees.filter((trainee) => trainee.memberStatus?.name !== "Ausgetretene");
 
   /**
