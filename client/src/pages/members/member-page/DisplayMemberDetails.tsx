@@ -448,14 +448,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("generation:", memberDetails.generation);
 
     // Data which will be submitted
     const data: membersTypes.MemberDetailsDto = {
       memberId: memberDetails.memberId,
       lastname: lastname,
       firstname: name,
-      gender: memberDetails.gender,
+      gender: Boolean(memberDetails.gender),
       birthday: birthday,
       mobile: smartphone,
       jbtEmail: jbtMail,

@@ -1,4 +1,12 @@
-import { ItSkillsValue, LanguageValue, NewMember } from "typeOrm/types/memberTypes";
+import {
+  ItSkillDto,
+  ItSkillsValue,
+  LanguageDto,
+  LanguageValue,
+  MentorDto,
+  NewMember,
+  UpdatedMember,
+} from "typeOrm/types/memberTypes";
 import { AppDataSource } from "../../datasource";
 import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
@@ -124,7 +132,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param member The updated member
    * @throws QueryError if the query fails
    */
-  updateMemberPersonalDataByID(memberId: number, memberData: Partial<Member>) {
+  updateMemberPersonalDataByID(memberId: number, memberData: UpdatedMember) {
     return this.update(memberId, {
       mobile: memberData.mobile,
       employer: memberData.employer,
@@ -160,11 +168,11 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param mentor The mentor of the updated member
    * @throws QueryError if the query fails
    */
-  updateMemberCriticalDataByID(memberId: number, memberData: Partial<Member>, mentor: Member | null) {
+  updateMemberCriticalDataByID(memberId: number, memberData: UpdatedMember, mentor: MentorDto | null) {
     return this.update(memberId, {
-      memberStatusId: memberData.memberStatusId,
-      generationId: memberData.generationId,
-      internalProjectId: memberData.internalProjectId,
+      memberStatusId: memberData.memberStatus.memberStatusId,
+      generationId: memberData.generation,
+      internalProjectId: memberData.internalProject ? memberData.internalProject.internalProjectId : null,
       mentorId: mentor ? mentor.memberId : null,
       traineeSince: memberData.traineeSince,
       memberSince: memberData.memberSince,
@@ -173,7 +181,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
       activeSince: memberData.activeSince,
       passiveSince: memberData.passiveSince,
       exitedSince: memberData.exitedSince,
-      departmentId: memberData.departmentId,
+      departmentId: memberData.department.departmentId,
       commitment: memberData.commitment,
       canPL: memberData.canPL,
       canQM: memberData.canQM,
@@ -251,7 +259,7 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
    * @param updatedLanguages The updated languages
    * @returns A promise that resolves when the update is done
    */
-  updateMemberLanguagesByID(memberID: number, updatedLanguages: { value: string; level: number }[]) {
+  updateMemberLanguagesByID(memberID: number, updatedLanguages: LanguageDto[]) {
     // 1. Delete the existing entries of languages of the specific member
     this.delete({ memberId: memberID });
 
@@ -279,6 +287,28 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).e
    */
   getItSkillValues(): Promise<ItSkillsValue[]> {
     return this.createQueryBuilder("itSkill").select("itSkill.value").distinct(true).getMany();
+  },
+  /**
+   * Updates the languages of a member
+   * @param memberId The id of the member
+   * @param updatedItSkills The updated languages
+   * @returns A promise that resolves when the update is done
+   */
+  updateMemberItSkillsByID(memberId: number, updatedItSkills: ItSkillDto[]) {
+    // 1. Delete the existing entries of languages of the specific member
+    this.delete({ memberId: memberId });
+
+    // 2. Create new entries for the updated languages
+    const newItSkills = updatedItSkills.map((language) => {
+      const newItSkill = new ItSkill();
+      newItSkill.memberId = memberId;
+      newItSkill.value = language.value;
+      newItSkill.level = language.level;
+      return newItSkill;
+    });
+
+    // 3. Save all new language entries
+    return this.save(newItSkills);
   },
 });
 
