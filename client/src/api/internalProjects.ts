@@ -24,7 +24,7 @@ export const getCurrentIPs = async (): Promise<AxiosResponse<InternalProjectDto[
  * @returns An array of all internal projects of type InternalProjectDto
  */
 export const getAllIPs = async (): Promise<AxiosResponse<InternalProjectDto[]>> => {
-  return await api.get<InternalProjectDto[]>(`/trainees/ips`);
+  return await api.get<InternalProjectDto[]>(`/trainees/ips/all`);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------
