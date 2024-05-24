@@ -1,6 +1,4 @@
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { ItSkill } from "../entities/ItSkill";
-import { Language } from "../../typeOrm/entities/Language";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 
 /**
@@ -21,6 +19,11 @@ export type MentorDto = {
   lastname: string;
 };
 
+export type MemberStatusDto = {
+  memberStatusId: number;
+  name: string;
+};
+
 /**
  * Type of the member field
  */
@@ -28,7 +31,7 @@ export type MembersFieldDto = {
   memberId: number;
   firstname: string;
   lastname: string;
-  memberStatus?: MemberStatus;
+  memberStatus?: MemberStatusDto;
 };
 
 /**
@@ -150,11 +153,6 @@ export type ItSkillDto = {
   memberId: number;
   value: string;
   level: number;
-};
-
-export type MemberStatusDto = {
-  memberStatusId: number;
-  name: string;
 };
 
 /**
