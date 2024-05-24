@@ -5,6 +5,7 @@ import MemberTestUtils from "../../utils/memberTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
 import { AppDataSource } from "../../../src/datasource";
+import { level } from "winston";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
@@ -219,7 +220,6 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      console.log(response.body);
       expect(response.body).toHaveLength(85);
     });
   });
@@ -492,78 +492,86 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8111;
+      const memberId = 8111;
       const memberInfo = {
-        mitgliedID,
-        vorname: "Brandon-Lee",
-        nachname: "Frye",
-        jbt_email: "b.frye@studentische-beratung.de",
-        geschlecht: 1,
-        geburtsdatum: "1990-06-05",
-        handy: "0162/9846320",
-        mitgliedstatus: "passives Mitglied",
+        memberId,
+        firstname: "Brandon-Lee",
+        lastname: "Frye",
+        jbtEmail: "b.frye@studentische-beratung.de",
+        gender: Boolean(1),
+        birthday: new Date("1990-06-05"),
+        mobile: "0162/9846320",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
         generation: null,
-        internesprojekt: null,
-        trainee_seit: "2011-04-30",
-        mitglied_seit: "2012-11-30",
-        alumnus_seit: null,
-        senior_seit: null,
-        aktiv_seit: "2012-11-30",
-        passiv_seit: null,
-        ausgetreten_seit: null,
-        ressort: "Mitglieder",
-        arbeitgeber: "Versicherung Deutschland",
-        strasse1: "Woodsman Ave 61",
-        plz1: "70364",
-        ort1: "Stuttgart",
-        tel1: null,
+        internalProject: null,
+        traineeSince: new Date("2011-04-30"),
+        memberSince: new Date("2012-11-30"),
+        alumnusSince: null,
+        seniorSince: null,
+        activeSince: new Date("2012-11-30"),
+        passiveSince: null,
+        exitedSince: null,
+        department: {
+          departmentId: 5,
+          name: "Mitglieder",
+          shortName: "MIT",
+        },
+        employer: "Versicherung Deutschland",
+        street1: "Woodsman Ave 61",
+        postalCode1: "70364",
+        city1: "Stuttgart",
+        phone1: null,
         email1: "brandon-lee@gmx.de",
-        strasse2: "Budapester Straße 96",
-        plz2: "56370",
-        ort2: "Rheinland-Pfalz",
-        tel2: "07042/984365",
+        street2: "Budapester Straße 96",
+        postalCode2: "56370",
+        city2: "Rheinland-Pfalz",
+        phone2: "07042/984365",
         email2: "brandon-lee@gmx.de",
-        hochschule: "Universität Hohenheim",
-        studiengang: "Master of Financial Management",
-        studienbeginn: "2014-09-30T22:00:00.000Z",
-        studienende: null,
-        vertiefungen: "Controlling und Unternehmensrechnung",
-        ausbildung: null,
-        engagement: null,
-        canPL: "2013-12-22",
-        canQM: "2013-12-22",
-        lastchange: "1899-11-29",
-        fuehrerschein: false,
-        ersthelferausbildung: false,
+        university: "Universität Hohenheim",
+        courseOfStudy: "Master of Financial Management",
+        studyStart: new Date("2014-09-30T22:00:00.000Z"),
+        studyEnd: null,
+        specializations: "Controlling und Unternehmensrechnung",
+        apprenticeship: null,
+        commitment: null,
+        canPL: new Date("2013-12-22"),
+        canQM: new Date("2013-12-22"),
+        lastChange: new Date("1899-11-29"),
+        drivingLicense: 0,
+        firstAidTraining: false,
         mentor: null,
         mentees: [],
-        sprachen: [
+        languages: [
           {
-            wert: "Deutsch",
-            niveau: 5,
+            memberId: memberId,
+            value: "Deutsch",
+            level: 5,
           },
+          { memberId: memberId, value: "English", level: 3 },
           {
-            wert: "English",
-            niveau: 3,
-          },
-          {
-            wert: "Französisch",
-            niveau: 1,
+            memberId: memberId,
+            value: "Französisch",
+            level: 1,
           },
         ],
-        edvkenntnisse: [
+        itSkills: [
           {
-            wert: "MS-Office",
-            niveau: 3,
+            memberId: memberId,
+            value: "MS-Office",
+            level: 3,
           },
           {
-            wert: "PHP",
-            niveau: 1,
+            memberId: memberId,
+            value: "PHP",
+            level: 1,
           },
         ],
       };
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}`)
+        .patch(`/api/members/${memberId}`)
         .send(memberInfo)
         .set("Cookie", `token=${token}`);
 
@@ -577,78 +585,86 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8111;
+      const memberId = 8111;
       const memberInfo = {
-        mitgliedID,
-        vorname: "Brandon-Lee",
-        nachname: "Frye",
-        jbt_email: "b.frye@studentische-beratung.de",
-        geschlecht: 1,
-        geburtsdatum: "1990-06-05",
-        handy: "0162/9846320",
-        mitgliedstatus: "passives Mitglied",
+        memberId,
+        firstname: "Brandon-Lee",
+        lastname: "Frye",
+        jbtEmail: "b.frye@studentische-beratung.de",
+        gender: Boolean(1),
+        birthday: new Date("1990-06-05"),
+        mobile: "0162/9846320",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
         generation: null,
-        internesprojekt: null,
-        trainee_seit: "2011-04-30",
-        mitglied_seit: "2012-11-30",
-        alumnus_seit: null,
-        senior_seit: null,
-        aktiv_seit: "2012-11-30",
-        passiv_seit: null,
-        ausgetreten_seit: null,
-        ressort: "Mitglieder",
-        arbeitgeber: "Versicherung Deutschland",
-        strasse1: "Woodsman Ave 61",
-        plz1: "70364",
-        ort1: "Stuttgart",
-        tel1: null,
+        internalProject: null,
+        traineeSince: new Date("2011-04-30"),
+        memberSince: new Date("2012-11-30"),
+        alumnusSince: null,
+        seniorSince: null,
+        activeSince: new Date("2012-11-30"),
+        passiveSince: null,
+        exitedSince: null,
+        department: {
+          departmentId: 5,
+          name: "Mitglieder",
+          shortName: "MIT",
+        },
+        employer: "Versicherung Deutschland",
+        street1: "Woodsman Ave 61",
+        postalCode1: "70364",
+        city1: "Stuttgart",
+        phone1: null,
         email1: "brandon-lee@gmx.de",
-        strasse2: "Budapester Straße 96",
-        plz2: "56370",
-        ort2: "Rheinland-Pfalz",
-        tel2: "07042/984365",
+        street2: "Budapester Straße 96",
+        postalCode2: "56370",
+        city2: "Rheinland-Pfalz",
+        phone2: "07042/984365",
         email2: "brandon-lee@gmx.de",
-        hochschule: "Universität Hohenheim",
-        studiengang: "Master of Financial Management",
-        studienbeginn: "2014-09-30T22:00:00.000Z",
-        studienende: null,
-        vertiefungen: "Controlling und Unternehmensrechnung",
-        ausbildung: null,
-        engagement: null,
-        canPL: "2013-12-22",
-        canQM: "2013-12-22",
-        lastchange: "1899-11-29",
-        fuehrerschein: false,
-        ersthelferausbildung: false,
+        university: "Universität Hohenheim",
+        courseOfStudy: "Master of Financial Management",
+        studyStart: new Date("2014-09-30T22:00:00.000Z"),
+        studyEnd: null,
+        specializations: "Controlling und Unternehmensrechnung",
+        apprenticeship: null,
+        commitment: null,
+        canPL: new Date("2013-12-22"),
+        canQM: new Date("2013-12-22"),
+        lastChange: new Date("1899-11-29"),
+        drivingLicense: 0,
+        firstAidTraining: false,
         mentor: null,
         mentees: [],
-        sprachen: [
+        languages: [
           {
-            wert: "Deutsch",
-            niveau: 5,
+            memberId: memberId,
+            value: "Deutsch",
+            level: 5,
           },
+          { memberId: memberId, value: "English", level: 3 },
           {
-            wert: "English",
-            niveau: 3,
-          },
-          {
-            wert: "Französisch",
-            niveau: 1,
+            memberId: memberId,
+            value: "Französisch",
+            level: 1,
           },
         ],
-        edvkenntnisse: [
+        itSkills: [
           {
-            wert: "MS-Office",
-            niveau: 3,
+            memberId: memberId,
+            value: "MS-Office",
+            level: 3,
           },
           {
-            wert: "PHP",
-            niveau: 1,
+            memberId: memberId,
+            value: "PHP",
+            level: 1,
           },
         ],
       };
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}`)
+        .patch(`/api/members/${memberId}`)
         .send(memberInfo)
         .set("Cookie", `token=${token}`);
 
