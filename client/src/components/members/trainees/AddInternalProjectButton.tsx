@@ -2,22 +2,15 @@ import React, { useState } from "react";
 import { useMediaQuery, Button, IconButton } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
 import AddInternalProjectDialog from "./AddInternalProjectDialog";
-import { Trainee } from "../../../types/traineesTypes";
 import { MemberPartialDto } from "../../../types/membersTypes";
 
 interface AddInternalProjectButtonProps {
   generationName: string | null;
   addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
-  trainees: Trainee[];
   members: MemberPartialDto[];
 }
 
-const AddInternalProjectButton = ({
-  generationName,
-  addInternalProject,
-  trainees,
-  members,
-}: AddInternalProjectButtonProps) => {
+const AddInternalProjectButton = ({ generationName, addInternalProject, members }: AddInternalProjectButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -45,7 +38,6 @@ const AddInternalProjectButton = ({
         handleDialogClose={handleClose}
         addInternalProject={addInternalProject}
         generationName={generationName}
-        trainees={trainees}
         members={members}
       />
     </>

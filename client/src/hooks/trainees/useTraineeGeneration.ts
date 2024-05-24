@@ -6,7 +6,6 @@ import {
   getTraineeProgress,
   setElectionDeadline as setElectionDeadlineApi,
 } from "../../api/generations";
-import { TraineeProgressDto } from "../../types/traineesTypes";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -28,7 +27,7 @@ const useTraineeGeneration = (generationID: number) => {
     },
   });
 
-  const traineeProgress = (traineeProgressData?.data as TraineeProgressDto[]) || [];
+  const traineeProgress = traineeProgressData?.data || [];
 
   // ----------------------------------------------------------------------------------
   // getTraineeChoicesOfGeneration query
@@ -60,7 +59,7 @@ const useTraineeGeneration = (generationID: number) => {
 
   // ----------------------------------------------------------------------------------
   // getInternalProjectsOfGeneration query
-  const { data: internalProjectsOfGenerationData } = useQuery({
+  const { data: internalProjectsOfGenerationData, isFetched: isInternalProjectsOfGenerationFetched } = useQuery({
     queryKey: ["internalProjectsOfGeneration", generationID],
     queryFn: () => {
       if (typeof generationID === "number") {
@@ -113,6 +112,7 @@ const useTraineeGeneration = (generationID: number) => {
     traineeChoices,
     traineeMotivation,
     internalProjectsOfGeneration,
+    isInternalProjectsOfGenerationFetched,
     setElectionDeadline,
   };
 };

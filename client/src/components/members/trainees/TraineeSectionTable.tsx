@@ -18,8 +18,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { AddCircleOutline, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import { Trainee } from "../../../types/traineesTypes";
+import { TraineeProgressDto } from "../../../types/traineesTypes";
 import { Link as RouterLink } from "react-router-dom";
+import useTrainees from "../../../hooks/trainees/useTrainees";
 
 // all columns of the table
 const columns = [
@@ -39,28 +40,27 @@ const columns = [
   "MS Excel",
 ];
 
-// all checklist keys
-const checklist = [
-  "AngebotBeiEV",
-  "APgehalten",
-  "DLbeiEV",
-  "Projektmanagement",
-  "RhetorikPräsenationstechnik",
-  "AkquiseVerhandlungstechnik",
-  "FinanzenRecht",
-  "Netzwerke",
-  "Qualitätsmanagement",
-  "MSPowerpoint",
-  "StrategieOrganisation",
-  "Datenschutzschulung",
-  "Sicherheitsschulung",
-  "ExcelGrundlagen",
-];
+const columnKeyMapping: { [key: string]: string } = {
+  "Angebot bei EV": "offerAtEv",
+  "AP gehalten und abgegeben": "apHeld",
+  "DL abgegeben": "dlAtEv",
+  Projektmanagement: "projectManagement",
+  "Rhetorik & Präsentationstechnik": "rhetoricPresentationTechnique",
+  "Akquise & Verhandlungstechnik": "acquisitionNegotiationTechnique",
+  "F&R": "departmentFinanceAndLaw",
+  NET: "departmentNetwork",
+  QM: "departmentQualityManagement",
+  "MS PPT": "msPowerpoint",
+  "Strategie und Organisation": "strategyAndOrganisation",
+  Datenschutzschulung: "dataPrivacyTraining",
+  Sicherheitsschulung: "safetyTraining",
+  "MS Excel": "excelBasics",
+};
 
 interface DialogProps {
   open: boolean;
   onClose: () => void;
-  trainee: Trainee | undefined;
+  trainee: TraineeProgressDto | undefined;
 }
 
 /**
@@ -69,6 +69,14 @@ interface DialogProps {
  * @returns the dialog to confirm the admission of a trainee
  */
 const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, trainee }) => {
+  const { admitTrainee } = useTrainees();
+  const handleAdmission = () => {
+    if (trainee) {
+      admitTrainee(trainee.memberID);
+    }
+    onClose();
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Aufnahme</DialogTitle>
@@ -76,14 +84,18 @@ const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, 
         {trainee?.firstname} {trainee?.lastname} aufnehmen?
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Abbrechen</Button>
-        <Button onClick={onClose}>Aufnehmen</Button>
+        <Button onClick={onClose} variant="contained">
+          Abbrechen
+        </Button>
+        <Button onClick={handleAdmission} variant="contained">
+          Aufnehmen
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 interface Props {
-  trainees: Trainee[];
+  trainees: TraineeProgressDto[];
 }
 
 /**
@@ -104,13 +116,15 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
     },
   };
   const [openAdmissionDialog, setOpenAdmissionDialog] = React.useState(false);
-  const [selectedTrainee, setSelectedTrainee] = React.useState<Trainee | undefined>();
+  const [selectedTrainee, setSelectedTrainee] = React.useState<TraineeProgressDto | undefined>();
   const { trainees } = props;
 
-  const handleAdmission = (trainee: Trainee) => {
+  const handleAdmission = (trainee: TraineeProgressDto) => {
     setOpenAdmissionDialog(true);
     setSelectedTrainee(trainee);
   };
+
+  console.log(trainees);
 
   return (
     <>
@@ -144,12 +158,12 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {trainees.map((trainee: Trainee, index) => (
-            <TableRow sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }} key={index}>
+          {trainees.map((trainee, index) => (
+            <TableRow key={trainee.memberID} sx={{ backgroundColor: index % 2 === 0 ? "#f7f7f7" : "#e4e4e4" }}>
               <TableCell sx={{ width: 150, border: 1, borderColor: "#fff" }}>
                 <Link
                   component={RouterLink}
-                  to={`/gesamtuebersicht/${trainee.memberId}`}
+                  to={`/gesamtuebersicht/${trainee.memberID}`}
                   underline="none"
                   color="inherit"
                   sx={{ fontWeight: "bold" }}
@@ -157,37 +171,42 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
                   {trainee.firstname} {trainee.lastname}
                 </Link>
               </TableCell>
-              {Object.entries(trainee).map(([key, value], index) => {
-                if (checklist.includes(key)) {
-                  return (
-                    <TableCell
-                      key={index}
-                      align="center"
-                      sx={{
-                        width: 10,
-                        border: 1,
-                        borderColor: "#fff",
-                        padding: 0,
-                      }}
-                    >
-                      {value ? <CheckBox color="primary" /> : <CheckBoxOutlineBlank color="primary" />}
-                    </TableCell>
-                  );
-                }
+              {columns.map((column) => {
+                const key = columnKeyMapping[column];
+                return (
+                  <TableCell
+                    key={`${trainee.memberID}-${key}`}
+                    align="center"
+                    sx={{
+                      width: 10,
+                      border: 1,
+                      borderColor: "#fff",
+                      padding: 0,
+                    }}
+                  >
+                    {trainee[key as keyof TraineeProgressDto] ? (
+                      <CheckBox color="primary" />
+                    ) : (
+                      <CheckBoxOutlineBlank color="primary" />
+                    )}
+                  </TableCell>
+                );
               })}
               <TableCell sx={{ maxWidth: 100, width: 80, border: 1, borderColor: "#fff" }} align="right">
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  spacing={1}
-                  component={Button}
-                  onClick={() => handleAdmission(trainee)}
-                >
-                  <Typography fontWeight={"bold"} fontSize={12} color={"black"}>
-                    Aufnehmen
-                  </Typography>
-                  <AddCircleOutline color="primary" fontSize="small" />
-                </Stack>
+                {trainee.memberStatus?.name === "Trainee" ? (
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    spacing={1}
+                    component={Button}
+                    onClick={() => handleAdmission(trainee)}
+                  >
+                    <Typography fontWeight={"bold"} fontSize={12} color={"black"}>
+                      Aufnehmen
+                    </Typography>
+                    <AddCircleOutline color="primary" fontSize="small" />
+                  </Stack>
+                ) : null}
               </TableCell>
             </TableRow>
           ))}

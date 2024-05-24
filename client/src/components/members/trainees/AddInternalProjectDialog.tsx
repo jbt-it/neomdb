@@ -14,13 +14,12 @@ import {
 import { AddCircleOutline, Clear } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
 import { MemberPartialDto } from "../../../types/membersTypes";
-import { Trainee } from "../../../types/traineesTypes";
+import useTrainees from "../../../hooks/trainees/useTrainees";
 
 interface AddInternalProjectDialogProps {
   open: boolean;
   handleDialogClose: () => void;
   addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
-  trainees: Trainee[];
   members: MemberPartialDto[];
   generationName: string | null;
 }
@@ -35,7 +34,6 @@ interface MemberOption {
  * @param open - boolean to determine if the dialog is open
  * @param handleDialogClose - function to close the dialog
  * @param addInternalProject - function to add the internal project to the database
- * @param trainees - array of all current trainees
  * @param members - array of all members who can be selected as QMs
  * @param generationName - name of the generation
  * @returns a dialog to add an internal project to the database
@@ -44,7 +42,6 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
   open,
   handleDialogClose,
   addInternalProject,
-  trainees,
   members,
   generationName,
 }: AddInternalProjectDialogProps) => {
@@ -53,6 +50,7 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
   const [projectName, setProjectName] = useState<string>("");
   const [projectShort, setProjectShort] = useState<string>("");
   const [formErrors, setFormErrors] = useState<boolean>(false);
+  const { trainees } = useTrainees();
 
   // reset all values when dialog is closed
   const handleClose = () => {

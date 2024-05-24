@@ -3,7 +3,7 @@
  */
 
 import { NumericFeedback } from "./eventTypes";
-import { MembersFieldDto } from "./membersTypes";
+import { MemberStatus, MembersFieldDto } from "./membersTypes";
 
 /**
  * Type of a trainee
@@ -106,6 +106,7 @@ export type TraineeMotivationDto = {
  */
 export type TraineeProgressDto = {
   memberID: number;
+  memberStatus: MemberStatus;
   firstname: string;
   lastname: string;
   generationID: number;

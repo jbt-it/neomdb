@@ -21,7 +21,7 @@ const useTrainees = () => {
   // ############
 
   // getTrainees query
-  const { data: traineesData } = useQuery({
+  const { data: traineesData, isFetched: isTraineesFetched } = useQuery({
     queryKey: ["trainees"],
     queryFn: getTrainees,
   });
@@ -30,7 +30,7 @@ const useTrainees = () => {
 
   // ----------------------------------------------------------------------------------
   // getInternalProjects query
-  const { data: internalProjectsData } = useQuery({
+  const { data: internalProjectsData, isFetched: isinternalProjectsFetched } = useQuery({
     queryKey: ["internalProjects"],
     queryFn: getAllIPs,
   });
@@ -48,7 +48,7 @@ const useTrainees = () => {
     queryFn: getGenerations,
   });
 
-  const generations = (generationsData?.data as Generation[]) || [];
+  const generations = generationsData?.data ? [...generationsData.data].reverse() : [];
 
   // ----------------------------------------------------------------------------------
   // getCurrentIPs query
@@ -127,7 +127,9 @@ const useTrainees = () => {
   // ----------------------------------------------------------------------------------
   return {
     trainees,
+    isTraineesFetched,
     internalProjects,
+    isinternalProjectsFetched,
     generations,
     isGenerationsLoading,
     isGenerationsFetched,
