@@ -12,10 +12,14 @@ import {
   MenteeDto,
   MentorDto,
   MembersFieldDto,
+  ItSkillDto,
+  LanguageDto,
 } from "../../typeOrm/types/memberTypes";
 import { PermissionDTO, User } from "../../typeOrm/types/authTypes";
 import { JWTPayload } from "../../typeOrm/types/authTypes";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
+import { ItSkill } from "../../typeOrm/entities/ItSkill";
+import { Language } from "../../typeOrm/entities/Language";
 
 /**
  * Provides methods to map a member to a dto (data transfer object)
@@ -123,6 +127,23 @@ export class MemberMapper {
       directorId: member.director.directorId,
     };
   }
+
+  static itSkillToItSkillDto(itSkill: ItSkill): ItSkillDto {
+    return {
+      memberId: itSkill.memberId,
+      value: itSkill.value,
+      level: itSkill.level,
+    };
+  }
+
+  static languageToLanguageDto(language: Language): LanguageDto {
+    return {
+      memberId: language.memberId,
+      value: language.value,
+      level: language.level,
+    };
+  }
+
   static membertoMemberDetailsDto(member: Member, withFinancialData: boolean): MemberDetailsDto {
     // If the user does not have the permission to see the financial data, the financial data will not be included in the response
     if (!withFinancialData) {
@@ -134,8 +155,11 @@ export class MemberMapper {
         birthday: member.birthday,
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
-        memberStatus: member.memberStatus,
-        generation: member.generation?.generationId,
+        memberStatus: {
+          memberStatusId: member.memberStatus.memberStatusId,
+          name: member.memberStatus.name,
+        },
+        generation: member.generationId,
         internalProject: member.internalProjects ? member.internalProjects[0] : null,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -168,8 +192,8 @@ export class MemberMapper {
         lastChange: member.lastChange,
         drivingLicense: member.drivingLicense,
         firstAidTraining: member.firstAidTraining,
-        languages: member.languages,
-        itSkills: member.itSkills,
+        languages: member.languages.map((language) => this.languageToLanguageDto(language)),
+        itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
         mentor: this.memberToMentorDto(member),
       };
@@ -182,8 +206,11 @@ export class MemberMapper {
         birthday: member.birthday,
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
-        memberStatus: member.memberStatus,
-        generation: member.generation?.generationId,
+        memberStatus: {
+          memberStatusId: member.memberStatus.memberStatusId,
+          name: member.memberStatus.name,
+        },
+        generation: member.generationId,
         internalProject: member.internalProjects ? member.internalProjects[0] : null,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -219,8 +246,8 @@ export class MemberMapper {
         accountHolder: member.accountHolder,
         iban: member.iban,
         bic: member.bic,
-        languages: member.languages,
-        itSkills: member.itSkills,
+        languages: member.languages.map((language) => this.languageToLanguageDto(language)),
+        itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
         mentor: this.memberToMentorDto(member),
       };

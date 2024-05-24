@@ -135,6 +135,29 @@ export type DirectorDto = {
 };
 
 /**
+ * Type of the language dto
+ */
+export type LanguageDto = {
+  memberId: number;
+  value: string;
+  level: number;
+};
+
+/**
+ * Type of the it skill dto
+ */
+export type ItSkillDto = {
+  memberId: number;
+  value: string;
+  level: number;
+};
+
+export type MemberStatusDto = {
+  memberStatusId: number;
+  name: string;
+};
+
+/**
  * Type of the member details dto used for the member details page
  */
 export type MemberDetailsDto = {
@@ -145,7 +168,7 @@ export type MemberDetailsDto = {
   birthday: Date | null;
   mobile: string;
   jbtEmail: string;
-  memberStatus: MemberStatus;
+  memberStatus: MemberStatusDto;
   generation: number | null;
   internalProject: InternalProject | null;
   traineeSince: Date | null;
@@ -184,8 +207,8 @@ export type MemberDetailsDto = {
   iban?: string;
   bic?: string;
   // Additional attributes
-  languages?: Language[];
-  itSkills?: ItSkill[];
+  languages?: LanguageDto[];
+  itSkills?: ItSkillDto[];
   mentees?: MenteeDto[];
   mentor?: MentorDto | null;
 };
