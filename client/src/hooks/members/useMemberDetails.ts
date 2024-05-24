@@ -60,10 +60,12 @@ const useMemberDetails = (memberID: number) => {
     mutationFn: updateMemberDetailsApi,
     onError: (err: AxiosError) => {
       if (err.response?.status === 401) {
+        showErrorMessage("Aktualisierung ist fehlgeschlagen!");
         dispatchAuth({ type: authReducerActionType.deauthenticate });
       }
     },
-    onSettled: () => {
+    onSuccess: () => {
+      showSuccessMessage("Profil wurden erfolgreich aktualisiert!");
       queryClient.invalidateQueries({ queryKey: ["memberDetails"] });
     },
   });
