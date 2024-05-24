@@ -4086,7 +4086,7 @@
 			"MembersFieldDto": {
 				"properties": {
 					"memberStatus": {
-						"$ref": "#/components/schemas/MemberStatus"
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
 					"lastname": {
 						"type": "string"
