@@ -4399,11 +4399,15 @@
 					},
 					"internalProjectID": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"generationID": {
 						"type": "number",
 						"format": "double"
+					},
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
 					"lastname": {
 						"type": "string"
@@ -4438,6 +4442,7 @@
 					"projectName",
 					"internalProjectID",
 					"generationID",
+					"memberStatus",
 					"lastname",
 					"firstname",
 					"memberID"

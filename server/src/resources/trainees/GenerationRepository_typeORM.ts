@@ -8,7 +8,10 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
    * @returns The generation or null if no generation was found
    */
   getGenerationByID(generationId: number): Promise<Generation | null> {
-    return this.findOne({ where: { generationId: generationId }, relations: ["members", "mentors"] });
+    return this.findOne({
+      where: { generationId: generationId },
+      relations: ["members", "mentors", "members.memberStatus"],
+    });
   },
 
   /**

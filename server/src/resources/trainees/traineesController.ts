@@ -246,9 +246,9 @@ export class TraineesController extends Controller {
   @Get("generations/{id}/trainee-progress")
   @Security("jwt", ["14"])
   public async getTraineeProgress(@Path() id: number): Promise<TraineeProgressDto[]> {
-    const ips = await this.traineesService.getTraineeProgress(id);
+    const traineeProgress = await this.traineesService.getTraineeProgress(id);
 
-    return ips;
+    return traineeProgress;
   }
 
   /**

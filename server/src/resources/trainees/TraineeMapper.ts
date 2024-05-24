@@ -51,23 +51,27 @@ export class TraineeMapper {
   static traineeToTraineeProgressDto(
     member: Member,
     generationId: number,
-    ip: InternalProject,
-    feedback: mandatoryWorkshopFeedback[]
+    ip?: InternalProject,
+    feedback?: mandatoryWorkshopFeedback[]
   ): TraineeProgressDto {
     return {
       memberID: member.memberId,
       firstname: member.firstName,
       lastname: member.lastName,
+      memberStatus: {
+        memberStatusId: member.memberStatusId,
+        name: member.memberStatus.name,
+      },
       generationID: generationId,
-      internalProjectID: ip.internalProjectId,
-      projectName: ip.projectName,
-      abbreviation: ip.abbreviation,
-      offerAtEv: ip.offerAtEv,
-      zpAtEv: ip.zpAtEv,
-      zpHeld: ip.zpHeld,
-      apAtEv: ip.apAtEv,
-      apHeld: ip.apHeld,
-      dlAtEv: ip.dlAtEv,
+      internalProjectID: ip?.internalProjectId ?? null,
+      projectName: ip?.projectName ?? "",
+      abbreviation: ip?.abbreviation ?? "",
+      offerAtEv: ip?.offerAtEv ?? false,
+      zpAtEv: ip?.zpAtEv ?? false,
+      zpHeld: ip?.zpHeld ?? null,
+      apAtEv: ip?.apAtEv ?? false,
+      apHeld: ip?.apHeld ?? null,
+      dlAtEv: ip?.dlAtEv ?? false,
       projectManagement: feedback.find((f) => f.workshopId === 8300)?.feedbackGiven ?? false,
       rhetoricPresentationTechnique: feedback.find((f) => f.workshopId === 8301)?.feedbackGiven ?? false,
       acquisitionNegotiationTechnique: feedback.find((f) => f.workshopId === 8302)?.feedbackGiven ?? false,
