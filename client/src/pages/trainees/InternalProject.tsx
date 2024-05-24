@@ -21,10 +21,7 @@ import InfoSection, { InformationField } from "../../components/general/InfoSect
 import LoadingCircle from "../../components/general/LoadingCircle";
 import EditInternalProjectDialog from "../../components/members/trainees/EditInternalProjectDialog";
 import dayjs from "dayjs";
-import api from "../../utils/api";
-import { authReducerActionType } from "../../types/globalTypes";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import useTrainees from "../../hooks/trainees/useTrainees";
 import useInternalProjectDetails from "../../hooks/trainees/useInternalProjectDetails";
 import useMembers from "../../hooks/members/useMembers";
@@ -44,7 +41,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
  */
 const InternalProject: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
   const hasInternalProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [15]);
 
   const [internalProjectInfoDialogOpen, setInternalProjectInfoDialogOpen] = useState<boolean>(false);
@@ -90,34 +87,9 @@ const InternalProject: React.FunctionComponent = () => {
   };
 
   const handleUpdateInternalProjectDetails = (ipDetails: InternalProjectDto) => {
-    console.log(ipDetails);
-    return;
     updateInternalProjectDetails(ipDetails).then((response: AxiosResponse) => {
       response.status === 204 ? handleInternalProjectInfoDialogClose() : null;
     });
-  };
-
-  /**
-   * Deletes the internal project
-   * @param id - The id of the internal project to be deleted
-   */
-  const deleteInternalProject = (id: number) => {
-    api
-      .delete(`/trainees/ip/${id}`)
-      .then((res) => {
-        if (res.status === 204) {
-          showSuccessMessage("Internes Projekt erfolgreich gelöscht!");
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Löschen ist fehlgeschlagen!");
-        } else {
-          showErrorMessage("Löschen ist fehlgeschlagen!");
-        }
-      });
   };
 
   // Fields for the internal project details
@@ -235,7 +207,7 @@ const InternalProject: React.FunctionComponent = () => {
                   <Button
                     variant="contained"
                     onClick={() => {
-                      deleteInternalProject(Number(id));
+                      console.log("delete ", Number(id));
                     }}
                     color="error"
                   >
