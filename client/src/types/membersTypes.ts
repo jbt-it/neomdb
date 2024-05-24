@@ -9,7 +9,7 @@ import { InternalProjectDto } from "./traineesTypes";
 export type LanguageOfMember = {
   memberId: number;
   value: string;
-  level: string;
+  level: number;
 };
 
 /**
@@ -18,7 +18,7 @@ export type LanguageOfMember = {
 export type ItSkillOfMember = {
   memberId: number;
   value: string;
-  level: string;
+  level: number;
 };
 
 /**

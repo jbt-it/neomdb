@@ -1,4 +1,12 @@
-import { ItSkillsValue, LanguageValue, NewMember } from "typeOrm/types/memberTypes";
+import {
+  ItSkillDto,
+  ItSkillsValue,
+  LanguageDto,
+  LanguageValue,
+  MentorDto,
+  NewMember,
+  UpdatedMember,
+} from "typeOrm/types/memberTypes";
 import { AppDataSource } from "../../datasource";
 import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
@@ -119,6 +127,68 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
+   * Updates the personal data of a member
+   * @param memberId The id of the member to update
+   * @param member The updated member
+   * @throws QueryError if the query fails
+   */
+  updateMemberPersonalDataByID(memberId: number, memberData: UpdatedMember) {
+    return this.update(memberId, {
+      mobile: memberData.mobile,
+      employer: memberData.employer,
+      street1: memberData.street1,
+      postalCode1: memberData.postalCode1,
+      city1: memberData.city1,
+      phone1: memberData.phone1,
+      email1: memberData.email1,
+      street2: memberData.street2,
+      postalCode2: memberData.postalCode2,
+      city2: memberData.city2,
+      phone2: memberData.phone2,
+      email2: memberData.email2,
+      university: memberData.university,
+      courseOfStudy: memberData.courseOfStudy,
+      studyStart: memberData.studyStart,
+      studyEnd: memberData.studyEnd,
+      specializations: memberData.specializations,
+      apprenticeship: memberData.apprenticeship,
+      accountHolder: memberData.accountHolder,
+      iban: memberData.iban,
+      bic: memberData.bic,
+      lastChange: new Date(),
+      drivingLicense: memberData.drivingLicense,
+      firstAidTraining: memberData.firstAidTraining,
+    });
+  },
+
+  /**
+   * Updates the critical data of a member
+   * @param memberId The id of the member to update
+   * @param member The updated member
+   * @param mentor The mentor of the updated member
+   * @throws QueryError if the query fails
+   */
+  updateMemberCriticalDataByID(memberId: number, memberData: UpdatedMember, mentor: MentorDto | null) {
+    return this.update(memberId, {
+      memberStatusId: memberData.memberStatus.memberStatusId,
+      generationId: memberData.generation,
+      internalProjectId: memberData.internalProject ? memberData.internalProject.internalProjectId : null,
+      mentorId: mentor ? mentor.memberId : null,
+      traineeSince: memberData.traineeSince,
+      memberSince: memberData.memberSince,
+      alumnusSince: memberData.alumnusSince,
+      seniorSince: memberData.seniorSince,
+      activeSince: memberData.activeSince,
+      passiveSince: memberData.passiveSince,
+      exitedSince: memberData.exitedSince,
+      departmentId: memberData.department.departmentId,
+      commitment: memberData.commitment,
+      canPL: memberData.canPL,
+      canQM: memberData.canQM,
+    });
+  },
+
+  /**
    * Updates the passwordHash of a member
    * @param memberID The id of the member
    * @param newPasswordHash The new password hash
@@ -182,6 +252,29 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
   getLanguageValues(): Promise<LanguageValue[]> {
     return this.createQueryBuilder("language").select("language.value").distinct(true).getRawMany();
   },
+
+  /**
+   * Updates the languages of a member
+   * @param memberID The id of the member
+   * @param updatedLanguages The updated languages
+   * @returns A promise that resolves when the update is done
+   */
+  updateMemberLanguagesByID(memberID: number, updatedLanguages: LanguageDto[]) {
+    // 1. Delete the existing entries of languages of the specific member
+    this.delete({ memberId: memberID });
+
+    // 2. Create new entries for the updated languages
+    const newLanguages = updatedLanguages.map((language) => {
+      const newLanguage = new Language();
+      newLanguage.memberId = memberID;
+      newLanguage.value = language.value;
+      newLanguage.level = language.level;
+      return newLanguage;
+    });
+
+    // 3. Save all new language entries
+    return this.save(newLanguages);
+  },
 });
 
 /**
@@ -194,6 +287,28 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).e
    */
   getItSkillValues(): Promise<ItSkillsValue[]> {
     return this.createQueryBuilder("itSkill").select("itSkill.value").distinct(true).getMany();
+  },
+  /**
+   * Updates the languages of a member
+   * @param memberId The id of the member
+   * @param updatedItSkills The updated languages
+   * @returns A promise that resolves when the update is done
+   */
+  updateMemberItSkillsByID(memberId: number, updatedItSkills: ItSkillDto[]) {
+    // 1. Delete the existing entries of languages of the specific member
+    this.delete({ memberId: memberId });
+
+    // 2. Create new entries for the updated languages
+    const newItSkills = updatedItSkills.map((language) => {
+      const newItSkill = new ItSkill();
+      newItSkill.memberId = memberId;
+      newItSkill.value = language.value;
+      newItSkill.level = language.level;
+      return newItSkill;
+    });
+
+    // 3. Save all new language entries
+    return this.save(newItSkills);
   },
 });
 

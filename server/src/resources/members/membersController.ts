@@ -471,21 +471,21 @@ export class MembersController extends Controller {
   @Security("jwt")
   public async updateMember(
     @Path() id: number,
-    @Body() requestBody: MemberDetails,
+    @Body() requestBody: MemberDetailsDto,
     @Request() request: any
   ): Promise<void> {
-    const { mentor, sprachen: languages, edvkenntnisse: edvSkills, ...member } = requestBody;
+    const { mentor, languages: languages, itSkills: updatedItSkills, ...member } = requestBody;
     const user = request.user as JWTPayload;
 
     if (id === user.memberId && doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to all fields if member is himself and has additional permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, true);
+      await this.membersService.updateMemberDetails(id, member, mentor, languages, updatedItSkills, true, true);
     } else if (id === user.memberId) {
       // Grants access to non critical fields to the member himself
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, false, true);
+      await this.membersService.updateMemberDetails(id, member, mentor, languages, updatedItSkills, false, true);
     } else if (doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to critical fields for members with permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, false);
+      await this.membersService.updateMemberDetails(id, member, mentor, languages, updatedItSkills, true, false);
     } else {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }

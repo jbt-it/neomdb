@@ -3723,6 +3723,66 @@
 				],
 				"type": "object"
 			},
+			"MemberStatusDto": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"memberStatusId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"name",
+					"memberStatusId"
+				],
+				"type": "object"
+			},
+			"LanguageDto": {
+				"properties": {
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"level",
+					"value",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the language dto"
+			},
+			"ItSkillDto": {
+				"properties": {
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"level",
+					"value",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the it skill dto"
+			},
 			"MenteeDto": {
 				"properties": {
 					"lastname": {
@@ -3783,13 +3843,13 @@
 					},
 					"itSkills": {
 						"items": {
-							"$ref": "#/components/schemas/ItSkill"
+							"$ref": "#/components/schemas/ItSkillDto"
 						},
 						"type": "array"
 					},
 					"languages": {
 						"items": {
-							"$ref": "#/components/schemas/Language"
+							"$ref": "#/components/schemas/LanguageDto"
 						},
 						"type": "array"
 					},
@@ -3950,7 +4010,7 @@
 						"nullable": true
 					},
 					"memberStatus": {
-						"$ref": "#/components/schemas/MemberStatus"
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
 					"jbtEmail": {
 						"type": "string"
@@ -4022,306 +4082,6 @@
 				],
 				"type": "object",
 				"description": "Type of the member details dto used for the member details page"
-			},
-			"EdvSkill": {
-				"properties": {
-					"niveau": {
-						"type": "number",
-						"format": "double"
-					},
-					"wert": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"niveau",
-					"wert"
-				],
-				"type": "object",
-				"description": "Type of the edv skill of a member"
-			},
-			"Mentee": {
-				"properties": {
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"nachname",
-					"vorname",
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of the mentee (partial member)"
-			},
-			"Mentor": {
-				"properties": {
-					"generationID": {
-						"type": "number",
-						"format": "double"
-					},
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of the mentor (partial member)"
-			},
-			"MemberDetails": {
-				"properties": {
-					"mentor": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/Mentor"
-							}
-						],
-						"nullable": true
-					},
-					"mentees": {
-						"items": {
-							"$ref": "#/components/schemas/Mentee"
-						},
-						"type": "array"
-					},
-					"edvkenntnisse": {
-						"items": {
-							"$ref": "#/components/schemas/EdvSkill"
-						},
-						"type": "array"
-					},
-					"sprachen": {
-						"items": {
-							"$ref": "#/components/schemas/Language"
-						},
-						"type": "array"
-					},
-					"bic": {
-						"type": "string"
-					},
-					"iban": {
-						"type": "string"
-					},
-					"kontoinhaber": {
-						"type": "string"
-					},
-					"ersthelferausbildung": {
-						"type": "boolean"
-					},
-					"fuehrerschein": {
-						"type": "boolean"
-					},
-					"lastchange": {
-						"type": "string"
-					},
-					"canQM": {
-						"type": "string",
-						"nullable": true
-					},
-					"canPL": {
-						"type": "string",
-						"nullable": true
-					},
-					"engagement": {
-						"type": "string",
-						"nullable": true
-					},
-					"ausbildung": {
-						"type": "string",
-						"nullable": true
-					},
-					"vertiefungen": {
-						"type": "string",
-						"nullable": true
-					},
-					"studienende": {
-						"type": "string",
-						"nullable": true
-					},
-					"studienbeginn": {
-						"type": "string",
-						"nullable": true
-					},
-					"studiengang": {
-						"type": "string"
-					},
-					"hochschule": {
-						"type": "string"
-					},
-					"email2": {
-						"type": "string",
-						"nullable": true
-					},
-					"tel2": {
-						"type": "string",
-						"nullable": true
-					},
-					"ort2": {
-						"type": "string",
-						"nullable": true
-					},
-					"plz2": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"strasse2": {
-						"type": "string",
-						"nullable": true
-					},
-					"email1": {
-						"type": "string",
-						"nullable": true
-					},
-					"tel1": {
-						"type": "string",
-						"nullable": true
-					},
-					"ort1": {
-						"type": "string"
-					},
-					"plz1": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"strasse1": {
-						"type": "string"
-					},
-					"arbeitgeber": {
-						"type": "string",
-						"nullable": true
-					},
-					"ressort": {
-						"type": "string"
-					},
-					"ausgetreten_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"passiv_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"aktiv_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"senior_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"alumnus_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"mitglied_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"trainee_seit": {
-						"type": "string",
-						"nullable": true
-					},
-					"internesprojekt": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"generation": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"mitgliedstatus": {
-						"$ref": "#/components/schemas/MemberStatus"
-					},
-					"jbt_email": {
-						"type": "string"
-					},
-					"handy": {
-						"type": "string"
-					},
-					"geburtsdatum": {
-						"type": "string",
-						"nullable": true
-					},
-					"geschlecht": {
-						"type": "number",
-						"format": "double"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"nachname": {
-						"type": "string"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"ersthelferausbildung",
-					"fuehrerschein",
-					"lastchange",
-					"canQM",
-					"canPL",
-					"engagement",
-					"ausbildung",
-					"vertiefungen",
-					"studienende",
-					"studienbeginn",
-					"studiengang",
-					"hochschule",
-					"email2",
-					"tel2",
-					"ort2",
-					"plz2",
-					"strasse2",
-					"email1",
-					"tel1",
-					"ort1",
-					"plz1",
-					"strasse1",
-					"arbeitgeber",
-					"ressort",
-					"ausgetreten_seit",
-					"passiv_seit",
-					"aktiv_seit",
-					"senior_seit",
-					"alumnus_seit",
-					"mitglied_seit",
-					"trainee_seit",
-					"internesprojekt",
-					"generation",
-					"mitgliedstatus",
-					"jbt_email",
-					"handy",
-					"geburtsdatum",
-					"geschlecht",
-					"vorname",
-					"nachname",
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
 			},
 			"MembersFieldDto": {
 				"properties": {
@@ -5535,7 +5295,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/MemberDetails",
+								"$ref": "#/components/schemas/MemberDetailsDto",
 								"description": "The new information of the member"
 							},
 							"example": {

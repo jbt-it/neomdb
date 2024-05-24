@@ -1,11 +1,9 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import path from "path";
-import { executeInTransaction } from "../../database";
 import { NotFoundError, QueryError } from "../../types/Errors";
-import { EdvSkill, Language, Member, Mentor, StatusOverview } from "../../types/membersTypes";
+import { StatusOverview } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
-import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
 import { MemberMapper } from "./MemberMapper";
@@ -21,7 +19,15 @@ import {
 import { DepartmentMapper } from "./DepartmentMapper";
 import { PermissionMapper } from "./PermissionMapper";
 import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
-import { CreateMemberRequest, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
+import {
+  CreateMemberRequest,
+  ItSkillDto,
+  LanguageDto,
+  MentorDto,
+  UpdateDepartmentDto,
+  UpdatedMember,
+} from "../../typeOrm/types/memberTypes";
+import { AppDataSource } from "../../datasource";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -353,7 +359,6 @@ class MembersService {
         statusOverview.queryErrorMsg = error.message;
       }
     }
-    console.log(memberId);
     return { memberId, statusOverview };
   };
 
@@ -370,10 +375,10 @@ class MembersService {
    */
   updateMemberDetails = async (
     memberID: number,
-    updatedMember: Member,
-    mentor: Mentor,
-    updatedLanguages: Language[],
-    updatedEdvSkills: EdvSkill[],
+    updatedMember: UpdatedMember,
+    mentor: MentorDto,
+    updatedLanguages: LanguageDto[],
+    updatedItSkills: ItSkillDto[],
     updateCritical: boolean,
     updatePersonal: boolean
   ) => {
@@ -383,44 +388,31 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
     // Check if potential new mentor exists (if set)
-    if (mentor && mentor.mitgliedID !== null) {
-      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
+    if (mentor && mentor.memberId !== null) {
+      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.memberId);
       if (mentorInDB === null) {
-        throw new NotFoundError(`Mentor with id ${mentor?.mitgliedID} does not exist`);
+        throw new NotFoundError(`Mentor with id ${mentor?.memberId} does not exist`);
       }
     }
 
-    // Create timestamp for last change
-    const updatedLastChange = createCurrentTimestamp();
-
-    // Fill tasks to be executed in transaction
-    const tasks = [];
-    if (updateCritical) {
-      // Add update tasks for critical data
-      tasks.push({
-        func: this.membersRepository.updateMemberCriticalDataByID,
-        args: [memberID, updatedMember, mentor],
-      });
-    }
-    if (updatePersonal) {
-      // Add update tasks for personal data
-      tasks.push({
-        func: this.membersRepository.updateMemberPersonalDataByID,
-        args: [memberID, updatedMember, updatedLastChange],
-      });
-      // Add update tasks for languages and edv skills
-      tasks.push({
-        func: this.membersRepository.updateMemberLanguagesByID,
-        args: [memberID, updatedLanguages],
-      });
-      tasks.push({
-        func: this.membersRepository.updateMemberEdvSkillsByID,
-        args: [memberID, updatedEdvSkills],
-      });
-    }
-
-    // Execute all tasks in transaction
-    await executeInTransaction(tasks);
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      if (updateCritical) {
+        await transactionalEntityManager
+          .withRepository(MembersRepository_typeORM)
+          .updateMemberCriticalDataByID(memberID, updatedMember, mentor);
+      }
+      if (updatePersonal) {
+        await transactionalEntityManager
+          .withRepository(MembersRepository_typeORM)
+          .updateMemberPersonalDataByID(memberID, updatedMember);
+      }
+      await transactionalEntityManager
+        .withRepository(LanguagesRepository_typeORM)
+        .updateMemberLanguagesByID(memberID, updatedLanguages);
+      await transactionalEntityManager
+        .withRepository(ItSkillsRepository_typeORM)
+        .updateMemberItSkillsByID(memberID, updatedItSkills);
+    });
   };
 
   /**

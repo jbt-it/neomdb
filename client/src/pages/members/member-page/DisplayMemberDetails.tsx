@@ -277,26 +277,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const updateLanguages = (
     list: membersTypes.LanguageOfMember[],
     index: number,
-    value: string,
+    value: string | number,
     typeOfValue: string
   ) => {
-    // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
-        // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          value: value,
+          value: value as string,
         };
         newList[index] = updatedLanguage;
         return newList;
       }
       case "NIVEAU": {
-        // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          level: value,
+          level: Number(value), // Ensure it's a number
         };
         newList[index] = updatedLanguage;
         return newList;
@@ -337,10 +334,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         }
       }
       case membersTypes.languagesReducerActionType.addNewLanguageWithNiveau: {
-        return updateLanguages(state, action.payload.index, action.payload.niveau, "NIVEAU");
+        return updateLanguages(state, action.payload.index, Number(action.payload.niveau), "NIVEAU"); // Ensure it's a number
       }
       case membersTypes.languagesReducerActionType.addEmptyLanguage: {
-        return [...state, { memberId: memberDetails.memberId, value: "", level: "" }];
+        return [...state, { memberId: memberDetails.memberId, value: "", level: 0 }]; // Initialize level as a number
       }
       case membersTypes.languagesReducerActionType.deleteLanguage: {
         return state.filter((value) => !(value.value === action.payload.lang.value));
@@ -368,24 +365,26 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param typeOfValue specifies which type the value is and what attribute of edv skill should be updated
    * @returns An updated list of languages
    */
-  const updateEdvSkills = (list: membersTypes.ItSkillOfMember[], index: number, value: string, typeOfValue: string) => {
-    // Creates a copy of the current list of languages
+  const updateEdvSkills = (
+    list: membersTypes.ItSkillOfMember[],
+    index: number,
+    value: string | number,
+    typeOfValue: string
+  ) => {
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
-        // Updates the language
         const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          value: value,
+          value: value as string,
         };
         newList[index] = updatedEdvSkill;
         return newList;
       }
       case "NIVEAU": {
-        // Updates the language
         const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          level: value,
+          level: Number(value), // Ensure it's a number
         };
         newList[index] = updatedEdvSkill;
         return newList;
@@ -426,10 +425,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         }
       }
       case membersTypes.itSkillsReducerActionType.addNewItSkillWithNiveau: {
-        return updateEdvSkills(state, action.payload.index, action.payload.level, "NIVEAU");
+        return updateEdvSkills(state, action.payload.index, Number(action.payload.level), "NIVEAU"); // Ensure it's a number
       }
       case membersTypes.itSkillsReducerActionType.addEmptyItSkill: {
-        return [...state, { memberId: memberDetails.memberId, value: "", level: "" }];
+        return [...state, { memberId: memberDetails.memberId, value: "", level: 0 }]; // Initialize level as a number
       }
       case membersTypes.itSkillsReducerActionType.deleteItSkill: {
         return state.filter((value) => !(value.value === action.payload.itSkill.value));
@@ -454,7 +453,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       memberId: memberDetails.memberId,
       lastname: lastname,
       firstname: name,
-      gender: memberDetails.gender,
+      gender: Boolean(memberDetails.gender),
       birthday: birthday,
       mobile: smartphone,
       jbtEmail: jbtMail,
@@ -490,13 +489,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       canPL: memberDetails.canPL,
       canQM: memberDetails.canQM,
       lastChange: new Date(),
-      drivingLicense: driversLicense ? 1 : 0, // drivingLicense is a number in the database
-      firstAidTraining: firstAid,
+      drivingLicense: driversLicense ? 1 : 0,
+      firstAidTraining: Boolean(firstAid),
       accountHolder: accountHolder,
       iban: ibanState,
       bic: bicState,
-      languages: languages,
-      itSkills: itSkills,
+      languages: languages.map((lang) => ({ ...lang, level: Number(lang.level) })),
+      itSkills: itSkills.map((itSkill) => ({ ...itSkill, level: Number(itSkill.level) })),
       mentees: menteeList,
       mentor: mentorState,
     };
@@ -946,7 +945,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 {(memberDetails?.languages || []).map((language) => {
                   return (
                     <Typography sx={styles.categoryLine}>
-                      {`${language.value}: ${getLanguageNiveauLabel(parseInt(language.level, 10))}`}
+                      {`${language.value}: ${getLanguageNiveauLabel(language.level)}`}
                     </Typography>
                   );
                 })}
@@ -957,9 +956,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Box sx={styles.categoryItemList}>
                 {(memberDetails?.itSkills || []).map((it) => {
                   return (
-                    <Typography sx={styles.categoryLine}>
-                      {`${it.value}: ${getEDVNiveauLabel(parseInt(it.level, 10))}`}
-                    </Typography>
+                    <Typography sx={styles.categoryLine}>{`${it.value}: ${getEDVNiveauLabel(it.level)}`}</Typography>
                   );
                 })}
               </Box>
@@ -1541,7 +1538,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={languages.some((lang) => lang.value === "" || lang.level === "")}
+                        disabled={languages.some((lang) => lang.value === "" || lang.level === 0)}
                         onClick={() =>
                           dispatchLanguages({
                             type: membersTypes.languagesReducerActionType.addEmptyLanguage,
@@ -1659,7 +1656,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={itSkills.some((edv) => edv.value === "" || edv.level === "")}
+                        disabled={itSkills.some((edv) => edv.value === "" || edv.level === 0)}
                         onClick={() => {
                           dispatchItSkills({
                             type: membersTypes.itSkillsReducerActionType.addEmptyItSkill,
