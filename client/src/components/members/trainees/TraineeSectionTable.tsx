@@ -124,6 +124,37 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
     setSelectedTrainee(trainee);
   };
 
+  // Check if all booleans are true and all dates are set
+  function checkTraineeProgress(trainee: TraineeProgressDto): boolean {
+    // Check if all booleans are true
+    const booleanProperties = [
+      trainee.offerAtEv,
+      trainee.zpAtEv,
+      trainee.apAtEv,
+      trainee.dlAtEv,
+      trainee.projectManagement,
+      trainee.rhetoricPresentationTechnique,
+      trainee.acquisitionNegotiationTechnique,
+      trainee.departmentFinanceAndLaw,
+      trainee.departmentNetwork,
+      trainee.departmentQualityManagement,
+      trainee.msPowerpoint,
+      trainee.strategyAndOrganisation,
+      trainee.dataPrivacyTraining,
+      trainee.safetyTraining,
+      trainee.excelBasics,
+    ];
+
+    const allBooleansTrue = booleanProperties.every((value) => Boolean(value) === true);
+
+    // Check if all dates are set (not null)
+    const dateProperties = [trainee.zpHeld, trainee.apHeld];
+
+    const allDatesSet = dateProperties.every((date) => date !== null);
+
+    return allBooleansTrue && allDatesSet;
+  }
+
   return (
     <>
       <AdmissionDialog
@@ -191,7 +222,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
                 );
               })}
               <TableCell sx={{ maxWidth: 100, width: 80, border: 1, borderColor: "#fff" }} align="right">
-                {trainee.memberStatus?.name === "Trainee" ? (
+                {trainee.memberStatus?.name === "Trainee" && checkTraineeProgress(trainee) ? (
                   <Stack
                     direction={"row"}
                     alignItems={"center"}
