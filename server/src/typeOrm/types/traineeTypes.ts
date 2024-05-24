@@ -1,4 +1,4 @@
-import { MembersFieldDto } from "./memberTypes";
+import { MemberStatusDto, MembersFieldDto } from "./memberTypes";
 
 /**
  * Type of the internal project of a member
@@ -83,8 +83,9 @@ export type TraineeProgressDto = {
   memberID: number;
   firstname: string;
   lastname: string;
+  memberStatus: MemberStatusDto;
   generationID: number;
-  internalProjectID: number;
+  internalProjectID: number | null;
   projectName: string;
   abbreviation: string;
   offerAtEv: boolean;
