@@ -15,7 +15,7 @@ import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 
 /**
  * Hook that handles the department api calls, uses react-query
- * @returns
+ * @returns The departments, the department members, the current directors, all directors and a function to update the details of a department
  */
 const useDepartments = () => {
   const { dispatchAuth } = useContext(AuthContext);

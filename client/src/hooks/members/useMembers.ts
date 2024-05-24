@@ -16,7 +16,7 @@ import { replaceSpecialCharacters } from "../../utils/stringUtils";
 
 /**
  * Hook that handles the members api calls, uses react-query
- * @returns The members, a boolean indicating if the data is loading and a boolean indicating if an error occured
+ * @returns The members, the languages, the it skills, a function to update the status of a member and a function to add a new member
  */
 const useMembers = () => {
   const { dispatchAuth } = useContext(AuthContext);
@@ -70,7 +70,7 @@ const useMembers = () => {
         dispatchAuth({ type: authReducerActionType.deauthenticate });
       }
     },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["memberDetails"] });
       queryClient.invalidateQueries({ queryKey: ["members"] });
       showSuccessMessage("Mitgliedsstatus erfolgreich geändert");

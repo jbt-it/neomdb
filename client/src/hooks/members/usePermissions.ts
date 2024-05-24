@@ -13,7 +13,7 @@ import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 
 /**
  * Hook that handles the permission api calls, uses react-query
- * @returns
+ * @returns The permissions, the permission assignments, a function to create a new permission assignment and a function to delete a permission assignment
  */
 const usePermissions = () => {
   const { dispatchAuth } = useContext(AuthContext);

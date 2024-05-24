@@ -14,7 +14,7 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Hook that handles the members api calls, uses react-query
- * @returns
+ * @returns The member details, a function to update the details of a member, the member image and a function to save the image of a member
  */
 const useMemberDetails = (memberID: number) => {
   const { dispatchAuth } = useContext(AuthContext);
