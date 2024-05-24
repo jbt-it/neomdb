@@ -124,8 +124,6 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
     setSelectedTrainee(trainee);
   };
 
-  console.log(trainees);
-
   return (
     <>
       <AdmissionDialog

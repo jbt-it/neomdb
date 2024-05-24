@@ -64,9 +64,7 @@ export const getInternalProjectsOfGeneration = async (
  * @returns The trainee progress of type TraineeProgressDto
  */
 export const getTraineeProgress = async (generationID: number): Promise<AxiosResponse<TraineeProgressDto[]>> => {
-  const tp = await api.get<TraineeProgressDto[]>(`/trainees/generations/${generationID}/trainee-progress`);
-  console.log(tp.data);
-  return tp;
+  return await api.get<TraineeProgressDto[]>(`/trainees/generations/${generationID}/trainee-progress`);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------

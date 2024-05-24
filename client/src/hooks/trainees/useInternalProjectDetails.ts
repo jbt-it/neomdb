@@ -21,13 +21,13 @@ const useInternalProjectDetails = (internalProjectID: number) => {
   // ############
 
   // getInternalProjectDetails query
-  const { data: internalProjectDetailsData } = useQuery({
+  const { data: internalProjectDetailsData, isFetched: isInternalProjectDetailsFetched } = useQuery({
     queryKey: ["internalProjectDetails", internalProjectID],
     queryFn: () => getIP(internalProjectID),
   });
 
   // The dates are converted to dayjs objects and the members are formatted to also include a name
-  const internalProjectDetails = internalProjectDetailsData?.data || {};
+  const internalProjectDetails = (internalProjectDetailsData?.data as InternalProjectDto) || {};
 
   // ----------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ const useInternalProjectDetails = (internalProjectID: number) => {
     return await mutateInternalProjectDetails(internalProjectDetails);
   };
 
-  return { internalProjectDetails, updateInternalProjectDetails };
+  return { internalProjectDetails, isInternalProjectDetailsFetched, updateInternalProjectDetails };
 };
 
 export default useInternalProjectDetails;
