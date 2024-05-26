@@ -290,11 +290,6 @@ class TraineesService {
       const feedback = allFeedback.find((feedback) => feedback.memberId === member.memberId);
       const ip = internalProjects.find((ip) => ip.internalProjectId === member.internalProjectId);
 
-      // If the member has no feedback or internal project, return undefined
-      // TODO: throw error or log warning?
-      if (!ip || !feedback) {
-        return;
-      }
       return TraineeMapper.traineeToTraineeProgressDto(member, generation.generationId, ip, feedback.feedback);
     });
 

@@ -1,22 +1,18 @@
-import {
-  ItSkillDto,
-  ItSkillsValue,
-  LanguageDto,
-  LanguageValue,
-  MentorDto,
-  NewMember,
-  UpdatedMember,
-} from "typeOrm/types/memberTypes";
+import { ItSkillsValue, LanguageValue, MentorDto, NewMember, UpdatedMember } from "typeOrm/types/memberTypes";
+import { LessThan, MoreThan } from "typeorm";
 import { AppDataSource } from "../../datasource";
+import { Generation } from "../../typeOrm/entities/Generation";
+import { ItSkill } from "../../typeOrm/entities/ItSkill";
 import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
-import { LessThan, MoreThan } from "typeorm";
-import { ItSkill } from "../../typeOrm/entities/ItSkill";
 
+/**
+ * Creates and exports the Members Repository
+ */
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
    * Retrieves all members as a list
@@ -233,11 +229,21 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
  */
 export const MemberStatusRespository_typeORM = AppDataSource.getRepository(MemberStatus).extend({
   /**
-   * Retrieves all member statuses as a list
-   * @returns A list of member statuses
+   * Retrieves a member status by its name
+   * @param statusID The name of the member status
+   * @returns The member status or null if no member status was found
    */
   getMemberStatusByName(statusName: string): Promise<MemberStatus> {
     return this.findOne({ where: { name: statusName } });
+  },
+
+  /**
+   * Retrieves a member status by its id
+   * @param statusID The id of the member status
+   * @returns The member status or null if no member status was found
+   */
+  getMemberStatusByID(statusID: number): Promise<MemberStatus> {
+    return this.findOne({ where: { memberStatusId: statusID } });
   },
 });
 
@@ -252,29 +258,6 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
   getLanguageValues(): Promise<LanguageValue[]> {
     return this.createQueryBuilder("language").select("language.value").distinct(true).getRawMany();
   },
-
-  /**
-   * Updates the languages of a member
-   * @param memberID The id of the member
-   * @param updatedLanguages The updated languages
-   * @returns A promise that resolves when the update is done
-   */
-  updateMemberLanguagesByID(memberID: number, updatedLanguages: LanguageDto[]) {
-    // 1. Delete the existing entries of languages of the specific member
-    this.delete({ memberId: memberID });
-
-    // 2. Create new entries for the updated languages
-    const newLanguages = updatedLanguages.map((language) => {
-      const newLanguage = new Language();
-      newLanguage.memberId = memberID;
-      newLanguage.value = language.value;
-      newLanguage.level = language.level;
-      return newLanguage;
-    });
-
-    // 3. Save all new language entries
-    return this.save(newLanguages);
-  },
 });
 
 /**
@@ -287,28 +270,6 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).e
    */
   getItSkillValues(): Promise<ItSkillsValue[]> {
     return this.createQueryBuilder("itSkill").select("itSkill.value").distinct(true).getMany();
-  },
-  /**
-   * Updates the languages of a member
-   * @param memberId The id of the member
-   * @param updatedItSkills The updated languages
-   * @returns A promise that resolves when the update is done
-   */
-  updateMemberItSkillsByID(memberId: number, updatedItSkills: ItSkillDto[]) {
-    // 1. Delete the existing entries of languages of the specific member
-    this.delete({ memberId: memberId });
-
-    // 2. Create new entries for the updated languages
-    const newItSkills = updatedItSkills.map((language) => {
-      const newItSkill = new ItSkill();
-      newItSkill.memberId = memberId;
-      newItSkill.value = language.value;
-      newItSkill.level = language.level;
-      return newItSkill;
-    });
-
-    // 3. Save all new language entries
-    return this.save(newItSkills);
   },
 });
 
@@ -342,6 +303,9 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
   },
 });
 
+/**
+ * Creates and exports the MemberHasDirectorPosition Repository
+ */
 export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepository(
   MemberHasDirectorPosition
 ).extend({
@@ -383,5 +347,27 @@ export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepo
       .andWhere("memberHasDirectorPositions.from <= NOW()")
       .andWhere("memberHasDirectorPositions.until >= NOW()")
       .getRawMany();
+  },
+});
+
+/**
+ * Creates and exports the Generation Repository
+ */
+export const GenerationRepository_typeORM = AppDataSource.getRepository(Generation).extend({
+  /**
+   * Retrieves all generations as a list
+   * @returns A list of generations
+   */
+  getGenerations(): Promise<Generation[]> {
+    return this.find();
+  },
+
+  /**
+   * Retrieves a generation by its id
+   * @param generationId The id of the generation
+   * @returns The generation or null if no generation was found
+   */
+  getGenerationById(generationId: number): Promise<Generation | null> {
+    return this.findOne({ where: { generationId } });
   },
 });

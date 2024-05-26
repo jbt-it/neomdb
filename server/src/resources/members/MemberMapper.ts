@@ -1,32 +1,30 @@
 import { DirectorHasPermission } from "typeOrm/entities/DirectorHasPermission";
 import { Department } from "../../typeOrm/entities/Department";
+import { ItSkill } from "../../typeOrm/entities/ItSkill";
+import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
+import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
+import { JWTPayload, PermissionDTO, User } from "../../typeOrm/types/authTypes";
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
   DirectorDto,
   DirectorPositionDto,
+  ItSkillDto,
+  LanguageDto,
   MemberDetailsDto,
   MemberPartialDto,
   MemberPermissionAssignmentDto,
+  MembersFieldDto,
   MenteeDto,
   MentorDto,
-  MembersFieldDto,
-  ItSkillDto,
-  LanguageDto,
 } from "../../typeOrm/types/memberTypes";
-import { PermissionDTO, User } from "../../typeOrm/types/authTypes";
-import { JWTPayload } from "../../typeOrm/types/authTypes";
-import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { ItSkill } from "../../typeOrm/entities/ItSkill";
-import { Language } from "../../typeOrm/entities/Language";
 
 /**
- * Provides methods to map a member to a dto (data transfer object)
+ * Provides methods to map a member to a dto (data transfer object) or vice versa
  */
 export class MemberMapper {
-  // --- To DTO mapper functions
-
+  // --- From Entity to DTO mapper functions
   static memberToJWTPayload(member: Member, directorPermissions: PermissionDTO[]): JWTPayload {
     return {
       memberId: member.memberId,
@@ -155,11 +153,8 @@ export class MemberMapper {
         birthday: member.birthday,
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
-        memberStatus: {
-          memberStatusId: member.memberStatus.memberStatusId,
-          name: member.memberStatus.name,
-        },
-        generation: member.generationId,
+        memberStatus: member.memberStatus,
+        generation: member.generationId ? member.generationId : null,
         internalProject: member.internalProjects ? member.internalProjects[0] : null,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -206,11 +201,8 @@ export class MemberMapper {
         birthday: member.birthday,
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
-        memberStatus: {
-          memberStatusId: member.memberStatus.memberStatusId,
-          name: member.memberStatus.name,
-        },
-        generation: member.generationId,
+        memberStatus: member.memberStatus,
+        generation: member.generationId ? member.generationId : null,
         internalProject: member.internalProjects ? member.internalProjects[0] : null,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -263,5 +255,68 @@ export class MemberMapper {
     };
   }
 
-  // --- From DTO mapper functions
+  // --- From DTO to Entity mapper functions
+
+  static personalMemberDetailsDtoToMember(
+    memberID: number,
+    member: Member,
+    memberDetailsDto: MemberDetailsDto
+  ): Member {
+    member.mobile = memberDetailsDto.mobile;
+    member.employer = memberDetailsDto.employer;
+    member.street1 = memberDetailsDto.street1;
+    member.postalCode1 = memberDetailsDto.postalCode1;
+    member.city1 = memberDetailsDto.city1;
+    member.phone1 = memberDetailsDto.phone1;
+    member.email1 = memberDetailsDto.email1;
+    member.street2 = memberDetailsDto.street2;
+    member.postalCode2 = memberDetailsDto.postalCode2;
+    member.city2 = memberDetailsDto.city2;
+    member.phone2 = memberDetailsDto.phone2;
+    member.email2 = memberDetailsDto.email2;
+    member.university = memberDetailsDto.university;
+    member.courseOfStudy = memberDetailsDto.courseOfStudy;
+    member.studyStart = memberDetailsDto.studyStart;
+    member.studyEnd = memberDetailsDto.studyEnd;
+    member.specializations = memberDetailsDto.specializations;
+    member.apprenticeship = memberDetailsDto.apprenticeship;
+    member.accountHolder = memberDetailsDto.accountHolder;
+    member.iban = memberDetailsDto.iban;
+    member.bic = memberDetailsDto.bic;
+    member.drivingLicense = memberDetailsDto.drivingLicense;
+    member.firstAidTraining = memberDetailsDto.firstAidTraining;
+    member.languages =
+      memberDetailsDto.languages === undefined
+        ? []
+        : MemberMapper.languageDtosToLanguages(memberID, memberDetailsDto.languages);
+    member.itSkills =
+      memberDetailsDto.itSkills === undefined
+        ? []
+        : MemberMapper.itSkillDtosToItSkills(memberID, memberDetailsDto.itSkills);
+    return member;
+  }
+
+  static languageDtoToLanguage(memberId: number, languageDto: LanguageDto): Language {
+    // TODO: Add type
+    const language = new Language();
+    language.memberId = memberId;
+    language.value = languageDto.value;
+    language.level = languageDto.level;
+    return language;
+  }
+  static languageDtosToLanguages(memberId: number, languageDtos: LanguageDto[]): Language[] {
+    return languageDtos.map((languageDto) => this.languageDtoToLanguage(memberId, languageDto));
+  }
+
+  static itSkillDtoToItSkill(memberId: number, itSkillDto: ItSkillDto): ItSkill {
+    // TODO: Add type
+    const itSkill = new ItSkill();
+    itSkill.memberId = memberId;
+    itSkill.value = itSkillDto.value;
+    itSkill.level = itSkillDto.level;
+    return itSkill;
+  }
+  static itSkillDtosToItSkills(memberId: number, itSkillDtos: ItSkillDto[]): ItSkill[] {
+    return itSkillDtos.map((itSkillDto) => this.itSkillDtoToItSkill(memberId, itSkillDto));
+  }
 }

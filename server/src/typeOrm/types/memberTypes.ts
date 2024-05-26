@@ -1,6 +1,4 @@
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { ItSkill } from "../entities/ItSkill";
-import { Language } from "../../typeOrm/entities/Language";
 import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
 
 /**
@@ -22,13 +20,21 @@ export type MentorDto = {
 };
 
 /**
+ * Type of the member status dto
+ */
+export type MemberStatusDto = {
+  memberStatusId: number;
+  name: string;
+};
+
+/**
  * Type of the member field
  */
 export type MembersFieldDto = {
   memberId: number;
   firstname: string;
   lastname: string;
-  memberStatus?: MemberStatus;
+  memberStatus?: MemberStatusDto;
 };
 
 /**
@@ -152,11 +158,6 @@ export type ItSkillDto = {
   level: number;
 };
 
-export type MemberStatusDto = {
-  memberStatusId: number;
-  name: string;
-};
-
 /**
  * Type of the member details dto used for the member details page
  */
@@ -199,7 +200,7 @@ export type MemberDetailsDto = {
   commitment: string | null;
   canPL: Date | null;
   canQM: Date | null;
-  lastChange: Date;
+  lastChange: Date | null;
   drivingLicense: number;
   firstAidTraining: boolean;
   // Optional attributes only viewable with specific permissions (of if the user is the member)
