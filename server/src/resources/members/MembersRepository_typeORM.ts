@@ -8,7 +8,11 @@ import { Permission } from "../../typeOrm/entities/Permission";
 import { PermissionDTO } from "../../typeOrm/types/authTypes";
 import { LessThan, MoreThan } from "typeorm";
 import { ItSkill } from "../../typeOrm/entities/ItSkill";
+import { Generation } from "../../typeOrm/entities/Generation";
 
+/**
+ * Creates and exports the Members Repository
+ */
 export const MembersRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
    * Retrieves all members as a list
@@ -163,11 +167,21 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
  */
 export const MemberStatusRespository_typeORM = AppDataSource.getRepository(MemberStatus).extend({
   /**
-   * Retrieves all member statuses as a list
-   * @returns A list of member statuses
+   * Retrieves a member status by its name
+   * @param statusID The name of the member status
+   * @returns The member status or null if no member status was found
    */
   getMemberStatusByName(statusName: string): Promise<MemberStatus> {
     return this.findOne({ where: { name: statusName } });
+  },
+
+  /**
+   * Retrieves a member status by its id
+   * @param statusID The id of the member status
+   * @returns The member status or null if no member status was found
+   */
+  getMemberStatusByID(statusID: number): Promise<MemberStatus> {
+    return this.findOne({ where: { memberStatusId: statusID } });
   },
 });
 
@@ -181,6 +195,12 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
    */
   getLanguageValues(): Promise<LanguageValue[]> {
     return this.createQueryBuilder("language").select("language.value").distinct(true).getRawMany();
+  },
+
+  // TODO: Comment
+  async removeAllLanguagesFromMember(memberId: number): Promise<void> {
+    // TODO: Test
+    this.delete({ memberId });
   },
 });
 
@@ -227,6 +247,9 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
   },
 });
 
+/**
+ * Creates and exports the MemberHasDirectorPosition Repository
+ */
 export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepository(
   MemberHasDirectorPosition
 ).extend({
@@ -268,5 +291,27 @@ export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepo
       .andWhere("memberHasDirectorPositions.from <= NOW()")
       .andWhere("memberHasDirectorPositions.until >= NOW()")
       .getRawMany();
+  },
+});
+
+/**
+ * Creates and exports the Generation Repository
+ */
+export const GenerationRepository_typeORM = AppDataSource.getRepository(Generation).extend({
+  /**
+   * Retrieves all generations as a list
+   * @returns A list of generations
+   */
+  getGenerations(): Promise<Generation[]> {
+    return this.find();
+  },
+
+  /**
+   * Retrieves a generation by its id
+   * @param generationId The id of the generation
+   * @returns The generation or null if no generation was found
+   */
+  getGenerationById(generationId: number): Promise<Generation | null> {
+    return this.findOne({ where: { generationId } });
   },
 });

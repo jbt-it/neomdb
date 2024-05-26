@@ -397,12 +397,12 @@ export class MembersController extends Controller {
    * @param requestBody The new information of the member
    *
    * @example requestBody {
-   *   "mitgliedID": 8111,
-   *   "vorname": "Brandon-Lee",
-   *   "nachname": "Frye",
-   *   "jbt_email": "b.frye@studentische-beratung.de",
-   *   "geschlecht": 1,
-   *   "geburtsdatum": "1990-06-05",
+   *   "memberId": 8111,
+   *   "firstname": "Brandon-Lee",
+   *   "lastname": "Frye",
+   *   "jbtEmail": "b.frye@studentische-beratung.de",
+   *   "gender": 1,
+   *   "": "1990-06-05",
    *   "handy": "0162/9846320",
    *   "mitgliedstatus": "passives Mitglied",
    *   "generation": null,
@@ -470,21 +470,20 @@ export class MembersController extends Controller {
   @Security("jwt")
   public async updateMember(
     @Path() id: number,
-    @Body() requestBody: MemberDetails,
+    @Body() requestBody: MemberDetailsDto,
     @Request() request: any
   ): Promise<void> {
-    const { mentor, sprachen: languages, edvkenntnisse: edvSkills, ...member } = requestBody;
     const user = request.user as JWTPayload;
 
     if (id === user.memberId && doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to all fields if member is himself and has additional permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, true);
+      await this.membersService.updateMemberDetails(id, requestBody, true, true);
     } else if (id === user.memberId) {
       // Grants access to non critical fields to the member himself
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, false, true);
+      await this.membersService.updateMemberDetails(id, requestBody, false, true);
     } else if (doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to critical fields for members with permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, false);
+      await this.membersService.updateMemberDetails(id, requestBody, true, false);
     } else {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }

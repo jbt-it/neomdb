@@ -1,12 +1,13 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import path from "path";
-import { executeInTransaction } from "../../database";
-import { NotFoundError, QueryError } from "../../types/Errors";
-import { EdvSkill, Language, Member, Mentor, StatusOverview } from "../../types/membersTypes";
+import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
+import { CreateMemberRequest, MemberDetailsDto, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
+import { ConflictError, NotFoundError, QueryError } from "../../types/Errors";
+import { StatusOverview } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
-import { createCurrentTimestamp } from "../../utils/dateUtils";
 import { getRandomString } from "../../utils/stringUtils";
+import { DepartmentMapper } from "./DepartmentMapper";
 import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
 import { MemberMapper } from "./MemberMapper";
 import MembersRepository from "./MembersRepository";
@@ -18,10 +19,7 @@ import {
   MembersRepository_typeORM,
   PermissionsRepository_typeORM,
 } from "./MembersRepository_typeORM";
-import { DepartmentMapper } from "./DepartmentMapper";
 import { PermissionMapper } from "./PermissionMapper";
-import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
-import { CreateMemberRequest, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -38,7 +36,7 @@ class MembersService {
   };
 
   /**
-   * Retrieves a member with its langauges, edvkills, mentor and mentee by its id
+   * Retrieves a member with its languages, its kills, mentor and mentee by its id
    * @throws NotFoundError if no member was found
    */
   getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
@@ -352,27 +350,20 @@ class MembersService {
         statusOverview.queryErrorMsg = error.message;
       }
     }
-    console.log(memberID);
     return { memberID, statusOverview };
   };
 
   /**
    * Updates details of the member with the given `memberID`
    * @param memberID The id of the member
-   * @param updatedMember The updated member data
-   * @param mentor The updated mentor data
-   * @param updatedLanguages The updated languages
-   * @param updatedEdvSkills The updated edv skills
+   * @param updatedMember The updated member details
    * @param updateCritical Whether to update critical data
    * @param updatePersonal Whether to update personal data
    * @throws NotFoundError if the member does not exist
    */
   updateMemberDetails = async (
     memberID: number,
-    updatedMember: Member,
-    mentor: Mentor,
-    updatedLanguages: Language[],
-    updatedEdvSkills: EdvSkill[],
+    updatedMember: MemberDetailsDto,
     updateCritical: boolean,
     updatePersonal: boolean
   ) => {
@@ -381,45 +372,68 @@ class MembersService {
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
-    // Check if potential new mentor exists (if set)
-    if (mentor && mentor.mitgliedID !== null) {
-      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
-      if (mentorInDB === null) {
-        throw new NotFoundError(`Mentor with id ${mentor?.mitgliedID} does not exist`);
-      }
-    }
 
     // Create timestamp for last change
-    const updatedLastChange = createCurrentTimestamp();
+    const updatedLastChange = new Date();
 
-    // Fill tasks to be executed in transaction
-    const tasks = [];
+    // Update critical data
     if (updateCritical) {
-      // Add update tasks for critical data
-      tasks.push({
-        func: this.membersRepository.updateMemberCriticalDataByID,
-        args: [memberID, updatedMember, mentor],
-      });
+      // Check if department exists
+      const department = await DepartmentRepository_typeORM.getDepartmentById(updatedMember.department.departmentId);
+      if (department === null) {
+        throw new NotFoundError(`Department with id ${updatedMember.department.departmentId} does not exist`);
+      }
+
+      // Check if generation exists
+      const generation = await GenerationRepository_typeORM.getGenerationByID(updatedMember.generation);
+      if (generation === null) {
+        throw new NotFoundError(`Generation with id ${updatedMember.generation} does not exist`);
+      }
+
+      // Check if member status exists
+      const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByID(
+        updatedMember.memberStatus.memberStatusId
+      );
+      if (memberStatus === null) {
+        throw new NotFoundError(`Member status with id ${updatedMember.memberStatus} does not exist`);
+      }
+
+      // Check if potential new mentor exists (if set)
+      if (updatedMember.mentor && updatedMember.mentor.memberId !== null) {
+        const mentorInDB = await MembersRepository_typeORM.getMemberByID(updatedMember.mentor.memberId);
+        if (mentorInDB === null) {
+          throw new NotFoundError(`Mentor with id ${updatedMember.mentor?.memberId} does not exist`);
+        }
+
+        // When mentor is set, check if mentor is not the same as the member
+        if (mentorInDB.memberId === memberID) {
+          throw new ConflictError("Mentor cannot be the same as the member");
+        }
+
+        // When mentor is set, the mentor can be updated
+        member.mentorId = updatedMember.mentor.memberId;
+      }
+      member.department = department;
+      member.generation = generation;
+
+      // Update the rest of the critical data
+      member.memberStatus = memberStatus;
+      member.traineeSince = updatedMember.traineeSince;
+      member.memberSince = updatedMember.memberSince;
+      member.alumnusSince = updatedMember.alumnusSince;
+      member.seniorSince = updatedMember.seniorSince;
+      member.passiveSince = updatedMember.passiveSince;
+      member.exitedSince = updatedMember.exitedSince;
+      member.commitment = updatedMember.commitment;
+      member.canPL = updatedMember.canPL;
+      member.canQM = updatedMember.canQM;
     }
     if (updatePersonal) {
-      // Add update tasks for personal data
-      tasks.push({
-        func: this.membersRepository.updateMemberPersonalDataByID,
-        args: [memberID, updatedMember, updatedLastChange],
-      });
-      // Add update tasks for languages and edv skills
-      tasks.push({
-        func: this.membersRepository.updateMemberLanguagesByID,
-        args: [memberID, updatedLanguages],
-      });
-      tasks.push({
-        func: this.membersRepository.updateMemberEdvSkillsByID,
-        args: [memberID, updatedEdvSkills],
-      });
+      // Update personal data
+      MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
+      member.lastChange = updatedLastChange;
     }
-
-    // Execute all tasks in transaction
-    await executeInTransaction(tasks);
+    await MembersRepository_typeORM.saveMember(member);
   };
 
   /**
