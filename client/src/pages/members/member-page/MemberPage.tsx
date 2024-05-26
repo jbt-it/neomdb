@@ -6,7 +6,6 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import api from "../../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
-import PageBar from "../../../components/navigation/PageBar";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
@@ -311,7 +310,6 @@ const MemberProfile: React.FunctionComponent = () => {
           />
         ) : null}
       </div>
-      <PageBar pageTitle="Profilseite" />
     </div>
   );
 };

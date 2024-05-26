@@ -1,17 +1,16 @@
 import React from "react";
-import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Radio,
   Box,
   TextField,
-  Theme,
   Typography,
   MenuItem,
   RadioGroup,
   Checkbox,
   FormControlLabel,
   Autocomplete,
+  useTheme,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -94,8 +93,10 @@ interface Props {
   fields: Array<Field>;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const FieldSection = (props: Props) => {
+  const theme = useTheme();
+
+  const styles = {
     fieldSectionBox: {
       width: "100%",
       display: "flex",
@@ -114,10 +115,6 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
     },
-    textField: {},
-    textBigField: {},
-    dateField: {},
-    dropdownField: {},
     radioButtonField: {
       display: "flex",
       flexDirection: "row",
@@ -129,12 +126,10 @@ const useStyles = makeStyles((theme: Theme) =>
     radioButtonItem: {
       flexGrow: 1,
     },
-    checkboxField: {},
-  })
-);
-
-const FieldSection = (props: Props) => {
-  const classes = useStyles();
+    checkboxField: {
+      paddingLeft: 1,
+    },
+  };
 
   const renderFields = (fields: Field[]) => {
     return fields.map((field: Field, index: number) => {
@@ -142,7 +137,12 @@ const FieldSection = (props: Props) => {
       if (field.type === "Dropdown") {
         fieldElement = (
           <TextField
-            className={`${classes.fieldItem} ${classes.dropdownField}`}
+            sx={{
+              flexGrow: 1,
+              marginTop: theme.spacing(1),
+              marginLeft: theme.spacing(1),
+              marginRight: theme.spacing(1),
+            }}
             key={index}
             variant="outlined"
             label={field.label}
@@ -163,11 +163,11 @@ const FieldSection = (props: Props) => {
         );
       } else if (field.type === "RadioButton") {
         fieldElement = (
-          <RadioGroup className={`${classes.fieldItem} ${classes.radioButtonField}`}>
+          <RadioGroup sx={styles.fieldItem && styles.radioButtonField}>
             {field.values.map((value, index) => {
               return (
                 <FormControlLabel
-                  className={classes.radioButtonItem}
+                  sx={styles.radioButtonItem}
                   value={value.value}
                   control={<Radio />}
                   label={value.label}
@@ -181,7 +181,7 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "Text") {
         fieldElement = (
           <TextField
-            className={`${classes.fieldItem} ${classes.textField}`}
+            sx={styles.fieldItem}
             error={field.error}
             helperText={field.helperText}
             key={index}
@@ -198,7 +198,7 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "TextBig") {
         fieldElement = (
           <TextField
-            className={`${classes.fieldItem} ${classes.textBigField}`}
+            sx={styles.fieldItem}
             key={index}
             label={field.label}
             color="primary"
@@ -214,7 +214,7 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <DatePicker
             key={index}
-            className={`${classes.fieldItem} ${classes.dateField}`}
+            sx={styles.fieldItem}
             label={field.label}
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
@@ -226,7 +226,7 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <TimePicker
             key={index}
-            className={`${classes.fieldItem} ${classes.dateField}`}
+            sx={styles.fieldItem}
             label={field.label}
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
@@ -238,7 +238,7 @@ const FieldSection = (props: Props) => {
         fieldElement = (
           <DateTimePicker
             key={index}
-            className={`${classes.fieldItem} ${classes.dateField}`}
+            sx={styles.fieldItem}
             label={field.label}
             value={field.state as Dayjs}
             slotProps={{ textField: { variant: "outlined", helperText: field.helperText, error: field.error } }}
@@ -253,7 +253,7 @@ const FieldSection = (props: Props) => {
             onChange={field.onChangeCallback ? field.onChangeCallback : undefined}
             renderInput={(params) => <TextField variant="outlined" {...params} label={field.label} />}
             options={field.state as string[]}
-            className={`${classes.fieldItem} ${classes.dropdownField}`}
+            sx={styles.fieldItem}
             size="medium"
             multiple
             disabled={field.disabled}
@@ -262,7 +262,7 @@ const FieldSection = (props: Props) => {
       } else if (field.type === "Checkbox") {
         fieldElement = (
           <FormControlLabel
-            className={`${classes.fieldItem} ${classes.checkboxField}`}
+            sx={styles.fieldItem && styles.checkboxField}
             control={
               <Checkbox
                 key={index}
@@ -280,13 +280,13 @@ const FieldSection = (props: Props) => {
       let fieldContainer: React.JSX.Element;
       if (field.width === "half") {
         fieldContainer = (
-          <Grid item xs={6} className={classes.gridItem} key={index}>
+          <Grid item xs={6} sx={styles.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
       } else if (field.width === "full") {
         fieldContainer = (
-          <Grid item xs={12} className={classes.gridItem} key={index}>
+          <Grid item xs={12} sx={styles.gridItem} key={index}>
             {fieldElement}
           </Grid>
         );
@@ -299,9 +299,9 @@ const FieldSection = (props: Props) => {
   };
 
   return (
-    <Box className={classes.fieldSectionBox}>
+    <Box sx={styles.fieldSectionBox}>
       {props.title ? (
-        <Typography variant="h5" className={classes.fieldSectionTitle}>
+        <Typography variant="h5" sx={styles.fieldSectionTitle}>
           {props.title}
         </Typography>
       ) : null}

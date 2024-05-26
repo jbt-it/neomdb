@@ -2,8 +2,7 @@
  * Component for resetting the password by the user without the help of a admin, bofore logging in
  */
 import React, { useState } from "react";
-import { Paper, Grid, Button, TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Paper, Grid, Button, TextField, useTheme, Box } from "@mui/material";
 import jbtLogoBlack from "../assets/jbt-logo-black.png";
 import api from "../utils/api";
 
@@ -11,10 +10,12 @@ import api from "../utils/api";
  * Function that allwos the user to reset the password, if forgotten by sending them a reset link
  */
 const ForgotPassword: React.FunctionComponent = () => {
+  const theme = useTheme();
+
   /**
    * Function which proivdes the styles of the ForgotPassword
    */
-  const useStyles = makeStyles((theme) => ({
+  const styles = {
     forgotPassword: {
       width: "65%",
       marginTop: theme.spacing(1),
@@ -54,9 +55,8 @@ const ForgotPassword: React.FunctionComponent = () => {
       height: "auto",
       marginTop: theme.spacing(3),
     },
-  }));
+  };
 
-  const classes = useStyles();
   const [email, setEmail] = useState<string>("");
   const [submitBoolean, setSubmitBoolean] = useState<boolean>(false);
 
@@ -97,7 +97,7 @@ const ForgotPassword: React.FunctionComponent = () => {
   const informationOfSubmit = () => {
     if (submitBoolean) {
       return (
-        <Paper className={classes.paper}>
+        <Paper sx={styles.paper}>
           Der Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.
         </Paper>
       );
@@ -107,39 +107,37 @@ const ForgotPassword: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="forgotPassword">
-      <Grid container spacing={0} alignItems="center" justifyContent="center">
-        <Grid item xs={10} sm={8} md={6} lg={4}>
-          <Paper className={classes.paper}>
-            <img className={classes.jbtLogoBlack} src={jbtLogoBlack} />
-            <h1>Passwort vergessen</h1>
-            <form
-              id="emailForm"
-              onSubmit={(event) => {
-                sendEmailWithLink();
+    <Grid container spacing={0} alignItems="center" justifyContent="center">
+      <Grid item xs={10} sm={8} md={6} lg={4}>
+        <Paper sx={styles.paper}>
+          <img style={styles.jbtLogoBlack} src={jbtLogoBlack} />
+          <h1>Passwort vergessen</h1>
+          <form
+            id="emailForm"
+            onSubmit={(event) => {
+              sendEmailWithLink();
+            }}
+          >
+            <TextField
+              sx={styles.inputfield}
+              id="email"
+              label="E-Mail"
+              type="text"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
               }}
-            >
-              <TextField
-                className={classes.inputfield}
-                id="email"
-                label="E-Mail"
-                type="text"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                }}
-                fullWidth
-              />
-              <p className={classes.warningText}>{invalidEmailWarning()}</p>
-              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                Passwort anfordern
-              </Button>
-            </form>
-          </Paper>
-          {informationOfSubmit()}
-        </Grid>
+              fullWidth
+            />
+            <Box sx={styles.warningText}>{invalidEmailWarning()}</Box>
+            <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
+              Passwort anfordern
+            </Button>
+          </form>
+        </Paper>
+        {informationOfSubmit()}
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

@@ -398,72 +398,87 @@ export class MembersController extends Controller {
    *
    * @example requestBody {
    *   "memberId": 8111,
-   *   "firstname": "Brandon-Lee",
    *   "lastname": "Frye",
+   *   "firstname": "Brandon-Lee",
+   *   "gender": true,
+   *   "birthday": "1990-06-06",
+   *   "mobile": "0162/9846320",
    *   "jbtEmail": "b.frye@studentische-beratung.de",
-   *   "gender": 1,
-   *   "": "1990-06-05",
-   *   "handy": "0162/9846320",
-   *   "mitgliedstatus": "passives Mitglied",
-   *   "generation": null,
-   *   "internesprojekt": null,
-   *   "trainee_seit": "2011-04-30",
-   *   "mitglied_seit": "2012-11-30",
-   *   "alumnus_seit": null,
-   *   "senior_seit": null,
-   *   "aktiv_seit": "2012-11-30",
-   *   "passiv_seit": null,
-   *   "ausgetreten_seit": null,
-   *   "ressort": "Mitglieder",
-   *   "arbeitgeber": "Versicherung Deutschland",
-   *   "strasse1": "Woodsman Ave 61",
-   *   "plz1": "70364",
-   *   "ort1": "Stuttgart",
-   *   "tel1": null,
+   *   "memberStatus": {
+   *     "memberStatusId": 1,
+   *     "name": "Trainee"
+   *   },
+   *   "generation": 3,
+   *   "internalProject": null,
+   *   "traineeSince": "2011-05-01",
+   *   "memberSince": "2012-12-01",
+   *   "alumnusSince": null,
+   *   "seniorSince": null,
+   *   "activeSince": "2012-12-01",
+   *   "passiveSince": null,
+   *   "exitedSince": null,
+   *   "department": {
+   *     "departmentId": 5,
+   *     "name": "Mitglieder",
+   *     "shortName": "MIT"
+   *   },
+   *   "employer": "Versicherung International",
+   *   "street1": "Woodsman Ave 61",
+   *   "postalCode1": "70364",
+   *   "city1": "Stuttgart",
+   *   "phone1": null,
    *   "email1": "brandon-lee@gmx.de",
-   *   "strasse2": "Budapester Straße 96",
-   *   "plz2": "56370",
-   *   "ort2": "Rheinland-Pfalz",
-   *   "tel2": "07042/984365",
+   *   "street2": "Budapester Straße 96",
+   *   "postalCode2": "987654",
+   *   "city2": "Reinesland Deutschland",
+   *   "phone2": "07042/984365",
    *   "email2": "brandon-lee@gmx.de",
-   *   "hochschule": "Universität Hohenheim",
-   *   "studiengang": "Master of Financial Management",
-   *   "studienbeginn": "2014-09-30T22:00:00.000Z",
-   *   "studienende": null,
-   *   "vertiefungen": "Controlling und Unternehmensrechnung",
-   *   "ausbildung": null,
-   *   "engagement": null,
-   *   "canPL": "2013-12-22",
-   *   "canQM": "2013-12-22",
-   *   "lastchange": "1899-11-29",
-   *   "fuehrerschein": false,
-   *   "ersthelferausbildung": false,
-   *   "mentor": null,
-   *   "mentees": [],
-   *   "sprachen": [
+   *   "university": "Universität Hohenheim",
+   *   "courseOfStudy": "Master of Financial Management",
+   *   "studyStart": "2014-10-01",
+   *   "studyEnd": null,
+   *   "specializations": "Controlling und Unternehmensrechnung",
+   *   "apprenticeship": null,
+   *   "commitment": null,
+   *   "canPL": "2013-12-23",
+   *   "canQM": "2013-12-23",
+   *   "lastChange": null,
+   *   "drivingLicense": 0,
+   *   "firstAidTraining": false,
+   *   "accountHolder": "8912203a67b608ee8b1dc826b18df9ab1fa18cc28199268a80279cc543d838b280756f78ae495347663fad487573ab72d763e0b553931d883f4dd70acb45eb4a",
+   *   "iban": "730984d2477de277a9d8c15860b9b703320d0195d898e0c64bf48856f425cb6cdf21240ed6d6c20b42d033bf8b623c4ec3dd9add15f9fbef743d1861e25cf703",
+   *   "bic": "0ba933576f9624335f5b6773310f7429345a051310d9179c132c33c9e4b14c78822d5134d3ffa7b345f13f9b6906215f61aa605b0ea823844ccc47e7684d8a35",
+   *   "languages": [
    *     {
-   *       "wert": "Deutsch",
-   *       "niveau": 5
+   *       "memberId": 8111,
+   *       "value": "Deutsch",
+   *       "level": 5
    *     },
    *     {
-   *       "wert": "English",
-   *       "niveau": 3
+   *       "memberId": 8111,
+   *       "value": "English",
+   *       "level": 3
    *     },
    *     {
-   *       "wert": "Französisch",
-   *       "niveau": 1
+   *       "memberId": 8111,
+   *       "value": "Französisch",
+   *       "level": 1
    *     }
    *   ],
-   *   "edvkenntnisse": [
+   *   "itSkills": [
    *     {
-   *       "wert": "MS-Office",
-   *       "niveau": 3
+   *       "memberId": 8111,
+   *       "value": "MS-Office",
+   *       "level": 3
    *     },
    *     {
-   *       "wert": "PHP",
-   *       "niveau": 1
+   *       "memberId": 8111,
+   *       "value": "PHP",
+   *       "level": 1
    *     }
-   *   ]
+   *   ],
+   *   "mentees": [],
+   *   "mentor": null
    * }
    */
   @Patch("{id}")

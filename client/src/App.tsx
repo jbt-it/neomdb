@@ -1,6 +1,6 @@
 // React imports
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PrivateRoutes from "./components/routing/PrivateRoutes";
 import PublicRoutes from "./components/routing/PublicRoutes";
 import ProtectedRoutes from "./components/routing/ProtectedRoutes";
@@ -54,7 +54,7 @@ import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluatio
 const App: React.FunctionComponent = () => {
   return (
     <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
             <Route path="/login" element={<Login />} />
@@ -112,7 +112,7 @@ const App: React.FunctionComponent = () => {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </LocalizationProvider>
   );
 };

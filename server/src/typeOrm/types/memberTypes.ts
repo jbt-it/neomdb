@@ -20,13 +20,21 @@ export type MentorDto = {
 };
 
 /**
+ * Type of the member status dto
+ */
+export type MemberStatusDto = {
+  memberStatusId: number;
+  name: string;
+};
+
+/**
  * Type of the member field
  */
 export type MembersFieldDto = {
   memberId: number;
   firstname: string;
   lastname: string;
-  memberStatus?: MemberStatus;
+  memberStatus?: MemberStatusDto;
 };
 
 /**
@@ -151,14 +159,6 @@ export type ItSkillDto = {
 };
 
 /**
- * Type of the member status dto
- */
-export type MemberStatusDto = {
-  memberStatusId: number;
-  name: string;
-};
-
-/**
  * Type of the member details dto used for the member details page
  */
 export type MemberDetailsDto = {
@@ -244,4 +244,52 @@ export type NewMember = {
   icalToken: string;
   passwordHash: string;
   traineeSince: Date | null;
+};
+
+export type UpdatedMember = {
+  memberId: number;
+  lastname: string;
+  firstname: string;
+  gender: boolean;
+  birthday: Date;
+  mobile: string;
+  jbtEmail: string;
+  memberStatus: MemberStatusDto;
+  generation: number;
+  internalProject: InternalProject;
+  traineeSince: Date;
+  memberSince: Date;
+  alumnusSince: Date;
+  seniorSince: Date;
+  activeSince: Date;
+  passiveSince: Date | null;
+  exitedSince: Date | null;
+  department: DepartmentPartialDto;
+  employer: string;
+  street1: string;
+  postalCode1: string;
+  city1: string;
+  phone1: string;
+  email1: string;
+  street2: string;
+  postalCode2: string;
+  city2: string;
+  phone2: string;
+  email2: string;
+  university: string;
+  courseOfStudy: string;
+  studyStart: Date;
+  studyEnd: Date;
+  specializations: string;
+  apprenticeship: string;
+  commitment: string;
+  canPL: Date;
+  canQM: Date;
+  lastChange: Date;
+  drivingLicense: number;
+  firstAidTraining: boolean;
+  accountHolder?: string;
+  iban?: string;
+  bic?: string;
+  mentees?: MenteeDto[];
 };

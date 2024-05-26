@@ -1,25 +1,24 @@
 import { DirectorHasPermission } from "typeOrm/entities/DirectorHasPermission";
 import { Department } from "../../typeOrm/entities/Department";
+import { ItSkill } from "../../typeOrm/entities/ItSkill";
+import { Language } from "../../typeOrm/entities/Language";
 import { Member } from "../../typeOrm/entities/Member";
+import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
+import { JWTPayload, PermissionDTO, User } from "../../typeOrm/types/authTypes";
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
   DirectorDto,
   DirectorPositionDto,
+  ItSkillDto,
+  LanguageDto,
   MemberDetailsDto,
   MemberPartialDto,
   MemberPermissionAssignmentDto,
+  MembersFieldDto,
   MenteeDto,
   MentorDto,
-  MembersFieldDto,
-  LanguageDto,
-  ItSkillDto,
 } from "../../typeOrm/types/memberTypes";
-import { PermissionDTO, User } from "../../typeOrm/types/authTypes";
-import { JWTPayload } from "../../typeOrm/types/authTypes";
-import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { Language } from "../../typeOrm/entities/Language";
-import { ItSkill } from "../../typeOrm/entities/ItSkill";
 
 /**
  * Provides methods to map a member to a dto (data transfer object) or vice versa
@@ -126,6 +125,23 @@ export class MemberMapper {
       directorId: member.director.directorId,
     };
   }
+
+  static itSkillToItSkillDto(itSkill: ItSkill): ItSkillDto {
+    return {
+      memberId: itSkill.memberId,
+      value: itSkill.value,
+      level: itSkill.level,
+    };
+  }
+
+  static languageToLanguageDto(language: Language): LanguageDto {
+    return {
+      memberId: language.memberId,
+      value: language.value,
+      level: language.level,
+    };
+  }
+
   static membertoMemberDetailsDto(member: Member, withFinancialData: boolean): MemberDetailsDto {
     // If the user does not have the permission to see the financial data, the financial data will not be included in the response
     if (!withFinancialData) {
@@ -171,8 +187,8 @@ export class MemberMapper {
         lastChange: member.lastChange,
         drivingLicense: member.drivingLicense,
         firstAidTraining: member.firstAidTraining,
-        languages: member.languages,
-        itSkills: member.itSkills,
+        languages: member.languages.map((language) => this.languageToLanguageDto(language)),
+        itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
         mentor: this.memberToMentorDto(member),
       };
@@ -222,8 +238,8 @@ export class MemberMapper {
         accountHolder: member.accountHolder,
         iban: member.iban,
         bic: member.bic,
-        languages: member.languages,
-        itSkills: member.itSkills,
+        languages: member.languages.map((language) => this.languageToLanguageDto(language)),
+        itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
         mentor: this.memberToMentorDto(member),
       };

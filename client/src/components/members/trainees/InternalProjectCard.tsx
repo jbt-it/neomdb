@@ -46,7 +46,7 @@ const InternalProjectCard = (props: Props) => {
   ];
 
   return (
-    <Card sx={(theme) => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectID}>
+    <Card sx={() => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectID}>
       <CardContent>
         <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
           <Link to={`/internes-projekt/${internalProjectID}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -64,8 +64,11 @@ const InternalProjectCard = (props: Props) => {
                     <Stack direction={"row"} alignItems={"center"} spacing={1} key={index}>
                       <Avatar
                         alt={`${trainee.firstname} ${trainee.lastname}`}
-                        {...stringAvatar(`${trainee.firstname} ${trainee.lastname}`)}
-                        sx={{ fontSize: "0.5rem", width: 15, height: 15 }}
+                        {...stringAvatar(`${trainee.firstname} ${trainee.lastname}`, {
+                          fontSize: "0.5rem",
+                          width: 16,
+                          height: 16,
+                        })}
                       />
                       <Typography variant="body1" color="text.secondary" fontSize={14}>
                         {`${trainee.firstname} ${trainee.lastname}`}

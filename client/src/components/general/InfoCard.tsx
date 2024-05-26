@@ -1,37 +1,9 @@
 /*
  * The InfoCard component displays a card with header, edit button and information
  */
-import { createStyles, makeStyles } from "@mui/styles";
 import React from "react";
-import { Card, Accordion, AccordionDetails, AccordionSummary, IconButton, Typography } from "@mui/material";
+import { Card, Accordion, AccordionDetails, AccordionSummary, IconButton, Typography, Box } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-
-/**
- * Function which proivdes the styles of the InfoCard component
- */
-const useStyles = makeStyles(() =>
-  createStyles({
-    panelHeader: {
-      display: "flex",
-      width: "100%",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    cardHeader: {
-      display: "flex",
-      width: "100%",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "10px",
-    },
-    card: {
-      paddingLeft: "20px",
-      paddingRight: "20px",
-      paddingTop: "20px",
-      paddingBottom: "15px",
-    },
-  })
-);
 
 /**
  * Prop type for the InfoCard
@@ -54,7 +26,6 @@ type InfoCardProps = {
  * </InfoCard>
  */
 const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) => {
-  const classes = useStyles();
   const { title, isEditable, handleEdit, isExpandable, defaultExpanded, children } = props;
 
   /**
@@ -73,27 +44,48 @@ const InfoCard: React.FunctionComponent<InfoCardProps> = (props: InfoCardProps) 
   };
 
   return isExpandable ? (
-    <Accordion defaultExpanded={defaultExpanded}>
+    <Accordion defaultExpanded={defaultExpanded} sx={{ m: 0 }}>
       <AccordionSummary aria-controls="" id="">
-        <div className={classes.panelHeader}>
-          <div>
-            <Typography variant="h5">
-              <strong>{title}</strong>
-            </Typography>
-          </div>
-          <div>{renderEditButton()}</div>
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h5">
+            <strong>{title}</strong>
+          </Typography>
+          {renderEditButton()}
+        </Box>
       </AccordionSummary>
       <AccordionDetails>{children}</AccordionDetails>
     </Accordion>
   ) : (
-    <Card elevation={3} className={classes.card}>
-      <div className={classes.cardHeader}>
+    <Card
+      elevation={3}
+      sx={{
+        paddingLeft: "20px",
+        paddingRight: "20px",
+        paddingTop: "20px",
+        paddingBottom: "15px",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "10px",
+        }}
+      >
         <Typography variant="h5">
           <strong>{title}</strong>
         </Typography>
-        <div>{renderEditButton()}</div>
-      </div>
+        {renderEditButton()}
+      </Box>
       {children}
     </Card>
   );
