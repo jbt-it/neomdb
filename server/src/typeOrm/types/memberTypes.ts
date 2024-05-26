@@ -19,6 +19,9 @@ export type MentorDto = {
   lastname: string;
 };
 
+/**
+ * Type of the member status dto
+ */
 export type MemberStatusDto = {
   memberStatusId: number;
   name: string;
@@ -197,7 +200,7 @@ export type MemberDetailsDto = {
   commitment: string | null;
   canPL: Date | null;
   canQM: Date | null;
-  lastChange: Date;
+  lastChange: Date | null;
   drivingLicense: number;
   firstAidTraining: boolean;
   // Optional attributes only viewable with specific permissions (of if the user is the member)

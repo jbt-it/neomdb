@@ -30,7 +30,19 @@ export class InternalProject {
   @Column("date", { name: "kickoff", nullable: true })
   kickoff: Date | null;
 
-  @Column("tinyint", { name: "AngebotBeiEV", width: 1, default: () => "'0'" })
+  @Column("tinyint", {
+    name: "AngebotBeiEV",
+    width: 1,
+    default: () => "'0'",
+    transformer: {
+      to(value: boolean): number {
+        return value ? 1 : 0;
+      },
+      from(value: number): boolean {
+        return value === 1;
+      },
+    },
+  })
   offerAtEv: boolean;
 
   @Column("tinyint", { name: "ZPbeiEV", width: 1, default: () => "'0'" })

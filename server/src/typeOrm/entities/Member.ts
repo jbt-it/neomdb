@@ -30,6 +30,7 @@ import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
+import { booleanTransformer } from "../../utils/transformer";
 
 @Index("name", ["name"], { unique: true })
 @Index("mitgliedID_UNIQUE", ["memberId"], { unique: true })
@@ -63,7 +64,12 @@ export class Member {
   @Column("varchar", { name: "icalToken", nullable: true, length: 16 })
   icalToken: string | null;
 
-  @Column("tinyint", { name: "geschlecht", nullable: true, width: 1 })
+  @Column("tinyint", {
+    name: "geschlecht",
+    nullable: true,
+    width: 1,
+    transformer: booleanTransformer,
+  })
   gender: boolean | null;
 
   @Column("date", { name: "geburtsdatum", nullable: true })
@@ -226,6 +232,7 @@ export class Member {
     name: "ersthelferausbildung",
     width: 1,
     default: () => "'0'",
+    transformer: booleanTransformer,
   })
   firstAidTraining: boolean;
 
