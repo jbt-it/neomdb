@@ -125,7 +125,7 @@ describe("GET / Trainees", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
@@ -162,15 +162,15 @@ describe("GET /generations/:id/trainee-choices", () => {
     expect(response.status).toBe(404);
   });
 
-  test("should return 200 for getting Trainees choises generation ", async () => {
+  test("should return 200 for getting Trainees choices generation ", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-choices")
+      .get(`/api/trainees/generations/${generationID}/trainee-choices`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -219,9 +219,9 @@ describe("GET /generations/:id/motivation", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/motivation")
+      .get(`/api/trainees/generations/${generationID}/motivation`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -356,9 +356,9 @@ describe("GET /generations/:id/trainee-progress", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-progress")
+      .get(`/api/trainees/generations/${generationID}/trainee-progress`)
       .send()
       .set("Cookie", `token=${token}`);
 

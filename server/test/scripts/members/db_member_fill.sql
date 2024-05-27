@@ -93,8 +93,8 @@ INSERT INTO `edvkenntnisse` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 
 INSERT INTO `mitglied_has_evposten` (`mitglied_mitgliedID`, `evposten_evpostenID`, `von`, `bis`) VALUES
 (8222, 10, '2008-04-01', '2009-04-01'),
-(8324, 1, '2011-10-10', '2024-12-01'),
-(8324, 11, '2011-10-10', '2024-12-01');
+(8324, 1, '2011-10-10', '2050-12-01'),
+(8324, 11, '2011-10-10', '2050-12-01');
 
 --
 -- Daten für Tabelle `evposten`
