@@ -1,20 +1,8 @@
 import React from "react";
-import { Autocomplete, IconButton, Stack, TextField, Theme } from "@mui/material";
+import { Autocomplete, IconButton, Stack, TextField, useTheme } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Clear from "@mui/icons-material/Clear";
-import { makeStyles, createStyles } from "@mui/styles";
 import { MembersField } from "../../types/membersTypes";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fieldItem: {
-      flexGrow: 1,
-      marginTop: theme.spacing(1),
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
-  })
-);
 
 /**
  * The props of the MemberSelection component
@@ -47,7 +35,16 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
   addMember,
   removeMember,
 }: MemberSelectionProps) => {
-  const classes = useStyles();
+  const theme = useTheme();
+
+  const styles = {
+    fieldItem: {
+      flexGrow: 1,
+      marginTop: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
+  };
   const options: MembersField[] = memberstatus
     ? selectableMembers.filter(
         (member) =>
@@ -65,7 +62,7 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
           <Autocomplete
             disablePortal
             autoSelect
-            className={`${classes.fieldItem} `}
+            sx={styles.fieldItem}
             id={`members-${index}`}
             options={selectableMembers}
             filterOptions={(options, state) => {

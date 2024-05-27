@@ -5,6 +5,7 @@ import useResponsive from "../../../hooks/useResponsive";
 
 import { schulung_has_feedbackfragen } from "../../../mock/events/schulung_has_feedbackfragen";
 import FeedbackSelection from "./FeedbackSelection";
+import { Link } from "react-router-dom";
 
 interface WorkshopInstanceFeedbackFormProps {
   onSumbit: (
@@ -146,7 +147,7 @@ const WorkshopInstanceFeedbackForm: React.FunctionComponent<WorkshopInstanceFeed
           </Grid>
         ))}
         <Grid item xs={6} sx={{ mt: 2 }}>
-          <Button variant="contained" fullWidth href={`/#/`}>
+          <Button variant="contained" fullWidth component={Link} to={"/"}>
             Abbrechen
           </Button>
         </Grid>

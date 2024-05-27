@@ -5,10 +5,8 @@
 import React, { useState, useContext } from "react";
 import api from "../utils/api";
 import { AuthContext } from "../context/auth-context/AuthContext";
-import { Paper, Button, Theme } from "@mui/material";
+import { Paper, Button, useTheme } from "@mui/material";
 import Textfield from "@mui/material/TextField";
-import { makeStyles } from "@mui/styles";
-import PageBar from "../components/navigation/PageBar";
 import { Container } from "@mui/system";
 
 /**
@@ -16,10 +14,12 @@ import { Container } from "@mui/system";
  * @returns returns the interface for the user
  */
 const ChangePassword: React.FunctionComponent = () => {
+  const theme = useTheme();
+
   /**
    * Function which proivdes the styles of the MenuDrawer
    */
-  const useStyles = makeStyles((theme: Theme) => ({
+  const styles = {
     inputfield: {},
     submit: {
       margin: theme.spacing(3, 0, 1),
@@ -39,9 +39,8 @@ const ChangePassword: React.FunctionComponent = () => {
       flexDirection: "column",
       alignItems: "center",
     },
-  }));
+  };
 
-  const classes = useStyles();
   const { auth } = useContext(AuthContext);
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
@@ -109,7 +108,7 @@ const ChangePassword: React.FunctionComponent = () => {
       return (
         <Textfield
           error
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="oldPassword"
           label="altes Passwort"
           type="password"
@@ -124,7 +123,7 @@ const ChangePassword: React.FunctionComponent = () => {
     }
     return (
       <Textfield
-        className={classes.inputfield}
+        sx={styles.inputfield}
         id="password"
         label="altes Passwort"
         type="password"
@@ -145,7 +144,7 @@ const ChangePassword: React.FunctionComponent = () => {
       return (
         <Textfield
           error
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpassword"
           label="neues Passwort"
           type="password"
@@ -160,7 +159,7 @@ const ChangePassword: React.FunctionComponent = () => {
     } else {
       return (
         <Textfield
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpassword"
           label="neues Passwort"
           type="password"
@@ -181,7 +180,7 @@ const ChangePassword: React.FunctionComponent = () => {
     if (newPassword === newPasswordValidation) {
       return (
         <Textfield
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpasswordvalidation"
           label="neues Passwort wiederholen"
           type="password"
@@ -196,7 +195,7 @@ const ChangePassword: React.FunctionComponent = () => {
       return (
         <Textfield
           error
-          className={classes.inputfield}
+          sx={styles.inputfield}
           id="newpasswordvalidation"
           label="neues Passwort wiederholen"
           type="password"
@@ -228,7 +227,7 @@ const ChangePassword: React.FunctionComponent = () => {
   const resResponse200Field = () => {
     if (resResponse200) {
       return (
-        <Paper className={classes.paper}>
+        <Paper sx={styles.paper}>
           <p>Das Passwort wurde geändert</p>
         </Paper>
       );
@@ -240,13 +239,13 @@ const ChangePassword: React.FunctionComponent = () => {
   return (
     <>
       <Container>
-        <Paper className={classes.paper}>
+        <Paper sx={styles.paper}>
           <p>
             Das neue Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen kleinen- und einen großen
             Buchstaben enthalten
           </p>
         </Paper>
-        <Paper className={classes.paper}>
+        <Paper sx={styles.paper}>
           <div>
             {getOldPasswordField()}
             {getNewPasswordField()}
@@ -254,7 +253,7 @@ const ChangePassword: React.FunctionComponent = () => {
           </div>
           <div>
             <Button
-              className={classes.submit}
+              sx={styles.submit}
               variant="contained"
               fullWidth
               color="primary"
@@ -270,7 +269,6 @@ const ChangePassword: React.FunctionComponent = () => {
         </Paper>
         {resResponse200Field()}
       </Container>
-      <PageBar pageTitle="Passwort ändern" />
     </>
   );
 };
