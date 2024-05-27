@@ -30,7 +30,7 @@ import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
-import { booleanTransformer } from "../../utils/transformer";
+import { booleanTransformer } from "../../utils/dataTransformer";
 
 @Index("name", ["name"], { unique: true })
 @Index("mitgliedID_UNIQUE", ["memberId"], { unique: true })
