@@ -1,8 +1,7 @@
 /*
  * Dialog component for displaying input fields for changing department infos
  */
-import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, Theme } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme } from "@mui/material";
 import React, { memo, useContext, useState } from "react";
 import { DepartmentDetails } from "../../types/membersTypes";
 import api from "../../utils/api";
@@ -11,30 +10,6 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
 import { AxiosError } from "axios";
 import { AxiosResponse } from "axios";
-
-/**
- * Function which proivdes the styles of the dialog department component
- */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fullWidth: {
-      width: "100%",
-    },
-    submitContainer: {
-      width: "100%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-    },
-    cancelButton: {
-      margin: theme.spacing(1, 1, 1, 1),
-    },
-    submitButton: {
-      margin: theme.spacing(1, 0, 1, 1),
-      color: "white",
-    },
-  })
-);
 
 /**
  * Props for the department dialog component
@@ -51,7 +26,30 @@ interface DepartmentDialogProps {
  * @returns Dialog with textfields
  */
 const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((props: DepartmentDialogProps) => {
-  const classes = useStyles();
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the dialog department component
+   */
+  const styles = {
+    fullWidth: {
+      width: "100%",
+    },
+    submitContainer: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+    },
+    cancelButton: {
+      margin: theme.spacing(1, 1, 1, 1),
+    },
+    submitButton: {
+      margin: theme.spacing(1, 0, 1, 1),
+      color: "white",
+    },
+  };
+
   const { title, isOpen, onClose, department } = props;
   const { dispatchAuth } = useContext(AuthContext);
 
@@ -91,7 +89,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField
-                className={classes.fullWidth}
+                sx={styles.fullWidth}
                 required
                 color="primary"
                 id="goal-link-field"
@@ -103,7 +101,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField
-                className={classes.fullWidth}
+                sx={styles.fullWidth}
                 color="primary"
                 required
                 id="organisation-link-field"
@@ -116,11 +114,11 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <hr />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-              <Button className={classes.cancelButton} variant="contained" onClick={onClose}>
+            <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+              <Button sx={styles.cancelButton} variant="contained" onClick={onClose}>
                 Abbrechen
               </Button>
-              <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+              <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                 Änderungen speichern
               </Button>
             </Grid>
