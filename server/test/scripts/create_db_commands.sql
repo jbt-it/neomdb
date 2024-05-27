@@ -115,12 +115,16 @@ CREATE TABLE `event` (
   `beschreibung` mediumtext NOT NULL,
   `datum` date DEFAULT NULL,
   `ende` date DEFAULT NULL,
-  `anmeldungsfrist` datetime DEFAULT NULL,
-  `ort` varchar(255) DEFAULT NULL,
   `startzeit` varchar(10) DEFAULT NULL,
   `endzeit` varchar(10) DEFAULT NULL,
+  `ort` varchar(255) DEFAULT NULL,
+  `anmeldungVon` datetime DEFAULT NULL,
+  `anmeldungBis` datetime DEFAULT NULL,
+  `maximaleTeilnehmer` int DEFAULT NULL,
+  `jbtgoes` tinyint(1) NOT NULL DEFAULT '0',
   `ww` tinyint(1) NOT NULL DEFAULT '0',
-  `netzwerk` tinyint(1) NOT NULL
+  `netzwerk` tinyint(1) NOT NULL DEFAULT '0'
+  `sonstige` tinyint(1) NOT NULL DEFAULT '0',
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -639,7 +643,10 @@ CREATE TABLE `mitglied_has_bueroraumreservierung` (
 
 CREATE TABLE `mitglied_has_event` (
   `event_eventID` int NOT NULL,
-  `mitglied_mitgliedID` int NOT NULL
+  `mitglied_mitgliedID` int NOT NULL,
+  `ist_teilnehmer` tinyint(1) NOT NULL DEFAULT 1,
+  `ist_organisator` tinyint(1) NOT NULL DEFAULT 0,
+  `anmeldezeitpunkt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -1025,7 +1032,9 @@ CREATE TABLE `schulungsinstanz` (
   `ort` varchar(45) DEFAULT NULL,
   `maximaleTeilnehmer` int DEFAULT NULL,
   `referenten` text,
-  `zielgruppe` text
+  `zielgruppe` text,
+  `anmeldungVon` datetime DEFAULT NULL,
+  `anmeldungBis` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

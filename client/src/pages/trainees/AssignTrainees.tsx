@@ -4,7 +4,6 @@
 import React, { useState } from "react";
 import {
   Paper,
-  Link,
   Divider,
   Table,
   TableBody,
@@ -13,24 +12,55 @@ import {
   TableHead,
   TableRow,
   Grid,
-  Theme,
   Typography,
   Button,
   RadioGroup,
   Radio,
   FormControlLabel,
   Modal,
+  useTheme,
 } from "@mui/material";
-import PageBar from "../../components/navigation/PageBar";
-import { makeStyles, createStyles } from "@mui/styles";
 import { showErrorMessage } from "../../utils/toastUtils";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
+import { Link } from "react-router-dom";
+
+type TraineeType = {
+  mitgliedID: number;
+  vorname: string;
+  nachname: string;
+  wahl_mentor1: number;
+  wahl_mentor1_name: string;
+  wahl_mentor2: number;
+  wahl_mentor2_name: string;
+  wahl_mentor3: number;
+  wahl_mentor3_name: string;
+  wahl_ressort1: number;
+  wahl_ressort1_kuerzel: string;
+  wahl_ressort2: number;
+  wahl_ressort2_kuerzel: string;
+  wahl_ressort3: number;
+  wahl_ressort3_kuerzel: string;
+  wahl_internesprojekt1: number;
+  wahl_internesprojekt1_kuerzel: string;
+  wahl_internesprojekt2: number;
+  wahl_internesprojekt2_kuerzel: string;
+  wahl_internesprojekt3: number;
+  wahl_internesprojekt3_kuerzel: string;
+  wahl_internesprojekt1_motivation: string;
+  wahl_internesprojekt2_motivation: string;
+  wahl_internesprojekt3_motivation: string;
+};
 
 /**
- * Function which proivdes the styles of the AssignTraineePreferences
+ * Options to create a new member and to change the status of members
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const AssignTrainees: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the AssignTraineePreferences
+   */
+  const styles = {
     // Header text of a paper marking a section of a page
     paperHeaderText: {
       marginLeft: theme.spacing(1),
@@ -88,6 +118,7 @@ const useStyles = makeStyles((theme: Theme) =>
     linkText: {
       textDecoration: "none",
       boxShadow: "none",
+      color: "black",
     },
     motivationalTextPaper: {
       overflowY: "auto",
@@ -103,48 +134,13 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
-  })
-);
-
-/**
- * Options to create a new member and to change the status of members
- */
-const AssignTrainees: React.FunctionComponent = () => {
-  const classes = useStyles();
-
+  };
   const [showMotivationalTexts, setShowMotivationalTexts] = useState<boolean>(false);
   const [openedTrainee, setOpenedTrainee] = useState<null | TraineeType>(null);
 
   // Test data
   const startDateString = "01.01.2024";
   const endDateString = "15.01.2024";
-
-  type TraineeType = {
-    mitgliedID: number;
-    vorname: string;
-    nachname: string;
-    wahl_mentor1: number;
-    wahl_mentor1_name: string;
-    wahl_mentor2: number;
-    wahl_mentor2_name: string;
-    wahl_mentor3: number;
-    wahl_mentor3_name: string;
-    wahl_ressort1: number;
-    wahl_ressort1_kuerzel: string;
-    wahl_ressort2: number;
-    wahl_ressort2_kuerzel: string;
-    wahl_ressort3: number;
-    wahl_ressort3_kuerzel: string;
-    wahl_internesprojekt1: number;
-    wahl_internesprojekt1_kuerzel: string;
-    wahl_internesprojekt2: number;
-    wahl_internesprojekt2_kuerzel: string;
-    wahl_internesprojekt3: number;
-    wahl_internesprojekt3_kuerzel: string;
-    wahl_internesprojekt1_motivation: string;
-    wahl_internesprojekt2_motivation: string;
-    wahl_internesprojekt3_motivation: string;
-  };
 
   const preferences = [
     {
@@ -226,24 +222,24 @@ const AssignTrainees: React.FunctionComponent = () => {
 
   const renderMotivationalTexts = (
     <Modal open={showMotivationalTexts} onClose={closeMotivationalTexts}>
-      <Paper className={classes.motivationalTextPaper}>
+      <Paper sx={styles.motivationalTextPaper}>
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für {openedTrainee?.wahl_internesprojekt1_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt1_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt1_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für {openedTrainee?.wahl_internesprojekt2_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt2_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt2_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für {openedTrainee?.wahl_internesprojekt3_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt3_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt3_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
           </Grid>
         </Grid>
       </Paper>
@@ -251,23 +247,23 @@ const AssignTrainees: React.FunctionComponent = () => {
   );
 
   const renderPreferences = (
-    <TableContainer component={Paper} className={classes.tableContainer}>
+    <TableContainer component={Paper} sx={styles.tableContainer}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Trainee</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Ressort</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Mentor</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Internes Projekt</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography></Typography>
             </TableCell>
           </TableRow>
@@ -278,9 +274,8 @@ const AssignTrainees: React.FunctionComponent = () => {
               <TableCell component="th" scope="row">
                 <Typography color="secondary">
                   <Link
-                    color="textPrimary"
-                    underline="hover"
-                    href={`#/gesamtuebersicht/${trainee.mitgliedID}`}
+                    to={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                    style={styles.linkText}
                   >{`${trainee.vorname} ${trainee.nachname}`}</Link>
                 </Typography>
               </TableCell>
@@ -359,32 +354,29 @@ const AssignTrainees: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        {renderMotivationalTexts}
-        <Paper className={classes.paperContainer}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h5" className={classes.paperHeaderText}>
-                Trainee-Zuteilung
-              </Typography>
-              <Typography className={classes.paperText}>
-                Hier können die Präferenzen für die Wahl von Ressort, Mentor und Internem Projekt der Trainees zugeteilt
-                werden.<br></br>
-                Startdatum Präferenzwahlen: <b>{startDateString}</b>
-                <br></br>
-                Enddatum Präferenzwahlen: <b>{endDateString}</b>
-                <br></br>
-              </Typography>
-              <Divider className={classes.paperHeaderDivider} />
-              {renderPreferences}
-              <Button variant="outlined" color="primary" className={classes.inputButton}>
-                Präferenzen Zuteilung speichern
-              </Button>
-            </Grid>
+      {renderMotivationalTexts}
+      <Paper sx={styles.paperContainer}>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Trainee-Zuteilung
+            </Typography>
+            <Typography sx={styles.paperText}>
+              Hier können die Präferenzen für die Wahl von Ressort, Mentor und Internem Projekt der Trainees zugeteilt
+              werden.<br></br>
+              Startdatum Präferenzwahlen: <b>{startDateString}</b>
+              <br></br>
+              Enddatum Präferenzwahlen: <b>{endDateString}</b>
+              <br></br>
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderPreferences}
+            <Button variant="outlined" color="primary" sx={styles.inputButton}>
+              Präferenzen Zuteilung speichern
+            </Button>
           </Grid>
-        </Paper>
-      </div>
-      <PageBar pageTitle="Trainee-Zuteilung" />
+        </Grid>
+      </Paper>
     </div>
   );
 };

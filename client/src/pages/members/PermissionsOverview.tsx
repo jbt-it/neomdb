@@ -3,8 +3,7 @@
  */
 
 import React, { useState, useEffect, useContext } from "react";
-import { Paper, Grid, Theme, Typography, Divider, Box, TextField, Chip } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
+import { Paper, Grid, Typography, Divider, Box, TextField, Chip, useTheme } from "@mui/material";
 import api from "../../utils/api";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -38,10 +37,15 @@ interface AllNames {
 }
 
 /**
- * Function which proivdes the styles of the PermissionsOverview
+ * Implements Overview of permissions.
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const PermissionsOverview: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the PermissionsOverview
+   */
+  const styles = {
     paperRoot: {
       padding: theme.spacing(2),
       display: "inline-block",
@@ -98,14 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
     closeIcon: {
       color: "white",
     },
-  })
-);
-
-/**
- * Implements Overview of permissions.
- */
-const PermissionsOverview: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
   const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
   const [permissionsOverview, setPermissionsOverview] = useState<Permissions[]>([]);
   const { auth } = useContext(AuthContext);
@@ -254,25 +251,25 @@ const PermissionsOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        <Box component="div" display="inline">
-          <Paper className={classes.paperRoot}>
+      <Box component="div" display="inline">
+        <Paper sx={styles.paperRoot}>
+          <Grid container spacing={0}>
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={styles.paperHeaderText}>
+                Berechtigungen
+              </Typography>
+              <Divider sx={styles.paperHeaderDivider} />
+            </Grid>
             <Grid container spacing={0}>
-              <Grid item xs={12}>
-                <Typography variant="h5" className={classes.paperHeaderText}>
-                  Berechtigungen
-                </Typography>
-                <Divider className={classes.paperHeaderDivider} />
-              </Grid>
-              <Grid container spacing={0}>
-                {permissionsOverview.map((permissions) => (
-                  <Grid item container spacing={0} className={classes.contentContainer} key={permissions.bezeichnung}>
-                    <Grid item xs={6}>
-                      <Grid item xs={12}>
-                        <Typography>{permissions.bezeichnung}</Typography>
-                      </Grid>
+              {permissionsOverview.map((permissions) => (
+                <Grid item container spacing={0} sx={styles.contentContainer} key={permissions.bezeichnung}>
+                  <Grid item xs={6}>
+                    <Grid item xs={12}>
+                      <Typography>{permissions.bezeichnung}</Typography>
                     </Grid>
-                    <Grid container spacing={0}>
+                  </Grid>
+                  <Grid container spacing={0}>
+                    <>
                       {memberPermissions.map((memberP) => {
                         if (permissions.berechtigungID === memberP.permission) {
                           if (memberPermissions.map((entry) => memberP.permission === entry.permission).length > 0) {
@@ -338,14 +335,14 @@ const PermissionsOverview: React.FunctionComponent = () => {
                       ) : (
                         (tmp = [])
                       )}
-                    </Grid>
+                    </>
                   </Grid>
-                ))}
-              </Grid>
+                </Grid>
+              ))}
             </Grid>
-          </Paper>
-        </Box>
-      </div>
+          </Grid>
+        </Paper>
+      </Box>
     </div>
   );
 };

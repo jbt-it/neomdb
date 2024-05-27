@@ -1,5 +1,4 @@
-# Only for local testing of the development and production builds
-# This file should not be used in the production environment!
+# For creating the test environment
 
 version: "3.8"
 

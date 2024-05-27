@@ -443,15 +443,10 @@ const EventDetails: React.FunctionComponent = () => {
    * Renders the page
    */
   return (
-    <Container maxWidth="lg" sx={{ ml: isMobile ? 0 : 1, maxWidth: isMobile ? "95%" : "100%" }}>
+    <Container maxWidth="lg" sx={{ maxWidth: isMobile ? "95%" : "100%" }}>
       {event ? (
         <>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            sx={{ ml: isMobile ? 0 : 3, pb: 1 }}
-          >
+          <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} sx={{ pb: 1 }}>
             <Typography fontWeight={"bold"} variant="h5">
               Termininformationen - {event ? event.name : null}
             </Typography>
@@ -462,7 +457,7 @@ const EventDetails: React.FunctionComponent = () => {
               </Stack>
             ) : null}
           </Stack>
-          <Paper sx={{ ml: isMobile ? 0 : 3 }}>
+          <Paper>
             <Stack
               direction={"row"}
               justifyContent={"space-between"}

@@ -2,7 +2,7 @@ import React from "react";
 
 const Dashboard: React.FunctionComponent = () => {
   return (
-    <div className="App">
+    <div>
       <h1>Dashboard</h1>
     </div>
   );
