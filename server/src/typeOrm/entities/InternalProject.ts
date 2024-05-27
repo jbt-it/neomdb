@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Member } from "./Member";
 import { Generation } from "./Generation";
+import { booleanTransformer } from "../../utils/dataTransformer";
 
 @Index("fk_IP_Generation", ["generationId"], {})
 @Entity("internesprojekt", { schema: "mdb" })
@@ -34,14 +35,7 @@ export class InternalProject {
     name: "AngebotBeiEV",
     width: 1,
     default: () => "'0'",
-    transformer: {
-      to(value: boolean): number {
-        return value ? 1 : 0;
-      },
-      from(value: number): boolean {
-        return value === 1;
-      },
-    },
+    transformer: booleanTransformer,
   })
   offerAtEv: boolean;
 
