@@ -7,9 +7,9 @@ import { mandatoryWorkshopFeedback } from "../../typeOrm/types/traineeTypes";
 
 export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
-   * Retrieves a trainees by internal project id
+   * Retrieves trainees by internal project id
    * @param internalProjectId The id of the internal project
-   * @returns The member or null if no member was found
+   * @returns The trainees of the internal project
    */
   getInternalProjectMembersByID(internalProjectId: number): Promise<Member[] | null> {
     return this.find({ where: { internalProjectId: internalProjectId } });

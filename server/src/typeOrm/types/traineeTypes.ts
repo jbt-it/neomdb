@@ -54,7 +54,7 @@ export type TraineeMotivationDto = {
 /**
  * Type of the request to update the voting deadlines of a generation
  */
-export type UpdateVotingDeadlinesRequest = {
+export type UpdateVotingDeadlinesRequestDto = {
   electionStart: Date;
   electionEnd: Date;
 };
