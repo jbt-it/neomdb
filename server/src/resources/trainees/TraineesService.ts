@@ -12,7 +12,7 @@ import {
 } from "../../typeOrm/types/traineeTypes";
 import { NotFoundError } from "../../types/Errors";
 import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
-import { InteralProjectMapper } from "./InteralProjectMapper";
+import { InternalProjectMapper } from "./InternalProjectMapper";
 import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
 import { TraineeMapper } from "./TraineeMapper";
 import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
@@ -28,7 +28,7 @@ class TraineesService {
     if (internalProject === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
-    return InteralProjectMapper.internalProjectToInternalProjectDto(internalProject);
+    return InternalProjectMapper.internalProjectToInternalProjectDto(internalProject);
   };
 
   /**
@@ -209,11 +209,7 @@ class TraineesService {
 
     const ips = await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(generationID);
 
-    const internalProjects = ips.map((ip) => {
-      return InteralProjectMapper.internalProjectToInternalProjectDto(ip);
-    });
-
-    return internalProjects;
+    return ips.map((ip) => InternalProjectMapper.internalProjectToInternalProjectDto(ip));
   };
 
   /**
@@ -237,11 +233,7 @@ class TraineesService {
       ? await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(currentGenerationId)
       : await InternalProjectRepository_typeORM.getAllInternalProjects();
 
-    const internalProjects = ips.map((ip) => {
-      return InteralProjectMapper.internalProjectToInternalProjectDto(ip);
-    });
-
-    return internalProjects;
+    return ips.map((ip) => InternalProjectMapper.internalProjectToInternalProjectDto(ip));
   };
 
   /**
@@ -271,12 +263,12 @@ class TraineesService {
     // Wait for all promises to resolve
     const allFeedback = await Promise.all(feedbackPromises);
 
-    // Map the data to the DTO
     const traineeProgress = generation.members.map((member) => {
       // Find the feedback and internal project for the member
       const feedback = allFeedback.find((feedback) => feedback.memberId === member.memberId);
       const ip = internalProjects.find((ip) => ip.internalProjectId === member.internalProjectId);
 
+      // Map the data to the DTO
       return TraineeMapper.traineeToTraineeProgressDto(member, generation.generationId, ip, feedback.feedback);
     });
 

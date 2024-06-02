@@ -1,11 +1,11 @@
 import { InternalProjectDto } from "../../typeOrm/types/traineeTypes";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { MemberMapper } from "../../resources/members/MemberMapper";
+import { MemberMapper } from "../members/MemberMapper";
 
 /**
  * Provides methods to map a internal project to a dto (data transfer object)
  */
-export class InteralProjectMapper {
+export class InternalProjectMapper {
   // --- To DTO mapper functions
 
   static internalProjectToInternalProjectDto(internalProject: InternalProject): InternalProjectDto {
