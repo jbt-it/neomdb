@@ -4,6 +4,7 @@ import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { AppDataSource } from "../../../src/datasource";
+import { MembersRepository_typeORM } from "../../../src/resources/members/MembersRepository_typeORM";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
@@ -531,10 +532,16 @@ describe("PATCH /:id/assignment", () => {
     // --- THEN
     expect(response.status).toBe(204);
 
-    // Check if the data was saved correctly
+    // Check if the data was saved correctly into the database
+    const memberFromDB = await MembersRepository_typeORM.getMemberDetailsByID(8478);
+    expect(memberFromDB.internalProject.internalProjectId).toBe(62);
+    expect(memberFromDB.mentor.memberId).toBe(8167);
+    expect(memberFromDB.departmentId).toBe(1);
+
+    // Check if the data is correctly returned (Tests if Mapper works correctly)
     const getResponse = await request(app).get("/api/members/8478").send().set("Cookie", `token=${token}`);
     expect(getResponse.status).toBe(200);
-    expect(getResponse.body.internalProject.internalProjectID).toBe(62);
+    expect(getResponse.body.internalProject.internalProjectId).toBe(62);
     expect(getResponse.body.mentor.memberId).toBe(8167);
     expect(getResponse.body.department.departmentId).toBe(1);
   });

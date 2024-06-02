@@ -118,7 +118,7 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   getMemberDetailsByID(memberID: number): Promise<Member | null> {
     return this.findOne({
       where: { memberId: memberID },
-      relations: ["mentor", "mentees", "languages", "itSkills", "department", "memberStatus"],
+      relations: ["mentor", "mentees", "internalProject", "languages", "itSkills", "department", "memberStatus"],
     });
   },
 

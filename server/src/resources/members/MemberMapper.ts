@@ -155,7 +155,7 @@ export class MemberMapper {
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
         generation: member.generationId ? member.generationId : null,
-        internalProject: member.internalProjects ? member.internalProjects[0] : null,
+        internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
         alumnusSince: member.alumnusSince,
@@ -190,7 +190,7 @@ export class MemberMapper {
         languages: member.languages.map((language) => this.languageToLanguageDto(language)),
         itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
-        mentor: this.memberToMentorDto(member),
+        mentor: this.memberToMentorDto(member.mentor),
       };
     } else {
       return {
@@ -203,7 +203,7 @@ export class MemberMapper {
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
         generation: member.generationId ? member.generationId : null,
-        internalProject: member.internalProjects ? member.internalProjects[0] : null,
+        internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
         alumnusSince: member.alumnusSince,
@@ -241,7 +241,7 @@ export class MemberMapper {
         languages: member.languages.map((language) => this.languageToLanguageDto(language)),
         itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
-        mentor: this.memberToMentorDto(member),
+        mentor: this.memberToMentorDto(member.mentor),
       };
     }
   }
