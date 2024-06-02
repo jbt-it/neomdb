@@ -465,7 +465,7 @@
 						},
 						"type": "array"
 					},
-					"internalProjects": {
+					"internalProjectsAsQm": {
 						"items": {
 							"$ref": "#/components/schemas/InternalProject"
 						},
@@ -576,12 +576,6 @@
 						},
 						"type": "array"
 					},
-					"qualityManagers": {
-						"items": {
-							"$ref": "#/components/schemas/InternalProject"
-						},
-						"type": "array"
-					},
 					"internalProject": {
 						"$ref": "#/components/schemas/InternalProject"
 					}
@@ -663,7 +657,7 @@
 					"notes",
 					"itSkills",
 					"generations",
-					"internalProjects",
+					"internalProjectsAsQm",
 					"generation",
 					"mentor",
 					"mentees",
@@ -684,7 +678,6 @@
 					"workshopFeedbackHasMembers",
 					"languages",
 					"traineeApplicants",
-					"qualityManagers",
 					"internalProject"
 				],
 				"type": "object",

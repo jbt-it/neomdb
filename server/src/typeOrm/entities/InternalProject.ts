@@ -54,7 +54,7 @@ export class InternalProject {
   @Column("tinyint", { name: "DLbeiEV", width: 1, default: () => "'0'" })
   dlAtEv: boolean;
 
-  @ManyToMany(() => Member, (member) => member.qualityManagers)
+  @ManyToMany(() => Member, (member) => member.internalProjectsAsQm)
   @JoinTable({
     name: "internesprojekt_has_qm",
     joinColumns: [
