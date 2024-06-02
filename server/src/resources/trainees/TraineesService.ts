@@ -1,22 +1,21 @@
-import { NotFoundError } from "../../types/Errors";
-import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
-import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
-import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
-import { InteralProjectMapper } from "./InteralProjectMapper";
+import { DepartmentRepository_typeORM } from "../../resources/members/DepartmentRepository_typeORM";
+import { MemberMapper } from "../../resources/members/MemberMapper";
+import { MembersRepository_typeORM } from "../../resources/members/MembersRepository_typeORM";
+import { Generation } from "../../typeOrm/entities/Generation";
+import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
 import {
-  TraineeChoiceDto,
   InternalProjectDto,
-  TraineeMotivationDto,
   TraineeAssignmentDto,
+  TraineeChoiceDto,
+  TraineeMotivationDto,
   TraineeProgressDto,
 } from "../../typeOrm/types/traineeTypes";
-import { MemberMapper } from "../../resources/members/MemberMapper";
+import { NotFoundError } from "../../types/Errors";
+import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
+import { InteralProjectMapper } from "./InteralProjectMapper";
+import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
 import { TraineeMapper } from "./TraineeMapper";
-import { MembersRepository_typeORM } from "../../resources/members/MembersRepository_typeORM";
-import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
-import { Generation } from "../../typeOrm/entities/Generation";
-import { AppDataSource } from "../../datasource";
-import { DepartmentRepository_typeORM } from "../../resources/members/DepartmentRepository_typeORM";
+import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
 
 class TraineesService {
   /**
@@ -49,48 +48,32 @@ class TraineesService {
    * @throws NotFoundError if the internal project does not exist
    */
   updateIPByID = async (id: number, updatedIp: InternalProjectDto): Promise<void> => {
-    // Update the internal project in a transaction
-    await AppDataSource.transaction(async (transactionalEntityManager) => {
-      const ip = await InternalProjectRepository_typeORM.getIPByID(id);
+    const ip = await InternalProjectRepository_typeORM.getIPByID(id);
 
-      if (ip === null) {
-        throw new NotFoundError(`IP with id ${id} not found`);
-      }
+    if (ip === null) {
+      throw new NotFoundError(`IP with id ${id} not found`);
+    }
 
-      const ipMembers = await TraineeRepository_typeORM.getInternalProjectMembersByID(id);
-      // Get the memberIDs of the updated and old internal project
-      const ipMemberIDs = updatedIp.members.map((member) => member.memberId);
-      const oldIPMemberIDs = ipMembers
-        .filter((member) => ipMemberIDs.includes(member.memberId) === false)
-        .map((member) => member.memberId);
+    // Fetch for the new members and quality managers of the internal project the respective Member objects
+    const newQms = updatedIp.qualityManagers.map((qm) => MembersRepository_typeORM.getMemberByID(qm.memberId));
+    const newMembers = updatedIp.members.map((member) => MembersRepository_typeORM.getMemberByID(member.memberId));
 
-      // Fetch for the new members and quality managers of the internal project the respective Member objects
-      const newQms = updatedIp.qualityManagers.map((qm) => MembersRepository_typeORM.getMemberByID(qm.memberId));
-      const newMembers = updatedIp.members.map((member) => MembersRepository_typeORM.getMemberByID(member.memberId));
+    // Change the internal project details based on the updated IP
+    ip.projectName = updatedIp.projectName;
+    ip.abbreviation = updatedIp.abbreviation;
+    ip.kickoff = updatedIp.kickoff;
+    ip.offerAtEv = updatedIp.offerAtEv;
+    ip.zpAtEv = updatedIp.zpAtEv;
+    ip.zpHeld = updatedIp.zpHeld;
+    ip.apAtEv = updatedIp.apAtEv;
+    ip.apHeld = updatedIp.apHeld;
+    ip.dlAtEv = updatedIp.dlAtEv;
+    ip.generationId = updatedIp.generation;
+    ip.qualityManagers = await Promise.all(newQms);
+    ip.members = await Promise.all(newMembers);
 
-      // Change the internal project details based on the updated IP
-      ip.projectName = updatedIp.projectName;
-      ip.abbreviation = updatedIp.abbreviation;
-      ip.kickoff = updatedIp.kickoff;
-      ip.offerAtEv = updatedIp.offerAtEv;
-      ip.zpAtEv = updatedIp.zpAtEv;
-      ip.zpHeld = updatedIp.zpHeld;
-      ip.apAtEv = updatedIp.apAtEv;
-      ip.apHeld = updatedIp.apHeld;
-      ip.dlAtEv = updatedIp.dlAtEv;
-      ip.generationId = updatedIp.generation;
-      ip.qualityManagers = await Promise.all(newQms);
-      ip.members = await Promise.all(newMembers);
-
-      // Update the IP details with members and qms
-      await InternalProjectRepository_typeORM.updateIPDetailsByID(ip, transactionalEntityManager);
-
-      // Remove the old members from the IP
-      const removeOldMembersPromises = oldIPMemberIDs.map((memberID) =>
-        TraineeRepository_typeORM.updateIPMembers(null, memberID, transactionalEntityManager)
-      );
-      await Promise.all(removeOldMembersPromises);
-    });
+    // Update the IP details with members and qms
+    await InternalProjectRepository_typeORM.saveInternalProject(ip);
   };
 
   /**
@@ -186,7 +169,11 @@ class TraineesService {
       throw new NotFoundError(`Department with id ${assignment.departmentID} not found`);
     }
 
-    await TraineeRepository_typeORM.updateAssignmentByMemberID(memberID, assignment.ipID, mentor, department);
+    member.internalProject = ip;
+    member.mentor = mentor;
+    member.department = department;
+
+    await MembersRepository_typeORM.saveMember(member);
   };
 
   /**

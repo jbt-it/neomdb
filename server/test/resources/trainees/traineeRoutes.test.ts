@@ -530,6 +530,13 @@ describe("PATCH /:id/assignment", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly
+    const getResponse = await request(app).get("/api/members/8478").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.internalProject.internalProjectID).toBe(62);
+    expect(getResponse.body.mentor.memberId).toBe(8167);
+    expect(getResponse.body.department.departmentId).toBe(1);
   });
 
   test("should return 422 for setting assignments for a trainee with invalid data", async () => {
@@ -628,6 +635,50 @@ describe("PUT /ip/:id", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly
+    const getResponse = await request(app).get("/api/trainees/ip/62").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.members).toStrictEqual([
+      {
+        memberId: 8478,
+        firstname: "Kellan",
+        lastname: "Mclaughlin",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+      {
+        memberId: 8748,
+        firstname: "Mason",
+        lastname: "Vinson",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+    ]);
+    expect(getResponse.body.qualityManagers).toStrictEqual([
+      {
+        memberId: 8222,
+        lastname: "Driscoll",
+        firstname: "Talha",
+        memberStatus: {
+          memberStatusId: 3,
+          name: "Senior",
+        },
+      },
+      {
+        memberId: 8320,
+        lastname: "Norton",
+        firstname: "Radhika",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
+      },
+    ]);
   });
 
   test("should return 422 for setting IP with invalid data", async () => {

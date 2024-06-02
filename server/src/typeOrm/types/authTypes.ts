@@ -51,7 +51,7 @@ export type PermissionDTO = {
 };
 
 /**
- * Type of the payload if the jason web token
+ * Type of the payload of the json web token
  */
 export type JWTPayload = {
   memberId: number;

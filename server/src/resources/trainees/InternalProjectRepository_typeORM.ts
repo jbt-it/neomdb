@@ -36,16 +36,12 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
   },
 
   /**
-   * Update the details of an internal project
-   * @param internalProject The internal project to be updated
-   * @param transactionalEntityManager The transactional entity manager
-   * @returns The updated internal project
+   * Saves the internal project
+   * @param internalProject The internal project to be saved
+   * @returns The saved internal project
    */
-  updateIPDetailsByID(
-    internalProject: InternalProject,
-    transactionalEntityManager: EntityManager
-  ): Promise<InternalProject> {
-    return transactionalEntityManager.save(internalProject);
+  saveInternalProject(internalProject: InternalProject): Promise<InternalProject> {
+    return this.save(internalProject);
   },
 });
 

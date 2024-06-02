@@ -988,7 +988,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"internalProject3Motivation":{"dataType":"string","required":true},"internalProject2Motivation":{"dataType":"string","required":true},"internalProject1Motivation":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateVotingDeadlinesRequest": {
+    "UpdateVotingDeadlinesRequestDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"datetime","required":true},"electionStart":{"dataType":"datetime","required":true}},"validators":{}},
     },
@@ -1775,7 +1775,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_setElectionDeadline(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
