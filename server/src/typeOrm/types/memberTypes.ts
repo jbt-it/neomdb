@@ -217,7 +217,7 @@ export type MemberDetailsDto = {
 /**
  * Type of the request to create a member
  */
-export type CreateMemberRequest = {
+export type CreateMemberRequestDto = {
   firstName: string;
   lastName: string;
   name: string;

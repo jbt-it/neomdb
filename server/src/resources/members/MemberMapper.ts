@@ -51,11 +51,14 @@ export class MemberMapper {
     };
   }
   static memberToMentorDto(member: Member): MentorDto {
-    return {
-      memberId: member.memberId,
-      lastname: member.lastName,
-      firstname: member.firstName,
-    };
+    // If the provided member is undefined, return null
+    return member
+      ? {
+          memberId: member.memberId,
+          lastname: member.lastName,
+          firstname: member.firstName,
+        }
+      : null;
   }
   static memberToMemberFieldDto(member: Member): MembersFieldDto {
     return {
@@ -154,7 +157,7 @@ export class MemberMapper {
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
-        generation: member.generationId ? member.generationId : null,
+        generation: member.generationId ?? null,
         internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -202,7 +205,7 @@ export class MemberMapper {
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
-        generation: member.generationId ? member.generationId : null,
+        generation: member.generationId ?? null,
         internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
@@ -297,7 +300,6 @@ export class MemberMapper {
   }
 
   static languageDtoToLanguage(memberId: number, languageDto: LanguageDto): Language {
-    // TODO: Add type
     const language = new Language();
     language.memberId = memberId;
     language.value = languageDto.value;
@@ -309,7 +311,6 @@ export class MemberMapper {
   }
 
   static itSkillDtoToItSkill(memberId: number, itSkillDto: ItSkillDto): ItSkill {
-    // TODO: Add type
     const itSkill = new ItSkill();
     itSkill.memberId = memberId;
     itSkill.value = itSkillDto.value;

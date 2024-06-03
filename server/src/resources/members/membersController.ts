@@ -19,6 +19,7 @@ import { checkDepartmentAccess } from "../../middleware/authorization";
 import { Permission } from "../../typeOrm/entities/Permission";
 import { JWTPayload, PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
 import {
+  CreateMemberRequestDto,
   DepartmentDetailsDto,
   DepartmentMemberDto,
   DirectorDto,
@@ -27,13 +28,11 @@ import {
   MemberDetailsDto,
   MemberPartialDto,
   UpdateDepartmentDto,
-  CreateMemberRequest,
 } from "../../typeOrm/types/memberTypes";
 import { UnauthorizedError } from "../../types/Errors";
 import {
   AssignPermissionToMemberRequest,
   CreateMemberResponse,
-  MemberDetails,
   MemberImage,
   StatusOverview,
 } from "../../types/membersTypes";
@@ -147,7 +146,7 @@ export class MembersController extends Controller {
    */
   @Post("")
   @Security("jwt", ["1"])
-  public async createMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
+  public async createMember(@Body() requestBody: CreateMemberRequestDto): Promise<CreateMemberResponse> {
     /**
      * Overview of the status of the different account creation operations
      */

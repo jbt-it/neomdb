@@ -248,10 +248,10 @@ class TraineesService {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    // fetch internal projects of the generation
+    // Fetch internal projects of the generation
     const internalProjects = await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(generationID);
 
-    // Fetch feedback for mandatory workshops for all members
+    // Holds for every member in generation a promise that resolves to the feedback of the member
     const feedbackPromises = generation.members.map(async (member) => {
       const feedback = await TraineeRepository_typeORM.checkFeedbackForMandatoryWorkshops(member.memberId);
       return {
@@ -272,6 +272,7 @@ class TraineesService {
       return TraineeMapper.traineeToTraineeProgressDto(member, generation.generationId, ip, feedback.feedback);
     });
 
+    // Only return the trainee progress if it is not undefined
     return traineeProgress.filter((progress) => progress !== undefined) as TraineeProgressDto[];
   };
 }

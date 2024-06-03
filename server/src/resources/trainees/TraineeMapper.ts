@@ -72,6 +72,7 @@ export class TraineeMapper {
       apAtEv: ip?.apAtEv ?? false,
       apHeld: ip?.apHeld ?? null,
       dlAtEv: ip?.dlAtEv ?? false,
+      // For every mandatory workshop, check if feedback was given
       projectManagement: feedback.find((f) => f.workshopId === 8300)?.feedbackGiven ?? false,
       rhetoricPresentationTechnique: feedback.find((f) => f.workshopId === 8301)?.feedbackGiven ?? false,
       acquisitionNegotiationTechnique: feedback.find((f) => f.workshopId === 8302)?.feedbackGiven ?? false,
