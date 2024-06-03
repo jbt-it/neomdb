@@ -4,7 +4,7 @@ import { MemberStatusDto, MembersFieldDto } from "./memberTypes";
  * Type of the internal project of a member
  */
 export type InternalProjectDto = {
-  internalProjectID: number;
+  internalProjectId: number;
   generation: number;
   generationName: string;
   projectName: string;
@@ -71,7 +71,7 @@ export type TraineeAssignmentDto = {
 /**
  * Type of mandatory workshop feedback
  */
-export type mandatoryWorkshopFeedback = {
+export type MandatoryWorkshopFeedback = {
   workshopId: number;
   feedbackGiven: boolean;
 };

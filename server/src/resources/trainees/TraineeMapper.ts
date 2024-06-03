@@ -3,7 +3,7 @@ import {
   TraineeChoiceDto,
   TraineeMotivationDto,
   TraineeProgressDto,
-  mandatoryWorkshopFeedback,
+  MandatoryWorkshopFeedback,
 } from "../../typeOrm/types/traineeTypes";
 import { MentorDto } from "../../typeOrm/types/memberTypes";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
@@ -52,7 +52,7 @@ export class TraineeMapper {
     member: Member,
     generationId: number,
     ip?: InternalProject,
-    feedback?: mandatoryWorkshopFeedback[]
+    feedback?: MandatoryWorkshopFeedback[]
   ): TraineeProgressDto {
     return {
       memberID: member.memberId,

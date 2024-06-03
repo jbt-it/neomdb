@@ -15,7 +15,7 @@ import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
 import { InternalProjectMapper } from "./InternalProjectMapper";
 import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
 import { TraineeMapper } from "./TraineeMapper";
-import { TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
+import { MemberHasWorkshopInstanceRepository, TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
 
 class TraineesService {
   /**
@@ -23,7 +23,7 @@ class TraineesService {
    * @throws NotFoundError if the internal project does not exist
    */
   getIPByID = async (id: number) => {
-    const internalProject = await InternalProjectRepository_typeORM.getIPByID(id);
+    const internalProject = await InternalProjectRepository_typeORM.getInternalProjectByID(id);
 
     if (internalProject === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
@@ -48,7 +48,7 @@ class TraineesService {
    * @throws NotFoundError if the internal project does not exist
    */
   updateIPByID = async (id: number, updatedIp: InternalProjectDto): Promise<void> => {
-    const ip = await InternalProjectRepository_typeORM.getIPByID(id);
+    const ip = await InternalProjectRepository_typeORM.getInternalProjectByID(id);
 
     if (ip === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
@@ -158,7 +158,7 @@ class TraineesService {
     }
 
     // Check if the internal project exists
-    const ip = await InternalProjectRepository_typeORM.getIPByID(assignment.ipID);
+    const ip = await InternalProjectRepository_typeORM.getInternalProjectByID(assignment.ipID);
     if (ip === null) {
       throw new NotFoundError(`IP with id ${assignment.ipID} not found`);
     }
@@ -253,7 +253,9 @@ class TraineesService {
 
     // Holds for every member in generation a promise that resolves to the feedback of the member
     const feedbackPromises = generation.members.map(async (member) => {
-      const feedback = await TraineeRepository_typeORM.checkFeedbackForMandatoryWorkshops(member.memberId);
+      const feedback = await MemberHasWorkshopInstanceRepository.getFeedbackForMandatoryWorkshopsByMemberId(
+        member.memberId
+      );
       return {
         memberId: member.memberId,
         feedback: feedback,

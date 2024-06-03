@@ -1,9 +1,9 @@
-import { EntityManager, UpdateResult } from "typeorm";
+import { UpdateResult } from "typeorm";
 import { AppDataSource } from "../../datasource";
-import { Member } from "../../typeOrm/entities/Member";
 import { Department } from "../../typeOrm/entities/Department";
+import { Member } from "../../typeOrm/entities/Member";
 import { MemberHasWorkshopInstance } from "../../typeOrm/entities/MemberHasWorkshopInstance";
-import { mandatoryWorkshopFeedback } from "../../typeOrm/types/traineeTypes";
+import { MandatoryWorkshopFeedback } from "../../typeOrm/types/traineeTypes";
 
 export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).extend({
   /**
@@ -21,20 +21,6 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
    */
   getTrainees(): Promise<Member[]> {
     return this.find({ where: { memberStatusId: 1 } });
-  },
-
-  /**
-   * Updates the members of an internal project
-   * @param internalProjectId The id of the internal project
-   * @param memberIds The ids of the members
-   * @returns A promise that resolves when the update is done
-   */
-  updateIPMembers(
-    internalProjectId: number,
-    memberId: number,
-    transactionalEntityManager: EntityManager
-  ): Promise<UpdateResult> {
-    return transactionalEntityManager.update(Member, { memberId: memberId }, { internalProjectId: internalProjectId });
   },
 
   /**
@@ -57,21 +43,16 @@ export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).ext
       departmentId: department,
     });
   },
-
+});
+export const MemberHasWorkshopInstanceRepository = AppDataSource.getRepository(MemberHasWorkshopInstance).extend({
   /**
-   * Checks for all mandatory workshops if feedback was given by a member
+   * Retrieves for all mandatory workshops the feedback of a member
    * @param memberId The id of the member
    * @returns An array of mandatory workshop feedbacks with the workshop id and if feedback was given
    */
-  async checkFeedbackForMandatoryWorkshops(memberId: number): Promise<mandatoryWorkshopFeedback[]> {
-    const MemberHasWorkshopInstanceRepository = AppDataSource.getRepository(MemberHasWorkshopInstance);
-
-    const instances = await MemberHasWorkshopInstanceRepository.find({
-      relations: {
-        workshopInstance: {
-          workshop: true,
-        },
-      },
+  async getFeedbackForMandatoryWorkshopsByMemberId(memberId: number): Promise<MandatoryWorkshopFeedback[]> {
+    const instances: MemberHasWorkshopInstance[] = await this.find({
+      relations: ["workshopInstance", "workshopInstance.workshop"],
       where: {
         memberId: memberId,
         type: "Teilnehmer",

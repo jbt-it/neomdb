@@ -27,7 +27,7 @@ interface Props {
  * @returns - Card with internal project information
  */
 const InternalProjectCard = (props: Props) => {
-  const { internalProjectID, projectName, members } = props.internalProject;
+  const { internalProjectId, projectName, members } = props.internalProject;
   const kickoff = props.internalProject.kickoff ? dayjs(props.internalProject.kickoff).format("DD.MM.YYYY") : "Nein";
   const zpHeld = props.internalProject.zpHeld ? dayjs(props.internalProject.zpHeld).format("DD.MM.YYYY") : "Nein";
   const apHeld = props.internalProject.apHeld ? dayjs(props.internalProject.apHeld).format("DD.MM.YYYY") : "Nein";
@@ -46,10 +46,10 @@ const InternalProjectCard = (props: Props) => {
   ];
 
   return (
-    <Card sx={() => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectID}>
+    <Card sx={() => ({ width: { xs: "100%", sm: 200, xl: 250 }, mr: 1, mb: 5 })} key={internalProjectId}>
       <CardContent>
         <Stack direction={"column"} sx={{ mb: 2, mt: -2, minHeight: 150 }}>
-          <Link to={`/internes-projekt/${internalProjectID}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link to={`/internes-projekt/${internalProjectId}`} style={{ textDecoration: "none", color: "inherit" }}>
             <Typography fontSize={16} fontWeight={"bold"} sx={{ mb: 1, mt: 1 }}>
               {projectName}
             </Typography>

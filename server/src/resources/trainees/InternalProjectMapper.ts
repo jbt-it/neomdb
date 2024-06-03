@@ -10,7 +10,7 @@ export class InternalProjectMapper {
 
   static internalProjectToInternalProjectDto(internalProject: InternalProject): InternalProjectDto {
     return {
-      internalProjectID: internalProject.internalProjectId,
+      internalProjectId: internalProject.internalProjectId,
       generation: internalProject.generationId,
       generationName: internalProject.generation.description,
       projectName: internalProject.projectName,

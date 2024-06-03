@@ -458,7 +458,9 @@ class MembersService {
       return;
     }
 
-    await MembersRepository_typeORM.updateMemberStatus(member.memberId, memberStatus.memberStatusId);
+    member.memberStatus = memberStatus;
+    member.lastChange = new Date();
+    await MembersRepository_typeORM.saveMember(member);
   };
 }
 

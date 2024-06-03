@@ -1,5 +1,5 @@
 import { ItSkillsValue, LanguageValue, NewMember } from "typeOrm/types/memberTypes";
-import { LessThan, MoreThan } from "typeorm";
+import { EntityManager, LessThan, MoreThan } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Generation } from "../../typeOrm/entities/Generation";
 import { ItSkill } from "../../typeOrm/entities/ItSkill";
@@ -123,26 +123,6 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   },
 
   /**
-   * Updates the passwordHash of a member
-   * @param memberID The id of the member
-   * @param newPasswordHash The new password hash
-   * @returns A promise that resolves when the update is done
-   */
-  updateUserPasswordByUserNameAndUserID(name: string, memberID: number, newPasswordHash: string): Promise<void> {
-    return this.update({ memberId: memberID, name: name }, { passwordHash: newPasswordHash });
-  },
-
-  /**
-   * Updates the status of a member and sets the lastChanged date
-   * @param memberID The id of the member
-   * @param statusId The id of the new status
-   * @returns A promise that resolves when the update is done
-   */
-  updateMemberStatus(memberID: number, statusId: number): Promise<void> {
-    return this.update(memberID, { memberStatusId: statusId, lastChange: new Date() });
-  },
-
-  /**
    * Creates a member
    * @param member The details of the new member to create
    * @returns The saved member's memberId
@@ -157,8 +137,8 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param member The member to save
    * @returns The saved member's memberId
    */
-  async saveMember(member: Member): Promise<Member> {
-    return this.save(member);
+  async saveMember(member: Member, transactionalEntityManager?: EntityManager): Promise<Member> {
+    return transactionalEntityManager ? transactionalEntityManager.save(member) : this.save(member);
   },
 });
 

@@ -1,4 +1,3 @@
-import { EntityManager } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { InternalProject } from "../../typeOrm/entities/InternalProject";
 
@@ -8,7 +7,7 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
    * @param id id of the internal project
    * @throws QueryError if the query fails
    */
-  getIPByID(internalProjectId: number): Promise<InternalProject | null> {
+  getInternalProjectByID(internalProjectId: number): Promise<InternalProject | null> {
     return this.findOne({
       where: { internalProjectId: internalProjectId },
       relations: ["qualityManagers", "members", "generation", "members.memberStatus", "qualityManagers.memberStatus"],
