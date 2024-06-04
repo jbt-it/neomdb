@@ -79,7 +79,7 @@ export const AppDataSource = new DataSource({
   username: dbConfig.username,
   password: dbConfig.password,
   database: dbConfig.database,
-  entities: [__dirname + "/typeOrm/entities/*.ts"],
+  entities: dbConfig.entities,
   synchronize: dbConfig.synchronize,
   logging: false,
 });

@@ -3502,7 +3502,7 @@
 				"type": "object",
 				"description": "Type of the response after creating a member"
 			},
-			"CreateMemberRequest": {
+			"CreateMemberRequestDto": {
 				"properties": {
 					"generationId": {
 						"type": "number",
@@ -4158,7 +4158,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"internalProjectID": {
+					"internalProjectId": {
 						"type": "number",
 						"format": "double"
 					}
@@ -4177,7 +4177,7 @@
 					"projectName",
 					"generationName",
 					"generation",
-					"internalProjectID"
+					"internalProjectId"
 				],
 				"type": "object",
 				"description": "Type of the internal project of a member"
@@ -4710,7 +4710,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateMemberRequest",
+								"$ref": "#/components/schemas/CreateMemberRequestDto",
 								"description": "The member to create"
 							},
 							"example": {
