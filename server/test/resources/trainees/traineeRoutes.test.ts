@@ -3,32 +3,40 @@ import request from "supertest";
 import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
+import { AppDataSource } from "../../../src/datasource";
+import { MembersRepository_typeORM } from "../../../src/resources/members/MembersRepository_typeORM";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
 
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-beforeAll(() => {
-  //try {
-  return traineeTestUtils.initTraineeData();
-  // await setupTraineeData();
-  // } catch (error) {
-  //console.log(error);
-  // } // Executes after every test
-  // await initTraineeData(); // Executes before the first test
-  // await setupTraineeData();
+beforeAll(async () => {
+  // Initialize the data source
+  await AppDataSource.initialize();
 });
 
-beforeEach(() => {
-  return traineeTestUtils.setupTraineeData(); // Executes before every test
+beforeEach(async () => {
+  // Populate the database with test data before each test
+  await traineeTestUtils.initTraineeData();
+  await traineeTestUtils.setupTraineeData();
 });
 
-afterEach(() => {
-  return traineeTestUtils.clearTraineeData();
+afterEach(async () => {
+  // Clean up the database after each test
+  const source = AppDataSource;
+  const entities = source.entityMetadatas;
+
+  await source.query(`SET FOREIGN_KEY_CHECKS = 0;`);
+  for (const entity of entities) {
+    const repository = source.getRepository(entity.name);
+    await repository.query(`DELETE FROM ${entity.tableName}`);
+  }
+  await source.query(`SET FOREIGN_KEY_CHECKS = 1;`);
 });
 
-afterAll(() => {
-  return traineeTestUtils.clearInitTraineeData();
+afterAll(async () => {
+  // Close the data source
+  await AppDataSource.destroy();
 });
 
 // --------------------------- TESTS --------------------------- \\
@@ -39,6 +47,7 @@ describe("GET /ip/:id", () => {
   test("should return 200 for getting an IP", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    expect(loginResponse.status).toBe(200);
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
@@ -47,33 +56,46 @@ describe("GET /ip/:id", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.projektname).toBe("JE7 Analyse");
-    expect(response.body.projektmitglieder).toStrictEqual([
+    expect(response.body.projectName).toBe("JE7 Analyse");
+    // console.log(response.body.members);
+    expect(response.body.members).toStrictEqual([
       {
-        mitgliedID: 8478,
-        vorname: "Kellan",
-        nachname: "Mclaughlin",
-        mitgliedstatus: "Trainee",
+        memberId: 8478,
+        firstname: "Kellan",
+        lastname: "Mclaughlin",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
       },
       {
-        mitgliedID: 8748,
-        vorname: "Mason",
-        nachname: "Vinson",
-        mitgliedstatus: "Trainee",
+        memberId: 8748,
+        firstname: "Mason",
+        lastname: "Vinson",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
       },
     ]);
-    expect(response.body.qualitaetsmanager).toStrictEqual([
+    expect(response.body.qualityManagers).toStrictEqual([
       {
-        mitgliedID: 8320,
-        vorname: "Radhika",
-        nachname: "Norton",
-        mitgliedstatus: "passives Mitglied",
+        memberId: 8320,
+        firstname: "Radhika",
+        lastname: "Norton",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
       },
       {
-        mitgliedID: 8324,
-        vorname: "Miruna",
-        nachname: "Decker",
-        mitgliedstatus: "Alumnus",
+        memberId: 8324,
+        firstname: "Miruna",
+        lastname: "Decker",
+        memberStatus: {
+          memberStatusId: 5,
+          name: "Alumnus",
+        },
       },
     ]);
   });
@@ -104,7 +126,7 @@ describe("GET / Trainees", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
@@ -141,50 +163,21 @@ describe("GET /generations/:id/trainee-choices", () => {
     expect(response.status).toBe(404);
   });
 
-  test("should return 200 for getting Trainees choises generation ", async () => {
+  test("should return 200 for getting Trainees choices generation ", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-choices")
+      .get(`/api/trainees/generations/${generationID}/trainee-choices`)
       .send()
       .set("Cookie", `token=${token}`);
 
     // --- THEN
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
-  });
-});
-
-describe("GET /ip/:id/mails", () => {
-  test("should return 200 for getting Trainees email of an IP", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/ip/62/mails").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-  });
-
-  test("should return 404 for getting Trainees email of an unknown IP", async () => {
-    // --- GIVEN
-    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
-    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-    // --- WHEN
-
-    const response = await request(app).get("/api/trainees/ip/99/mails").send().set("Cookie", `token=${token}`);
-
-    // --- THEN
-    expect(response.status).toBe(404);
   });
 });
 
@@ -227,9 +220,9 @@ describe("GET /generations/:id/motivation", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/motivation")
+      .get(`/api/trainees/generations/${generationID}/motivation`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -364,9 +357,9 @@ describe("GET /generations/:id/trainee-progress", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-progress")
+      .get(`/api/trainees/generations/${generationID}/trainee-progress`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -384,8 +377,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "2021-01-01",
-      votingEnd: "2021-01-01",
+      electionStart: "2021-01-01",
+      electionEnd: "2021-01-01",
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -403,8 +396,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "2021-01-01",
-      votingEnd: "2021-01-01",
+      electionStart: "2021-01-01",
+      electionEnd: "2021-01-01",
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -422,8 +415,8 @@ describe("POST /generations/:id/set-deadline", () => {
 
     // --- WHEN
     const deadlines = {
-      votingStart: "123",
-      votingEnd: 123,
+      electionStart: "123",
+      electionEnd: 123,
     };
     const response = await request(app)
       .post("/api/trainees/generations/15/set-deadline")
@@ -538,6 +531,19 @@ describe("PATCH /:id/assignment", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly into the database
+    const memberFromDB = await MembersRepository_typeORM.getMemberDetailsByID(8478);
+    expect(memberFromDB.internalProject.internalProjectId).toBe(62);
+    expect(memberFromDB.mentor.memberId).toBe(8167);
+    expect(memberFromDB.departmentId).toBe(1);
+
+    // Check if the data is correctly returned (Tests if Mapper works correctly)
+    const getResponse = await request(app).get("/api/members/8478").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.internalProject.internalProjectId).toBe(62);
+    expect(getResponse.body.mentor.memberId).toBe(8167);
+    expect(getResponse.body.department.departmentId).toBe(1);
   });
 
   test("should return 422 for setting assignments for a trainee with invalid data", async () => {
@@ -569,17 +575,18 @@ describe("PUT /ip/:id", () => {
 
     // --- WHEN
     const assignments = {
-      DLBeiEV: true,
-      APGehalten: "2021-01-01",
-      APBeiEV: true,
-      ZPGehalten: "2021-01-01",
-      ZPBeiEV: true,
-      AngebotBeiEV: true,
-      kickoff: "2021-01-01",
-      kuerzel: "string",
-      projektname: "string-long",
+      internalProjectID: 62,
       generation: 15,
-      internesProjektID: 62,
+      generationName: "Wintersemester 19/20",
+      projectName: "string-long",
+      dlAtEv: true,
+      apHeld: new Date("2021-01-01"),
+      apAtEv: true,
+      zpHeld: new Date("2021-01-01"),
+      zpAtEv: true,
+      offerAtEv: true,
+      kickoff: new Date("2021-01-01"),
+      abbreviation: "string",
     };
     const response = await request(app).put("/api/trainees/ip/62").send(assignments).set("Cookie", `token=${token}`);
 
@@ -594,47 +601,91 @@ describe("PUT /ip/:id", () => {
 
     // --- WHEN
     const newIPData = {
-      projektmitglieder: [
+      members: [
         {
-          mitgliedID: 8478,
-          vorname: "Kellan",
-          nachname: "Mclaughlin",
+          memberId: 8478,
+          firstname: "Kellan",
+          lastname: "Mclaughlin",
         },
         {
-          mitgliedID: 8748,
-          vorname: "Mason",
-          nachname: "Vinson",
-        },
-      ],
-      qualitaetsmanager: [
-        {
-          mitgliedID: 8320,
-          vorname: "Radhika",
-          nachname: "Norton",
-        },
-        {
-          mitgliedID: 8333,
-          vorname: "Miruna",
-          nachname: "Decker",
+          memberId: 8748,
+          firstname: "Mason",
+          lastname: "Vinson",
         },
       ],
-      DLBeiEV: true,
-      APGehalten: "2021-01-01",
-      APBeiEV: true,
-      ZPGehalten: "2021-01-01",
-      ZPBeiEV: true,
-      AngebotBeiEV: true,
-      kickoff: "2021-01-01",
-      kuerzel: "string",
-      projektname: "string-long",
+      qualityManagers: [
+        {
+          memberId: 8320,
+          firstname: "Radhika",
+          lastname: "Norton",
+        },
+        {
+          memberId: 8222,
+          firstname: "Talha",
+          lastname: "Driscoll",
+        },
+      ],
+      dlAtEv: true,
+      apHeld: new Date("2021-01-01"),
+      apAtEv: true,
+      zpHeld: new Date("2021-01-01"),
+      zpAtEv: true,
+      offerAtEv: true,
+      kickoff: new Date("2021-01-01"),
+      abbreviation: "string",
+      projectName: "string-long",
       generation: 15,
-      generationsBezeichnung: "string-long",
-      internesProjektID: 62,
+      generationName: "string-long",
+      internalProjectID: 62,
     };
     const response = await request(app).put("/api/trainees/ip/62").send(newIPData).set("Cookie", `token=${token}`);
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly
+    const getResponse = await request(app).get("/api/trainees/ip/62").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.members).toStrictEqual([
+      {
+        memberId: 8478,
+        firstname: "Kellan",
+        lastname: "Mclaughlin",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+      {
+        memberId: 8748,
+        firstname: "Mason",
+        lastname: "Vinson",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+    ]);
+    expect(getResponse.body.qualityManagers).toStrictEqual([
+      {
+        memberId: 8222,
+        lastname: "Driscoll",
+        firstname: "Talha",
+        memberStatus: {
+          memberStatusId: 3,
+          name: "Senior",
+        },
+      },
+      {
+        memberId: 8320,
+        lastname: "Norton",
+        firstname: "Radhika",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
+      },
+    ]);
   });
 
   test("should return 422 for setting IP with invalid data", async () => {

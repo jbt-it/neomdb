@@ -1,16 +1,16 @@
 import AuthService from "./AuthService";
 import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "@tsoa/runtime";
+import { generateJWT } from "../utils/jwtUtils";
+import { getCookieOptionsAsString } from "./cookieConfig";
+import { UnauthorizedError } from "../types/Errors";
+import * as nodemailer from "nodemailer";
 import {
   JWTPayload,
   UserChangePasswordRequest,
   UserForgotPasswordRequest,
   UserLoginRequest,
   UserResetPasswordRequest,
-} from "../types/authTypes";
-import { generateJWT } from "../utils/jwtUtils";
-import { getCookieOptionsAsString } from "./cookieConfig";
-import { UnauthorizedError } from "../types/Errors";
-import * as nodemailer from "nodemailer";
+} from "../typeOrm/types/authTypes";
 
 /**
  * Controller for the authentication
@@ -124,7 +124,7 @@ export class AuthController extends Controller {
         "Es gab eine Anfrage, dein Passwort für die MDB zu ändern! \n" +
         "Falls du diese Anfrage nicht gestellt haben, ignoriere bitte diese E-Mail oder wende dich an das Ressort IT. \n" +
         "Andernfalls verwende bitte die folgende URL, um dein Passwort zu ändern: \n\n" +
-        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+        "http://localhost:3000/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
         token +
         "\n\n" +
         "\n\n" +
@@ -132,7 +132,7 @@ export class AuthController extends Controller {
         "Dein Ressort IT",
     };
     // TODO: Handle Errors
-    transport.sendMail(mailOptions);
+    // transport.sendMail(mailOptions);
   }
 
   /**

@@ -37,13 +37,13 @@ const WorkshopsOverview: FunctionComponent = () => {
   }, []);
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 2, mr: isMobile ? 0 : 2 }}>
+    <Container>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
         alignContent={"center"}
-        sx={{ mb: 2, maxWidth: "98%" }}
+        sx={{ mb: 2 }}
       >
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops

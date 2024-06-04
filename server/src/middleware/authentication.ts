@@ -1,7 +1,7 @@
 import * as express from "express";
 import { UnauthenticatedError, UnauthorizedError } from "../types/Errors";
 import { checkForValidJWT, extractJWTFromHeader, verifyJWT } from "../utils/jwtUtils";
-import { Permission } from "types/authTypes";
+import { PermissionDTO } from "../typeOrm/types/authTypes";
 
 /**
  * Checks if the user has the required permissions to access the route
@@ -9,8 +9,8 @@ import { Permission } from "types/authTypes";
  * @param permissions Permissions required to access the route
  * @throws UnauthenticatedError if the user does not have the required permissions
  */
-const checkPermissions = (jwtPermissions: Permission[], permissions: string[]) => {
-  if (!jwtPermissions.some((permission) => permissions.includes(permission.permissionID.toString()))) {
+const checkPermissions = (jwtPermissions: PermissionDTO[], permissions: string[]) => {
+  if (!jwtPermissions.some((permission) => permissions.includes(permission.permissionId.toString()))) {
     throw new UnauthorizedError("Authorization failed: Insufficient permissions");
   }
 };
