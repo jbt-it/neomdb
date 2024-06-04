@@ -7,4 +7,5 @@ TRUNCATE TABLE mdb_test.mitglied_has_evposten;
 TRUNCATE TABLE mdb_test.evposten;
 TRUNCATE TABLE mdb_test.mitglied_has_berechtigung;
 TRUNCATE TABLE mdb_test.generation;
+TRUNCATE TABLE mdb_test.internesprojekt;
 SET FOREIGN_KEY_CHECKS = 1;

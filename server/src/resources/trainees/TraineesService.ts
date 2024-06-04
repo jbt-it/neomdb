@@ -1,147 +1,104 @@
-import { NotFoundError } from "../../types/Errors";
-import TraineesRepository from "./TraineesRepository";
+import { DepartmentRepository_typeORM } from "../../resources/members/DepartmentRepository_typeORM";
+import { MemberMapper } from "../../resources/members/MemberMapper";
+import { MembersRepository_typeORM } from "../../resources/members/MembersRepository_typeORM";
+import { Generation } from "../../typeOrm/entities/Generation";
+import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
 import {
-  Generation,
-  InternalProject,
-  JBTMail,
-  Trainee,
-  TraineeChoice,
-  TraineeMotivation,
-  TraineeAssignment,
-  InternalProjectAndTrainee,
-  Workshop,
-} from "../../types/traineesTypes";
-import { Mentor } from "../../types/membersTypes";
-import MembersRepository from "../members/MembersRepository";
-import { executeInTransaction } from "../../database";
+  InternalProjectDto,
+  TraineeAssignmentDto,
+  TraineeChoiceDto,
+  TraineeMotivationDto,
+  TraineeProgressDto,
+} from "../../typeOrm/types/traineeTypes";
+import { NotFoundError } from "../../types/Errors";
+import { GenerationRepository_typeORM } from "./GenerationRepository_typeORM";
+import { InternalProjectMapper } from "./InternalProjectMapper";
+import InternalProjectRepository_typeORM from "./InternalProjectRepository_typeORM";
+import { TraineeMapper } from "./TraineeMapper";
+import { MemberHasWorkshopInstanceRepository, TraineeRepository_typeORM } from "./TraineeRepository_typeORM";
 
 class TraineesService {
-  traineesRepository = new TraineesRepository();
-  memberRepository = new MembersRepository();
-
   /**
    * Get an internal project by its id
    * @throws NotFoundError if the internal project does not exist
    */
-  getIPByID = async (id: number): Promise<InternalProject> => {
-    const ip = await this.traineesRepository.getIPByID(id);
+  getIPByID = async (id: number) => {
+    const internalProject = await InternalProjectRepository_typeORM.getInternalProjectByID(id);
 
-    if (ip === null) {
+    if (internalProject === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
-
-    return ip;
+    return InternalProjectMapper.internalProjectToInternalProjectDto(internalProject);
   };
 
   /**
    * Get the choices of all trainees of a generation
    * @throws NotFoundError if the generation does not exist
    */
-  getTraineeChoicesByGenerationID = async (generationID: number): Promise<TraineeChoice[]> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
-
+  getTraineeChoicesByGenerationID = async (generationID: number): Promise<TraineeChoiceDto[]> => {
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
-
-    const choices = await this.traineesRepository.getTraineeChoicesByGenerationID(generationID);
-
-    return choices;
+    return generation.members.map((choice) => TraineeMapper.memberToTraineeChoiceDto(choice));
   };
 
   /**
    * Update an internal project by its id
    * @throws NotFoundError if the internal project does not exist
    */
-  updateIPByID = async (id: number, updatedIp: InternalProject): Promise<void> => {
-    const ip = await this.traineesRepository.getIPByID(id);
-
-    if (ip === null) {
-      throw new NotFoundError(`IP with id ${id} not found`);
-    }
-    const ipMemberIDs = updatedIp.projektmitglieder.map((member) => member.mitgliedID);
-    const oldIPMemberIDs = ip.projektmitglieder
-      .filter((member) => ipMemberIDs.includes(member.mitgliedID) === false)
-      .map((member) => member.mitgliedID);
-    const ipQmIDs = updatedIp.qualitaetsmanager.map((qm) => qm.mitgliedID);
-    const oldIPQmIDs = ip.qualitaetsmanager
-      .filter((qm) => ipQmIDs.includes(qm.mitgliedID) === false)
-      .map((qm) => qm.mitgliedID);
-
-    // Fill tasks to be executed in transaction
-    const tasks = [];
-
-    // Task to update the internal project details
-    tasks.push({
-      func: this.traineesRepository.updateIPDetailsByID,
-      args: [id, updatedIp],
-    });
-
-    // Task to add new trainees to an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPMembers,
-      args: [id, ipMemberIDs],
-    });
-
-    // Task to remove trainees from an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPMembers,
-      args: [null, oldIPMemberIDs],
-    });
-
-    // Task to add new quality managers to an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPQMs,
-      args: [id, ipQmIDs],
-    });
-
-    // Task to remove quality managers from an internal project
-    tasks.push({
-      func: this.traineesRepository.updateIPQMs,
-      args: [id, oldIPQmIDs],
-    });
-
-    // Execute all tasks in transaction
-    await executeInTransaction(tasks);
-  };
-
-  /**
-   * Get the mails of all trainees of an internal project
-   * @throws NotFoundError if the internal project does not exist
-   */
-  getTraineeMailsByIpID = async (id: number): Promise<JBTMail[]> => {
-    const ip = await this.traineesRepository.getIPByID(id);
+  updateIPByID = async (id: number, updatedIp: InternalProjectDto): Promise<void> => {
+    const ip = await InternalProjectRepository_typeORM.getInternalProjectByID(id);
 
     if (ip === null) {
       throw new NotFoundError(`IP with id ${id} not found`);
     }
 
-    const mails = await this.traineesRepository.getTraineeMailsByIpID(id);
+    // Fetch for the new members and quality managers of the internal project the respective Member objects
+    const newQms = updatedIp.qualityManagers.map((qm) => MembersRepository_typeORM.getMemberByID(qm.memberId));
+    const newMembers = updatedIp.members.map((member) => MembersRepository_typeORM.getMemberByID(member.memberId));
 
-    return mails;
+    // Change the internal project details based on the updated IP
+    ip.projectName = updatedIp.projectName;
+    ip.abbreviation = updatedIp.abbreviation;
+    ip.kickoff = updatedIp.kickoff;
+    ip.offerAtEv = updatedIp.offerAtEv;
+    ip.zpAtEv = updatedIp.zpAtEv;
+    ip.zpHeld = updatedIp.zpHeld;
+    ip.apAtEv = updatedIp.apAtEv;
+    ip.apHeld = updatedIp.apHeld;
+    ip.dlAtEv = updatedIp.dlAtEv;
+    ip.generationId = updatedIp.generation;
+    ip.qualityManagers = await Promise.all(newQms);
+    ip.members = await Promise.all(newMembers);
+
+    // Update the IP details with members and qms
+    await InternalProjectRepository_typeORM.saveInternalProject(ip);
   };
 
   /**
    * Get the motivation of all trainees of a generation
    * @throws NotFoundError if the generation does not exist
    */
-  getTraineeMotivationsByGenerationID = async (generationID: number): Promise<TraineeMotivation[]> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
+  getTraineeMotivationsByGenerationID = async (generationID: number): Promise<TraineeMotivationDto[]> => {
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    const motivation = await this.traineesRepository.getTraineeMotivationsByGenerationID(generationID);
+    const motivations = generation.members.map((member) => {
+      return TraineeMapper.traineeToMotivationDto(member);
+    });
 
-    return motivation;
+    return motivations;
   };
 
   /**
    * Get all generations
    */
   getGenerations = async (): Promise<Generation[]> => {
-    const generations = await this.traineesRepository.getGenerations();
+    const generations = await GenerationRepository_typeORM.getGenerations();
 
     return generations;
   };
@@ -150,14 +107,16 @@ class TraineesService {
    * Get all mentors of a generation
    * @throws NotFoundError if the generation does not exist
    */
-  getMentorsByGenerationID = async (generationID: number): Promise<Mentor[]> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
+  getMentorsByGenerationID = async (generationID: number): Promise<MentorDto[]> => {
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    const mentors = await this.traineesRepository.getMentorsByGenerationID(generationID);
+    const mentors = generation.mentors.map((mentor) => {
+      return MemberMapper.memberToMentorDto(mentor);
+    });
 
     return mentors;
   };
@@ -165,47 +124,56 @@ class TraineesService {
   /**
    * Updates the voting deadline of a generation
    * @throws NotFoundError if the generation does not exist
+   * @throws Error if the election start date is after the election end date
    */
-  updateVotingDeadline = async (generationID: number, votingStart: string, votingEnd: string): Promise<void> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
+  updateElectionDeadline = async (generationID: number, electionStart: Date, electionEnd: Date): Promise<void> => {
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    await this.traineesRepository.updateVotingDeadline(generationID, votingStart, votingEnd);
+    if (electionStart > electionEnd) {
+      throw new Error("The election start date must be before the election end date");
+    }
+
+    await GenerationRepository_typeORM.updateElectionDeadline(generationID, electionStart, electionEnd);
   };
 
   /**
    * Updates the assignment of a trainee
    * @throws NotFoundError if the member, mentor, internal project or department does not exist
    */
-  updateAssignmentByMemberID = async (memberID: number, assignment: TraineeAssignment): Promise<void> => {
+  updateAssignmentByMemberID = async (memberID: number, assignment: TraineeAssignmentDto): Promise<void> => {
     // Check if the member (trainee) exists
-    const member = await this.memberRepository.getMemberByID(memberID, false);
+    const member = await MembersRepository_typeORM.getMemberByID(memberID);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
     // Check if the mentor exists
-    const mentor = await this.memberRepository.getMemberByID(assignment.mentorID, false);
+    const mentor = await MembersRepository_typeORM.getMemberByID(assignment.mentorID);
     if (mentor === null) {
       throw new NotFoundError(`Mentor with id ${assignment.mentorID} not found`);
     }
 
     // Check if the internal project exists
-    const ip = await this.traineesRepository.getIPByID(assignment.ipID);
+    const ip = await InternalProjectRepository_typeORM.getInternalProjectByID(assignment.ipID);
     if (ip === null) {
       throw new NotFoundError(`IP with id ${assignment.ipID} not found`);
     }
 
     // Check if the department exists
-    const department = await this.memberRepository.getDepartmentByID(assignment.departmentID);
+    const department = await DepartmentRepository_typeORM.getDepartmentById(assignment.departmentID);
     if (department === null) {
       throw new NotFoundError(`Department with id ${assignment.departmentID} not found`);
     }
 
-    await this.traineesRepository.updateAssignmentByMemberID(memberID, assignment);
+    member.internalProject = ip;
+    member.mentor = mentor;
+    member.department = department;
+
+    await MembersRepository_typeORM.saveMember(member);
   };
 
   /**
@@ -213,54 +181,59 @@ class TraineesService {
    * @throws NotFoundError if the generation or mentor does not exist
    */
   addMentorToGeneration = async (generationID: number, mentorID: number): Promise<void> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    const mentor = await this.memberRepository.getMemberByID(mentorID, false);
+    const mentor = await MembersRepository_typeORM.getMemberByID(mentorID);
 
     if (mentor === null) {
       throw new NotFoundError(`Mentor with id ${mentorID} not found`);
     }
 
-    await this.traineesRepository.addMentorToGeneration(generationID, mentorID);
+    await GenerationRepository_typeORM.addMentorToGeneration(generationID, mentorID);
   };
 
   /**
    * Get all internal projects of a generation
    * @throws NotFoundError if the generation does not exist
    */
-  getInternalProjectsByGenerationID = async (generationID: number): Promise<InternalProject[]> => {
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
+  getInternalProjectsByGenerationID = async (generationID: number): Promise<InternalProjectDto[]> => {
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
 
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    const ips = await this.traineesRepository.getInternalProjectsByGenerationID(generationID);
+    const ips = await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(generationID);
 
-    return ips;
+    return ips.map((ip) => InternalProjectMapper.internalProjectToInternalProjectDto(ip));
   };
 
   /**
    * Get all trainees
    */
-  getTrainees = async (): Promise<Trainee[]> => {
-    const trainees = await this.traineesRepository.getTrainees();
+  getTrainees = async (): Promise<MembersFieldDto[]> => {
+    const trainees = await TraineeRepository_typeORM.getTrainees();
 
-    return trainees;
+    return trainees.map((trainee) => MemberMapper.memberToMemberFieldDto(trainee));
   };
 
   /**
    * Get all internal projects
    * @param onlyCurrent if true, only the current internal projects are returned
    */
-  getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProject[]> => {
-    const ips = await this.traineesRepository.getInternalProjects(onlyCurrent);
+  getInternalProjects = async (onlyCurrent: boolean): Promise<InternalProjectDto[]> => {
+    const currentGenerationId = await GenerationRepository_typeORM.getCurrentGenerationId();
 
-    return ips;
+    // Get all internal projects or only the current ones
+    const ips = onlyCurrent
+      ? await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(currentGenerationId)
+      : await InternalProjectRepository_typeORM.getAllInternalProjects();
+
+    return ips.map((ip) => InternalProjectMapper.internalProjectToInternalProjectDto(ip));
   };
 
   /**
@@ -268,39 +241,41 @@ class TraineesService {
    * @param generationID ID of the generation
    * @returns A promise that resolves to an array containing the combined data
    */
-  getTraineeProgress = async (generationID: number): Promise<(InternalProjectAndTrainee & Workshop)[]> => {
+  getTraineeProgress = async (generationID: number): Promise<TraineeProgressDto[]> => {
     // Fetch generation to check if it exists
-    const generation = await this.traineesRepository.getGenerationByID(generationID);
-
+    const generation = await GenerationRepository_typeORM.getGenerationByID(generationID);
     if (generation === null) {
       throw new NotFoundError(`Generation with id ${generationID} not found`);
     }
 
-    // Fetch internal project milestones by generation ID
-    const ips: InternalProjectAndTrainee[] =
-      await this.traineesRepository.getTraineeMilestonesfromInternalProjectsByGenerationID(generationID);
-    // Fetch workshop feedback by generation ID
-    const feedback: Workshop[] = await this.traineesRepository.getTraineeWorkshopFeedbackByGenerationID(generationID);
-    // Create a Map object to group data by member ID
-    const mapMemberIDToTrainingData = new Map<number, Record<string, number>>();
+    // Fetch internal projects of the generation
+    const internalProjects = await InternalProjectRepository_typeORM.getInternalProjectsByGenerationId(generationID);
 
-    // Fill the map with data from the "feedback" array
-    feedback.forEach((item) => {
-      const { mitgliedID, schulungsname, feedbackAbgegeben } = item;
-      if (!mapMemberIDToTrainingData.has(mitgliedID)) {
-        mapMemberIDToTrainingData.set(mitgliedID, {});
-      }
-      mapMemberIDToTrainingData.get(mitgliedID)![schulungsname] = feedbackAbgegeben;
+    // Holds for every member in generation a promise that resolves to the feedback of the member
+    const feedbackPromises = generation.members.map(async (member) => {
+      const feedback = await MemberHasWorkshopInstanceRepository.getFeedbackForMandatoryWorkshopsByMemberId(
+        member.memberId
+      );
+      return {
+        memberId: member.memberId,
+        feedback: feedback,
+      };
     });
 
-    // Combine data from the "ips" array
-    const resultArray = ips.map((item) => {
-      const { mitgliedID, ...rest } = item;
-      const trainingData = mapMemberIDToTrainingData.get(mitgliedID) || {};
-      return { mitgliedID, ...rest, ...trainingData } as InternalProjectAndTrainee & Workshop;
+    // Wait for all promises to resolve
+    const allFeedback = await Promise.all(feedbackPromises);
+
+    const traineeProgress = generation.members.map((member) => {
+      // Find the feedback and internal project for the member
+      const feedback = allFeedback.find((feedback) => feedback.memberId === member.memberId);
+      const ip = internalProjects.find((ip) => ip.internalProjectId === member.internalProjectId);
+
+      // Map the data to the DTO
+      return TraineeMapper.traineeToTraineeProgressDto(member, generation.generationId, ip, feedback.feedback);
     });
 
-    return resultArray;
+    // Only return the trainee progress if it is not undefined
+    return traineeProgress.filter((progress) => progress !== undefined) as TraineeProgressDto[];
   };
 }
 

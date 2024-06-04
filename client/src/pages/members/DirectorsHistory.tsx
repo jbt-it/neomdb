@@ -22,7 +22,8 @@ import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import api from "../../utils/api";
 import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
 import { showErrorMessage } from "../../utils/toastUtils";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { DirectorDto } from "../../types/membersTypes";
 
 // Create a styled component with the form
 const StyledForm = styled("form")(({ theme }) => ({
@@ -35,19 +36,6 @@ const StyledForm = styled("form")(({ theme }) => ({
     alignItems: "center",
   },
 }));
-
-/**
- * Interface for the director object
- */
-interface Director {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  von: string;
-  bis: string;
-  kuerzel: string;
-  lastchange: string;
-}
 
 /**
  * Depicts a table with all directors and a filter section to filter the directors
@@ -154,7 +142,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
       },
     },
   };
-  const [directors, setdirectors] = useState<Director[]>([]);
+  const [directors, setdirectors] = useState<DirectorDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
@@ -204,21 +192,21 @@ const DirectorsHistory: React.FunctionComponent = () => {
   /**
    * Filters and sorts the director data and returns it
    */
-  const getFilteredandSortedDirectors = (): Director[] => {
+  const getFilteredandSortedDirectors = (): DirectorDto[] => {
     let filtereddirectors = directors;
 
     // Filters by kuerzel
     if (kuerzelFilter !== "") {
       filtereddirectors = filtereddirectors.filter((director) => {
-        return director.kuerzel === kuerzelFilter;
+        return director.department?.shortName === kuerzelFilter;
       });
     }
 
     // Filters by search input
     filtereddirectors = filtereddirectors.filter((director) => {
       return (
-        director.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        director.nachname.toLowerCase().includes(searchFilter.toLowerCase())
+        director.firstname.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        director.lastname.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
     let sorteddirectors = filtereddirectors;
@@ -226,12 +214,12 @@ const DirectorsHistory: React.FunctionComponent = () => {
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sorteddirectors = sorteddirectors.sort((a, b) => {
-        return a.nachname.localeCompare(b.nachname);
+        return a.lastname.localeCompare(b.lastname);
       });
       // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sorteddirectors = sorteddirectors.sort((a, b) => {
-        return -a.nachname.localeCompare(b.nachname);
+        return -a.lastname.localeCompare(b.lastname);
       });
     }
     return sorteddirectors;
@@ -326,13 +314,14 @@ const DirectorsHistory: React.FunctionComponent = () => {
             {getFilteredandSortedDirectors().map((director, index) => (
               <TableRow hover key={index}>
                 <TableCell component="th" scope="row">
-                  <NavLink
-                    to={`/gesamtuebersicht/${director.mitgliedID}`}
-                  >{`${director.vorname} ${director.nachname}`}</NavLink>
+                  <Link
+                    style={{ color: "black", textDecoration: "none" }}
+                    to={`/gesamtuebersicht/${director.memberId}`}
+                  >{`${director.firstname} ${director.lastname}`}</Link>
                 </TableCell>
-                <TableCell>{director.kuerzel}</TableCell>
-                <TableCell>{transformSQLStringToGermanDate(director.von)}</TableCell>
-                {<TableCell>{transformSQLStringToGermanDate(director.bis)}</TableCell>}
+                <TableCell>{director.department?.shortName}</TableCell>
+                <TableCell>{transformSQLStringToGermanDate(director.from.toString())}</TableCell>
+                {<TableCell>{transformSQLStringToGermanDate(director.until.toString())}</TableCell>}
               </TableRow>
             ))}
           </TableBody>

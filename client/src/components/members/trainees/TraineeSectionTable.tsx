@@ -73,7 +73,7 @@ const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, 
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Aufnahme</DialogTitle>
       <DialogContent>
-        {trainee?.vorname} {trainee?.nachname} aufnehmen?
+        {trainee?.firstname} {trainee?.lastname} aufnehmen?
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Abbrechen</Button>
@@ -149,12 +149,12 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
               <TableCell sx={{ width: 150, border: 1, borderColor: "#fff" }}>
                 <Link
                   component={RouterLink}
-                  to={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                  to={`/gesamtuebersicht/${trainee.memberId}`}
                   underline="none"
                   color="inherit"
                   sx={{ fontWeight: "bold" }}
                 >
-                  {trainee.vorname} {trainee.nachname}
+                  {trainee.firstname} {trainee.lastname}
                 </Link>
               </TableCell>
               {Object.entries(trainee).map(([key, value], index) => {
