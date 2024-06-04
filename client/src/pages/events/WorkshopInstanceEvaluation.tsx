@@ -128,7 +128,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
       <Skeleton variant="rounded" sx={{ height: 500 }} />
     </Stack>
   ) : (
-    <Container sx={{ ml: isMobile ? 0 : 3, maxWidth: 800 }}>
+    <Container sx={{ maxWidth: 800 }}>
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}
