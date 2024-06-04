@@ -199,7 +199,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
                       return (
                         <ListItem key={mitglied.mitgliedID} sx={{ display: "list-item" }} disablePadding disableGutters>
                           <Link
-                            to={`/gesamtuebersicht${mitglied.mitgliedID}`}
+                            to={`/gesamtuebersicht/${mitglied.mitgliedID}`}
                             style={{ textDecoration: "none", color: "inherit" }}
                           >
                             {mitglied.vorname} {mitglied.nachname}
