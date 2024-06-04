@@ -1,5 +1,5 @@
-import { ItSkillsValue, LanguageValue, MentorDto, NewMember, UpdatedMember } from "typeOrm/types/memberTypes";
-import { LessThan, MoreThan } from "typeorm";
+import { ItSkillsValue, LanguageValue, NewMember } from "typeOrm/types/memberTypes";
+import { EntityManager, LessThan, MoreThan } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Generation } from "../../typeOrm/entities/Generation";
 import { ItSkill } from "../../typeOrm/entities/ItSkill";
@@ -118,90 +118,8 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
   getMemberDetailsByID(memberID: number): Promise<Member | null> {
     return this.findOne({
       where: { memberId: memberID },
-      relations: ["mentor", "mentees", "languages", "itSkills", "department", "memberStatus"],
+      relations: ["mentor", "mentees", "internalProject", "languages", "itSkills", "department", "memberStatus"],
     });
-  },
-
-  /**
-   * Updates the personal data of a member
-   * @param memberId The id of the member to update
-   * @param member The updated member
-   * @throws QueryError if the query fails
-   */
-  updateMemberPersonalDataByID(memberId: number, memberData: UpdatedMember) {
-    return this.update(memberId, {
-      mobile: memberData.mobile,
-      employer: memberData.employer,
-      street1: memberData.street1,
-      postalCode1: memberData.postalCode1,
-      city1: memberData.city1,
-      phone1: memberData.phone1,
-      email1: memberData.email1,
-      street2: memberData.street2,
-      postalCode2: memberData.postalCode2,
-      city2: memberData.city2,
-      phone2: memberData.phone2,
-      email2: memberData.email2,
-      university: memberData.university,
-      courseOfStudy: memberData.courseOfStudy,
-      studyStart: memberData.studyStart,
-      studyEnd: memberData.studyEnd,
-      specializations: memberData.specializations,
-      apprenticeship: memberData.apprenticeship,
-      accountHolder: memberData.accountHolder,
-      iban: memberData.iban,
-      bic: memberData.bic,
-      lastChange: new Date(),
-      drivingLicense: memberData.drivingLicense,
-      firstAidTraining: memberData.firstAidTraining,
-    });
-  },
-
-  /**
-   * Updates the critical data of a member
-   * @param memberId The id of the member to update
-   * @param member The updated member
-   * @param mentor The mentor of the updated member
-   * @throws QueryError if the query fails
-   */
-  updateMemberCriticalDataByID(memberId: number, memberData: UpdatedMember, mentor: MentorDto | null) {
-    return this.update(memberId, {
-      memberStatusId: memberData.memberStatus.memberStatusId,
-      generationId: memberData.generation,
-      internalProjectId: memberData.internalProject ? memberData.internalProject.internalProjectId : null,
-      mentorId: mentor ? mentor.memberId : null,
-      traineeSince: memberData.traineeSince,
-      memberSince: memberData.memberSince,
-      alumnusSince: memberData.alumnusSince,
-      seniorSince: memberData.seniorSince,
-      activeSince: memberData.activeSince,
-      passiveSince: memberData.passiveSince,
-      exitedSince: memberData.exitedSince,
-      departmentId: memberData.department.departmentId,
-      commitment: memberData.commitment,
-      canPL: memberData.canPL,
-      canQM: memberData.canQM,
-    });
-  },
-
-  /**
-   * Updates the passwordHash of a member
-   * @param memberID The id of the member
-   * @param newPasswordHash The new password hash
-   * @returns A promise that resolves when the update is done
-   */
-  updateUserPasswordByUserNameAndUserID(name: string, memberID: number, newPasswordHash: string): Promise<void> {
-    return this.update({ memberId: memberID, name: name }, { passwordHash: newPasswordHash });
-  },
-
-  /**
-   * Updates the status of a member and sets the lastChanged date
-   * @param memberID The id of the member
-   * @param statusId The id of the new status
-   * @returns A promise that resolves when the update is done
-   */
-  updateMemberStatus(memberID: number, statusId: number): Promise<void> {
-    return this.update(memberID, { memberStatusId: statusId, lastChange: new Date() });
   },
 
   /**
@@ -210,8 +128,8 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @returns The saved member's memberId
    */
   async createMember(member: NewMember): Promise<number> {
-    const savedMember = await this.save(member);
-    return savedMember.memberId;
+    const newMember = await this.save(member);
+    return newMember.memberId;
   },
 
   /**
@@ -219,8 +137,8 @@ export const MembersRepository_typeORM = AppDataSource.getRepository(Member).ext
    * @param member The member to save
    * @returns The saved member's memberId
    */
-  async saveMember(member: Member): Promise<Member> {
-    return this.save(member);
+  async saveMember(member: Member, transactionalEntityManager?: EntityManager): Promise<Member> {
+    return transactionalEntityManager ? transactionalEntityManager.save(member) : this.save(member);
   },
 });
 

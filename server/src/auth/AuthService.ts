@@ -1,16 +1,17 @@
 import * as bcrypt from "bcryptjs";
 import * as crypto from "node:crypto";
+import { AppDataSource } from "../datasource";
+import { DepartmentRepository_typeORM } from "../resources/members/DepartmentRepository_typeORM";
 import { MemberMapper } from "../resources/members/MemberMapper";
 import {
   MemberHasDirectorPositionRepository_typeORM,
   MembersRepository_typeORM,
 } from "../resources/members/MembersRepository_typeORM";
-import { JWTPayload, PermissionDTO, UserLoginRequest, UserChangePasswordRequest } from "../typeOrm/types/authTypes";
+import { JWTPayload, PermissionDTO, UserChangePasswordRequest, UserLoginRequest } from "../typeOrm/types/authTypes";
 import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
 import { getDateDifferenceInDays } from "../utils/dateUtils";
 import { sleepRandomly } from "../utils/timeUtils";
 import { PasswordResetRepository_typeORM } from "./PasswordResetRepository_typeORM";
-import { DepartmentRepository_typeORM } from "../resources/members/DepartmentRepository_typeORM";
 
 class AuthService {
   /**
@@ -83,12 +84,8 @@ class AuthService {
     }
 
     const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
-
-    await MembersRepository_typeORM.updateUserPasswordByUserNameAndUserID(
-      userChangePasswordRequest.userName,
-      userChangePasswordRequest.userID,
-      newPasswordHash
-    );
+    user.passwordHash = newPasswordHash;
+    await MembersRepository_typeORM.saveMember(user);
   };
 
   /**
@@ -145,8 +142,11 @@ class AuthService {
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    await MembersRepository_typeORM.updateUserPasswordByUserNameAndUserID(name, user.memberId, newPasswordHash);
-    await PasswordResetRepository_typeORM.deletePasswordResetEntriesByEmail(email);
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      user.passwordHash = newPasswordHash;
+      await MembersRepository_typeORM.saveMember(user, transactionalEntityManager);
+      await PasswordResetRepository_typeORM.deletePasswordResetEntriesByEmail(email, transactionalEntityManager);
+    });
   };
 
   /**

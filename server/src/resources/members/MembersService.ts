@@ -2,7 +2,7 @@ import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import path from "path";
 import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
-import { CreateMemberRequest, MemberDetailsDto, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
+import { CreateMemberRequestDto, MemberDetailsDto, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
 import { ConflictError, NotFoundError, QueryError } from "../../types/Errors";
 import { StatusOverview } from "../../types/membersTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
@@ -287,7 +287,7 @@ class MembersService {
   /**
    * Creates new accounts for a member
    */
-  createAccountsOfMember = async (newMemberRequest: CreateMemberRequest, statusOverview: StatusOverview) => {
+  createAccountsOfMember = async (newMemberRequest: CreateMemberRequestDto, statusOverview: StatusOverview) => {
     // Create jbtMail and newUserName
     const { newUserName, jbtMail } = await this.createJBTMailAndNameOfMember(newMemberRequest.name);
 
@@ -459,7 +459,9 @@ class MembersService {
       return;
     }
 
-    await MembersRepository_typeORM.updateMemberStatus(member.memberId, memberStatus.memberStatusId);
+    member.memberStatus = memberStatus;
+    member.lastChange = new Date();
+    await MembersRepository_typeORM.saveMember(member);
   };
 }
 

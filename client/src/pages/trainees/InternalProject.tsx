@@ -247,7 +247,7 @@ const InternalProject: React.FunctionComponent = () => {
     // };
 
     api
-      .put(`/trainees/ip/${updatedInternalProjectDetails.internalProjectID}`, updatedInternalProjectDetails)
+      .put(`/trainees/ip/${updatedInternalProjectDetails.internalProjectId}`, updatedInternalProjectDetails)
       .then((res) => {
         if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");

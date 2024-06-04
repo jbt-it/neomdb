@@ -113,7 +113,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     }
 
     const data: InternalProjectDto = {
-      internalProjectID: internalProjectDetails?.internalProjectID,
+      internalProjectId: internalProjectDetails?.internalProjectId,
       generation: internalProjectDetails.generation,
       generationName: generationName,
       projectName: projectName,

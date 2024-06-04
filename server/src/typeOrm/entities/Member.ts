@@ -30,7 +30,7 @@ import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
-import { booleanTransformer } from "../../utils/transformer";
+import { booleanTransformer } from "../../utils/dataTransformer";
 
 @Index("name", ["name"], { unique: true })
 @Index("mitgliedID_UNIQUE", ["memberId"], { unique: true })
@@ -302,7 +302,7 @@ export class Member {
   generations: Generation[];
 
   @ManyToMany(() => InternalProject, (internalProject) => internalProject.qualityManagers)
-  internalProjects: InternalProject[];
+  internalProjectsAsQm: InternalProject[];
 
   @ManyToOne(() => Generation, (generation) => generation.members, {
     onDelete: "NO ACTION",
@@ -385,9 +385,6 @@ export class Member {
 
   @OneToMany(() => TraineeApplicant, (traineeApplicant) => traineeApplicant.admittedMember)
   traineeApplicants: TraineeApplicant[];
-
-  @ManyToMany(() => InternalProject, (internalProject) => internalProject.qualityManagers)
-  qualityManagers: InternalProject[];
 
   @ManyToOne(() => InternalProject, (internalProject) => internalProject.members)
   @JoinColumn({ name: "internesprojekt", referencedColumnName: "internalProjectId" })

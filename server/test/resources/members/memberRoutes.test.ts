@@ -124,7 +124,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(3);
+      expect(response.body).toHaveLength(5);
     });
   });
 
@@ -220,7 +220,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(85);
+      expect(response.body).toHaveLength(25);
     });
   });
 
@@ -392,7 +392,7 @@ describe("Test member routes", () => {
 
     test("should return 403 for deligate without having permission", async () => {
       // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
@@ -763,7 +763,7 @@ describe("Test member routes", () => {
 
     test("should return 403 for delete member's permission without permission as normal member", async () => {
       // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN

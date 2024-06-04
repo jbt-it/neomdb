@@ -52,6 +52,7 @@ export const GenerationRepository_typeORM = AppDataSource.getRepository(Generati
    * @returns The updated generation
    */
   addMentorToGeneration(generationId: number, mentorId: number): Promise<Generation> {
+    // Using the relation-of-function for better performance
     return this.createQueryBuilder().relation(Generation, "mentors").of(generationId).add(mentorId);
   },
 });

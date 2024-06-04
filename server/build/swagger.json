@@ -57,7 +57,7 @@
 					"memberId"
 				],
 				"type": "object",
-				"description": "Type of the payload if the jason web token"
+				"description": "Type of the payload of the json web token"
 			},
 			"UserLoginRequest": {
 				"properties": {
@@ -465,7 +465,7 @@
 						},
 						"type": "array"
 					},
-					"internalProjects": {
+					"internalProjectsAsQm": {
 						"items": {
 							"$ref": "#/components/schemas/InternalProject"
 						},
@@ -576,12 +576,6 @@
 						},
 						"type": "array"
 					},
-					"qualityManagers": {
-						"items": {
-							"$ref": "#/components/schemas/InternalProject"
-						},
-						"type": "array"
-					},
 					"internalProject": {
 						"$ref": "#/components/schemas/InternalProject"
 					}
@@ -663,7 +657,7 @@
 					"notes",
 					"itSkills",
 					"generations",
-					"internalProjects",
+					"internalProjectsAsQm",
 					"generation",
 					"mentor",
 					"mentees",
@@ -684,7 +678,6 @@
 					"workshopFeedbackHasMembers",
 					"languages",
 					"traineeApplicants",
-					"qualityManagers",
 					"internalProject"
 				],
 				"type": "object",
@@ -3509,7 +3502,7 @@
 				"type": "object",
 				"description": "Type of the response after creating a member"
 			},
-			"CreateMemberRequest": {
+			"CreateMemberRequestDto": {
 				"properties": {
 					"generationId": {
 						"type": "number",
@@ -4165,7 +4158,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"internalProjectID": {
+					"internalProjectId": {
 						"type": "number",
 						"format": "double"
 					}
@@ -4184,7 +4177,7 @@
 					"projectName",
 					"generationName",
 					"generation",
-					"internalProjectID"
+					"internalProjectId"
 				],
 				"type": "object",
 				"description": "Type of the internal project of a member"
@@ -4295,7 +4288,7 @@
 				"type": "object",
 				"description": "Type of the motivation of a trainee"
 			},
-			"UpdateVotingDeadlinesRequest": {
+			"UpdateVotingDeadlinesRequestDto": {
 				"properties": {
 					"electionEnd": {
 						"type": "string",
@@ -4717,7 +4710,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateMemberRequest",
+								"$ref": "#/components/schemas/CreateMemberRequestDto",
 								"description": "The member to create"
 							},
 							"example": {
@@ -5703,7 +5696,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateVotingDeadlinesRequest",
+								"$ref": "#/components/schemas/UpdateVotingDeadlinesRequestDto",
 								"description": "start and end date of the voting"
 							},
 							"example": {
