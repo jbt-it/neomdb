@@ -22,7 +22,6 @@ import {
   MenuItem,
   Checkbox,
   ListItemText,
-  Link,
   Container,
   List,
   ListItem,
@@ -48,6 +47,7 @@ import { CommonEventType } from "../../types/eventTypes";
 import { mitglied_has_event } from "../../mock/events/mitglied_has_event";
 import { events as mockEvents } from "../../mock/events/events";
 import { schulungen as mockWorkshops } from "../../mock/events/Workshops";
+import { Link } from "react-router-dom";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -106,7 +106,7 @@ const EventsOverview: React.FC = () => {
 
     return (
       <Box hidden={value !== index} id={`tabpanel-${index}`} {...other}>
-        {value === index && <Box sx={{ p: mobile ? 0 : 3 }}>{children}</Box>}
+        {value === index && <Box sx={{ paddingTop: mobile ? 0 : 3 }}>{children}</Box>}
       </Box>
     );
   };
@@ -824,7 +824,7 @@ const EventsOverview: React.FC = () => {
       endMonth ? rows.filter((event) => event.date < endMonth) : null;
     }
     return (
-      <TableContainer component={Paper} sx={{ margin: "auto" }}>
+      <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -852,12 +852,12 @@ const EventsOverview: React.FC = () => {
                 ) : null}
                 <TableRow>
                   <TableCell>
-                    <Link href={`#/veranstaltungen/${row.ID}`}>
+                    <Link to={`/veranstaltungen/${row.ID}`}>
                       <EventChip type={row.type} size="small" />
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Link color="textPrimary" underline="hover" href={`#/veranstaltungen/${row.ID}`}>
+                    <Link style={{ textDecoration: "none", color: "black" }} to={`/veranstaltungen/${row.ID}`}>
                       {row.name}
                     </Link>
                   </TableCell>
@@ -946,7 +946,7 @@ const EventsOverview: React.FC = () => {
               sx={{ p: 0.5, flexDirection: "column", alignItems: "flex-start", mb: 1, width: "100%" }}
               style={{ boxShadow: "none" }}
             >
-              <CardActionArea component={Link} href={`#/veranstaltungen/${row.ID}`}>
+              <CardActionArea component={Link} to={`/veranstaltungen/${row.ID}`}>
                 <CardContent sx={{ p: 0 }}>
                   <Box sx={{ display: "flex", direction: "row", alignItems: "center" }}>
                     <EventChip type={row.type} size="small" sx={{ ml: -0.5, mr: 1 }} />
@@ -1054,12 +1054,8 @@ const EventsOverview: React.FC = () => {
    * Returns the content of the actual page
    */
   return (
-    <Container maxWidth="lg" sx={{ ml: mobile ? 0 : 1 }}>
-      <Stack
-        direction={mobile ? "column" : "row"}
-        justifyContent={"space-between"}
-        sx={{ ml: mobile ? 0 : 3, mr: mobile ? 2 : 3 }}
-      >
+    <Container maxWidth="lg">
+      <Stack direction={mobile ? "column" : "row"} justifyContent={"space-between"}>
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Veranstaltungen
         </Typography>
@@ -1070,16 +1066,16 @@ const EventsOverview: React.FC = () => {
       </Stack>
       {events.length > 0 ? (
         <Box>
-          <Box sx={{ ml: mobile ? 0 : 2 }}>{displayFiters ? renderFilters() : null}</Box>
+          <Box>{displayFiters ? renderFilters() : null}</Box>
           <Stack direction={"row"} alignItems="center" justifyContent="space-between">
-            <Tabs value={tabValue} onChange={handleTabChange} sx={{ ml: mobile ? 0 : 3 }}>
+            <Tabs value={tabValue} onChange={handleTabChange}>
               <Tab label={mobile ? "Alle Events" : "Alle Veranstaltungen"} />
               <Tab label={mobile ? "Meine Events" : "Meine Veranstaltungen"} />
               {!mobile ? <Tab label="Events" /> : null}
               {!mobile ? <Tab label="Workshops" /> : null}
             </Tabs>
             <IconButton
-              sx={{ width: 35, height: 35, mr: mobile ? 1 : 3 }}
+              sx={{ width: 35, height: 35 }}
               onClick={() => {
                 setDisplayFilters((prev) => !prev);
               }}

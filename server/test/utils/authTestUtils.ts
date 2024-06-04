@@ -39,6 +39,7 @@ class AuthTestUtils {
 
       return token;
     } catch (error) {
+      console.error("Error extracting token from response", error);
       throw new Error("No token found in response");
     }
   };
@@ -58,6 +59,7 @@ class AuthTestUtils {
       }
       await this.authRepository.createPasswordResetEntry(email, "salt", token);
     } catch (error) {
+      console.error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
       throw new Error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
     }
   };

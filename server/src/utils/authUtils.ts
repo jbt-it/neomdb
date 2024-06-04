@@ -1,6 +1,6 @@
 // File for providing authenticaion based util functions
 
-import { JWTPayload, Permission, User } from "../types/authTypes";
+import { PermissionDTO, JWTPayload, User } from "../typeOrm/types/authTypes";
 
 /**
  * Checks if a list of permissions of a member include a list of permission IDs
@@ -9,8 +9,8 @@ import { JWTPayload, Permission, User } from "../types/authTypes";
  * @param permissions The array of permission IDs the `memberPermissions` should include
  * @returns true if all `permissions` are included in `memberPermissions`
  */
-export const doesPermissionsInclude = (memberPermissions: Permission[], permissions: number[]) => {
-  return permissions.every((element) => memberPermissions.some((permission) => permission.permissionID === element));
+export const doesPermissionsInclude = (memberPermissions: PermissionDTO[], permissions: number[]) => {
+  return permissions.every((element) => memberPermissions.some((permission) => permission.permissionId === element));
 };
 
 /**
@@ -20,8 +20,8 @@ export const doesPermissionsInclude = (memberPermissions: Permission[], permissi
  * @param permissions The array of permission IDs the `memberPermissions` should include at least one
  * @returns true if at least one of the `permissions` are included in `memberPermissions`
  */
-export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
-  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionID === element));
+export const doesPermissionsHaveSomeOf = (memberPermissions: PermissionDTO[], permissions: number[]) => {
+  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionId === element));
 };
 
 /**
@@ -31,9 +31,9 @@ export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permi
  * @param permissionToBeDelegated The permission that should be delegated
  * @returns true if the permission can be delegated by the member
  */
-export const canPermissionBeDelegated = (memberPermissions: Permission[], permissionToBeDelegated: number) => {
+export const canPermissionBeDelegated = (memberPermissions: PermissionDTO[], permissionToBeDelegated: number) => {
   return memberPermissions.some(
-    (permission) => permission.permissionID === permissionToBeDelegated && permission.canDelegate
+    (permission) => permission.permissionId === permissionToBeDelegated && permission.canDelegate
   );
 };
 
@@ -53,31 +53,29 @@ export const doesRolesHaveSomeOf = (memberRoles: number[], roles: number[]) => {
  * @param directorPermissionsResult The result of the director permissions query
  * @returns The payload for the user data
  */
-export const createUserDataPayload = (result: User, directorPermissionsResult: Permission[]) => {
+export const createUserDataPayload = (result: User, directorPermissionsResult: PermissionDTO[]) => {
   const permissions = [];
   const roles = [];
   // Adds role permissions to the permissions array and adds directorID to the roles array
   if (directorPermissionsResult.length !== 0) {
     directorPermissionsResult.forEach((permission) => {
-      permissions.push({ permissionID: permission.permissionID, canDelegate: permission.canDelegate });
-      if (!roles.includes(permission.directorID)) {
-        roles.push(permission.directorID);
+      permissions.push({ permissionID: permission.permissionId, canDelegate: permission.canDelegate });
+      if (!roles.includes(permission.directorId)) {
+        roles.push(permission.directorId);
       }
     });
   }
 
   // Adds normal permissions to the permissions array
   if (result.permissions) {
-    result.permissions
-      .split(",")
-      .map(Number)
-      .map((perm) => {
-        // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
-        permissions.push({ permissionID: perm, canDelegate: 0 });
-      });
+    result.permissions.map((perm) => {
+      // A Permission which was delegated to a member cannot be delegated further (therefore canDelegate is always 0)
+      permissions.push({ permissionID: perm, canDelegate: 0 });
+    });
   }
+
   const payload: JWTPayload = {
-    mitgliedID: result.mitgliedID,
+    memberId: result.memberId,
     name: result.name,
     permissions,
     roles,

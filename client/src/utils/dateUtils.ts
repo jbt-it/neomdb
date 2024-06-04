@@ -9,6 +9,22 @@ const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", year: "numeric
 const locales = "de-DE";
 
 /**
+ * Transforms a string to a date
+ * @param dateString The string to transform
+ * @returns The string as a date
+ */
+export const stringToDate = (dateString: string) => {
+  if (dateString === "") {
+    return null;
+  }
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date string: ${dateString}`);
+  }
+  return date;
+};
+
+/**
  * Transforms a date to a readable string
  * @param date The date to transform
  * @returns The date as a readable string

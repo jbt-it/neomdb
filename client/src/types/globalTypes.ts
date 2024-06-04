@@ -7,7 +7,7 @@ export type AuthContextType = {
 };
 
 export type Permission = {
-  permissionID: number;
+  permissionId: number;
   canDelegate: boolean;
 };
 

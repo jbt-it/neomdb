@@ -15,23 +15,40 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  Theme,
   Typography,
   Button,
+  useTheme,
+  Box,
+  styled,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import PageBar from "../../components/navigation/PageBar";
 import api from "../../utils/api";
 import { showSuccessMessage, showErrorMessage } from "../../utils/toastUtils";
-import { transfromDateToSQLDate } from "../../utils/dateUtils";
 import { replaceSpecialCharacters } from "../../utils/stringUtils";
-import { makeStyles, createStyles } from "@mui/styles";
+import { MemberPartialDto } from "../../types/membersTypes";
+
+// Create a styed form component
+const StyledForm = styled("form")(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  [theme.breakpoints.down("xl")]: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
 
 /**
- * Function which proivdes the styles of the MemberManagement
+ * Options to create a new member and to change the status of members
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const MemberManagement: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the MemberManagement
+   */
+  const styles = {
     // Header text of a paper marking a section of a page
     paperHeaderText: {
       marginLeft: theme.spacing(1),
@@ -59,16 +76,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paperContainer: {
       marginBottom: "10px",
-    },
-    filters: {
-      [theme.breakpoints.up("md")]: {
-        display: "flex",
-        alignItems: "flex-end",
-      },
-      [theme.breakpoints.down("md")]: {
-        display: "flex",
-        alignItems: "center",
-      },
     },
     filterElement: {
       [theme.breakpoints.up("md")]: {
@@ -151,31 +158,10 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "block",
       },
     },
-  })
-);
-
-/**
- * Interface for the member object
- */
-interface Member {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  handy: string;
-  jbt_email: string;
-  mitgliedstatus: string;
-  ressort: string;
-  lastchange: string;
-}
-
-/**
- * Options to create a new member and to change the status of members
- */
-const MemberManagement: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberPartialDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -247,20 +233,20 @@ const MemberManagement: React.FunctionComponent = () => {
   /**
    * Filters and sorts the member data and returns it
    */
-  const getFilteredAndSortedMembers = (): Member[] => {
+  const getFilteredAndSortedMembers = (): MemberPartialDto[] => {
     let filteredMembers = members;
 
     // Filters by status
     if (statusFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.mitgliedstatus.toString() === statusFilter;
+        return member.memberStatus.name.toString() === statusFilter;
       });
     }
 
     // Filters by ressort
     if (ressortFilter !== "") {
       filteredMembers = filteredMembers.filter((member) => {
-        return member.ressort === ressortFilter;
+        return member.department.name === ressortFilter;
       });
     }
 
@@ -268,9 +254,9 @@ const MemberManagement: React.FunctionComponent = () => {
     filteredMembers = filteredMembers.filter((member) => {
       return (
         searchFilter === null ||
-        (member.vorname !== null && member.vorname.toLowerCase().includes(searchFilter.toLowerCase())) ||
-        (member.nachname !== null && member.nachname.toLowerCase().includes(searchFilter.toLowerCase())) ||
-        (member.handy !== null && member.handy.includes(searchFilter))
+        (member.firstname !== null && member.firstname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.lastname !== null && member.lastname.toLowerCase().includes(searchFilter.toLowerCase())) ||
+        (member.mobile !== null && member.mobile.includes(searchFilter))
       );
     });
 
@@ -279,8 +265,8 @@ const MemberManagement: React.FunctionComponent = () => {
     // Sorts by last changed in ascending order
     if (sortOption === "lastchange ASC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return -1;
@@ -294,8 +280,8 @@ const MemberManagement: React.FunctionComponent = () => {
       // Sorts by last changed in descending order
     } else if (sortOption === "lastchange DESC") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        const dateA = new Date(a.lastchange);
-        const dateB = new Date(b.lastchange);
+        const dateA = new Date(a.lastChange);
+        const dateB = new Date(b.lastChange);
 
         if (dateA < dateB) {
           return 1;
@@ -310,12 +296,12 @@ const MemberManagement: React.FunctionComponent = () => {
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return a.nachname.localeCompare(b.nachname);
+        return a.lastname.localeCompare(b.lastname);
       });
       // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sortedMembers = sortedMembers.sort((a, b) => {
-        return -a.nachname.localeCompare(b.nachname);
+        return -a.lastname.localeCompare(b.lastname);
       });
     }
     return sortedMembers;
@@ -372,9 +358,8 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const changeMemberStatus = (id: number, status: string) => {
     const payload = {
-      mitgliedstatus: status,
+      memberStatus: status,
     };
-
     api
       .patch(`/members/${id}/status`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -409,19 +394,16 @@ const MemberManagement: React.FunctionComponent = () => {
       return;
     }
 
-    const password = Math.random().toString(36).slice(2, 11);
     const firstNameSanitized = replaceSpecialCharacters(firstName.trim().replace(" ", "-")).toLowerCase();
     const lastNameSanitized = replaceSpecialCharacters(lastName.trim().replace(" ", "-")).toLowerCase();
     const payload = {
       name: firstNameSanitized + "." + lastNameSanitized,
-      password: password,
-      vorname: firstName.trim(),
-      nachname: lastName.trim(),
-      geburtsdatum: null,
-      handy: null,
-      geschlecht: null,
-      generation: null,
-      traineeSeit: transfromDateToSQLDate(new Date()),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      birthday: null,
+      mobile: null,
+      gender: null,
+      generationId: null,
       email: email,
     };
 
@@ -470,37 +452,37 @@ const MemberManagement: React.FunctionComponent = () => {
    * The add member form
    */
   const addMemberForm = (
-    <Paper className={classes.paperContainer}>
+    <Paper sx={styles.paperContainer}>
       <Grid container>
         <Grid item xs={12}>
-          <Typography variant="h5" className={classes.paperHeaderText}>
+          <Typography variant="h5" sx={styles.paperHeaderText}>
             Neues Mitglied hinzufügen
           </Typography>
-          <Divider className={classes.paperHeaderDivider} />
+          <Divider sx={styles.paperHeaderDivider} />
         </Grid>
         <Grid item container xs={12} sm={12} md={12} lg={12}>
-          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+          <Grid item xs={12} sm={12} md={6} lg={6} sx={styles.inputContainer}>
             <TextField
               label="Vorname"
-              className={classes.inputField}
+              sx={styles.inputField}
               color="primary"
               onChange={handleFirstName}
               value={firstName}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+          <Grid item xs={12} sm={12} md={6} lg={6} sx={styles.inputContainer}>
             <TextField
               label="Nachname"
-              className={classes.inputField}
+              sx={styles.inputField}
               color="primary"
               onChange={handleLastName}
               value={lastName}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={6} className={classes.inputContainer}>
+          <Grid item xs={12} sm={12} md={6} lg={6} sx={styles.inputContainer}>
             <TextField
               label="Private E-Mail-Adresse"
-              className={classes.inputField}
+              sx={styles.inputField}
               color="primary"
               onChange={handleEmail}
               value={email}
@@ -508,7 +490,7 @@ const MemberManagement: React.FunctionComponent = () => {
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12}>
-          <Button variant="outlined" color="primary" className={classes.inputButton} onClick={addMember}>
+          <Button variant="outlined" color="primary" sx={styles.inputButton} onClick={addMember}>
             Benutzer anlegen
           </Button>
         </Grid>
@@ -521,10 +503,10 @@ const MemberManagement: React.FunctionComponent = () => {
    */
   const additionalFilters = (
     <div>
-      <Grid item xs={6} sm={3} className={classes.statusFilterAdditional}>
+      <Grid item xs={6} sm={3} sx={styles.statusFilterAdditional}>
         <TextField
           label="Status"
-          className={classes.filterElement}
+          sx={styles.filterElement}
           color="primary"
           onChange={handleStatusChange}
           value={statusFilter}
@@ -538,10 +520,10 @@ const MemberManagement: React.FunctionComponent = () => {
           <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
         </TextField>
       </Grid>
-      <Grid item xs={6} sm={3} className={classes.ressortFilterAdditional}>
+      <Grid item xs={6} sm={3} sx={styles.ressortFilterAdditional}>
         <TextField
           label="Ressort"
-          className={classes.filterElement}
+          sx={styles.filterElement}
           color="primary"
           onChange={handleRessortChange}
           value={ressortFilter}
@@ -558,7 +540,7 @@ const MemberManagement: React.FunctionComponent = () => {
         </TextField>
       </Grid>
       <TextField
-        className={classes.sortElement}
+        sx={styles.sortElement}
         color="primary"
         onChange={handleSortOptionChange}
         value={sortOption}
@@ -576,27 +558,22 @@ const MemberManagement: React.FunctionComponent = () => {
    * The change status filter
    */
   const changeStatusFilter = (
-    <Paper className={classes.paperContainer}>
-      <form className={classes.filters} noValidate autoComplete="off">
+    <Paper sx={styles.paperContainer}>
+      <StyledForm noValidate autoComplete="off">
         <Grid container>
           <Grid item xs={12} sm={12}>
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Status eines Mitglieds ändern
             </Typography>
-            <Divider className={classes.paperHeaderDivider} />
+            <Divider sx={styles.paperHeaderDivider} />
           </Grid>
           <Grid item xs={6} sm={3}>
-            <TextField
-              label="Name/Mail/..."
-              className={classes.filterElement}
-              color="primary"
-              onChange={handleSearchInput}
-            />
+            <TextField label="Name/Mail/..." sx={styles.filterElement} color="primary" onChange={handleSearchInput} />
           </Grid>
-          <Grid item xs={6} sm={3} className={classes.statusFilterMain}>
+          <Grid item xs={6} sm={3} sx={styles.statusFilterMain}>
             <TextField
               label="Status"
-              className={classes.filterElement}
+              sx={styles.filterElement}
               color="primary"
               onChange={handleStatusChange}
               value={statusFilter}
@@ -610,10 +587,10 @@ const MemberManagement: React.FunctionComponent = () => {
               <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={6} sm={3} className={classes.ressortFilterMain}>
+          <Grid item xs={6} sm={3} sx={styles.ressortFilterMain}>
             <TextField
               label="Ressort"
-              className={classes.filterElement}
+              sx={styles.filterElement}
               color="primary"
               onChange={handleRessortChange}
               value={ressortFilter}
@@ -630,12 +607,12 @@ const MemberManagement: React.FunctionComponent = () => {
             </TextField>
           </Grid>
         </Grid>
-        <IconButton aria-label="more filter options" className={classes.filterBtn} onClick={toggleFilters}>
+        <IconButton aria-label="more filter options" sx={styles.filterBtn} onClick={toggleFilters}>
           {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
         </IconButton>
-      </form>
+      </StyledForm>
       {additionalFiltersState ? additionalFilters : null}
-      <div className={classes.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</div>
+      <Box sx={styles.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</Box>
     </Paper>
   );
 
@@ -643,26 +620,28 @@ const MemberManagement: React.FunctionComponent = () => {
    * The change status table
    */
   const changeStatusTable = (
-    <TableContainer component={Paper} className={classes.tableContainer}>
+    <TableContainer component={Paper} sx={styles.tableContainer}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableHeadCell}>
-              <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
-                <Typography variant="h6">Name</Typography>
-                {getNameSortIcon()}
-              </div>
+            <TableCell sx={styles.tableHeadCell}>
+              <Box sx={styles.tableHeadSortBtn} onClick={toggleNameSort}>
+                <>
+                  <Typography variant="h6">Name</Typography>
+                  {getNameSortIcon()}
+                </>
+              </Box>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography variant="h6">Handy</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography variant="h6">Mail</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography variant="h6">Status</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography variant="h6">Ressort</Typography>
             </TableCell>
           </TableRow>
@@ -671,19 +650,19 @@ const MemberManagement: React.FunctionComponent = () => {
           {getFilteredAndSortedMembers().map((member, index) => (
             <TableRow hover key={index}>
               <TableCell component="th" scope="row">
-                {`${member.vorname} ${member.nachname}`}
+                {`${member.firstname} ${member.lastname}`}
               </TableCell>
-              <TableCell>{member.handy}</TableCell>
-              <TableCell>{member.jbt_email}</TableCell>
+              <TableCell>{member.mobile}</TableCell>
+              <TableCell>{member.jbtEmail}</TableCell>
               <TableCell>
                 <TextField
                   label="Status"
-                  className={classes.filterElement}
+                  sx={styles.filterElement}
                   color="primary"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    changeMemberStatus(member.mitgliedID, event.target.value);
+                    changeMemberStatus(member.memberId, event.target.value);
                   }}
-                  value={member.mitgliedstatus}
+                  value={member.memberStatus.name}
                   select
                 >
                   <MenuItem value={"Trainee"}>Trainee</MenuItem>
@@ -695,7 +674,7 @@ const MemberManagement: React.FunctionComponent = () => {
                   <MenuItem value={"Ausgetretene"}>ausgetretenes Mitglied</MenuItem>
                 </TextField>
               </TableCell>
-              <TableCell>{member.ressort}</TableCell>
+              <TableCell>{member.department.name}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -705,12 +684,9 @@ const MemberManagement: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        {addMemberForm}
-        {changeStatusFilter}
-        {changeStatusTable}
-      </div>
-      <PageBar pageTitle="Mitgliedermanagement" />
+      {addMemberForm}
+      {changeStatusFilter}
+      {changeStatusTable}
     </div>
   );
 };

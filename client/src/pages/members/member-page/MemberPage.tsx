@@ -6,7 +6,6 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import api from "../../../utils/api";
 import DisplayMemberDetails from "./DisplayMemberDetails";
 import { AuthContext } from "../../../context/auth-context/AuthContext";
-import PageBar from "../../../components/navigation/PageBar";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import { authReducerActionType } from "../../../types/globalTypes";
@@ -14,12 +13,12 @@ import { useParams } from "react-router-dom";
 
 const MemberProfile: React.FunctionComponent = () => {
   const params = useParams();
-  const [members, setMembers] = useState<membersTypes.Member[]>([]);
+  const [members, setMembers] = useState<membersTypes.MemberPartialDto[]>([]);
   const { auth, dispatchAuth } = useContext(AuthContext);
-  const [departments, setDepartments] = useState<membersTypes.Department[]>([]);
+  const [departments, setDepartments] = useState<membersTypes.DepartmentPartialDto[]>([]);
   const [languages, setLanguages] = useState<membersTypes.Language[]>([]);
-  const [edvSkills, setEdvSkills] = useState<membersTypes.EDVSkill[]>([]);
-  const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetails>();
+  const [edvSkills, setEdvSkills] = useState<membersTypes.ItSkill[]>([]);
+  const [memberDetails, setMembersDetails] = useState<membersTypes.MemberDetailsDto>();
   const [memberImage, setMemberImage] = useState<membersTypes.MemberImage | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
@@ -200,7 +199,7 @@ const MemberProfile: React.FunctionComponent = () => {
   /**
    * Updates the member details
    */
-  const updateMemberDetails = (data: membersTypes.MemberDetails) => {
+  const updateMemberDetails = (data: membersTypes.MemberDetailsDto) => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -311,7 +310,6 @@ const MemberProfile: React.FunctionComponent = () => {
           />
         ) : null}
       </div>
-      <PageBar pageTitle="Profilseite" />
     </div>
   );
 };
