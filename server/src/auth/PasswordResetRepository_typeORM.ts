@@ -1,3 +1,4 @@
+import { EntityManager } from "typeorm";
 import { AppDataSource } from "../datasource";
 import { PasswordReset } from "../typeOrm/entities/PasswordReset";
 
@@ -7,8 +8,10 @@ export const PasswordResetRepository_typeORM = AppDataSource.getRepository(Passw
    * @param memberJbtEmail The email of the password reset entries
    * @returns A promise that resolves when the entries are deleted
    */
-  deletePasswordResetEntriesByEmail(memberJbtEmail: string): Promise<void> {
-    return this.delete({ memberJbtEmail });
+  deletePasswordResetEntriesByEmail(memberJbtEmail: string, transactionalEntityManager?: EntityManager): Promise<void> {
+    return transactionalEntityManager
+      ? this.delete({ memberJbtEmail }, transactionalEntityManager)
+      : this.delete({ memberJbtEmail });
   },
 
   /**

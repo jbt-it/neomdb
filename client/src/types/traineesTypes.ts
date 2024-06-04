@@ -54,7 +54,7 @@ export type Pflichtworkshops = {
  * Type of the internal project of a member
  */
 export type InternalProjectDto = {
-  internalProjectID: number;
+  internalProjectId: number;
   generation: number;
   generationName: string;
   projectName: string;

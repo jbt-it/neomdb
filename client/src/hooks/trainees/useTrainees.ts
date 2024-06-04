@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { getTrainees, setTraineeAssignment, admitTrainee as admitTraineeApi } from "../../api/trainees";
 import { getAllIPs, getCurrentIPs } from "../../api/internalProjects";
-import { InternalProjectDto, Trainee } from "../../types/traineesTypes";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { AxiosError } from "axios";
 import { authReducerActionType } from "../../types/globalTypes";

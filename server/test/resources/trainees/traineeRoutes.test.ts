@@ -4,6 +4,7 @@ import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { AppDataSource } from "../../../src/datasource";
+import { MembersRepository_typeORM } from "../../../src/resources/members/MembersRepository_typeORM";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
@@ -125,7 +126,7 @@ describe("GET / Trainees", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
@@ -162,15 +163,15 @@ describe("GET /generations/:id/trainee-choices", () => {
     expect(response.status).toBe(404);
   });
 
-  test("should return 200 for getting Trainees choises generation ", async () => {
+  test("should return 200 for getting Trainees choices generation ", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-choices")
+      .get(`/api/trainees/generations/${generationID}/trainee-choices`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -219,9 +220,9 @@ describe("GET /generations/:id/motivation", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/motivation")
+      .get(`/api/trainees/generations/${generationID}/motivation`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -356,9 +357,9 @@ describe("GET /generations/:id/trainee-progress", () => {
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
     // --- WHEN
-
+    const generationID = 14;
     const response = await request(app)
-      .get("/api/trainees/generations/15/trainee-progress")
+      .get(`/api/trainees/generations/${generationID}/trainee-progress`)
       .send()
       .set("Cookie", `token=${token}`);
 
@@ -530,6 +531,19 @@ describe("PATCH /:id/assignment", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly into the database
+    const memberFromDB = await MembersRepository_typeORM.getMemberDetailsByID(8478);
+    expect(memberFromDB.internalProject.internalProjectId).toBe(62);
+    expect(memberFromDB.mentor.memberId).toBe(8167);
+    expect(memberFromDB.departmentId).toBe(1);
+
+    // Check if the data is correctly returned (Tests if Mapper works correctly)
+    const getResponse = await request(app).get("/api/members/8478").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.internalProject.internalProjectId).toBe(62);
+    expect(getResponse.body.mentor.memberId).toBe(8167);
+    expect(getResponse.body.department.departmentId).toBe(1);
   });
 
   test("should return 422 for setting assignments for a trainee with invalid data", async () => {
@@ -628,6 +642,50 @@ describe("PUT /ip/:id", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
+
+    // Check if the data was saved correctly
+    const getResponse = await request(app).get("/api/trainees/ip/62").send().set("Cookie", `token=${token}`);
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.body.members).toStrictEqual([
+      {
+        memberId: 8478,
+        firstname: "Kellan",
+        lastname: "Mclaughlin",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+      {
+        memberId: 8748,
+        firstname: "Mason",
+        lastname: "Vinson",
+        memberStatus: {
+          memberStatusId: 1,
+          name: "Trainee",
+        },
+      },
+    ]);
+    expect(getResponse.body.qualityManagers).toStrictEqual([
+      {
+        memberId: 8222,
+        lastname: "Driscoll",
+        firstname: "Talha",
+        memberStatus: {
+          memberStatusId: 3,
+          name: "Senior",
+        },
+      },
+      {
+        memberId: 8320,
+        lastname: "Norton",
+        firstname: "Radhika",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
+      },
+    ]);
   });
 
   test("should return 422 for setting IP with invalid data", async () => {

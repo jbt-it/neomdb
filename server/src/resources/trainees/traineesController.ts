@@ -5,7 +5,7 @@ import {
   TraineeChoiceDto,
   TraineeMotivationDto,
   TraineeProgressDto,
-  UpdateVotingDeadlinesRequest,
+  UpdateVotingDeadlinesRequestDto,
   TraineeAssignmentDto,
 } from "../../typeOrm/types/traineeTypes";
 import MembersService from "../members/MembersService";
@@ -152,7 +152,7 @@ export class TraineesController extends Controller {
   @Security("jwt", ["14"])
   public async setElectionDeadline(
     @Path() id: number,
-    @Body() requestBody: UpdateVotingDeadlinesRequest
+    @Body() requestBody: UpdateVotingDeadlinesRequestDto
   ): Promise<void> {
     await this.traineesService.updateElectionDeadline(id, requestBody.electionStart, requestBody.electionEnd);
   }

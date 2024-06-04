@@ -125,7 +125,7 @@ const models: TsoaRoute.Models = {
             "notes": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "itSkills": {"dataType":"array","array":{"dataType":"refObject","ref":"ItSkill"},"required":true},
             "generations": {"dataType":"array","array":{"dataType":"refObject","ref":"Generation"},"required":true},
-            "internalProjects": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
+            "internalProjectsAsQm": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
             "generation": {"ref":"Generation","required":true},
             "mentor": {"ref":"Member","required":true},
             "mentees": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
@@ -146,7 +146,6 @@ const models: TsoaRoute.Models = {
             "workshopFeedbackHasMembers": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedbackHasMember"},"required":true},
             "languages": {"dataType":"array","array":{"dataType":"refObject","ref":"Language"},"required":true},
             "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
-            "qualityManagers": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
             "internalProject": {"ref":"InternalProject","required":true},
         },
         "additionalProperties": false,
@@ -893,7 +892,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"statusOverview":{"ref":"StatusOverview","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateMemberRequest": {
+    "CreateMemberRequestDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationId":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"gender":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mobile":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"birthday":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true}},"validators":{}},
     },
@@ -975,7 +974,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InternalProjectDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"qualityManagers":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"members":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"dlAtEv":{"dataType":"boolean","required":true},"apHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"apAtEv":{"dataType":"boolean","required":true},"zpHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"zpAtEv":{"dataType":"boolean","required":true},"offerAtEv":{"dataType":"boolean","required":true},"kickoff":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"abbreviation":{"dataType":"string","required":true},"projectName":{"dataType":"string","required":true},"generationName":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"internalProjectID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"qualityManagers":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"members":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"dlAtEv":{"dataType":"boolean","required":true},"apHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"apAtEv":{"dataType":"boolean","required":true},"zpHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"zpAtEv":{"dataType":"boolean","required":true},"offerAtEv":{"dataType":"boolean","required":true},"kickoff":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"abbreviation":{"dataType":"string","required":true},"projectName":{"dataType":"string","required":true},"generationName":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"internalProjectId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TraineeChoiceDto": {
@@ -988,7 +987,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"internalProject3Motivation":{"dataType":"string","required":true},"internalProject2Motivation":{"dataType":"string","required":true},"internalProject1Motivation":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateVotingDeadlinesRequest": {
+    "UpdateVotingDeadlinesRequestDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"datetime","required":true},"electionStart":{"dataType":"datetime","required":true}},"validators":{}},
     },
@@ -1303,7 +1302,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_createMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMemberRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1775,7 +1774,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_setElectionDeadline(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

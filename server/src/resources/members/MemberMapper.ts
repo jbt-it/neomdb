@@ -51,11 +51,14 @@ export class MemberMapper {
     };
   }
   static memberToMentorDto(member: Member): MentorDto {
-    return {
-      memberId: member.memberId,
-      lastname: member.lastName,
-      firstname: member.firstName,
-    };
+    // If the provided member is undefined, return null
+    return member
+      ? {
+          memberId: member.memberId,
+          lastname: member.lastName,
+          firstname: member.firstName,
+        }
+      : null;
   }
   static memberToMemberFieldDto(member: Member): MembersFieldDto {
     return {
@@ -154,8 +157,8 @@ export class MemberMapper {
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
-        generation: member.generationId ? member.generationId : null,
-        internalProject: member.internalProjects ? member.internalProjects[0] : null,
+        generation: member.generationId ?? null,
+        internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
         alumnusSince: member.alumnusSince,
@@ -190,7 +193,7 @@ export class MemberMapper {
         languages: member.languages.map((language) => this.languageToLanguageDto(language)),
         itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
-        mentor: this.memberToMentorDto(member),
+        mentor: this.memberToMentorDto(member.mentor),
       };
     } else {
       return {
@@ -202,8 +205,8 @@ export class MemberMapper {
         mobile: member.mobile,
         jbtEmail: member.jbtEmail,
         memberStatus: member.memberStatus,
-        generation: member.generationId ? member.generationId : null,
-        internalProject: member.internalProjects ? member.internalProjects[0] : null,
+        generation: member.generationId ?? null,
+        internalProject: member.internalProject,
         traineeSince: member.traineeSince,
         memberSince: member.memberSince,
         alumnusSince: member.alumnusSince,
@@ -241,7 +244,7 @@ export class MemberMapper {
         languages: member.languages.map((language) => this.languageToLanguageDto(language)),
         itSkills: member.itSkills.map((itSkill) => this.itSkillToItSkillDto(itSkill)),
         mentees: member.mentees.map((mentee) => this.memberToMenteeDto(mentee)),
-        mentor: this.memberToMentorDto(member),
+        mentor: this.memberToMentorDto(member.mentor),
       };
     }
   }
@@ -297,7 +300,6 @@ export class MemberMapper {
   }
 
   static languageDtoToLanguage(memberId: number, languageDto: LanguageDto): Language {
-    // TODO: Add type
     const language = new Language();
     language.memberId = memberId;
     language.value = languageDto.value;
@@ -309,7 +311,6 @@ export class MemberMapper {
   }
 
   static itSkillDtoToItSkill(memberId: number, itSkillDto: ItSkillDto): ItSkill {
-    // TODO: Add type
     const itSkill = new ItSkill();
     itSkill.memberId = memberId;
     itSkill.value = itSkillDto.value;
