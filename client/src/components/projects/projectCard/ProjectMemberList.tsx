@@ -2,31 +2,31 @@ import { Avatar, AvatarGroup, Box, List, ListItem, ListItemAvatar, ListItemText,
 import React from "react";
 import { stringAvatar } from "../../../utils/stringUtils";
 import { Link } from "react-router-dom";
-import { MembersField } from "../../../types/membersTypes";
-import { makeStyles, createStyles } from "@mui/styles";
+import { MembersFieldDto } from "../../../types/membersTypes";
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    avatar: {
-      fontSize: "0.75rem",
-      width: 30,
-      height: 30,
-    },
-    groupedAvatar: {
-      fontSize: "0.75rem",
-      width: 40,
-      height: 40,
-    },
-  })
-);
+const styles = {
+  avatar: {
+    fontSize: "0.75rem",
+    width: 30,
+    height: 30,
+  },
+  groupedAvatar: {
+    fontSize: "0.75rem",
+    width: 40,
+    height: 40,
+  },
+};
 
 interface ProjectMemberListProps {
-  projectMembers: MembersField[];
+  projectMembers: MembersFieldDto[];
 }
 
+/**
+ * Renders a list of project members
+ * @param projectMembers List of project members as MembersFieldDto
+ * @returns ProjectMemberList component
+ */
 const ProjectMemberList = ({ projectMembers }: ProjectMemberListProps) => {
-  const classes = useStyles();
-
   if (projectMembers.length === 0) {
     return <Typography>Keine Projektmitglieder</Typography>;
   }
@@ -37,9 +37,9 @@ const ProjectMemberList = ({ projectMembers }: ProjectMemberListProps) => {
         <AvatarGroup max={4}>
           {projectMembers.map((member) => (
             <Avatar
-              alt={`${member.vorname} ${member.nachname}`}
-              {...stringAvatar(`${member.vorname} ${member.nachname}`)}
-              className={classes.groupedAvatar}
+              alt={`${member.firstname} ${member.lastname}`}
+              {...stringAvatar(`${member.firstname} ${member.lastname}`)}
+              style={styles.groupedAvatar}
             />
           ))}
         </AvatarGroup>
@@ -52,21 +52,21 @@ const ProjectMemberList = ({ projectMembers }: ProjectMemberListProps) => {
       <List disablePadding>
         {projectMembers.map((member) => (
           <ListItem
-            key={`Projektmitglied-${member.mitgliedID}`}
+            key={`Projektmitglied-${member.memberId}`}
             component={Link}
-            to={`/gesamtuebersicht/${member.mitgliedID}`}
+            to={`/gesamtuebersicht/${member.memberId}`}
             sx={{ padding: 0.5, margin: 0 }}
           >
             <ListItemAvatar>
               <Avatar
-                alt={`${member.vorname} ${member.nachname}`}
-                {...stringAvatar(`${member.vorname} ${member.nachname}`)}
-                className={classes.avatar}
+                alt={`${member.firstname} ${member.lastname}`}
+                {...stringAvatar(`${member.firstname} ${member.lastname}`)}
+                style={styles.avatar}
               />
             </ListItemAvatar>
             <ListItemText sx={{ marginLeft: -2, color: "black" }}>
               <Typography fontSize={16}>
-                {member.vorname} {member.nachname}
+                {member.firstname} {member.lastname}
               </Typography>
             </ListItemText>
           </ListItem>

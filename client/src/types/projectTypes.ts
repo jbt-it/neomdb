@@ -1,11 +1,11 @@
 import { Dayjs } from "dayjs";
-import { MembersField } from "./membersTypes";
+import { MembersFieldDto } from "./membersTypes";
 
 export type Project = {
   projectID: number;
   projectName: string;
   projectStatus: string;
-  projectMembers: MembersField[];
+  projectMembers: MembersFieldDto[];
 };
 
 export type ProjectOverview = Project & {

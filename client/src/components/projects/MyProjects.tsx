@@ -7,6 +7,11 @@ interface MyProjectsProps {
   projects: Project[];
 }
 
+/**
+ * Renders a grid of project cards
+ * @param projects List of projects as Project[]
+ * @returns MyProjects component
+ */
 const MyProjects = ({ projects }: MyProjectsProps) => {
   return (
     <Grid container spacing={3}>

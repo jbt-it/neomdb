@@ -1,59 +1,74 @@
-import { MembersField } from "../types/membersTypes";
+import { MembersFieldDto } from "../types/membersTypes";
 import dayjs from "dayjs";
 
+// CURRENTLY JUST A PLACEHOLDER UNTIL REACT QUERY IS IMPLEMENTED
 const useProjects = () => {
   const projectMembers2 = [
     {
-      mitgliedID: 8167,
-      name: "Wolfgang Luft",
-      vorname: "Wolfgang",
-      nachname: "Luft",
-      mitgliedstatus: "Aktiv",
+      memberId: 8167,
+      firstname: "Wolfgang",
+      lastname: "Luft",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
     {
-      mitgliedID: 8222,
-      name: "Talha Driscoll",
-      vorname: "Talha",
-      nachname: "Driscoll",
-      mitgliedstatus: "Aktiv",
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
     {
-      mitgliedID: 8222,
-      name: "Talha Driscoll",
-      vorname: "Talha",
-      nachname: "Driscoll",
-      mitgliedstatus: "Aktiv",
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
     {
-      mitgliedID: 8222,
-      name: "Talha Driscoll",
-      vorname: "Talha",
-      nachname: "Driscoll",
-      mitgliedstatus: "Aktiv",
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
     {
-      mitgliedID: 8222,
-      name: "Talha Driscoll",
-      vorname: "Talha",
-      nachname: "Driscoll",
-      mitgliedstatus: "Aktiv",
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
   ];
 
   const projectMembers = [
     {
-      mitgliedID: 8167,
-      name: "Wolfgang Luft",
-      vorname: "Wolfgang",
-      nachname: "Luft",
-      mitgliedstatus: "Aktiv",
+      memberId: 8167,
+      firstname: "Wolfgang",
+      lastname: "Luft",
+      mitgliedstatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
     {
-      mitgliedID: 8222,
-      name: "Talha Driscoll",
-      vorname: "Talha",
-      nachname: "Driscoll",
-      mitgliedstatus: "Aktiv",
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      mitgliedstatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
     },
   ];
 
@@ -62,31 +77,31 @@ const useProjects = () => {
       projectID: 1,
       projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
       projectStatus: "active",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
     },
     {
       projectID: 2,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "active",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
     },
     {
       projectID: 3,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "invoiced",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
     },
     {
       projectID: 4,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "offer",
-      projectMembers: projectMembers2 as MembersField[],
+      projectMembers: projectMembers2 as MembersFieldDto[],
     },
     {
       projectID: 5,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "completed",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
     },
   ];
 
@@ -107,7 +122,7 @@ const useProjects = () => {
       projectID: 1,
       projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
       projectStatus: "active",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
       projectSector: "IT",
       projectCompany: "Firma1",
       projectCoreCompetence: "Analyse",
@@ -119,7 +134,7 @@ const useProjects = () => {
       projectID: 2,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "active",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
       projectSector: "IT",
       projectCompany: "Firma2",
       projectCoreCompetence: "Analyse",
@@ -131,7 +146,7 @@ const useProjects = () => {
       projectID: 3,
       projectName: "Markteintrittsstrategie für ein mobiles Solardach",
       projectStatus: "active",
-      projectMembers: projectMembers as MembersField[],
+      projectMembers: projectMembers as MembersFieldDto[],
       projectSector: "IT",
       projectCompany: "Firma2",
       projectCoreCompetence: "Analyse",
