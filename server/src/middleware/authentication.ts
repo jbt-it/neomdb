@@ -1,7 +1,7 @@
 import * as express from "express";
 import { UnauthenticatedError, UnauthorizedError } from "../types/Errors";
 import { checkForValidJWT, extractJWTFromHeader, verifyJWT } from "../utils/jwtUtils";
-import { PermissionDTO } from "../typeOrm/types/authTypes";
+import { PermissionDTO } from "../types/authTypes";
 
 /**
  * Checks if the user has the required permissions to access the route

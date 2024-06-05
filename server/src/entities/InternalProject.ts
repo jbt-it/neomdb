@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { Member } from "./Member";
 import { Generation } from "./Generation";
-import { booleanTransformer } from "../../utils/dataTransformer";
+import { booleanTransformer } from "../utils/dataTransformer";
 
 @Index("fk_IP_Generation", ["generationId"], {})
 @Entity("internesprojekt", { schema: "mdb" })

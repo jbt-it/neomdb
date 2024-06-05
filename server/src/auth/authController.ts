@@ -10,7 +10,7 @@ import {
   UserForgotPasswordRequest,
   UserLoginRequest,
   UserResetPasswordRequest,
-} from "../typeOrm/types/authTypes";
+} from "../types/authTypes";
 
 /**
  * Controller for the authentication

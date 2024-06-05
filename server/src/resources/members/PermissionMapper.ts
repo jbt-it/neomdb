@@ -1,5 +1,5 @@
-import { PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
-import { Permission } from "../../typeOrm/entities/Permission";
+import { PermissionAssignmentDto } from "../../types/authTypes";
+import { Permission } from "../../entities/Permission";
 import { MemberMapper } from "./MemberMapper";
 
 export class PermissionMapper {

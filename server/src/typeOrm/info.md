@@ -1,1 +1,0 @@
-This folder contains all entites of the neomdb.

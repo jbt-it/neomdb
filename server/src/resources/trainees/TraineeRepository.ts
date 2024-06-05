@@ -1,11 +1,11 @@
 import { UpdateResult } from "typeorm";
 import { AppDataSource } from "../../datasource";
-import { Department } from "../../typeOrm/entities/Department";
-import { Member } from "../../typeOrm/entities/Member";
-import { MemberHasWorkshopInstance } from "../../typeOrm/entities/MemberHasWorkshopInstance";
-import { MandatoryWorkshopFeedback } from "../../typeOrm/types/traineeTypes";
+import { Department } from "../../entities/Department";
+import { Member } from "../../entities/Member";
+import { MemberHasWorkshopInstance } from "../../entities/MemberHasWorkshopInstance";
+import { MandatoryWorkshopFeedback } from "../../types/traineeTypes";
 
-export const TraineeRepository_typeORM = AppDataSource.getRepository(Member).extend({
+export const TraineeRepository = AppDataSource.getRepository(Member).extend({
   /**
    * Retrieves trainees by internal project id
    * @param internalProjectId The id of the internal project

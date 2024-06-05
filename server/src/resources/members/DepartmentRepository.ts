@@ -1,8 +1,8 @@
 import { In, Not } from "typeorm";
 import { AppDataSource } from "../../datasource";
-import { Department } from "../../typeOrm/entities/Department";
+import { Department } from "../../entities/Department";
 
-export const DepartmentRepository_typeORM = AppDataSource.getRepository(Department).extend({
+export const DepartmentRepository = AppDataSource.getRepository(Department).extend({
   /**
    * Retrieves all departments as a list
    * @returns A list of departments

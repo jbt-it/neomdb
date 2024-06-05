@@ -1,6 +1,6 @@
 // File for providing authenticaion based util functions
 
-import { PermissionDTO, JWTPayload, User } from "../typeOrm/types/authTypes";
+import { PermissionDTO, JWTPayload, User } from "../types/authTypes";
 
 /**
  * Checks if a list of permissions of a member include a list of permission IDs

@@ -1,5 +1,5 @@
-import { Department } from "typeOrm/entities/Department";
-import { DepartmentDetailsDto } from "typeOrm/types/memberTypes";
+import { Department } from "../../entities/Department";
+import { DepartmentDetailsDto } from "types/memberTypes";
 
 export class DepartmentMapper {
   static departmentToDepartmentDetailsDto(department: Department): DepartmentDetailsDto {

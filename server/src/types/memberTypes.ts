@@ -1,5 +1,5 @@
-import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
+import { InternalProject } from "../entities/InternalProject";
+import { MemberStatus } from "../entities/MemberStatus";
 
 /**
  * Type of the mentee (partial member)
@@ -8,6 +8,14 @@ export type MenteeDto = {
   memberId: number;
   firstname: string;
   lastname: string;
+};
+
+/**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
 };
 
 /**
@@ -247,4 +255,36 @@ export type NewMember = {
   icalToken: string;
   passwordHash: string;
   traineeSince: Date | null;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
+};
+
+/**
+ * Type of the response after creating a member
+ */
+export type CreateMemberResponseDto = {
+  memberID: number;
+  statusOverview: StatusOverview;
+};
+
+/**
+ * Type of the request to assign a permission to a member
+ */
+export type AssignPermissionToMemberRequestDto = {
+  memberID: number;
+  permissionID: number;
 };
