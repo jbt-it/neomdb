@@ -2,6 +2,17 @@ import { InternalProject } from "../entities/InternalProject";
 import { MemberStatus } from "../entities/MemberStatus";
 
 /**
+ * The member status names
+ */
+export type MemberStatusName =
+  | "Trainee"
+  | "aktives Mitglied"
+  | "Senior"
+  | "Alumnus"
+  | "passives Mitglied"
+  | "Ausgetretene";
+
+/**
  * Type of the mentee (partial member)
  */
 export type MenteeDto = {

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { PoolConnection } from "mysql2";
 import * as dotenv from "dotenv";
 dotenv.config();
-import { commit, connectionQuery, startTransaction } from "../../database";
+import { commit, connectionQuery, startTransaction } from "../database";
 
 /**
  * Reads the SQL commands from a file
