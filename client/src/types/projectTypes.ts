@@ -39,3 +39,12 @@ export type ProjectKeyData = {
   amountProjectMembersMax: number | undefined;
   applicationDeadline: Dayjs | undefined;
 };
+
+export type CustomerData = {
+  customerName: string | undefined;
+  shortDescription: string | undefined;
+  newCustomer: boolean | undefined;
+  acquisitor: string | undefined;
+  acquisitionMethod: string | undefined;
+  contactChannels: string[] | undefined;
+};

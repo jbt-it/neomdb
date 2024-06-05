@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
-import { ProjectKeyData } from "../../types/projectTypes";
+import { CustomerData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
@@ -26,6 +26,15 @@ const ProjectTendering = () => {
     amountProjectMembersMin: undefined,
     amountProjectMembersMax: undefined,
     applicationDeadline: undefined,
+  });
+
+  const [customerData, setCustomerData] = React.useState<CustomerData>({
+    customerName: undefined,
+    shortDescription: undefined,
+    newCustomer: undefined,
+    acquisitor: undefined,
+    acquisitionMethod: undefined,
+    contactChannels: undefined,
   });
 
   const [activeStep, setActiveStep] = React.useState(0);
@@ -94,7 +103,7 @@ const ProjectTendering = () => {
       case 0:
         return <KeyDataStep projectKeyData={projectKeyData} setProjectKeyData={setProjectKeyData} />;
       case 1:
-        return <CustomerStep />;
+        return <CustomerStep customerData={customerData} setCustomerData={setCustomerData} />;
       case 2:
         return <ProjectDescriptionStep />;
       default:
