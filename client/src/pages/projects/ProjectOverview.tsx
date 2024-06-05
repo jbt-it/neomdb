@@ -19,7 +19,7 @@ const ProjectOverview = () => {
   const { projects, allProjects, tenderedProjects } = useProjects();
   const isMobile = useResponsive("down", "sm");
   const { auth } = useAuth();
-  const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [7]);
+  const hasBillingPermission = doesPermissionsHaveSomeOf(auth.permissions, [7]);
 
   // Handles the tab change
   const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
@@ -37,7 +37,7 @@ const ProjectOverview = () => {
           <Tab label="Projektausschreibungen" value="projectTenders" />
           <Tab label="Meine Projekte" value="myProjects" />
           <Tab label="Alle Projekte" value="allProjects" />
-          {hasProjectPermission ? <Tab label="Abrechnung" value="billing" /> : null}
+          {hasBillingPermission ? <Tab label="Abrechnung" value="billing" /> : null}
         </TabList>
       </Box>
       <TabPanel value="projectTenders">
