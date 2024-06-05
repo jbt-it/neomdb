@@ -5,6 +5,7 @@ import MyProjects from "../../components/projects/MyProjects";
 import ProjectTenders from "../../components/projects/ProjectTenders";
 import AllProjects from "../../components/projects/AllProjects";
 import useProjects from "../../hooks/useProjects";
+import useResponsive from "../../hooks/useResponsive";
 
 /**
  * ProjectOverview component
@@ -14,6 +15,7 @@ import useProjects from "../../hooks/useProjects";
 const ProjectOverview = () => {
   const [value, setValue] = React.useState("projectTenders");
   const { projects, allProjects, tenderedProjects } = useProjects();
+  const isMobile = useResponsive("down", "sm");
 
   // Handles the tab change
   const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
@@ -23,7 +25,11 @@ const ProjectOverview = () => {
   return (
     <TabContext value={value}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <TabList onChange={handleChangeTab} variant="scrollable" centered>
+        <TabList
+          onChange={handleChangeTab}
+          variant={isMobile ? "scrollable" : "standard"}
+          centered={isMobile ? false : true}
+        >
           <Tab label="Projektausschreibungen" value="projectTenders" />
           <Tab label="Meine Projekte" value="myProjects" />
           <Tab label="Alle Projekte" value="allProjects" />

@@ -9,12 +9,12 @@ export type Project = {
 };
 
 export type ProjectOverview = Project & {
-  projectSector: string;
-  projectCompany: string;
-  projectCoreCompetence: string;
+  projectSector: string | null;
+  projectCompany: string | null;
+  projectCoreCompetence: string | null;
   projectStartDate: Dayjs;
-  projectEndDate: Dayjs;
-  projectNumberOfBT: number;
+  projectEndDate: Dayjs | null;
+  projectNumberOfBT: number | null;
 };
 
 export type TenderedProject = {

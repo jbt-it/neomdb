@@ -31,12 +31,14 @@ const ProjectMemberList = ({ projectMembers }: ProjectMemberListProps) => {
     return <Typography>Keine Projektmitglieder</Typography>;
   }
 
+  // If there are more than 3 members, display them in an AvatarGroup
   if (projectMembers.length > 3) {
     return (
       <Box display="flex" justifyItems={"start"}>
         <AvatarGroup max={4}>
           {projectMembers.map((member) => (
             <Avatar
+              key={`Projektmitglied-Avatar-${member.memberId}`}
               alt={`${member.firstname} ${member.lastname}`}
               {...stringAvatar(`${member.firstname} ${member.lastname}`)}
               style={styles.groupedAvatar}

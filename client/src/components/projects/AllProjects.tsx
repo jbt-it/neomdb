@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ProjectOverview } from "../../types/projectTypes";
 import AllProjectsTable from "./AllProjectsTable";
-import { Box, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment, SelectChangeEvent, TextField } from "@mui/material";
 import { FilterListOff, Search } from "@mui/icons-material";
 import FilterList from "@mui/icons-material/FilterList";
+import useResponsive from "../../hooks/useResponsive";
+import AllProjectsDateFilters from "./AllProjectsDateFilters";
+import AllProjectsCoreCompetenciesFilter from "./AllProjectsCoreCompetenciesFilter";
+import { Dayjs } from "dayjs";
 
 interface AllProjectsProps {
   projects: ProjectOverview[];
@@ -18,20 +22,77 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
   const [filteredProjects, setFilteredProjects] = React.useState<ProjectOverview[]>(projects);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showFilters, setShowFilters] = React.useState(false);
-
-  // Filter the projects based on the search term
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    const filteredProjects = projects.filter((project) =>
-      project.projectName.toLowerCase().includes(event.target.value.toLowerCase())
-    );
-    setFilteredProjects(filteredProjects);
-  };
+  const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
+  const isMobile = useResponsive("down", "sm");
+  const coreCompetencies = [
+    "Finance & Controlling",
+    "Human Resources",
+    "Marketing & Sales",
+    "Process & Organization",
+    "Research & Implications",
+    "Sustainability",
+    "Sonstiges",
+  ];
+  const [coreCompetenciesFilter, setCoreCompetenciesFilter] = useState<string[]>(coreCompetencies.sort());
 
   // Show or hide the filter options
   const handleShowFilters = () => {
     setShowFilters(!showFilters);
   };
+
+  // Change the search term
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Change the start date
+  const onChangeStartDate = (date: Dayjs | null) => {
+    setStartDate(date);
+  };
+
+  // Change the end date
+  const onChangeEndDate = (date: Dayjs | null) => {
+    setEndDate(date);
+  };
+
+  // Change the core competencies filter
+  const onChangeCoreCompetenciesFilter = (event: SelectChangeEvent<any>) => {
+    const value = event.target.value;
+    if (coreCompetenciesFilter.includes(value)) {
+      setCoreCompetenciesFilter(coreCompetenciesFilter.filter((competence) => competence !== value));
+    } else {
+      setCoreCompetenciesFilter([value, ...coreCompetenciesFilter]);
+    }
+  };
+
+  // Reset the core competencies filter
+  const resetProjectFilters = () => {
+    setCoreCompetenciesFilter(coreCompetencies);
+    setSearchTerm("");
+    setFilteredProjects(projects);
+  };
+
+  // Filter the projects based on the search term, start date, end date and core competencies
+  useEffect(() => {
+    let filteredProjects = projects.filter((project) =>
+      project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (startDate) {
+      filteredProjects = filteredProjects.filter((project) => {
+        return project.projectStartDate >= startDate;
+      });
+    }
+    if (endDate) {
+      filteredProjects = filteredProjects.filter((project) => {
+        return project.projectEndDate ? project.projectEndDate <= endDate : true;
+      });
+    }
+    filteredProjects = filteredProjects.filter((project) =>
+      coreCompetenciesFilter.includes(project.projectCoreCompetence ? project.projectCoreCompetence : "")
+    );
+    setFilteredProjects(filteredProjects);
+  }, [searchTerm, startDate, endDate, coreCompetenciesFilter, projects]);
 
   return (
     <>
@@ -39,6 +100,15 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
         <IconButton sx={{ height: 40, width: 40 }} onClick={handleShowFilters}>
           {showFilters ? <FilterListOff /> : <FilterList />}
         </IconButton>
+        {showFilters && !isMobile ? (
+          <AllProjectsDateFilters
+            resetProjectFilters={resetProjectFilters}
+            startDate={startDate}
+            onChangeStartDate={onChangeStartDate}
+            endDate={endDate}
+            onChangeEndDate={onChangeEndDate}
+          />
+        ) : null}
         <TextField
           InputProps={{
             startAdornment: (
@@ -55,6 +125,22 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
           sx={{ marginLeft: "auto", mb: 2 }}
         />
       </Box>
+      {showFilters && isMobile ? (
+        <AllProjectsDateFilters
+          resetProjectFilters={resetProjectFilters}
+          startDate={startDate}
+          onChangeStartDate={onChangeStartDate}
+          endDate={endDate}
+          onChangeEndDate={onChangeEndDate}
+        />
+      ) : null}
+      {showFilters ? (
+        <AllProjectsCoreCompetenciesFilter
+          coreCompetenciesFilter={coreCompetenciesFilter}
+          onChangeCoreCompetenciesFilter={onChangeCoreCompetenciesFilter}
+          setCoreCompetenciesFilter={setCoreCompetenciesFilter}
+        />
+      ) : null}
       <AllProjectsTable projects={filteredProjects} />
     </>
   );

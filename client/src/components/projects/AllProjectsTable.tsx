@@ -90,7 +90,7 @@ const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
             <TableCell>{project.projectCompany}</TableCell>
             <TableCell>{project.projectCoreCompetence}</TableCell>
             <TableCell>{project.projectStartDate.format("DD.MM.YYYY")}</TableCell>
-            <TableCell>{project.projectEndDate.format("DD.MM.YYYY")}</TableCell>
+            <TableCell>{project.projectEndDate ? project.projectEndDate.format("DD.MM.YYYY") : ""}</TableCell>
             <TableCell>{project.projectNumberOfBT}</TableCell>
             <TableCell>
               <ProjectChip status={project.projectStatus} />
