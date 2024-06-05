@@ -1,4 +1,4 @@
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import TenderedProjectCard from "./projectCard/TenderedProjectCard";
 import { TenderedProject } from "../../types/projectTypes";
@@ -24,14 +24,9 @@ const ProjectTenders = ({ tenderedProjects }: ProjectTendersProps) => {
   return (
     <>
       {hasPermissionExternalProject ? (
-        <Stack direction={"row"} spacing={3} sx={{ marginBottom: 4 }}>
-          <Button variant="outlined" color={"info"} startIcon={<AddCircle />} sx={{ height: 40 }}>
-            <Typography fontSize={isMobile ? 12 : 14}>Projekt ausschreiben</Typography>
-          </Button>
-          <Button variant="outlined" color="info" startIcon={<AddCircle />} sx={{ height: 40 }}>
-            <Typography fontSize={isMobile ? 12 : 14}> Projekt nachtragen</Typography>
-          </Button>
-        </Stack>
+        <Button variant="outlined" color={"info"} startIcon={<AddCircle />} sx={{ height: 40, marginBottom: 4 }}>
+          <Typography fontSize={isMobile ? 12 : 14}>Projekt ausschreiben</Typography>
+        </Button>
       ) : null}
       <Grid container>
         {tenderedProjects.map((project) => (
