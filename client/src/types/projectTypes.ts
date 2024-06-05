@@ -14,7 +14,7 @@ export type ProjectOverview = Project & {
   projectCoreCompetence: string | null;
   projectStartDate: Dayjs;
   projectEndDate: Dayjs | null;
-  projectNumberOfBT: number | null;
+  projectNumberOfBT: number;
 };
 
 export type TenderedProject = {

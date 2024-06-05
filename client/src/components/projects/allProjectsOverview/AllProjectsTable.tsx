@@ -1,12 +1,15 @@
 import React from "react";
-import { ProjectOverview } from "../../types/projectTypes";
+import { ProjectOverview } from "../../../types/projectTypes";
 import { Paper, useTheme, Table, TableCell, TableHead, TableRow, TableContainer } from "@mui/material";
-import useResponsive from "../../hooks/useResponsive";
-import ProjectChip from "./projectCard/ProjectChip";
+import useResponsive from "../../../hooks/useResponsive";
+import ProjectChip from "../projectCard/ProjectChip";
 import { Link } from "react-router-dom";
+import ProjectTableHeadCell from "../ProjectTableHeadCell";
 
 interface AllProjectsTableProps {
   projects: ProjectOverview[];
+  sortedBy: string;
+  onChangeSortBy: (column: string) => void;
 }
 
 /**
@@ -14,7 +17,7 @@ interface AllProjectsTableProps {
  * @param param - Projects to be displayed in a table
  * @returns - A table with all projects
  */
-const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
+const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTableProps) => {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
 
@@ -26,10 +29,6 @@ const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
       textAlign: "center",
       whiteSpace: "nowrap",
       overflow: "hidden",
-    },
-    tableHeaderCell: {
-      fontWeight: "bold",
-      color: "white",
     },
     tableRow: {
       "&:nth-of-type(odd)": { backgroundColor: "#fff" },
@@ -45,8 +44,8 @@ const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
         <Table size="small">
           <TableHead sx={styles.tableHeader}>
             <TableRow>
-              <TableCell sx={styles.tableHeaderCell}>Projektname</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Status</TableCell>
+              <ProjectTableHeadCell column="Projektname" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+              <ProjectTableHeadCell column="Status" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
             </TableRow>
           </TableHead>
           {projects.map((project) => (
@@ -73,14 +72,14 @@ const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
       <Table size="small">
         <TableHead sx={styles.tableHeader}>
           <TableRow>
-            <TableCell sx={styles.tableHeaderCell}>Projektname</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Branche</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Unternehmen</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Kernkompetenz</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Beginn</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Ende</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>BT</TableCell>
-            <TableCell sx={styles.tableHeaderCell}>Status</TableCell>
+            <ProjectTableHeadCell column="Projektname" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Branche" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Unternehmen" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Kernkompetenz" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Beginn" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Ende" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="BT" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
+            <ProjectTableHeadCell column="Status" sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
           </TableRow>
         </TableHead>
         {projects.map((project) => (
@@ -91,7 +90,7 @@ const AllProjectsTable = ({ projects }: AllProjectsTableProps) => {
             <TableCell>{project.projectCoreCompetence}</TableCell>
             <TableCell>{project.projectStartDate.format("DD.MM.YYYY")}</TableCell>
             <TableCell>{project.projectEndDate ? project.projectEndDate.format("DD.MM.YYYY") : ""}</TableCell>
-            <TableCell>{project.projectNumberOfBT}</TableCell>
+            <TableCell align="right">{project.projectNumberOfBT}</TableCell>
             <TableCell>
               <ProjectChip status={project.projectStatus} />
             </TableCell>

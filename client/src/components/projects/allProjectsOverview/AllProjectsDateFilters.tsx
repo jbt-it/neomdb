@@ -1,8 +1,8 @@
 import { Button, Stack } from "@mui/material";
 import React from "react";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import { RestartAlt } from "@mui/icons-material";
-import { DateRangePicker } from "../general/DateRangePicker";
+import { DateRangePicker } from "../../general/DateRangePicker";
 import dayjs, { Dayjs } from "dayjs";
 
 interface AllProjectsDateFiltersProps {

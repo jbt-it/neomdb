@@ -3,7 +3,7 @@ import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyProjects from "../../components/projects/MyProjects";
 import ProjectTenders from "../../components/projects/ProjectTenders";
-import AllProjects from "../../components/projects/AllProjects";
+import AllProjects from "../../components/projects/allProjectsOverview/AllProjects";
 import useProjects from "../../hooks/useProjects";
 import useResponsive from "../../hooks/useResponsive";
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ProjectOverview } from "../../types/projectTypes";
+import { ProjectOverview } from "../../../types/projectTypes";
 import AllProjectsTable from "./AllProjectsTable";
 import { Box, IconButton, InputAdornment, SelectChangeEvent, TextField } from "@mui/material";
 import { FilterListOff, Search } from "@mui/icons-material";
 import FilterList from "@mui/icons-material/FilterList";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import AllProjectsDateFilters from "./AllProjectsDateFilters";
 import AllProjectsCoreCompetenciesFilter from "./AllProjectsCoreCompetenciesFilter";
 import { Dayjs } from "dayjs";
@@ -15,7 +15,7 @@ interface AllProjectsProps {
 
 /**
  * Component to display all projects, a search bar and a filter button
- * @param param - List of projects
+ * @param projects - List of projects
  * @returns - A table with all projects, a search bar and a filter button
  */
 const AllProjects = ({ projects }: AllProjectsProps) => {
@@ -35,6 +35,7 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
     "Sonstiges",
   ];
   const [coreCompetenciesFilter, setCoreCompetenciesFilter] = useState<string[]>(coreCompetencies.sort());
+  const [sortedBy, setSortedBy] = useState("");
 
   // Show or hide the filter options
   const handleShowFilters = () => {
@@ -94,6 +95,81 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
     setFilteredProjects(filteredProjects);
   }, [searchTerm, startDate, endDate, coreCompetenciesFilter, projects]);
 
+  // Sort the projects
+  const handleSortBy = (sortBy: string) => {
+    const sortedProjects = [...filteredProjects];
+    sortedProjects.sort((a, b) => {
+      if (sortBy === "BT descending") {
+        return b.projectNumberOfBT - a.projectNumberOfBT;
+      }
+      if (sortBy === "BT ascending") return a.projectNumberOfBT - b.projectNumberOfBT;
+      if (sortBy === "Beginn descending") {
+        return b.projectStartDate.diff(a.projectStartDate);
+      }
+      if (sortBy === "Beginn ascending") return a.projectStartDate.diff(b.projectStartDate);
+      if (sortBy === "Ende descending") {
+        return a.projectEndDate === null ? 1 : b.projectEndDate === null ? -1 : b.projectEndDate.diff(a.projectEndDate);
+      }
+      if (sortBy === "Ende ascending")
+        return a.projectEndDate === null ? -1 : b.projectEndDate === null ? 1 : a.projectEndDate.diff(b.projectEndDate);
+      if (sortBy === "Projektname descending") {
+        return a.projectName.localeCompare(b.projectName);
+      }
+      if (sortBy === "Projektname ascending") return b.projectName.localeCompare(a.projectName);
+      if (sortBy === "Branche descending") {
+        return a.projectSector === null
+          ? 1
+          : b.projectSector === null
+          ? -1
+          : a.projectSector.localeCompare(b.projectSector);
+      }
+      if (sortBy === "Branche ascending")
+        return a.projectSector === null
+          ? -1
+          : b.projectSector === null
+          ? 1
+          : b.projectSector.localeCompare(a.projectSector);
+      if (sortBy === "Unternehmen descending") {
+        return b.projectCompany === null
+          ? 1
+          : a.projectCompany === null
+          ? -1
+          : a.projectCompany.localeCompare(b.projectCompany);
+      }
+      if (sortBy === "Unternehmen ascending")
+        return b.projectCompany === null
+          ? -1
+          : a.projectCompany === null
+          ? 1
+          : b.projectCompany.localeCompare(a.projectCompany);
+      if (sortBy === "Kernkompetenz descending") {
+        return b.projectCoreCompetence === null
+          ? 1
+          : a.projectCoreCompetence === null
+          ? -1
+          : a.projectCoreCompetence.localeCompare(b.projectCoreCompetence);
+      }
+      if (sortBy === "Kernkompetenz ascending")
+        return b.projectCoreCompetence === null
+          ? -1
+          : a.projectCoreCompetence === null
+          ? 1
+          : b.projectCoreCompetence.localeCompare(a.projectCoreCompetence);
+      if (sortBy === "Status descending") {
+        return a.projectStatus.localeCompare(b.projectStatus);
+      }
+      if (sortBy === "Status ascending") return b.projectStatus.localeCompare(a.projectStatus);
+      return 0;
+    });
+    setFilteredProjects(sortedProjects);
+  };
+
+  // Sort the projects when the sorting option changes
+  const onChangeSortBy = (sortBy: string) => {
+    setSortedBy(sortBy);
+    handleSortBy(sortBy);
+  };
+
   return (
     <>
       <Box sx={{ display: "flex", flex: 1, flexDirection: "row" }}>
@@ -141,7 +217,7 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
           setCoreCompetenciesFilter={setCoreCompetenciesFilter}
         />
       ) : null}
-      <AllProjectsTable projects={filteredProjects} />
+      <AllProjectsTable projects={filteredProjects} sortedBy={sortedBy} onChangeSortBy={onChangeSortBy} />
     </>
   );
 };

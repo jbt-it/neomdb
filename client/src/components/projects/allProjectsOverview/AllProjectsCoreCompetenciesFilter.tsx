@@ -11,7 +11,7 @@ import {
   Stack,
 } from "@mui/material";
 import React from "react";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import { RestartAlt } from "@mui/icons-material";
 
 interface AllProjectsCoreCompetenciesFilterProps {

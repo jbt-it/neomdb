@@ -140,7 +140,7 @@ const useProjects = () => {
       projectCoreCompetence: "Finance & Controlling",
       projectStartDate: dayjs("2023-03-20"),
       projectEndDate: dayjs("2024-04-20"),
-      projectNumberOfBT: 10,
+      projectNumberOfBT: 20,
     },
     {
       projectID: 3,
