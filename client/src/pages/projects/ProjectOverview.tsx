@@ -6,6 +6,8 @@ import ProjectTenders from "../../components/projects/ProjectTenders";
 import AllProjects from "../../components/projects/allProjectsOverview/AllProjects";
 import useProjects from "../../hooks/useProjects";
 import useResponsive from "../../hooks/useResponsive";
+import { useAuth } from "../../hooks/useAuth";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * ProjectOverview component
@@ -16,6 +18,8 @@ const ProjectOverview = () => {
   const [value, setValue] = React.useState("projectTenders");
   const { projects, allProjects, tenderedProjects } = useProjects();
   const isMobile = useResponsive("down", "sm");
+  const { auth } = useAuth();
+  const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [7]);
 
   // Handles the tab change
   const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
@@ -33,6 +37,7 @@ const ProjectOverview = () => {
           <Tab label="Projektausschreibungen" value="projectTenders" />
           <Tab label="Meine Projekte" value="myProjects" />
           <Tab label="Alle Projekte" value="allProjects" />
+          {hasProjectPermission ? <Tab label="Abrechnung" value="billing" /> : null}
         </TabList>
       </Box>
       <TabPanel value="projectTenders">
@@ -43,6 +48,9 @@ const ProjectOverview = () => {
       </TabPanel>
       <TabPanel value="allProjects">
         <AllProjects projects={allProjects} />
+      </TabPanel>
+      <TabPanel value="billing">
+        <p>Abrechnung</p>
       </TabPanel>
     </TabContext>
   );
