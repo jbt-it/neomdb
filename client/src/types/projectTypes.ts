@@ -24,3 +24,18 @@ export type TenderedProject = {
   projectText: string;
   applicationDeadline: Dayjs;
 };
+
+export type ProjectKeyData = {
+  projectName: string | undefined;
+  location: string | undefined;
+  tenderingDate: Dayjs | undefined;
+  start: Dayjs | undefined;
+  duration: string | undefined;
+  conditions: number | undefined;
+  conditionsRange: number | undefined;
+  btMin: number | undefined;
+  btMax: number | undefined;
+  amountProjectMembersMin: number | undefined;
+  amountProjectMembersMax: number | undefined;
+  applicationDeadline: Dayjs | undefined;
+};

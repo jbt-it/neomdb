@@ -24,7 +24,13 @@ const ProjectTenders = ({ tenderedProjects }: ProjectTendersProps) => {
   return (
     <>
       {hasPermissionExternalProject ? (
-        <Button variant="outlined" color={"info"} startIcon={<AddCircle />} sx={{ height: 40, marginBottom: 4 }}>
+        <Button
+          variant="outlined"
+          color={"info"}
+          startIcon={<AddCircle />}
+          sx={{ height: 40, marginBottom: 4 }}
+          href="/projekte/projektausschreibung"
+        >
           <Typography fontSize={isMobile ? 12 : 14}>Projekt ausschreiben</Typography>
         </Button>
       ) : null}
