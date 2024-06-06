@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Paper, Stack, Step, StepButton, Stepper, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
@@ -102,13 +102,13 @@ const ProjectTendering = () => {
     } else {
       newErrors.location = false;
     }
-    if (!projectKeyData.tenderingDate) {
+    if (!projectKeyData.tenderingDate || projectKeyData.tenderingDate.toDate() < new Date()) {
       newErrors.tenderingDate = true;
       hasErrors = true;
     } else {
       newErrors.tenderingDate = false;
     }
-    if (!projectKeyData.start) {
+    if (!projectKeyData.start || projectKeyData.start.toDate() < new Date()) {
       newErrors.start = true;
       hasErrors = true;
     } else {
@@ -120,43 +120,62 @@ const ProjectTendering = () => {
     } else {
       newErrors.duration = false;
     }
-    if (!projectKeyData.conditions) {
+    if (!projectKeyData.conditions || projectKeyData.conditions < 0) {
       newErrors.conditions = true;
       hasErrors = true;
     } else {
       newErrors.conditions = false;
     }
-    if (!projectKeyData.conditionsRange) {
+    if (
+      !projectKeyData.conditionsRange ||
+      projectKeyData.conditionsRange < 0 ||
+      (projectKeyData.conditions && projectKeyData.conditionsRange < projectKeyData.conditions)
+    ) {
       newErrors.conditionsRange = true;
       hasErrors = true;
     } else {
       newErrors.conditionsRange = false;
     }
-    if (!projectKeyData.btMin) {
+    if (!projectKeyData.btMin || projectKeyData.btMin < 0 || !Number.isInteger(projectKeyData.btMin)) {
       newErrors.btMin = true;
       hasErrors = true;
     } else {
       newErrors.btMin = false;
     }
-    if (!projectKeyData.btMax) {
+    if (
+      !projectKeyData.btMax ||
+      projectKeyData.btMax < 0 ||
+      !Number.isInteger(projectKeyData.btMax) ||
+      (projectKeyData.btMin && projectKeyData.btMax < projectKeyData.btMin)
+    ) {
       newErrors.btMax = true;
       hasErrors = true;
     } else {
       newErrors.btMax = false;
     }
-    if (!projectKeyData.amountProjectMembersMin) {
+    if (
+      !projectKeyData.amountProjectMembersMin ||
+      projectKeyData.amountProjectMembersMin < 0 ||
+      !Number.isInteger(projectKeyData.amountProjectMembersMin)
+    ) {
       newErrors.amountProjectMembersMin = true;
       hasErrors = true;
     } else {
       newErrors.amountProjectMembersMin = false;
     }
-    if (!projectKeyData.amountProjectMembersMax) {
+    if (
+      !projectKeyData.amountProjectMembersMax ||
+      projectKeyData.amountProjectMembersMax < 0 ||
+      !Number.isInteger(projectKeyData.amountProjectMembersMax) ||
+      (projectKeyData.amountProjectMembersMin &&
+        projectKeyData.amountProjectMembersMax < projectKeyData.amountProjectMembersMin)
+    ) {
       newErrors.amountProjectMembersMax = true;
       hasErrors = true;
     } else {
       newErrors.amountProjectMembersMax = false;
     }
-    if (!projectKeyData.applicationDeadline) {
+    if (!projectKeyData.applicationDeadline || projectKeyData.applicationDeadline.toDate() < new Date()) {
       newErrors.applicationDeadline = true;
       hasErrors = true;
     } else {
