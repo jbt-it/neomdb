@@ -212,7 +212,6 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          label="€/BT"
           value={conditionsRange}
           onChange={onChangeConditionsRange}
           disabled={isCompleted}
