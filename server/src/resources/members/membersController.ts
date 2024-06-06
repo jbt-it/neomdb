@@ -15,27 +15,25 @@ import {
   SuccessResponse,
   Tags,
 } from "@tsoa/runtime";
+import { Permission } from "../../entities/Permission";
 import { checkDepartmentAccess } from "../../middleware/authorization";
-import { Permission } from "../../typeOrm/entities/Permission";
-import { JWTPayload, PermissionAssignmentDto } from "../../typeOrm/types/authTypes";
+import { UnauthorizedError } from "../../types/Errors";
+import { JWTPayload, PermissionAssignmentDto } from "../../types/authTypes";
 import {
+  AssignPermissionToMemberRequestDto,
   CreateMemberRequestDto,
+  CreateMemberResponseDto,
   DepartmentDetailsDto,
   DepartmentMemberDto,
   DirectorDto,
   ItSkillsValue,
   LanguageValue,
   MemberDetailsDto,
-  MemberPartialDto,
-  UpdateDepartmentDto,
-} from "../../typeOrm/types/memberTypes";
-import { UnauthorizedError } from "../../types/Errors";
-import {
-  AssignPermissionToMemberRequest,
-  CreateMemberResponse,
   MemberImage,
+  MemberPartialDto,
   StatusOverview,
-} from "../../types/membersTypes";
+  UpdateDepartmentDto,
+} from "../../types/memberTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import MembersService from "./MembersService";
 
@@ -146,7 +144,7 @@ export class MembersController extends Controller {
    */
   @Post("")
   @Security("jwt", ["1"])
-  public async createMember(@Body() requestBody: CreateMemberRequestDto): Promise<CreateMemberResponse> {
+  public async createMember(@Body() requestBody: CreateMemberRequestDto): Promise<CreateMemberResponseDto> {
     /**
      * Overview of the status of the different account creation operations
      */
@@ -183,7 +181,7 @@ export class MembersController extends Controller {
     };
 
     const newMember = requestBody;
-    const createMemberResponse: CreateMemberResponse = await this.membersService.createAccountsOfMember(
+    const createMemberResponse: CreateMemberResponseDto = await this.membersService.createAccountsOfMember(
       newMember,
       statusOverview
     );
@@ -314,7 +312,7 @@ export class MembersController extends Controller {
   @Security("jwt")
   @SuccessResponse("201")
   public async assignPermissionToMember(
-    @Body() requestBody: AssignPermissionToMemberRequest,
+    @Body() requestBody: AssignPermissionToMemberRequestDto,
     @Request() request: any
   ): Promise<void> {
     const user = request.user as JWTPayload;
@@ -347,7 +345,7 @@ export class MembersController extends Controller {
   @Delete("permissions")
   @Security("jwt")
   public async unassignPermissionFromMember(
-    @Body() requestBody: AssignPermissionToMemberRequest,
+    @Body() requestBody: AssignPermissionToMemberRequestDto,
     @Request() request: any
   ): Promise<void> {
     const user = request.user as JWTPayload;

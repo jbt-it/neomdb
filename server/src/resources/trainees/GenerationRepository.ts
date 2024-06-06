@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../datasource";
-import { Generation } from "../../typeOrm/entities/Generation";
+import { Generation } from "../../entities/Generation";
 
-export const GenerationRepository_typeORM = AppDataSource.getRepository(Generation).extend({
+export const GenerationRepository = AppDataSource.getRepository(Generation).extend({
   /**
    * Retrievs a generation by its id
    * @param generationId The id of the generation

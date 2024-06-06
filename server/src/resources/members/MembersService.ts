@@ -1,37 +1,33 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import path from "path";
-import { GenerationRepository_typeORM } from "../../resources/trainees/GenerationRepository_typeORM";
-import { CreateMemberRequestDto, MemberDetailsDto, UpdateDepartmentDto } from "../../typeOrm/types/memberTypes";
+import { GenerationRepository } from "../trainees/GenerationRepository";
 import { ConflictError, NotFoundError, QueryError } from "../../types/Errors";
-import { StatusOverview } from "../../types/membersTypes";
+import { CreateMemberRequestDto, MemberDetailsDto, StatusOverview, UpdateDepartmentDto } from "../../types/memberTypes";
 import { getPathOfImage } from "../../utils/assetsUtils";
 import { getRandomString } from "../../utils/stringUtils";
 import { DepartmentMapper } from "./DepartmentMapper";
-import { DepartmentRepository_typeORM } from "./DepartmentRepository_typeORM";
+import { DepartmentRepository } from "./DepartmentRepository";
 import { MemberMapper } from "./MemberMapper";
-import MembersRepository from "./MembersRepository";
 import {
   ItSkillsRepository_typeORM,
   LanguagesRepository_typeORM,
   MemberHasDirectorPositionRepository_typeORM,
   MemberStatusRespository_typeORM,
-  MembersRepository_typeORM,
+  MembersRepository,
   PermissionsRepository_typeORM,
-} from "./MembersRepository_typeORM";
+} from "./MembersRepository";
 import { PermissionMapper } from "./PermissionMapper";
 
 /**
  * Provides methods to execute member related service functionalities
  */
 class MembersService {
-  membersRepository = new MembersRepository();
-
   /**
    * Retrieves a list of all members
    */
   getMemberList = async () => {
-    const memberList = await MembersRepository_typeORM.getMembersWithDepartment();
+    const memberList = await MembersRepository.getMembersWithDepartment();
     return memberList.map((member) => MemberMapper.memberToMemberPartialDto(member));
   };
 
@@ -40,7 +36,7 @@ class MembersService {
    * @throws NotFoundError if no member was found
    */
   getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
-    const memberDetails = await MembersRepository_typeORM.getMemberDetailsByID(memberID);
+    const memberDetails = await MembersRepository.getMemberDetailsByID(memberID);
     if (memberDetails === null) {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
@@ -91,8 +87,7 @@ class MembersService {
    * Retrieves a list of all members grouped by their department
    */
   getMembersOfDepartments = async () => {
-    const membersOfDepartments =
-      await MembersRepository_typeORM.getActiveMembersWithDepartmentAndWithDirectorPositions();
+    const membersOfDepartments = await MembersRepository.getActiveMembersWithDepartmentAndWithDirectorPositions();
 
     return membersOfDepartments.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
   };
@@ -114,7 +109,7 @@ class MembersService {
    * Retrieves all departments
    */
   getDepartments = async () => {
-    const departments = await DepartmentRepository_typeORM.getDepartments();
+    const departments = await DepartmentRepository.getDepartments();
 
     return departments.map((department) => DepartmentMapper.departmentToDepartmentDetailsDto(department));
   };
@@ -124,7 +119,7 @@ class MembersService {
    * @throws NotFoundError if no department was found
    */
   updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentDto) => {
-    const department = await DepartmentRepository_typeORM.getDepartmentById(departmentID);
+    const department = await DepartmentRepository.getDepartmentById(departmentID);
 
     if (department === null) {
       throw new NotFoundError(`Department with id ${departmentID} not found`);
@@ -134,7 +129,7 @@ class MembersService {
     department.linkObjectivePresentation = updateDepartmentRequest.linkObjectivePresentation;
     department.linkOrganigram = updateDepartmentRequest.linkOrganigram;
 
-    await DepartmentRepository_typeORM.saveDepartment(department);
+    await DepartmentRepository.saveDepartment(department);
   };
 
   /**
@@ -176,7 +171,7 @@ class MembersService {
    * @throws NotFoundError if the member or the permission does not exist
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = MembersRepository_typeORM.getMemberByIDWithPermissions(memberID);
+    const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
     const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
@@ -192,14 +187,14 @@ class MembersService {
     }
 
     member.permissions.push(permission);
-    await MembersRepository_typeORM.saveMember(member);
+    await MembersRepository.saveMember(member);
   };
 
   /**
    * Deletes a permission from a member
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = MembersRepository_typeORM.getMemberByIDWithPermissions(memberID);
+    const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
     const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
@@ -215,7 +210,7 @@ class MembersService {
     }
 
     member.permissions = member.permissions.filter((p) => p.permissionId !== permissionID);
-    await MembersRepository_typeORM.saveMember(member);
+    await MembersRepository.saveMember(member);
   };
 
   /**
@@ -231,7 +226,7 @@ class MembersService {
     let newUserName = "";
 
     // Search for memberName to check if it already exists
-    const resultFirstQuery = await MembersRepository_typeORM.getMemberByName(memberName);
+    const resultFirstQuery = await MembersRepository.getMemberByName(memberName);
     // Check if memberName already exists
     if (resultFirstQuery === null) {
       newUserName = memberName;
@@ -241,7 +236,7 @@ class MembersService {
     let duplicateCounter = 1;
     // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
     while (newUserName === "") {
-      const result = await MembersRepository_typeORM.getMemberByName(memberName + duplicateCounter);
+      const result = await MembersRepository.getMemberByName(memberName + duplicateCounter);
       // Check if the member with the new name already exists
       if (result === null) {
         newUserName = memberName + duplicateCounter;
@@ -302,17 +297,17 @@ class MembersService {
       let newMember = member;
       if (member.generationId !== null) {
         // Check if the generation exists
-        const generation = await GenerationRepository_typeORM.getGenerationByID(member.generationId);
+        const generation = await GenerationRepository.getGenerationByID(member.generationId);
         if (generation === null) {
           throw new NotFoundError(`Generation with id ${member.generationId} does not exist`);
         }
       } else {
         // Retrieve the generations and select the newest one
-        const currentGenerationId = await GenerationRepository_typeORM.getCurrentGenerationId();
+        const currentGenerationId = await GenerationRepository.getCurrentGenerationId();
         // Add the generation to the member
         newMember = { ...member, generationId: currentGenerationId };
       }
-      memberID = await MembersRepository_typeORM.createMember({
+      memberID = await MembersRepository.createMember({
         ...newMember,
         name: newUserName,
         passwordHash: passwordHash,
@@ -368,7 +363,7 @@ class MembersService {
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = await MembersRepository_typeORM.getMemberByID(memberID);
+    const member = await MembersRepository.getMemberByID(memberID);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
@@ -379,13 +374,13 @@ class MembersService {
     // Update critical data
     if (updateCritical) {
       // Check if department exists
-      const department = await DepartmentRepository_typeORM.getDepartmentById(updatedMember.department.departmentId);
+      const department = await DepartmentRepository.getDepartmentById(updatedMember.department.departmentId);
       if (department === null) {
         throw new NotFoundError(`Department with id ${updatedMember.department.departmentId} does not exist`);
       }
 
       // Check if generation exists
-      const generation = await GenerationRepository_typeORM.getGenerationByID(updatedMember.generation);
+      const generation = await GenerationRepository.getGenerationByID(updatedMember.generation);
       if (generation === null) {
         throw new NotFoundError(`Generation with id ${updatedMember.generation} does not exist`);
       }
@@ -400,7 +395,7 @@ class MembersService {
 
       // Check if potential new mentor exists (if set)
       if (updatedMember.mentor && updatedMember.mentor.memberId !== null) {
-        const mentorInDB = await MembersRepository_typeORM.getMemberByID(updatedMember.mentor.memberId);
+        const mentorInDB = await MembersRepository.getMemberByID(updatedMember.mentor.memberId);
         if (mentorInDB === null) {
           throw new NotFoundError(`Mentor with id ${updatedMember.mentor?.memberId} does not exist`);
         }
@@ -433,7 +428,7 @@ class MembersService {
       MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
       member.lastChange = updatedLastChange;
     }
-    await MembersRepository_typeORM.saveMember(member);
+    await MembersRepository.saveMember(member);
   };
 
   /**
@@ -442,7 +437,7 @@ class MembersService {
    */
   updateMemberStatus = async (memberID: number, status: string) => {
     // Check if member exists
-    const member = await MembersRepository_typeORM.getMemberByID(memberID);
+    const member = await MembersRepository.getMemberByID(memberID);
     const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByName(status);
 
     if (member === null) {
@@ -460,7 +455,7 @@ class MembersService {
 
     member.memberStatus = memberStatus;
     member.lastChange = new Date();
-    await MembersRepository_typeORM.saveMember(member);
+    await MembersRepository.saveMember(member);
   };
 }
 

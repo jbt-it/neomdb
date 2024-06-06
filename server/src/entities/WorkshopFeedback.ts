@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { WorkshopInstance } from "./WorkshopInstance";
 import { WorkshopFeedbackHasFeedbackQuestion } from "./WorkshopFeedbackHasFeedbackQuestion";
-import { WorkshopFeedbackHasMember } from "./WorkshopFeedbackHasMitglied";
+import { WorkshopFeedbackHasMember } from "./WorkshopFeedbackHasMember";
 
 @Index("schulungsinstanzID_UNIQUE", ["workshopFeedbackId"], { unique: true })
 @Index("fk_schulungsfeedback_schulungsinstanz1", ["workshopInstanceId"], {})

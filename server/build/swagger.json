@@ -3485,7 +3485,7 @@
 				"type": "object",
 				"description": "Type of the overview of the status of the different account creation operations"
 			},
-			"CreateMemberResponse": {
+			"CreateMemberResponseDto": {
 				"properties": {
 					"statusOverview": {
 						"$ref": "#/components/schemas/StatusOverview"
@@ -3699,7 +3699,7 @@
 				"type": "object",
 				"description": "Type of the permission assignment (permission of a member or a director)"
 			},
-			"AssignPermissionToMemberRequest": {
+			"AssignPermissionToMemberRequestDto": {
 				"properties": {
 					"permissionID": {
 						"type": "number",
@@ -3714,7 +3714,8 @@
 					"permissionID",
 					"memberID"
 				],
-				"type": "object"
+				"type": "object",
+				"description": "Type of the request to assign a permission to a member"
 			},
 			"MemberStatusDto": {
 				"properties": {
@@ -4685,7 +4686,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CreateMemberResponse"
+									"$ref": "#/components/schemas/CreateMemberResponseDto"
 								}
 							}
 						}
@@ -5175,7 +5176,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to create"
 							},
 							"example": {
@@ -5210,7 +5211,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to delete"
 							},
 							"example": {
