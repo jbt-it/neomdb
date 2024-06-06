@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, Stack, Step, StepButton, Stepper, TextField, Typography } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
+import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
 
 // Steps for the project tendering form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
@@ -283,6 +284,11 @@ const ProjectTendering = () => {
     alert("Tender project");
   };
 
+  // Handle the saving of the project
+  const handleSaveProject = () => {
+    alert("Save project");
+  };
+
   // Handle the next step
   const handleNext = () => {
     const newActiveStep =
@@ -292,10 +298,6 @@ const ProjectTendering = () => {
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
-    // Check if all steps are completed and tender the project
-    if (allStepsCompleted()) {
-      handleTenderProject();
-    }
   };
 
   // Handle the going back a step
@@ -408,11 +410,24 @@ const ProjectTendering = () => {
         <div>
           {allStepsCompleted() ? (
             <React.Fragment>
-              <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
+              <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
+                Soll das Projekt ausgeschieben oder nachgetragen werden?
+              </Typography>
+              <SummaryDetails
+                projectKeyData={projectKeyData}
+                customerData={customerData}
+                projectDescriptionData={projectDescriptionData}
+              />
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset} variant="outlined">
-                  Reset
+                <Button onClick={handleTenderProject} sx={{ mr: 3 }} variant="outlined">
+                  Ausschreiben
+                </Button>
+                <Button onClick={handleSaveProject} variant="outlined">
+                  Nachtragen
+                </Button>
+                <Box sx={{ flex: "1 2 auto" }} />
+                <Button onClick={handleReset} variant="outlined" color="info">
+                  Nochmals Bearbeiten
                 </Button>
               </Box>
             </React.Fragment>

@@ -51,7 +51,7 @@ export type CustomerData = {
   newCustomer: boolean | undefined;
   acquisitor: string | undefined;
   acquisitionMethod: string | undefined;
-  contactChannels: string[] | undefined;
+  contactChannels: string[];
 };
 
 export type ProjectDescriptionData = {
