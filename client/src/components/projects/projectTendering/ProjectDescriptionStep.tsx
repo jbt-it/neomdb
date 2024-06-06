@@ -7,6 +7,7 @@ interface ProjectDescriptionStepProps {
   projectDescriptionData: ProjectDescriptionData;
   setProjectDescriptionData: React.Dispatch<React.SetStateAction<ProjectDescriptionData>>;
   isCompleted: boolean;
+  errors: { [key: string]: boolean };
 }
 
 /**
@@ -19,6 +20,7 @@ const ProjectDescriptionStep = ({
   projectDescriptionData,
   setProjectDescriptionData,
   isCompleted,
+  errors,
 }: ProjectDescriptionStepProps) => {
   const { situation, peculiarities, coreCompetencies, requirementProfile, referenceProjects, notes } =
     projectDescriptionData;
@@ -82,6 +84,8 @@ const ProjectDescriptionStep = ({
           value={situation}
           onChange={onChangeSituation}
           disabled={isCompleted}
+          helperText={errors.situation ? "Bitte geben Sie eine Ausgangssituation/Zielsetzung ein." : ""}
+          error={errors.situation}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -96,13 +100,15 @@ const ProjectDescriptionStep = ({
           value={peculiarities}
           onChange={onChangePeculiarities}
           disabled={isCompleted}
+          helperText={errors.peculiarities ? "Bitte geben Sie Besonderheiten ein." : ""}
+          error={errors.peculiarities}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Kernkompetenzen:
         </Typography>
-        <FormControl sx={{ flex: 3 }} disabled={isCompleted}>
+        <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.coreCompetencies}>
           <FormGroup row onChange={onChangeCoreCompetencies}>
             {allCoreCompetencies.map((competency) => (
               <FormControlLabel
@@ -117,6 +123,9 @@ const ProjectDescriptionStep = ({
               />
             ))}
           </FormGroup>
+          <Typography variant={"caption"} color={"error"} sx={{ display: errors.coreCompetencies ? "block" : "none" }}>
+            Bitte wählen Sie mindestens eine Kernkompetenz aus.
+          </Typography>
         </FormControl>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -131,6 +140,8 @@ const ProjectDescriptionStep = ({
           value={requirementProfile}
           onChange={onChangeRequirementProfile}
           disabled={isCompleted}
+          helperText={errors.requirementProfile ? "Bitte geben Sie ein Anforderungsprofil ein." : ""}
+          error={errors.requirementProfile}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -145,6 +156,8 @@ const ProjectDescriptionStep = ({
           value={referenceProjects}
           onChange={onChangeReferenceProjects}
           disabled={isCompleted}
+          helperText={errors.referenceProjects ? "Bitte geben Sie Referenzprojekte ein." : ""}
+          error={errors.referenceProjects}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -159,6 +172,8 @@ const ProjectDescriptionStep = ({
           value={notes}
           onChange={onChangeNotes}
           disabled={isCompleted}
+          helperText={errors.notes ? "Bitte geben Sie Bemerkungen ein." : ""}
+          error={errors.notes}
         />
       </Stack>
     </Stack>

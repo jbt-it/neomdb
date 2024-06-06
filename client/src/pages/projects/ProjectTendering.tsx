@@ -75,6 +75,16 @@ const ProjectTendering = () => {
     notes: "",
   });
 
+  // Errors for the project description data
+  const [projectDescriptionDataErrors, setProjectDescriptionDataErrors] = React.useState<{ [key: string]: boolean }>({
+    situation: false,
+    peculiarities: false,
+    coreCompetencies: false,
+    requirementProfile: false,
+    referenceProjects: false,
+    notes: false,
+  });
+
   // Validate the project key data
   const validateProjectKeyData = () => {
     let hasErrors = false;
@@ -199,6 +209,50 @@ const ProjectTendering = () => {
     return hasErrors;
   };
 
+  // Validate the project description data
+  const validateProjectDescriptionData = () => {
+    let hasErrors = false;
+    const newErrors = { ...projectDescriptionDataErrors };
+    if (!projectDescriptionData.situation) {
+      newErrors.situation = true;
+      hasErrors = true;
+    } else {
+      newErrors.situation = false;
+    }
+    if (!projectDescriptionData.peculiarities) {
+      newErrors.peculiarities = true;
+      hasErrors = true;
+    } else {
+      newErrors.peculiarities = false;
+    }
+    if (!projectDescriptionData.coreCompetencies || projectDescriptionData.coreCompetencies.length === 0) {
+      newErrors.coreCompetencies = true;
+      hasErrors = true;
+    } else {
+      newErrors.coreCompetencies = false;
+    }
+    if (!projectDescriptionData.requirementProfile) {
+      newErrors.requirementProfile = true;
+      hasErrors = true;
+    } else {
+      newErrors.requirementProfile = false;
+    }
+    if (!projectDescriptionData.referenceProjects) {
+      newErrors.referenceProjects = true;
+      hasErrors = true;
+    } else {
+      newErrors.referenceProjects = false;
+    }
+    if (!projectDescriptionData.notes) {
+      newErrors.notes = true;
+      hasErrors = true;
+    } else {
+      newErrors.notes = false;
+    }
+    setProjectDescriptionDataErrors(newErrors);
+    return hasErrors;
+  };
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -256,16 +310,25 @@ const ProjectTendering = () => {
 
   // Handle the completion of a step
   const handleComplete = () => {
+    // If the active step is the project key data step, validate the project key data and return if there are errors
     if (activeStep === 0) {
       if (validateProjectKeyData()) {
         return;
       }
     }
+    // If the active step is the customer step, validate the customer data and return if there are errors
     if (activeStep === 1) {
       if (validateCustomerData()) {
         return;
       }
     }
+    // If the active step is the project description step, validate the project description data and return if there are errors
+    if (activeStep === 2) {
+      if (validateProjectDescriptionData()) {
+        return;
+      }
+    }
+    // If there are no errors, set the step as completed and go to the next step
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
@@ -312,6 +375,7 @@ const ProjectTendering = () => {
             projectDescriptionData={projectDescriptionData}
             setProjectDescriptionData={setProjectDescriptionData}
             isCompleted={completed[2]}
+            errors={projectDescriptionDataErrors}
           />
         );
       default:
