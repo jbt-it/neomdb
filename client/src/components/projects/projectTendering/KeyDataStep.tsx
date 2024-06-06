@@ -137,7 +137,14 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
         </Typography>
         <DatePicker
           sx={{ flex: 3 }}
-          slotProps={{ textField: { variant: "outlined", size: "small" } }}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              size: "small",
+              helperText: errors.tenderingDate ? "Ausschreibungsdatum darf nicht leer sein" : "",
+              error: errors.tenderingDate,
+            },
+          }}
           value={tenderingDate}
           onChange={onChangeTenderingDate}
           disabled={isCompleted}
@@ -149,7 +156,14 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
         </Typography>
         <DatePicker
           sx={{ flex: 3 }}
-          slotProps={{ textField: { variant: "outlined", size: "small" } }}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              size: "small",
+              helperText: errors.start ? "Startschuss darf nicht leer sein" : "",
+              error: errors.start,
+            },
+          }}
           value={start}
           onChange={onChangeStart}
           disabled={isCompleted}
@@ -166,6 +180,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={duration}
           onChange={onChangeDuration}
           disabled={isCompleted}
+          helperText={errors.duration ? "Dauer darf nicht leer sein" : ""}
+          error={errors.duration}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -180,6 +196,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={conditions}
           onChange={onChangeConditions}
           disabled={isCompleted}
+          helperText={errors.conditions ? "Konditionen dürfen nicht leer sein" : ""}
+          error={errors.conditions}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -195,6 +213,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={conditionsRange}
           onChange={onChangeConditionsRange}
           disabled={isCompleted}
+          helperText={errors.conditionsRange ? "Konditionen (Bereich) dürfen nicht leer sein" : ""}
+          error={errors.conditionsRange}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -209,6 +229,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={btMin}
           onChange={onChangeBtMin}
           disabled={isCompleted}
+          helperText={errors.btMin ? "Beratertage (Min) dürfen nicht leer sein" : ""}
+          error={errors.btMin}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -223,6 +245,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={btMax}
           onChange={onChangeBtMax}
           disabled={isCompleted}
+          helperText={errors.btMax ? "Beratertage (Max) dürfen nicht leer sein" : ""}
+          error={errors.btMax}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -237,6 +261,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={amountProjectMembersMin}
           onChange={onChangeAmountProjectMembersMin}
           disabled={isCompleted}
+          helperText={errors.amountProjectMembersMin ? "Projektmitglieder (Min) dürfen nicht leer sein" : ""}
+          error={errors.amountProjectMembersMin}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -251,6 +277,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={amountProjectMembersMax}
           onChange={onChangeAmountProjectMembersMax}
           disabled={isCompleted}
+          helperText={errors.amountProjectMembersMax ? "Projektmitglieder (Max) dürfen nicht leer sein" : ""}
+          error={errors.amountProjectMembersMax}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -259,7 +287,14 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
         </Typography>
         <DatePicker
           sx={{ flex: 3 }}
-          slotProps={{ textField: { variant: "outlined", size: "small" } }}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              size: "small",
+              helperText: errors.applicationDeadline ? "Bewerbungsfrist darf nicht leer sein" : "",
+              error: errors.applicationDeadline,
+            },
+          }}
           value={applicationDeadline}
           onChange={onChangeApplicationDeadline}
           disabled={isCompleted}
