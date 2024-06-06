@@ -1,6 +1,11 @@
 import { Dayjs } from "dayjs";
 import { MembersFieldDto } from "./membersTypes";
 
+export type CoreCompetency = {
+  coreCompetencyId: number;
+  designation: string;
+};
+
 export type Project = {
   projectID: number;
   projectName: string;
@@ -47,4 +52,13 @@ export type CustomerData = {
   acquisitor: string | undefined;
   acquisitionMethod: string | undefined;
   contactChannels: string[] | undefined;
+};
+
+export type ProjectDescriptionData = {
+  situation: string | undefined;
+  peculiarities: string | undefined;
+  coreCompetencies: CoreCompetency[];
+  requirementProfile: string | undefined;
+  referenceProjects: string | undefined;
+  notes: string | undefined;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
-import { CustomerData, ProjectKeyData } from "../../types/projectTypes";
+import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
@@ -13,6 +13,7 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  * @returns - A form to create a new project tendering
  */
 const ProjectTendering = () => {
+  // Project key data
   const [projectKeyData, setProjectKeyData] = React.useState<ProjectKeyData>({
     projectName: undefined,
     location: undefined,
@@ -28,14 +29,120 @@ const ProjectTendering = () => {
     applicationDeadline: undefined,
   });
 
+  const [projectKeyDataErrors, setProjectKeyDataErrors] = React.useState<{ [key: string]: boolean }>({
+    projectName: false,
+    location: false,
+    tenderingDate: false,
+    start: false,
+    duration: false,
+    conditions: false,
+    conditionsRange: false,
+    btMin: false,
+    btMax: false,
+    amountProjectMembersMin: false,
+    amountProjectMembersMax: false,
+    applicationDeadline: false,
+  });
+
+  // Customer data
   const [customerData, setCustomerData] = React.useState<CustomerData>({
     customerName: undefined,
     shortDescription: undefined,
     newCustomer: undefined,
     acquisitor: undefined,
     acquisitionMethod: undefined,
-    contactChannels: undefined,
+    contactChannels: [],
   });
+
+  // Project Description data
+  const [projectDescriptionData, setProjectDescriptionData] = React.useState<ProjectDescriptionData>({
+    situation: "",
+    peculiarities: "",
+    coreCompetencies: [],
+    requirementProfile: "",
+    referenceProjects: "",
+    notes: "",
+  });
+
+  // Validate the project key data
+  const validateProjectKeyData = () => {
+    let hasErrors = false;
+    const newErrors = { ...projectKeyDataErrors };
+    if (!projectKeyData.projectName) {
+      newErrors.projectName = true;
+      hasErrors = true;
+    } else {
+      newErrors.projectName = false;
+    }
+    if (!projectKeyData.location) {
+      newErrors.location = true;
+      hasErrors = true;
+    } else {
+      newErrors.location = false;
+    }
+    if (!projectKeyData.tenderingDate) {
+      newErrors.tenderingDate = true;
+      hasErrors = true;
+    } else {
+      newErrors.tenderingDate = false;
+    }
+    if (!projectKeyData.start) {
+      newErrors.start = true;
+      hasErrors = true;
+    } else {
+      newErrors.start = false;
+    }
+    if (!projectKeyData.duration) {
+      newErrors.duration = true;
+      hasErrors = true;
+    } else {
+      newErrors.duration = false;
+    }
+    if (!projectKeyData.conditions) {
+      newErrors.conditions = true;
+      hasErrors = true;
+    } else {
+      newErrors.conditions = false;
+    }
+    if (!projectKeyData.conditionsRange) {
+      newErrors.conditionsRange = true;
+      hasErrors = true;
+    } else {
+      newErrors.conditionsRange = false;
+    }
+    if (!projectKeyData.btMin) {
+      newErrors.btMin = true;
+      hasErrors = true;
+    } else {
+      newErrors.btMin = false;
+    }
+    if (!projectKeyData.btMax) {
+      newErrors.btMax = true;
+      hasErrors = true;
+    } else {
+      newErrors.btMax = false;
+    }
+    if (!projectKeyData.amountProjectMembersMin) {
+      newErrors.amountProjectMembersMin = true;
+      hasErrors = true;
+    } else {
+      newErrors.amountProjectMembersMin = false;
+    }
+    if (!projectKeyData.amountProjectMembersMax) {
+      newErrors.amountProjectMembersMax = true;
+      hasErrors = true;
+    } else {
+      newErrors.amountProjectMembersMax = false;
+    }
+    if (!projectKeyData.applicationDeadline) {
+      newErrors.applicationDeadline = true;
+      hasErrors = true;
+    } else {
+      newErrors.applicationDeadline = false;
+    }
+    setProjectKeyDataErrors(newErrors);
+    return hasErrors;
+  };
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
@@ -62,6 +169,11 @@ const ProjectTendering = () => {
     return completedSteps() === totalSteps();
   };
 
+  // Handle the tendering of the project
+  const handleTenderProject = () => {
+    alert("Tender project");
+  };
+
   // Handle the next step
   const handleNext = () => {
     const newActiveStep =
@@ -71,6 +183,10 @@ const ProjectTendering = () => {
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
+    // Check if all steps are completed and tender the project
+    if (allStepsCompleted()) {
+      handleTenderProject();
+    }
   };
 
   // Handle the going back a step
@@ -88,7 +204,13 @@ const ProjectTendering = () => {
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
-    handleNext();
+    if (activeStep === 0) {
+      if (validateProjectKeyData()) {
+        handleNext();
+      }
+    } else {
+      handleNext();
+    }
   };
 
   // Handle the reset of the steps
@@ -97,17 +219,46 @@ const ProjectTendering = () => {
     setCompleted({});
   };
 
+  // Handle the editing of a step
+  const handleEdit = () => {
+    const newCompleted = { ...completed };
+    delete newCompleted[activeStep];
+    setCompleted(newCompleted);
+  };
+
   // Render the current step
   const renderStep = (step: number) => {
     switch (step) {
       case 0:
-        return <KeyDataStep projectKeyData={projectKeyData} setProjectKeyData={setProjectKeyData} />;
+        return (
+          <KeyDataStep
+            projectKeyData={projectKeyData}
+            setProjectKeyData={setProjectKeyData}
+            isCompleted={completed[0]}
+            errors={projectKeyDataErrors}
+          />
+        );
       case 1:
-        return <CustomerStep customerData={customerData} setCustomerData={setCustomerData} />;
+        return (
+          <CustomerStep customerData={customerData} setCustomerData={setCustomerData} isCompleted={completed[1]} />
+        );
       case 2:
-        return <ProjectDescriptionStep />;
+        return (
+          <ProjectDescriptionStep
+            projectDescriptionData={projectDescriptionData}
+            setProjectDescriptionData={setProjectDescriptionData}
+            isCompleted={completed[2]}
+          />
+        );
       default:
-        return <KeyDataStep projectKeyData={projectKeyData} setProjectKeyData={setProjectKeyData} />;
+        return (
+          <KeyDataStep
+            projectKeyData={projectKeyData}
+            setProjectKeyData={setProjectKeyData}
+            isCompleted={completed[0]}
+            errors={projectKeyDataErrors}
+          />
+        );
     }
   };
 
@@ -148,20 +299,20 @@ const ProjectTendering = () => {
                   sx={{ mr: 1 }}
                   variant="outlined"
                 >
-                  Back
+                  Zurück
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
                 <Button onClick={handleNext} sx={{ mr: 1 }} variant="outlined">
-                  Next
+                  Weiter
                 </Button>
                 {activeStep !== steps.length &&
                   (completed[activeStep] ? (
-                    <Typography variant="caption" sx={{ display: "inline-block" }}>
-                      Step {activeStep + 1} already completed
-                    </Typography>
+                    <Button onClick={handleEdit} variant="outlined" color="info">
+                      Bearbeiten
+                    </Button>
                   ) : (
                     <Button onClick={handleComplete} variant="outlined">
-                      {completedSteps() === totalSteps() - 1 ? "Finish" : "Complete Step"}
+                      {completedSteps() === totalSteps() - 1 ? "Ausschreiben" : "Abschließen"}
                     </Button>
                   ))}
               </Box>

@@ -7,6 +7,8 @@ import { DatePicker } from "@mui/x-date-pickers";
 interface KeyDataStepProps {
   projectKeyData: ProjectKeyData;
   setProjectKeyData: React.Dispatch<React.SetStateAction<ProjectKeyData>>;
+  isCompleted: boolean;
+  errors: { [key: string]: boolean };
 }
 
 /**
@@ -15,7 +17,7 @@ interface KeyDataStepProps {
  * @param setProjectKeyData - Function to set the key data of the project
  * @returns - The input fields for the key data step
  */
-const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) => {
+const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }: KeyDataStepProps) => {
   const {
     projectName,
     location,
@@ -109,13 +111,25 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           size="small"
           value={projectName}
           onChange={onChangeProjectName}
+          disabled={isCompleted}
+          error={errors.projectName}
+          helperText={errors.projectName ? "Projektname darf nicht leer sein" : ""}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Einsatzort:
         </Typography>
-        <TextField sx={{ flex: 3 }} variant="outlined" size="small" value={location} onChange={onChangeLocation} />
+        <TextField
+          sx={{ flex: 3 }}
+          variant="outlined"
+          size="small"
+          value={location}
+          onChange={onChangeLocation}
+          disabled={isCompleted}
+          error={errors.location}
+          helperText={errors.location ? "Einsatzort darf nicht leer sein" : ""}
+        />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
@@ -126,6 +140,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           slotProps={{ textField: { variant: "outlined", size: "small" } }}
           value={tenderingDate}
           onChange={onChangeTenderingDate}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -137,13 +152,21 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           slotProps={{ textField: { variant: "outlined", size: "small" } }}
           value={start}
           onChange={onChangeStart}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Dauer:
         </Typography>
-        <TextField sx={{ flex: 3 }} variant="outlined" size="small" value={duration} onChange={onChangeDuration} />
+        <TextField
+          sx={{ flex: 3 }}
+          variant="outlined"
+          size="small"
+          value={duration}
+          onChange={onChangeDuration}
+          disabled={isCompleted}
+        />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
@@ -156,6 +179,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           type="number"
           value={conditions}
           onChange={onChangeConditions}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -170,6 +194,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           label="€/BT"
           value={conditionsRange}
           onChange={onChangeConditionsRange}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -183,6 +208,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           type="number"
           value={btMin}
           onChange={onChangeBtMin}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -196,6 +222,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           type="number"
           value={btMax}
           onChange={onChangeBtMax}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -209,6 +236,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           type="number"
           value={amountProjectMembersMin}
           onChange={onChangeAmountProjectMembersMin}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -222,6 +250,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           type="number"
           value={amountProjectMembersMax}
           onChange={onChangeAmountProjectMembersMax}
+          disabled={isCompleted}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -233,6 +262,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData }: KeyDataStepProps) =>
           slotProps={{ textField: { variant: "outlined", size: "small" } }}
           value={applicationDeadline}
           onChange={onChangeApplicationDeadline}
+          disabled={isCompleted}
         />
       </Stack>
     </Stack>

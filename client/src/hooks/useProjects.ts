@@ -1,5 +1,6 @@
 import { MembersFieldDto } from "../types/membersTypes";
 import dayjs from "dayjs";
+import { CoreCompetency } from "../types/projectTypes";
 
 // CURRENTLY JUST A PLACEHOLDER UNTIL REACT QUERY IS IMPLEMENTED
 const useProjects = () => {
@@ -156,7 +157,16 @@ const useProjects = () => {
     },
   ];
 
-  return { projects, tenderedProjects, allProjects };
+  const allCoreCompetencies = [
+    { coreCompetencyId: 1, designation: "Process & Organization" },
+    { coreCompetencyId: 2, designation: "Human Resources" },
+    { coreCompetencyId: 3, designation: "Marketing & Sales" },
+    { coreCompetencyId: 4, designation: "Finance & Controlling" },
+    { coreCompetencyId: 5, designation: "Sonstiges" },
+    { coreCompetencyId: 6, designation: "Research & Implications" },
+  ] as CoreCompetency[];
+
+  return { projects, tenderedProjects, allProjects, allCoreCompetencies };
 };
 
 export default useProjects;
