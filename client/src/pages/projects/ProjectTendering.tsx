@@ -29,6 +29,7 @@ const ProjectTendering = () => {
     applicationDeadline: undefined,
   });
 
+  // Errors for the project key data
   const [projectKeyDataErrors, setProjectKeyDataErrors] = React.useState<{ [key: string]: boolean }>({
     projectName: false,
     location: false,
@@ -52,6 +53,16 @@ const ProjectTendering = () => {
     acquisitor: undefined,
     acquisitionMethod: undefined,
     contactChannels: [],
+  });
+
+  // Errors for the customer data
+  const [customerDataErrors, setCustomerDataErrors] = React.useState<{ [key: string]: boolean }>({
+    customerName: false,
+    shortDescription: false,
+    newCustomer: false,
+    acquisitor: false,
+    acquisitionMethod: false,
+    contactChannels: false,
   });
 
   // Project Description data
@@ -144,6 +155,50 @@ const ProjectTendering = () => {
     return hasErrors;
   };
 
+  // Validate the customer data
+  const validateCustomerData = () => {
+    let hasErrors = false;
+    const newErrors = { ...customerDataErrors };
+    if (!customerData.customerName) {
+      newErrors.customerName = true;
+      hasErrors = true;
+    } else {
+      newErrors.customerName = false;
+    }
+    if (!customerData.shortDescription) {
+      newErrors.shortDescription = true;
+      hasErrors = true;
+    } else {
+      newErrors.shortDescription = false;
+    }
+    if (customerData.newCustomer === undefined) {
+      newErrors.newCustomer = true;
+      hasErrors = true;
+    } else {
+      newErrors.newCustomer = false;
+    }
+    if (!customerData.acquisitor) {
+      newErrors.acquisitor = true;
+      hasErrors = true;
+    } else {
+      newErrors.acquisitor = false;
+    }
+    if (!customerData.acquisitionMethod) {
+      newErrors.acquisitionMethod = true;
+      hasErrors = true;
+    } else {
+      newErrors.acquisitionMethod = false;
+    }
+    if (!customerData.contactChannels || customerData.contactChannels.length === 0) {
+      newErrors.contactChannels = true;
+      hasErrors = true;
+    } else {
+      newErrors.contactChannels = false;
+    }
+    setCustomerDataErrors(newErrors);
+    return hasErrors;
+  };
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -206,6 +261,11 @@ const ProjectTendering = () => {
         return;
       }
     }
+    if (activeStep === 1) {
+      if (validateCustomerData()) {
+        return;
+      }
+    }
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
@@ -239,7 +299,12 @@ const ProjectTendering = () => {
         );
       case 1:
         return (
-          <CustomerStep customerData={customerData} setCustomerData={setCustomerData} isCompleted={completed[1]} />
+          <CustomerStep
+            customerData={customerData}
+            setCustomerData={setCustomerData}
+            isCompleted={completed[1]}
+            errors={customerDataErrors}
+          />
         );
       case 2:
         return (

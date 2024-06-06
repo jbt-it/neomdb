@@ -19,6 +19,7 @@ interface CustomerStepProps {
   customerData: CustomerData;
   setCustomerData: React.Dispatch<React.SetStateAction<CustomerData>>;
   isCompleted: boolean;
+  errors: { [key: string]: boolean };
 }
 
 /**
@@ -27,7 +28,7 @@ interface CustomerStepProps {
  * @param setCustomerData - Function to change the customer data
  * @returns - A form to enter the customer data
  */
-const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerStepProps) => {
+const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: CustomerStepProps) => {
   const allContactChannels = [
     "Außenauftritt (online, offline)",
     "Netzwerkveranstaltungen (BVMW, IT-Brunch, ...)",
@@ -86,6 +87,9 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
           Altkunde/Neukunde:
         </Typography>
         <FormControl sx={{ flex: 3 }} disabled={isCompleted}>
+          <Typography variant={"caption"} color={"error"} sx={{ display: errors.newCustomer ? "block" : "none" }}>
+            Bitte wählen Sie eine Option aus.
+          </Typography>
           <RadioGroup row value={newCustomer} onChange={onChangeNewCustomer}>
             <FormControlLabel value={false} control={<Radio />} label="Altkunde" />
             <FormControlLabel value={true} control={<Radio />} label="Neukunde" />
@@ -103,6 +107,8 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
           value={customerName}
           onChange={onChangeCustomerName}
           disabled={isCompleted}
+          helperText={errors.customerName ? "Bitte geben Sie einen Auftraggeber an." : ""}
+          error={errors.customerName}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -116,13 +122,15 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
           value={shortDescription}
           onChange={onChangeShortDescription}
           disabled={isCompleted}
+          helperText={errors.shortDescription ? "Bitte geben Sie eine Kurzbeschreibung an." : ""}
+          error={errors.shortDescription}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Akquiseverantwortlicher:
         </Typography>
-        <FormControl sx={{ flex: 3 }} disabled={isCompleted}>
+        <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitor}>
           <Select value={acquisitor} onChange={onChangeAcquisitor} size="small">
             {allAcquisitors.map((acquisitor) => (
               <MenuItem key={acquisitor} value={acquisitor}>
@@ -130,13 +138,20 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
               </MenuItem>
             ))}
           </Select>
+          <Typography
+            variant={"caption"}
+            color={"error"}
+            sx={{ display: errors.acquisitor ? "block" : "none", marginLeft: 2 }}
+          >
+            Bitte wählen Sie eine Option aus.
+          </Typography>
         </FormControl>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Akquisemethode:
         </Typography>
-        <FormControl sx={{ flex: 3 }} disabled={isCompleted}>
+        <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitionMethod}>
           <Select value={acquisitionMethod} onChange={onChangeAquisitionMethod} size="small">
             {allAcquisitionMethods.map((method) => (
               <MenuItem key={method} value={method}>
@@ -144,13 +159,24 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
               </MenuItem>
             ))}
           </Select>
+          <Typography
+            variant={"caption"}
+            color={"error"}
+            sx={{ display: errors.acquisitionMethod ? "block" : "none", marginLeft: 2 }}
+          >
+            Bitte wählen Sie eine Option aus.
+          </Typography>
         </FormControl>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Akquisekanal:
         </Typography>
-        <FormControl sx={{ flex: 3 }} disabled={isCompleted}>
+        <FormControl
+          sx={{ flex: 3 }}
+          disabled={isCompleted}
+          error={errors.contactChannels && contactChannels?.length === 0}
+        >
           <FormGroup row onChange={onChangeContactChannels}>
             {allContactChannels.map((channel) => (
               <FormControlLabel
@@ -160,6 +186,13 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted }: CustomerSt
               />
             ))}
           </FormGroup>
+          <Typography
+            variant={"caption"}
+            color={"error"}
+            sx={{ display: errors.contactChannels && contactChannels?.length === 0 ? "block" : "none" }}
+          >
+            Bitte wählen Sie mindestens einen Kanal aus.
+          </Typography>
         </FormControl>
       </Stack>
     </Stack>
