@@ -201,16 +201,15 @@ const ProjectTendering = () => {
 
   // Handle the completion of a step
   const handleComplete = () => {
+    if (activeStep === 0) {
+      if (validateProjectKeyData()) {
+        return;
+      }
+    }
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
-    if (activeStep === 0) {
-      if (validateProjectKeyData()) {
-        handleNext();
-      }
-    } else {
-      handleNext();
-    }
+    handleNext();
   };
 
   // Handle the reset of the steps
