@@ -4036,7 +4036,6 @@
 				"required": [
 					"firstAidTraining",
 					"drivingLicense",
-					"lastChange",
 					"canQM",
 					"canPL",
 					"commitment",
