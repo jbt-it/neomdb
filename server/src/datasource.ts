@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import logger from "./logger";
 import { DataSource } from "typeorm";
+import logger from "./logger";
 
 const isProduction = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "test";
@@ -38,22 +38,26 @@ const getDbConfig = () => {
   let dbName = null;
   let entities = [];
   let synchronize = false;
+  let subscribers = [];
   if (isTest) {
     dbHost = process.env.DB_TEST_HOST;
     dbUsername = process.env.DB_TEST_USER;
     dbName = process.env.DB_TEST_NAME;
     entities = [__dirname + "/entities/*.ts"];
+    subscribers = [__dirname + "/global/*.ts"];
     synchronize = true;
   } else if (isProduction) {
     dbHost = process.env.DB_HOST_PROD;
     dbUsername = process.env.DB_USER;
     dbName = process.env.DB_NAME;
     entities = [__dirname + "/entities/*.js"];
+    subscribers = [__dirname + "/global/*.js"];
   } else {
     dbHost = process.env.DB_HOST_DEV;
     dbUsername = process.env.DB_USER;
     dbName = process.env.DB_NAME;
     entities = [__dirname + "/entities/*.ts"];
+    subscribers = [__dirname + "/global/*.ts"];
   }
 
   return {
@@ -63,6 +67,7 @@ const getDbConfig = () => {
     password: dbPassword,
     database: dbName,
     entities,
+    subscribers,
     synchronize,
   };
 };
@@ -81,5 +86,6 @@ export const AppDataSource = new DataSource({
   database: dbConfig.database,
   entities: dbConfig.entities,
   synchronize: dbConfig.synchronize,
+  subscribers: dbConfig.subscribers,
   logging: false,
 });
