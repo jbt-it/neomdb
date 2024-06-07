@@ -9,6 +9,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { ItSkill } from "./ItSkill";
 import { Generation } from "./Generation";
@@ -213,7 +214,7 @@ export class Member {
   @Column("date", { name: "canQM", nullable: true })
   canQM: Date | null;
 
-  @Column("date", { name: "lastchange", nullable: true })
+  @UpdateDateColumn({ name: "lastchange", nullable: true })
   lastChange: Date | null;
 
   @Column("text", { name: "sonstige_ws", nullable: true })
