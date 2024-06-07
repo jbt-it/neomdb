@@ -73,14 +73,14 @@ export class UpdateSubscriber implements EntitySubscriberInterface<any> {
 
       // Gets the current user from the context
       const user = Context.getUser();
-
+      const entityIdToTrack = this.entityIdsToTrack[event.metadata.name]; // Get the name of the property that holds the id of the entity
       const actionText = this.createActionText(event.updatedColumns);
 
       // Create new trace entity
       const trace = new Trace();
       trace.dateOfChange = new Date();
       trace.table = event.metadata.name;
-      trace.changedId = event.entity[this.entityIdsToTrack[event.metadata.name]];
+      trace.changedId = event.entity[entityIdToTrack];
       trace.action = actionText;
       trace.user = user.name;
 
