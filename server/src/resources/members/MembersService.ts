@@ -368,9 +368,6 @@ class MembersService {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
 
-    // Create timestamp for last change
-    const updatedLastChange = new Date();
-
     // Update critical data
     if (updateCritical) {
       // Check if department exists
@@ -426,7 +423,6 @@ class MembersService {
     if (updatePersonal) {
       // Update personal data
       MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
-      member.lastChange = updatedLastChange;
     }
     await MembersRepository.saveMember(member);
   };
@@ -454,7 +450,6 @@ class MembersService {
     }
 
     member.memberStatus = memberStatus;
-    member.lastChange = new Date();
     await MembersRepository.saveMember(member);
   };
 }
