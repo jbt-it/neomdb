@@ -1,6 +1,7 @@
 import { AppDataSource } from "../datasource";
 import { Trace } from "../entities/Trace";
 import { EntitySubscriberInterface, EventSubscriber, UpdateEvent } from "typeorm";
+import { Context } from "./Context";
 
 /**
  * The update subscriber listenes to updates made to entites and automatically creates an entry in the trace table.
@@ -10,9 +11,17 @@ export class UpdateSubscriber implements EntitySubscriberInterface<any> {
   /**
    * A list of entity names that specify for which entites a trace entry should be created.
    */
-  private entitiesToTrack = ["Member"];
+  private entitiesToTrack = ["Member", "Project", "Department", "Company"];
 
-  private entityIdsToTrack = { Member: "memberId" };
+  /**
+   * A dictionary that maps entity names to the name of the property that holds the id of the entity.
+   */
+  private entityIdsToTrack = {
+    Member: "memberId",
+    Project: "projectId",
+    Department: "departmentId",
+    Company: "companyId",
+  };
 
   /**
    * Specifies to which class of an entity the subscriber listens to.
@@ -44,7 +53,7 @@ export class UpdateSubscriber implements EntitySubscriberInterface<any> {
       }
       // If the column is the last one, add the column name to the action text and add a dot at the end.
       if (index === columns.length - 1) {
-        actionText += ` and ${column.propertyName}.`;
+        actionText += ` and ${column.propertyName}`;
         return;
       }
       // If the column is not the first or the last one, add the column name to the action text with a comma.
@@ -62,6 +71,9 @@ export class UpdateSubscriber implements EntitySubscriberInterface<any> {
     if (this.entitiesToTrack.includes(event.metadata.name)) {
       const traceRepository = AppDataSource.getRepository(Trace);
 
+      // Gets the current user from the context
+      const user = Context.getUser();
+
       const actionText = this.createActionText(event.updatedColumns);
 
       // Create new trace entity
@@ -70,7 +82,7 @@ export class UpdateSubscriber implements EntitySubscriberInterface<any> {
       trace.table = event.metadata.name;
       trace.changedId = event.entity[this.entityIdsToTrack[event.metadata.name]];
       trace.action = actionText;
-      trace.user = "TODO";
+      trace.user = user.name;
 
       // Save trace entity
       traceRepository.save(trace);

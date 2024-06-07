@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
 import request from "supertest";
+import { DepartmentDetailsDto, UpdateDepartmentDto } from "types/memberTypes";
 import app from "../../src/app";
 import { AppDataSource } from "../../src/datasource";
 import { Trace } from "../../src/entities/Trace";
@@ -49,6 +50,8 @@ describe("Test UpdateSubscriber", () => {
     const memberId = 8324;
     // Retrieve the member
     const memberResponse = await request(app).get(`/api/members/${memberId}`).set("Cookie", `token=${token}`);
+    expect(memberResponse.status).toBe(200);
+
     const updatedMember = {
       ...memberResponse.body,
       employer: "Changed employer",
@@ -61,13 +64,50 @@ describe("Test UpdateSubscriber", () => {
 
     // --- THEN
     expect(response.status).toBe(204);
-    // Wait for the subscriber to finish
+    // Wait one second for the subscriber to finish
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const traceRepository = AppDataSource.getRepository(Trace);
     const traces = await traceRepository.find();
     expect(traces.length).toBe(1);
     expect(traces[0].changedId).toBe(memberId);
     expect(traces[0].table).toBe("Member");
-    expect(traces[0].action).toBe("Changed employer and specializations.");
+    expect(traces[0].action).toBe("Changed employer and specializations");
+    expect(traces[0].user).toBe("m.decker");
+  });
+
+  test("Should create a trace entry when a department is updated", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+    const departmentId = 1;
+    // Retrieve the department
+    const departmentResponse = await request(app).get(`/api/members/departments`).set("Cookie", `token=${token}`);
+    expect(departmentResponse.status).toBe(200);
+    const oldDepartment = departmentResponse.body.find(
+      (department: DepartmentDetailsDto) => department.departmentId === departmentId
+    );
+
+    const updatedDepartment: UpdateDepartmentDto = {
+      linkObjectivePresentation: "Changed linkObjectivePresentation",
+      linkOrganigram: oldDepartment.linkOrganigram,
+    };
+    const response = await request(app)
+      .put(`/api/members/departments/${departmentId}`)
+      .send(updatedDepartment)
+      .set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(204);
+    // Wait one second for the subscriber to finish
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const traceRepository = AppDataSource.getRepository(Trace);
+    const traces = await traceRepository.find();
+    expect(traces.length).toBe(1);
+    expect(traces[0].changedId).toBe(departmentId);
+    expect(traces[0].table).toBe("Department");
+    expect(traces[0].action).toBe("Changed linkObjectivePresentation");
+    expect(traces[0].user).toBe("m.decker");
   });
 });

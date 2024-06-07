@@ -60,8 +60,8 @@ export type MembersFieldDto = {
  * Type of the request to update a department
  */
 export type UpdateDepartmentDto = {
-  linkObjectivePresentation: string;
-  linkOrganigram: string;
+  linkObjectivePresentation: string | null;
+  linkOrganigram: string | null;
 };
 
 /**
