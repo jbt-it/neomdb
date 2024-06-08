@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Container, Typography, Box, Divider, Paper, Stack, Chip, Button } from "@mui/material";
 
 import { Workshop, WorkshopInstance, EventParticipant } from "../../types/eventTypes";
@@ -16,7 +16,7 @@ import { eventParticipants } from "../../mock/events/eventParticipants";
 import useResponsive from "../../hooks/useResponsive";
 import { AddCircle, CheckCircle, RemoveCircleOutline, Group, Grade } from "@mui/icons-material";
 import api from "../../utils/api";
-import { Member } from "../../types/membersTypes";
+import { MemberPartialDto } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import dayjs from "dayjs";
@@ -76,11 +76,11 @@ const WorkshopInstanceDetails = () => {
         if (res.status === 200) {
           if (mounted) {
             setMembers(
-              res.data.map((member: Member) => ({
-                mitgliedID: member.mitgliedID,
-                vorname: member.vorname,
-                nachname: member.nachname,
-                mitgliedstatus: member.mitgliedstatus,
+              res.data.map((member: MemberPartialDto) => ({
+                memberId: member.memberId,
+                firstname: member.firstname,
+                lastname: member.lastname,
+                memberStatus: member.memberStatus,
               }))
             );
           }
@@ -193,7 +193,8 @@ const WorkshopInstanceDetails = () => {
     ) : workshopInstance.status === "Feedback" || workshopInstance.status === "Abgeschlossen" ? (
       <Button
         variant="contained"
-        href={`/#/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
+        component={Link}
+        to={`/workshops/${workshopInstance.schulungId}/${workshopInstance.schulungsinstanzID}/feedbackauswertung`}
         sx={{ fontWeight: 600, fontSize: isMobile ? 10 : 14 }}
         color="info"
         startIcon={<Grade />}
@@ -247,7 +248,7 @@ const WorkshopInstanceDetails = () => {
   ];
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 3 }}>
+    <Container>
       {isRegistraionClosing ? (
         <WorkshopInstanceAdmissionClosingTable
           participants={participants}

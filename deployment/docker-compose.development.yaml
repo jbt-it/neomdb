@@ -21,6 +21,8 @@ services:
       - mysql:/var/lib/mysql
     networks:
       - neomdb_network
+    ports:
+      - 5306:3306
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
     secrets:

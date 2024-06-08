@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { AddCircleOutline, Clear } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
-import { Member } from "../../../types/membersTypes";
+import { MemberPartialDto } from "../../../types/membersTypes";
 import { Trainee } from "../../../types/traineesTypes";
 
 interface AddInternalProjectDialogProps {
@@ -21,7 +21,7 @@ interface AddInternalProjectDialogProps {
   handleDialogClose: () => void;
   addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
   trainees: Trainee[];
-  members: Member[];
+  members: MemberPartialDto[];
   generationName: string | null;
 }
 
@@ -87,14 +87,14 @@ const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialog
 
   // create options for the trainees Autocomplete components
   const traineeOptions: MemberOption[] = trainees.map((trainee) => ({
-    name: `${trainee.vorname} ${trainee.nachname}`,
-    id: trainee.mitgliedID,
+    name: `${trainee.firstname} ${trainee.lastname}`,
+    id: trainee.memberId,
   }));
 
   // create options for the qms Autocomplete components
   const qmOptions: MemberOption[] = members.map((member) => ({
-    name: `${member.vorname} ${member.nachname}`,
-    id: member.mitgliedID,
+    name: `${member.firstname} ${member.lastname}`,
+    id: member.memberId,
   }));
 
   return (

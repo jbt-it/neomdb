@@ -2,12 +2,13 @@
  * Component that handles the not found error
  */
 import React from "react";
-import { Button, Theme, CardActions, CardContent, Typography } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
+import { Box, Button, CardActions, CardContent, Typography, useTheme } from "@mui/material";
 import Card from "@mui/material/Card";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const NotFound: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  const styles = {
     root: {
       display: "flex",
     },
@@ -54,16 +55,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "white",
       backgroundColor: "#f6891f",
     },
-  })
-);
-
-const NotFound: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
   return (
-    <div className={"content-page ${classes.root}"}>
-      <Card className={classes.notFoundCard} variant="outlined">
+    <Box sx={styles.root}>
+      <Card sx={styles.notFoundCard} variant="outlined">
         <CardContent>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
+          <Typography sx={styles.title} color="textSecondary" gutterBottom>
             Fehler:
           </Typography>
           <Typography variant="h5" component="h2">
@@ -76,12 +73,12 @@ const NotFound: React.FunctionComponent = () => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button className={classes.backButton} size="medium" variant="contained" disableElevation href="#/">
+          <Button sx={styles.backButton} size="medium" variant="contained" disableElevation href="/">
             Zurück zum Dashboard
           </Button>
         </CardActions>
       </Card>
-    </div>
+    </Box>
   );
 };
 

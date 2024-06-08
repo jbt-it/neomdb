@@ -1,40 +1,41 @@
-import MembersService from "./MembersService";
-import {
-  AssignPermissionToMemberRequest,
-  CreateMemberRequest,
-  CreateMemberResponse,
-  Department,
-  DepartmentMember,
-  Director,
-  MemberDetails,
-  MemberImage,
-  MemberPartial,
-  MemberStatus,
-  StatusOverview,
-  UpdateDepartmentRequest,
-  Value,
-} from "../../types/membersTypes";
 import {
   Body,
+  Controller,
   Delete,
+  Get,
   Middlewares,
   Patch,
+  Path,
   Post,
   Put,
-  Get,
-  Route,
-  Controller,
-  Security,
-  Tags,
-  Request,
-  Path,
   Query,
+  Request,
+  Route,
+  Security,
   SuccessResponse,
+  Tags,
 } from "@tsoa/runtime";
-import { JWTPayload, Permission, PermissionAssignment } from "../../types/authTypes";
-import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
+import { Permission } from "../../entities/Permission";
 import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
+import { JWTPayload, PermissionAssignmentDto } from "../../types/authTypes";
+import {
+  AssignPermissionToMemberRequestDto,
+  CreateMemberRequestDto,
+  CreateMemberResponseDto,
+  DepartmentDetailsDto,
+  DepartmentMemberDto,
+  DirectorDto,
+  ItSkillsValue,
+  LanguageValue,
+  MemberDetailsDto,
+  MemberImage,
+  MemberPartialDto,
+  StatusOverview,
+  UpdateDepartmentDto,
+} from "../../types/memberTypes";
+import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
+import MembersService from "./MembersService";
 
 /**
  * Controller for the members module
@@ -52,7 +53,7 @@ export class MembersController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getMembers(): Promise<MemberPartial[]> {
+  public async getMembers(): Promise<MemberPartialDto[]> {
     const members = await this.membersService.getMemberList();
     return members;
   }
@@ -84,7 +85,7 @@ export class MembersController extends Controller {
   public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: any) {
     const user = request.user as JWTPayload;
     // The user can only save the image if he is the member himself
-    if (id !== user.mitgliedID) {
+    if (id !== user.memberId) {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }
 
@@ -96,15 +97,14 @@ export class MembersController extends Controller {
   }
 
   /**
-   * Retrieves all members of the departments (this does not invclude the director of a department)
+   * Retrieves all members of the departments (this does not include the director of a department)
    * @summary Get all members of departments
    */
   // TODO: Change route name
   @Get("department-members")
   @Security("jwt")
-  public async getMembersOfDepartments(): Promise<DepartmentMember[]> {
+  public async getMembersOfDepartments(): Promise<DepartmentMemberDto[]> {
     const membersOfDepartments = await this.membersService.getMembersOfDepartments();
-
     return membersOfDepartments;
   }
 
@@ -115,7 +115,7 @@ export class MembersController extends Controller {
    */
   @Get("directors")
   @Security("jwt")
-  public async getDirectors(@Query("current") current: boolean): Promise<Director[]> {
+  public async getDirectors(@Query("current") current: boolean): Promise<DirectorDto[]> {
     // Query parameter to specify if only the current directors should be retrieved
     const directors = await this.membersService.getDirectors(current);
 
@@ -144,7 +144,7 @@ export class MembersController extends Controller {
    */
   @Post("")
   @Security("jwt", ["1"])
-  public async createMember(@Body() requestBody: CreateMemberRequest): Promise<CreateMemberResponse> {
+  public async createMember(@Body() requestBody: CreateMemberRequestDto): Promise<CreateMemberResponseDto> {
     /**
      * Overview of the status of the different account creation operations
      */
@@ -181,11 +181,10 @@ export class MembersController extends Controller {
     };
 
     const newMember = requestBody;
-    const createMemberResponse: CreateMemberResponse = await this.membersService.createAccountsOfMember(
+    const createMemberResponse: CreateMemberResponseDto = await this.membersService.createAccountsOfMember(
       newMember,
       statusOverview
     );
-
     this.setStatus(createMemberResponse.statusOverview.querySuccesful ? 201 : 500);
     return createMemberResponse;
   }
@@ -200,17 +199,14 @@ export class MembersController extends Controller {
    * @param requestBody The new status of the member
    *
    * @example requestBody {
-   *  "mitgliedstatus": "aktives Mitglied"
+   *  "memberStatus": "aktives Mitglied"
    * }
    */
   // TODO: Change route name
   @Patch("{id}/status")
   @Security("jwt", ["1"])
-  public async updateMemberStatus(
-    @Path() id: number,
-    @Body() requestBody: { mitgliedstatus: MemberStatus }
-  ): Promise<void> {
-    const status = requestBody.mitgliedstatus;
+  public async updateMemberStatus(@Path() id: number, @Body() requestBody: { memberStatus: string }): Promise<void> {
+    const status = requestBody.memberStatus;
     await this.membersService.updateMemberStatus(id, status);
   }
 
@@ -220,16 +216,25 @@ export class MembersController extends Controller {
    */
   @Get("departments")
   @Security("jwt")
-  public async getDepartments(): Promise<Department[]> {
+  public async getDepartments(): Promise<DepartmentDetailsDto[]> {
     const departments = await this.membersService.getDepartments();
 
     return departments;
   }
 
+  /**
+   * Updates the information of an existing department
+   * @summary Update a department
+   * @param id The id of the department to update
+   * @example requestBody {
+   * "linkObjectivePresentation": "https://example.com",
+   * "linkOrganigram": "https://example.com"
+   * }
+   */
   @Put("departments/{id}")
   @Security("jwt")
   @Middlewares(checkDepartmentAccess)
-  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentRequest): Promise<void> {
+  public async updateDepartment(@Path() id: number, @Body() requestBody: UpdateDepartmentDto): Promise<void> {
     await this.membersService.updateDepartment(id, requestBody);
   }
 
@@ -239,7 +244,7 @@ export class MembersController extends Controller {
    */
   @Get("languages")
   @Security("jwt")
-  public async getLanguages(): Promise<Value[]> {
+  public async getLanguages(): Promise<LanguageValue[]> {
     const languages = await this.membersService.getLanguageValues();
 
     return languages;
@@ -251,7 +256,7 @@ export class MembersController extends Controller {
    */
   @Get("edv-skills")
   @Security("jwt")
-  public async getEDVSkills(): Promise<Value[]> {
+  public async getEDVSkills(): Promise<ItSkillsValue[]> {
     const edvSkills = await this.membersService.getEdvSkillValues();
 
     return edvSkills;
@@ -263,7 +268,7 @@ export class MembersController extends Controller {
    */
   @Get("permission-assignments")
   @Security("jwt")
-  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignment[]> {
+  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignmentDto[]> {
     const user = request.user as JWTPayload;
     const userHasAnyPermission = user.permissions.length > 0;
     if (!userHasAnyPermission) {
@@ -293,27 +298,6 @@ export class MembersController extends Controller {
   }
 
   /**
-   * Retrieves a list of all permissions of the member with the given ID
-   * @summary Get permissions by member id
-   * @param id The id of the member to retrieve the permissions from
-   */
-  @Get("{id}/permissions")
-  @Security("jwt")
-  public async getPermissionsByMemberID(
-    @Path() id: number,
-    @Request() request: any
-  ): Promise<{ permissions: Permission[] }> {
-    const user = request.user as JWTPayload;
-    const userHasAnyPermission = user.permissions.length > 0;
-    if (!userHasAnyPermission) {
-      throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
-    }
-    const permissions = await this.membersService.getPermissionsByMemberID(id);
-
-    return permissions;
-  }
-
-  /**
    * Create new permission for member
    * @summary Create permission
    * @param requestBody The permission to create
@@ -328,16 +312,18 @@ export class MembersController extends Controller {
   @Security("jwt")
   @SuccessResponse("201")
   public async assignPermissionToMember(
-    @Body() requestBody: AssignPermissionToMemberRequest,
+    @Body() requestBody: AssignPermissionToMemberRequestDto,
     @Request() request: any
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
-    // Checks if the member is allowed to delegate the permission
+    // Checks if the member is allowed to delegate the permission (if they are not an admin)
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be delegated!");
     }
@@ -359,16 +345,18 @@ export class MembersController extends Controller {
   @Delete("permissions")
   @Security("jwt")
   public async unassignPermissionFromMember(
-    @Body() requestBody: AssignPermissionToMemberRequest,
+    @Body() requestBody: AssignPermissionToMemberRequestDto,
     @Request() request: any
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
+    const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
-    // Checks if the member is allowed to delete the permission
+    // Checks if the member is allowed to delete the permission (if they are not an admin)
     if (
-      !doesPermissionsInclude(user.permissions, [permissionID]) ||
-      !canPermissionBeDelegated(user.permissions, permissionID)
+      !isUserAdmin &&
+      (!doesPermissionsInclude(user.permissions, [permissionID]) ||
+        !canPermissionBeDelegated(user.permissions, permissionID))
     ) {
       throw new UnauthorizedError("Permission cannot be deleted!");
     }
@@ -385,7 +373,7 @@ export class MembersController extends Controller {
    */
   @Get("{id}")
   @Security("jwt")
-  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetails> {
+  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetailsDto> {
     const user = request.user;
     let userCanViewFinancialData = false;
 
@@ -394,7 +382,7 @@ export class MembersController extends Controller {
     if (id === user.mitgliedID || doesPermissionsInclude(user.permissions, [6])) {
       userCanViewFinancialData = true;
     }
-    const member: MemberDetails = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
+    const member = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
     return member;
   }
 
@@ -406,94 +394,108 @@ export class MembersController extends Controller {
    * @param requestBody The new information of the member
    *
    * @example requestBody {
-   *   "mitgliedID": 8111,
-   *   "vorname": "Brandon-Lee",
-   *   "nachname": "Frye",
-   *   "jbt_email": "b.frye@studentische-beratung.de",
-   *   "geschlecht": 1,
-   *   "geburtsdatum": "1990-06-05",
-   *   "handy": "0162/9846320",
-   *   "mitgliedstatus": "passives Mitglied",
-   *   "generation": null,
-   *   "internesprojekt": null,
-   *   "trainee_seit": "2011-04-30",
-   *   "mitglied_seit": "2012-11-30",
-   *   "alumnus_seit": null,
-   *   "senior_seit": null,
-   *   "aktiv_seit": "2012-11-30",
-   *   "passiv_seit": null,
-   *   "ausgetreten_seit": null,
-   *   "ressort": "Mitglieder",
-   *   "arbeitgeber": "Versicherung Deutschland",
-   *   "strasse1": "Woodsman Ave 61",
-   *   "plz1": "70364",
-   *   "ort1": "Stuttgart",
-   *   "tel1": null,
+   *   "memberId": 8111,
+   *   "lastname": "Frye",
+   *   "firstname": "Brandon-Lee",
+   *   "gender": true,
+   *   "birthday": "1990-06-06",
+   *   "mobile": "0162/9846320",
+   *   "jbtEmail": "b.frye@studentische-beratung.de",
+   *   "memberStatus": {
+   *     "memberStatusId": 1,
+   *     "name": "Trainee"
+   *   },
+   *   "generation": 3,
+   *   "internalProject": null,
+   *   "traineeSince": "2011-05-01",
+   *   "memberSince": "2012-12-01",
+   *   "alumnusSince": null,
+   *   "seniorSince": null,
+   *   "activeSince": "2012-12-01",
+   *   "passiveSince": null,
+   *   "exitedSince": null,
+   *   "department": {
+   *     "departmentId": 5,
+   *     "name": "Mitglieder",
+   *     "shortName": "MIT"
+   *   },
+   *   "employer": "Versicherung International",
+   *   "street1": "Woodsman Ave 61",
+   *   "postalCode1": "70364",
+   *   "city1": "Stuttgart",
+   *   "phone1": null,
    *   "email1": "brandon-lee@gmx.de",
-   *   "strasse2": "Budapester Straße 96",
-   *   "plz2": "56370",
-   *   "ort2": "Rheinland-Pfalz",
-   *   "tel2": "07042/984365",
+   *   "street2": "Budapester Straße 96",
+   *   "postalCode2": "987654",
+   *   "city2": "Reinesland Deutschland",
+   *   "phone2": "07042/984365",
    *   "email2": "brandon-lee@gmx.de",
-   *   "hochschule": "Universität Hohenheim",
-   *   "studiengang": "Master of Financial Management",
-   *   "studienbeginn": "2014-09-30T22:00:00.000Z",
-   *   "studienende": null,
-   *   "vertiefungen": "Controlling und Unternehmensrechnung",
-   *   "ausbildung": null,
-   *   "engagement": null,
-   *   "canPL": "2013-12-22",
-   *   "canQM": "2013-12-22",
-   *   "lastchange": "1899-11-29",
-   *   "fuehrerschein": false,
-   *   "ersthelferausbildung": false,
-   *   "mentor": null,
-   *   "mentees": [],
-   *   "sprachen": [
+   *   "university": "Universität Hohenheim",
+   *   "courseOfStudy": "Master of Financial Management",
+   *   "studyStart": "2014-10-01",
+   *   "studyEnd": null,
+   *   "specializations": "Controlling und Unternehmensrechnung",
+   *   "apprenticeship": null,
+   *   "commitment": null,
+   *   "canPL": "2013-12-23",
+   *   "canQM": "2013-12-23",
+   *   "lastChange": null,
+   *   "drivingLicense": 0,
+   *   "firstAidTraining": false,
+   *   "accountHolder": "8912203a67b608ee8b1dc826b18df9ab1fa18cc28199268a80279cc543d838b280756f78ae495347663fad487573ab72d763e0b553931d883f4dd70acb45eb4a",
+   *   "iban": "730984d2477de277a9d8c15860b9b703320d0195d898e0c64bf48856f425cb6cdf21240ed6d6c20b42d033bf8b623c4ec3dd9add15f9fbef743d1861e25cf703",
+   *   "bic": "0ba933576f9624335f5b6773310f7429345a051310d9179c132c33c9e4b14c78822d5134d3ffa7b345f13f9b6906215f61aa605b0ea823844ccc47e7684d8a35",
+   *   "languages": [
    *     {
-   *       "wert": "Deutsch",
-   *       "niveau": 5
+   *       "memberId": 8111,
+   *       "value": "Deutsch",
+   *       "level": 5
    *     },
    *     {
-   *       "wert": "English",
-   *       "niveau": 3
+   *       "memberId": 8111,
+   *       "value": "English",
+   *       "level": 3
    *     },
    *     {
-   *       "wert": "Französisch",
-   *       "niveau": 1
+   *       "memberId": 8111,
+   *       "value": "Französisch",
+   *       "level": 1
    *     }
    *   ],
-   *   "edvkenntnisse": [
+   *   "itSkills": [
    *     {
-   *       "wert": "MS-Office",
-   *       "niveau": 3
+   *       "memberId": 8111,
+   *       "value": "MS-Office",
+   *       "level": 3
    *     },
    *     {
-   *       "wert": "PHP",
-   *       "niveau": 1
+   *       "memberId": 8111,
+   *       "value": "PHP",
+   *       "level": 1
    *     }
-   *   ]
+   *   ],
+   *   "mentees": [],
+   *   "mentor": null
    * }
    */
   @Patch("{id}")
   @Security("jwt")
   public async updateMember(
     @Path() id: number,
-    @Body() requestBody: MemberDetails,
+    @Body() requestBody: MemberDetailsDto,
     @Request() request: any
   ): Promise<void> {
-    const { mentor, sprachen: languages, edvkenntnisse: edvSkills, ...member } = requestBody;
     const user = request.user as JWTPayload;
 
-    if (id === user.mitgliedID && doesPermissionsInclude(user.permissions, [1])) {
+    if (id === user.memberId && doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to all fields if member is himself and has additional permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, true);
-    } else if (id === user.mitgliedID) {
+      await this.membersService.updateMemberDetails(id, requestBody, true, true);
+    } else if (id === user.memberId) {
       // Grants access to non critical fields to the member himself
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, false, true);
+      await this.membersService.updateMemberDetails(id, requestBody, false, true);
     } else if (doesPermissionsInclude(user.permissions, [1])) {
       // Grants access to critical fields for members with permission
-      await this.membersService.updateMemberDetails(id, member, mentor, languages, edvSkills, true, false);
+      await this.membersService.updateMemberDetails(id, requestBody, true, false);
     } else {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }

@@ -3,13 +3,13 @@ import { useMediaQuery, Button, IconButton } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
 import AddInternalProjectDialog from "./AddInternalProjectDialog";
 import { Trainee } from "../../../types/traineesTypes";
-import { Member } from "../../../types/membersTypes";
+import { MemberPartialDto } from "../../../types/membersTypes";
 
 interface AddInternalProjectButtonProps {
   generationName: string | null;
   addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
   trainees: Trainee[];
-  members: Member[];
+  members: MemberPartialDto[];
 }
 
 const AddInternalProjectButton = ({
