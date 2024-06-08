@@ -142,6 +142,7 @@ const AssignTrainees: React.FunctionComponent = () => {
   const startDateString = "01.01.2024";
   const endDateString = "15.01.2024";
 
+  // TODO: Replace with actual data (structure must be adjusted)
   const preferences = [
     {
       mitgliedID: 7,

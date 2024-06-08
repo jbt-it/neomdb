@@ -6,23 +6,23 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Permission": {
+			"PermissionDTO": {
 				"properties": {
-					"directorID": {
+					"directorId": {
 						"type": "number",
 						"format": "double"
 					},
 					"canDelegate": {
 						"type": "boolean"
 					},
-					"permissionID": {
+					"permissionId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"canDelegate",
-					"permissionID"
+					"permissionId"
 				],
 				"type": "object",
 				"description": "Type of the permission"
@@ -38,14 +38,14 @@
 					},
 					"permissions": {
 						"items": {
-							"$ref": "#/components/schemas/Permission"
+							"$ref": "#/components/schemas/PermissionDTO"
 						},
 						"type": "array"
 					},
 					"name": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
@@ -54,10 +54,10 @@
 					"roles",
 					"permissions",
 					"name",
-					"mitgliedID"
+					"memberId"
 				],
 				"type": "object",
-				"description": "Type of the payload if the jason web token"
+				"description": "Type of the payload of the json web token"
 			},
 			"UserLoginRequest": {
 				"properties": {
@@ -132,53 +132,3217 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
-			"MemberStatus": {
-				"type": "string",
-				"enum": [
-					"Trainee",
-					"aktives Mitglied",
-					"Senior",
-					"Alumnus",
-					"passives Mitglied",
-					"Ausgetretene"
-				]
-			},
-			"MemberPartial": {
+			"Member": {
 				"properties": {
-					"lastchange": {
-						"type": "string"
-					},
-					"ressort": {
-						"type": "string"
-					},
-					"mitgliedstatus": {
-						"$ref": "#/components/schemas/MemberStatus"
-					},
-					"jbt_email": {
-						"type": "string"
-					},
-					"handy": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					},
-					"nachname": {
+					"firstName": {
 						"type": "string"
 					},
-					"vorname": {
+					"lastName": {
 						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"passwordHash": {
+						"type": "string",
+						"nullable": true
+					},
+					"password": {
+						"type": "string",
+						"nullable": true
+					},
+					"icalToken": {
+						"type": "string",
+						"nullable": true
+					},
+					"gender": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"birthday": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"mobile": {
+						"type": "string",
+						"nullable": true
+					},
+					"fax": {
+						"type": "string",
+						"nullable": true
+					},
+					"jbtEmail": {
+						"type": "string",
+						"nullable": true
+					},
+					"memberStatusId": {
+						"type": "number",
+						"format": "double"
+					},
+					"generationId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"internalProjectId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"internalProjectOld": {
+						"type": "string",
+						"nullable": true
+					},
+					"mentorId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"traineeSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"memberSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"alumnusSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"seniorSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"activeSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"passiveSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"exitedSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"employer": {
+						"type": "string",
+						"nullable": true
+					},
+					"street1": {
+						"type": "string",
+						"nullable": true
+					},
+					"postalCode1": {
+						"type": "string",
+						"nullable": true
+					},
+					"city1": {
+						"type": "string",
+						"nullable": true
+					},
+					"phone1": {
+						"type": "string",
+						"nullable": true
+					},
+					"email1": {
+						"type": "string",
+						"nullable": true
+					},
+					"street2": {
+						"type": "string",
+						"nullable": true
+					},
+					"postalCode2": {
+						"type": "string",
+						"nullable": true
+					},
+					"city2": {
+						"type": "string",
+						"nullable": true
+					},
+					"phone2": {
+						"type": "string",
+						"nullable": true
+					},
+					"email2": {
+						"type": "string"
+					},
+					"university": {
+						"type": "string",
+						"nullable": true
+					},
+					"courseOfStudy": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"studyEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"specializations": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeship": {
+						"type": "string",
+						"nullable": true
+					},
+					"accountHolder": {
+						"type": "string",
+						"nullable": true
+					},
+					"iban": {
+						"type": "string",
+						"nullable": true
+					},
+					"bic": {
+						"type": "string",
+						"nullable": true
+					},
+					"commitment": {
+						"type": "string",
+						"nullable": true
+					},
+					"remarks": {
+						"type": "string",
+						"nullable": true
+					},
+					"departure": {
+						"type": "string",
+						"nullable": true
+					},
+					"departureDate": {
+						"type": "string",
+						"nullable": true
+					},
+					"picture": {
+						"type": "string",
+						"nullable": true
+					},
+					"canPL": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"canQM": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"lastChange": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"otherWs": {
+						"type": "string",
+						"nullable": true
+					},
+					"drivingLicense": {
+						"type": "number",
+						"format": "double"
+					},
+					"drivingLicense2": {
+						"type": "number",
+						"format": "double"
+					},
+					"drivingLicense3": {
+						"type": "number",
+						"format": "double"
+					},
+					"firstAidTraining": {
+						"type": "boolean"
+					},
+					"choiceMentor": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceMentor1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceMentor2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceMentor3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceInternalProject": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceInternalProject1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceInternalProject1Motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"choiceInternalProject2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceInternalProject2Motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"choiceInternalProject3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceInternalProject3Motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"choiceDepartment": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceDepartment1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceDepartment2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"choiceDepartment3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"notes": {
+						"type": "string",
+						"nullable": true
+					},
+					"itSkills": {
+						"items": {
+							"$ref": "#/components/schemas/ItSkill"
+						},
+						"type": "array"
+					},
+					"generations": {
+						"items": {
+							"$ref": "#/components/schemas/Generation"
+						},
+						"type": "array"
+					},
+					"internalProjectsAsQm": {
+						"items": {
+							"$ref": "#/components/schemas/InternalProject"
+						},
+						"type": "array"
+					},
+					"generation": {
+						"$ref": "#/components/schemas/Generation"
+					},
+					"mentor": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"mentees": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"department": {
+						"$ref": "#/components/schemas/Department"
+					},
+					"memberHasOtherPositions": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasOtherPosition"
+						},
+						"type": "array"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/Permission"
+						},
+						"type": "array"
+					},
+					"memberHasEvents": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasEvent"
+						},
+						"type": "array"
+					},
+					"memberHasEventwws": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasEventWw"
+						},
+						"type": "array"
+					},
+					"memberHasDirectorPositions": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasDirectorPosition"
+						},
+						"type": "array"
+					},
+					"memberHasExpertises": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasExpertise"
+						},
+						"type": "array"
+					},
+					"memberHasProjects": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasProject"
+						},
+						"type": "array"
+					},
+					"memberHasWorkshopInstances": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasWorkshopInstance"
+						},
+						"type": "array"
+					},
+					"memberHasStatuses": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasStatus"
+						},
+						"type": "array"
+					},
+					"mmtrackings": {
+						"items": {
+							"$ref": "#/components/schemas/Mmtracking"
+						},
+						"type": "array"
+					},
+					"passwordReset": {
+						"$ref": "#/components/schemas/PasswordReset"
+					},
+					"internships": {
+						"items": {
+							"$ref": "#/components/schemas/Internship"
+						},
+						"type": "array"
+					},
+					"workshopFeedbackHasMembers": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopFeedbackHasMember"
+						},
+						"type": "array"
+					},
+					"languages": {
+						"items": {
+							"$ref": "#/components/schemas/Language"
+						},
+						"type": "array"
+					},
+					"traineeApplicants": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicant"
+						},
+						"type": "array"
+					},
+					"internalProject": {
+						"$ref": "#/components/schemas/InternalProject"
 					}
 				},
 				"required": [
-					"lastchange",
-					"ressort",
-					"mitgliedstatus",
-					"jbt_email",
-					"handy",
-					"nachname",
-					"vorname"
+					"memberId",
+					"firstName",
+					"lastName",
+					"name",
+					"passwordHash",
+					"password",
+					"icalToken",
+					"gender",
+					"birthday",
+					"mobile",
+					"fax",
+					"jbtEmail",
+					"memberStatusId",
+					"generationId",
+					"internalProjectId",
+					"internalProjectOld",
+					"mentorId",
+					"traineeSince",
+					"memberSince",
+					"alumnusSince",
+					"seniorSince",
+					"activeSince",
+					"passiveSince",
+					"exitedSince",
+					"departmentId",
+					"employer",
+					"street1",
+					"postalCode1",
+					"city1",
+					"phone1",
+					"email1",
+					"street2",
+					"postalCode2",
+					"city2",
+					"phone2",
+					"email2",
+					"university",
+					"courseOfStudy",
+					"studyStart",
+					"studyEnd",
+					"specializations",
+					"apprenticeship",
+					"accountHolder",
+					"iban",
+					"bic",
+					"commitment",
+					"remarks",
+					"departure",
+					"departureDate",
+					"picture",
+					"canPL",
+					"canQM",
+					"lastChange",
+					"otherWs",
+					"drivingLicense",
+					"drivingLicense2",
+					"drivingLicense3",
+					"firstAidTraining",
+					"choiceMentor",
+					"choiceMentor1",
+					"choiceMentor2",
+					"choiceMentor3",
+					"choiceInternalProject",
+					"choiceInternalProject1",
+					"choiceInternalProject1Motivation",
+					"choiceInternalProject2",
+					"choiceInternalProject2Motivation",
+					"choiceInternalProject3",
+					"choiceInternalProject3Motivation",
+					"choiceDepartment",
+					"choiceDepartment1",
+					"choiceDepartment2",
+					"choiceDepartment3",
+					"notes",
+					"itSkills",
+					"generations",
+					"internalProjectsAsQm",
+					"generation",
+					"mentor",
+					"mentees",
+					"memberStatus",
+					"department",
+					"memberHasOtherPositions",
+					"permissions",
+					"memberHasEvents",
+					"memberHasEventwws",
+					"memberHasDirectorPositions",
+					"memberHasExpertises",
+					"memberHasProjects",
+					"memberHasWorkshopInstances",
+					"memberHasStatuses",
+					"mmtrackings",
+					"passwordReset",
+					"internships",
+					"workshopFeedbackHasMembers",
+					"languages",
+					"traineeApplicants",
+					"internalProject"
 				],
 				"type": "object",
-				"description": "Type of the partial member"
+				"additionalProperties": false
+			},
+			"ItSkill": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
+						"type": "string"
+					},
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"value",
+					"level",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Generation": {
+				"properties": {
+					"generationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"applicationStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDate": {
+						"type": "string",
+						"nullable": true
+					},
+					"selectionWeDate": {
+						"type": "string",
+						"nullable": true
+					},
+					"infoEveningVisitors": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"doorCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"electionStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"electionEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"mentors": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"traineeApplicants": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicant"
+						},
+						"type": "array"
+					},
+					"internalProjects": {
+						"items": {
+							"$ref": "#/components/schemas/InternalProject"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"generationId",
+					"description",
+					"applicationStart",
+					"applicationEnd",
+					"wwDate",
+					"selectionWeDate",
+					"infoEveningVisitors",
+					"doorCode",
+					"electionStart",
+					"electionEnd",
+					"mentors",
+					"members",
+					"traineeApplicants",
+					"internalProjects"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicant": {
+				"properties": {
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"generation": {
+						"type": "number",
+						"format": "double"
+					},
+					"applicationDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"invited": {
+						"type": "boolean"
+					},
+					"toBeAdmitted": {
+						"type": "boolean"
+					},
+					"admitted": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"firstName": {
+						"type": "string",
+						"nullable": true
+					},
+					"lastName": {
+						"type": "string",
+						"nullable": true
+					},
+					"gender": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"picture": {
+						"type": "string",
+						"nullable": true
+					},
+					"birthDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"mobilePhone": {
+						"type": "string",
+						"nullable": true
+					},
+					"landlinePhone": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
+						"type": "string",
+						"nullable": true
+					},
+					"homeAddressStreet": {
+						"type": "string",
+						"nullable": true
+					},
+					"homeAddressNumber": {
+						"type": "string",
+						"nullable": true
+					},
+					"homeAddressPostalCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"homeAddressCity": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyAddressStreet": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyAddressNumber": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyAddressPostalCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyAddressCity": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledDegree": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledUniversity": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledOtherSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyStart": {
+						"type": "string",
+						"nullable": true
+					},
+					"studySemester": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyFirstMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"studySecondMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyThirdMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"bachelorSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"bachelorUniversity": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipJob": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipCompany": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipLocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipStart": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipEnd": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupation": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupationCompany": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupationLocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupationStart": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupationEnd": {
+						"type": "string",
+						"nullable": true
+					},
+					"itSkills": {
+						"type": "string",
+						"nullable": true
+					},
+					"hobbies": {
+						"type": "string",
+						"nullable": true
+					},
+					"timeInvestment": {
+						"type": "string",
+						"nullable": true
+					},
+					"motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"selfAssessment1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment4": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment5": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment6": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment7": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment8": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"flyer": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"posters": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"lectures": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"friends": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"internet": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"others": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"othersText": {
+						"type": "string",
+						"nullable": true
+					},
+					"workingWeekend": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"availabilityWorkingWeekend": {
+						"type": "string",
+						"enum": [
+							"kannImmer",
+							"nichtFR",
+							"nichtSA",
+							"nichtSO"
+						],
+						"nullable": true
+					},
+					"socialMedia": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"campusRally": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"partner": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"newsletter": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"admittedMember": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"generationEntity": {
+						"$ref": "#/components/schemas/Generation"
+					},
+					"traineeApplicantVoluntarySchools": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantVoluntarySchool"
+						},
+						"type": "array"
+					},
+					"traineeApplicantVoluntaryStudies": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantVoluntaryStudy"
+						},
+						"type": "array"
+					},
+					"traineeApplicantHiwis": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantHiwi"
+						},
+						"type": "array"
+					},
+					"traineeApplicantInternships": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantInternship"
+						},
+						"type": "array"
+					},
+					"traineeApplicantLanguages": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantLanguage"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"traineeApplicantId",
+					"generation",
+					"applicationDate",
+					"invited",
+					"toBeAdmitted",
+					"admitted",
+					"firstName",
+					"lastName",
+					"gender",
+					"picture",
+					"birthDate",
+					"mobilePhone",
+					"landlinePhone",
+					"email",
+					"homeAddressStreet",
+					"homeAddressNumber",
+					"homeAddressPostalCode",
+					"homeAddressCity",
+					"studyAddressStreet",
+					"studyAddressNumber",
+					"studyAddressPostalCode",
+					"studyAddressCity",
+					"enrolledDegree",
+					"enrolledUniversity",
+					"enrolledSubject",
+					"enrolledOtherSubject",
+					"studyStart",
+					"studySemester",
+					"studyFirstMajor",
+					"studySecondMajor",
+					"studyThirdMajor",
+					"bachelorSubject",
+					"bachelorUniversity",
+					"apprenticeshipJob",
+					"apprenticeshipCompany",
+					"apprenticeshipLocation",
+					"apprenticeshipStart",
+					"apprenticeshipEnd",
+					"occupation",
+					"occupationCompany",
+					"occupationLocation",
+					"occupationStart",
+					"occupationEnd",
+					"itSkills",
+					"hobbies",
+					"timeInvestment",
+					"motivation",
+					"selfAssessment1",
+					"selfAssessment2",
+					"selfAssessment3",
+					"selfAssessment4",
+					"selfAssessment5",
+					"selfAssessment6",
+					"selfAssessment7",
+					"selfAssessment8",
+					"flyer",
+					"posters",
+					"lectures",
+					"friends",
+					"internet",
+					"others",
+					"othersText",
+					"workingWeekend",
+					"availabilityWorkingWeekend",
+					"socialMedia",
+					"campusRally",
+					"partner",
+					"newsletter",
+					"admittedMember",
+					"generationEntity",
+					"traineeApplicantVoluntarySchools",
+					"traineeApplicantVoluntaryStudies",
+					"traineeApplicantHiwis",
+					"traineeApplicantInternships",
+					"traineeApplicantLanguages"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantVoluntarySchool": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"activity": {
+						"type": "string",
+						"nullable": true
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"id",
+					"traineeApplicantId",
+					"activity",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantVoluntaryStudy": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"activity": {
+						"type": "string",
+						"nullable": true
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"id",
+					"traineeApplicantId",
+					"activity",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantHiwi": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"activity": {
+						"type": "string",
+						"nullable": true
+					},
+					"company": {
+						"type": "string",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"start": {
+						"type": "string",
+						"nullable": true
+					},
+					"end": {
+						"type": "string",
+						"nullable": true
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"id",
+					"traineeApplicantId",
+					"activity",
+					"company",
+					"location",
+					"start",
+					"end",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantInternship": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"activity": {
+						"type": "string",
+						"nullable": true
+					},
+					"company": {
+						"type": "string",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"start": {
+						"type": "string",
+						"nullable": true
+					},
+					"end": {
+						"type": "string",
+						"nullable": true
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"id",
+					"traineeApplicantId",
+					"activity",
+					"company",
+					"location",
+					"start",
+					"end",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantLanguage": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"language": {
+						"type": "string",
+						"nullable": true
+					},
+					"languageLevel": {
+						"type": "string",
+						"nullable": true
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"id",
+					"traineeApplicantId",
+					"language",
+					"languageLevel",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InternalProject": {
+				"properties": {
+					"internalProjectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"generationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"projectName": {
+						"type": "string"
+					},
+					"abbreviation": {
+						"type": "string"
+					},
+					"kickoff": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"offerAtEv": {
+						"type": "boolean"
+					},
+					"zpAtEv": {
+						"type": "boolean"
+					},
+					"zpHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apAtEv": {
+						"type": "boolean"
+					},
+					"apHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"dlAtEv": {
+						"type": "boolean"
+					},
+					"qualityManagers": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"generation": {
+						"$ref": "#/components/schemas/Generation"
+					}
+				},
+				"required": [
+					"internalProjectId",
+					"generationId",
+					"projectName",
+					"abbreviation",
+					"kickoff",
+					"offerAtEv",
+					"zpAtEv",
+					"zpHeld",
+					"apAtEv",
+					"apHeld",
+					"dlAtEv",
+					"qualityManagers",
+					"members",
+					"generation"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberStatus": {
+				"properties": {
+					"memberStatusId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					},
+					"memberHasStatuses": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasStatus"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"memberStatusId",
+					"name",
+					"members",
+					"memberHasStatuses"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Department": {
+				"properties": {
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"linkObjectivePresentation": {
+						"type": "string",
+						"nullable": true
+					},
+					"linkOrganigram": {
+						"type": "string",
+						"nullable": true
+					},
+					"shortPresentation": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"director": {
+						"$ref": "#/components/schemas/Director"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"departmentId",
+					"name",
+					"shortName",
+					"jbtEmail",
+					"linkObjectivePresentation",
+					"linkOrganigram",
+					"shortPresentation",
+					"content",
+					"director",
+					"members"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DirectorHasPermission": {
+				"properties": {
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"canDelegate": {
+						"type": "boolean"
+					},
+					"permission": {
+						"$ref": "#/components/schemas/Permission"
+					},
+					"director": {
+						"$ref": "#/components/schemas/Director"
+					}
+				},
+				"required": [
+					"directorId",
+					"permissionId",
+					"canDelegate",
+					"permission",
+					"director"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Permission": {
+				"properties": {
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"directorHasPermissions": {
+						"items": {
+							"$ref": "#/components/schemas/DirectorHasPermission"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"permissionId",
+					"name",
+					"description",
+					"directorHasPermissions",
+					"members"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Director": {
+				"properties": {
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"designationMale": {
+						"type": "string"
+					},
+					"designationFemale": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"shortIntroduction": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"sequence": {
+						"type": "number",
+						"format": "double"
+					},
+					"department": {
+						"$ref": "#/components/schemas/Department"
+					},
+					"directorHasPermissions": {
+						"items": {
+							"$ref": "#/components/schemas/DirectorHasPermission"
+						},
+						"type": "array"
+					},
+					"memberHasDirectorPositions": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasDirectorPosition"
+						},
+						"type": "array"
+					},
+					"projects": {
+						"items": {
+							"$ref": "#/components/schemas/Project"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"directorId",
+					"designationMale",
+					"designationFemale",
+					"departmentId",
+					"shortName",
+					"jbtEmail",
+					"shortIntroduction",
+					"content",
+					"sequence",
+					"department",
+					"directorHasPermissions",
+					"memberHasDirectorPositions",
+					"projects"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasDirectorPosition": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"until": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"director": {
+						"$ref": "#/components/schemas/Director"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"directorId",
+					"from",
+					"until",
+					"director",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Project": {
+				"properties": {
+					"projectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"Bewerbung",
+							"Angebot",
+							"Durchführung",
+							"Abrechnung",
+							"Abgeschlossen",
+							"NichtBesetzt",
+							"PitchVerloren",
+							"AngebotAbgelehnt",
+							"Abgebrochen"
+						],
+						"nullable": true
+					},
+					"projectName": {
+						"type": "string"
+					},
+					"applicationsKey": {
+						"type": "string"
+					},
+					"clientId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"clientConfidential": {
+						"type": "boolean"
+					},
+					"sectorOld": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"companyOld": {
+						"type": "string",
+						"nullable": true
+					},
+					"note": {
+						"type": "string",
+						"nullable": true
+					},
+					"kickoff": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"projectEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationStart1": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationEnd1": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationStart2": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationEnd2": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"signatureDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"invoicing": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"invoiceNumber": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"accountingSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"soldBT": {
+						"type": "string",
+						"nullable": true
+					},
+					"performedBT": {
+						"type": "string",
+						"nullable": true
+					},
+					"soldExpenses": {
+						"type": "string",
+						"nullable": true
+					},
+					"euroPerBT": {
+						"type": "string",
+						"nullable": true
+					},
+					"APatEV": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"evaluationAtEV": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"DLatEV": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"moneyReceived": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"paymentDelay": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"consultingContractProvided": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"teamContractProvided": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"offerInAlfresco": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"deviationFromStandard": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"qmApproval": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"jobSite": {
+						"type": "string",
+						"nullable": true
+					},
+					"tenderDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"estimatedProjectStart": {
+						"type": "string",
+						"nullable": true
+					},
+					"estimatedProjectDuration": {
+						"type": "string",
+						"nullable": true
+					},
+					"estimatedProjectBTmin": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"estimatedProjectBTmax": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"estimatedProjectEuroPerBT": {
+						"type": "string",
+						"nullable": true
+					},
+					"estimatedProjectEuroPerBTrange": {
+						"type": "string",
+						"nullable": true
+					},
+					"estimatedProjectMemberMin": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"estimatedProjectMemberMax": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"staffingCommittee": {
+						"type": "string",
+						"nullable": true
+					},
+					"customerType": {
+						"type": "string",
+						"enum": [
+							"Altkunde",
+							"Neukunde"
+						],
+						"nullable": true
+					},
+					"customerLocationOld": {
+						"type": "string",
+						"nullable": true
+					},
+					"customerAddress1Old": {
+						"type": "string",
+						"nullable": true
+					},
+					"customerAddress2Old": {
+						"type": "string",
+						"nullable": true
+					},
+					"customerAddress3Old": {
+						"type": "string",
+						"nullable": true
+					},
+					"acquisitorId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"acquisitionMethod": {
+						"type": "string",
+						"enum": [
+							"Kunde",
+							"Alumni",
+							"Kurator",
+							"Partner",
+							"PA",
+							"JBTler"
+						],
+						"nullable": true
+					},
+					"clientInformationOld": {
+						"type": "string",
+						"nullable": true
+					},
+					"situation": {
+						"type": "string",
+						"nullable": true
+					},
+					"peculiarities": {
+						"type": "string",
+						"nullable": true
+					},
+					"coreCompetency": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"requirementProfile": {
+						"type": "string",
+						"nullable": true
+					},
+					"referenceProjects": {
+						"type": "string",
+						"nullable": true
+					},
+					"netSalesPriceVariable": {
+						"type": "string",
+						"nullable": true
+					},
+					"ownCloud": {
+						"type": "string",
+						"nullable": true
+					},
+					"memberHasProjects": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasProject"
+						},
+						"type": "array"
+					},
+					"acquisitor": {
+						"$ref": "#/components/schemas/Director"
+					},
+					"client": {
+						"$ref": "#/components/schemas/Company"
+					},
+					"industry": {
+						"$ref": "#/components/schemas/Industry"
+					},
+					"contactPersons": {
+						"items": {
+							"$ref": "#/components/schemas/ContactPerson"
+						},
+						"type": "array"
+					},
+					"coreCompetencies": {
+						"items": {
+							"$ref": "#/components/schemas/CoreCompetency"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"projectId",
+					"status",
+					"projectName",
+					"applicationsKey",
+					"clientId",
+					"clientConfidential",
+					"sectorOld",
+					"companyOld",
+					"note",
+					"kickoff",
+					"projectEnd",
+					"applicationStart1",
+					"applicationEnd1",
+					"applicationStart2",
+					"applicationEnd2",
+					"signatureDate",
+					"invoicing",
+					"invoiceNumber",
+					"accountingSince",
+					"soldBT",
+					"performedBT",
+					"soldExpenses",
+					"euroPerBT",
+					"APatEV",
+					"evaluationAtEV",
+					"DLatEV",
+					"moneyReceived",
+					"paymentDelay",
+					"consultingContractProvided",
+					"teamContractProvided",
+					"offerInAlfresco",
+					"deviationFromStandard",
+					"qmApproval",
+					"jobSite",
+					"tenderDate",
+					"estimatedProjectStart",
+					"estimatedProjectDuration",
+					"estimatedProjectBTmin",
+					"estimatedProjectBTmax",
+					"estimatedProjectEuroPerBT",
+					"estimatedProjectEuroPerBTrange",
+					"estimatedProjectMemberMin",
+					"estimatedProjectMemberMax",
+					"staffingCommittee",
+					"customerType",
+					"customerLocationOld",
+					"customerAddress1Old",
+					"customerAddress2Old",
+					"customerAddress3Old",
+					"acquisitorId",
+					"acquisitionMethod",
+					"clientInformationOld",
+					"situation",
+					"peculiarities",
+					"coreCompetency",
+					"requirementProfile",
+					"referenceProjects",
+					"netSalesPriceVariable",
+					"ownCloud",
+					"memberHasProjects",
+					"acquisitor",
+					"client",
+					"industry",
+					"contactPersons",
+					"coreCompetencies"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasProject": {
+				"properties": {
+					"projectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"btAllocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"expensesAllocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"Bewerbung",
+							"Mitglied",
+							"PL",
+							"QM"
+						],
+						"nullable": true
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"freelancerContract": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"moneyTransferred": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"semester": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"internship": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeship": {
+						"type": "string",
+						"nullable": true
+					},
+					"studentJob": {
+						"type": "string",
+						"nullable": true
+					},
+					"seminarPapers": {
+						"type": "string",
+						"nullable": true
+					},
+					"workshops": {
+						"type": "string",
+						"nullable": true
+					},
+					"internalCommitment": {
+						"items": {
+							"type": "string",
+							"enum": [
+								"Vorstandstätigkeit",
+								"Teamleiter"
+							]
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"preliminaryWork": {
+						"items": {
+							"type": "string",
+							"enum": [
+								"Herstellung des Erstkontakts",
+								"Schreiben des Angebots"
+							]
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"extraordinaryCommitment": {
+						"type": "string",
+						"nullable": true
+					},
+					"availability": {
+						"type": "string",
+						"enum": [
+							"Ohne Einschränkung",
+							"Mit Einschränkung"
+						],
+						"nullable": true
+					},
+					"restriction": {
+						"type": "string",
+						"nullable": true
+					},
+					"motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"project": {
+						"$ref": "#/components/schemas/Project"
+					}
+				},
+				"required": [
+					"projectId",
+					"memberId",
+					"btAllocation",
+					"expensesAllocation",
+					"type",
+					"date",
+					"applicationDate",
+					"freelancerContract",
+					"moneyTransferred",
+					"semester",
+					"internship",
+					"apprenticeship",
+					"studentJob",
+					"seminarPapers",
+					"workshops",
+					"internalCommitment",
+					"preliminaryWork",
+					"extraordinaryCommitment",
+					"availability",
+					"restriction",
+					"motivation",
+					"member",
+					"project"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Company": {
+				"properties": {
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"prospect": {
+						"type": "boolean"
+					},
+					"name": {
+						"type": "string"
+					},
+					"industryId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"shortDescription": {
+						"type": "string",
+						"nullable": true
+					},
+					"addressAdditional": {
+						"type": "string",
+						"nullable": true
+					},
+					"street": {
+						"type": "string",
+						"nullable": true
+					},
+					"postalCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"city": {
+						"type": "string",
+						"nullable": true
+					},
+					"url": {
+						"type": "string",
+						"nullable": true
+					},
+					"importantInformation": {
+						"type": "string",
+						"nullable": true
+					},
+					"revenueStrength": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"projectNumber": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"btAmount": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"satisfaction": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"contactDesired": {
+						"type": "boolean"
+					},
+					"contactChannel": {
+						"type": "string",
+						"nullable": true
+					},
+					"classified": {
+						"type": "boolean"
+					},
+					"contactPersons": {
+						"items": {
+							"$ref": "#/components/schemas/ContactPerson"
+						},
+						"type": "array"
+					},
+					"projects": {
+						"items": {
+							"$ref": "#/components/schemas/Project"
+						},
+						"type": "array"
+					},
+					"industry": {
+						"$ref": "#/components/schemas/Industry"
+					}
+				},
+				"required": [
+					"companyId",
+					"prospect",
+					"name",
+					"industryId",
+					"shortDescription",
+					"addressAdditional",
+					"street",
+					"postalCode",
+					"city",
+					"url",
+					"importantInformation",
+					"revenueStrength",
+					"projectNumber",
+					"btAmount",
+					"satisfaction",
+					"contactDesired",
+					"contactChannel",
+					"classified",
+					"contactPersons",
+					"projects",
+					"industry"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ContactPerson": {
+				"properties": {
+					"contactPersonId": {
+						"type": "number",
+						"format": "double"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"company": {
+						"$ref": "#/components/schemas/Company"
+					},
+					"projects": {
+						"items": {
+							"$ref": "#/components/schemas/Project"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"contactPersonId",
+					"companyId",
+					"name",
+					"company",
+					"projects"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Industry": {
+				"properties": {
+					"industryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"projects": {
+						"items": {
+							"$ref": "#/components/schemas/Project"
+						},
+						"type": "array"
+					},
+					"company": {
+						"items": {
+							"$ref": "#/components/schemas/Company"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"industryId",
+					"description",
+					"projects",
+					"company"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CoreCompetency": {
+				"properties": {
+					"coreCompetencyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"designation": {
+						"type": "string"
+					},
+					"projects": {
+						"items": {
+							"$ref": "#/components/schemas/Project"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"coreCompetencyId",
+					"designation",
+					"projects"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasOtherPosition": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"otherPositionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"from": {
+						"type": "string"
+					},
+					"until": {
+						"type": "string",
+						"nullable": true
+					},
+					"otherPosition": {
+						"$ref": "#/components/schemas/OtherPosition"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"otherPositionId",
+					"from",
+					"until",
+					"otherPosition",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OtherPosition": {
+				"properties": {
+					"otherPositionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"descriptionMale": {
+						"type": "string"
+					},
+					"descriptionFemale": {
+						"type": "string"
+					},
+					"briefIntroduction": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"memberHasOtherPositions": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasOtherPosition"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"otherPositionId",
+					"descriptionMale",
+					"descriptionFemale",
+					"briefIntroduction",
+					"content",
+					"memberHasOtherPositions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasEvent": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"Teilnehmer",
+							"Organisator"
+						]
+					},
+					"registrationTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"eventId",
+					"memberId",
+					"role",
+					"registrationTime",
+					"event",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Event": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"eventName": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"end": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"registrationFrom": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"registrationTo": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"ww": {
+						"type": "boolean"
+					},
+					"network": {
+						"type": "boolean"
+					},
+					"maximumParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"jbtGoes": {
+						"type": "boolean"
+					},
+					"others": {
+						"type": "boolean"
+					},
+					"memberHasEvents": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasEvent"
+						},
+						"type": "array"
+					},
+					"memberHasEventWws": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasEventWw"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"eventId",
+					"eventName",
+					"description",
+					"date",
+					"end",
+					"registrationFrom",
+					"registrationTo",
+					"location",
+					"startTime",
+					"endTime",
+					"ww",
+					"network",
+					"maximumParticipants",
+					"jbtGoes",
+					"others",
+					"memberHasEvents",
+					"memberHasEventWws"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasEventWw": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"arrival": {
+						"type": "string",
+						"enum": [
+							"FrF",
+							"FrM",
+							"FrA",
+							"SaF",
+							"SaM",
+							"SaA",
+							"SaS"
+						],
+						"nullable": true
+					},
+					"departure": {
+						"type": "string",
+						"enum": [
+							"FrM",
+							"FrA",
+							"SaF",
+							"SaM",
+							"SaA",
+							"So"
+						],
+						"nullable": true
+					},
+					"car": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"seats": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"vegetarian": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"eventId",
+					"memberId",
+					"arrival",
+					"departure",
+					"car",
+					"seats",
+					"vegetarian",
+					"comment",
+					"event",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasExpertise": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"expertiseId": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
+						"type": "string"
+					},
+					"expertise": {
+						"$ref": "#/components/schemas/Expertise"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"expertiseId",
+					"value",
+					"expertise",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Expertise": {
+				"properties": {
+					"expertiseId": {
+						"type": "number",
+						"format": "double"
+					},
+					"designation": {
+						"type": "string",
+						"nullable": true
+					},
+					"memberHasExpertise": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasExpertise"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"expertiseId",
+					"designation",
+					"memberHasExpertise"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasWorkshopInstance": {
+				"properties": {
+					"workshopInstanceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"Anmeldung",
+							"Teilnehmer",
+							"Referent"
+						]
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"present": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"feedbackGiven": {
+						"type": "boolean"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"workshopInstance": {
+						"$ref": "#/components/schemas/WorkshopInstance"
+					}
+				},
+				"required": [
+					"workshopInstanceId",
+					"memberId",
+					"type",
+					"date",
+					"present",
+					"feedbackGiven",
+					"member",
+					"workshopInstance"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopInstance": {
+				"properties": {
+					"workshopInstanceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"workshopId": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"Anmeldung",
+							"Anmeldung abgeschlossen",
+							"Feedback",
+							"Abgeschlossen"
+						],
+						"nullable": true
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"maximumParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"speakers": {
+						"type": "string",
+						"nullable": true
+					},
+					"targetGroup": {
+						"type": "string",
+						"nullable": true
+					},
+					"registrationFrom": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"registrationUntil": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"memberHasWorkshopInstances": {
+						"items": {
+							"$ref": "#/components/schemas/MemberHasWorkshopInstance"
+						},
+						"type": "array"
+					},
+					"workshopFeedbacks": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopFeedback"
+						},
+						"type": "array"
+					},
+					"workshop": {
+						"$ref": "#/components/schemas/Workshop"
+					}
+				},
+				"required": [
+					"workshopInstanceId",
+					"workshopId",
+					"status",
+					"date",
+					"startTime",
+					"endTime",
+					"location",
+					"maximumParticipants",
+					"speakers",
+					"targetGroup",
+					"registrationFrom",
+					"registrationUntil",
+					"memberHasWorkshopInstances",
+					"workshopFeedbacks",
+					"workshop"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopFeedbackHasFeedbackQuestion": {
+				"properties": {
+					"workshopFeedbackId": {
+						"type": "number",
+						"format": "double"
+					},
+					"feedbackQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"grade": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"feedbackQuestion": {
+						"$ref": "#/components/schemas/FeedbackQuestion"
+					},
+					"workshopFeedback": {
+						"$ref": "#/components/schemas/WorkshopFeedback"
+					}
+				},
+				"required": [
+					"workshopFeedbackId",
+					"feedbackQuestionId",
+					"grade",
+					"feedbackQuestion",
+					"workshopFeedback"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FeedbackQuestion": {
+				"properties": {
+					"feedbackQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"question": {
+						"type": "string",
+						"nullable": true
+					},
+					"workshopFeedbackHasFeedbackQuestions": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopFeedbackHasFeedbackQuestion"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"feedbackQuestionId",
+					"question",
+					"workshopFeedbackHasFeedbackQuestions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopFeedback": {
+				"properties": {
+					"workshopFeedbackId": {
+						"type": "number",
+						"format": "double"
+					},
+					"workshopInstanceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"workshopLevel": {
+						"type": "string",
+						"nullable": true
+					},
+					"contentFeedback": {
+						"type": "string",
+						"nullable": true
+					},
+					"presentationFeedback": {
+						"type": "string",
+						"nullable": true
+					},
+					"workshopNeed": {
+						"type": "string",
+						"nullable": true
+					},
+					"workshopInstance": {
+						"$ref": "#/components/schemas/WorkshopInstance"
+					},
+					"workshopFeedbackHasFeedbackQuestions": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopFeedbackHasFeedbackQuestion"
+						},
+						"type": "array"
+					},
+					"workshopFeedbackHasMembers": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopFeedbackHasMember"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"workshopFeedbackId",
+					"workshopInstanceId",
+					"date",
+					"workshopLevel",
+					"contentFeedback",
+					"presentationFeedback",
+					"workshopNeed",
+					"workshopInstance",
+					"workshopFeedbackHasFeedbackQuestions",
+					"workshopFeedbackHasMembers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopFeedbackHasMember": {
+				"properties": {
+					"workshopFeedbackId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"grade": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"workshopFeedback": {
+						"$ref": "#/components/schemas/WorkshopFeedback"
+					}
+				},
+				"required": [
+					"workshopFeedbackId",
+					"memberId",
+					"grade",
+					"member",
+					"workshopFeedback"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Workshop": {
+				"properties": {
+					"workshopId": {
+						"type": "number",
+						"format": "double"
+					},
+					"workshopName": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"Pflichtworkshop",
+							"Workshop",
+							"Externer Workshop"
+						],
+						"nullable": true
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"workshopInstances": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopInstance"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"workshopId",
+					"workshopName",
+					"type",
+					"description",
+					"workshopInstances"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasStatus": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"memberStatusId": {
+						"type": "number",
+						"format": "double"
+					},
+					"note": {
+						"type": "string",
+						"nullable": true
+					},
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"date",
+					"memberStatusId",
+					"note",
+					"memberStatus",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Mmtracking": {
+				"properties": {
+					"mmtrackingId": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"mmtrackingId",
+					"date",
+					"members"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PasswordReset": {
+				"properties": {
+					"memberJbtEmail": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"salt": {
+						"type": "string",
+						"format": "byte"
+					},
+					"token": {
+						"type": "string"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberJbtEmail",
+					"date",
+					"salt",
+					"token",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Internship": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"company": {
+						"type": "string",
+						"nullable": true
+					},
+					"description": {
+						"type": "string"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"company",
+					"description",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Language": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
+						"type": "string"
+					},
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"value",
+					"level",
+					"member"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DepartmentPartialDto": {
+				"properties": {
+					"shortName": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"shortName",
+					"name",
+					"departmentId"
+				],
+				"type": "object",
+				"description": "Type of the partial department dto used for the member list"
+			},
+			"MemberPartialDto": {
+				"properties": {
+					"lastChange": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"department": {
+						"$ref": "#/components/schemas/DepartmentPartialDto"
+					},
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"mobile": {
+						"type": "string"
+					},
+					"internalProjectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"generationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"lastChange",
+					"department",
+					"memberStatus",
+					"jbtEmail",
+					"mobile",
+					"internalProjectId",
+					"generationId",
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the partial member dto used for the member list"
 			},
 			"MemberImage": {
 				"properties": {
@@ -196,78 +3360,79 @@
 				"type": "object",
 				"description": "Type of the member image"
 			},
-			"DepartmentMember": {
+			"DepartmentMemberDto": {
 				"properties": {
-					"bezeichnung": {
+					"department": {
+						"$ref": "#/components/schemas/DepartmentPartialDto"
+					},
+					"lastname": {
 						"type": "string"
 					},
-					"ressort": {
+					"firstname": {
 						"type": "string"
 					},
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"bezeichnung",
-					"ressort",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"department",
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of a member of a department (partial member with department information)"
 			},
-			"Director": {
+			"DirectorDto": {
 				"properties": {
-					"kuerzel": {
+					"designationMale": {
 						"type": "string"
 					},
-					"bezeichnung_maennlich": {
+					"designationFemale": {
 						"type": "string"
 					},
-					"bezeichnung_weiblich": {
-						"type": "string"
+					"gender": {
+						"type": "boolean"
 					},
-					"geschlecht": {
-						"type": "string"
+					"until": {
+						"type": "string",
+						"format": "date-time"
 					},
-					"ressortID": {
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"department": {
+						"$ref": "#/components/schemas/DepartmentPartialDto"
+					},
+					"directorId": {
 						"type": "number",
 						"format": "double"
 					},
-					"evpostenID": {
-						"type": "number",
-						"format": "double"
-					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"kuerzel",
-					"bezeichnung_maennlich",
-					"bezeichnung_weiblich",
-					"geschlecht",
-					"ressortID",
-					"evpostenID",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"designationMale",
+					"designationFemale",
+					"gender",
+					"until",
+					"from",
+					"department",
+					"directorId",
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the director (partial member with department and role information)"
@@ -320,7 +3485,7 @@
 				"type": "object",
 				"description": "Type of the overview of the status of the different account creation operations"
 			},
-			"CreateMemberResponse": {
+			"CreateMemberResponseDto": {
 				"properties": {
 					"statusOverview": {
 						"$ref": "#/components/schemas/StatusOverview"
@@ -337,30 +3502,25 @@
 				"type": "object",
 				"description": "Type of the response after creating a member"
 			},
-			"CreateMemberRequest": {
+			"CreateMemberRequestDto": {
 				"properties": {
-					"traineeSeit": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"generation": {
+					"generationId": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
 					},
-					"geschlecht": {
+					"gender": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
 					},
-					"handy": {
+					"mobile": {
 						"type": "string",
 						"nullable": true
 					},
-					"geburtsdatum": {
+					"birthday": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"email": {
@@ -369,116 +3529,177 @@
 					"name": {
 						"type": "string"
 					},
-					"nachname": {
+					"lastName": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstName": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"traineeSeit",
-					"password",
-					"generation",
-					"geschlecht",
-					"handy",
-					"geburtsdatum",
+					"generationId",
+					"gender",
+					"mobile",
+					"birthday",
 					"email",
 					"name",
-					"nachname",
-					"vorname"
+					"lastName",
+					"firstName"
 				],
 				"type": "object",
 				"description": "Type of the request to create a member"
 			},
-			"Department": {
+			"DepartmentDetailsDto": {
 				"properties": {
-					"linkOrganigramm": {
+					"linkOrganigram": {
 						"type": "string"
 					},
-					"linkZielvorstellung": {
+					"linkObjectivePresentation": {
 						"type": "string"
 					},
-					"jbt_email": {
+					"jbtEmail": {
 						"type": "string"
 					},
-					"kuerzel": {
+					"shortName": {
 						"type": "string"
 					},
-					"bezeichnung": {
+					"name": {
 						"type": "string"
 					},
-					"ressortID": {
+					"departmentId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"linkOrganigramm",
-					"linkZielvorstellung",
-					"jbt_email",
-					"kuerzel",
-					"bezeichnung",
-					"ressortID"
+					"linkOrganigram",
+					"linkObjectivePresentation",
+					"jbtEmail",
+					"shortName",
+					"name",
+					"departmentId"
 				],
 				"type": "object",
 				"description": "Type of the department"
 			},
-			"UpdateDepartmentRequest": {
+			"UpdateDepartmentDto": {
 				"properties": {
-					"linkOrganigramm": {
+					"linkOrganigram": {
 						"type": "string"
 					},
-					"linkZielvorstellung": {
+					"linkObjectivePresentation": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"linkOrganigramm",
-					"linkZielvorstellung"
+					"linkOrganigram",
+					"linkObjectivePresentation"
 				],
 				"type": "object",
 				"description": "Type of the request to update a department"
 			},
-			"Value": {
+			"LanguageValue": {
 				"properties": {
-					"wert": {
+					"language": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"wert"
+					"language"
 				],
 				"type": "object",
-				"description": "Value type used for languages and edv skills"
+				"description": "Value type for languages"
 			},
-			"PermissionAssignment": {
+			"ItSkillsValue": {
 				"properties": {
+					"itSkill": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"itSkill"
+				],
+				"type": "object",
+				"description": "Value type for it skills"
+			},
+			"MemberPermissionAssignmentDto": {
+				"properties": {
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the member permission asignment dto used for the permission page"
+			},
+			"DirectorPositionDto": {
+				"properties": {
+					"shortName": {
+						"type": "string"
+					},
 					"canDelegate": {
 						"type": "boolean"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"shortName",
+					"canDelegate",
+					"directorId"
+				],
+				"type": "object",
+				"description": "Type of the director position dto"
+			},
+			"PermissionAssignmentDto": {
+				"properties": {
+					"directors": {
+						"items": {
+							"$ref": "#/components/schemas/DirectorPositionDto"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/MemberPermissionAssignmentDto"
+						},
+						"type": "array"
+					},
+					"description": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
 					},
 					"permissionID": {
 						"type": "number",
 						"format": "double"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
 					}
 				},
 				"required": [
-					"canDelegate",
-					"permissionID",
-					"mitgliedID",
-					"name"
+					"directors",
+					"members",
+					"description",
+					"name",
+					"permissionID"
 				],
 				"type": "object",
 				"description": "Type of the permission assignment (permission of a member or a director)"
 			},
-			"AssignPermissionToMemberRequest": {
+			"AssignPermissionToMemberRequestDto": {
 				"properties": {
 					"permissionID": {
 						"type": "number",
@@ -493,111 +3714,137 @@
 					"permissionID",
 					"memberID"
 				],
-				"type": "object"
+				"type": "object",
+				"description": "Type of the request to assign a permission to a member"
 			},
-			"Language": {
+			"MemberStatusDto": {
 				"properties": {
-					"niveau": {
+					"name": {
+						"type": "string"
+					},
+					"memberStatusId": {
 						"type": "number",
 						"format": "double"
-					},
-					"wert": {
-						"type": "string"
 					}
 				},
 				"required": [
-					"niveau",
-					"wert"
+					"name",
+					"memberStatusId"
 				],
 				"type": "object",
-				"description": "Type of the language of a member"
+				"description": "Type of the member status dto"
 			},
-			"EdvSkill": {
+			"LanguageDto": {
 				"properties": {
-					"niveau": {
+					"level": {
 						"type": "number",
 						"format": "double"
 					},
-					"wert": {
+					"value": {
 						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"niveau",
-					"wert"
+					"level",
+					"value",
+					"memberId"
 				],
 				"type": "object",
-				"description": "Type of the edv skill of a member"
+				"description": "Type of the language dto"
 			},
-			"Mentee": {
+			"ItSkillDto": {
 				"properties": {
-					"nachname": {
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"value": {
 						"type": "string"
 					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"level",
+					"value",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the it skill dto"
+			},
+			"MenteeDto": {
+				"properties": {
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the mentee (partial member)"
 			},
-			"Mentor": {
+			"MentorDto": {
 				"properties": {
-					"generationID": {
-						"type": "number",
-						"format": "double"
-					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"mitgliedID"
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the mentor (partial member)"
 			},
-			"MemberDetails": {
+			"MemberDetailsDto": {
 				"properties": {
 					"mentor": {
 						"allOf": [
 							{
-								"$ref": "#/components/schemas/Mentor"
+								"$ref": "#/components/schemas/MentorDto"
 							}
 						],
 						"nullable": true
 					},
 					"mentees": {
 						"items": {
-							"$ref": "#/components/schemas/Mentee"
+							"$ref": "#/components/schemas/MenteeDto"
 						},
 						"type": "array"
 					},
-					"edvkenntnisse": {
+					"itSkills": {
 						"items": {
-							"$ref": "#/components/schemas/EdvSkill"
+							"$ref": "#/components/schemas/ItSkillDto"
 						},
 						"type": "array"
 					},
-					"sprachen": {
+					"languages": {
 						"items": {
-							"$ref": "#/components/schemas/Language"
+							"$ref": "#/components/schemas/LanguageDto"
 						},
 						"type": "array"
 					},
@@ -607,70 +3854,76 @@
 					"iban": {
 						"type": "string"
 					},
-					"kontoinhaber": {
+					"accountHolder": {
 						"type": "string"
 					},
-					"ersthelferausbildung": {
+					"firstAidTraining": {
 						"type": "boolean"
 					},
-					"fuehrerschein": {
-						"type": "boolean"
+					"drivingLicense": {
+						"type": "number",
+						"format": "double"
 					},
-					"lastchange": {
-						"type": "string"
+					"lastChange": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
 					},
 					"canQM": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"canPL": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"engagement": {
+					"commitment": {
 						"type": "string",
 						"nullable": true
 					},
-					"ausbildung": {
+					"apprenticeship": {
 						"type": "string",
 						"nullable": true
 					},
-					"vertiefungen": {
+					"specializations": {
 						"type": "string",
 						"nullable": true
 					},
-					"studienende": {
+					"studyEnd": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"studienbeginn": {
+					"studyStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"studiengang": {
+					"courseOfStudy": {
 						"type": "string"
 					},
-					"hochschule": {
+					"university": {
 						"type": "string"
 					},
 					"email2": {
 						"type": "string",
 						"nullable": true
 					},
-					"tel2": {
+					"phone2": {
 						"type": "string",
 						"nullable": true
 					},
-					"ort2": {
+					"city2": {
 						"type": "string",
 						"nullable": true
 					},
-					"plz2": {
-						"type": "number",
-						"format": "double",
+					"postalCode2": {
+						"type": "string",
 						"nullable": true
 					},
-					"strasse2": {
+					"street2": {
 						"type": "string",
 						"nullable": true
 					},
@@ -678,59 +3931,73 @@
 						"type": "string",
 						"nullable": true
 					},
-					"tel1": {
+					"phone1": {
 						"type": "string",
 						"nullable": true
 					},
-					"ort1": {
+					"city1": {
 						"type": "string"
 					},
-					"plz1": {
-						"type": "number",
-						"format": "double",
+					"postalCode1": {
+						"type": "string",
 						"nullable": true
 					},
-					"strasse1": {
+					"street1": {
 						"type": "string"
 					},
-					"arbeitgeber": {
+					"employer": {
 						"type": "string",
 						"nullable": true
 					},
-					"ressort": {
-						"type": "string"
-					},
-					"ausgetreten_seit": {
-						"type": "string",
+					"department": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/DepartmentPartialDto"
+							}
+						],
 						"nullable": true
 					},
-					"passiv_seit": {
+					"exitedSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"aktiv_seit": {
+					"passiveSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"senior_seit": {
+					"activeSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"alumnus_seit": {
+					"seniorSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"mitglied_seit": {
+					"alumnusSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"trainee_seit": {
+					"memberSince": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"internesprojekt": {
-						"type": "number",
-						"format": "double",
+					"traineeSince": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"internalProject": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/InternalProject"
+							}
+						],
 						"nullable": true
 					},
 					"generation": {
@@ -738,397 +4005,309 @@
 						"format": "double",
 						"nullable": true
 					},
-					"mitgliedstatus": {
-						"$ref": "#/components/schemas/MemberStatus"
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
-					"jbt_email": {
+					"jbtEmail": {
 						"type": "string"
 					},
-					"handy": {
+					"mobile": {
 						"type": "string"
 					},
-					"geburtsdatum": {
+					"birthday": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"geschlecht": {
-						"type": "number",
-						"format": "double"
+					"gender": {
+						"type": "boolean"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"ersthelferausbildung",
-					"fuehrerschein",
-					"lastchange",
+					"firstAidTraining",
+					"drivingLicense",
+					"lastChange",
 					"canQM",
 					"canPL",
-					"engagement",
-					"ausbildung",
-					"vertiefungen",
-					"studienende",
-					"studienbeginn",
-					"studiengang",
-					"hochschule",
+					"commitment",
+					"apprenticeship",
+					"specializations",
+					"studyEnd",
+					"studyStart",
+					"courseOfStudy",
+					"university",
 					"email2",
-					"tel2",
-					"ort2",
-					"plz2",
-					"strasse2",
+					"phone2",
+					"city2",
+					"postalCode2",
+					"street2",
 					"email1",
-					"tel1",
-					"ort1",
-					"plz1",
-					"strasse1",
-					"arbeitgeber",
-					"ressort",
-					"ausgetreten_seit",
-					"passiv_seit",
-					"aktiv_seit",
-					"senior_seit",
-					"alumnus_seit",
-					"mitglied_seit",
-					"trainee_seit",
-					"internesprojekt",
+					"phone1",
+					"city1",
+					"postalCode1",
+					"street1",
+					"employer",
+					"department",
+					"exitedSince",
+					"passiveSince",
+					"activeSince",
+					"seniorSince",
+					"alumnusSince",
+					"memberSince",
+					"traineeSince",
+					"internalProject",
 					"generation",
-					"mitgliedstatus",
-					"jbt_email",
-					"handy",
-					"geburtsdatum",
-					"geschlecht",
-					"vorname",
-					"nachname",
-					"mitgliedID"
+					"memberStatus",
+					"jbtEmail",
+					"mobile",
+					"birthday",
+					"gender",
+					"firstname",
+					"lastname",
+					"memberId"
 				],
 				"type": "object",
-				"description": "Type of member with additional data (languages, mentor, mentee, edvskills)"
+				"description": "Type of the member details dto used for the member details page"
 			},
-			"Trainee": {
+			"MembersFieldDto": {
 				"properties": {
-					"generation": {
-						"type": "number",
-						"format": "double"
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"generation",
-					"nachname",
-					"vorname",
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of a trainee (partial member)"
-			},
-			"MembersField": {
-				"properties": {
-					"mitgliedstatus": {
-						"$ref": "#/components/schemas/MemberStatus"
-					},
-					"nachname": {
-						"type": "string"
-					},
-					"vorname": {
-						"type": "string"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"lastname",
+					"firstname",
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the member field"
 			},
-			"InternalProject": {
+			"InternalProjectDto": {
 				"properties": {
-					"qualitaetsmanager": {
+					"qualityManagers": {
 						"items": {
-							"$ref": "#/components/schemas/MembersField"
+							"$ref": "#/components/schemas/MembersFieldDto"
 						},
 						"type": "array",
 						"nullable": true
 					},
-					"projektmitglieder": {
+					"members": {
 						"items": {
-							"$ref": "#/components/schemas/MembersField"
+							"$ref": "#/components/schemas/MembersFieldDto"
 						},
 						"type": "array",
 						"nullable": true
 					},
-					"DLBeiEV": {
+					"dlAtEv": {
 						"type": "boolean"
 					},
-					"APGehalten": {
+					"apHeld": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"APBeiEV": {
+					"apAtEv": {
 						"type": "boolean"
 					},
-					"ZPGehalten": {
+					"zpHeld": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"ZPBeiEV": {
+					"zpAtEv": {
 						"type": "boolean"
 					},
-					"AngebotBeiEV": {
+					"offerAtEv": {
 						"type": "boolean"
 					},
 					"kickoff": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"kuerzel": {
+					"abbreviation": {
 						"type": "string"
 					},
-					"projektname": {
+					"projectName": {
 						"type": "string"
 					},
-					"generationsBezeichnung": {
+					"generationName": {
 						"type": "string"
 					},
 					"generation": {
 						"type": "number",
 						"format": "double"
 					},
-					"internesProjektID": {
+					"internalProjectId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"qualitaetsmanager",
-					"projektmitglieder",
-					"DLBeiEV",
-					"APGehalten",
-					"APBeiEV",
-					"ZPGehalten",
-					"ZPBeiEV",
-					"AngebotBeiEV",
+					"qualityManagers",
+					"members",
+					"dlAtEv",
+					"apHeld",
+					"apAtEv",
+					"zpHeld",
+					"zpAtEv",
+					"offerAtEv",
 					"kickoff",
-					"kuerzel",
-					"projektname",
-					"generationsBezeichnung",
+					"abbreviation",
+					"projectName",
+					"generationName",
 					"generation",
-					"internesProjektID"
+					"internalProjectId"
 				],
 				"type": "object",
 				"description": "Type of the internal project of a member"
 			},
-			"TraineeChoice": {
+			"TraineeChoiceDto": {
 				"properties": {
-					"wahl_ressort3": {
+					"choice_department3": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_ressort2": {
+					"choice_department2": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_ressort1": {
+					"choice_department1": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_ressort": {
+					"choice_department": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_internesprojekt3": {
+					"choice_internalProject3": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_internesprojekt2": {
+					"choice_internalProject2": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_internesprojekt1": {
+					"choice_internalProject1": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_internesprojekt": {
+					"choice_internalProject": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_mentor3": {
+					"choice_mentor3": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_mentor2": {
+					"choice_mentor2": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_mentor1": {
+					"choice_mentor1": {
 						"type": "number",
 						"format": "double"
 					},
-					"wahl_mentor": {
+					"choice_mentor": {
 						"type": "number",
 						"format": "double"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberID": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"wahl_ressort3",
-					"wahl_ressort2",
-					"wahl_ressort1",
-					"wahl_ressort",
-					"wahl_internesprojekt3",
-					"wahl_internesprojekt2",
-					"wahl_internesprojekt1",
-					"wahl_internesprojekt",
-					"wahl_mentor3",
-					"wahl_mentor2",
-					"wahl_mentor1",
-					"wahl_mentor",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"choice_department3",
+					"choice_department2",
+					"choice_department1",
+					"choice_department",
+					"choice_internalProject3",
+					"choice_internalProject2",
+					"choice_internalProject1",
+					"choice_internalProject",
+					"choice_mentor3",
+					"choice_mentor2",
+					"choice_mentor1",
+					"choice_mentor",
+					"lastname",
+					"firstname",
+					"memberID"
 				],
 				"type": "object",
 				"description": "Type of the trainee choice of a member"
 			},
-			"JBTMail": {
+			"TraineeMotivationDto": {
 				"properties": {
-					"email": {
+					"internalProject3Motivation": {
 						"type": "string"
+					},
+					"internalProject2Motivation": {
+						"type": "string"
+					},
+					"internalProject1Motivation": {
+						"type": "string"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"email"
+					"internalProject3Motivation",
+					"internalProject2Motivation",
+					"internalProject1Motivation",
+					"memberID"
 				],
 				"type": "object",
-				"description": "Type of the jbt mail of a member"
+				"description": "Type of the motivation of a trainee"
 			},
-			"Generation": {
+			"UpdateVotingDeadlinesRequestDto": {
 				"properties": {
-					"wahl_ende": {
+					"electionEnd": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"wahl_start": {
+					"electionStart": {
 						"type": "string",
 						"format": "date-time"
-					},
-					"tuercode": {
-						"type": "number",
-						"format": "double"
-					},
-					"infoabendBesucher": {
-						"type": "number",
-						"format": "double"
-					},
-					"auswahlWETermin": {
-						"type": "string"
-					},
-					"wwTermin": {
-						"type": "string"
-					},
-					"bewerbung_ende": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"bewerbung_start": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"bezeichnung": {
-						"type": "string"
-					},
-					"generationID": {
-						"type": "number",
-						"format": "double"
 					}
 				},
 				"required": [
-					"wahl_ende",
-					"wahl_start",
-					"tuercode",
-					"infoabendBesucher",
-					"auswahlWETermin",
-					"wwTermin",
-					"bewerbung_ende",
-					"bewerbung_start",
-					"bezeichnung",
-					"generationID"
-				],
-				"type": "object",
-				"description": "Type of the generation"
-			},
-			"TraineeMotivation": {
-				"properties": {
-					"wahl_internesprojekt3_motivation": {
-						"type": "string"
-					},
-					"wahl_internesprojekt2_motivation": {
-						"type": "string"
-					},
-					"wahl_internesprojekt1_motivation": {
-						"type": "string"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"wahl_internesprojekt3_motivation",
-					"wahl_internesprojekt2_motivation",
-					"wahl_internesprojekt1_motivation",
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of the trainee motivation written by a trainee to explain the choice of an internal project"
-			},
-			"UpdateVotingDeadlinesRequest": {
-				"properties": {
-					"votingEnd": {
-						"type": "string"
-					},
-					"votingStart": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"votingEnd",
-					"votingStart"
+					"electionEnd",
+					"electionStart"
 				],
 				"type": "object",
 				"description": "Type of the request to update the voting deadlines of a generation"
 			},
-			"TraineeAssignment": {
+			"TraineeAssignmentDto": {
 				"properties": {
 					"departmentID": {
 						"type": "number",
@@ -1151,106 +4330,121 @@
 				"type": "object",
 				"description": "Type of the assignment of a trainee to an internal project, mentor and department"
 			},
-			"InternalProjectAndTrainee": {
+			"TraineeProgressDto": {
 				"properties": {
-					"DLbeiEV": {
+					"excelBasics": {
 						"type": "boolean"
 					},
-					"APgehalten": {
-						"type": "string"
-					},
-					"APbeiEV": {
+					"safetyTraining": {
 						"type": "boolean"
 					},
-					"ZPgehalten": {
-						"type": "string"
-					},
-					"ZPbeiEV": {
+					"dataPrivacyTraining": {
 						"type": "boolean"
 					},
-					"AngebotBeiEV": {
+					"strategyAndOrganisation": {
 						"type": "boolean"
 					},
-					"kuerzel": {
+					"msPowerpoint": {
+						"type": "boolean"
+					},
+					"departmentQualityManagement": {
+						"type": "boolean"
+					},
+					"departmentNetwork": {
+						"type": "boolean"
+					},
+					"departmentFinanceAndLaw": {
+						"type": "boolean"
+					},
+					"acquisitionNegotiationTechnique": {
+						"type": "boolean"
+					},
+					"rhetoricPresentationTechnique": {
+						"type": "boolean"
+					},
+					"projectManagement": {
+						"type": "boolean"
+					},
+					"dlAtEv": {
+						"type": "boolean"
+					},
+					"apHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apAtEv": {
+						"type": "boolean"
+					},
+					"zpHeld": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"zpAtEv": {
+						"type": "boolean"
+					},
+					"offerAtEv": {
+						"type": "boolean"
+					},
+					"abbreviation": {
 						"type": "string"
 					},
-					"projektname": {
+					"projectName": {
 						"type": "string"
 					},
-					"internesprojekt": {
+					"internalProjectID": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"generationID": {
 						"type": "number",
 						"format": "double"
 					},
-					"generation": {
-						"type": "number",
-						"format": "double"
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatusDto"
 					},
-					"nachname": {
+					"lastname": {
 						"type": "string"
 					},
-					"vorname": {
+					"firstname": {
 						"type": "string"
 					},
-					"mitgliedID": {
+					"memberID": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"DLbeiEV",
-					"APgehalten",
-					"APbeiEV",
-					"ZPgehalten",
-					"ZPbeiEV",
-					"AngebotBeiEV",
-					"kuerzel",
-					"projektname",
-					"internesprojekt",
-					"generation",
-					"nachname",
-					"vorname",
-					"mitgliedID"
+					"excelBasics",
+					"safetyTraining",
+					"dataPrivacyTraining",
+					"strategyAndOrganisation",
+					"msPowerpoint",
+					"departmentQualityManagement",
+					"departmentNetwork",
+					"departmentFinanceAndLaw",
+					"acquisitionNegotiationTechnique",
+					"rhetoricPresentationTechnique",
+					"projectManagement",
+					"dlAtEv",
+					"apHeld",
+					"apAtEv",
+					"zpHeld",
+					"zpAtEv",
+					"offerAtEv",
+					"abbreviation",
+					"projectName",
+					"internalProjectID",
+					"generationID",
+					"memberStatus",
+					"lastname",
+					"firstname",
+					"memberID"
 				],
 				"type": "object",
-				"description": "Type of the milestones during internal project for trainee"
-			},
-			"Workshop": {
-				"properties": {
-					"feedbackAbgegeben": {
-						"type": "number",
-						"format": "double"
-					},
-					"schulungsname": {
-						"type": "string"
-					},
-					"schulungsinstanzID": {
-						"type": "number",
-						"format": "double"
-					},
-					"mitgliedID": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"feedbackAbgegeben",
-					"schulungsname",
-					"schulungsinstanzID",
-					"mitgliedID"
-				],
-				"type": "object",
-				"description": "Type of the given feedback on obligatory workshop for trainees"
-			},
-			"TraineeProgress": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/InternalProjectAndTrainee"
-					},
-					{
-						"$ref": "#/components/schemas/Workshop"
-					}
-				],
-				"description": "Type of the progress of a trainee (consists of internal project, trainee and workshop)"
+				"description": "Type of the trainee progress with the internal project milestones and mandatory workshops feedback"
 			}
 		},
 		"securitySchemes": {
@@ -1464,7 +4658,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/MemberPartial"
+										"$ref": "#/components/schemas/MemberPartialDto"
 									},
 									"type": "array"
 								}
@@ -1492,7 +4686,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CreateMemberResponse"
+									"$ref": "#/components/schemas/CreateMemberResponseDto"
 								}
 							}
 						}
@@ -1517,7 +4711,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateMemberRequest",
+								"$ref": "#/components/schemas/CreateMemberRequestDto",
 								"description": "The member to create"
 							},
 							"example": {
@@ -1639,7 +4833,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/DepartmentMember"
+										"$ref": "#/components/schemas/DepartmentMemberDto"
 									},
 									"type": "array"
 								}
@@ -1647,7 +4841,7 @@
 						}
 					}
 				},
-				"description": "Retrieves all members of the departments (this does not invclude the director of a department)",
+				"description": "Retrieves all members of the departments (this does not include the director of a department)",
 				"summary": "Get all members of departments",
 				"tags": [
 					"Members"
@@ -1670,7 +4864,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Director"
+										"$ref": "#/components/schemas/DirectorDto"
 									},
 									"type": "array"
 								}
@@ -1740,18 +4934,18 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"mitgliedstatus": {
-										"$ref": "#/components/schemas/MemberStatus"
+									"memberStatus": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"mitgliedstatus"
+									"memberStatus"
 								],
 								"type": "object",
 								"description": "The new status of the member"
 							},
 							"example": {
-								"mitgliedstatus": "aktives Mitglied"
+								"memberStatus": "aktives Mitglied"
 							}
 						}
 					}
@@ -1768,7 +4962,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Department"
+										"$ref": "#/components/schemas/DepartmentDetailsDto"
 									},
 									"type": "array"
 								}
@@ -1797,6 +4991,8 @@
 						"description": "No content"
 					}
 				},
+				"description": "Updates the information of an existing department",
+				"summary": "Update a department",
 				"tags": [
 					"Members"
 				],
@@ -1807,6 +5003,7 @@
 				],
 				"parameters": [
 					{
+						"description": "The id of the department to update",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -1821,7 +5018,11 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateDepartmentRequest"
+								"$ref": "#/components/schemas/UpdateDepartmentDto"
+							},
+							"example": {
+								"linkObjectivePresentation": "https://example.com",
+								"linkOrganigram": "https://example.com"
 							}
 						}
 					}
@@ -1838,7 +5039,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Value"
+										"$ref": "#/components/schemas/LanguageValue"
 									},
 									"type": "array"
 								}
@@ -1869,7 +5070,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Value"
+										"$ref": "#/components/schemas/ItSkillsValue"
 									},
 									"type": "array"
 								}
@@ -1900,7 +5101,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/PermissionAssignment"
+										"$ref": "#/components/schemas/PermissionAssignmentDto"
 									},
 									"type": "array"
 								}
@@ -1975,7 +5176,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to create"
 							},
 							"example": {
@@ -2010,7 +5211,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to delete"
 							},
 							"example": {
@@ -2022,56 +5223,6 @@
 				}
 			}
 		},
-		"/members/{id}/permissions": {
-			"get": {
-				"operationId": "GetPermissionsByMemberID",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"permissions": {
-											"items": {
-												"$ref": "#/components/schemas/Permission"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"permissions"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "Retrieves a list of all permissions of the member with the given ID",
-				"summary": "Get permissions by member id",
-				"tags": [
-					"Members"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"description": "The id of the member to retrieve the permissions from",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
 		"/members/{id}": {
 			"get": {
 				"operationId": "GetMember",
@@ -2081,7 +5232,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MemberDetails"
+									"$ref": "#/components/schemas/MemberDetailsDto"
 								}
 							}
 						}
@@ -2145,77 +5296,92 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/MemberDetails",
+								"$ref": "#/components/schemas/MemberDetailsDto",
 								"description": "The new information of the member"
 							},
 							"example": {
-								"mitgliedID": 8111,
-								"vorname": "Brandon-Lee",
-								"nachname": "Frye",
-								"jbt_email": "b.frye@studentische-beratung.de",
-								"geschlecht": 1,
-								"geburtsdatum": "1990-06-05",
-								"handy": "0162/9846320",
-								"mitgliedstatus": "passives Mitglied",
-								"generation": null,
-								"internesprojekt": null,
-								"trainee_seit": "2011-04-30",
-								"mitglied_seit": "2012-11-30",
-								"alumnus_seit": null,
-								"senior_seit": null,
-								"aktiv_seit": "2012-11-30",
-								"passiv_seit": null,
-								"ausgetreten_seit": null,
-								"ressort": "Mitglieder",
-								"arbeitgeber": "Versicherung Deutschland",
-								"strasse1": "Woodsman Ave 61",
-								"plz1": "70364",
-								"ort1": "Stuttgart",
-								"tel1": null,
+								"memberId": 8111,
+								"lastname": "Frye",
+								"firstname": "Brandon-Lee",
+								"gender": true,
+								"birthday": "1990-06-06",
+								"mobile": "0162/9846320",
+								"jbtEmail": "b.frye@studentische-beratung.de",
+								"memberStatus": {
+									"memberStatusId": 1,
+									"name": "Trainee"
+								},
+								"generation": 3,
+								"internalProject": null,
+								"traineeSince": "2011-05-01",
+								"memberSince": "2012-12-01",
+								"alumnusSince": null,
+								"seniorSince": null,
+								"activeSince": "2012-12-01",
+								"passiveSince": null,
+								"exitedSince": null,
+								"department": {
+									"departmentId": 5,
+									"name": "Mitglieder",
+									"shortName": "MIT"
+								},
+								"employer": "Versicherung International",
+								"street1": "Woodsman Ave 61",
+								"postalCode1": "70364",
+								"city1": "Stuttgart",
+								"phone1": null,
 								"email1": "brandon-lee@gmx.de",
-								"strasse2": "Budapester Straße 96",
-								"plz2": "56370",
-								"ort2": "Rheinland-Pfalz",
-								"tel2": "07042/984365",
+								"street2": "Budapester Straße 96",
+								"postalCode2": "987654",
+								"city2": "Reinesland Deutschland",
+								"phone2": "07042/984365",
 								"email2": "brandon-lee@gmx.de",
-								"hochschule": "Universität Hohenheim",
-								"studiengang": "Master of Financial Management",
-								"studienbeginn": "2014-09-30T22:00:00.000Z",
-								"studienende": null,
-								"vertiefungen": "Controlling und Unternehmensrechnung",
-								"ausbildung": null,
-								"engagement": null,
-								"canPL": "2013-12-22",
-								"canQM": "2013-12-22",
-								"lastchange": "1899-11-29",
-								"fuehrerschein": false,
-								"ersthelferausbildung": false,
-								"mentor": null,
-								"mentees": [],
-								"sprachen": [
+								"university": "Universität Hohenheim",
+								"courseOfStudy": "Master of Financial Management",
+								"studyStart": "2014-10-01",
+								"studyEnd": null,
+								"specializations": "Controlling und Unternehmensrechnung",
+								"apprenticeship": null,
+								"commitment": null,
+								"canPL": "2013-12-23",
+								"canQM": "2013-12-23",
+								"lastChange": null,
+								"drivingLicense": 0,
+								"firstAidTraining": false,
+								"accountHolder": "8912203a67b608ee8b1dc826b18df9ab1fa18cc28199268a80279cc543d838b280756f78ae495347663fad487573ab72d763e0b553931d883f4dd70acb45eb4a",
+								"iban": "730984d2477de277a9d8c15860b9b703320d0195d898e0c64bf48856f425cb6cdf21240ed6d6c20b42d033bf8b623c4ec3dd9add15f9fbef743d1861e25cf703",
+								"bic": "0ba933576f9624335f5b6773310f7429345a051310d9179c132c33c9e4b14c78822d5134d3ffa7b345f13f9b6906215f61aa605b0ea823844ccc47e7684d8a35",
+								"languages": [
 									{
-										"wert": "Deutsch",
-										"niveau": 5
+										"memberId": 8111,
+										"value": "Deutsch",
+										"level": 5
 									},
 									{
-										"wert": "English",
-										"niveau": 3
+										"memberId": 8111,
+										"value": "English",
+										"level": 3
 									},
 									{
-										"wert": "Französisch",
-										"niveau": 1
+										"memberId": 8111,
+										"value": "Französisch",
+										"level": 1
 									}
 								],
-								"edvkenntnisse": [
+								"itSkills": [
 									{
-										"wert": "MS-Office",
-										"niveau": 3
+										"memberId": 8111,
+										"value": "MS-Office",
+										"level": 3
 									},
 									{
-										"wert": "PHP",
-										"niveau": 1
+										"memberId": 8111,
+										"value": "PHP",
+										"level": 1
 									}
-								]
+								],
+								"mentees": [],
+								"mentor": null
 							}
 						}
 					}
@@ -2232,7 +5398,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Trainee"
+										"$ref": "#/components/schemas/MembersFieldDto"
 									},
 									"type": "array"
 								}
@@ -2262,7 +5428,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/InternalProject"
+									"$ref": "#/components/schemas/InternalProjectDto"
 								}
 							}
 						}
@@ -2328,7 +5494,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/InternalProject",
+								"$ref": "#/components/schemas/InternalProjectDto",
 								"description": "updated internal project"
 							},
 							"example": {
@@ -2384,7 +5550,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeChoice"
+										"$ref": "#/components/schemas/TraineeChoiceDto"
 									},
 									"type": "array"
 								}
@@ -2407,48 +5573,6 @@
 				"parameters": [
 					{
 						"description": "id of the generation",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/trainees/ip/{id}/mails": {
-			"get": {
-				"operationId": "GetIPTeamMails",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/JBTMail"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "Retrieves the mails for the specified internal projects",
-				"summary": "Get ip team mails",
-				"tags": [
-					"Trainees"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"description": "id of the internal project",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -2501,7 +5625,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeMotivation"
+										"$ref": "#/components/schemas/TraineeMotivationDto"
 									},
 									"type": "array"
 								}
@@ -2537,7 +5661,7 @@
 		},
 		"/trainees/generations/{id}/set-deadline": {
 			"post": {
-				"operationId": "SetVotingDeadline",
+				"operationId": "SetElectionDeadline",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -2573,12 +5697,12 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateVotingDeadlinesRequest",
+								"$ref": "#/components/schemas/UpdateVotingDeadlinesRequestDto",
 								"description": "start and end date of the voting"
 							},
 							"example": {
-								"votingStart": "2021-01-01",
-								"votingEnd": "2021-01-01"
+								"electionStart": "2021-01-01 18:00:00",
+								"electionEnd": "2021-01-31 20:00:00"
 							}
 						}
 					}
@@ -2623,11 +5747,10 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TraineeAssignment",
+								"$ref": "#/components/schemas/TraineeAssignmentDto",
 								"description": "assignment of the trainee"
 							},
 							"example": {
-								"memberID": 8167,
 								"ipID": 62,
 								"mentorID": 8167,
 								"departmentID": 1
@@ -2647,7 +5770,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/Mentor"
+										"$ref": "#/components/schemas/MentorDto"
 									},
 									"type": "array"
 								}
@@ -2735,7 +5858,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}
@@ -2779,7 +5902,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}
@@ -2810,7 +5933,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/InternalProject"
+										"$ref": "#/components/schemas/InternalProjectDto"
 									},
 									"type": "array"
 								}
@@ -2841,7 +5964,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TraineeProgress"
+										"$ref": "#/components/schemas/TraineeProgressDto"
 									},
 									"type": "array"
 								}

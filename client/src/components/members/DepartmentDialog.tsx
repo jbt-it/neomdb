@@ -3,7 +3,7 @@
  */
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme } from "@mui/material";
 import React, { memo, useContext, useState } from "react";
-import { DepartmentDetails } from "../../types/membersTypes";
+import { DepartmentDetailsDto } from "../../types/membersTypes";
 import api from "../../utils/api";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -18,7 +18,7 @@ interface DepartmentDialogProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;
-  department: DepartmentDetails;
+  department: DepartmentDetailsDto;
 }
 
 /**
@@ -53,8 +53,8 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
   const { title, isOpen, onClose, department } = props;
   const { dispatchAuth } = useContext(AuthContext);
 
-  const [goalLink, setGoalLink] = useState(department.linkZielvorstellung);
-  const [organisationLink, setOrganisationLink] = useState(department.linkOrganigramm);
+  const [goalLink, setGoalLink] = useState(department.linkObjectivePresentation);
+  const [organisationLink, setOrganisationLink] = useState(department.linkOrganigram);
 
   /**
    * Saves the changed links of the department
@@ -63,9 +63,9 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     event.preventDefault(); // Prevents the page from reloading
 
     // Given department object with changed goal and organisation links
-    const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
+    const editedDepartment = { ...department, linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
     api
-      .put(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
+      .put(`/members/departments/${editedDepartment.departmentId}`, editedDepartment)
       .then((res: AxiosResponse) => {
         if (res.status === 204) {
           showSuccessMessage("Aktualisierung erfolgreich!");

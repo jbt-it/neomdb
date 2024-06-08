@@ -1,5 +1,9 @@
 import AuthService from "./AuthService";
 import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "@tsoa/runtime";
+import { generateJWT } from "../utils/jwtUtils";
+import { getCookieOptionsAsString } from "./cookieConfig";
+import { UnauthorizedError } from "../types/Errors";
+import * as nodemailer from "nodemailer";
 import {
   JWTPayload,
   UserChangePasswordRequest,
@@ -7,10 +11,6 @@ import {
   UserLoginRequest,
   UserResetPasswordRequest,
 } from "../types/authTypes";
-import { generateJWT } from "../utils/jwtUtils";
-import { getCookieOptionsAsString } from "./cookieConfig";
-import { UnauthorizedError } from "../types/Errors";
-import * as nodemailer from "nodemailer";
 
 /**
  * Controller for the authentication
@@ -132,7 +132,7 @@ export class AuthController extends Controller {
         "Dein Ressort IT",
     };
     // TODO: Handle Errors
-    transport.sendMail(mailOptions);
+    // transport.sendMail(mailOptions);
   }
 
   /**

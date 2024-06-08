@@ -8,32 +8,15 @@ import api from "../../utils/api";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-
-/**
- * Interface of route get permission-assignments
- */
-interface MemberPermissions {
-  name: string;
-  permission: number;
-  canDelegate: number;
-  memberID: number;
-}
-
-/**
- * Interface of route get permissions
- */
-interface Permissions {
-  bezeichnung: string;
-  beschreibung: string;
-  berechtigungID: number;
-}
+import { MemberPartialDto, PermissionAssignmentDto } from "../../types/membersTypes";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 
 /**
  * Interface used for autocomplete
  */
-interface AllNames {
+interface AutocompleteValue {
   name: string;
-  memberID: number;
+  memberId: number;
 }
 
 /**
@@ -103,30 +86,69 @@ const PermissionsOverview: React.FunctionComponent = () => {
       color: "white",
     },
   };
-  const [memberPermissions, setMemberPermissions] = useState<MemberPermissions[]>([]);
-  const [permissionsOverview, setPermissionsOverview] = useState<Permissions[]>([]);
+  const [permissionAssignments, setPermissionAssignments] = useState<PermissionAssignmentDto[]>([]);
+  const [membersForAutocomplete, setMembersForAutocomplete] = useState<AutocompleteValue[]>([]);
+  const [autocompleteValues, setAutocompleteValues] = useState<AutocompleteValue[]>([]); // State for the values of the autocomplete
+  const [directorPositionsForAutocomplete, setDirectorPositionsForAutocomplete] = useState<AutocompleteValue[]>([]); // State for the director positions -> TODO: Change to directorPosition type?
+
+  const [isAdmin, setIsAdmin] = useState<boolean>(false); // State for checking if the user is admin
   const { auth } = useContext(AuthContext);
-  let tmp: AllNames[] = [];
+  let tmp: AutocompleteValue[] = [];
 
   /**
-   * Handles the API call and cleans state thereafter
+   * Retrieves all members
    */
-  const getPermissions: VoidFunction = () => {
+  const getMembers: VoidFunction = () => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
-      .get("/members/permissions", {
+      .get("/members", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setPermissionsOverview(res.data);
+            const tmpMembers: AutocompleteValue[] = res.data.map((member: MemberPartialDto) => ({
+              name: member.firstname + " " + member.lastname,
+              memberID: member.memberId,
+            }));
+            setMembersForAutocomplete(tmpMembers);
           }
         }
       })
       .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
+        showErrorMessage("Mitglieder konnten nicht geladen werden");
+      });
+    // Clean-up function
+    return () => {
+      mounted = false;
+    };
+  };
+
+  /**
+   * Retrieves the director positions
+   */
+  const getDirectorPositions: VoidFunction = () => {
+    // Variable for checking, if the component is mounted
+    let mounted = true;
+    setDirectorPositionsForAutocomplete([
+      { name: "RL IT", memberId: -1 },
+      { name: "RL MAR", memberId: -1 },
+    ]);
+    // TODO: Wait until route is implemented
+    api
+      .get("/members/director-positions", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          if (mounted) {
+            // TODO: setDirectorPositionsForAutocomplete(res.data);
+          }
+        }
+      })
+      .catch(() => {
+        showErrorMessage("Vorstände konnten nicht geladen werden");
       });
     // Clean-up function
     return () => {
@@ -147,7 +169,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setMemberPermissions(res.data);
+            setPermissionAssignments(res.data);
           }
         }
       })
@@ -219,19 +241,35 @@ const PermissionsOverview: React.FunctionComponent = () => {
   };
 
   /**
+   * Initializes the values of the autocomplete with the members and the director positions
+   */
+  const initAutocompleteValues = () => {
+    setAutocompleteValues([...directorPositionsForAutocomplete, ...membersForAutocomplete]);
+  };
+
+  /**
+   * Checks if the user is admin
+   */
+  const checkAdmin = () => {
+    if (doesPermissionsHaveSomeOf(auth.permissions, [100])) {
+      setIsAdmin(true);
+    }
+  };
+
+  /**
    * Check if clicked event added or removed entity from autocomplete
    */
   const handleOnChange = (
-    newValue: AllNames[],
-    details: AutocompleteChangeDetails<AllNames> | undefined,
+    newValue: AutocompleteValue[],
+    details: AutocompleteChangeDetails<AutocompleteValue> | undefined,
     permissionID: number
   ) => {
     // Check if details is undefined
     if (details) {
       if (newValue[newValue.length - 1] === details.option) {
-        createPermission(details.option.memberID, permissionID);
+        createPermission(details.option.memberId, permissionID);
       } else {
-        deletePermission(details.option.memberID, permissionID);
+        deletePermission(details.option.memberId, permissionID);
       }
     }
   };
@@ -239,111 +277,122 @@ const PermissionsOverview: React.FunctionComponent = () => {
   /**
    * Retuns true if user can deligate permissionID else false
    */
-  const checkDisable = (permissionID: number) => {
-    return !(
-      auth.permissions.filter((permission) => permission.permissionID === permissionID && permission.canDelegate)
+  const checkDelegation = (permissionId: number) => {
+    if (isAdmin) {
+      return true;
+    }
+    return (
+      auth.permissions.filter((permission) => permission.permissionId === permissionId && permission.canDelegate)
         .length > 0
     );
   };
 
-  useEffect(() => getPermissions(), []);
+  // useEffect(() => getPermissions(), []);
+  useEffect(() => checkAdmin(), []);
   useEffect(() => getPermissionAssignments(), []);
+  useEffect(() => getMembers(), []);
+  useEffect(() => getDirectorPositions(), []);
+  useEffect(() => initAutocompleteValues(), [membersForAutocomplete, directorPositionsForAutocomplete]);
 
   return (
-    <div>
-      <Box component="div" display="inline">
-        <Paper sx={styles.paperRoot}>
+    <Box component="div" display="inline">
+      <Paper sx={styles.paperRoot}>
+        <Grid container spacing={0}>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Berechtigungen
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+          </Grid>
           <Grid container spacing={0}>
-            <Grid item xs={12}>
-              <Typography variant="h5" sx={styles.paperHeaderText}>
-                Berechtigungen
-              </Typography>
-              <Divider sx={styles.paperHeaderDivider} />
-            </Grid>
-            <Grid container spacing={0}>
-              {permissionsOverview.map((permissions) => (
-                <Grid item container spacing={0} sx={styles.contentContainer} key={permissions.bezeichnung}>
-                  <Grid item xs={6}>
-                    <Grid item xs={12}>
-                      <Typography>{permissions.bezeichnung}</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={0}>
-                    <>
-                      {memberPermissions.map((memberP) => {
-                        if (permissions.berechtigungID === memberP.permission) {
-                          if (memberPermissions.map((entry) => memberP.permission === entry.permission).length > 0) {
-                            tmp.push({
-                              name: memberP.name,
-                              memberID: memberP.memberID,
-                            });
-                          }
-                        }
-                      })}
-                      {tmp.length >= 1 ? (
-                        <Grid item xs>
-                          <Autocomplete
-                            multiple
-                            disableClearable
-                            filterSelectedOptions
-                            id="tags-standard"
-                            color="primary"
-                            isOptionEqualToValue={(option, value) => {
-                              // Compare member ID of entities if not director else name
-                              if (value.memberID !== -1) {
-                                return option.memberID === value.memberID;
-                              } else {
-                                return option.name === value.name;
-                              }
-                            }}
-                            options={
-                              // Remove duplicated options
-                              memberPermissions.filter(
-                                (value, index, self) =>
-                                  index ===
-                                  self.findIndex((t) => t.memberID === value.memberID && t.name === value.name)
-                              )
-                            }
-                            getOptionLabel={(options) => options.name}
-                            defaultValue={tmp}
-                            disabled={checkDisable(permissions.berechtigungID)}
-                            onChange={(event, newValue, reason, details) => {
-                              handleOnChange(newValue, details, permissions.berechtigungID);
-                            }}
-                            getOptionDisabled={(option) => option.memberID === -1}
-                            renderTags={(tagValue, getTagProps) =>
-                              tagValue.map((option, index) => (
-                                <Chip
-                                  label={option.name}
-                                  {...getTagProps({ index })}
-                                  disabled={checkDisable(permissions.berechtigungID) || option.memberID < 0}
-                                />
-                              ))
-                            }
-                            {...(tmp = [])}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                variant="standard"
-                                color="primary"
-                                label=""
-                                placeholder="Hinzufügen"
-                              />
-                            )}
-                          />
-                        </Grid>
-                      ) : (
-                        (tmp = [])
-                      )}
-                    </>
+            {permissionAssignments.map((permissionAssignment) => (
+              <Grid item container spacing={0} sx={styles.contentContainer} key={permissionAssignment.name}>
+                <Grid item xs={6}>
+                  <Grid item xs={12}>
+                    <Typography>{permissionAssignment.name}</Typography>
                   </Grid>
                 </Grid>
-              ))}
-            </Grid>
+                <Grid container spacing={0}>
+                  <>
+                    {/* Iterates over all directors that are assigned to the permission */}
+                    {permissionAssignment.directors.map((director) => {
+                      tmp.push({
+                        name: director.shortName,
+                        memberId: -1,
+                      });
+                    })}
+                    {/* Iterates over all members that are assigned to the permission */}
+                    {permissionAssignment.members.map((member) => {
+                      tmp.push({
+                        name: member.firstname + " " + member.lastname,
+                        memberId: member.memberId,
+                      });
+                    })}
+                    {tmp.length >= 1 ? (
+                      <Grid item xs>
+                        <Autocomplete
+                          multiple
+                          disableClearable
+                          filterSelectedOptions
+                          id="tags-standard"
+                          color="primary"
+                          isOptionEqualToValue={(option, value) => {
+                            // Compare member ID of entities if not director else name
+                            if (value.memberId !== -1) {
+                              return option.memberId === value.memberId;
+                            } else {
+                              return option.name === value.name;
+                            }
+                          }}
+                          options={
+                            // Remove duplicated options
+                            autocompleteValues.filter(
+                              (value, index, self) =>
+                                index ===
+                                self.findIndex((t) => {
+                                  return t.memberId === value.memberId && t.name === value.name;
+                                })
+                            )
+                          }
+                          getOptionLabel={(options) => options.name}
+                          defaultValue={tmp}
+                          disabled={checkDelegation(permissionAssignment.permissionID)}
+                          onChange={(event, newValue, reason, details) => {
+                            handleOnChange(newValue, details, permissionAssignment.permissionID);
+                          }}
+                          getOptionDisabled={(option) => option.memberId === -1}
+                          renderTags={(tagValue, getTagProps) =>
+                            tagValue.map((option, index) => (
+                              <Chip
+                                label={option.name}
+                                {...getTagProps({ index })}
+                                disabled={checkDelegation(permissionAssignment.permissionID) || option.memberId < 0}
+                              />
+                            ))
+                          }
+                          {...(tmp = [])}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant="standard"
+                              color="primary"
+                              label=""
+                              placeholder="Hinzufügen"
+                            />
+                          )}
+                        />
+                      </Grid>
+                    ) : (
+                      (tmp = [])
+                    )}
+                  </>
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
-        </Paper>
-      </Box>
-    </div>
+        </Grid>
+      </Paper>
+    </Box>
   );
 };
 export default PermissionsOverview;
