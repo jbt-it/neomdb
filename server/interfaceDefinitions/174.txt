@@ -1,0 +1,67 @@
+type editProjectDetails = {
+    projectID: number,
+    projectName: string,
+    projectDescription: string,
+    projectStatus: string,
+}
+
+
+// Class for Project Details
+type ProjectDetails {
+  projectID; // number
+  projectName; // string
+  status; // string
+  location; // string
+  announcementDate; // string (could be Date object)
+  kickoff; // string (could be Date object)
+  duration; // string
+  conditions; // number
+  conditionsRange; // string
+  consultingDaysMin; // number
+  consultingDaysMax; // number
+  membersMin; // number
+  membersMax; // number
+  applicationStart; // string (could be Date object)
+  applicationDeadline; // string (could be Date object)
+  kickOffDate; // date (could be Date object)
+  selectionPanel; // array of strings
+}
+
+// Class for Client Data
+type ClientData {
+  client; // string
+  sector; // string
+  shortDescription; // string
+  street; // string
+  postalCode; // string
+  city; // string
+  website; // string
+  existingCustomer; // boolean
+  acquisitionResponsible; // string
+  acquisitionMethod; // string
+  acquisitionChannel; // array of strings
+  confidential; // string
+}
+
+// Class for Project Description
+class ProjectDescription {
+  startingSituation; // string
+  objective; // string
+  peculiarities; // string
+  coreCompetencies; // array of strings
+  requirementsProfile; // string
+  referenceProjects; // array of strings
+  remarks; // string
+}
+
+// Class for Execution and Billing Data
+class ExecutionBillingData {
+  projectMembers; // array of MembersField + application
+  QMs; // array of MembersField + application
+  signingDate; // string (could be Date object)
+  conditions; // number
+  soldBT; // number
+  soldExpenses; // number
+  projectEnd; // string (could be Date object)
+  invoicing; // string (could be Date object)
+}

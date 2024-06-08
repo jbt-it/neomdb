@@ -1,0 +1,25 @@
+type ApplicationDetails = {
+    applicant: string, // Bewerber
+    university: string, // Hochschule
+    courseOfStudy: string, // Studiengang
+    semester: string, // Semester
+    specializations: string, // Vertiefungen
+    internships: string, // Praktika
+    education: string, // Ausbildung
+    workingStudentActivities: string, // Werkstudenten-Tätigkeit
+    seminarPapers: string, // Seminararbeiten
+    workshops: string, // Schulungen/Workshops
+    internalEngagement: string, // Internes Engagement
+    externalProjectExperience: Array<ExternalProjectExperience>, // Externe Projekterfahrung
+    acquisitionAchievements: string, // Akquise-Vorleistungen
+    extraordinaryEngagement: string, // Außerordentliches Engagement
+    availability: string, // Zeitliche Verfügbarkeit
+    limitationReasons: string, // Gründe und Dauer der Einschränkung
+    motivation: string // Motivation
+}
+
+type ExternalProjectExperience = {
+    description: string, // Beschreibung der Erfahrung
+    duration: string, // Dauer der Erfahrung
+    role: string // Rolle im Projekt
+}

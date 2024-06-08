@@ -1,0 +1,64 @@
+// Class for Document Confirmation
+class DocumentConfirmation {
+  finalPresentationAndReferenceSlideAvailable; // boolean
+  finalPresentationHeld; // boolean
+  evaluationResultsAvailable; // boolean
+  documentationGuideAvailable; // boolean
+  offerInAlfresco; // boolean
+  deviationFromStandard; // boolean
+  consultingContractAvailable; // boolean
+  teamContractAvailable; // boolean
+  QMReleased; // boolean
+  fullyEnteredInCRM; // boolean
+  paymentDelay; // boolean
+  moneyReceived; // boolean
+  // ... and so on for each document and transaction listed
+}
+
+// Class for Project Billing Information
+class ProjectBillingInfo {
+  post netSalesPrice; // number
+  soldConsultingDays; // number
+  consultingDayRate; // number
+  netSalesPriceCalculation; // string
+  expenses; // number
+  valueAddedTax; // number
+  invoiceAmount; // number
+  commissionToAssociation; // number
+}
+
+//GET
+TeamDivision: {
+  divisionDetails:
+  {
+    totalBT: number
+    expenses: number
+    sum: number
+  },
+  recipients: [
+    {
+      member: MembersField
+      bt: number
+      expenses: number
+      sum: number
+    },
+  ]
+}
+
+//POST
+recipients: [
+  {
+    member: MembersField
+    bt: number
+    expenses: number
+    sum: number
+  },
+]
+
+
+//Class for Project Memebers
+class projectMembers{
+  freelancerContract; // string
+  moneyTransfered; // number
+}
+;
