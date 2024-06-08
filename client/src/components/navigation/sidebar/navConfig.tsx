@@ -1,6 +1,13 @@
-import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, TrendingUp } from "@mui/icons-material";
-import { SvgIconComponent } from "@mui/icons-material";
-import { Permission } from "../../../types/globalTypes";
+import {
+  Build,
+  Dashboard,
+  EmojiObjects,
+  Event,
+  MoreHoriz,
+  PeopleAlt,
+  SvgIconComponent,
+  TrendingUp,
+} from "@mui/icons-material";
 
 interface NavItem {
   title: string;
