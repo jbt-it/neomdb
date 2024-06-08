@@ -168,7 +168,7 @@ const FinanceOverview: React.FunctionComponent = () => {
   const [memberFinanceData, setMemberFinanceData] = useState<membersTypes.MemberFinanceDataType[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [accountFilter, setAccountFilter] = useState<string>("");
+  const [accountFilter, setAccountFilter] = useState<string>("allMembers");
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
 
@@ -325,7 +325,7 @@ const FinanceOverview: React.FunctionComponent = () => {
     }
 
     // Filters by account
-    if (accountFilter !== "") {
+    if (accountFilter !== "allMembers") {
       if (accountFilter === "hasAccount") {
         filteredMembers = filteredMembers.filter((member) => {
           return member.iban.toString() !== "" && member.bic.toString() !== "";
@@ -440,37 +440,6 @@ const FinanceOverview: React.FunctionComponent = () => {
   // The additional filters
   const additionalFilters = (
     <div>
-      <Grid item xs={6} sm={3} sx={styles.statusFilterAdditional}>
-        <TextField
-          label="Status"
-          sx={styles.filterElement}
-          color="primary"
-          onChange={handleStatusChange}
-          value={statusFilter}
-          select
-        >
-          <MenuItem value={""}>-</MenuItem>
-          <MenuItem value={"Trainee"}>Trainee</MenuItem>
-          <MenuItem value={"aktives Mitglied"}>aktives Mitglied</MenuItem>
-          <MenuItem value={"Senior"}>Senior</MenuItem>
-          <MenuItem value={"passives Mitglied"}>passives Mitglied</MenuItem>
-          <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
-        </TextField>
-      </Grid>
-      <Grid item xs={6} sm={3} sx={styles.accountFilterAdditional}>
-        <TextField
-          label="Kontodatenstatus"
-          sx={styles.filterElement}
-          color="primary"
-          onChange={handleAccountChange}
-          value={accountFilter}
-          select
-        >
-          <MenuItem value={""}>alle Mitglieder</MenuItem>
-          <MenuItem value={"noAccount"}>fehlende Kontodaten</MenuItem>
-          <MenuItem value={"hasAccount"}>vorhandene Kontodaten</MenuItem>
-        </TextField>
-      </Grid>
       <TextField
         sx={styles.sortElement}
         color="primary"
@@ -551,7 +520,7 @@ const FinanceOverview: React.FunctionComponent = () => {
                 value={accountFilter}
                 select
               >
-                <MenuItem value={""}>alle Mitglieder</MenuItem>
+                <MenuItem value={"allMembers"}>alle Mitglieder</MenuItem>
                 <MenuItem value={"noAccount"}>fehlende Kontodaten</MenuItem>
                 <MenuItem value={"hasAccount"}>vorhandene Kontodaten</MenuItem>
               </TextField>
