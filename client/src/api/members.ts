@@ -11,6 +11,7 @@ import {
   UpdateMemberImageParams,
   UpdateMemberStatusParams,
 } from "../types/membersTypes";
+import { convertToBase64 } from "../utils/imageUtils";
 
 //-----------------------------------------------------------------------------------------------------------------------
 // GET ROUTES
@@ -82,24 +83,6 @@ export const updateMemberStatus = async ({
   status,
 }: UpdateMemberStatusParams): Promise<AxiosResponse<void>> => {
   return await api.patch(`/members/${memberId}/status`, { memberStatus: status });
-};
-
-/**
- * Convert a file to a base64 string
- * @param file - The file to convert
- * @returns A promise that resolves with the base64 string
- */
-const convertToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const result = reader.result as string;
-      const base64 = result.split(",")[1];
-      resolve(base64);
-    };
-    reader.onerror = (error) => reject(error);
-  });
 };
 
 /**

@@ -66,7 +66,7 @@ const useMemberDetails = (memberID: number) => {
     },
     onSuccess: () => {
       showSuccessMessage("Profil wurden erfolgreich aktualisiert!");
-      queryClient.invalidateQueries({ queryKey: ["memberDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["memberDetails"] }); // Invalidate the memberDetails data to refetch the data
     },
   });
 
@@ -94,7 +94,8 @@ const useMemberDetails = (memberID: number) => {
     },
     onSuccess: (data) => {
       showSuccessMessage("Bild wurde erfolgreich hochgeladen!");
-      queryClient.invalidateQueries({ queryKey: ["memberImage", memberID] });
+      queryClient.invalidateQueries({ queryKey: ["memberImage", memberID] }); // Invalidate the memberImage data to refetch the data
+      // Update the memberImage data with the new image
       queryClient.setQueryData(["memberImage", memberID], (oldData: any) => {
         return {
           ...oldData,
