@@ -71,15 +71,15 @@ const useMembers = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberDetails"] });
-      queryClient.invalidateQueries({ queryKey: ["members"] });
+      queryClient.invalidateQueries({ queryKey: ["memberDetails"] }); // Invalidate the memberDetails data to refetch the data
+      queryClient.invalidateQueries({ queryKey: ["members"] }); // Invalidate the members data to refetch the data
       showSuccessMessage("Mitgliedsstatus erfolgreich geändert");
     },
   });
 
   /**
    * Function to update the status of a member
-   * @param memberID The id of the member
+   * @param memberId The id of the member
    * @param status The new status
    */
   const updateMemberStatus = async (memberId: number, status: string) => {
@@ -101,7 +101,7 @@ const useMembers = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["members"] });
+      queryClient.invalidateQueries({ queryKey: ["members"] }); // Invalidate the members data to refetch the data
       showSuccessMessage("Mitglied erfolgreich hinzugefügt");
     },
   });

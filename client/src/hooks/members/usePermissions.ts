@@ -55,7 +55,7 @@ const usePermissions = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissionAssignments"] });
+      queryClient.invalidateQueries({ queryKey: ["permissionAssignments"] }); // Invalidate the permissionAssignments data to refetch the data
       showSuccessMessage("Berechtigung wurde erfolgreich erteilt");
     },
   });
@@ -84,14 +84,14 @@ const usePermissions = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["PermissionAssignments"] });
+      queryClient.invalidateQueries({ queryKey: ["permissionAssignments"] }); // Invalidate the permissionAssignments data to refetch the data
       showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
     },
   });
 
   /**
    * Function to delete a relation between a member and a permission
-   * @param memberID - The ID of the member
+   * @param memberId - The Id of the member
    * @param permissionID - The ID of the permission
    */
   const deletePermission = async (memberId: number, permissionID: number) => {

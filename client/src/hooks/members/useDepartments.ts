@@ -77,7 +77,7 @@ const useDepartments = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["departments"] });
+      queryClient.invalidateQueries({ queryKey: ["departments"] }); // Invalidate the departments data to trigger a refetch
       showSuccessMessage("Ressort erfolgreich aktualisiert");
     },
   });
