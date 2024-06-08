@@ -6,7 +6,7 @@ import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
 import api from "../../utils/api";
 import InfoCard from "../../components/general/InfoCard";
 import DepartmentDialog from "../../components/members/DepartmentDialog";
-import { DepartmentDetails, DepartmentMember, Director } from "../../types/membersTypes";
+import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto } from "../../types/membersTypes";
 import { showErrorMessage } from "../../utils/toastUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { doesRolesHaveSomeOf } from "../../utils/authUtils";
@@ -50,9 +50,9 @@ const DepartmentOverview: React.FunctionComponent = () => {
   };
   const { auth } = useContext(AuthContext);
 
-  const [members, setMembers] = useState<DepartmentMember[]>([]);
-  const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
-  const [directors, setDirectors] = useState<Director[]>([]);
+  const [members, setMembers] = useState<DepartmentMemberDto[]>([]);
+  const [departments, setDepartments] = useState<DepartmentDetailsDto[]>([]);
+  const [directors, setDirectors] = useState<DirectorDto[]>([]);
   const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
   const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
   const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
@@ -152,7 +152,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    */
   const getMembersOfDeparment = (departmentID: number) => {
     return members.filter((member) => {
-      return member.ressort === departmentID;
+      return member.department?.departmentId === departmentID;
     });
   };
 
@@ -162,7 +162,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    */
   const getDirectorOfDepartment = (departmentID: number) => {
     return directors.filter((director) => {
-      return director.ressortID === departmentID;
+      return director.department?.departmentId === departmentID;
     })[0];
   };
 
@@ -174,7 +174,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @returns false if the director of the given department is undefined
    */
   const isDepartmentEditable = (departmentID: number) => {
-    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.evpostenID;
+    const directorIDofDepartment = getDirectorOfDepartment(departmentID)?.directorId;
     if (directorIDofDepartment === undefined) {
       return false;
     }
@@ -299,21 +299,20 @@ const DepartmentOverview: React.FunctionComponent = () => {
    * @returns The rendered director information
    * @returns null if the director is undefined
    */
-  const renderDirector = (department: DepartmentDetails, director: Director) => {
+  const renderDirector = (department: DepartmentDetailsDto, director: DirectorDto) => {
     return (
       <div>
-        <Typography variant="h6">
-          <strong>Ressortleitung:</strong>
+        <Typography variant="h6" fontWeight={"bold"}>
+          Ressortleitung:
         </Typography>
         {director ? (
-          <div key={`director-${department.bezeichnung}`}>
-            <h3>
-              <Link
-                style={styles.navLink}
-                to={`/gesamtuebersicht/${director.mitgliedID}`}
-              >{`${director.vorname} ${director.nachname}`}</Link>
-            </h3>
-          </div>
+          <Typography
+            variant="h6"
+            fontWeight={"bold"}
+            component={Link}
+            style={styles.navLink}
+            to={`/gesamtuebersicht/${director.memberId}`}
+          >{`${director.firstname} ${director.lastname}`}</Typography>
         ) : null}
       </div>
     );
@@ -322,11 +321,11 @@ const DepartmentOverview: React.FunctionComponent = () => {
   return (
     <div>
       {departments.map((department, index) => (
-        <div key={department.kuerzel}>
+        <Box key={department.shortName} sx={{ marginBottom: 3 }}>
           <InfoCard
-            title={department.bezeichnung}
-            isEditable={isDepartmentEditable(department.ressortID)}
-            handleEdit={(event) => handleDialogOpen(event, department.kuerzel)}
+            title={department.name}
+            isEditable={isDepartmentEditable(department.departmentId)}
+            handleEdit={(event) => handleDialogOpen(event, department.shortName)}
             defaultExpanded={false}
             isExpandable={false}
             key={index}
@@ -336,7 +335,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
                 sx={styles.button}
                 variant="contained"
                 component={Link}
-                to={department.linkZielvorstellung}
+                to={department.linkObjectivePresentation}
                 target="_blank"
               >
                 Zu den Zielen
@@ -346,41 +345,41 @@ const DepartmentOverview: React.FunctionComponent = () => {
                 sx={styles.button}
                 variant="contained"
                 component={Link}
-                to={department.linkOrganigramm}
+                to={department.linkOrganigram}
                 target="_blank"
               >
                 Zur Organisation
               </Button>
             </Box>
             <br></br>
-            {renderDirector(department, getDirectorOfDepartment(department.ressortID))}
+            {renderDirector(department, getDirectorOfDepartment(department.departmentId))}
             <br></br>
-            <div>
+            <Box>
               <Typography variant="h6">
                 <strong>Mitglieder:</strong>
               </Typography>
-              <Grid container spacing={1} sx={{ marginTop: -3 }}>
-                {getMembersOfDeparment(department.ressortID).map((member, membIndex) => (
+              <Grid spacing={1} container>
+                {getMembersOfDeparment(department.departmentId).map((member, membIndex) => (
                   <Grid item key={`member-${membIndex}`}>
-                    <h3>
-                      <Link
-                        style={styles.navLink}
-                        to={`/gesamtuebersicht/${member.mitgliedID}`}
-                      >{`${member.vorname} ${member.nachname}`}</Link>
-                    </h3>
+                    <Typography
+                      component={Link}
+                      variant="h6"
+                      fontWeight={"bold"}
+                      style={styles.navLink}
+                      to={`/gesamtuebersicht/${member.memberId}`}
+                    >{`${member.firstname} ${member.lastname}`}</Typography>
                   </Grid>
                 ))}
               </Grid>
-            </div>
+            </Box>
           </InfoCard>
           <DepartmentDialog
-            title={department.bezeichnung}
-            isOpen={getDialogState(department.kuerzel)}
-            onClose={() => getDialogStateChangeFunction(department.kuerzel)}
+            title={department.name}
+            isOpen={getDialogState(department.shortName)}
+            onClose={() => getDialogStateChangeFunction(department.shortName)}
             department={department}
           />
-          <br></br>
-        </div>
+        </Box>
       ))}
     </div>
   );

@@ -126,7 +126,9 @@ const FieldSection = (props: Props) => {
     radioButtonItem: {
       flexGrow: 1,
     },
-    checkboxField: {},
+    checkboxField: {
+      paddingLeft: 1,
+    },
   };
 
   const renderFields = (fields: Field[]) => {

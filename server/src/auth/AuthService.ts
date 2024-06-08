@@ -1,17 +1,16 @@
-import { createCurrentTimestamp } from "../utils/dateUtils";
-import MembersRepository from "../resources/members/MembersRepository";
-import { JWTPayload, Permission, User, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
-import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
-import { createUserDataPayload } from "../utils/authUtils";
-import { sleepRandomly } from "../utils/timeUtils";
-import AuthRepository from "./AuthRepository";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "node:crypto";
+import { AppDataSource } from "../datasource";
+import { DepartmentRepository } from "../resources/members/DepartmentRepository";
+import { MemberMapper } from "../resources/members/MemberMapper";
+import { MemberHasDirectorPositionRepository_typeORM, MembersRepository } from "../resources/members/MembersRepository";
+import { JWTPayload, PermissionDTO, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
+import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
+import { getDateDifferenceInDays } from "../utils/dateUtils";
+import { sleepRandomly } from "../utils/timeUtils";
+import { PasswordResetRepository } from "./PasswordResetRepository";
 
 class AuthService {
-  authRepository = new AuthRepository();
-  membersRepository = new MembersRepository();
-
   /**
    * Logs a user in
    * @throws UnauthenticatedError if the credentials are incomplete
@@ -22,8 +21,7 @@ class AuthService {
       throw new UnauthenticatedError("Credentials incomplete");
     }
 
-    const user: User = await this.authRepository.getUserByName(userLogin.username);
-
+    const user = await MembersRepository.getMemberByNameWithPermissions(userLogin.username);
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
       sleepRandomly(50, 110);
@@ -35,11 +33,10 @@ class AuthService {
       throw new UnauthenticatedError("Username or password wrong");
     }
 
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
-      user.mitgliedID
-    );
+    const directorPermissions: PermissionDTO[] =
+      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
 
-    const payload: JWTPayload = createUserDataPayload(user, directorPermissions);
+    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
   };
 
@@ -48,19 +45,20 @@ class AuthService {
    * @throws NotFoundError if no user was found
    */
   getUserData = async (username: string): Promise<JWTPayload> => {
-    const user: User = await this.authRepository.getUserByName(username);
+    const user = await MembersRepository.getMemberByNameWithPermissions(username);
 
     if (user === null) {
       throw new NotFoundError(`No user found with name ${username}`);
     }
 
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(
-      user.mitgliedID
-    );
+    const directorPermissions: PermissionDTO[] =
+      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
 
-    const payload = createUserDataPayload(user, directorPermissions);
+    const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
   };
+
+  // TODO: Adjsut the following methods to the new typeORM structure
 
   /**
    * Compares the old password with the passwordHash of the user and updates
@@ -70,7 +68,7 @@ class AuthService {
    */
   changeUserPassword = async (userChangePasswordRequest: UserChangePasswordRequest): Promise<void> => {
     // const userPassword = await getUserPasswordByName(userChangePasswordRequest.userName);
-    const user = await this.authRepository.getUserByName(userChangePasswordRequest.userName);
+    const user = await MembersRepository.getMemberByName(userChangePasswordRequest.userName);
 
     if (user === null) {
       throw new UnauthenticatedError("User does not exist");
@@ -83,12 +81,8 @@ class AuthService {
     }
 
     const newPasswordHash = await bcrypt.hash(userChangePasswordRequest.newPassword, 10);
-
-    await this.authRepository.updateUserPasswordByUserNameAndUserID(
-      userChangePasswordRequest.userName,
-      userChangePasswordRequest.userID,
-      newPasswordHash
-    );
+    user.passwordHash = newPasswordHash;
+    await MembersRepository.saveMember(user);
   };
 
   /**
@@ -96,7 +90,7 @@ class AuthService {
    * @param email The email of the password reset entry
    */
   createPasswordResetToken = async (name: string, email: string): Promise<string> => {
-    const user = await this.authRepository.getUserByName(name);
+    const user = await MembersRepository.getMemberByName(name);
 
     if (user === null) {
       // Sleep to prevent oracle attacks (guessing if a user exists by looking at the response time)
@@ -108,10 +102,10 @@ class AuthService {
     const token = crypto.randomBytes(64).toString("base64url");
 
     // Delete old entrys, if any exist
-    await this.authRepository.deletePasswordResetEntriesByEmail(email);
+    await PasswordResetRepository.deletePasswordResetEntriesByEmail(email);
 
     // Insert the values into the passwort_reset table
-    await this.authRepository.createPasswordResetEntry(email, "salt", token);
+    await PasswordResetRepository.createPasswordResetEntry(email, "salt", token);
 
     return token;
   };
@@ -124,30 +118,32 @@ class AuthService {
    * @param newPassword The new password of the user
    */
   resetPasswordWithToken = async (name: string, email: string, token: string, newPassword: string): Promise<void> => {
-    // Get current date
-    const date = createCurrentTimestamp();
-
-    const passwordResetEntry = await this.authRepository.getPasswordReserEntryByEmailAndToken(date, email, token);
+    const passwordResetEntry = await PasswordResetRepository.getPasswordResetEntryByEmailAndToken(email, token);
 
     if (passwordResetEntry === null) {
       throw new NotFoundError(`No password reset entry found with email ${email} and token ${token}`);
     }
 
-    const user = await this.authRepository.getUserByName(name);
+    const user = await MembersRepository.getMemberByName(name);
 
     if (user === null) {
       throw new NotFoundError(`No user found with name ${name}`);
     }
 
+    const timeDiff = getDateDifferenceInDays(passwordResetEntry.date, new Date());
+
     // Check if the entry is older than five days
-    if (passwordResetEntry.datediff <= -6) {
-      await this.authRepository.deletePasswordResetEntriesByEmail(email);
+    if (timeDiff <= -6) {
+      await PasswordResetRepository.deletePasswordResetEntriesByEmail(email);
       throw new ExpiredTokenError("Token already expired");
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    await this.authRepository.updateUserPasswordByUserNameAndUserID(name, user.mitgliedID, newPasswordHash);
-    await this.authRepository.deletePasswordResetEntriesByEmail(email);
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      user.passwordHash = newPasswordHash;
+      await MembersRepository.saveMember(user, transactionalEntityManager);
+      await PasswordResetRepository.deletePasswordResetEntriesByEmail(email, transactionalEntityManager);
+    });
   };
 
   /**
@@ -155,18 +151,11 @@ class AuthService {
    * @param roles Array of roles of the user
    */
   isUserAuthorizedForDepartment = async (roles: number[], departmentID: number): Promise<boolean> => {
-    const departments = await this.membersRepository.getDepartmentsByRoles(roles);
-
+    const departments = await DepartmentRepository.getDepartmentsByRoles(roles);
     if (departments === null) {
       return false;
     }
-
-    for (let i = 0; i < departments.length; i++) {
-      if (departments[i].ressortID === departmentID) {
-        return true;
-      }
-    }
-    return false;
+    return departments.some((department) => department.departmentId === departmentID);
   };
 }
 

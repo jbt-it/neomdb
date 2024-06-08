@@ -2,10 +2,9 @@
  * Component that handles the login process
  */
 import React, { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
-import { Paper, Grid, Button, TextField, Link, useTheme, styled } from "@mui/material";
+import { Paper, Grid, Button, TextField, useTheme, styled, Typography } from "@mui/material";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
 import { useAuth } from "../hooks/useAuth";
@@ -89,7 +88,7 @@ const Login: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          const userID = res.data.mitgliedID;
+          const userID = res.data.memberId;
           const userName = res.data.name;
           const permissions = res.data.permissions;
           const roles = res.data.roles;
@@ -171,12 +170,20 @@ const Login: React.FunctionComponent = () => {
             </Button>
             <Grid container>
               <Grid item xs sx={styles.linkItem}>
-                <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
+                <Link
+                  style={{
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                  }}
+                  to="/passwort-vergessen"
+                >
+                  Forgot Password?
+                </Link>
               </Grid>
               <Grid item xs sx={styles.warningItem}>
-                <Link id="capswarning" variant="body2" sx={styles.warningText}>
+                <Typography id="capswarning" variant="body2" sx={styles.warningText}>
                   {setCapsLockWaring()}
-                </Link>
+                </Typography>
               </Grid>
             </Grid>
           </StyledForm>

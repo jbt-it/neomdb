@@ -2,8 +2,8 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typogra
 import React, { useState } from "react";
 import FieldSection, { Field } from "../../general/FieldSection";
 import MemberSelection from "../../general/MemberSelection";
-import { InternalProjectDetails } from "../../../types/traineesTypes";
-import { MembersField } from "../../../types/membersTypes";
+import { InternalProjectDto } from "../../../types/traineesTypes";
+import { MembersFieldDto } from "../../../types/membersTypes";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -11,12 +11,12 @@ import dayjs, { Dayjs } from "dayjs";
  * Interface for the edit internal project dialog
  */
 interface EditInternalProjectDialogProps {
-  internalProjectDetails: InternalProjectDetails;
+  internalProjectDetails: InternalProjectDto;
   open: boolean;
   closeDialog: () => void;
-  updateInternalProjectDetails: (data: InternalProjectDetails) => void;
-  selectableTrainees: MembersField[];
-  selectableQMs: MembersField[];
+  updateInternalProjectDetails: (data: InternalProjectDto) => void;
+  selectableTrainees: MembersFieldDto[];
+  selectableQMs: MembersFieldDto[];
 }
 
 /**
@@ -82,81 +82,85 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     },
   };
   const isMobile = useResponsive("down", "sm");
-  const [projektname, setProjektName] = useState<string>(internalProjectDetails.projektname);
-  const [kuerzel, setKuerzel] = useState<string>(internalProjectDetails.kuerzel);
-  const [generationsBezeichnung, setGenerationsBezeichnung] = useState<string>(
-    internalProjectDetails.generationsBezeichnung
+  const [projectName, setProjectName] = useState<string>(internalProjectDetails.projectName);
+  const [abbreviation, setAbbreviation] = useState<string>(internalProjectDetails.abbreviation);
+  const [generationName, setGenerationName] = useState<string>(internalProjectDetails.generationName);
+  const [kickoff, setKickoff] = useState<Dayjs | null | undefined>(dayjs(internalProjectDetails.kickoff));
+  const [offerAtEV, setOfferAtEV] = useState<boolean | undefined>(internalProjectDetails.offerAtEv);
+  const [zpHeld, setZpHeld] = useState<Dayjs | null | undefined>(dayjs(internalProjectDetails.zpHeld));
+  const [zpAtEv, setZpAtEv] = useState<boolean | undefined>(internalProjectDetails.zpAtEv);
+  const [apHeld, setApHeld] = useState<Dayjs | null | undefined>(dayjs(internalProjectDetails.apHeld));
+  const [apAtEv, setApAtEv] = useState<boolean | undefined>(internalProjectDetails.apAtEv);
+  const [dlAtEv, setDlAtEv] = useState<boolean | undefined>(internalProjectDetails.dlAtEv);
+  const [projectMembers, setProjectMembers] = useState<MembersFieldDto[]>(internalProjectDetails.members || []);
+  const [qualityManagers, setQualityManagers] = useState<MembersFieldDto[]>(
+    internalProjectDetails.qualityManagers || []
   );
-  const [kickoff, setKickoff] = useState<Dayjs | null | undefined>(internalProjectDetails.kickoff);
-  const [angebotAbgegeben, setAngebotAbgegeben] = useState<boolean | undefined>(internalProjectDetails.AngebotBeiEV);
-  const [zpDatum, setZpDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.ZPGehalten);
-  const [zpAbgegeben, setZpAbgegeben] = useState<boolean | undefined>(internalProjectDetails.ZPBeiEV);
-  const [apDatum, setApDatum] = useState<Dayjs | null | undefined>(internalProjectDetails.APGehalten);
-  const [apAbgegeben, setApAbgegeben] = useState<boolean | undefined>(internalProjectDetails.APBeiEV);
-  const [dlAbgegeben, setDlAbgegeben] = useState<boolean | undefined>(internalProjectDetails.DLBeiEV);
-  const [projektmitglieder, setProjektmitglieder] = useState<MembersField[]>(internalProjectDetails.projektmitglieder);
-  const [qualitaetsmanager, setQualitaetsmanager] = useState<MembersField[]>(internalProjectDetails.qualitaetsmanager);
 
-  const errorAP = apDatum ? (kickoff ? apDatum.isBefore(kickoff) : zpDatum ? apDatum.isBefore(zpDatum) : false) : false;
-  const errorZP = zpDatum ? (kickoff ? zpDatum.isBefore(kickoff) : false) : false;
+  const errorAP = apHeld ? (kickoff ? apHeld.isBefore(kickoff) : zpHeld ? apHeld.isBefore(zpHeld) : false) : false;
+  const errorZP = zpHeld ? (kickoff ? zpHeld.isBefore(kickoff) : false) : false;
 
-  const errorName = projektname === "";
-  const errorKuerzel = kuerzel === "";
+  const errorName = projectName === "";
+  const errorAbbreviation = abbreviation === "";
+
+  const errorEmptyMembers = projectMembers.some((member) => Object.keys(member).length === 0);
+  const errorEmptyQMs = qualityManagers.some((member) => Object.keys(member).length === 0);
 
   // Function to update the internal project details
   const handleUpdateInternalProjectDetails = () => {
-    if (errorAP || errorZP || errorName || errorKuerzel) {
+    if (errorAP || errorZP || errorName || errorAbbreviation || errorEmptyMembers || errorEmptyQMs) {
       return;
     }
-    const data = {
-      internesProjektID: internalProjectDetails?.internesProjektID,
-      projektname,
-      kuerzel,
+
+    const data: InternalProjectDto = {
+      internalProjectId: internalProjectDetails?.internalProjectId,
       generation: internalProjectDetails.generation,
-      generationsBezeichnung,
-      kickoff,
-      AngebotBeiEV: angebotAbgegeben,
-      ZPBeiEV: zpAbgegeben,
-      ZPGehalten: zpDatum,
-      APBeiEV: apAbgegeben,
-      APGehalten: apDatum,
-      DLBeiEV: dlAbgegeben,
-      projektmitglieder,
-      qualitaetsmanager,
+      generationName: generationName,
+      projectName: projectName,
+      abbreviation: abbreviation,
+      kickoff: kickoff ? kickoff.toDate() : null,
+      offerAtEv: offerAtEV ? true : false,
+      zpAtEv: zpAtEv ? true : false,
+      zpHeld: zpHeld ? zpHeld.toDate() : null,
+      apAtEv: apAtEv ? true : false,
+      apHeld: apHeld ? apHeld.toDate() : null,
+      dlAtEv: dlAtEv ? true : false,
+      members: projectMembers,
+      qualityManagers: qualityManagers,
     };
+
     updateInternalProjectDetails(data);
   };
-
   /**
    * Handles the closing of the internal project information dialog
    * @param event FormEvent
    */
   const handleInternalProjectInfoDialogClose: VoidFunction = () => {
-    setProjektName(internalProjectDetails.projektname);
-    setKuerzel(internalProjectDetails.kuerzel);
-    setGenerationsBezeichnung(internalProjectDetails.generationsBezeichnung);
-    setKickoff(internalProjectDetails.kickoff);
-    setAngebotAbgegeben(internalProjectDetails.AngebotBeiEV);
-    setApDatum(internalProjectDetails.APGehalten);
-    setApAbgegeben(internalProjectDetails.APBeiEV);
-    setZpDatum(internalProjectDetails.ZPGehalten);
-    setZpAbgegeben(internalProjectDetails.ZPBeiEV);
-    setDlAbgegeben(internalProjectDetails.DLBeiEV);
-    setProjektmitglieder(internalProjectDetails.projektmitglieder);
-    setQualitaetsmanager(internalProjectDetails.qualitaetsmanager);
+    setProjectName(internalProjectDetails.projectName);
+    setAbbreviation(internalProjectDetails.abbreviation);
+    setGenerationName(internalProjectDetails.generationName);
+    setKickoff(dayjs(internalProjectDetails.kickoff));
+    setOfferAtEV(internalProjectDetails.offerAtEv);
+    setApHeld(dayjs(internalProjectDetails.apHeld));
+    setApAtEv(internalProjectDetails.apAtEv);
+    setZpHeld(dayjs(internalProjectDetails.zpHeld));
+    setZpAtEv(internalProjectDetails.zpAtEv);
+    setDlAtEv(internalProjectDetails.dlAtEv);
+    setProjectMembers(internalProjectDetails.members || []);
+    setQualityManagers(internalProjectDetails.qualityManagers || []);
     closeDialog();
   };
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjektName(event.target.value);
+    setProjectName(event.target.value);
   };
 
   const onChangeKuerzel = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKuerzel(event.target.value);
+    setAbbreviation(event.target.value);
   };
 
   const onChangeTraineegeneration = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGenerationsBezeichnung(event.target.value);
+    setGenerationName(event.target.value);
   };
 
   const onChangeKickoff = (value: unknown) => {
@@ -166,78 +170,78 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
 
   const onChangeApDatum = (value: unknown) => {
     const dateValue = value as Dayjs;
-    setApDatum(dateValue);
+    setApHeld(dateValue);
   };
 
   const onChangeZpDatum = (value: unknown) => {
     const dateValue = value as Dayjs;
-    setZpDatum(dateValue);
+    setZpHeld(dateValue);
   };
 
   const onChangeAngebotAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAngebotAbgegeben(event.target.checked);
+    setOfferAtEV(event.target.checked);
   };
 
   const onChangeApAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setApAbgegeben(event.target.checked);
+    setApAtEv(event.target.checked);
   };
 
   const onChangeZpAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setZpAbgegeben(event.target.checked);
+    setZpAtEv(event.target.checked);
   };
 
   const onChangeDlAbgegeben = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDlAbgegeben(event.target.checked);
+    setDlAtEv(event.target.checked);
   };
 
   // Function to handle the selection of a member
-  const handleMemberSelection = (event: React.SyntheticEvent, value: MembersField | null) => {
+  const handleMemberSelection = (event: React.SyntheticEvent, value: MembersFieldDto | null) => {
     event.persist();
     const index = Number(event.currentTarget.id.split("-")[1]);
     if (value !== null) {
-      const updatedMembers = [...projektmitglieder];
+      const updatedMembers = [...projectMembers];
       updatedMembers[index] = value;
-      setProjektmitglieder(updatedMembers);
+      setProjectMembers(updatedMembers);
     }
   };
 
   // Function to add a member to the list of members
   const addMember = () => {
-    setProjektmitglieder((prev) => [...prev, [] as unknown as MembersField]);
+    setProjectMembers((prev) => [...prev, [] as unknown as MembersFieldDto]);
   };
 
   // Function to remove a member from the list of members
-  const removeMember = (mitgliedID: number) => {
-    const updatedMembers = projektmitglieder.filter((member) => member.mitgliedID !== mitgliedID);
-    setProjektmitglieder(updatedMembers);
+  const removeMember = (memberId: number) => {
+    const updatedMembers = projectMembers.filter((member) => member.memberId !== memberId);
+    setProjectMembers(updatedMembers);
   };
 
   // Function to handle the selection of a QM
-  const handleQMSelection = (event: React.SyntheticEvent, value: MembersField | null) => {
+  const handleQMSelection = (event: React.SyntheticEvent, value: MembersFieldDto | null) => {
     const index = Number(event.currentTarget.id.split("-")[1]);
     if (value !== null) {
-      const updatedQMs = [...qualitaetsmanager];
+      const updatedQMs = [...qualityManagers];
       updatedQMs[index] = value;
-      setQualitaetsmanager(updatedQMs);
+      setQualityManagers(updatedQMs);
     }
   };
 
   // Function to add a member to the list of QMs
   const addQM = () => {
-    setQualitaetsmanager((prev) => [...prev, [] as unknown as MembersField]);
+    setQualityManagers((prev) => [...prev, [] as unknown as MembersFieldDto]);
   };
 
   // Function to remove a member from the list of QMs
-  const removeQM = (mitgliedID: number) => {
-    const updatedQMs = qualitaetsmanager.filter((member) => member.mitgliedID !== mitgliedID);
-    setQualitaetsmanager(updatedQMs);
+  const removeQM = (memberId: number) => {
+    const updatedQMs = qualityManagers.filter((member) => member.memberId !== memberId);
+    setQualityManagers(updatedQMs);
   };
 
   // detail fields
   const internalProjectDialogFields: Array<Field> = [
     {
       label: "Name",
-      state: projektname,
+      state: projectName,
       width: isMobile ? "full" : "half",
       onChangeCallback: onChangeName,
       type: "Text",
@@ -246,16 +250,16 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     },
     {
       label: "Kürzel",
-      state: kuerzel,
+      state: abbreviation,
       width: isMobile ? "full" : "half",
       onChangeCallback: onChangeKuerzel,
       type: "Text",
-      error: errorKuerzel,
-      helperText: errorKuerzel ? "Kürzel darf nicht leer sein" : "",
+      error: errorAbbreviation,
+      helperText: errorAbbreviation ? "Kürzel darf nicht leer sein" : "",
     },
     {
       label: "Traineegeneration",
-      state: generationsBezeichnung,
+      state: generationName,
       width: "full",
       onChangeCallback: onChangeTraineegeneration,
       type: "Text",
@@ -264,7 +268,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     { label: "Kickoff", state: dayjs(kickoff), width: "full", onChangeCallback: onChangeKickoff, type: "Date" },
     {
       label: "ZP Datum",
-      state: dayjs(zpDatum),
+      state: dayjs(zpHeld),
       width: "full",
       onChangeCallback: onChangeZpDatum,
       type: "Date",
@@ -273,7 +277,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
     },
     {
       label: "AP Datum",
-      state: dayjs(apDatum),
+      state: dayjs(apHeld),
       width: "full",
       onChangeCallback: onChangeApDatum,
       type: "Date",
@@ -286,28 +290,28 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
   const fieldDocuments: Array<Field> = [
     {
       label: "Angebot abgegeben",
-      state: angebotAbgegeben,
+      state: offerAtEV,
       width: "full",
       onChangeCallback: onChangeAngebotAbgegeben,
       type: "Checkbox",
     },
     {
       label: "ZP abgegeben",
-      state: zpAbgegeben,
+      state: zpAtEv,
       width: "full",
       onChangeCallback: onChangeZpAbgegeben,
       type: "Checkbox",
     },
     {
       label: "AP abgegeben",
-      state: apAbgegeben,
+      state: apAtEv,
       width: "full",
       onChangeCallback: onChangeApAbgegeben,
       type: "Checkbox",
     },
     {
       label: "DL abgegeben",
-      state: dlAbgegeben,
+      state: dlAtEv,
       width: "full",
       onChangeCallback: onChangeDlAbgegeben,
       type: "Checkbox",
@@ -316,7 +320,7 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
 
   return (
     <Dialog open={open} onClose={handleInternalProjectInfoDialogClose}>
-      <DialogTitle>{internalProjectDetails.projektname} bearbeiten</DialogTitle>
+      <DialogTitle>{internalProjectDetails.projectName} bearbeiten</DialogTitle>
       <DialogContent dividers={true}>
         <Box sx={styles.fieldSectionBox}>
           <FieldSection title={"Details"} fields={internalProjectDialogFields}></FieldSection>
@@ -326,18 +330,24 @@ const EditInternalProjectDialog: React.FunctionComponent<EditInternalProjectDial
         </Box>
         <Box sx={styles.fieldSectionBox && styles.projectMembers}>
           <Typography variant="subtitle1">Projektmitglieder</Typography>
+          {errorEmptyMembers ? (
+            <Typography color="error">Bitte füge ein Projektmitglied hinzu oder lösche das leere Feld</Typography>
+          ) : null}
           <MemberSelection
-            selectedMembers={projektmitglieder}
+            selectedMembers={projectMembers}
             addMember={addMember}
             onChangeCallback={handleMemberSelection}
             removeMember={removeMember}
             selectableMembers={selectableTrainees}
-          ></MemberSelection>
+          />
         </Box>
         <Box sx={styles.fieldSectionBox && styles.projectMembers}>
           <Typography variant="subtitle1">Qualitätsmanager</Typography>
+          {errorEmptyQMs ? (
+            <Typography color="error">Bitte füge ein Qualitätsmanager hinzu oder lösche das leere Feld</Typography>
+          ) : null}
           <MemberSelection
-            selectedMembers={qualitaetsmanager}
+            selectedMembers={qualityManagers}
             addMember={addQM}
             removeMember={removeQM}
             onChangeCallback={handleQMSelection}

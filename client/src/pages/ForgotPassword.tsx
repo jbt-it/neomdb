@@ -64,7 +64,6 @@ const ForgotPassword: React.FunctionComponent = () => {
    * Send the email to the backend
    */
   const sendEmailWithLink = () => {
-    console.log("sendEmailWithLink");
     const data = {
       email,
     };

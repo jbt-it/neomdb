@@ -7,7 +7,7 @@ import { Permission } from "../types/globalTypes";
  * @returns true if at least one of the `permissions` are included in `memberPermissions`
  */
 export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
-  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionID === element));
+  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionId === element));
 };
 
 /**
