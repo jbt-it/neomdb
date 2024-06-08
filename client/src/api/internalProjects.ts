@@ -36,5 +36,5 @@ export const getAllIPs = async (): Promise<AxiosResponse<InternalProjectDto[]>> 
  * @returns The updated internal project of type InternalProjectDto
  */
 export const updateIP = async (internalProject: InternalProjectDto): Promise<AxiosResponse<InternalProjectDto>> => {
-  return await api.put<InternalProjectDto>(`/trainees/ip/${internalProject.internalProjectID}`, internalProject);
+  return await api.put<InternalProjectDto>(`/trainees/ip/${internalProject.internalProjectId}`, internalProject);
 };
