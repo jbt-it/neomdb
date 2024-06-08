@@ -5,9 +5,10 @@ import { Box, ListItemButton, Collapse, List } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-import { Permission } from "../../../types/globalTypes";
+import { Auth, Permission } from "../../../types/globalTypes";
 import { useAuth } from "../../../hooks/useAuth";
 import usePathname from "../../../hooks/usePathname";
+import { checkForPermission } from "../../../utils/authUtils";
 
 interface NavItemProps {
   item: {
@@ -17,7 +18,7 @@ interface NavItemProps {
     children?: {
       title: string;
       path: string;
-      permissions?: Permission[];
+      permissions?: number[];
     }[];
   };
   openItem?: boolean;
@@ -27,7 +28,7 @@ interface NavItemProps {
 interface NavItemChildProps {
   path: string;
   title: string;
-  permissions?: Permission[];
+  permissions?: number[];
 }
 
 /**
@@ -50,6 +51,14 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   }, [item.children, pathname]);
 
   const active = item.path === pathname || activeChild;
+
+  const checkAccess = (navPermissions?: number[]) => {
+    if (navPermissions === undefined) {
+      return true;
+    } else {
+      return checkForPermission(auth.permissions, navPermissions);
+    }
+  };
 
   if (item.children !== undefined && setOpenItem !== undefined) {
     const handleCollpaseClick = () => {
@@ -87,7 +96,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
         <Collapse in={openItem} timeout="auto" unmountOnExit>
           <List sx={{ marginLeft: 3, marginTop: -1, paddingBottom: 0 }}>
             {item.children.map((child: NavItemChildProps) =>
-              child.permissions && auth.permissions.length === 0 ? null : (
+              checkAccess(child.permissions) ? (
                 <ListItemButton
                   component={NavLink}
                   to={child.path}
@@ -113,7 +122,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
                 >
                   <Box component="span">{child.title} </Box>
                 </ListItemButton>
-              )
+              ) : null
             )}
           </List>
         </Collapse>

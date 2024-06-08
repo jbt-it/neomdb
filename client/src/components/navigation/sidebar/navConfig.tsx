@@ -9,7 +9,7 @@ interface NavItem {
   children?: {
     title: string;
     path: string;
-    permissions?: Permission[];
+    permissions?: number[];
   }[];
 }
 
@@ -123,6 +123,11 @@ const navConfig: NavItem[] = [
       {
         title: "Innovationsmanagement",
         path: "/innovationsmanagement",
+      },
+      {
+        title: "Finanzen",
+        path: "/finanzuebersicht",
+        permissions: [6],
       },
     ],
   },
