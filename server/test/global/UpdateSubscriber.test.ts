@@ -3,6 +3,7 @@ import request from "supertest";
 import { DepartmentDetailsDto, UpdateDepartmentDto } from "types/memberTypes";
 import app from "../../src/app";
 import { AppDataSource } from "../../src/datasource";
+import { MemberStatus } from "../../src/entities/MemberStatus";
 import { Trace } from "../../src/entities/Trace";
 import AuthTestUtils from "../utils/authTestUtils";
 import MemberTestUtils from "../utils/memberTestUtils";
@@ -51,9 +52,9 @@ describe("Test UpdateSubscriber", () => {
     // Retrieve the member
     const memberResponse = await request(app).get(`/api/members/${memberId}`).set("Cookie", `token=${token}`);
     expect(memberResponse.status).toBe(200);
-
     const updatedMember = {
       ...memberResponse.body,
+      memberStatus: await AppDataSource.getRepository(MemberStatus).findOne({ where: { memberStatusId: 1 } }),
       employer: "Changed employer",
       specializations: "Changed specializations",
     };
@@ -71,7 +72,7 @@ describe("Test UpdateSubscriber", () => {
     expect(traces.length).toBe(1);
     expect(traces[0].changedId).toBe(memberId);
     expect(traces[0].table).toBe("Member");
-    expect(traces[0].action).toBe("Changed employer and specializations");
+    expect(traces[0].action).toBe("Changed member.");
     expect(traces[0].user).toBe("m.decker");
   });
 
@@ -107,7 +108,7 @@ describe("Test UpdateSubscriber", () => {
     expect(traces.length).toBe(1);
     expect(traces[0].changedId).toBe(departmentId);
     expect(traces[0].table).toBe("Department");
-    expect(traces[0].action).toBe("Changed linkObjectivePresentation");
+    expect(traces[0].action).toBe("Changed department.");
     expect(traces[0].user).toBe("m.decker");
   });
 });
