@@ -41,7 +41,7 @@ afterAll(async () => {
   await AppDataSource.destroy();
 });
 
-describe("Test UpdateSubscriber", () => {
+describe("Test ChangeSubscriber on updates", () => {
   test("Should create a trace entry when a member is updated", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
@@ -111,4 +111,8 @@ describe("Test UpdateSubscriber", () => {
     expect(traces[0].action).toBe("Changed department.");
     expect(traces[0].user).toBe("m.decker");
   });
+});
+
+describe("Test ChangeSubscriber on deletes", () => {
+  // Currently, there is no delete functionality implemented that would trigger the ChangeSubscriber.
 });
