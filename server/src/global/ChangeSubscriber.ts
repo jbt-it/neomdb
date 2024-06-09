@@ -52,7 +52,7 @@ export class ChangeSubscriber implements EntitySubscriberInterface<any> {
       trace.table = event.metadata.name;
       trace.changedId = event.entity[entityIdToTrack];
       trace.action = actionText;
-      trace.user = user.name;
+      trace.user = user?.name || "unknown user";
 
       // Save trace entity
       traceRepository.save(trace);
