@@ -1,7 +1,7 @@
+import { Box, Stack } from "@mui/material";
 import React, { useState } from "react";
-import { Box, List, Stack } from "@mui/material";
-import navConfig from "./navConfig";
 import NavItem from "./NavItem";
+import navConfig from "./navConfig";
 
 const SidebarDesktop = () => {
   const [openMitglieder, setOpenMitglieder] = useState(false);

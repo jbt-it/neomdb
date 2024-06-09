@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-import { Box, ListItemButton, Collapse, List } from "@mui/material";
+import { ExpandLess, ExpandMore, SvgIconComponent } from "@mui/icons-material";
+import { Box, Collapse, List, ListItemButton } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-import { Auth, Permission } from "../../../types/globalTypes";
 import { useAuth } from "../../../hooks/useAuth";
 import usePathname from "../../../hooks/usePathname";
 import { checkForPermission } from "../../../utils/authUtils";
@@ -52,6 +51,12 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
 
   const active = item.path === pathname || activeChild;
 
+  /**
+   * Checks if the user has the permission to view the NavBar item.
+   *
+   * @param navPermissions - The permissions required for the item in the NavBar.
+   * @returns true if the user has the given permissions, false otherwise.
+   */
   const checkAccess = (navPermissions?: number[]) => {
     if (navPermissions === undefined) {
       return true;
