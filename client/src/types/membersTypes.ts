@@ -142,7 +142,7 @@ export type MemberPermissionAssignmentDto = {
 /**
  * Type of the assign permission dto
  */
-export type AssignPermissionToMemberRequest = {
+export type AssignPermissionToMemberRequestDto = {
   memberId: number;
   permissionID: number;
 };
@@ -430,7 +430,7 @@ export type StatusOverview = {
 /**
  * Type of the response after creating a member
  */
-export type CreateMemberResponse = {
+export type CreateMemberResponseDto = {
   memberId: number;
   statusOverview: StatusOverview;
 };

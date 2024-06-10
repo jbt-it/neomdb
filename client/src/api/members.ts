@@ -2,7 +2,7 @@ import api from "../utils/api";
 import { AxiosResponse } from "axios";
 import {
   AddMemberParams,
-  CreateMemberResponse,
+  CreateMemberResponseDto,
   ItSkill,
   Language,
   MemberDetailsDto,
@@ -104,6 +104,6 @@ export const saveMemberImage = async ({ image, memberID }: UpdateMemberImagePara
  * @param member - The details of the new member
  * @returns The new member of type MemberDetails
  */
-export const addMember = async (member: AddMemberParams): Promise<AxiosResponse<CreateMemberResponse>> => {
+export const addMember = async (member: AddMemberParams): Promise<AxiosResponse<CreateMemberResponseDto>> => {
   return await api.post("/members", member);
 };

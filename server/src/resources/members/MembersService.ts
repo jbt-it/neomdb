@@ -286,7 +286,7 @@ class MembersService {
     // Create jbtMail and newUserName
     const { newUserName, jbtMail } = await this.createJBTMailAndNameOfMember(newMemberRequest.name);
 
-    let memberID = null;
+    let memberId = null;
     // Create member in database
     try {
       const { ...member } = newMemberRequest;
@@ -308,7 +308,7 @@ class MembersService {
         // Add the generation to the member
         newMember = { ...member, generationId: currentGenerationId };
       }
-      memberID = await MembersRepository.createMember({
+      memberId = await MembersRepository.createMember({
         ...newMember,
         name: newUserName,
         passwordHash: passwordHash,
@@ -346,7 +346,7 @@ class MembersService {
         statusOverview.queryErrorMsg = error.message;
       }
     }
-    return { memberID, statusOverview };
+    return { memberId, statusOverview };
   };
 
   /**
