@@ -36,6 +36,7 @@ import {
 } from "../../types/memberTypes";
 import { canPermissionBeDelegated, doesPermissionsInclude } from "../../utils/authUtils";
 import MembersService from "./MembersService";
+import { ExpressRequest } from "../../types/expressTypes";
 
 /**
  * Controller for the members module
@@ -82,7 +83,7 @@ export class MembersController extends Controller {
    */
   @Post("{id}/image")
   @Security("jwt")
-  public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: any) {
+  public async saveImage(@Path() id: number, @Body() requestBody: MemberImage, @Request() request: ExpressRequest) {
     const user = request.user as JWTPayload;
     // The user can only save the image if he is the member himself
     if (id !== user.memberId) {
@@ -268,7 +269,7 @@ export class MembersController extends Controller {
    */
   @Get("permission-assignments")
   @Security("jwt")
-  public async getPermissionAssignments(@Request() request: any): Promise<PermissionAssignmentDto[]> {
+  public async getPermissionAssignments(@Request() request: ExpressRequest): Promise<PermissionAssignmentDto[]> {
     const user = request.user as JWTPayload;
     const userHasAnyPermission = user.permissions.length > 0;
     if (!userHasAnyPermission) {
@@ -285,7 +286,7 @@ export class MembersController extends Controller {
    */
   @Get("permissions")
   @Security("jwt")
-  public async getPermissions(@Request() request: any): Promise<Permission[]> {
+  public async getPermissions(@Request() request: ExpressRequest): Promise<Permission[]> {
     const user = request.user as JWTPayload;
     const userHasAnyPermission = user.permissions.length > 0;
     if (!userHasAnyPermission) {
@@ -313,7 +314,7 @@ export class MembersController extends Controller {
   @SuccessResponse("201")
   public async assignPermissionToMember(
     @Body() requestBody: AssignPermissionToMemberRequestDto,
-    @Request() request: any
+    @Request() request: ExpressRequest
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
@@ -346,7 +347,7 @@ export class MembersController extends Controller {
   @Security("jwt")
   public async unassignPermissionFromMember(
     @Body() requestBody: AssignPermissionToMemberRequestDto,
-    @Request() request: any
+    @Request() request: ExpressRequest
   ): Promise<void> {
     const user = request.user as JWTPayload;
     const { memberID, permissionID } = requestBody;
@@ -373,13 +374,13 @@ export class MembersController extends Controller {
    */
   @Get("{id}")
   @Security("jwt")
-  public async getMember(@Path() id: number, @Request() request: any): Promise<MemberDetailsDto> {
+  public async getMember(@Path() id: number, @Request() request: ExpressRequest): Promise<MemberDetailsDto> {
     const user = request.user;
     let userCanViewFinancialData = false;
 
     // Only if the user is the member to retrieve or they have the correct permissions
     // the financial data is retrieved as well
-    if (id === user.mitgliedID || doesPermissionsInclude(user.permissions, [6])) {
+    if (id === user.memberId || doesPermissionsInclude(user.permissions, [6])) {
       userCanViewFinancialData = true;
     }
     const member = await this.membersService.getMemberDetails(id, userCanViewFinancialData);
@@ -483,7 +484,7 @@ export class MembersController extends Controller {
   public async updateMember(
     @Path() id: number,
     @Body() requestBody: MemberDetailsDto,
-    @Request() request: any
+    @Request() request: ExpressRequest
   ): Promise<void> {
     const user = request.user as JWTPayload;
 
