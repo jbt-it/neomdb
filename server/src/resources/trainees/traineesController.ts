@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
-import TraineesService from "./TraineesService";
+import { Generation } from "../../entities/Generation";
+import { MembersFieldDto, MentorDto } from "../../types/memberTypes";
 import {
   InternalProjectDto,
+  TraineeAssignmentDto,
   TraineeChoiceDto,
   TraineeMotivationDto,
   TraineeProgressDto,
   UpdateVotingDeadlinesRequestDto,
-  TraineeAssignmentDto,
 } from "../../types/traineeTypes";
 import MembersService from "../members/MembersService";
-import { MembersFieldDto, MentorDto } from "../../types/memberTypes";
-import { Generation } from "../../entities/Generation";
+import TraineesService from "./TraineesService";
 
 /**
  * Controller for the trainees
