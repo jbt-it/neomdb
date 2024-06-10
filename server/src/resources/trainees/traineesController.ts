@@ -7,10 +7,10 @@ import {
   TraineeProgressDto,
   UpdateVotingDeadlinesRequestDto,
   TraineeAssignmentDto,
-} from "../../typeOrm/types/traineeTypes";
+} from "../../types/traineeTypes";
 import MembersService from "../members/MembersService";
-import { MembersFieldDto, MentorDto } from "../../typeOrm/types/memberTypes";
-import { Generation } from "../../typeOrm/entities/Generation";
+import { MembersFieldDto, MentorDto } from "../../types/memberTypes";
+import { Generation } from "../../entities/Generation";
 
 /**
  * Controller for the trainees

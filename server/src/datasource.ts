@@ -42,18 +42,18 @@ const getDbConfig = () => {
     dbHost = process.env.DB_TEST_HOST;
     dbUsername = process.env.DB_TEST_USER;
     dbName = process.env.DB_TEST_NAME;
-    entities = [__dirname + "/typeOrm/entities/*.ts"];
+    entities = [__dirname + "/entities/*.ts"];
     synchronize = true;
   } else if (isProduction) {
     dbHost = process.env.DB_HOST_PROD;
     dbUsername = process.env.DB_USER;
     dbName = process.env.DB_NAME;
-    entities = [__dirname + "/typeOrm/entities/*.js"];
+    entities = [__dirname + "/entities/*.js"];
   } else {
     dbHost = process.env.DB_HOST_DEV;
     dbUsername = process.env.DB_USER;
     dbName = process.env.DB_NAME;
-    entities = [__dirname + "/typeOrm/entities/*.ts"];
+    entities = [__dirname + "/entities/*.ts"];
   }
 
   return {

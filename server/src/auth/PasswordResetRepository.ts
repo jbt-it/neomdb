@@ -1,8 +1,8 @@
 import { EntityManager } from "typeorm";
 import { AppDataSource } from "../datasource";
-import { PasswordReset } from "../typeOrm/entities/PasswordReset";
+import { PasswordReset } from "../entities/PasswordReset";
 
-export const PasswordResetRepository_typeORM = AppDataSource.getRepository(PasswordReset).extend({
+export const PasswordResetRepository = AppDataSource.getRepository(PasswordReset).extend({
   /**
    * Deletes a password reset entries by its email
    * @param memberJbtEmail The email of the password reset entries

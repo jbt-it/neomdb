@@ -1,5 +1,5 @@
-import { InternalProjectDto } from "../../typeOrm/types/traineeTypes";
-import { InternalProject } from "../../typeOrm/entities/InternalProject";
+import { InternalProjectDto } from "../../types/traineeTypes";
+import { InternalProject } from "../../entities/InternalProject";
 import { MemberMapper } from "../members/MemberMapper";
 
 /**

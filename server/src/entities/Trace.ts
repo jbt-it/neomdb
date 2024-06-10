@@ -7,17 +7,17 @@ export class Trace {
   traceId: number;
 
   @Column("datetime", { name: "aenderungszeitpunkt" })
-  aenderungszeitpunkt: Date;
+  dateOfChange: Date;
 
   @Column("varchar", { name: "aktion", length: 150 })
-  aktion: string;
+  action: string;
 
   @Column("varchar", { name: "benutzer", length: 45 })
-  benutzer: string;
+  user: string;
 
   @Column("text", { name: "tabelle" })
-  tabelle: string;
+  table: string;
 
   @Column("int", { name: "geaenderteID" })
-  geaenderteId: number;
+  changedId: number;
 }

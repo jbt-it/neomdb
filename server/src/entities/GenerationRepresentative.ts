@@ -1,10 +1,11 @@
 import { Column, Entity } from "typeorm";
 
 @Entity("generationenbeauftragter", { schema: "mdb" })
-export class Generationenbeauftragter {
+export class GenerationRepresentative {
   @Column("int", { primary: true, name: "generation_generationID" })
-  generationGenerationId: number;
+  generationId: number;
 
+  // TODO: Make foreign, if entity is used
   @Column("int", { primary: true, name: "mitglied_mitgliedID" })
-  mitgliedMitgliedId: number;
+  memberId: number;
 }

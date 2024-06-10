@@ -1,9 +1,9 @@
 import { Column, Entity } from "typeorm";
 
 @Entity("hilfetext", { schema: "mdb" })
-export class Hilfetext {
+export class HelpText {
   @Column("varchar", { primary: true, name: "hilfetextID", length: 255 })
-  hilfetextId: string;
+  helpTextId: string;
 
   @Column("tinyint", { name: "editable", width: 1, default: () => "'1'" })
   editable: boolean;

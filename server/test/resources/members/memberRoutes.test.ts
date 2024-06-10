@@ -302,8 +302,8 @@ describe("Test member routes", () => {
 
       const memberFromDB = await memberTestUtils.getMemberByIDFromDB(response.body.memberID);
       expect(memberFromDB).not.toBeNull();
-      expect(memberFromDB.mitgliedID).toBe(response.body.memberID);
-      expect(memberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(memberFromDB.memberId).toBe(response.body.memberID);
+      expect(memberFromDB.memberStatus.name).toBe("Trainee");
     });
 
     test("should return 403 for creating a new member without permission", async () => {
@@ -356,19 +356,19 @@ describe("Test member routes", () => {
       expect(firstResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(firstMemberFromDB).not.toBeNull();
-      expect(firstMemberFromDB.mitgliedID).toBe(firstResponse.body.memberID);
-      expect(firstMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(firstMemberFromDB.memberId).toBe(firstResponse.body.memberID);
+      expect(firstMemberFromDB.memberStatus.name).toBe("Trainee");
 
       expect(secondResponse.status).toBe(201);
       expect(secondResponse.body.memberID).toBeDefined();
       expect(secondResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(secondMemberFromDB).not.toBeNull();
-      expect(secondMemberFromDB.mitgliedID).toBe(secondResponse.body.memberID);
-      expect(secondMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(secondMemberFromDB.memberId).toBe(secondResponse.body.memberID);
+      expect(secondMemberFromDB.memberStatus.name).toBe("Trainee");
 
-      expect(firstMemberFromDB.jbt_email).toBe("jesse.pinkman@studentische-beratung.de");
-      expect(secondMemberFromDB.jbt_email).toBe("jesse.pinkman1@studentische-beratung.de");
+      expect(firstMemberFromDB.jbtEmail).toBe("jesse.pinkman@studentische-beratung.de");
+      expect(secondMemberFromDB.jbtEmail).toBe("jesse.pinkman1@studentische-beratung.de");
     });
   });
 

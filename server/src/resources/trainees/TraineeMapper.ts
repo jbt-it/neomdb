@@ -1,12 +1,12 @@
-import { Member } from "../../typeOrm/entities/Member";
+import { Member } from "../../entities/Member";
 import {
   TraineeChoiceDto,
   TraineeMotivationDto,
   TraineeProgressDto,
   MandatoryWorkshopFeedback,
-} from "../../typeOrm/types/traineeTypes";
-import { MentorDto } from "../../typeOrm/types/memberTypes";
-import { InternalProject } from "../../typeOrm/entities/InternalProject";
+} from "../../types/traineeTypes";
+import { MentorDto } from "../../types/memberTypes";
+import { InternalProject } from "../../entities/InternalProject";
 
 export class TraineeMapper {
   // --- To DTO mapper functions
