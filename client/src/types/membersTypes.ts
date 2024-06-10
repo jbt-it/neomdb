@@ -62,7 +62,6 @@ export type DepartmentPartialDto = {
 /**
  * Type of the department
  */
-// @JanMueller31 -> Former DepartmentDetails TODO: Delete this comment line after type is used
 export type DepartmentDetailsDto = {
   departmentId: number;
   name: string;
@@ -75,7 +74,6 @@ export type DepartmentDetailsDto = {
 /**
  * Type of the request to update a department
  */
-// @JanMueller31 -> Can be used for the update of a department TODO: Delete this comment line after type is used
 export type UpdateDepartmentDto = {
   linkObjectivePresentation: string;
   linkOrganigram: string;
