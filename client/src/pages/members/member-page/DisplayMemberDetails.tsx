@@ -45,7 +45,6 @@ interface DisplayMemberDetailsProps {
   memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
-  getMemberDetails: () => void;
 }
 
 /**

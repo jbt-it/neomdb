@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Box, Stack, Divider, SelectChangeEvent } from "@mui/material";
 
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 
-import { MemberPartialDto } from "../../types/membersTypes";
 import { Trainee, InternalProjectDto, Generation } from "../../types/traineesTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 
@@ -14,6 +13,7 @@ import InternalProjectCard from "../../components/members/trainees/InternalProje
 import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSectionSkeleton";
 import AddInternalProjectButton from "../../components/members/trainees/AddInternalProjectButton";
 import GenerationSelection from "../../components/members/trainees/GenerationSelection";
+import useMembers from "../../hooks/members/useMembers";
 
 /**
  * This component displays the trainee section page
@@ -25,11 +25,11 @@ import GenerationSelection from "../../components/members/trainees/GenerationSel
 const TraineeSection: React.FunctionComponent = () => {
   const { auth, dispatchAuth } = useContext(AuthContext);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
-  const [members, setMembers] = useState<MemberPartialDto[]>([]);
   const [internalProjects, setInternalProjects] = useState<InternalProjectDto[]>([]);
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
+  const { members } = useMembers();
 
   const [isLoadingGenerations, setIsLoadingGenerations] = useState<boolean>(true); // state for loading generations
   const [isLoadingTrainees, setIsLoadingTrainees] = useState<boolean>(true); // state for loading trainees
@@ -123,36 +123,6 @@ const TraineeSection: React.FunctionComponent = () => {
   };
 
   /**
-   * Retrieves all members
-   * TODO: split into two functions, one for all members who should be selected as qms and one for members of a specific generation
-   */
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/users`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  /**
    * retrieves all traineegenerations from the database and sets the state of traineegenerations
    * TODO: change to only get a specific generation as soon as the backend route is fixed
    */
@@ -188,7 +158,6 @@ const TraineeSection: React.FunctionComponent = () => {
   };
 
   useEffect(() => getGenerations(), []);
-  useEffect(() => getMembers(), []);
   useEffect(() => getTrainees(), [selectedGeneration]);
   useEffect(() => getInternalProjects(), [selectedGeneration]);
 

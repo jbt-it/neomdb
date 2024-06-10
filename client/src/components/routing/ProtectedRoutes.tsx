@@ -1,7 +1,7 @@
-import React from "react";
-import { useAuth } from "../../hooks/useAuth";
+import React, { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * This file contains the ProtectedRoute component, which is responsible for rendering the protected routes of the application.
@@ -21,7 +21,7 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
    </Route>
  */
 const ProtectedRoute = ({ children, permissionIDs }: any) => {
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const location = useLocation();
 
   /**

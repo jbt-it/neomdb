@@ -317,7 +317,8 @@ export class MembersController extends Controller {
     @Request() request: ExpressRequest
   ): Promise<void> {
     const user = request.user as JWTPayload;
-    const { memberID, permissionID } = requestBody;
+    const { memberId, permissionID } = requestBody;
+
     const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
     // Checks if the member is allowed to delegate the permission (if they are not an admin)
@@ -329,7 +330,7 @@ export class MembersController extends Controller {
       throw new UnauthorizedError("Permission cannot be delegated!");
     }
 
-    await this.membersService.addPermissionToMember(memberID, permissionID);
+    await this.membersService.addPermissionToMember(memberId, permissionID);
   }
 
   /**
@@ -350,7 +351,7 @@ export class MembersController extends Controller {
     @Request() request: ExpressRequest
   ): Promise<void> {
     const user = request.user as JWTPayload;
-    const { memberID, permissionID } = requestBody;
+    const { memberId, permissionID } = requestBody;
     const isUserAdmin = doesPermissionsInclude(user.permissions, [100]);
 
     // Checks if the member is allowed to delete the permission (if they are not an admin)
@@ -362,7 +363,7 @@ export class MembersController extends Controller {
       throw new UnauthorizedError("Permission cannot be deleted!");
     }
 
-    await this.membersService.deletePermissionFromMember(memberID, permissionID);
+    await this.membersService.deletePermissionFromMember(memberId, permissionID);
   }
 
   /**
