@@ -3490,14 +3490,14 @@
 					"statusOverview": {
 						"$ref": "#/components/schemas/StatusOverview"
 					},
-					"memberID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"statusOverview",
-					"memberID"
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the response after creating a member"
@@ -3705,14 +3705,14 @@
 						"type": "number",
 						"format": "double"
 					},
-					"memberID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"permissionID",
-					"memberID"
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the request to assign a permission to a member"

@@ -7,9 +7,11 @@ import { Paper, Grid, Typography, Divider, Box, TextField, Chip, useTheme } from
 import api from "../../utils/api";
 import Autocomplete, { AutocompleteChangeDetails } from "@mui/material/Autocomplete";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { MemberPartialDto, PermissionAssignmentDto } from "../../types/membersTypes";
+import { showErrorMessage } from "../../utils/toastUtils";
+import { MemberPartialDto } from "../../types/membersTypes";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import useMembers from "../../hooks/members/useMembers";
+import usePermissions from "../../hooks/members/usePermissions";
 
 /**
  * Interface used for autocomplete
@@ -86,44 +88,18 @@ const PermissionsOverview: React.FunctionComponent = () => {
       color: "white",
     },
   };
-  const [permissionAssignments, setPermissionAssignments] = useState<PermissionAssignmentDto[]>([]);
-  const [membersForAutocomplete, setMembersForAutocomplete] = useState<AutocompleteValue[]>([]);
-  const [autocompleteValues, setAutocompleteValues] = useState<AutocompleteValue[]>([]); // State for the values of the autocomplete
   const [directorPositionsForAutocomplete, setDirectorPositionsForAutocomplete] = useState<AutocompleteValue[]>([]); // State for the director positions -> TODO: Change to directorPosition type?
 
   const [isAdmin, setIsAdmin] = useState<boolean>(false); // State for checking if the user is admin
   const { auth } = useContext(AuthContext);
   let tmp: AutocompleteValue[] = [];
-
-  /**
-   * Retrieves all members
-   */
-  const getMembers: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            const tmpMembers: AutocompleteValue[] = res.data.map((member: MemberPartialDto) => ({
-              name: member.firstname + " " + member.lastname,
-              memberID: member.memberId,
-            }));
-            setMembersForAutocomplete(tmpMembers);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Mitglieder konnten nicht geladen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
+  const { members } = useMembers();
+  const { permissionAssignments, createPermission, deletePermission } = usePermissions();
+  const membersForAutocomplete: AutocompleteValue[] = members.map((member: MemberPartialDto) => ({
+    name: member.firstname + " " + member.lastname,
+    memberId: member.memberId,
+  }));
+  const autocompleteValues: AutocompleteValue[] = [...directorPositionsForAutocomplete, ...membersForAutocomplete];
 
   /**
    * Retrieves the director positions
@@ -154,97 +130,6 @@ const PermissionsOverview: React.FunctionComponent = () => {
     return () => {
       mounted = false;
     };
-  };
-
-  /**
-   * Retrieves the permissions of all members
-   */
-  const getPermissionAssignments: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/permission-assignments", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setPermissionAssignments(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigungen konnten nicht geladen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Create a new relation between a member and a permission
-   */
-  const createPermission = (memberID: number, permissionID: number) => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .post(
-        "/members/permissions",
-        { memberID, permissionID },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then((res) => {
-        if (res.status === 201) {
-          if (mounted) {
-            showSuccessMessage("Berechtigung wurde erfolgreich erteilt");
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigung konnte nicht erteilt werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Deletes a given permission
-   */
-  const deletePermission = (memberID: number, permissionID: number) => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .delete("/members/permissions", {
-        data: { memberID, permissionID },
-
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 204) {
-          if (mounted) {
-            showSuccessMessage("Berechtigung wurde erfolgreich entzogen");
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Berechtigung konnte nicht entzogen werden");
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * Initializes the values of the autocomplete with the members and the director positions
-   */
-  const initAutocompleteValues = () => {
-    setAutocompleteValues([...directorPositionsForAutocomplete, ...membersForAutocomplete]);
   };
 
   /**
@@ -287,12 +172,8 @@ const PermissionsOverview: React.FunctionComponent = () => {
     );
   };
 
-  // useEffect(() => getPermissions(), []);
   useEffect(() => checkAdmin(), []);
-  useEffect(() => getPermissionAssignments(), []);
-  useEffect(() => getMembers(), []);
   useEffect(() => getDirectorPositions(), []);
-  useEffect(() => initAutocompleteValues(), [membersForAutocomplete, directorPositionsForAutocomplete]);
 
   return (
     <Box component="div" display="inline">
@@ -356,7 +237,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                           }
                           getOptionLabel={(options) => options.name}
                           defaultValue={tmp}
-                          disabled={checkDelegation(permissionAssignment.permissionID)}
+                          disabled={!checkDelegation(permissionAssignment.permissionID)}
                           onChange={(event, newValue, reason, details) => {
                             handleOnChange(newValue, details, permissionAssignment.permissionID);
                           }}
@@ -366,7 +247,7 @@ const PermissionsOverview: React.FunctionComponent = () => {
                               <Chip
                                 label={option.name}
                                 {...getTagProps({ index })}
-                                disabled={checkDelegation(permissionAssignment.permissionID) || option.memberId < 0}
+                                disabled={!checkDelegation(permissionAssignment.permissionID) || option.memberId < 0}
                               />
                             ))
                           }

@@ -288,7 +288,7 @@ export type StatusOverview = {
  * Type of the response after creating a member
  */
 export type CreateMemberResponseDto = {
-  memberID: number;
+  memberId: number;
   statusOverview: StatusOverview;
 };
 
@@ -296,6 +296,6 @@ export type CreateMemberResponseDto = {
  * Type of the request to assign a permission to a member
  */
 export type AssignPermissionToMemberRequestDto = {
-  memberID: number;
+  memberId: number;
   permissionID: number;
 };

@@ -140,6 +140,14 @@ export type MemberPermissionAssignmentDto = {
 };
 
 /**
+ * Type of the assign permission dto
+ */
+export type AssignPermissionToMemberRequestDto = {
+  memberId: number;
+  permissionID: number;
+};
+
+/**
  * Type of the director position dto
  */
 export type DirectorPositionDto = {
@@ -371,4 +379,58 @@ export type MembersFieldDto = {
   firstname: string;
   lastname: string;
   memberStatus?: MemberStatus;
+};
+
+/**
+ * Type of the update member status api request params
+ */
+export type UpdateMemberStatusParams = {
+  memberId: number;
+  status: string;
+};
+
+/**
+ * Type of the update member image params
+ */
+export type UpdateMemberImageParams = {
+  image: File;
+  memberID: number;
+};
+
+/**
+ * Type of the add member params
+ */
+export type AddMemberParams = {
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  birthday: Date | null;
+  mobile: string | null;
+  gender: number | null;
+  generationId: number | null;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
+};
+
+/**
+ * Type of the response after creating a member
+ */
+export type CreateMemberResponseDto = {
+  memberId: number;
+  statusOverview: StatusOverview;
 };

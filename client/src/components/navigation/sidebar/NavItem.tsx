@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 import { Box, ListItemButton, Collapse, List } from "@mui/material";
@@ -6,8 +6,8 @@ import { alpha } from "@mui/material/styles";
 import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 import { Permission } from "../../../types/globalTypes";
-import { useAuth } from "../../../hooks/useAuth";
 import usePathname from "../../../hooks/usePathname";
+import { AuthContext } from "../../../context/auth-context/AuthContext";
 
 interface NavItemProps {
   item: {
@@ -38,7 +38,7 @@ interface NavItemChildProps {
  */
 const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const [activeChild, setActiveChild] = useState(false);
 
   useEffect(() => {

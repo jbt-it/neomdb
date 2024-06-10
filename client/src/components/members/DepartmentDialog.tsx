@@ -2,14 +2,10 @@
  * Dialog component for displaying input fields for changing department infos
  */
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme } from "@mui/material";
-import React, { memo, useContext, useState } from "react";
-import { DepartmentDetailsDto } from "../../types/membersTypes";
-import api from "../../utils/api";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { authReducerActionType } from "../../types/globalTypes";
-import { AxiosError } from "axios";
+import React, { memo, useState } from "react";
+import { DepartmentDetailsDto, UpdateDepartmentDto } from "../../types/membersTypes";
 import { AxiosResponse } from "axios";
+import useDepartments from "../../hooks/members/useDepartments";
 
 /**
  * Props for the department dialog component
@@ -51,7 +47,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
   };
 
   const { title, isOpen, onClose, department } = props;
-  const { dispatchAuth } = useContext(AuthContext);
+  const { updateDepartmentDetails } = useDepartments();
 
   const [goalLink, setGoalLink] = useState(department.linkObjectivePresentation);
   const [organisationLink, setOrganisationLink] = useState(department.linkOrganigram);
@@ -63,22 +59,10 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     event.preventDefault(); // Prevents the page from reloading
 
     // Given department object with changed goal and organisation links
-    const editedDepartment = { linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
-    api
-      .put(`/members/departments/${department.departmentId}`, editedDepartment)
-      .then((res: AxiosResponse) => {
-        if (res.status === 204) {
-          showSuccessMessage("Aktualisierung erfolgreich!");
-          onClose();
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
+    const editedDepartment = { ...department, linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
+    updateDepartmentDetails(editedDepartment).then((response: AxiosResponse<UpdateDepartmentDto>) => {
+      response.status === 204 ? onClose() : null;
+    });
   };
 
   return (
