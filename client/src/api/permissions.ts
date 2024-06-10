@@ -1,4 +1,4 @@
-import { AssignPermissionToMemberRequest, PermissionAssignmentDto } from "../types/membersTypes";
+import { AssignPermissionToMemberRequestDto, PermissionAssignmentDto } from "../types/membersTypes";
 import api from "../utils/api";
 import { AxiosResponse } from "axios";
 
@@ -31,8 +31,8 @@ export const getPermissionAssignments = async (): Promise<AxiosResponse<Permissi
  * @returns The new permission assignment of type PermissionAssignment
  */
 export const createPermissionAssignment = async (
-  permissionAssigment: AssignPermissionToMemberRequest
-): Promise<AxiosResponse<AssignPermissionToMemberRequest>> => {
+  permissionAssigment: AssignPermissionToMemberRequestDto
+): Promise<AxiosResponse<AssignPermissionToMemberRequestDto>> => {
   return await api.post("/members/permissions", permissionAssigment);
 };
 
@@ -45,7 +45,7 @@ export const createPermissionAssignment = async (
  * @param permissionID - The ID of the permission
  */
 export const deletePermissionAssignment = async (
-  permissionAssigment: AssignPermissionToMemberRequest
+  permissionAssigment: AssignPermissionToMemberRequestDto
 ): Promise<void> => {
   return await api.delete("/members/permissions", {
     data: permissionAssigment,

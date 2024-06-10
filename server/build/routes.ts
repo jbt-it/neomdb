@@ -887,7 +887,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wikiErrorMsg":{"dataType":"string","required":true},"wikiSuccesful":{"dataType":"boolean","required":true},"nextcloudErrorMsg":{"dataType":"string","required":true},"nextcloudSuccesful":{"dataType":"boolean","required":true},"mailListErrorMsg":{"dataType":"string","required":true},"mailListSuccesful":{"dataType":"boolean","required":true},"mailErrorMsg":{"dataType":"string","required":true},"mailSuccesful":{"dataType":"boolean","required":true},"queryErrorMsg":{"dataType":"string","required":true},"querySuccesful":{"dataType":"boolean","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateMemberResponse": {
+    "CreateMemberResponseDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"statusOverview":{"ref":"StatusOverview","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
@@ -932,7 +932,7 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directors":{"dataType":"array","array":{"dataType":"refAlias","ref":"DirectorPositionDto"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberPermissionAssignmentDto"},"required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AssignPermissionToMemberRequest": {
+    "AssignPermissionToMemberRequestDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"permissionID":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
@@ -1509,7 +1509,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_assignPermissionToMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequestDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -1536,7 +1536,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_unassignPermissionFromMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequestDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 

@@ -4,7 +4,7 @@ import app from "../../../src/app";
 import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { AppDataSource } from "../../../src/datasource";
-import { MembersRepository_typeORM } from "../../../src/resources/members/MembersRepository_typeORM";
+import { MembersRepository } from "../../../src/resources/members/MembersRepository";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
@@ -533,7 +533,7 @@ describe("PATCH /:id/assignment", () => {
     expect(response.status).toBe(204);
 
     // Check if the data was saved correctly into the database
-    const memberFromDB = await MembersRepository_typeORM.getMemberDetailsByID(8478);
+    const memberFromDB = await MembersRepository.getMemberDetailsByID(8478);
     expect(memberFromDB.internalProject.internalProjectId).toBe(62);
     expect(memberFromDB.mentor.memberId).toBe(8167);
     expect(memberFromDB.departmentId).toBe(1);
@@ -636,7 +636,7 @@ describe("PUT /ip/:id", () => {
       projectName: "string-long",
       generation: 15,
       generationName: "string-long",
-      internalProjectID: 62,
+      internalProjectId: 62,
     };
     const response = await request(app).put("/api/trainees/ip/62").send(newIPData).set("Cookie", `token=${token}`);
 

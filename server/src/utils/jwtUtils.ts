@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import * as fs from "fs";
-import { JWTPayload } from "../typeOrm/types/authTypes";
+import { JWTPayload } from "../types/authTypes";
 import { Request } from "express";
 
 /**

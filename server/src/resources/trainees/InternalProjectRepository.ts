@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../datasource";
-import { InternalProject } from "../../typeOrm/entities/InternalProject";
+import { InternalProject } from "../../entities/InternalProject";
 
-export const InternalProjectRepository_typeORM = AppDataSource.getRepository(InternalProject).extend({
+export const InternalProjectRepository = AppDataSource.getRepository(InternalProject).extend({
   /**
    * Get an internal project by its id
    * @param id id of the internal project
@@ -44,4 +44,4 @@ export const InternalProjectRepository_typeORM = AppDataSource.getRepository(Int
   },
 });
 
-export default InternalProjectRepository_typeORM;
+export default InternalProjectRepository;
