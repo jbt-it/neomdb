@@ -10,12 +10,12 @@ import { DepartmentMapper } from "./DepartmentMapper";
 import { DepartmentRepository } from "./DepartmentRepository";
 import { MemberMapper } from "./MemberMapper";
 import {
-  ItSkillsRepository_typeORM,
-  LanguagesRepository_typeORM,
-  MemberHasDirectorPositionRepository_typeORM,
-  MemberStatusRespository_typeORM,
+  ItSkillsRepository,
+  LanguagesRepository,
+  MemberHasDirectorPositionRepository,
+  MemberStatusRespository,
   MembersRepository,
-  PermissionsRepository_typeORM,
+  PermissionsRepository,
 } from "./MembersRepository";
 import { PermissionMapper } from "./PermissionMapper";
 
@@ -98,9 +98,9 @@ class MembersService {
   getDirectors = async (onlyCurrent: boolean) => {
     let directors = [];
     if (onlyCurrent) {
-      directors = await MemberHasDirectorPositionRepository_typeORM.getCurrentDirectors();
+      directors = await MemberHasDirectorPositionRepository.getCurrentDirectors();
     } else {
-      directors = await MemberHasDirectorPositionRepository_typeORM.getAllDirectors();
+      directors = await MemberHasDirectorPositionRepository.getAllDirectors();
     }
     return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
@@ -136,7 +136,7 @@ class MembersService {
    * Retrieves all language values
    */
   getLanguageValues = async () => {
-    const languageValues = await LanguagesRepository_typeORM.getLanguageValues();
+    const languageValues = await LanguagesRepository.getLanguageValues();
     return languageValues;
   };
 
@@ -144,7 +144,7 @@ class MembersService {
    * Retrieves all edv skill values
    */
   getEdvSkillValues = async () => {
-    const edvSkillValues = await ItSkillsRepository_typeORM.getItSkillValues();
+    const edvSkillValues = await ItSkillsRepository.getItSkillValues();
 
     return edvSkillValues;
   };
@@ -153,7 +153,7 @@ class MembersService {
    * Retrieves all permissions
    */
   getPermissions = async () => {
-    const permissions = await PermissionsRepository_typeORM.getPermissions();
+    const permissions = await PermissionsRepository.getPermissions();
 
     return permissions;
   };
@@ -162,7 +162,7 @@ class MembersService {
    * Retrieves all permission assignments
    */
   getPermissionAssignments = async () => {
-    const permissionAssignments = await PermissionsRepository_typeORM.getPermissionWithAssignments();
+    const permissionAssignments = await PermissionsRepository.getPermissionWithAssignments();
     return permissionAssignments.map((permission) => PermissionMapper.permissionToPermissionAssignment(permission));
   };
 
@@ -172,7 +172,7 @@ class MembersService {
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
     const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
-    const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
+    const permissionQuery = PermissionsRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
@@ -195,7 +195,7 @@ class MembersService {
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
     const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
-    const permissionQuery = PermissionsRepository_typeORM.getPermissionByID(permissionID);
+    const permissionQuery = PermissionsRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
@@ -386,9 +386,7 @@ class MembersService {
       }
 
       // Check if member status exists
-      const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByID(
-        updatedMember.memberStatus.memberStatusId
-      );
+      const memberStatus = await MemberStatusRespository.getMemberStatusByID(updatedMember.memberStatus.memberStatusId);
       if (memberStatus === null) {
         throw new NotFoundError(`Member status with id ${updatedMember.memberStatus} does not exist`);
       }
@@ -438,7 +436,7 @@ class MembersService {
   updateMemberStatus = async (memberID: number, status: string) => {
     // Check if member exists
     const member = await MembersRepository.getMemberByID(memberID);
-    const memberStatus = await MemberStatusRespository_typeORM.getMemberStatusByName(status);
+    const memberStatus = await MemberStatusRespository.getMemberStatusByName(status);
 
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
