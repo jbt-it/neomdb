@@ -21,7 +21,7 @@ import { checkForPermission } from "../../utils/authUtils";
    </Route>
  */
 const ProtectedRoute = ({ children, permissionIDs }: any) => {
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const location = useLocation();
 
   return checkForPermission(auth.permissions, permissionIDs) ? (

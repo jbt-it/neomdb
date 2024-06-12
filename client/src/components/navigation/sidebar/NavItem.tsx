@@ -38,7 +38,7 @@ interface NavItemChildProps {
  */
 const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const [activeChild, setActiveChild] = useState(false);
 
   useEffect(() => {
