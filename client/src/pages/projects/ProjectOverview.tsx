@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyProjects from "../../components/projects/MyProjects";
@@ -6,8 +6,8 @@ import ProjectTenders from "../../components/projects/ProjectTenders";
 import AllProjects from "../../components/projects/allProjectsOverview/AllProjects";
 import useProjects from "../../hooks/useProjects";
 import useResponsive from "../../hooks/useResponsive";
-import { useAuth } from "../../hooks/useAuth";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * ProjectOverview component
@@ -18,7 +18,7 @@ const ProjectOverview = () => {
   const [value, setValue] = React.useState("projectTenders");
   const { projects, allProjects, tenderedProjects } = useProjects();
   const isMobile = useResponsive("down", "sm");
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const hasBillingPermission = doesPermissionsHaveSomeOf(auth.permissions, [7]);
 
   // Handles the tab change
