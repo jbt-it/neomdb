@@ -13,7 +13,7 @@ import useCompanies from "./useCompanies";
 const useProjects = () => {
   const { allCompanies } = useCompanies();
 
-  const coreCompetencies = [
+  const allCoreCompetencies = [
     {
       coreCompetencyId: 1,
       designation: "Process & Organization",
@@ -198,7 +198,7 @@ const useProjects = () => {
       status: "Abgeschlossen",
       projectMembers: projectMembers as MembersFieldDto[],
       client: allCompanies[0],
-      coreCompetencies: [coreCompetencies[0], coreCompetencies[2]] as CoreCompetencyDto[],
+      coreCompetencies: [allCoreCompetencies[0], allCoreCompetencies[2]] as CoreCompetencyDto[],
       tenderDate: dayjs("2020-06-14"),
       kickoff: dayjs("2020-06-20"),
       projectEnd: dayjs("2020-09-20"),
@@ -261,7 +261,7 @@ const useProjects = () => {
       status: "Pitch verloren",
       projectMembers: projectMembers as MembersFieldDto[],
       client: allCompanies[2],
-      coreCompetencies: [coreCompetencies[4], coreCompetencies[5]],
+      coreCompetencies: [allCoreCompetencies[4], allCoreCompetencies[5]],
       tenderDate: dayjs("2021-03-11"),
       kickoff: dayjs("2021-03-16"),
       projectEnd: null,
@@ -276,7 +276,7 @@ const useProjects = () => {
       status: "Nicht besetzt",
       projectMembers: projectMembers as MembersFieldDto[],
       client: allCompanies[3],
-      coreCompetencies: coreCompetencies[2],
+      coreCompetencies: allCoreCompetencies[2],
       tenderDate: dayjs("2021-06-14"),
       kickoff: null,
       projectEnd: null,
@@ -311,7 +311,7 @@ const useProjects = () => {
       status: "Durchführung",
       projectMembers: projectMembers as MembersFieldDto[],
       client: allCompanies[5],
-      coreCompetencies: coreCompetencies[5],
+      coreCompetencies: allCoreCompetencies[5],
       tenderDate: dayjs("2023-010-10"),
       kickoff: dayjs("2023-10-20"),
       projectEnd: null,
@@ -326,7 +326,7 @@ const useProjects = () => {
       status: "Bewerbung",
       projectMembers: projectMembers as MembersFieldDto[],
       client: allCompanies[6],
-      coreCompetencies: coreCompetencies[6],
+      coreCompetencies: allCoreCompetencies[6],
       tenderDate: dayjs("2024-02-10"),
       kickoff: null,
       projectEnd: null,
@@ -336,7 +336,7 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
-  return { projects, tenderedProjects, allProjects, allIndustries, coreCompetencies };
+  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies };
 };
 
 export default useProjects;
