@@ -74,19 +74,9 @@ const SummaryDetails = ({ projectKeyData, customerData, projectDescriptionData }
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
-          Akquisekanal:
-        </Typography>
-        <Typography sx={{ flex: 3 }}>
-          {customerData.contactChannels.length === 1
-            ? customerData.contactChannels[0]
-            : customerData.contactChannels.map((channel) => channel).join(", ")}
-        </Typography>
-      </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-        <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Auftraggeber:
         </Typography>
-        <Typography sx={{ flex: 3 }}>{customerData.customerName}</Typography>
+        <Typography sx={{ flex: 3 }}>{customerData.name}</Typography>
       </Stack>
       <Divider />
     </Stack>

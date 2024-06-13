@@ -48,22 +48,31 @@ const ProjectTendering = () => {
 
   // Customer data
   const [customerData, setCustomerData] = React.useState<CustomerData>({
-    customerName: undefined,
-    shortDescription: undefined,
+    companyId: -1,
+    name: "",
+    shortDescription: "",
     newCustomer: undefined,
     acquisitor: undefined,
     acquisitionMethod: undefined,
-    contactChannels: [],
+    industry: undefined,
+    contactPerson: undefined,
+    street: "",
+    postalCode: "",
+    city: "",
+    addressAdditional: "",
+    url: "",
+    importantInformation: "",
+    contactDesired: false,
+    classified: false,
   });
 
   // Errors for the customer data
   const [customerDataErrors, setCustomerDataErrors] = React.useState<{ [key: string]: boolean }>({
-    customerName: false,
-    shortDescription: false,
+    customer: false,
+    industry: false,
     newCustomer: false,
+    contactPerson: false,
     acquisitor: false,
-    acquisitionMethod: false,
-    contactChannels: false,
   });
 
   // Project Description data
@@ -189,17 +198,17 @@ const ProjectTendering = () => {
   const validateCustomerData = () => {
     let hasErrors = false;
     const newErrors = { ...customerDataErrors };
-    if (!customerData.customerName) {
-      newErrors.customerName = true;
+    if (customerData.companyId === -1) {
+      newErrors.customer = true;
       hasErrors = true;
     } else {
-      newErrors.customerName = false;
+      newErrors.customer = false;
     }
-    if (!customerData.shortDescription) {
-      newErrors.shortDescription = true;
+    if (!customerData.industry) {
+      newErrors.industry = true;
       hasErrors = true;
     } else {
-      newErrors.shortDescription = false;
+      newErrors.industry = false;
     }
     if (customerData.newCustomer === undefined) {
       newErrors.newCustomer = true;
@@ -218,12 +227,6 @@ const ProjectTendering = () => {
       hasErrors = true;
     } else {
       newErrors.acquisitionMethod = false;
-    }
-    if (!customerData.contactChannels || customerData.contactChannels.length === 0) {
-      newErrors.contactChannels = true;
-      hasErrors = true;
-    } else {
-      newErrors.contactChannels = false;
     }
     setCustomerDataErrors(newErrors);
     return hasErrors;

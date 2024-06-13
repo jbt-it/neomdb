@@ -14,7 +14,7 @@ export type IndustryDto = {
 };
 
 // type of the company DTO
-export type CompanyDto = {
+export type CompanyShortDto = {
   companyId: number;
   name: string;
   industry: IndustryDto;
@@ -30,7 +30,7 @@ export type ProjectShortDto = {
 
 // Type of the project DTO for the project overview table
 export type ProjectOverviewDto = ProjectShortDto & {
-  client: CompanyDto;
+  client: CompanyShortDto;
   coreCompetencies: CoreCompetencyDto | CoreCompetencyDto[];
   kickoff: Dayjs | null; // will be shown if the project is in progress
   tenderDate: Dayjs; // will be shown if the project is tendered
@@ -50,6 +50,35 @@ export type TenderedProjectDto = {
   applicationEnd2: Dayjs | null;
 };
 
+export type NewCompanyDto = {
+  name: string;
+  industry: IndustryDto;
+  shortDescription: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  addressAdditional: string;
+  url: string;
+  importantInformation: string;
+  contactDesired: boolean;
+  classified: boolean;
+};
+
+export type CompanyDto = {
+  companyId: number;
+  name: string;
+  industry: IndustryDto;
+  shortDescription: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  addressAdditional: string;
+  url: string;
+  importantInformation: string;
+  contactDesired: boolean;
+  classified: boolean;
+};
+
 export type ProjectKeyData = {
   projectName: string | undefined;
   location: string | undefined;
@@ -65,13 +94,34 @@ export type ProjectKeyData = {
   applicationDeadline: Dayjs | undefined;
 };
 
+export type AcquisitionChannelDto = {
+  acquisitionChannelId: number;
+  description: string;
+};
+
+export type ContactPersonDto = {
+  contactPersonId: number;
+  companyId: number;
+  name: string;
+};
+
 export type CustomerData = {
-  customerName: string | undefined;
-  shortDescription: string | undefined;
+  companyId: number;
+  name: string;
+  shortDescription: string;
   newCustomer: boolean | undefined;
+  industry: IndustryDto | undefined;
+  street: string;
+  postalCode: string;
+  city: string;
+  addressAdditional: string;
+  url: string;
+  importantInformation: string;
+  contactDesired: boolean;
+  classified: boolean;
   acquisitor: string | undefined;
   acquisitionMethod: string | undefined;
-  contactChannels: string[];
+  contactPerson: ContactPersonDto | undefined;
 };
 
 export type ProjectDescriptionData = {
