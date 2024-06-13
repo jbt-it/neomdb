@@ -7,8 +7,8 @@ import PageBar from "../../components/navigation/PageBar";
 import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
-
-import { makeStyles, createStyles } from "@mui/styles";
+import { styled } from "@mui/system";
+//import { makeStyles, createStyles } from "@mui/styles";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { Generation, InternalProject, TraineePreference } from "../../types/traineesTypes";
 import { Department, Member, Mentor } from "../../types/membersTypes";
@@ -17,53 +17,52 @@ import { AxiosError } from "axios";
 /**
  * Function which proivdes the styles of the TraineePreferences
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    // Header text of a paper marking a section of a page
-    paperHeaderText: {
-      marginLeft: theme.spacing(1),
-      marginTop: theme.spacing(1),
-    },
-    paperText: {
-      marginLeft: theme.spacing(1),
-      marginTop: theme.spacing(1),
-    },
-    // Header divider of a paper marking a section of a page
-    paperHeaderDivider: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(2),
-    },
-    paperContainer: {
-      marginBottom: "10px",
-    },
-    inputContainer: {
-      padding: theme.spacing(1),
-    },
-    selectionElement: {
-      [theme.breakpoints.up("md")]: {
-        margin: theme.spacing(1),
-        width: "155px",
-      },
-      [theme.breakpoints.down("md")]: {
-        margin: theme.spacing(1),
-        width: "120px",
-      },
-      [theme.breakpoints.down("sm")]: {
-        margin: theme.spacing(1),
-        width: "120px",
-      },
-    },
-    motivationalText: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
-    inputButton: {
+//const useStyles = makeStyles((theme: Theme) =>
+const useStyles = styled((theme: Theme) => ({
+  // Header text of a paper marking a section of a page
+  paperHeaderText: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+  },
+  paperText: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+  },
+  // Header divider of a paper marking a section of a page
+  paperHeaderDivider: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  paperContainer: {
+    marginBottom: "10px",
+  },
+  inputContainer: {
+    padding: theme.spacing(1),
+  },
+  selectionElement: {
+    [theme.breakpoints.up("md")]: {
       margin: theme.spacing(1),
+      width: "155px",
     },
-  })
-);
+    [theme.breakpoints.down("md")]: {
+      margin: theme.spacing(1),
+      width: "120px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      margin: theme.spacing(1),
+      width: "120px",
+    },
+  },
+  motivationalText: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+  inputButton: {
+    margin: theme.spacing(1),
+  },
+}));
 
 /**
  * Options to create a new member and to change the status of members
@@ -196,7 +195,7 @@ const TraineePreferences: React.FunctionComponent = () => {
     let mounted = true;
 
     api
-      .get(`/members/${auth.userID}`, {
+      .get(`/members/${auth.userID}/basic`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

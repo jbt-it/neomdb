@@ -62,7 +62,7 @@ export class MembersController extends Controller {
    * Retrieves a member by its id
    * @param id The member id
    */
-  @Get("{id}")
+  @Get("{id}/basic")
   @Security("jwt")
   public async getMemberByID(@Path() id: number): Promise<Member> {
     return await this.membersService.getMemberByID(id);

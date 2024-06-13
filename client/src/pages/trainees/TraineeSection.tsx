@@ -68,14 +68,11 @@ const TraineeSection: React.FunctionComponent = () => {
 
   /**
    * retrieves all trainees of the selected generation from the database and sets the state of trainees
-   * TODO: remove traineesTmp as soon as the backend route is fixed
    */
   const getTrainees: VoidFunction = () => {
     let mounted = true;
     api
-      //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
       .get(`/members`, {
-        //correct Routes need to be imported
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

@@ -180,6 +180,217 @@
 				"type": "object",
 				"description": "Type of the partial member"
 			},
+			"Member": {
+				"properties": {
+					"bic": {
+						"type": "string"
+					},
+					"iban": {
+						"type": "string"
+					},
+					"kontoinhaber": {
+						"type": "string"
+					},
+					"ersthelferausbildung": {
+						"type": "boolean"
+					},
+					"fuehrerschein": {
+						"type": "boolean"
+					},
+					"lastchange": {
+						"type": "string"
+					},
+					"canQM": {
+						"type": "string",
+						"nullable": true
+					},
+					"canPL": {
+						"type": "string",
+						"nullable": true
+					},
+					"engagement": {
+						"type": "string",
+						"nullable": true
+					},
+					"ausbildung": {
+						"type": "string",
+						"nullable": true
+					},
+					"vertiefungen": {
+						"type": "string",
+						"nullable": true
+					},
+					"studienende": {
+						"type": "string",
+						"nullable": true
+					},
+					"studienbeginn": {
+						"type": "string",
+						"nullable": true
+					},
+					"studiengang": {
+						"type": "string"
+					},
+					"hochschule": {
+						"type": "string"
+					},
+					"email2": {
+						"type": "string",
+						"nullable": true
+					},
+					"tel2": {
+						"type": "string",
+						"nullable": true
+					},
+					"ort2": {
+						"type": "string",
+						"nullable": true
+					},
+					"plz2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"strasse2": {
+						"type": "string",
+						"nullable": true
+					},
+					"email1": {
+						"type": "string"
+					},
+					"tel1": {
+						"type": "string",
+						"nullable": true
+					},
+					"ort1": {
+						"type": "string"
+					},
+					"plz1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"strasse1": {
+						"type": "string"
+					},
+					"arbeitgeber": {
+						"type": "string",
+						"nullable": true
+					},
+					"ressort": {
+						"type": "string"
+					},
+					"ausgetreten_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"passiv_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"aktiv_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"senior_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"alumnus_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"mitglied_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"trainee_seit": {
+						"type": "string",
+						"nullable": true
+					},
+					"internesprojekt": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"generation": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"mitgliedstatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"jbt_email": {
+						"type": "string"
+					},
+					"handy": {
+						"type": "string"
+					},
+					"geburtsdatum": {
+						"type": "string"
+					},
+					"geschlecht": {
+						"type": "number",
+						"format": "double"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"mitgliedID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ersthelferausbildung",
+					"fuehrerschein",
+					"lastchange",
+					"canQM",
+					"canPL",
+					"engagement",
+					"ausbildung",
+					"vertiefungen",
+					"studienende",
+					"studienbeginn",
+					"studiengang",
+					"hochschule",
+					"email2",
+					"tel2",
+					"ort2",
+					"plz2",
+					"strasse2",
+					"email1",
+					"tel1",
+					"ort1",
+					"plz1",
+					"strasse1",
+					"arbeitgeber",
+					"ressort",
+					"ausgetreten_seit",
+					"passiv_seit",
+					"aktiv_seit",
+					"senior_seit",
+					"alumnus_seit",
+					"mitglied_seit",
+					"trainee_seit",
+					"internesprojekt",
+					"generation",
+					"mitgliedstatus",
+					"jbt_email",
+					"handy",
+					"geburtsdatum",
+					"geschlecht",
+					"vorname",
+					"nachname",
+					"mitgliedID"
+				],
+				"type": "object",
+				"description": "Type of the member"
+			},
 			"MemberImage": {
 				"properties": {
 					"mimeType": {
@@ -1613,6 +1824,44 @@
 						}
 					}
 				}
+			}
+		},
+		"/members/{id}/basic": {
+			"get": {
+				"operationId": "GetMemberByID",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Member"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves a member by its id",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The member id",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/members/{id}/image": {
