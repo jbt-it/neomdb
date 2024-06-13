@@ -123,11 +123,6 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
     setCustomerData({ ...customerData, url: event.target.value });
   };
 
-  // Handle industry change
-  const onChangeIndustry = (event: SyntheticEvent<Element, Event>, value: IndustryDto | null) => {
-    setCustomerData({ ...customerData, industry: value || undefined });
-  };
-
   // Handle customer data change
   const onChangeCustomerData = (event: SyntheticEvent<Element, Event>, value: CompanyDto | null) => {
     setCustomerData({
@@ -146,6 +141,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
       industry: value?.industry || undefined,
       contactPerson: undefined,
     });
+  };
+
+  // Handle industry change
+  const onChangeIndustry = (event: SyntheticEvent<Element, Event>, value: IndustryDto | null) => {
+    setCustomerData({ ...customerData, industry: value || undefined });
   };
 
   // Handle change contact person
@@ -210,7 +210,12 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
             Geheim:
           </Typography>
           <Box sx={{ flex: 3 }}>
-            <Checkbox sx={{ paddingLeft: 0 }} value={classified} onChange={onChangeClassified} disabled={isCompleted} />
+            <Checkbox
+              sx={{ paddingLeft: 0 }}
+              checked={classified}
+              onChange={onChangeClassified}
+              disabled={isCompleted}
+            />
           </Box>
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -230,7 +235,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
             )}
             options={allIndustries}
             getOptionLabel={(option) => option.description}
-            value={industry}
+            value={allIndustries.find((ind) => ind.industryId === industry?.industryId) || null}
             onChange={onChangeIndustry}
             size="small"
           />
@@ -246,6 +251,8 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
             value={shortDescription}
             onChange={onChangeShortDescription}
             disabled={isCompleted}
+            multiline
+            rows={4}
             helperText={errors.shortDescription ? "Bitte gib eine Kurzbeschreibung an." : ""}
             error={errors.shortDescription}
           />
@@ -309,7 +316,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
           <Box sx={{ flex: 3 }}>
             <Checkbox
               sx={{ paddingLeft: 0 }}
-              value={contactDesired}
+              checked={contactDesired}
               onChange={handleContactDesired}
               disabled={isCompleted}
             />
@@ -321,7 +328,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
           </Typography>
           <Autocomplete
             sx={{ flex: 3 }}
-            value={contactPerson}
+            value={allContactPartners.find((cp) => cp.contactPersonId === contactPerson?.contactPersonId) || null}
             options={allContactPartners.filter((contact) => contact.companyId === customerData.companyId)}
             getOptionLabel={(option) => option.name}
             size="small"
