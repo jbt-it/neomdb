@@ -182,18 +182,18 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
       }
       if (sortBy === "Projektname ascending") return b.projectName.localeCompare(a.projectName);
       if (sortBy === "Branche descending") {
-        return a.industry === null
+        return a.client.industry === null
           ? 1
-          : b.industry === null
+          : b.client.industry === null
           ? -1
-          : a.industry.description.localeCompare(b.industry.description);
+          : a.client.industry.description.localeCompare(b.client.industry.description);
       }
       if (sortBy === "Branche ascending")
-        return a.industry === null
+        return a.client.industry === null
           ? -1
-          : b.industry === null
+          : b.client.industry === null
           ? 1
-          : b.industry.description.localeCompare(a.industry.description);
+          : b.client.industry.description.localeCompare(a.client.industry.description);
       if (sortBy === "Unternehmen descending") {
         return b.client === null ? 1 : a.client === null ? -1 : a.client.name.localeCompare(b.client.name);
       }

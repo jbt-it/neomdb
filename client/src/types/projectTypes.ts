@@ -2,7 +2,7 @@ import { Dayjs } from "dayjs";
 import { MembersFieldDto } from "./membersTypes";
 
 // Type of the core competency DTO
-export type CoreCompetency = {
+export type CoreCompetencyDto = {
   coreCompetencyId: number;
   designation: string;
 };
@@ -17,7 +17,7 @@ export type IndustryDto = {
 export type CompanyDto = {
   companyId: number;
   name: string;
-  industry: IndustryDto | null;
+  industry: IndustryDto;
 };
 
 // Type of the project DTO for the users projects
@@ -30,9 +30,8 @@ export type ProjectShortDto = {
 
 // Type of the project DTO for the project overview table
 export type ProjectOverviewDto = ProjectShortDto & {
-  industry: IndustryDto;
   client: CompanyDto;
-  coreCompetencies: CoreCompetency | CoreCompetency[];
+  coreCompetencies: CoreCompetencyDto | CoreCompetencyDto[];
   kickoff: Dayjs | null; // will be shown if the project is in progress
   tenderDate: Dayjs; // will be shown if the project is tendered
   projectEnd: Dayjs | null; // will be shown if the project is done

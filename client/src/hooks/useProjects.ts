@@ -1,7 +1,7 @@
 import { MembersFieldDto } from "../types/membersTypes";
 import dayjs from "dayjs";
 import {
-  CoreCompetency,
+  CoreCompetencyDto,
   IndustryDto,
   ProjectOverviewDto,
   ProjectShortDto,
@@ -42,7 +42,7 @@ const useProjects = () => {
       coreCompetencyId: 7,
       designation: "Sustainability",
     },
-  ] as CoreCompetency[];
+  ] as CoreCompetencyDto[];
 
   const allIndustries = [
     {
@@ -196,9 +196,8 @@ const useProjects = () => {
       projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
       status: "Abgeschlossen",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allIndustries[0],
       client: allCompanies[0],
-      coreCompetencies: [coreCompetencies[0], coreCompetencies[2]] as CoreCompetency[],
+      coreCompetencies: [coreCompetencies[0], coreCompetencies[2]] as CoreCompetencyDto[],
       tenderDate: dayjs("2020-06-14"),
       kickoff: dayjs("2020-06-20"),
       projectEnd: dayjs("2020-09-20"),
@@ -212,7 +211,6 @@ const useProjects = () => {
       projectName: "Implementierung und Optimierung von CRM-Systemen im Vertriebsbereich",
       status: "Abrechnung",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allIndustries[4],
       client: allCompanies[1],
       coreCompetencies: [
         {
@@ -223,7 +221,7 @@ const useProjects = () => {
           coreCompetencyId: 5,
           designation: "Finance & Controlling",
         },
-      ] as CoreCompetency[],
+      ] as CoreCompetencyDto[],
       tenderDate: dayjs("2020-12-01"),
       kickoff: dayjs("2020-12-18"),
       projectEnd: dayjs("2021-03-15"),
@@ -237,10 +235,6 @@ const useProjects = () => {
       projectName: "Überprüfung und Neugestaltung der Lieferkettenprozesse in der Lebensmittelindustrie",
       status: "Abgelehnt",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: {
-        industryId: 44,
-        description: "Eventmanagement",
-      } as IndustryDto,
       client: allCompanies[1],
       coreCompetencies: [
         {
@@ -251,7 +245,7 @@ const useProjects = () => {
           coreCompetencyId: 5,
           designation: "Finance & Controlling",
         },
-      ] as CoreCompetency[],
+      ] as CoreCompetencyDto[],
       tenderDate: dayjs("2021-02-12"),
       kickoff: dayjs("2021-02-21"),
       projectEnd: null,
@@ -265,7 +259,6 @@ const useProjects = () => {
       projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
       status: "Pitch verloren",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allCompanies[2].industry,
       client: allCompanies[2],
       coreCompetencies: [coreCompetencies[4], coreCompetencies[5]],
       tenderDate: dayjs("2021-03-11"),
@@ -281,7 +274,6 @@ const useProjects = () => {
       projectName: "Konzeption und Umsetzung einer digitalen Marketingkampagne für die ABC AG",
       status: "Nicht besetzt",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allCompanies[3].industry,
       client: allCompanies[3],
       coreCompetencies: coreCompetencies[2],
       tenderDate: dayjs("2021-06-14"),
@@ -297,20 +289,19 @@ const useProjects = () => {
       projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
       status: "Angebot",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allCompanies[4].industry,
       client: allCompanies[4],
       coreCompetencies: [
         {
           coreCompetencyId: 5,
           designation: "Finance & Controlling",
         },
-      ] as CoreCompetency[],
+      ] as CoreCompetencyDto[],
       tenderDate: dayjs("2022-07-14"),
       kickoff: dayjs("2022-07-25"),
       projectEnd: null,
       soldBT: null,
       estimatedProjectBTmin: 10,
-      estimatedProjectBTmax: 20,
+      estimatedProjectBTmax: 15,
     },
     {
       // Projekt in Durchführung, gestartet, aber noch nicht beendet
@@ -318,7 +309,6 @@ const useProjects = () => {
       projectName: "Planung und Koordination der Büroerweiterung für Start-up Unternehmen",
       status: "Durchführung",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allCompanies[5].industry,
       client: allCompanies[5],
       coreCompetencies: coreCompetencies[5],
       tenderDate: dayjs("2023-010-10"),
@@ -334,7 +324,6 @@ const useProjects = () => {
       projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
       status: "Bewerbung",
       projectMembers: projectMembers as MembersFieldDto[],
-      industry: allCompanies[6].industry,
       client: allCompanies[6],
       coreCompetencies: coreCompetencies[6],
       tenderDate: dayjs("2024-02-10"),

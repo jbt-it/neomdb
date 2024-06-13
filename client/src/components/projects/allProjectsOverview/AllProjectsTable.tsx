@@ -91,7 +91,7 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
         {projects.map((project) => (
           <TableRow key={project.projectId} sx={styles.tableRow} component={Link} to={`/projekt/${project.projectId}`}>
             <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>{project.projectName}</TableCell>
-            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.industry.description}</TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.client.industry.description}</TableCell>
             <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.client.name}</TableCell>
             <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>
               {Array.isArray(project.coreCompetencies)
@@ -109,7 +109,11 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
               {project.projectEnd ? project.projectEnd.format("DD.MM.YYYY") : ""}
             </TableCell>
             <TableCell align="right" sx={[styles.tableCell, { maxWidth: 50 }]}>
-              {project.soldBT ? project.soldBT : `${project.estimatedProjectBTmin} - ${project.estimatedProjectBTmax}`}
+              {project.soldBT
+                ? project.soldBT
+                : project.estimatedProjectBTmin === project.estimatedProjectBTmax
+                ? project.estimatedProjectBTmin
+                : `${project.estimatedProjectBTmin} - ${project.estimatedProjectBTmax}`}
             </TableCell>
             <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>
               <ProjectChip status={project.status} />
