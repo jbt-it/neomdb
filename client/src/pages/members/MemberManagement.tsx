@@ -355,6 +355,9 @@ const MemberManagement: React.FunctionComponent = () => {
     setEmail(event.target.value);
   };
 
+  /**
+   * Adds the member with the specified data to the database and resets the input fields
+   */
   const handleAddMember = () => {
     addMember(firstName, lastName, email);
     setFirstName("");

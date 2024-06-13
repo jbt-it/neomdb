@@ -2,7 +2,6 @@
  * Contains all members types for the frontend
  */
 
-import { NumericFeedback } from "./eventTypes";
 import { MemberStatus, MembersFieldDto } from "./membersTypes";
 
 /**
@@ -31,6 +30,9 @@ export type Trainee = {
   ExcelGrundlagen: boolean;
 };
 
+/**
+ * Type of generation
+ */
 export type Generation = {
   generationId: number;
   description: string;
@@ -43,6 +45,9 @@ export type Generation = {
   electionEnd: Date | null;
 };
 
+/**
+ * Type of the mandatory workshops of a member
+ */
 export type Pflichtworkshops = {
   mitgliedID: number;
   schulungID: number;
