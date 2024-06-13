@@ -102,8 +102,8 @@ const FinanceOverview: React.FunctionComponent = () => {
       },
     },
     button: {
-      margin: "7px",
       marginTop: "20px",
+      marginBottom: "20px",
       border: "0",
       backgroundColor: theme.palette.primary.main,
       color: "white",
@@ -488,40 +488,26 @@ const FinanceOverview: React.FunctionComponent = () => {
 
   return (
     <div>
+      <Grid container spacing={3}>
+        <Grid item>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/jahresbeitrag/`} target="_blank">
+            Jahresbeitrag
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/wwbeitrag/`} target="_blank">
+            WW-Beitrag
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/sonstigereinzug/`} target="_blank">
+            Sonstiger Einzug
+          </Button>
+        </Grid>
+      </Grid>
       <Paper sx={styles.filterContainer}>
         <StyledForm noValidate autoComplete="off">
           <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <Grid container spacing={3}>
-                <Grid item>
-                  <Button
-                    sx={styles.button}
-                    variant="contained"
-                    component={Link}
-                    to={`/jahresbeitrag/`}
-                    target="_blank"
-                  >
-                    Jahresbeitrag
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button sx={styles.button} variant="contained" component={Link} to={`/wwbeitrag/`} target="_blank">
-                    WW-Beitrag
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    sx={styles.button}
-                    variant="contained"
-                    component={Link}
-                    to={`/sonstigereinzug/`}
-                    target="_blank"
-                  >
-                    Sonstiger Einzug
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
             <Grid item xs={6} sm={3}>
               <TextField label="Name" sx={styles.filterElement} color="primary" onChange={handleSearchInput} />
             </Grid>
