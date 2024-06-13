@@ -1,13 +1,13 @@
 import React from "react";
-import { ProjectOverview } from "../../../types/projectTypes";
-import { Paper, useTheme, Table, TableCell, TableHead, TableRow, TableContainer } from "@mui/material";
+import { ProjectOverviewDto } from "../../../types/projectTypes";
+import { Paper, useTheme, Table, TableCell, TableHead, TableRow, TableContainer, useMediaQuery } from "@mui/material";
 import useResponsive from "../../../hooks/useResponsive";
 import ProjectChip from "../projectCard/ProjectChip";
 import { Link } from "react-router-dom";
 import ProjectTableHeadCell from "../ProjectTableHeadCell";
 
 interface AllProjectsTableProps {
-  projects: ProjectOverview[];
+  projects: ProjectOverviewDto[];
   sortedBy: string;
   onChangeSortBy: (column: string) => void;
 }
@@ -34,7 +34,12 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
       "&:nth-of-type(odd)": { backgroundColor: "#fff" },
       "&:nth-of-type(even)": { backgroundColor: "#ededed" },
       textDecoration: "none",
-      height: 60,
+    },
+    tableCell: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      paddingRight: 0,
     },
   };
 
@@ -51,14 +56,14 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
           </TableHead>
           {projects.map((project) => (
             <TableRow
-              key={project.projectID}
+              key={project.projectId}
               sx={styles.tableRow}
               component={Link}
-              to={`/projekt/${project.projectID}`}
+              to={`/projekt/${project.projectId}`}
             >
-              <TableCell>{project.projectName}</TableCell>
-              <TableCell>
-                <ProjectChip status={project.projectStatus} />
+              <TableCell sx={[styles.tableCell, { maxWidth: 150 }]}>{project.projectName}</TableCell>
+              <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>
+                <ProjectChip status={project.status} />
               </TableCell>
             </TableRow>
           ))}
@@ -84,16 +89,30 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
           </TableRow>
         </TableHead>
         {projects.map((project) => (
-          <TableRow key={project.projectID} sx={styles.tableRow} component={Link} to={`/projekt/${project.projectID}`}>
-            <TableCell>{project.projectName}</TableCell>
-            <TableCell>{project.projectSector}</TableCell>
-            <TableCell>{project.projectCompany}</TableCell>
-            <TableCell>{project.projectCoreCompetence}</TableCell>
-            <TableCell>{project.projectStartDate.format("DD.MM.YYYY")}</TableCell>
-            <TableCell>{project.projectEndDate ? project.projectEndDate.format("DD.MM.YYYY") : ""}</TableCell>
-            <TableCell align="right">{project.projectNumberOfBT}</TableCell>
-            <TableCell>
-              <ProjectChip status={project.projectStatus} />
+          <TableRow key={project.projectId} sx={styles.tableRow} component={Link} to={`/projekt/${project.projectId}`}>
+            <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>{project.projectName}</TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.industry.description}</TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.client.name}</TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>
+              {Array.isArray(project.coreCompetencies)
+                ? project.coreCompetencies.map((cc) => cc.designation)
+                : project.coreCompetencies.designation}
+            </TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>
+              {project.kickoff
+                ? project.kickoff.format("DD.MM.YYYY")
+                : project.tenderDate
+                ? project.tenderDate.format("DD.MM.YYYY")
+                : ""}
+            </TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>
+              {project.projectEnd ? project.projectEnd.format("DD.MM.YYYY") : ""}
+            </TableCell>
+            <TableCell align="right" sx={[styles.tableCell, { maxWidth: 50 }]}>
+              {project.soldBT ? project.soldBT : `${project.estimatedProjectBTmin} - ${project.estimatedProjectBTmax}`}
+            </TableCell>
+            <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>
+              <ProjectChip status={project.status} />
             </TableCell>
           </TableRow>
         ))}

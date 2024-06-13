@@ -12,13 +12,13 @@ interface ProjectChipProps {
  */
 const ProjectChip: React.FC<ProjectChipProps> = ({ status }) => {
   switch (status) {
-    case "application":
+    case "Bewerbung":
       return <Chip label="Bewerbung" color="success" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
-    case "offer":
+    case "Angebot":
       return <Chip label="Angebot" color="info" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
-    case "active":
+    case "Druchführung":
       return <Chip label="Durchführung" color="primary" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
-    case "invoiced":
+    case "Abrechnung":
       return (
         <Chip
           label="Abrechnung"
@@ -26,8 +26,14 @@ const ProjectChip: React.FC<ProjectChipProps> = ({ status }) => {
           sx={{ bgcolor: "#ad3d9b", color: "#fff", minWidth: 75, fontWeight: "bold" }}
         />
       );
-    case "completed":
+    case "Abgeschlossen":
       return <Chip label="Abgeschlossen" color="secondary" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
+    case "Abgelehnt":
+      return <Chip label="Abgelehnt" color="error" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
+    case "Pitch verloren":
+      return <Chip label="Pitch verloren" color="error" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
+    case "Nicht besetzt":
+      return <Chip label="Nicht besetzt" color="error" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
     default:
       return <Chip label="Durchführung" color="primary" size="small" sx={{ minWidth: 75, fontWeight: "bold" }} />;
   }

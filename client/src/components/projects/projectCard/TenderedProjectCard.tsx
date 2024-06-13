@@ -1,5 +1,5 @@
 import React from "react";
-import { TenderedProject } from "../../../types/projectTypes";
+import { TenderedProjectDto } from "../../../types/projectTypes";
 import { Box, Button, Card, CardActions, CardContent, Divider, Typography } from "@mui/material";
 import ProjectChip from "./ProjectChip";
 
@@ -13,23 +13,23 @@ import ProjectChip from "./ProjectChip";
  * @returns - A card component for a tendered project
  */
 const TenderedProjectCard = ({
-  projectID,
+  projectId,
   projectName,
-  projectStatus,
-  projectText,
+  status,
+  situation,
   applicationDeadline,
-}: TenderedProject) => {
+}: TenderedProjectDto) => {
   return (
-    <Card sx={{ maxWidth: 350 }} key={`Projekt-${projectID}`}>
+    <Card sx={{ maxWidth: 350 }} key={`Projekt-${projectId}`}>
       <CardContent sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Box sx={{ mb: 1 }}>
-          <ProjectChip status={projectStatus} />
+          <ProjectChip status={status} />
         </Box>
         <Box>
           <Typography fontWeight="bold">{projectName}</Typography>
         </Box>
         <Divider sx={{ marginBottom: 2 }} />
-        <Typography>{projectText}</Typography>
+        <Typography>{situation}</Typography>
         <Box
           sx={{
             backgroundColor: "#aeb0b2",

@@ -1,14 +1,14 @@
 import { Button, Grid, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import TenderedProjectCard from "./projectCard/TenderedProjectCard";
-import { TenderedProject } from "../../types/projectTypes";
+import { TenderedProjectDto } from "../../types/projectTypes";
 import { AddCircle } from "@mui/icons-material";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import useResponsive from "../../hooks/useResponsive";
 
 interface ProjectTendersProps {
-  tenderedProjects: TenderedProject[];
+  tenderedProjects: TenderedProjectDto[];
 }
 
 /**
@@ -30,7 +30,7 @@ const ProjectTenders = ({ tenderedProjects }: ProjectTendersProps) => {
       ) : null}
       <Grid container>
         {tenderedProjects.map((project) => (
-          <Grid item xs={12} sm={6} md={6} lg={4} xl={3} key={project.projectID}>
+          <Grid item xs={12} sm={6} md={6} lg={4} xl={3} key={project.projectId}>
             <TenderedProjectCard {...project} />
           </Grid>
         ))}
