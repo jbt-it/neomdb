@@ -34,6 +34,7 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
       "&:nth-of-type(odd)": { backgroundColor: "#fff" },
       "&:nth-of-type(even)": { backgroundColor: "#ededed" },
       textDecoration: "none",
+      height: 60,
     },
   };
 

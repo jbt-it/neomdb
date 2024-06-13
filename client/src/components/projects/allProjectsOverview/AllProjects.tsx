@@ -86,7 +86,7 @@ const AllProjects = ({ projects }: AllProjectsProps) => {
     }
     if (endDate) {
       filteredProjects = filteredProjects.filter((project) => {
-        return project.projectEndDate ? project.projectEndDate <= endDate : true;
+        return project.projectEndDate ? project.projectEndDate <= endDate : false;
       });
     }
     filteredProjects = filteredProjects.filter((project) =>
