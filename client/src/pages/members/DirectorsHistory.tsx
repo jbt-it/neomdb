@@ -2,7 +2,7 @@
  * The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Table,
@@ -19,11 +19,10 @@ import {
   Box,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import api from "../../utils/api";
 import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
-import { showErrorMessage } from "../../utils/toastUtils";
 import { Link } from "react-router-dom";
 import { DirectorDto } from "../../types/membersTypes";
+import useDepartments from "../../hooks/members/useDepartments";
 
 // Create a styled component with the form
 const StyledForm = styled("form")(({ theme }) => ({
@@ -142,36 +141,10 @@ const DirectorsHistory: React.FunctionComponent = () => {
       },
     },
   };
-  const [directors, setdirectors] = useState<DirectorDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
-
-  // Retrieves the directors
-  const getdirectors = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/directors?current=false", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setdirectors(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Internal Server Error");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, []);
-  useEffect(() => getdirectors(), [getdirectors]);
+  const { allDirectors } = useDepartments();
 
   /**
    * Handles the change event on the search filter input
@@ -193,7 +166,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
    * Filters and sorts the director data and returns it
    */
   const getFilteredandSortedDirectors = (): DirectorDto[] => {
-    let filtereddirectors = directors;
+    let filtereddirectors = allDirectors;
 
     // Filters by kuerzel
     if (kuerzelFilter !== "") {

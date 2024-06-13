@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { useAuth } from "../../hooks/useAuth";
 import { NumericFeedback, Workshop, WorkshopInstance } from "../../types/eventTypes";
 
 import InfoSection, { InformationField } from "../../components/general/InfoSection";
@@ -12,6 +11,7 @@ import { schulung } from "../../mock/events/schulung";
 import { schulungsinstanz } from "../../mock/events/schulungsinstanz";
 import { mitglied_has_schulungsinstanz } from "../../mock/events/mitglied_has_schulungsinstanz";
 import useResponsive from "../../hooks/useResponsive";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Displays the feedback form for a workshop instance
@@ -21,7 +21,7 @@ const WorkshopInstanceFeedback = () => {
   const { workshopInstanceID } = useParams<{
     workshopInstanceID: string;
   }>();
-  const { auth, dispatchAuth } = useAuth();
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const [workshopInstance, setWorkshopInstance] = useState<WorkshopInstance | null>(null);
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
 

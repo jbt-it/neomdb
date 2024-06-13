@@ -1,11 +1,9 @@
-import { describe, expect, test, beforeAll, beforeEach, afterEach, afterAll } from "@jest/globals";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
 import request from "supertest";
 import app from "../../../src/app";
-import MemberTestUtils from "../../utils/memberTestUtils";
-import AuthTestUtils from "../../utils/authTestUtils";
-import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
 import { AppDataSource } from "../../../src/datasource";
-import { level } from "winston";
+import AuthTestUtils from "../../utils/authTestUtils";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
@@ -297,13 +295,13 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(201);
-      expect(response.body.memberID).toBeDefined();
+      expect(response.body.memberId).toBeDefined();
       expect(response.body.statusOverview.querySuccesful).toBe(true);
 
-      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(response.body.memberID);
+      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(response.body.memberId);
       expect(memberFromDB).not.toBeNull();
-      expect(memberFromDB.mitgliedID).toBe(response.body.memberID);
-      expect(memberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(memberFromDB.memberId).toBe(response.body.memberId);
+      expect(memberFromDB.memberStatus.name).toBe("Trainee");
     });
 
     test("should return 403 for creating a new member without permission", async () => {
@@ -348,27 +346,27 @@ describe("Test member routes", () => {
       const firstResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
       const secondResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
       // --- THEN
-      const firstMemberFromDB = await memberTestUtils.getMemberByIDFromDB(firstResponse.body.memberID);
-      const secondMemberFromDB = await memberTestUtils.getMemberByIDFromDB(secondResponse.body.memberID);
+      const firstMemberFromDB = await memberTestUtils.getMemberByIDFromDB(firstResponse.body.memberId);
+      const secondMemberFromDB = await memberTestUtils.getMemberByIDFromDB(secondResponse.body.memberId);
 
       expect(firstResponse.status).toBe(201);
-      expect(firstResponse.body.memberID).toBeDefined();
+      expect(firstResponse.body.memberId).toBeDefined();
       expect(firstResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(firstMemberFromDB).not.toBeNull();
-      expect(firstMemberFromDB.mitgliedID).toBe(firstResponse.body.memberID);
-      expect(firstMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(firstMemberFromDB.memberId).toBe(firstResponse.body.memberId);
+      expect(firstMemberFromDB.memberStatus.name).toBe("Trainee");
 
       expect(secondResponse.status).toBe(201);
-      expect(secondResponse.body.memberID).toBeDefined();
+      expect(secondResponse.body.memberId).toBeDefined();
       expect(secondResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(secondMemberFromDB).not.toBeNull();
-      expect(secondMemberFromDB.mitgliedID).toBe(secondResponse.body.memberID);
-      expect(secondMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(secondMemberFromDB.memberId).toBe(secondResponse.body.memberId);
+      expect(secondMemberFromDB.memberStatus.name).toBe("Trainee");
 
-      expect(firstMemberFromDB.jbt_email).toBe("jesse.pinkman@studentische-beratung.de");
-      expect(secondMemberFromDB.jbt_email).toBe("jesse.pinkman1@studentische-beratung.de");
+      expect(firstMemberFromDB.jbtEmail).toBe("jesse.pinkman@studentische-beratung.de");
+      expect(secondMemberFromDB.jbtEmail).toBe("jesse.pinkman1@studentische-beratung.de");
     });
   });
 
@@ -379,11 +377,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -396,11 +394,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -414,16 +412,16 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 9999;
+      const memberId = 9999;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(404);
-      expect(JSON.parse(response.text).message).toBe(`Member with id ${memberID} does not exist`);
+      expect(JSON.parse(response.text).message).toBe(`Member with id ${memberId} does not exist`);
     });
 
     test("should return 403 for deligate permission not existing", async () => {
@@ -432,11 +430,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 9999;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -539,7 +537,6 @@ describe("Test member routes", () => {
         commitment: null,
         canPL: new Date("2013-12-22"),
         canQM: new Date("2013-12-22"),
-        lastChange: new Date("1899-11-29"),
         drivingLicense: 0,
         firstAidTraining: false,
         mentor: null,
@@ -577,6 +574,13 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(204);
+
+      // Check if the member was updated correctly in the database
+      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(memberId);
+      expect(memberFromDB).not.toBeNull();
+      expect(memberFromDB.memberId).toBe(memberId);
+      expect(memberFromDB.firstName).toBe(memberInfo.firstname);
+      expect(memberFromDB.lastChange).not.toBeNull();
     });
 
     test("should return 403 for update member with permission", async () => {
@@ -733,11 +737,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8167;
+      const memberId = 8167;
       const permissionID = 8;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -750,11 +754,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8167;
+      const memberId = 8167;
       const permissionID = 1;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -767,11 +771,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 5;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -784,11 +788,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 200;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN

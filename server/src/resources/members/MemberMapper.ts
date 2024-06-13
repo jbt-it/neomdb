@@ -1,10 +1,10 @@
-import { DirectorHasPermission } from "typeOrm/entities/DirectorHasPermission";
-import { Department } from "../../typeOrm/entities/Department";
-import { ItSkill } from "../../typeOrm/entities/ItSkill";
-import { Language } from "../../typeOrm/entities/Language";
-import { Member } from "../../typeOrm/entities/Member";
-import { MemberHasDirectorPosition } from "../../typeOrm/entities/MemberHasDirectorPosition";
-import { JWTPayload, PermissionDTO, User } from "../../typeOrm/types/authTypes";
+import { DirectorHasPermission } from "entities/DirectorHasPermission";
+import { Department } from "../../entities/Department";
+import { ItSkill } from "../../entities/ItSkill";
+import { Language } from "../../entities/Language";
+import { Member } from "../../entities/Member";
+import { MemberHasDirectorPosition } from "../../entities/MemberHasDirectorPosition";
+import { JWTPayload, PermissionDTO, User } from "../../types/authTypes";
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
@@ -18,7 +18,7 @@ import {
   MembersFieldDto,
   MenteeDto,
   MentorDto,
-} from "../../typeOrm/types/memberTypes";
+} from "../../types/memberTypes";
 
 /**
  * Provides methods to map a member to a dto (data transfer object) or vice versa

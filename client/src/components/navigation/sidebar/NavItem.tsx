@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-import { Box, ListItemButton, Collapse, List } from "@mui/material";
+import { ExpandLess, ExpandMore, SvgIconComponent } from "@mui/icons-material";
+import { Box, Collapse, List, ListItemButton } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { SvgIconComponent, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-import { Permission } from "../../../types/globalTypes";
-import { useAuth } from "../../../hooks/useAuth";
 import usePathname from "../../../hooks/usePathname";
+import { checkForPermission } from "../../../utils/authUtils";
+import { AuthContext } from "../../../context/auth-context/AuthContext";
 
 interface NavItemProps {
   item: {
@@ -17,7 +17,7 @@ interface NavItemProps {
     children?: {
       title: string;
       path: string;
-      permissions?: Permission[];
+      permissions?: number[];
     }[];
   };
   openItem?: boolean;
@@ -27,7 +27,7 @@ interface NavItemProps {
 interface NavItemChildProps {
   path: string;
   title: string;
-  permissions?: Permission[];
+  permissions?: number[];
 }
 
 /**
@@ -39,7 +39,7 @@ interface NavItemChildProps {
 const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
   const pathParentName = pathname.split("/").slice(0, 2).join("/");
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const [activeChild, setActiveChild] = useState(false);
 
   useEffect(() => {
@@ -51,6 +51,20 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   }, [item.children, pathname]);
 
   const active = item.path === pathname || activeChild || item.path === pathParentName;
+
+  /**
+   * Checks if the user has the permission to view the NavBar item.
+   *
+   * @param navPermissions - The permissions required for the item in the NavBar.
+   * @returns true if the user has the given permissions, false otherwise.
+   */
+  const checkAccess = (navPermissions?: number[]) => {
+    if (navPermissions === undefined) {
+      return true;
+    } else {
+      return checkForPermission(auth.permissions, navPermissions);
+    }
+  };
 
   if (item.children !== undefined && setOpenItem !== undefined) {
     const handleCollpaseClick = () => {
@@ -88,7 +102,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
         <Collapse in={openItem} timeout="auto" unmountOnExit>
           <List sx={{ marginLeft: 3, marginTop: -1, paddingBottom: 0 }}>
             {item.children.map((child: NavItemChildProps) =>
-              child.permissions && auth.permissions.length === 0 ? null : (
+              checkAccess(child.permissions) ? (
                 <ListItemButton
                   component={NavLink}
                   to={child.path}
@@ -114,7 +128,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
                 >
                   <Box component="span">{child.title} </Box>
                 </ListItemButton>
-              )
+              ) : null
             )}
           </List>
         </Collapse>

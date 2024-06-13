@@ -1,7 +1,8 @@
 import * as express from "express";
 import { UnauthenticatedError, UnauthorizedError } from "../types/Errors";
 import { checkForValidJWT, extractJWTFromHeader, verifyJWT } from "../utils/jwtUtils";
-import { PermissionDTO } from "../typeOrm/types/authTypes";
+import { PermissionDTO } from "../types/authTypes";
+import { Context } from "../global/Context";
 
 /**
  * Checks if the user has the required permissions to access the route
@@ -36,6 +37,7 @@ const checkDataFromJWT = (req: express.Request, permissions: string[]) => {
       checkPermissions(jwtData.permissions, permissions);
     }
 
+    Context.setUser(jwtData);
     resolve(jwtData);
   });
 };

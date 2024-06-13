@@ -1,17 +1,14 @@
+import { PasswordResetRepository } from "../../src/auth/PasswordResetRepository";
 import request from "supertest";
-import { Express } from "express";
-import AuthRepository from "../../src/auth/AuthRepository";
 
 /**
  * Utility class for testing the auth routes
  */
 class AuthTestUtils {
-  authRepository: AuthRepository = null;
   app: Express.Application = null;
 
   constructor(app: Express.Application) {
     this.app = app;
-    this.authRepository = new AuthRepository();
   }
 
   /**
@@ -53,11 +50,11 @@ class AuthTestUtils {
     try {
       // Tries to delete the old entry, if any exists
       try {
-        await this.authRepository.deletePasswordResetEntriesByEmail(email);
+        await PasswordResetRepository.deletePasswordResetEntriesByEmail(email);
       } catch (error) {
         // Do nothing
       }
-      await this.authRepository.createPasswordResetEntry(email, "salt", token);
+      await PasswordResetRepository.createPasswordResetEntry(email, "salt", token);
     } catch (error) {
       console.error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
       throw new Error(`Error creating password reset entry "${token}" for email ${email}: ${error}`);
