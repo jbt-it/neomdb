@@ -185,7 +185,8 @@ const useProjects = () => {
       situation: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       Nullam auctor, nunc nec ultricies ultricies, nunc nisl ultricies nunc,
       nec ultricies nunc nisl nec nunc.`,
-      applicationDeadline: dayjs("2024-04-20"),
+      applicationEnd1: dayjs("2024-04-20"),
+      applicationEnd2: null,
     },
   ] as TenderedProjectDto[];
 

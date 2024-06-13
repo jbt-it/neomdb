@@ -46,5 +46,6 @@ export type TenderedProjectDto = {
   projectName: string;
   status: string;
   situation: string;
-  applicationDeadline: Dayjs;
+  applicationEnd1: Dayjs | null;
+  applicationEnd2: Dayjs | null;
 };

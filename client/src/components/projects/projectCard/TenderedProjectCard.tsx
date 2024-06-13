@@ -9,7 +9,8 @@ import ProjectChip from "./ProjectChip";
  * @param projectName - Name of the project
  * @param projectStatus - Status of the project
  * @param projectText - Description of the project
- * @param applicationDeadline - Deadline for applications
+ * @param applicationEnd1 - First Deadline for applications
+ * @param applicationEnd2 - Second Deadline for applications
  * @returns - A card component for a tendered project
  */
 const TenderedProjectCard = ({
@@ -17,7 +18,8 @@ const TenderedProjectCard = ({
   projectName,
   status,
   situation,
-  applicationDeadline,
+  applicationEnd1,
+  applicationEnd2,
 }: TenderedProjectDto) => {
   return (
     <Card sx={{ maxWidth: 350 }} key={`Projekt-${projectId}`}>
@@ -30,22 +32,26 @@ const TenderedProjectCard = ({
         </Box>
         <Divider sx={{ marginBottom: 2 }} />
         <Typography>{situation}</Typography>
-        <Box
-          sx={{
-            backgroundColor: "#aeb0b2",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 1.5,
-            marginTop: 4,
-            padding: 0.5,
-          }}
-        >
-          <Typography color="#000" fontSize={14}>
-            Bewirb dich jetzt bis zum:{" "}
-            <span style={{ fontWeight: "bold" }}>{applicationDeadline.format("DD.MM.YYYY")}</span>
-          </Typography>
-        </Box>
+        {applicationEnd1 ? (
+          <Box
+            sx={{
+              backgroundColor: "#aeb0b2",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 1.5,
+              marginTop: 4,
+              padding: 0.5,
+            }}
+          >
+            <Typography color="#000" fontSize={14}>
+              Bewirb dich jetzt bis zum:{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {applicationEnd2 ? applicationEnd2.format("DD.MM.YYYY") : applicationEnd1.format("DD.MM.YYYY")}
+              </span>
+            </Typography>
+          </Box>
+        ) : null}
       </CardContent>
       <CardActions sx={{ justifyContent: "space-between" }}>
         <Button variant="contained">Bewerben</Button>
