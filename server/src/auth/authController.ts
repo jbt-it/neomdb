@@ -10,7 +10,8 @@ import {
   UserForgotPasswordRequest,
   UserLoginRequest,
   UserResetPasswordRequest,
-} from "../typeOrm/types/authTypes";
+} from "../types/authTypes";
+import { ExpressRequest } from "../types/expressTypes";
 
 /**
  * Controller for the authentication
@@ -47,7 +48,7 @@ export class AuthController extends Controller {
    */
   @Get("me")
   @Security("jwt")
-  public async getUserData(@Request() request: any): Promise<JWTPayload> {
+  public async getUserData(@Request() request: ExpressRequest): Promise<JWTPayload> {
     const user = request.user as JWTPayload;
     const payload = await this.authService.getUserData(user.name);
     const token = generateJWT(payload);
@@ -72,7 +73,10 @@ export class AuthController extends Controller {
   // TODO: Use @Post("change-password") instead of @Patch("change-password")
   @Patch("change-password")
   @Security("jwt")
-  public async changePassword(@Body() requestBody: UserChangePasswordRequest, @Request() request: any): Promise<void> {
+  public async changePassword(
+    @Body() requestBody: UserChangePasswordRequest,
+    @Request() request: ExpressRequest
+  ): Promise<void> {
     const user = request.user;
     if (user.name !== requestBody.userName) {
       throw new UnauthorizedError("You are not allowed to change the password of another user");

@@ -2,7 +2,7 @@
  * The MemberOverview-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Table,
@@ -21,12 +21,9 @@ import {
   styled,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import api from "../../utils/api";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { useContext } from "react";
 import * as membersTypes from "../../types/membersTypes";
-import { authReducerActionType } from "../../types/globalTypes";
 import { Link } from "react-router-dom";
+import useMembers from "../../hooks/members/useMembers";
 
 // styled form component
 const StyledForm = styled("form")(({ theme }) => ({
@@ -151,7 +148,6 @@ const MemberOverview: React.FunctionComponent = () => {
   `;
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [members, setMembers] = useState<membersTypes.MemberPartialDto[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [ressortFilter, setRessortFilter] = useState<string>("");
@@ -159,36 +155,7 @@ const MemberOverview: React.FunctionComponent = () => {
 
   const [nameSort, setNameSort] = useState<string>("");
 
-  const { dispatchAuth } = useContext(AuthContext);
-
-  // Retrieves the members
-  const getMembers: VoidFunction = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setMembers(res.data);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, [dispatchAuth]);
-
-  useEffect(() => getMembers(), [getMembers]);
+  const { members } = useMembers();
 
   /**
    * Handles the change event on the search filter input

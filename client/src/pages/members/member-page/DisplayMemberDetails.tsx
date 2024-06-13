@@ -45,7 +45,6 @@ interface DisplayMemberDetailsProps {
   memberImage: membersTypes.MemberImage | null;
   updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
-  getMemberDetails: () => void;
 }
 
 /**
@@ -448,6 +447,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const newDepartment = {
+      departmentId: department?.departmentId,
+      name: department?.name,
+      shortName: department?.shortName,
+    } as membersTypes.DepartmentPartialDto;
 
     // Data which will be submitted
     const data: membersTypes.MemberDetailsDto = {
@@ -468,7 +472,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       activeSince: memberDetails.activeSince,
       passiveSince: passiveSince,
       exitedSince: memberDetails.exitedSince,
-      department: department,
+      department: newDepartment,
       employer: employer,
       street1: street1,
       postalCode1: plz1State,

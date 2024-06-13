@@ -62,7 +62,6 @@ export type DepartmentPartialDto = {
 /**
  * Type of the department
  */
-// @JanMueller31 -> Former DepartmentDetails TODO: Delete this comment line after type is used
 export type DepartmentDetailsDto = {
   departmentId: number;
   name: string;
@@ -75,7 +74,6 @@ export type DepartmentDetailsDto = {
 /**
  * Type of the request to update a department
  */
-// @JanMueller31 -> Can be used for the update of a department TODO: Delete this comment line after type is used
 export type UpdateDepartmentDto = {
   linkObjectivePresentation: string;
   linkOrganigram: string;
@@ -137,6 +135,14 @@ export type MemberPermissionAssignmentDto = {
   memberId: number;
   firstname: string;
   lastname: string;
+};
+
+/**
+ * Type of the assign permission dto
+ */
+export type AssignPermissionToMemberRequestDto = {
+  memberId: number;
+  permissionID: number;
 };
 
 /**
@@ -371,4 +377,58 @@ export type MembersFieldDto = {
   firstname: string;
   lastname: string;
   memberStatus?: MemberStatus;
+};
+
+/**
+ * Type of the update member status api request params
+ */
+export type UpdateMemberStatusParams = {
+  memberId: number;
+  status: string;
+};
+
+/**
+ * Type of the update member image params
+ */
+export type UpdateMemberImageParams = {
+  image: File;
+  memberID: number;
+};
+
+/**
+ * Type of the add member params
+ */
+export type AddMemberParams = {
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  birthday: Date | null;
+  mobile: string | null;
+  gender: number | null;
+  generationId: number | null;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
+};
+
+/**
+ * Type of the response after creating a member
+ */
+export type CreateMemberResponseDto = {
+  memberId: number;
+  statusOverview: StatusOverview;
 };

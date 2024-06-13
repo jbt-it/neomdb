@@ -9,6 +9,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { ItSkill } from "./ItSkill";
 import { Generation } from "./Generation";
@@ -23,14 +24,14 @@ import { MemberHasStatus } from "./MemberHasStatus";
 import { Mmtracking } from "./Mmtracking";
 import { PasswordReset } from "./PasswordReset";
 import { Internship } from "./Internship";
-import { WorkshopFeedbackHasMember } from "./WorkshopFeedbackHasMitglied";
+import { WorkshopFeedbackHasMember } from "./WorkshopFeedbackHasMember";
 import { TraineeApplicant } from "./TraineeApplicant";
 import { MemberHasDirectorPosition } from "./MemberHasDirectorPosition";
 import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
-import { booleanTransformer } from "../../utils/dataTransformer";
+import { booleanTransformer } from "../utils/dataTransformer";
 
 @Index("name", ["name"], { unique: true })
 @Index("mitgliedID_UNIQUE", ["memberId"], { unique: true })
@@ -213,7 +214,7 @@ export class Member {
   @Column("date", { name: "canQM", nullable: true })
   canQM: Date | null;
 
-  @Column("date", { name: "lastchange", nullable: true })
+  @UpdateDateColumn({ name: "lastchange", nullable: true })
   lastChange: Date | null;
 
   @Column("text", { name: "sonstige_ws", nullable: true })

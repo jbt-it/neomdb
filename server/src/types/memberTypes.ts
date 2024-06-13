@@ -1,5 +1,16 @@
-import { InternalProject } from "../../typeOrm/entities/InternalProject";
-import { MemberStatus } from "../../typeOrm/entities/MemberStatus";
+import { InternalProject } from "../entities/InternalProject";
+import { MemberStatus } from "../entities/MemberStatus";
+
+/**
+ * The member status names
+ */
+export type MemberStatusName =
+  | "Trainee"
+  | "aktives Mitglied"
+  | "Senior"
+  | "Alumnus"
+  | "passives Mitglied"
+  | "Ausgetretene";
 
 /**
  * Type of the mentee (partial member)
@@ -8,6 +19,14 @@ export type MenteeDto = {
   memberId: number;
   firstname: string;
   lastname: string;
+};
+
+/**
+ * Type of the member image
+ */
+export type MemberImage = {
+  base64: string;
+  mimeType: string;
 };
 
 /**
@@ -41,8 +60,8 @@ export type MembersFieldDto = {
  * Type of the request to update a department
  */
 export type UpdateDepartmentDto = {
-  linkObjectivePresentation: string;
-  linkOrganigram: string;
+  linkObjectivePresentation: string | null;
+  linkOrganigram: string | null;
 };
 
 /**
@@ -200,7 +219,7 @@ export type MemberDetailsDto = {
   commitment: string | null;
   canPL: Date | null;
   canQM: Date | null;
-  lastChange: Date | null;
+  lastChange?: Date | null;
   drivingLicense: number;
   firstAidTraining: boolean;
   // Optional attributes only viewable with specific permissions (of if the user is the member)
@@ -247,4 +266,36 @@ export type NewMember = {
   icalToken: string;
   passwordHash: string;
   traineeSince: Date | null;
+};
+
+/**
+ * Type of the overview of the status of the different account creation operations
+ */
+export type StatusOverview = {
+  querySuccesful: boolean;
+  queryErrorMsg: string;
+  mailSuccesful: boolean;
+  mailErrorMsg: string;
+  mailListSuccesful: boolean;
+  mailListErrorMsg: string;
+  nextcloudSuccesful: boolean;
+  nextcloudErrorMsg: string;
+  wikiSuccesful: boolean;
+  wikiErrorMsg: string;
+};
+
+/**
+ * Type of the response after creating a member
+ */
+export type CreateMemberResponseDto = {
+  memberId: number;
+  statusOverview: StatusOverview;
+};
+
+/**
+ * Type of the request to assign a permission to a member
+ */
+export type AssignPermissionToMemberRequestDto = {
+  memberId: number;
+  permissionID: number;
 };

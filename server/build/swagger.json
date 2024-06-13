@@ -3485,19 +3485,19 @@
 				"type": "object",
 				"description": "Type of the overview of the status of the different account creation operations"
 			},
-			"CreateMemberResponse": {
+			"CreateMemberResponseDto": {
 				"properties": {
 					"statusOverview": {
 						"$ref": "#/components/schemas/StatusOverview"
 					},
-					"memberID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"statusOverview",
-					"memberID"
+					"memberId"
 				],
 				"type": "object",
 				"description": "Type of the response after creating a member"
@@ -3585,10 +3585,12 @@
 			"UpdateDepartmentDto": {
 				"properties": {
 					"linkOrganigram": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"linkObjectivePresentation": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -3699,22 +3701,23 @@
 				"type": "object",
 				"description": "Type of the permission assignment (permission of a member or a director)"
 			},
-			"AssignPermissionToMemberRequest": {
+			"AssignPermissionToMemberRequestDto": {
 				"properties": {
 					"permissionID": {
 						"type": "number",
 						"format": "double"
 					},
-					"memberID": {
+					"memberId": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
 					"permissionID",
-					"memberID"
+					"memberId"
 				],
-				"type": "object"
+				"type": "object",
+				"description": "Type of the request to assign a permission to a member"
 			},
 			"MemberStatusDto": {
 				"properties": {
@@ -4035,7 +4038,6 @@
 				"required": [
 					"firstAidTraining",
 					"drivingLicense",
-					"lastChange",
 					"canQM",
 					"canPL",
 					"commitment",
@@ -4685,7 +4687,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CreateMemberResponse"
+									"$ref": "#/components/schemas/CreateMemberResponseDto"
 								}
 							}
 						}
@@ -5175,7 +5177,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to create"
 							},
 							"example": {
@@ -5210,7 +5212,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AssignPermissionToMemberRequest",
+								"$ref": "#/components/schemas/AssignPermissionToMemberRequestDto",
 								"description": "The permission to delete"
 							},
 							"example": {
