@@ -3585,10 +3585,12 @@
 			"UpdateDepartmentDto": {
 				"properties": {
 					"linkOrganigram": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"linkObjectivePresentation": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -4036,7 +4038,6 @@
 				"required": [
 					"firstAidTraining",
 					"drivingLicense",
-					"lastChange",
 					"canQM",
 					"canPL",
 					"commitment",
