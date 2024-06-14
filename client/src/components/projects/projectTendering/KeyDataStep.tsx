@@ -20,7 +20,7 @@ interface KeyDataStepProps {
 const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }: KeyDataStepProps) => {
   const {
     projectName,
-    location,
+    jobSite,
     tenderDate,
     estimatedProjectStart,
     estimatedProjectDuration,
@@ -39,8 +39,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
   };
 
   // Function to handle the change of the location
-  const onChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, location: event.target.value });
+  const onChangeJobSite = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, jobSite: event.target.value });
   };
 
   // Function to handle the change of the start date
@@ -117,8 +117,8 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           sx={{ flex: 3 }}
           variant="outlined"
           size="small"
-          value={location}
-          onChange={onChangeLocation}
+          value={jobSite}
+          onChange={onChangeJobSite}
           disabled={isCompleted}
         />
       </Stack>

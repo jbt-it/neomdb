@@ -21,7 +21,7 @@ const ProjectTendering = () => {
   // Project key data initial state
   const [projectKeyData, setProjectKeyData] = React.useState<ProjectKeyData>({
     projectName: "",
-    location: "",
+    jobSite: "",
     tenderDate: dayjs(), // will be shown but is disabled
     estimatedProjectStart: undefined,
     estimatedProjectDuration: "",
@@ -312,7 +312,7 @@ const ProjectTendering = () => {
       projectId: -1,
       projectName: projectKeyData.projectName,
       status: projectKeyData.tenderDate ? "Bewerbung" : "Durchführung",
-      location: projectKeyData.location,
+      jobSite: projectKeyData.jobSite,
       tenderDate: projectKeyData.tenderDate?.toDate(),
       estimatedProjectStart: projectKeyData.estimatedProjectStart.toDate(),
       estimatedProjectDuration: projectKeyData.estimatedProjectDuration,

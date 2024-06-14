@@ -97,7 +97,7 @@ export type ContactPersonDto = {
 // Type of the project key data for the project tendering
 export type ProjectKeyData = {
   projectName: string;
-  location: string;
+  jobSite: string;
   tenderDate: Dayjs | undefined;
   estimatedProjectStart: Dayjs | undefined;
   estimatedProjectDuration: string;
@@ -146,7 +146,7 @@ export type ProjectDescriptionData = {
 export type ProjectDetailsDto = {
   projectId: number;
   projectName: string;
-  location: string;
+  jobSite: string;
   status: string;
   tenderDate: Date | undefined;
   estimatedProjectStart: Date;
