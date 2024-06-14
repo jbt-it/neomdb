@@ -147,6 +147,7 @@ export type ProjectDetailsDto = {
   projectId: number;
   projectName: string;
   location: string;
+  status: string;
   tenderDate: Date | undefined;
   estimatedProjectStart: Date;
   estimatedProjectDuration: string;

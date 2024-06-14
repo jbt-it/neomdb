@@ -311,6 +311,7 @@ const ProjectTendering = () => {
     const data = {
       projectId: -1,
       projectName: projectKeyData.projectName,
+      status: projectKeyData.tenderDate ? "Bewerbung" : "Durchführung",
       location: projectKeyData.location,
       tenderDate: projectKeyData.tenderDate?.toDate(),
       estimatedProjectStart: projectKeyData.estimatedProjectStart.toDate(),
