@@ -5,6 +5,7 @@ import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep"
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
 import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
+import dayjs from "dayjs";
 
 // Steps for the project tendering form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
@@ -14,39 +15,36 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  * @returns - A form to create a new project tendering
  */
 const ProjectTendering = () => {
-  // Project key data
+  // Project key data initial state
   const [projectKeyData, setProjectKeyData] = React.useState<ProjectKeyData>({
     projectName: undefined,
     location: undefined,
-    tenderingDate: undefined,
-    start: undefined,
-    duration: undefined,
-    conditions: undefined,
-    conditionsRange: undefined,
-    btMin: undefined,
-    btMax: undefined,
-    amountProjectMembersMin: undefined,
-    amountProjectMembersMax: undefined,
-    applicationDeadline: undefined,
+    tenderDate: dayjs(), // will be shown but is disabled
+    estimatedProjectStart: undefined,
+    estimatedProjectDuration: undefined,
+    estimatedProjectEuroPerBT: undefined,
+    estimatedProjectEuroPerBTrange: undefined,
+    estimatedProjectBTmin: undefined,
+    estimatedProjectBTmax: undefined,
+    estimatedProjectMemberMin: undefined,
+    estimatedProjectMemberMax: undefined,
+    applicationEnd1: undefined,
   });
 
-  // Errors for the project key data
+  // Errors for the project key data inital state
   const [projectKeyDataErrors, setProjectKeyDataErrors] = React.useState<{ [key: string]: boolean }>({
     projectName: false,
-    location: false,
-    tenderingDate: false,
-    start: false,
-    duration: false,
-    conditions: false,
-    conditionsRange: false,
-    btMin: false,
-    btMax: false,
-    amountProjectMembersMin: false,
-    amountProjectMembersMax: false,
-    applicationDeadline: false,
+    estimatedProjectStart: false,
+    estimatedProjectDuration: false,
+    estimatedProjectEuroPerBT: false,
+    estimatedProjectBTmin: false,
+    estimatedProjectBTmax: false,
+    estimatedProjectMemberMin: false,
+    estimatedProjectMemberMax: false,
+    applicationEnd1: false,
   });
 
-  // Customer data
+  // Customer data initial state
   const [customerData, setCustomerData] = React.useState<CustomerData>({
     companyId: -1,
     name: "",
@@ -66,7 +64,7 @@ const ProjectTendering = () => {
     classified: false,
   });
 
-  // Errors for the customer data
+  // Errors for the customer data initial state
   const [customerDataErrors, setCustomerDataErrors] = React.useState<{ [key: string]: boolean }>({
     customer: false,
     industry: false,
@@ -75,7 +73,7 @@ const ProjectTendering = () => {
     acquisitor: false,
   });
 
-  // Project Description data
+  // Project Description data initial state
   const [projectDescriptionData, setProjectDescriptionData] = React.useState<ProjectDescriptionData>({
     situation: "",
     peculiarities: "",
@@ -85,7 +83,7 @@ const ProjectTendering = () => {
     notes: "",
   });
 
-  // Errors for the project description data
+  // Errors for the project description data initial state
   const [projectDescriptionDataErrors, setProjectDescriptionDataErrors] = React.useState<{ [key: string]: boolean }>({
     situation: false,
     peculiarities: false,
@@ -96,6 +94,7 @@ const ProjectTendering = () => {
   });
 
   // Validate the project key data
+  // Checks for projectName, estimatedProjectStart, estimatedProjectDuration, estimatedProjectEuroPerBT, estimatedProjectBTmin, estimatedProjectBTmax, estimatedProjectMemberMin, estimatedProjectMemberMax and applicationEnd1
   const validateProjectKeyData = () => {
     let hasErrors = false;
     const newErrors = { ...projectKeyDataErrors };
@@ -105,96 +104,91 @@ const ProjectTendering = () => {
     } else {
       newErrors.projectName = false;
     }
-    if (!projectKeyData.location) {
-      newErrors.location = true;
+    if (!projectKeyData.estimatedProjectStart || projectKeyData.estimatedProjectStart.toDate() < new Date()) {
+      newErrors.estimatedProjectStart = true;
       hasErrors = true;
     } else {
-      newErrors.location = false;
+      newErrors.estimatedProjectStart = false;
     }
-    if (!projectKeyData.tenderingDate || projectKeyData.tenderingDate.toDate() < new Date()) {
-      newErrors.tenderingDate = true;
+    if (!projectKeyData.estimatedProjectDuration) {
+      newErrors.estimatedProjectDuration = true;
       hasErrors = true;
     } else {
-      newErrors.tenderingDate = false;
+      newErrors.estimatedProjectDuration = false;
     }
-    if (!projectKeyData.start || projectKeyData.start.toDate() < new Date()) {
-      newErrors.start = true;
+    if (!projectKeyData.estimatedProjectEuroPerBT || projectKeyData.estimatedProjectEuroPerBT < 0) {
+      newErrors.estimatedProjectEuroPerBT = true;
       hasErrors = true;
     } else {
-      newErrors.start = false;
-    }
-    if (!projectKeyData.duration) {
-      newErrors.duration = true;
-      hasErrors = true;
-    } else {
-      newErrors.duration = false;
-    }
-    if (!projectKeyData.conditions || projectKeyData.conditions < 0) {
-      newErrors.conditions = true;
-      hasErrors = true;
-    } else {
-      newErrors.conditions = false;
+      newErrors.estimatedProjectEuroPerBT = false;
     }
     if (
-      !projectKeyData.conditionsRange ||
-      projectKeyData.conditionsRange < 0 ||
-      (projectKeyData.conditions && projectKeyData.conditionsRange < projectKeyData.conditions)
+      projectKeyData.estimatedProjectEuroPerBT &&
+      projectKeyData.estimatedProjectEuroPerBTrange &&
+      projectKeyData.estimatedProjectEuroPerBTrange < projectKeyData.estimatedProjectEuroPerBT
     ) {
-      newErrors.conditionsRange = true;
+      newErrors.estimatedProjectEuroPerBTrange = true;
       hasErrors = true;
     } else {
-      newErrors.conditionsRange = false;
-    }
-    if (!projectKeyData.btMin || projectKeyData.btMin < 0 || !Number.isInteger(projectKeyData.btMin)) {
-      newErrors.btMin = true;
-      hasErrors = true;
-    } else {
-      newErrors.btMin = false;
+      newErrors.estimatedProjectEuroPerBTrange = false;
     }
     if (
-      !projectKeyData.btMax ||
-      projectKeyData.btMax < 0 ||
-      !Number.isInteger(projectKeyData.btMax) ||
-      (projectKeyData.btMin && projectKeyData.btMax < projectKeyData.btMin)
+      !projectKeyData.estimatedProjectBTmin ||
+      projectKeyData.estimatedProjectBTmin < 0 ||
+      !Number.isInteger(projectKeyData.estimatedProjectBTmin)
     ) {
-      newErrors.btMax = true;
+      newErrors.estimatedProjectBTmin = true;
       hasErrors = true;
     } else {
-      newErrors.btMax = false;
+      newErrors.estimatedProjectBTmin = false;
     }
     if (
-      !projectKeyData.amountProjectMembersMin ||
-      projectKeyData.amountProjectMembersMin < 0 ||
-      !Number.isInteger(projectKeyData.amountProjectMembersMin)
+      !projectKeyData.estimatedProjectBTmax ||
+      projectKeyData.estimatedProjectBTmax < 0 ||
+      !Number.isInteger(projectKeyData.estimatedProjectBTmax) ||
+      (projectKeyData.estimatedProjectBTmin &&
+        projectKeyData.estimatedProjectBTmax < projectKeyData.estimatedProjectBTmin)
     ) {
-      newErrors.amountProjectMembersMin = true;
+      newErrors.estimatedProjectBTmax = true;
       hasErrors = true;
     } else {
-      newErrors.amountProjectMembersMin = false;
+      newErrors.estimatedProjectBTmax = false;
     }
     if (
-      !projectKeyData.amountProjectMembersMax ||
-      projectKeyData.amountProjectMembersMax < 0 ||
-      !Number.isInteger(projectKeyData.amountProjectMembersMax) ||
-      (projectKeyData.amountProjectMembersMin &&
-        projectKeyData.amountProjectMembersMax < projectKeyData.amountProjectMembersMin)
+      !projectKeyData.estimatedProjectMemberMin ||
+      projectKeyData.estimatedProjectMemberMin < 0 ||
+      !Number.isInteger(projectKeyData.estimatedProjectMemberMin)
     ) {
-      newErrors.amountProjectMembersMax = true;
+      newErrors.estimatedProjectMemberMin = true;
       hasErrors = true;
     } else {
-      newErrors.amountProjectMembersMax = false;
+      newErrors.estimatedProjectMemberMin = false;
     }
-    if (!projectKeyData.applicationDeadline || projectKeyData.applicationDeadline.toDate() < new Date()) {
-      newErrors.applicationDeadline = true;
+    if (
+      !projectKeyData.estimatedProjectMemberMax ||
+      projectKeyData.estimatedProjectMemberMax < 0 ||
+      !Number.isInteger(projectKeyData.estimatedProjectMemberMax) ||
+      (projectKeyData.estimatedProjectMemberMin &&
+        projectKeyData.estimatedProjectMemberMax < projectKeyData.estimatedProjectMemberMin)
+    ) {
+      newErrors.estimatedProjectMemberMax = true;
       hasErrors = true;
     } else {
-      newErrors.applicationDeadline = false;
+      newErrors.estimatedProjectMemberMax = false;
+    }
+    // only check if the applicationEnd is in the future if the date is set, the date can be empty/undefined if the project is not tendered but rather just saved
+    if (projectKeyData.applicationEnd1 ? projectKeyData.applicationEnd1.toDate() < new Date() : false) {
+      newErrors.applicationEnd1 = true;
+      hasErrors = true;
+    } else {
+      newErrors.applicationEnd1 = false;
     }
     setProjectKeyDataErrors(newErrors);
     return hasErrors;
   };
 
   // Validate the customer data
+  // Checks if a customer is set, an industry is set, if the customerType is set, an acquisitor is set and an acquisition method is set
   const validateCustomerData = () => {
     let hasErrors = false;
     const newErrors = { ...customerDataErrors };
@@ -276,6 +270,7 @@ const ProjectTendering = () => {
     return hasErrors;
   };
 
+  // states for the active step and the completed steps
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;

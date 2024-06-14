@@ -24,43 +24,43 @@ const SummaryDetails = ({ projectKeyData, customerData, projectDescriptionData }
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Startschuss:
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.start?.format("DD.MM.YYYY")}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectStart?.format("DD.MM.YYYY")}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Dauer:
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.duration}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectDuration}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Konditionen:
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.conditions}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectEuroPerBT}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Beratertage (Min):
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.btMin}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectBTmin}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Beratertage (Max):
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.btMax}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectBTmax}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektmitglieder (Min):
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.amountProjectMembersMin}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectMemberMin}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektmitglieder (Max):
         </Typography>
-        <Typography sx={{ flex: 3 }}>{projectKeyData.amountProjectMembersMax}</Typography>
+        <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectMemberMax}</Typography>
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>

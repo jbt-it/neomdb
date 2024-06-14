@@ -21,16 +21,16 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
   const {
     projectName,
     location,
-    tenderingDate,
-    start,
-    duration,
-    conditions,
-    conditionsRange,
-    btMin,
-    btMax,
-    amountProjectMembersMin,
-    amountProjectMembersMax,
-    applicationDeadline,
+    tenderDate,
+    estimatedProjectStart,
+    estimatedProjectDuration,
+    estimatedProjectEuroPerBT,
+    estimatedProjectEuroPerBTrange,
+    estimatedProjectBTmin,
+    estimatedProjectBTmax,
+    estimatedProjectMemberMin,
+    estimatedProjectMemberMax,
+    applicationEnd1,
   } = projectKeyData;
 
   // Function to handle the change of the project name
@@ -43,60 +43,53 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
     setProjectKeyData({ ...projectKeyData, location: event.target.value });
   };
 
-  // Function to handle the change of the tendering date
-  const onChangeTenderingDate = (date: Dayjs | null) => {
-    date
-      ? setProjectKeyData({ ...projectKeyData, tenderingDate: date })
-      : setProjectKeyData({ ...projectKeyData, tenderingDate: undefined });
-  };
-
   // Function to handle the change of the start date
-  const onChangeStart = (date: Dayjs | null) => {
+  const onChangeEstimatedProjectStart = (date: Dayjs | null) => {
     date
-      ? setProjectKeyData({ ...projectKeyData, start: date })
-      : setProjectKeyData({ ...projectKeyData, start: undefined });
+      ? setProjectKeyData({ ...projectKeyData, estimatedProjectStart: date })
+      : setProjectKeyData({ ...projectKeyData, estimatedProjectStart: undefined });
   };
 
   // Function to handle the change of the duration
-  const onChangeDuration = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, duration: event.target.value });
+  const onChangeEstimatedProjectDuration = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, estimatedProjectDuration: event.target.value });
   };
 
   // Function to handle the change of the conditions
-  const onChangeConditions = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, conditions: Number(event.target.value) });
+  const onChangeEstimatedProjectEuroPerBT = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, estimatedProjectEuroPerBT: Number(event.target.value) });
   };
 
   // Function to handle the change of the conditions range
-  const onChangeConditionsRange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, conditionsRange: Number(event.target.value) });
+  const onChangeEstimatedProjectEuroPerBTrange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, estimatedProjectEuroPerBTrange: Number(event.target.value) });
   };
 
   // Function to handle the change of the bt min
   const onChangeBtMin = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, btMin: Number(event.target.value) });
+    setProjectKeyData({ ...projectKeyData, estimatedProjectBTmin: Number(event.target.value) });
   };
 
   // Function to handle the change of the bt max
   const onChangeBtMax = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, btMax: Number(event.target.value) });
+    setProjectKeyData({ ...projectKeyData, estimatedProjectBTmax: Number(event.target.value) });
   };
 
   // Function to handle the change of the amount of project members min
-  const onChangeAmountProjectMembersMin = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, amountProjectMembersMin: Number(event.target.value) });
+  const onChangeEstimatedProjectMemberMin = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, estimatedProjectMemberMin: Number(event.target.value) });
   };
 
   // Function to handle the change of the amount of project members max
-  const onChangeAmountProjectMembersMax = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectKeyData({ ...projectKeyData, amountProjectMembersMax: Number(event.target.value) });
+  const onChangeEstimatedProjectMemberMax = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectKeyData({ ...projectKeyData, estimatedProjectMemberMax: Number(event.target.value) });
   };
 
   // Function to handle the change of the application deadline
-  const onChangeApplicationDeadline = (date: Dayjs | null) => {
+  const onChangeApplicationEnd1 = (date: Dayjs | null) => {
     date
-      ? setProjectKeyData({ ...projectKeyData, applicationDeadline: date })
-      : setProjectKeyData({ ...projectKeyData, applicationDeadline: undefined });
+      ? setProjectKeyData({ ...projectKeyData, applicationEnd1: date })
+      : setProjectKeyData({ ...projectKeyData, applicationEnd1: undefined });
   };
 
   return (
@@ -127,8 +120,6 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           value={location}
           onChange={onChangeLocation}
           disabled={isCompleted}
-          error={errors.location}
-          helperText={errors.location ? "Einsatzort darf nicht leer sein" : ""}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -141,14 +132,10 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
             textField: {
               variant: "outlined",
               size: "small",
-              helperText: errors.tenderingDate ? "Ausschreibungsdatum darf nicht leer sein oder vor heute liegen" : "",
-              error: errors.tenderingDate,
             },
           }}
-          value={tenderingDate}
-          onChange={onChangeTenderingDate}
-          disabled={isCompleted}
-          minDate={dayjs()}
+          value={tenderDate}
+          disabled={true}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -161,12 +148,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
             textField: {
               variant: "outlined",
               size: "small",
-              helperText: errors.start ? "Startschuss darf nicht leer sein oder vor heute liegen" : "",
-              error: errors.start,
+              helperText: errors.estimatedProjectStart ? "Startschuss darf nicht leer sein oder vor heute liegen" : "",
+              error: errors.estimatedProjectStart,
             },
           }}
-          value={start}
-          onChange={onChangeStart}
+          value={estimatedProjectStart}
+          onChange={onChangeEstimatedProjectStart}
           disabled={isCompleted}
           minDate={dayjs()}
         />
@@ -179,11 +166,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           sx={{ flex: 3 }}
           variant="outlined"
           size="small"
-          value={duration}
-          onChange={onChangeDuration}
+          value={estimatedProjectDuration}
+          onChange={onChangeEstimatedProjectDuration}
           disabled={isCompleted}
-          helperText={errors.duration ? "Dauer darf nicht leer sein" : ""}
-          error={errors.duration}
+          helperText={errors.estimatedProjectDuration ? "Dauer darf nicht leer sein" : ""}
+          error={errors.estimatedProjectDuration}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -195,12 +182,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={conditions}
-          onChange={onChangeConditions}
+          value={estimatedProjectEuroPerBT}
+          onChange={onChangeEstimatedProjectEuroPerBT}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.conditions ? "Konditionen dürfen nicht leer sein" : ""}
-          error={errors.conditions}
+          helperText={errors.estimatedProjectEuroPerBT ? "Konditionen dürfen nicht leer sein" : ""}
+          error={errors.estimatedProjectEuroPerBT}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -212,12 +199,16 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={conditionsRange}
-          onChange={onChangeConditionsRange}
+          value={estimatedProjectEuroPerBTrange}
+          onChange={onChangeEstimatedProjectEuroPerBTrange}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.conditionsRange ? "Konditionen (Bereich) dürfen nicht leer sein" : ""}
-          error={errors.conditionsRange}
+          helperText={
+            errors.estimatedProjectEuroPerBTrange
+              ? "Konditionen (Bereich) darf nicht niedriger als Konditionen sein"
+              : ""
+          }
+          error={errors.estimatedProjectEuroPerBTrange}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -229,12 +220,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={btMin}
+          value={estimatedProjectBTmin}
           onChange={onChangeBtMin}
           disabled={isCompleted}
           inputProps={{ min: 1 }}
-          helperText={errors.btMin ? "Beratertage (Min) dürfen nicht leer sein" : ""}
-          error={errors.btMin}
+          helperText={errors.estimatedProjectBTmin ? "Beratertage (Min) dürfen nicht leer sein" : ""}
+          error={errors.estimatedProjectBTmin}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -246,12 +237,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={btMax}
+          value={estimatedProjectBTmax}
           onChange={onChangeBtMax}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.btMax ? "Beratertage (Max) dürfen nicht leer sein" : ""}
-          error={errors.btMax}
+          helperText={errors.estimatedProjectBTmax ? "Beratertage (Max) dürfen nicht leer sein" : ""}
+          error={errors.estimatedProjectBTmax}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -263,12 +254,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={amountProjectMembersMin}
-          onChange={onChangeAmountProjectMembersMin}
+          value={estimatedProjectMemberMin}
+          onChange={onChangeEstimatedProjectMemberMin}
           disabled={isCompleted}
           inputProps={{ min: 1 }}
-          helperText={errors.amountProjectMembersMin ? "Projektmitglieder (Min) dürfen nicht leer sein" : ""}
-          error={errors.amountProjectMembersMin}
+          helperText={errors.estimatedProjectMemberMin ? "Projektmitglieder (Min) dürfen nicht leer sein" : ""}
+          error={errors.estimatedProjectMemberMin}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -280,12 +271,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           variant="outlined"
           size="small"
           type="number"
-          value={amountProjectMembersMax}
-          onChange={onChangeAmountProjectMembersMax}
+          value={estimatedProjectMemberMax}
+          onChange={onChangeEstimatedProjectMemberMax}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.amountProjectMembersMax ? "Projektmitglieder (Max) dürfen nicht leer sein" : ""}
-          error={errors.amountProjectMembersMax}
+          helperText={errors.estimatedProjectMemberMax ? "Projektmitglieder (Max) dürfen nicht leer sein" : ""}
+          error={errors.estimatedProjectMemberMax}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -298,14 +289,12 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
             textField: {
               variant: "outlined",
               size: "small",
-              helperText: errors.applicationDeadline
-                ? "Bewerbungsfrist darf nicht leer sein oder vor heute liegen"
-                : "",
-              error: errors.applicationDeadline,
+              helperText: errors.applicationEnd1 ? "Bewerbungsfrist muss in der Zukunft liegen" : "",
+              error: errors.applicationEnd1,
             },
           }}
-          value={applicationDeadline}
-          onChange={onChangeApplicationDeadline}
+          value={applicationEnd1}
+          onChange={onChangeApplicationEnd1}
           disabled={isCompleted}
           minDate={dayjs()}
         />

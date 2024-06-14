@@ -82,16 +82,16 @@ export type CompanyDto = {
 export type ProjectKeyData = {
   projectName: string | undefined;
   location: string | undefined;
-  tenderingDate: Dayjs | undefined;
-  start: Dayjs | undefined;
-  duration: string | undefined;
-  conditions: number | undefined;
-  conditionsRange: number | undefined;
-  btMin: number | undefined;
-  btMax: number | undefined;
-  amountProjectMembersMin: number | undefined;
-  amountProjectMembersMax: number | undefined;
-  applicationDeadline: Dayjs | undefined;
+  tenderDate: Dayjs | undefined;
+  estimatedProjectStart: Dayjs | undefined;
+  estimatedProjectDuration: string | undefined;
+  estimatedProjectEuroPerBT: number | undefined;
+  estimatedProjectEuroPerBTrange: number | undefined;
+  estimatedProjectBTmin: number | undefined;
+  estimatedProjectBTmax: number | undefined;
+  estimatedProjectMemberMin: number | undefined;
+  estimatedProjectMemberMax: number | undefined;
+  applicationEnd1: Dayjs | undefined;
 };
 
 export type AcquisitionChannelDto = {
