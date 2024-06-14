@@ -52,6 +52,8 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
     url,
     contactPerson,
     industry,
+    newContactPerson,
+    newContactPersonName,
   } = customerData;
   const { allCompanies, allContactPartners } = useCompanies();
   const { allIndustries } = useProjects();
@@ -154,6 +156,21 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
       ...customerData,
       contactPerson: value || undefined,
     });
+  };
+
+  // Handle new contact person
+  const onChangeNewContactPersonName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerData({ ...customerData, newContactPersonName: event.target.value });
+  };
+
+  // Handle new contact person
+  const onChangeNewContactPerson = () => {
+    setCustomerData({ ...customerData, newContactPerson: true });
+  };
+
+  // Handle new contact person cancel
+  const onChangeNewContactPersonCancel = () => {
+    setCustomerData({ ...customerData, newContactPerson: false });
   };
 
   return (
@@ -326,23 +343,46 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Ansprechpartner:
           </Typography>
-          <Autocomplete
-            sx={{ flex: 3 }}
-            value={allContactPartners.find((cp) => cp.contactPersonId === contactPerson?.contactPersonId) || null}
-            options={allContactPartners.filter((contact) => contact.companyId === customerData.companyId)}
-            getOptionLabel={(option) => option.name}
-            size="small"
-            onChange={onChangeContactPerson}
-            disabled={isCompleted}
-            renderInput={(params) => (
+          {newContactPerson ? (
+            <Stack direction={"row"} sx={{ flex: 3 }} spacing={3}>
               <TextField
+                value={newContactPersonName}
+                onChange={onChangeNewContactPersonName}
                 variant="outlined"
+                size="small"
+                disabled={isCompleted}
+                sx={{ flex: 7 }}
                 error={errors.contactPerson}
-                helperText={errors.industryError ? "Bitte gib einen Ansprechpartner an." : ""}
-                {...params}
+                helperText={errors.contactPerson ? "Bitte gib einen Ansprechpartner an." : ""}
               />
-            )}
-          />
+              <Button variant="outlined" onClick={onChangeNewContactPersonCancel} sx={{ flex: 1, maxHeight: 40 }}>
+                Abbrechen
+              </Button>
+            </Stack>
+          ) : (
+            <Stack direction={"row"} sx={{ flex: 3 }} spacing={3}>
+              <Autocomplete
+                value={allContactPartners.find((cp) => cp.contactPersonId === contactPerson?.contactPersonId) || null}
+                options={allContactPartners.filter((contact) => contact.companyId === customerData.companyId)}
+                getOptionLabel={(option) => option.name}
+                size="small"
+                onChange={onChangeContactPerson}
+                disabled={isCompleted}
+                sx={{ flex: 7 }}
+                renderInput={(params) => (
+                  <TextField
+                    variant="outlined"
+                    error={errors.contactPerson}
+                    helperText={errors.contactPerson ? "Bitte gib einen Ansprechpartner an." : ""}
+                    {...params}
+                  />
+                )}
+              />
+              <Button variant="outlined" sx={{ flex: 1, maxHeight: 40 }} onClick={onChangeNewContactPerson}>
+                Neu
+              </Button>
+            </Stack>
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>

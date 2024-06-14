@@ -26,6 +26,14 @@ const SummaryDetails = ({ projectKeyData, customerData, projectDescriptionData }
         </Typography>
         <Typography sx={{ flex: 3 }}>{projectKeyData.estimatedProjectStart?.format("DD.MM.YYYY")}</Typography>
       </Stack>
+      {projectKeyData.applicationEnd1 ? (
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+          <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
+            Bewerbungsfrist:
+          </Typography>
+          <Typography sx={{ flex: 3 }}>{projectKeyData.applicationEnd1.format("DD.MM.YYYY - HH:mm")}</Typography>
+        </Stack>
+      ) : null}
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Dauer:

@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import {
   CoreCompetencyDto,
   IndustryDto,
+  ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,
   TenderedProjectDto,
@@ -336,7 +337,15 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
-  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies };
+  const tenderProject = (newProject: ProjectDetailsDto) => {
+    console.log("Tendering project", newProject);
+  };
+
+  const saveProject = (newProject: ProjectDetailsDto) => {
+    console.log("Saving project", newProject);
+  };
+
+  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies, tenderProject, saveProject };
 };
 
 export default useProjects;

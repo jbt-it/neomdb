@@ -96,11 +96,11 @@ export type ContactPersonDto = {
 
 // Type of the project key data for the project tendering
 export type ProjectKeyData = {
-  projectName: string | undefined;
-  location: string | undefined;
+  projectName: string;
+  location: string;
   tenderDate: Dayjs | undefined;
   estimatedProjectStart: Dayjs | undefined;
-  estimatedProjectDuration: string | undefined;
+  estimatedProjectDuration: string;
   estimatedProjectEuroPerBT: number | undefined;
   estimatedProjectEuroPerBTrange: number | undefined;
   estimatedProjectBTmin: number | undefined;
@@ -128,14 +128,58 @@ export type CustomerData = {
   acquisitor: string | undefined;
   acquisitionMethod: string | undefined;
   contactPerson: ContactPersonDto | undefined;
+  newContactPerson: boolean;
+  newContactPersonName: string;
 };
 
 // Type of the project description data for the project tendering
 export type ProjectDescriptionData = {
-  situation: string | undefined;
-  peculiarities: string | undefined;
+  situation: string;
+  peculiarities: string;
   coreCompetencies: CoreCompetencyDto[];
-  requirementProfile: string | undefined;
-  referenceProjects: string | undefined;
-  notes: string | undefined;
+  requirementProfile: string;
+  referenceProjects: string;
+  notes: string;
+};
+
+// Type of the project tendering data
+export type ProjectDetailsDto = {
+  projectId: number;
+  projectName: string;
+  location: string;
+  tenderDate: Date | undefined;
+  estimatedProjectStart: Date;
+  estimatedProjectDuration: string;
+  estimatedProjectEuroPerBT: number;
+  estimatedProjectEuroPerBTrange: number | undefined | null;
+  estimatedProjectBTmin: number;
+  estimatedProjectBTmax: number;
+  estimatedProjectMemberMin: number;
+  estimatedProjectMemberMax: number;
+  applicationStart1: Date | null;
+  applicationEnd1: Date | undefined | null;
+  applicationStart2: Date | null;
+  applicationEnd2: Date | null;
+  situation: string;
+  peculiarities: string;
+  coreCompetencies: CoreCompetencyDto[];
+  requirementProfile: string;
+  referenceProjects: string;
+  notes: string;
+  acquisitor: string;
+  acquisitionMethod: string;
+  newContactPerson: boolean;
+  contactPerson: ContactPersonDto | string;
+  newCustomer: boolean;
+  kickoff: Date | null;
+  staffingCommittee: MembersFieldDto[];
+  client: CompanyDto;
+  members: MembersFieldDto[];
+  qms: MembersFieldDto[];
+  signatureDate: Date | null;
+  euroPerBT: number | null;
+  soldBT: number | null;
+  soldExpenses: number | null;
+  projectEnd: Date | null;
+  invoicing: Date | null;
 };

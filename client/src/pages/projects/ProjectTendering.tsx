@@ -6,6 +6,8 @@ import CustomerStep from "../../components/projects/projectTendering/CustomerSte
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
 import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
 import dayjs from "dayjs";
+import useProjects from "../../hooks/useProjects";
+import { showErrorMessage } from "../../utils/toastUtils";
 
 // Steps for the project tendering form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
@@ -15,13 +17,14 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  * @returns - A form to create a new project tendering
  */
 const ProjectTendering = () => {
+  const { tenderProject, saveProject } = useProjects();
   // Project key data initial state
   const [projectKeyData, setProjectKeyData] = React.useState<ProjectKeyData>({
-    projectName: undefined,
-    location: undefined,
+    projectName: "",
+    location: "",
     tenderDate: dayjs(), // will be shown but is disabled
     estimatedProjectStart: undefined,
-    estimatedProjectDuration: undefined,
+    estimatedProjectDuration: "",
     estimatedProjectEuroPerBT: undefined,
     estimatedProjectEuroPerBTrange: undefined,
     estimatedProjectBTmin: undefined,
@@ -54,6 +57,8 @@ const ProjectTendering = () => {
     acquisitionMethod: undefined,
     industry: undefined,
     contactPerson: undefined,
+    newContactPerson: false,
+    newContactPersonName: "",
     street: "",
     postalCode: "",
     city: "",
@@ -71,6 +76,7 @@ const ProjectTendering = () => {
     newCustomer: false,
     contactPerson: false,
     acquisitor: false,
+    newContactPersonName: false,
   });
 
   // Project Description data initial state
@@ -217,6 +223,18 @@ const ProjectTendering = () => {
     } else {
       newErrors.acquisitionMethod = false;
     }
+    if (
+      customerData.newContactPerson &&
+      (!customerData.newContactPersonName || customerData.newContactPersonName.trim() === "")
+    ) {
+      newErrors.contactPerson = true;
+      hasErrors = true;
+    } else if (!customerData.newContactPerson && !customerData.contactPerson) {
+      newErrors.contactPerson = true;
+      hasErrors = true;
+    } else {
+      newErrors.contactPerson = false;
+    }
     setCustomerDataErrors(newErrors);
     return hasErrors;
   };
@@ -262,14 +280,88 @@ const ProjectTendering = () => {
     return completedSteps() === totalSteps();
   };
 
-  // Handle the tendering of the project
-  const handleTenderProject = () => {
+  // Handle the tendering or saving of the project, depending on the tendering flag, determines if an email is sent to the members and if the projectApplicationEnd has to be set
+  const handleSaveProject = (tendering: boolean) => {
     alert("Tender project");
-  };
-
-  // Handle the saving of the project
-  const handleSaveProject = () => {
-    alert("Save project");
+    // All data should be set at this point, but check again to be sure
+    if (
+      !projectKeyData.projectName ||
+      !projectKeyData.estimatedProjectStart ||
+      !projectKeyData.estimatedProjectDuration ||
+      !projectKeyData.estimatedProjectEuroPerBT ||
+      !projectKeyData.estimatedProjectBTmin ||
+      !projectKeyData.estimatedProjectBTmax ||
+      !projectKeyData.estimatedProjectMemberMin ||
+      !projectKeyData.estimatedProjectMemberMax ||
+      !customerData.acquisitor ||
+      !customerData.acquisitionMethod ||
+      !customerData.industry ||
+      customerData.companyId === -1 ||
+      !projectDescriptionData.coreCompetencies ||
+      projectDescriptionData.coreCompetencies.length === 0 ||
+      (customerData.newContactPerson ? !customerData.newContactPersonName : !customerData.contactPerson) ||
+      !projectKeyData.estimatedProjectEuroPerBT ||
+      !customerData.newCustomer ||
+      (tendering && !projectKeyData.applicationEnd1)
+    ) {
+      // Show an error message if some data is missing
+      showErrorMessage("Einige Daten fehlen oder sind fehlerhaft");
+      return;
+    }
+    const data = {
+      projectId: -1,
+      projectName: projectKeyData.projectName,
+      location: projectKeyData.location,
+      tenderDate: projectKeyData.tenderDate?.toDate(),
+      estimatedProjectStart: projectKeyData.estimatedProjectStart.toDate(),
+      estimatedProjectDuration: projectKeyData.estimatedProjectDuration,
+      estimatedProjectEuroPerBT: projectKeyData.estimatedProjectEuroPerBT,
+      estimatedProjectEuroPerBTrange: projectKeyData.estimatedProjectEuroPerBTrange,
+      estimatedProjectBTmin: projectKeyData.estimatedProjectBTmin,
+      estimatedProjectBTmax: projectKeyData.estimatedProjectBTmax,
+      estimatedProjectMemberMin: projectKeyData.estimatedProjectMemberMin,
+      estimatedProjectMemberMax: projectKeyData.estimatedProjectMemberMax,
+      applicationStart1: null,
+      applicationEnd1: projectKeyData.applicationEnd1?.toDate(),
+      applicationStart2: null,
+      applicationEnd2: null,
+      situation: projectDescriptionData.situation,
+      peculiarities: projectDescriptionData.peculiarities,
+      coreCompetencies: projectDescriptionData.coreCompetencies,
+      requirementProfile: projectDescriptionData.requirementProfile,
+      referenceProjects: projectDescriptionData.referenceProjects,
+      notes: projectDescriptionData.notes,
+      acquisitor: customerData.acquisitor,
+      acquisitionMethod: customerData.acquisitionMethod,
+      newContactPerson: customerData.newContactPerson,
+      contactPerson: customerData.contactPerson || customerData.newContactPersonName,
+      newCustomer: customerData.newCustomer,
+      kickoff: null,
+      staffingCommittee: [],
+      client: {
+        companyId: customerData.companyId,
+        name: customerData.name,
+        industry: customerData.industry,
+        shortDescription: customerData.shortDescription,
+        street: customerData.street,
+        postalCode: customerData.postalCode,
+        city: customerData.city,
+        addressAdditional: customerData.addressAdditional,
+        url: customerData.url,
+        importantInformation: customerData.importantInformation,
+        contactDesired: customerData.contactDesired,
+        classified: customerData.classified,
+      },
+      members: [],
+      qms: [],
+      signatureDate: null,
+      euroPerBT: null,
+      soldBT: null,
+      soldExpenses: null,
+      projectEnd: null,
+      invoicing: null,
+    };
+    tendering ? tenderProject(data) : saveProject(data);
   };
 
   // Handle the next step
@@ -393,21 +485,31 @@ const ProjectTendering = () => {
         <div>
           {allStepsCompleted() ? (
             <React.Fragment>
-              <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
-                Soll das Projekt ausgeschieben oder nachgetragen werden?
-              </Typography>
+              {projectKeyData.applicationEnd1 ? (
+                <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
+                  Soll das Projekt ausgeschrieben werden?
+                </Typography>
+              ) : (
+                <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
+                  Soll das Projekt nachgetragen werden?
+                </Typography>
+              )}
+              <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}></Typography>
               <SummaryDetails
                 projectKeyData={projectKeyData}
                 customerData={customerData}
                 projectDescriptionData={projectDescriptionData}
               />
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Button onClick={handleTenderProject} sx={{ mr: 3 }} variant="outlined">
-                  Ausschreiben
-                </Button>
-                <Button onClick={handleSaveProject} variant="outlined">
-                  Nachtragen
-                </Button>
+                {projectKeyData.applicationEnd1 ? (
+                  <Button onClick={() => handleSaveProject(true)} variant="outlined">
+                    Ausschreiben
+                  </Button>
+                ) : (
+                  <Button onClick={() => handleSaveProject(false)} variant="outlined">
+                    Nachtragen
+                  </Button>
+                )}
                 <Box sx={{ flex: "1 2 auto" }} />
                 <Button onClick={handleReset} variant="outlined" color="info">
                   Nochmals Bearbeiten
