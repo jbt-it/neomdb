@@ -336,7 +336,7 @@ const ProjectTendering = () => {
       acquisitionMethod: customerData.acquisitionMethod,
       newContactPerson: customerData.newContactPerson,
       contactPerson: customerData.contactPerson || customerData.newContactPersonName,
-      newCustomer: customerData.newCustomer,
+      customerType: customerData.newCustomer ? "Neukunde" : "Altkunde",
       kickoff: null,
       staffingCommittee: [],
       client: {

@@ -171,7 +171,7 @@ export type ProjectDetailsDto = {
   acquisitionMethod: string;
   newContactPerson: boolean;
   contactPerson: ContactPersonDto | string;
-  newCustomer: boolean;
+  customerType: string;
   kickoff: Date | null;
   staffingCommittee: MembersFieldDto[];
   client: CompanyDto;
