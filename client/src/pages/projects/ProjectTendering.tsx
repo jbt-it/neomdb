@@ -85,12 +85,7 @@ const ProjectTendering = () => {
 
   // Errors for the project description data initial state
   const [projectDescriptionDataErrors, setProjectDescriptionDataErrors] = React.useState<{ [key: string]: boolean }>({
-    situation: false,
-    peculiarities: false,
     coreCompetencies: false,
-    requirementProfile: false,
-    referenceProjects: false,
-    notes: false,
   });
 
   // Validate the project key data
@@ -227,44 +222,15 @@ const ProjectTendering = () => {
   };
 
   // Validate the project description data
+  // Checks if core competencies are set
   const validateProjectDescriptionData = () => {
     let hasErrors = false;
     const newErrors = { ...projectDescriptionDataErrors };
-    if (!projectDescriptionData.situation) {
-      newErrors.situation = true;
-      hasErrors = true;
-    } else {
-      newErrors.situation = false;
-    }
-    if (!projectDescriptionData.peculiarities) {
-      newErrors.peculiarities = true;
-      hasErrors = true;
-    } else {
-      newErrors.peculiarities = false;
-    }
     if (!projectDescriptionData.coreCompetencies || projectDescriptionData.coreCompetencies.length === 0) {
       newErrors.coreCompetencies = true;
       hasErrors = true;
     } else {
       newErrors.coreCompetencies = false;
-    }
-    if (!projectDescriptionData.requirementProfile) {
-      newErrors.requirementProfile = true;
-      hasErrors = true;
-    } else {
-      newErrors.requirementProfile = false;
-    }
-    if (!projectDescriptionData.referenceProjects) {
-      newErrors.referenceProjects = true;
-      hasErrors = true;
-    } else {
-      newErrors.referenceProjects = false;
-    }
-    if (!projectDescriptionData.notes) {
-      newErrors.notes = true;
-      hasErrors = true;
-    } else {
-      newErrors.notes = false;
     }
     setProjectDescriptionDataErrors(newErrors);
     return hasErrors;

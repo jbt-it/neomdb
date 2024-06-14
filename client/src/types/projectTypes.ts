@@ -50,6 +50,7 @@ export type TenderedProjectDto = {
   applicationEnd2: Dayjs | null;
 };
 
+// Type of the new company that is send to the backend
 export type NewCompanyDto = {
   name: string;
   industry: IndustryDto;
@@ -64,6 +65,7 @@ export type NewCompanyDto = {
   classified: boolean;
 };
 
+// Type of a companyDto that is received from the backend
 export type CompanyDto = {
   companyId: number;
   name: string;
@@ -79,6 +81,20 @@ export type CompanyDto = {
   classified: boolean;
 };
 
+// Type of the acquisition channel that is received from the backend
+export type AcquisitionChannelDto = {
+  acquisitionChannelId: number;
+  description: string;
+};
+
+// Type of the contact person that is received from the backend
+export type ContactPersonDto = {
+  contactPersonId: number;
+  companyId: number;
+  name: string;
+};
+
+// Type of the project key data for the project tendering
 export type ProjectKeyData = {
   projectName: string | undefined;
   location: string | undefined;
@@ -94,17 +110,7 @@ export type ProjectKeyData = {
   applicationEnd1: Dayjs | undefined;
 };
 
-export type AcquisitionChannelDto = {
-  acquisitionChannelId: number;
-  description: string;
-};
-
-export type ContactPersonDto = {
-  contactPersonId: number;
-  companyId: number;
-  name: string;
-};
-
+// Type of the customer data for the project tendering
 export type CustomerData = {
   companyId: number;
   name: string;
@@ -124,6 +130,7 @@ export type CustomerData = {
   contactPerson: ContactPersonDto | undefined;
 };
 
+// Type of the project description data for the project tendering
 export type ProjectDescriptionData = {
   situation: string | undefined;
   peculiarities: string | undefined;

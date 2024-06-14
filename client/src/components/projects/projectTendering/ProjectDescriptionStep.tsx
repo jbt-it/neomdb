@@ -84,8 +84,6 @@ const ProjectDescriptionStep = ({
           value={situation}
           onChange={onChangeSituation}
           disabled={isCompleted}
-          helperText={errors.situation ? "Bitte geben Sie eine Ausgangssituation/Zielsetzung ein." : ""}
-          error={errors.situation}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -100,8 +98,6 @@ const ProjectDescriptionStep = ({
           value={peculiarities}
           onChange={onChangePeculiarities}
           disabled={isCompleted}
-          helperText={errors.peculiarities ? "Bitte geben Sie Besonderheiten ein." : ""}
-          error={errors.peculiarities}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -124,7 +120,7 @@ const ProjectDescriptionStep = ({
             ))}
           </FormGroup>
           <Typography variant={"caption"} color={"error"} sx={{ display: errors.coreCompetencies ? "block" : "none" }}>
-            Bitte wählen Sie mindestens eine Kernkompetenz aus.
+            Bitte wähle mindestens eine Kernkompetenz aus.
           </Typography>
         </FormControl>
       </Stack>
@@ -140,8 +136,6 @@ const ProjectDescriptionStep = ({
           value={requirementProfile}
           onChange={onChangeRequirementProfile}
           disabled={isCompleted}
-          helperText={errors.requirementProfile ? "Bitte geben Sie ein Anforderungsprofil ein." : ""}
-          error={errors.requirementProfile}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -156,8 +150,6 @@ const ProjectDescriptionStep = ({
           value={referenceProjects}
           onChange={onChangeReferenceProjects}
           disabled={isCompleted}
-          helperText={errors.referenceProjects ? "Bitte geben Sie Referenzprojekte ein." : ""}
-          error={errors.referenceProjects}
         />
       </Stack>
       <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -172,8 +164,6 @@ const ProjectDescriptionStep = ({
           value={notes}
           onChange={onChangeNotes}
           disabled={isCompleted}
-          helperText={errors.notes ? "Bitte geben Sie Bemerkungen ein." : ""}
-          error={errors.notes}
         />
       </Stack>
     </Stack>
