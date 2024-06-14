@@ -64,14 +64,9 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
   };
 
   // Handle save new customer
+  // TODO: Implement the save new customer function when backend is ready
   const handleSaveNewCustomer = (newCustomer: NewCompanyDto) => {
-    setCustomerData({
-      ...customerData,
-      name: newCustomer.name,
-      newCustomer: true,
-      acquisitor: "",
-      acquisitionMethod: "",
-    });
+    console.log(newCustomer);
     setIsNewCustomerDialogOpen(false);
   };
 

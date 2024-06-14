@@ -3,11 +3,11 @@ import {
   Button,
   Checkbox,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
   Grid,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -42,6 +42,7 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
   // Reset all fields
   const resetStates = () => {
     setCustomerName("");
+    setShortDescription("");
     setConfidential(false);
     setIndustry(null);
     setStreet("");
@@ -49,7 +50,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
     setCity("");
     setAddressAdditional("");
     setUrl("");
-    setContactDesired(false);
+    setContactDesired(true);
+    setImportantInformation("");
+    setCustomerNameError(false);
+    setIndustryError(false);
   };
 
   // Check if all required fields are filled
@@ -259,11 +263,16 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
         </Grid>
+        <Divider sx={{ width: "100%", marginX: "auto", borderColor: "#f6891f", mt: 3 }} />
+        <Stack direction={"row"} spacing={4} sx={{ mt: 3 }} justifyContent={"flex-end"}>
+          <Button onClick={handleCancel} variant="outlined">
+            Abbrechen
+          </Button>
+          <Button onClick={handleSave} variant="outlined">
+            Speichern
+          </Button>
+        </Stack>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCancel}>Abbrechen</Button>
-        <Button onClick={handleSave}>Speichern</Button>
-      </DialogActions>
     </Dialog>
   );
 };
