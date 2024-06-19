@@ -1,20 +1,20 @@
-type ProjectApplication = {
-    fullName: string, // Name, Vorname
-    membershipStatus: string, // Mitgliedstatus
-    applicationDate: string, // Datum
-    details: {
-        viewDetails: string, // Details anzeigen
-        viewOldApplications: string // Alte Bewerbungen
-    }
-}
+// Type for the project application
+export type ProjectApplication = {
+  fullName: string; // Name, Vorname
+  membershipStatus: string; // Mitgliedstatus
+  applicationDate: string; // Datum
+  details: {
+    viewDetails: string; // Details anzeigen
+    viewOldApplications: string; // Alte Bewerbungen
+  };
+};
 
-   {
-        fullName: "Obst, Christian",
-        membershipStatus: "aktives Mitglied",
-        applicationDate: "01.01.2001",
-        details: {
-            viewDetails: "Details anzeigen",
-            viewOldApplications: "Alte Bewerbungen"
-        }
-    
-]
+const exampleApplication: ProjectApplication = {
+  fullName: 'Doe, John',
+  membershipStatus: 'aktives Mitglied',
+  applicationDate: '01.01.2022',
+  details: {
+    viewDetails: 'Details anzeigen',
+    viewOldApplications: 'Alte Bewerbungen'
+  }
+};
