@@ -1,95 +1,97 @@
-type WorkshopSuggestion = {
-  workshopId: number,
-  workshopName: string,
-  workshopSelected: boolean
-}
+// Type for workshop suggestion
+export type WorkshopSuggestion = {
+  workshopId: number;
+  workshopName: string;
+  workshopSelected: boolean;
+};
 
+// Type for external project experience
+export type ExternalProjectExperience = {
+  projectName: string;
+  projectDuration: string;
+  earnedBT: number;
+  statusOfMember: string;
+};
 
-// get suggestions
-{
-  "suggestions": {
-    "ITSkills": string[],
-    "trainingAndWorkshops":"WorkshopSuggestion[]",
-    "activitiesInJBT":"string[]",
-    "conductedWorkshops":"string[]"
-},
- "externProjectExperience":[
-      {
-      "projectName":"String",
-      "projectDuration":"String",
-      "earnedBT":"Number",
-      "statusOfMember":"String"
-    }
-    ]
-}
+// Type for applicant data
+export type ApplicantData = {
+  internship: string;
+  apprenticeship: string;
+  workingStudentPosition: string;
+  seminarPapers: string;
+  trainingAndWorkshops: WorkshopSuggestion[];
+  motivation: string;
+  confidentialityAgreementSignature: boolean;
+  availabilitySchedule: boolean;
+  reasonForTimeConstrains: string;
+  boardActivity: boolean;
+  teamLeader: boolean;
+  extraordinaryClubCommitment: string;
+  initialContact: boolean;
+  writingTheProposal: boolean;
+};
 
+// Type for member details
+export type MemberDetails = {
+  memberID: number;
+  givenName: string;
+  surname: string;
+  courseOfStudy: string;
+  semester: number;
+  specialization: string;
+};
 
-// post application
-{
-  "applicantData": {
-    "internship": "String",
-    "apprenticeship": "String",
-	  "workingStudentPosition": "String",
-    "seminarPapers":"String",
-    "trainingAndWorkshops":"WorkshopSuggestion[]",
-    "Motivation":"String",
-    "confidentialityAgreementSignature":"Boolean",
-    "availabilitySchedule":"Boolean",
-    "reasonForTimeConstrains":"String"
-    "boardActivity": "Boolean",
-    "teamLeader": "Boolean",
-    "extraordinaryClubCommitment":"String"
-    "initialContact": "Boolean",
-    "writingTheProposal": "Boolean"
-  },
-}
+// Type for previous application
+export type PreviousApplication = {
+  memberID: number;
+  projectID: number;
+  projectName: string;
+  applicationStatus: string;
+};
 
-// get application information
+// Get suggestions
+const suggestions = {
+  ITSkills: [] as string[],
+  trainingAndWorkshops: [] as WorkshopSuggestion[],
+  activitiesInJBT: [] as string[],
+  conductedWorkshops: [] as string[]
+};
 
-{
+// Get application information
+const applicationInformation = {
   memberDetails: {
-    memberID: number,
-    givenName: string,
-    surname: string,
-    courseOfStudy: string,
-    semester: number,
-    specialization: string,
+    memberID: 0,
+    givenName: '',
+    surname: '',
+    courseOfStudy: '',
+    semester: 0,
+    specialization: ''
   },
-  "applicantData": {
-    "internship": "String",
-    "apprenticeship": "String",
-	  "workingStudentPosition": "String",
-    "seminarPapers":"String",
-    "trainingAndWorkshops":"WorkshopSuggestion[]",
-    "Motivation":"String",
-    "confidentialityAgreementSignature":"Boolean",
-    "availabilitySchedule":"Boolean",
-    "reasonForTimeConstrains":"String"
-    "boardActivity": "Boolean",
-    "teamLeader": "Boolean",
-    "extraordinaryClubCommitment":"String"
-    "initialContact": "Boolean",
-    "writingTheProposal": "Boolean"
+  applicantData: {
+    internship: '',
+    apprenticeship: '',
+    workingStudentPosition: '',
+    seminarPapers: '',
+    trainingAndWorkshops: [] as WorkshopSuggestion[],
+    motivation: '',
+    confidentialityAgreementSignature: false,
+    availabilitySchedule: false,
+    reasonForTimeConstrains: '',
+    boardActivity: false,
+    teamLeader: false,
+    extraordinaryClubCommitment: '',
+    initialContact: false,
+    writingTheProposal: false
   },
-    "externProjectExperience":[
-      {
-      "projectName":"String",
-      "projectDuration":"String",
-      "earnedBT":"Number",
-      "statusOfMember":"String"
-    }
-    ]
+  externProjectExperience: [] as ExternalProjectExperience[]
+};
 
-}
-
-// get previous application
-previousApplication: {
-  [
-    {
-      memberID: number,
-      projectID: number,
-      projectName: string,
-      applicationStatus: string
-    }
-    ]
-}
+// Get previous application
+const previousApplication: PreviousApplication[] = [
+  {
+    memberID: 0,
+    projectID: 0,
+    projectName: '',
+    applicationStatus: ''
+  }
+];
