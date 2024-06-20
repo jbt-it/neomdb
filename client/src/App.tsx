@@ -40,6 +40,9 @@ import EventsOverview from "./pages/events/EventsOverview";
 // project pages
 import ProjectOverview from "./pages/projects/ProjectOverview";
 
+// finance pages
+import FinanceOverview from "./pages/finance/FinanceOverview";
+
 // other pages
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -109,6 +112,14 @@ const App: React.FunctionComponent = () => {
               element={
                 <ProtectedRoutes permissionIDs={[]}>
                   <PermissionsOverview />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="finanzuebersicht"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <FinanceOverview />
                 </ProtectedRoutes>
               }
             />
