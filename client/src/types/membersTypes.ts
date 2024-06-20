@@ -176,6 +176,20 @@ export type DepartmentMemberDto = {
 };
 
 /**
+ * Type of the member finances
+ */
+export type MemberFinanceDataType = {
+  memberId: number;
+  lastName: string;
+  firstName: string;
+  memberStatus: string;
+  accountHolder: string;
+  iban: string;
+  bic: string;
+  lastchange: string;
+};
+
+/**
  * Type of the member image
  */
 export type MemberImage = {
