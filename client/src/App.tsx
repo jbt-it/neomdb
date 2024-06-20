@@ -37,6 +37,9 @@ import WorkshopDetails from "./pages/events/WorkshopDetails";
 import EventDetails from "./pages/events/EventDetails";
 import EventsOverview from "./pages/events/EventsOverview";
 
+// project pages
+import ProjectOverview from "./pages/projects/ProjectOverview";
+
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
 
@@ -79,7 +82,7 @@ const App: React.FunctionComponent = () => {
             <Route path="internes-projekt/:id" element={<InternalProject />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
-            <Route path="projekte" element={<Dashboard />} />
+            <Route path="projekte" element={<ProjectOverview />} />
             <Route path="veranstaltungen" element={<EventsOverview />} />
             <Route path="veranstaltungen/:id" element={<EventDetails />} />
             <Route path="workshops" element={<WorkshopsOverview />} />
