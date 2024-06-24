@@ -1,45 +1,61 @@
 // Type for the project details
 export type ProjectDetails = {
-  projectID: number;
+  projectid: number;
   projectName: string;
-  projectStatus: string;
-  location: string;
-  applicationStartDate: Date;
-  applicationDeadline: Date;
-  start: Date;
-  duration: string;
-  conditions: string;
-  conditionsRange: string;
-  minConsultingDays: number;
-  maxConsultingDays: number;
-  minProjectMembers: number;
-  maxProjectMembers: number;
-  applicationStart: Date;
-  kickOff: Date;
-  descriptionFilePath: string;
-  characteristics: string;
-  coreCompetencies: string;
-  requirementsProfile: string;
+  status string;
+  jobSite: string;
+  announcementDate: Date;
+  kickoff: Date;
+  tenderDate: Date;
+  estimatedProjectStart: Date;
+  estimatedProjectDuration: string;
+  estimatedProjectEuroPerBT: string;
+  estimatedProjectEuroPerBTrange: string;
+  estimatedProjectBTmin: number;
+  estimatedProjectBTmax: number;
+  estimatedProjectMemberMin: number;
+  estimatedProjectMemberMax: number;
+  applicationStart1: Date;
+  applicationEnd1: Date;
+  applicationStart2: Date | null;
+  applicationEnd2: Date | null;
+  kickoff: Date;
+  peculiarities: string;
+  coreCompetencies: CoreCompetency[];
+  requirementProfile: string;
   referenceProjects: string;
-  dateOfSignature: Date;
+  signatureDate: Date | null,
   staffingCommittee: MemberField[];
-  projectMembers: MemberField[];
-  initialSituationAndObjective: string;
+  members: MemberField[],
+  qualityManagers: MemberField[],
+  situation: string;
   soldBT: string;
   soldExpenses: string;
-  soldConditions: string;
+  euroPerBT: string,
+  projectEnd: Date,
+  invoicing: Date,
+  acquisitor: DirectorDto,
+  acquisitionMethod: string,
+  customerType: "Altkunde" | "Neukunde",
 };
 
 // Type for the customer details
 export type CustomerDetails = {
-  customerID: number;
-  industry: string;
-  description: string;
+  customerid: number;
+  industry: IndustryDto;
+  shortDescription: string;
   street: string;
   postalCode: string;
   city: string;
-  website: string;
-  customerType: string;
-  acquisitor: string;
-  acqusitionChannel: string;
+  addressAdditional: string;
+  url: string,
+  importantInformation: string,
+  classified: boolean,
+  contactDesired: boolean,
 };
+
+// Type for project details without permissions
+export type ProjectDetailsWithoutPermissions = Omit<ProjectDetails, 'staffingCommittee' | 'projectMembers'>;
+
+// Type for project details with permissions
+export type ProjectDetailsWithPermissions = ProjectDetails;
