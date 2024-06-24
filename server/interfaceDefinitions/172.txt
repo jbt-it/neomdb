@@ -7,21 +7,8 @@ export type ExternalProjectExperience = {
 
 // Type for the application details
 export type ApplicationDetails = {
-  applicant: string; // Bewerber
-  university: string; // Hochschule
-  courseOfStudy: string; // Studiengang
-  semester: string; // Semester
-  specializations: string; // Vertiefungen
-  internships: string; // Praktika
-  education: string; // Ausbildung
-  workingStudentActivities: string; // Werkstudenten-Tätigkeit
-  seminarPapers: string; // Seminararbeiten
-  workshops: string; // Schulungen/Workshops
-  internalEngagement: string; // Internes Engagement
-  externalProjectExperience: ExternalProjectExperience[]; // Externe Projekterfahrung
-  acquisitionAchievements: string; // Akquise-Vorleistungen
-  extraordinaryEngagement: string; // Außerordentliches Engagement
-  availability: string; // Zeitliche Verfügbarkeit
-  limitationReasons: string; // Gründe und Dauer der Einschränkung
-  motivation: string; // Motivation
+    projectId: number,
+    projectName: string,
+    memberId: number,
+    type: string,
 };
