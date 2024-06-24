@@ -39,6 +39,15 @@ export type ProjectDetails = {
   customerType: "Altkunde" | "Neukunde",
 };
 
+// for projects with status "Bewerbung"
+type ProjectApplicationShort = {
+    firstname: string,
+    lastname: string,
+    memberStatus: MemberStatusDto,
+    applicationDate: Date, // Datum
+    type: string,
+}
+
 // Type for the customer details
 export type CustomerDetails = {
   customerid: number;
