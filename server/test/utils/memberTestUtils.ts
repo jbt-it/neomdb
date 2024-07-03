@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import MembersRepository from "../../src/resources/members/MembersRepository";
-import { Member } from "../../src/types/membersTypes";
+import { MembersRepository } from "../../src/resources/members/MembersRepository";
 import { executeScript } from "./databaseUtils";
+import { Member } from "../../src/entities/Member";
 
 /**
  * Utility class for testing the members routes
@@ -12,12 +12,10 @@ class MemberTestUtils {
   clearMemberScript = "./test/scripts/members/db_member_clear.sql";
   fillMemberScript = "./test/scripts/members/db_member_fill.sql";
 
-  membersRepository: MembersRepository = null;
   app: Express.Application = null;
 
   constructor(app: Express.Application) {
     this.app = app;
-    this.membersRepository = new MembersRepository();
   }
 
   /**
@@ -80,7 +78,7 @@ class MemberTestUtils {
    * @returns The member
    */
   getMemberByIDFromDB = async (id: number): Promise<Member> => {
-    const member = await this.membersRepository.getMemberByID(id, true);
+    const member = await MembersRepository.getMemberByID(id);
     return member;
   };
 }

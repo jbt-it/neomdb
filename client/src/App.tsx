@@ -1,6 +1,6 @@
 // React imports
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PrivateRoutes from "./components/routing/PrivateRoutes";
 import PublicRoutes from "./components/routing/PublicRoutes";
 import ProtectedRoutes from "./components/routing/ProtectedRoutes";
@@ -37,6 +37,12 @@ import WorkshopDetails from "./pages/events/WorkshopDetails";
 import EventDetails from "./pages/events/EventDetails";
 import EventsOverview from "./pages/events/EventsOverview";
 
+// project pages
+import ProjectOverview from "./pages/projects/ProjectOverview";
+
+// finance pages
+import FinanceOverview from "./pages/finance/FinanceOverview";
+
 // other pages
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -54,7 +60,7 @@ import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluatio
 const App: React.FunctionComponent = () => {
   return (
     <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
             <Route path="/login" element={<Login />} />
@@ -76,7 +82,7 @@ const App: React.FunctionComponent = () => {
             <Route path="internes-projekt/:id" element={<InternalProject />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
-            <Route path="projekte" element={<Dashboard />} />
+            <Route path="projekte" element={<ProjectOverview />} />
             <Route path="veranstaltungen" element={<EventsOverview />} />
             <Route path="veranstaltungen/:id" element={<EventDetails />} />
             <Route path="workshops" element={<WorkshopsOverview />} />
@@ -109,10 +115,18 @@ const App: React.FunctionComponent = () => {
                 </ProtectedRoutes>
               }
             />
+            <Route
+              path="finanzuebersicht"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <FinanceOverview />
+                </ProtectedRoutes>
+              }
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </LocalizationProvider>
   );
 };

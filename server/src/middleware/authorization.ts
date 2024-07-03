@@ -13,13 +13,13 @@ export const restrictRoutesSelfOrPermission = (permissions: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const jwtData = verifyJWT(req.cookies.token);
     const isMemberAuthorized =
-      Number(req.params.id) === jwtData.mitgliedID || doesPermissionsInclude(jwtData.permissions, permissions);
+      Number(req.params.id) === jwtData.memberId || doesPermissionsInclude(jwtData.permissions, permissions);
 
     if (!isMemberAuthorized) {
       return res.status(403).send("Authorization failed: You are not permitted to do this");
     }
 
-    res.locals.memberID = jwtData.mitgliedID;
+    res.locals.memberID = jwtData.memberId;
     res.locals.permissions = jwtData.permissions;
     next();
   };

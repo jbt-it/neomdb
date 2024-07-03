@@ -1,4 +1,4 @@
-import { MemberField } from "./membersTypes";
+import { MemberField } from "./memberTypes";
 
 /**
  * Type of the updated event

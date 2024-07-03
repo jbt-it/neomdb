@@ -105,7 +105,7 @@ export class EventsController extends Controller {
     // Check if the user has the permission to update the event or is part of the organizers
     if (
       !doesPermissionsInclude(user.permissions, [8]) &&
-      !currentOrganizers.some((organizer) => organizer.memberID === user.mitgliedID)
+      !currentOrganizers.some((organizer) => organizer.memberID === user.memberId)
     ) {
       throw new UnauthorizedError("You are not allowed to update this event");
     }

@@ -5,17 +5,6 @@
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `akquisekanal`
---
-
-CREATE TABLE `akquisekanal` (
-  `akquisekanalID` int NOT NULL,
-  `bezeichnung` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `andererposten`
 --
 
@@ -36,25 +25,7 @@ CREATE TABLE `andererposten` (
 CREATE TABLE `ansprechpartner` (
   `ansprechpartnerID` int NOT NULL,
   `unternehmen_unternehmenID` int NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geschlecht` tinyint(1) DEFAULT NULL,
-  `geburtsdatum` date DEFAULT NULL,
-  `position` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `festnetz` varchar(20) DEFAULT NULL,
-  `handy` varchar(20) DEFAULT NULL,
-  `xing` varchar(200) DEFAULT NULL,
-  `adresszusatz` varchar(500) DEFAULT NULL,
-  `strasse` varchar(100) DEFAULT NULL,
-  `plz` varchar(10) DEFAULT NULL,
-  `ort` varchar(100) DEFAULT NULL,
-  `persoenlicheEigenschaften` mediumtext,
-  `verbleib` mediumtext,
-  `wichtigkeitKontaktaufnahme` int DEFAULT NULL,
-  `kontaktperson` int DEFAULT NULL,
-  `erinnerung` date DEFAULT NULL,
-  `erwarteBestaetigung` date DEFAULT NULL,
-  `zufriedenheit` int DEFAULT NULL
+  `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -79,17 +50,6 @@ CREATE TABLE `branche` (
   `brancheID` int NOT NULL,
   `bezeichnung` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `bueroraum`
---
-
-CREATE TABLE `bueroraum` (
-  `bueroraumID` int NOT NULL,
-  `bezeichnung` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -223,121 +183,6 @@ CREATE TABLE `generation_has_mentor` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `hcw`
---
-
-CREATE TABLE `hcw` (
-  `hcwJahr` int NOT NULL,
-  `hcwStart` date NOT NULL,
-  `hcwEnde` date NOT NULL,
-  `bewerbung_start` datetime NOT NULL,
-  `bewerbung_ende` datetime NOT NULL,
-  `angezeigte_frist` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `hcwberatung`
---
-
-CREATE TABLE `hcwberatung` (
-  `hcwberatungID` int NOT NULL,
-  `jahr` int NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `kuerzel` varchar(10) NOT NULL,
-  `datum` date DEFAULT NULL,
-  `login` varchar(45) DEFAULT NULL,
-  `passwort` varchar(45) DEFAULT NULL,
-  `session` varchar(32) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `hcwbewerber`
---
-
-CREATE TABLE `hcwbewerber` (
-  `hcwbewerberID` int NOT NULL,
-  `jahr` int NOT NULL,
-  `eingangsdatum` datetime NOT NULL,
-  `token` varchar(32) NOT NULL,
-  `nachname` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `vorname` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `anrede` int NOT NULL,
-  `titel` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `geburtsdatum` date NOT NULL,
-  `handy` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `festnetz` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `email` varchar(65) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `strasse` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `hausnr` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `plz` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `ort` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `schule_Abiturnote` decimal(10,2) DEFAULT NULL,
-  `schule_Abiturtermin` varchar(45) DEFAULT NULL,
-  `schule_Schule` varchar(200) DEFAULT NULL,
-  `schule_Ort` varchar(160) DEFAULT NULL,
-  `studium_Hochschule` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Abschluss` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Beginn` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Ende` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Fach` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Fachsemester` int DEFAULT NULL,
-  `studium_StatusAbschlussarbeit` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Notenschnitt` decimal(10,2) DEFAULT NULL,
-  `studium_Auslandssemester` tinyint(1) DEFAULT NULL,
-  `studium_Berufsausbildung` tinyint(1) DEFAULT NULL,
-  `praxis_Berufstaetigkeit` int DEFAULT NULL,
-  `praxis_Praktika` int DEFAULT NULL,
-  `praxis_Auslandspraktika` int DEFAULT NULL,
-  `praxis_Hiwi` int DEFAULT NULL,
-  `praxis_Werkstudent` int DEFAULT NULL,
-  `edv_Word` int DEFAULT NULL,
-  `edv_Excel` int DEFAULT NULL,
-  `edv_PowerPoint` int DEFAULT NULL,
-  `edv_Access` int DEFAULT NULL,
-  `flyer` tinyint(1) DEFAULT NULL,
-  `plakate` tinyint(1) DEFAULT NULL,
-  `vorlesungen` tinyint(1) DEFAULT NULL,
-  `netzwerke` tinyint(1) DEFAULT NULL,
-  `karriereportale` tinyint(1) DEFAULT NULL,
-  `freunde` tinyint(1) DEFAULT NULL,
-  `professoren` tinyint(1) DEFAULT NULL,
-  `stiftungen` tinyint(1) DEFAULT NULL,
-  `charly_education` tinyint(1) DEFAULT NULL,
-  `newsletter` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `hcwbewerber_anlage`
---
-
-CREATE TABLE `hcwbewerber_anlage` (
-  `hcwbewerber_hcwbewerberID` int NOT NULL,
-  `anlageIndex` int NOT NULL,
-  `filename` varchar(200) NOT NULL,
-  `filesize` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `hcwbewerber_has_beratung`
---
-
-CREATE TABLE `hcwbewerber_has_beratung` (
-  `hcwbewerber_hcwbewerberID` int NOT NULL,
-  `hcwberatung_hcwberatungID` int NOT NULL,
-  `einstufung` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `hilfetext`
 --
 
@@ -346,47 +191,6 @@ CREATE TABLE `hilfetext` (
   `editable` tinyint(1) NOT NULL DEFAULT '1',
   `text` longtext NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `innovation`
---
-
-CREATE TABLE `innovation` (
-  `innovationID` int NOT NULL COMMENT 'PK',
-  `autor` int NOT NULL COMMENT 'FK zur Mitgliedertabelle',
-  `datum` date NOT NULL,
-  `ressortBeiEinreichung` int NOT NULL,
-  `titel` varchar(255) DEFAULT NULL,
-  `beschreibung` longtext,
-  `kurzbeschreibung` longtext,
-  `ressort` int NOT NULL,
-  `idee_art` varchar(45) DEFAULT NULL,
-  `klassifizierung` varchar(45) DEFAULT NULL,
-  `industrie` varchar(45) DEFAULT NULL,
-  `anwendungsfall` longtext,
-  `jbt_fit` longtext,
-  `wert` longtext,
-  `einzigartigkeit` longtext,
-  `status` enum('eingereicht','zurückgestellt','in Bearbeitung','umgesetzt','abgelehnt') NOT NULL DEFAULT 'eingereicht',
-  `notiz` longtext,
-  `marktgroesse_und_moeglichkeiten_attraktiv` tinyint(1) DEFAULT NULL,
-  `vorhandener_markt` tinyint(1) DEFAULT NULL,
-  `technisch_umsetzbar` tinyint(1) DEFAULT NULL,
-  `konkurrenz_vorhanden` tinyint(1) DEFAULT NULL,
-  `anwendungsfall_plausibel` int DEFAULT NULL,
-  `fuer_jbt_sinnvoll` int DEFAULT NULL,
-  `wow_faktor` int DEFAULT NULL,
-  `einfachheit_konzept` int DEFAULT NULL,
-  `nutzen` int DEFAULT NULL,
-  `zusaetzlicher_profit` int DEFAULT NULL,
-  `investitionsvolumen` int DEFAULT NULL,
-  `know_how` int DEFAULT NULL,
-  `bedrohung_wettbewerber` int DEFAULT NULL,
-  `umsetzung_schwierigkeit` int DEFAULT NULL,
-  `potentialwert` decimal(5,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -428,70 +232,6 @@ CREATE TABLE `internesprojekt_has_qm` (
 CREATE TABLE `kernkompetenz` (
   `kernkompetenzID` int NOT NULL,
   `bezeichnung` varchar(45) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `kontaktaufnahme`
---
-
-CREATE TABLE `kontaktaufnahme` (
-  `kontaktaufnahmeID` int NOT NULL,
-  `ansprechpartner_ansprechpartnerID` int NOT NULL,
-  `insertTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `zeitpunkt` datetime NOT NULL,
-  `kanal` enum('Telefon','E-Mail','Gespräch','Sonstiges') NOT NULL,
-  `initiativeJBT` tinyint(1) NOT NULL,
-  `mitglied_mitgliedID` int DEFAULT NULL,
-  `grund` mediumtext,
-  `kurzfassung` mediumtext,
-  `neueDeadlines` mediumtext,
-  `weitereNotizen` mediumtext
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `kurator`
---
-
-CREATE TABLE `kurator` (
-  `kuratorID` int NOT NULL,
-  `kuratortyp` enum('wissenschaft','wirtschaft') NOT NULL DEFAULT 'wirtschaft',
-  `name` varchar(100) NOT NULL,
-  `bild` varchar(45) DEFAULT NULL,
-  `kurzvorstellung` text,
-  `kurator_seit` date DEFAULT NULL,
-  `kontakt` text,
-  `arbeit` text,
-  `weitere_taetigkeiten` text,
-  `auszeichnungen` text,
-  `bisherigeKoop` text,
-  `besonderes` text,
-  `internes` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `kurator_akquiriert`
---
-
-CREATE TABLE `kurator_akquiriert` (
-  `kurator_kuratorID` int NOT NULL,
-  `mitglied_mitgliedID` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `messenger`
---
-
-CREATE TABLE `messenger` (
-  `messengerID` int NOT NULL,
-  `bezeichnung` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -621,30 +361,14 @@ CREATE TABLE `mitglied_has_berechtigung` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `mitglied_has_bueroraumreservierung`
---
-
-CREATE TABLE `mitglied_has_bueroraumreservierung` (
-  `mitglied_has_bueroraumreservierungID` int NOT NULL,
-  `bueroraum_bueroraumID` int NOT NULL,
-  `mitglied_mitgliedID` int NOT NULL,
-  `datum` date NOT NULL,
-  `ende` date NOT NULL,
-  `startzeit` varchar(10) DEFAULT NULL,
-  `endzeit` varchar(10) DEFAULT NULL,
-  `beschreibung` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `mitglied_has_event`
 --
 
 CREATE TABLE `mitglied_has_event` (
   `event_eventID` int NOT NULL,
   `mitglied_mitgliedID` int NOT NULL,
-  `rolle` enum('Teilnehmer','Organisator') NOT NULL,
+  `ist_teilnehmer` tinyint(1) NOT NULL DEFAULT 1,
+  `ist_organisator` tinyint(1) NOT NULL DEFAULT 0,
   `anmeldezeitpunkt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -689,31 +413,6 @@ CREATE TABLE `mitglied_has_expertenwissen` (
   `expertenwissen_expertenwissenID` int NOT NULL,
   `wert` varchar(150) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `mitglied_has_messenger`
---
-
-CREATE TABLE `mitglied_has_messenger` (
-  `mitglied_mitgliedID` int NOT NULL,
-  `messenger_messengerID` int NOT NULL,
-  `wert` varchar(150) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `mitglied_has_mitglied`
---
-
-CREATE TABLE `mitglied_has_mitglied` (
-  `mitgliedID_rater` int NOT NULL,
-  `mitgliedID_target` int NOT NULL,
-  `rating` tinyint(1) NOT NULL,
-  `ratingID` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 

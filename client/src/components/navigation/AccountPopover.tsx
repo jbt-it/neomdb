@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { alpha } from "@mui/material/styles";
+import React, { useContext, useState } from "react";
+import { alpha, useTheme } from "@mui/material/styles";
 import { MenuItem, Typography, IconButton, Avatar, Popover, Box, Divider } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
 import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { authReducerActionType } from "../../types/globalTypes";
+import { stringToColor } from "../../utils/stringUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import useMemberDetails from "../../hooks/members/useMemberDetails";
 
 interface MenuOption {
   label: string;
@@ -17,8 +19,10 @@ interface MenuOption {
  */
 const AccountPopover = () => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
-  const { auth, dispatchAuth } = useAuth();
+  const { auth, dispatchAuth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { memberImage } = useMemberDetails(auth.userID!);
+  const theme = useTheme();
 
   const MENU_OPTIONS: MenuOption[] = [
     {
@@ -68,11 +72,17 @@ const AccountPopover = () => {
           sx={{
             width: 36,
             height: 36,
+            bgcolor: memberImage?.base64
+              ? theme.palette.grey[500]
+              : stringToColor(auth.userName ? auth.userName.toString() : ""),
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-        >
-          {auth.userName?.charAt(0).toUpperCase()}
-        </Avatar>
+          src={
+            memberImage?.base64
+              ? `data:image/${memberImage.mimeType};base64,${memberImage.base64}`
+              : auth.userName?.charAt(0).toUpperCase()
+          }
+        />
       </IconButton>
 
       <Popover

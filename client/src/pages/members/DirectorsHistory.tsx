@@ -2,7 +2,7 @@
  * The DirectorHistory-Component displays all old and current directors in a table and displays options for filtering and sorting them
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Table,
@@ -14,21 +14,38 @@ import {
   TextField,
   MenuItem,
   Grid,
-  Theme,
+  useTheme,
+  styled,
+  Box,
 } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
-import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
 import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
-import { showErrorMessage } from "../../utils/toastUtils";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { DirectorDto } from "../../types/membersTypes";
+import useDepartments from "../../hooks/members/useDepartments";
+
+// Create a styled component with the form
+const StyledForm = styled("form")(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  [theme.breakpoints.down("xl")]: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
 
 /**
- * Function which proivdes the styles of the DirectorHistory
+ * Depicts a table with all directors and a filter section to filter the directors
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const DirectorsHistory: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the DirectorHistory
+   */
+  const styles = {
     amountOfEntries: {
       marginBottom: "10px",
       padding: "7px",
@@ -123,57 +140,11 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "block",
       },
     },
-  })
-);
-
-/**
- * Interface for the director object
- */
-interface Director {
-  mitgliedID: number;
-  nachname: string;
-  vorname: string;
-  von: string;
-  bis: string;
-  kuerzel: string;
-  lastchange: string;
-}
-
-/**
- * Depicts a table with all directors and a filter section to filter the directors
- */
-const DirectorsHistory: React.FunctionComponent = () => {
-  const classes = useStyles();
-  const [directors, setdirectors] = useState<Director[]>([]);
+  };
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [kuerzelFilter, setkuerzelFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
-
-  // Retrieves the directors
-  const getdirectors = useCallback(() => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get("/members/directors?current=false", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setdirectors(res.data);
-          }
-        }
-      })
-      .catch(() => {
-        showErrorMessage("Internal Server Error");
-      });
-
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  }, []);
-  useEffect(() => getdirectors(), [getdirectors]);
+  const { allDirectors } = useDepartments();
 
   /**
    * Handles the change event on the search filter input
@@ -194,21 +165,21 @@ const DirectorsHistory: React.FunctionComponent = () => {
   /**
    * Filters and sorts the director data and returns it
    */
-  const getFilteredandSortedDirectors = (): Director[] => {
-    let filtereddirectors = directors;
+  const getFilteredandSortedDirectors = (): DirectorDto[] => {
+    let filtereddirectors = allDirectors;
 
     // Filters by kuerzel
     if (kuerzelFilter !== "") {
       filtereddirectors = filtereddirectors.filter((director) => {
-        return director.kuerzel === kuerzelFilter;
+        return director.department?.shortName === kuerzelFilter;
       });
     }
 
     // Filters by search input
     filtereddirectors = filtereddirectors.filter((director) => {
       return (
-        director.vorname.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        director.nachname.toLowerCase().includes(searchFilter.toLowerCase())
+        director.firstname.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        director.lastname.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
     let sorteddirectors = filtereddirectors;
@@ -216,12 +187,12 @@ const DirectorsHistory: React.FunctionComponent = () => {
     // Sorts by lastname in ascending alphabetical order
     if (nameSort === "up") {
       sorteddirectors = sorteddirectors.sort((a, b) => {
-        return a.nachname.localeCompare(b.nachname);
+        return a.lastname.localeCompare(b.lastname);
       });
       // Sorts by lastname in descending alphabetical order
     } else if (nameSort === "down") {
       sorteddirectors = sorteddirectors.sort((a, b) => {
-        return -a.nachname.localeCompare(b.nachname);
+        return -a.lastname.localeCompare(b.lastname);
       });
     }
     return sorteddirectors;
@@ -266,74 +237,69 @@ const DirectorsHistory: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        <Paper className={classes.filterContainer}>
-          <form className={classes.filters} noValidate autoComplete="off">
-            <Grid container spacing={8}>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  label="Name"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handleSearchInput}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3} className={classes.kuerzelFilterMain}>
-                <TextField
-                  label="Vorstandsposten"
-                  className={classes.filterElement}
-                  color="primary"
-                  onChange={handlekuerzelChange}
-                  value={kuerzelFilter}
-                  select
-                >
-                  <MenuItem value={""}>-</MenuItem>
-                  <MenuItem value={"RL NET"}>NET</MenuItem>
-                  <MenuItem value={"RL QM"}>QM</MenuItem>
-                  <MenuItem value={"RL F&R"}>F&R</MenuItem>
-                  <MenuItem value={"RL FK"}>FK</MenuItem>
-                  <MenuItem value={"RL MIT"}>MIT</MenuItem>
-                  <MenuItem value={"RL MAR"}>MAR</MenuItem>
-                  <MenuItem value={"RL IT"}>IT</MenuItem>
-                  <MenuItem value={"1V"}>1V</MenuItem>
-                </TextField>
-              </Grid>
+      <Paper sx={styles.filterContainer}>
+        <StyledForm noValidate autoComplete="off">
+          <Grid container spacing={8}>
+            <Grid item xs={6} sm={3}>
+              <TextField label="Name" sx={styles.filterElement} color="primary" onChange={handleSearchInput} />
             </Grid>
-          </form>
-        </Paper>
-        <TableContainer component={Paper} className={classes.tableContainer}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableHeadCell}>
-                  <div className={classes.tableHeadSortBtn} onClick={toggleNameSort}>
+            <Grid item xs={6} sm={3} sx={styles.kuerzelFilterMain}>
+              <TextField
+                label="Vorstandsposten"
+                sx={styles.filterElement}
+                color="primary"
+                onChange={handlekuerzelChange}
+                value={kuerzelFilter}
+                select
+              >
+                <MenuItem value={""}>-</MenuItem>
+                <MenuItem value={"RL NET"}>NET</MenuItem>
+                <MenuItem value={"RL QM"}>QM</MenuItem>
+                <MenuItem value={"RL F&R"}>F&R</MenuItem>
+                <MenuItem value={"RL FK"}>FK</MenuItem>
+                <MenuItem value={"RL MIT"}>MIT</MenuItem>
+                <MenuItem value={"RL MAR"}>MAR</MenuItem>
+                <MenuItem value={"RL IT"}>IT</MenuItem>
+                <MenuItem value={"1V"}>1V</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
+        </StyledForm>
+      </Paper>
+      <TableContainer component={Paper} sx={styles.tableContainer}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={toggleNameSort}>
+                  <>
                     Name
                     {getNameSortIcon()}
-                  </div>
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>Vorstandsposten</TableCell>
+              <TableCell sx={styles.tableHeadCell}>von</TableCell>
+              <TableCell sx={styles.tableHeadCell}>bis</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getFilteredandSortedDirectors().map((director, index) => (
+              <TableRow hover key={index}>
+                <TableCell component="th" scope="row">
+                  <Link
+                    style={{ color: "black", textDecoration: "none" }}
+                    to={`/gesamtuebersicht/${director.memberId}`}
+                  >{`${director.firstname} ${director.lastname}`}</Link>
                 </TableCell>
-                <TableCell className={classes.tableHeadCell}>Vorstandsposten</TableCell>
-                <TableCell className={classes.tableHeadCell}>von</TableCell>
-                <TableCell className={classes.tableHeadCell}>bis</TableCell>
+                <TableCell>{director.department?.shortName}</TableCell>
+                <TableCell>{transformSQLStringToGermanDate(director.from.toString())}</TableCell>
+                {<TableCell>{transformSQLStringToGermanDate(director.until.toString())}</TableCell>}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {getFilteredandSortedDirectors().map((director, index) => (
-                <TableRow hover key={index}>
-                  <TableCell component="th" scope="row">
-                    <NavLink
-                      to={`/gesamtuebersicht/${director.mitgliedID}`}
-                    >{`${director.vorname} ${director.nachname}`}</NavLink>
-                  </TableCell>
-                  <TableCell>{director.kuerzel}</TableCell>
-                  <TableCell>{transformSQLStringToGermanDate(director.von)}</TableCell>
-                  {<TableCell>{transformSQLStringToGermanDate(director.bis)}</TableCell>}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-      <PageBar pageTitle="Ewige EV-Liste" />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import TraineesRepository from "../../src/resources/trainees/TraineesRepository";
-import { InternalProject } from "../../src/types/traineesTypes";
+import InternalProjectRepository from "../../src/resources/trainees/InternalProjectRepository";
 import { executeScript } from "./databaseUtils";
+import { InternalProject } from "../../src/entities/InternalProject";
 
 /**
  * Utility class for testing the trainees routes
@@ -10,12 +10,10 @@ class TraineeTestUtils {
   clearTraineeScript = "./test/scripts/trainees/db_trainee_clear.sql";
   fillTraineeScript = "./test/scripts/trainees/db_trainee_fill.sql";
 
-  traineesRepository: TraineesRepository = null;
   app: Express.Application = null;
 
   constructor(app: Express.Application) {
     this.app = app;
-    this.traineesRepository = new TraineesRepository();
   }
 
   /**
@@ -51,7 +49,7 @@ class TraineeTestUtils {
    * @returns The IP
    */
   getIPByIDFromDB = async (id: number): Promise<InternalProject> => {
-    const ip = await this.traineesRepository.getIPByID(id);
+    const ip = await InternalProjectRepository.getInternalProjectByID(id);
     return ip;
   };
 }
