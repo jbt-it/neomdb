@@ -2579,12 +2579,12 @@
 					"description": {
 						"type": "string"
 					},
-					"date": {
+					"eventBegin": {
 						"type": "string",
 						"format": "date-time",
 						"nullable": true
 					},
-					"end": {
+					"eventEnd": {
 						"type": "string",
 						"format": "date-time",
 						"nullable": true
@@ -2645,8 +2645,8 @@
 					"eventId",
 					"eventName",
 					"description",
-					"date",
-					"end",
+					"eventBegin",
+					"eventEnd",
 					"registrationFrom",
 					"registrationTo",
 					"location",
