@@ -99,7 +99,7 @@ INSERT INTO `edvkenntnisse` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 -- Daten für Tabelle `event`
 --
 
-INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
+INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `event_beginn`, `event_ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
 (5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-01 19:23:00', '2013-11-12 20:00:00', 'Nähe Geislingen an der Steige (Freizeitheim Stötten)', NULL, NULL, 1, 0, 58, 0, 0),
 (7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-11-28 21:23:00', '2013-12-09 22:00:00', 'Euro Forum Katharinasaal/TMS', '18:00', '09:00', 0, 0, 50, 0, 0),
 (8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-11-29 19:23:00', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0, 50, 0, 0),
