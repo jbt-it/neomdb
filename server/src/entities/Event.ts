@@ -14,11 +14,11 @@ export class Event {
   @Column("mediumtext", { name: "beschreibung" })
   description: string;
 
-  @Column("date", { name: "datum", nullable: true })
-  date: Date | null;
+  @Column("date", { name: "event_beginn", nullable: true })
+  eventBegin: Date | null;
 
-  @Column("date", { name: "ende", nullable: true })
-  end: Date | null;
+  @Column("date", { name: "event_ende", nullable: true })
+  eventEnd: Date | null;
 
   @Column("datetime", { name: "anmeldungVon", nullable: true })
   registrationFrom: Date | null;
