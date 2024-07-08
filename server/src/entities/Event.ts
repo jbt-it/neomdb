@@ -20,31 +20,31 @@ export class Event {
   @Column("date", { name: "event_ende", nullable: true })
   eventEnd: Date | null;
 
+  // TODO: Date
+  @Column("time", { name: "startzeit", nullable: true })
+  startTime: string | null;
+
+  // TODO: Date
+  @Column("time", { name: "endzeit", nullable: true })
+  endTime: string | null;
+
   @Column("datetime", { name: "anmeldungVon", nullable: true })
   registrationFrom: Date | null;
 
   @Column("datetime", { name: "anmeldungBis", nullable: true })
   registrationTo: Date | null;
 
+  @Column("int", { name: "maximaleTeilnehmer", nullable: true })
+  maximumParticipants: number | null;
+
   @Column("varchar", { name: "ort", nullable: true, length: 255 })
   location: string | null;
-
-  // TODO: Date
-  @Column("varchar", { name: "startzeit", nullable: true, length: 10 })
-  startTime: string | null;
-
-  // TODO: Date
-  @Column("varchar", { name: "endzeit", nullable: true, length: 10 })
-  endTime: string | null;
 
   @Column("tinyint", { name: "ww", width: 1, default: () => "'0'" })
   ww: boolean;
 
-  @Column("tinyint", { name: "netzwerk", width: 1 })
+  @Column("tinyint", { name: "netzwerk", width: 1, default: () => "'0'" })
   network: boolean;
-
-  @Column("int", { name: "maximaleTeilnehmer", nullable: true })
-  maximumParticipants: number | null;
 
   @Column("tinyint", { name: "jbtgoes", width: 1, default: () => "'0'" })
   jbtGoes: boolean;

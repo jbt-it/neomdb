@@ -35,8 +35,10 @@ export type Generation = {
   description: string;
   applicationStart: Date | null;
   applicationEnd: Date | null;
-  wwDate: string | null;
-  selectionWeDate: string | null;
+  selectionWeDateStart: Date | null;
+  selectionWeDateEnd: Date | null;
+  wwDateStart: Date | null;
+  wwDateEnd: Date | null;
   infoEveningVisitors: number | null;
   doorCode: string | null;
   electionEnd: Date | null;
