@@ -728,12 +728,24 @@
 						"format": "date-time",
 						"nullable": true
 					},
-					"wwDate": {
+					"selectionWeDateStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"selectionWeDate": {
+					"selectionWeDateEnd": {
 						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateEnd": {
+						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"infoEveningVisitors": {
@@ -785,8 +797,10 @@
 					"description",
 					"applicationStart",
 					"applicationEnd",
-					"wwDate",
-					"selectionWeDate",
+					"selectionWeDateStart",
+					"selectionWeDateEnd",
+					"wwDateStart",
+					"wwDateEnd",
 					"infoEveningVisitors",
 					"doorCode",
 					"electionStart",
@@ -2589,6 +2603,14 @@
 						"format": "date-time",
 						"nullable": true
 					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
 					"registrationFrom": {
 						"type": "string",
 						"format": "date-time",
@@ -2599,15 +2621,12 @@
 						"format": "date-time",
 						"nullable": true
 					},
+					"maximumParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"location": {
-						"type": "string",
-						"nullable": true
-					},
-					"startTime": {
-						"type": "string",
-						"nullable": true
-					},
-					"endTime": {
 						"type": "string",
 						"nullable": true
 					},
@@ -2616,11 +2635,6 @@
 					},
 					"network": {
 						"type": "boolean"
-					},
-					"maximumParticipants": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
 					},
 					"jbtGoes": {
 						"type": "boolean"
@@ -2647,14 +2661,14 @@
 					"description",
 					"eventBegin",
 					"eventEnd",
-					"registrationFrom",
-					"registrationTo",
-					"location",
 					"startTime",
 					"endTime",
+					"registrationFrom",
+					"registrationTo",
+					"maximumParticipants",
+					"location",
 					"ww",
 					"network",
-					"maximumParticipants",
 					"jbtGoes",
 					"others",
 					"memberHasEvents",
