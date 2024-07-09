@@ -177,14 +177,16 @@ const InternalProject: React.FunctionComponent = () => {
    */
   return isInternalProjectDetailsFetched ? (
     <div>
-      <EditInternalProjectDialog
-        internalProjectDetails={internalProjectDetails}
-        open={internalProjectInfoDialogOpen}
-        closeDialog={handleInternalProjectInfoDialogClose}
-        updateInternalProjectDetails={handleUpdateInternalProjectDetails}
-        selectableQMs={selectableQMs}
-        selectableTrainees={selectableTrainees}
-      />
+      {internalProjectDetails ? (
+        <EditInternalProjectDialog
+          internalProjectDetails={internalProjectDetails}
+          open={internalProjectInfoDialogOpen}
+          closeDialog={handleInternalProjectInfoDialogClose}
+          updateInternalProjectDetails={handleUpdateInternalProjectDetails}
+          selectableQMs={selectableQMs}
+          selectableTrainees={selectableTrainees}
+        />
+      ) : null}
 
       <StyledPaper>
         <Box

@@ -42,7 +42,7 @@ interface DisplayMemberDetailsProps {
   listOfEDVSkills: membersTypes.ItSkill[];
   memberDetails: membersTypes.MemberDetailsDto;
   isOwner: boolean;
-  memberImage: membersTypes.MemberImage | null;
+  memberImage: membersTypes.MemberImage | undefined;
   updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
 }
