@@ -24,6 +24,7 @@ const TraineeSection: React.FunctionComponent = () => {
   const { auth } = useContext(AuthContext);
   const { generations, isGenerationsFetched } = useTrainees();
   const { members } = useMembers();
+  const { admitTrainee } = useTrainees();
 
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
@@ -108,7 +109,7 @@ const TraineeSection: React.FunctionComponent = () => {
       {hasPermissionInternalProject ? (
         <>
           <Divider sx={{ mb: 5 }} />
-          <TraineeSectionTable trainees={traineeProgress} />
+          <TraineeSectionTable trainees={traineeProgress} admitTrainee={admitTrainee} />
         </>
       ) : null}
     </>

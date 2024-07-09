@@ -20,7 +20,6 @@ import {
 import { AddCircleOutline, CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { TraineeProgressDto } from "../../../types/traineesTypes";
 import { Link as RouterLink } from "react-router-dom";
-import useTrainees from "../../../hooks/trainees/useTrainees";
 
 // all columns of the table
 const columns = [
@@ -61,15 +60,18 @@ interface DialogProps {
   open: boolean;
   onClose: () => void;
   trainee: TraineeProgressDto | undefined;
+  admitTrainee: (memberID: number) => void;
 }
 
 /**
  * The AdmissionDialog component displays a dialog to confirm the admission of a trainee
- * @param param - open: boolean, onClose: () => void, trainee: Trainee | undefined
+ * @param open - boolean if the dialog is open
+ * @param onClose - function to close the dialog
+ * @param trainee - the trainee to be admitted
+ * @param admitTrainee - (memberID: number) => void
  * @returns the dialog to confirm the admission of a trainee
  */
-const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, trainee }) => {
-  const { admitTrainee } = useTrainees();
+const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, trainee, admitTrainee }) => {
   const handleAdmission = () => {
     if (trainee) {
       admitTrainee(trainee.memberID);
@@ -96,11 +98,13 @@ const AdmissionDialog: React.FunctionComponent<DialogProps> = ({ open, onClose, 
 };
 interface Props {
   trainees: TraineeProgressDto[];
+  admitTrainee: (memberID: number) => void;
 }
 
 /**
  * The TraineeSectionTable component displays the table to display the trainees of a generation and all checklists
- * @param props - trainees: Trainee[]
+ * @param trainees - Array of TraineeProgressDto
+ * @param admitTrainee - function to admit a trainee
  * @returns the table to display the trainees of a generation
  */
 const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
@@ -117,7 +121,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
   };
   const [openAdmissionDialog, setOpenAdmissionDialog] = React.useState(false);
   const [selectedTrainee, setSelectedTrainee] = React.useState<TraineeProgressDto | undefined>();
-  const { trainees } = props;
+  const { trainees, admitTrainee } = props;
 
   const handleAdmission = (trainee: TraineeProgressDto) => {
     setOpenAdmissionDialog(true);
@@ -161,6 +165,7 @@ const TraineeSectionTable: React.FunctionComponent<Props> = (props: Props) => {
         open={openAdmissionDialog}
         onClose={() => setOpenAdmissionDialog(false)}
         trainee={selectedTrainee}
+        admitTrainee={admitTrainee}
       />
       <Table size="small" component={Paper} sx={{ maxWidth: 1200 }}>
         <TableHead sx={styles.tableHeader}>

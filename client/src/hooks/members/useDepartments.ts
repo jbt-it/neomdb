@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto } from "../../types/membersTypes";
+import { DepartmentDetailsDto } from "../../types/membersTypes";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { AxiosError } from "axios";
@@ -31,7 +31,7 @@ const useDepartments = () => {
     queryFn: getDepartments,
   });
 
-  const departments = (departmentsData?.data as DepartmentDetailsDto[]) || [];
+  const departments = departmentsData?.data || [];
 
   // ----------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ const useDepartments = () => {
     queryFn: getDepartmentMembers,
   });
 
-  const departmentMembers = (departmentMembersData?.data as DepartmentMemberDto[]) || [];
+  const departmentMembers = departmentMembersData?.data || [];
 
   // ----------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ const useDepartments = () => {
     queryFn: getCurrentDirectors,
   });
 
-  const currentDirectors = (currentDirectorsData?.data as DirectorDto[]) || [];
+  const currentDirectors = currentDirectorsData?.data || [];
 
   // ----------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ const useDepartments = () => {
     queryFn: getAllDirectors,
   });
 
-  const allDirectors = (allDirectorsData?.data as DirectorDto[]) || [];
+  const allDirectors = allDirectorsData?.data || [];
 
   // ############
   //  UPDATES

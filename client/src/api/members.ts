@@ -39,7 +39,7 @@ export const getMemberDetails = async (memberId: number): Promise<AxiosResponse<
  * @returns The image of the member of type MemberImage
  */
 export const getMemberImage = async (id: number): Promise<AxiosResponse<MemberImage>> => {
-  return await api.get(`/members/${id}/image`);
+  return await api.get<MemberImage>(`/members/${id}/image`);
 };
 
 /**
@@ -47,7 +47,7 @@ export const getMemberImage = async (id: number): Promise<AxiosResponse<MemberIm
  * @returns An array of all languages of type Language
  */
 export const getLanguages = async (): Promise<AxiosResponse<Language[]>> => {
-  return await api.get("/members/languages");
+  return await api.get<Language[]>("/members/languages");
 };
 
 /**
@@ -55,7 +55,7 @@ export const getLanguages = async (): Promise<AxiosResponse<Language[]>> => {
  * @returns An array of all IT skills of type ITSkill
  */
 export const getITSkills = async (): Promise<AxiosResponse<ItSkill[]>> => {
-  return await api.get("/members/edv-skills");
+  return await api.get<ItSkill[]>("/members/edv-skills");
 };
 
 //-----------------------------------------------------------------------------------------------------------------------

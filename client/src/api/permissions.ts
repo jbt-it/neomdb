@@ -10,7 +10,7 @@ import { AxiosResponse } from "axios";
  * @returns An array of all permissions of type Permissions
  */
 export const getPermissions = async (): Promise<AxiosResponse<Permissions[]>> => {
-  return await api.get("/members/permissions");
+  return await api.get<Permissions[]>("/members/permissions");
 };
 
 /**
@@ -18,7 +18,7 @@ export const getPermissions = async (): Promise<AxiosResponse<Permissions[]>> =>
  * @returns An array of all permission assignments of type PermissionAssignment
  */
 export const getPermissionAssignments = async (): Promise<AxiosResponse<PermissionAssignmentDto[]>> => {
-  return await api.get("/members/permission-assignments");
+  return await api.get<PermissionAssignmentDto[]>("/members/permission-assignments");
 };
 
 //-----------------------------------------------------------------------------------------------------------------------

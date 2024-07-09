@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
@@ -25,6 +25,7 @@ import { AxiosResponse } from "axios";
 import useTrainees from "../../hooks/trainees/useTrainees";
 import useInternalProjectDetails from "../../hooks/trainees/useInternalProjectDetails";
 import useMembers from "../../hooks/members/useMembers";
+import { MembersFieldDto } from "../../types/membersTypes";
 
 // Styling for the paper element
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -51,17 +52,25 @@ const InternalProject: React.FunctionComponent = () => {
   const { internalProjectDetails, isInternalProjectDetailsFetched, updateInternalProjectDetails } =
     useInternalProjectDetails(Number(id));
 
-  const selectableQMs = members
-    .filter((member) => member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene")
-    .map((member) => {
-      return {
-        memberId: member.memberId,
-        firstname: member.firstname,
-        lastname: member.lastname,
-        memberStatus: member.memberStatus,
-      };
-    });
-  const selectableTrainees = trainees.filter((trainee) => trainee.memberStatus?.name !== "Ausgetretene");
+  let selectableQMs: MembersFieldDto[] = [];
+  let selectableTrainees: MembersFieldDto[] = [];
+
+  useEffect(() => {
+    selectableQMs = members
+      .filter((member) => member.memberStatus?.name !== "Trainee" && member.memberStatus?.name !== "Ausgetretene")
+      .map((member) => {
+        return {
+          memberId: member.memberId,
+          firstname: member.firstname,
+          lastname: member.lastname,
+          memberStatus: member.memberStatus,
+        };
+      });
+  }, [members]);
+
+  useEffect(() => {
+    selectableTrainees = trainees.filter((trainee) => trainee.memberStatus?.name !== "Ausgetretene");
+  }, [trainees]);
 
   /**
    * Handles the click on the edit button of the internal project information section

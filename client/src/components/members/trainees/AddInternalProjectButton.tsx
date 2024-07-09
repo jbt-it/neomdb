@@ -3,6 +3,7 @@ import { useMediaQuery, Button, IconButton } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
 import AddInternalProjectDialog from "./AddInternalProjectDialog";
 import { MemberPartialDto } from "../../../types/membersTypes";
+import useTrainees from "../../../hooks/trainees/useTrainees";
 
 interface AddInternalProjectButtonProps {
   generationName: string | null;
@@ -13,6 +14,7 @@ interface AddInternalProjectButtonProps {
 const AddInternalProjectButton = ({ generationName, addInternalProject, members }: AddInternalProjectButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const { trainees } = useTrainees();
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -39,6 +41,7 @@ const AddInternalProjectButton = ({ generationName, addInternalProject, members 
         addInternalProject={addInternalProject}
         generationName={generationName}
         members={members}
+        trainees={trainees}
       />
     </>
   );

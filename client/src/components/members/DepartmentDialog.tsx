@@ -5,7 +5,6 @@ import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme }
 import React, { memo, useState } from "react";
 import { DepartmentDetailsDto } from "../../types/membersTypes";
 import { AxiosResponse } from "axios";
-import useDepartments from "../../hooks/members/useDepartments";
 
 /**
  * Props for the department dialog component
@@ -15,6 +14,9 @@ interface DepartmentDialogProps {
   isOpen: boolean;
   onClose: () => void;
   department: DepartmentDetailsDto;
+  updateDepartmentDetails: (
+    departmentDetails: DepartmentDetailsDto
+  ) => Promise<AxiosResponse<DepartmentDetailsDto, any>>;
 }
 
 /**
@@ -46,8 +48,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     },
   };
 
-  const { title, isOpen, onClose, department } = props;
-  const { updateDepartmentDetails } = useDepartments();
+  const { title, isOpen, onClose, department, updateDepartmentDetails } = props;
 
   const [goalLink, setGoalLink] = useState(department.linkObjectivePresentation);
   const [organisationLink, setOrganisationLink] = useState(department.linkOrganigram);

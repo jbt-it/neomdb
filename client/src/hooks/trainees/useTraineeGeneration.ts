@@ -12,6 +12,11 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { AxiosError } from "axios";
 import { authReducerActionType } from "../../types/globalTypes";
 
+/**
+ * Hook that handles the trainee generation api calls, uses react-query
+ * @param generationID - The generation ID
+ * @returns The trainee progress, a boolean indicating if the trainee progress is fetched, the trainee choices, the trainee motivation, the internal projects of the generation, a boolean indicating if the internal projects of the generation are fetched and a function to set the election deadline
+ */
 const useTraineeGeneration = (generationID: number) => {
   const { dispatchAuth } = useContext(AuthContext);
   const queryClient = useQueryClient();
