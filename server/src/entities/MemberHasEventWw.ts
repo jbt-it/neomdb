@@ -1,4 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Arrival, Departure } from "../types/EventTypes";
 import { Event } from "./Event";
 import { Member } from "./Member";
 
@@ -16,17 +17,17 @@ export class MemberHasEventWw {
   @Column("enum", {
     name: "anreise",
     nullable: true,
-    enum: ["FrF", "FrM", "FrA", "SaF", "SaM", "SaA", "SaS"],
+    enum: Arrival,
   })
-  arrival: "FrF" | "FrM" | "FrA" | "SaF" | "SaM" | "SaA" | "SaS" | null;
+  arrival: Arrival | null;
 
   // TODO: Implement enum
   @Column("enum", {
     name: "abreise",
     nullable: true,
-    enum: ["FrM", "FrA", "SaF", "SaM", "SaA", "So"],
+    enum: Departure,
   })
-  departure: "FrM" | "FrA" | "SaF" | "SaM" | "SaA" | "So" | null;
+  departure: Departure | null;
 
   @Column("tinyint", { name: "auto", nullable: true, width: 1 })
   car: boolean | null;
@@ -35,7 +36,7 @@ export class MemberHasEventWw {
   seats: number | null;
 
   @Column("tinyint", { name: "vegetarier", nullable: true, width: 1 })
-  vegetarian: boolean | null;
+  isVegetarian: boolean | null;
 
   @Column("text", { name: "kommentar", nullable: true })
   comment: string | null;
@@ -53,4 +54,8 @@ export class MemberHasEventWw {
   })
   @JoinColumn([{ name: "mitglied_mitgliedID", referencedColumnName: "memberId" }])
   member: Member;
+
+  constructor(init?: Partial<MemberHasEventWw>) {
+    Object.assign(this, init);
+  }
 }

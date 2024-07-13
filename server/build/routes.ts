@@ -63,19 +63,24 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"MemberField","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Arrival": {
+        "dataType": "refEnum",
+        "enums": ["FrF","FrM","FrA","SaF","SaM","SaA","SaS"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Departure": {
+        "dataType": "refEnum",
+        "enums": ["FrM","FrA","SaF","SaM","SaA","So"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EventWWMember": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"kommentar":{"dataType":"string","required":true},"vegetarier":{"dataType":"boolean","required":true},"plaetze":{"dataType":"double","required":true},"auto":{"dataType":"boolean","required":true},"abreise":{"dataType":"string","required":true},"anreise":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true},"eventID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"comment":{"dataType":"string","required":true},"isVegetarian":{"dataType":"boolean","required":true},"seats":{"dataType":"double","required":true},"car":{"dataType":"boolean","required":true},"departure":{"ref":"Departure","required":true},"arrival":{"ref":"Arrival","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"mitgliedId":{"dataType":"double","required":true},"eventId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EventDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wwMembers":{"dataType":"array","array":{"dataType":"refAlias","ref":"EventWWMember"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"EventMember"},"required":true},"organizers":{"dataType":"array","array":{"dataType":"refAlias","ref":"EventOrganizer"},"required":true},"type":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["WW"]},{"dataType":"enum","enums":["Netzwerk"]},{"dataType":"enum","enums":["JBT goes"]},{"dataType":"enum","enums":["Sonstige"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Pflichtworkshop"]}],"required":true},"description":{"dataType":"string","required":true},"maxParticipants":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"registrationEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"registrationStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"endTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"startTime":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"endDate":{"dataType":"datetime","required":true},"startDate":{"dataType":"datetime","required":true},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"name":{"dataType":"string","required":true},"eventId":{"dataType":"double","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateEventRequest": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"organizers":{"dataType":"array","array":{"dataType":"refAlias","ref":"EventOrganizer"},"required":true},"event":{"ref":"EventDto","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
@@ -698,11 +703,11 @@ const models: TsoaRoute.Models = {
         "properties": {
             "eventId": {"dataType":"double","required":true},
             "memberId": {"dataType":"double","required":true},
-            "arrival": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["FrF"]},{"dataType":"enum","enums":["FrM"]},{"dataType":"enum","enums":["FrA"]},{"dataType":"enum","enums":["SaF"]},{"dataType":"enum","enums":["SaM"]},{"dataType":"enum","enums":["SaA"]},{"dataType":"enum","enums":["SaS"]},{"dataType":"enum","enums":[null]}],"required":true},
-            "departure": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["FrM"]},{"dataType":"enum","enums":["FrA"]},{"dataType":"enum","enums":["SaF"]},{"dataType":"enum","enums":["SaM"]},{"dataType":"enum","enums":["SaA"]},{"dataType":"enum","enums":["So"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "arrival": {"dataType":"union","subSchemas":[{"ref":"Arrival"},{"dataType":"enum","enums":[null]}],"required":true},
+            "departure": {"dataType":"union","subSchemas":[{"ref":"Departure"},{"dataType":"enum","enums":[null]}],"required":true},
             "car": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
             "seats": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
-            "vegetarian": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "isVegetarian": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
             "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "event": {"ref":"Event","required":true},
             "member": {"ref":"Member","required":true},
@@ -1231,7 +1236,7 @@ export function RegisterRoutes(app: Router) {
             function EventsController_updateEvent(request: any, response: any, next: any) {
             const args = {
                     eventID: {"in":"path","name":"eventID","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateEventRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"EventDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 

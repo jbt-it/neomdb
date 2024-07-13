@@ -35,4 +35,8 @@ export class MemberHasEvent {
   })
   @JoinColumn([{ name: "mitglied_mitgliedID", referencedColumnName: "memberId" }])
   member: Member;
+
+  constructor(init?: Partial<MemberHasEvent>) {
+    Object.assign(this, init);
+  }
 }

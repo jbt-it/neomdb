@@ -11,19 +11,43 @@ export type EventOrganizer = MemberField;
 export type EventMember = MemberField;
 
 /**
+ * Enum for the arrival of a member of a working weekend
+ */
+export enum Arrival {
+  FrF = "FrF",
+  FrM = "FrM",
+  FrA = "FrA",
+  SaF = "SaF",
+  SaM = "SaM",
+  SaA = "SaA",
+  SaS = "SaS",
+}
+
+/**
+ * Enum for the departure of a member of a working weekend
+ */
+export enum Departure {
+  FrM = "FrM",
+  FrA = "FrA",
+  SaF = "SaF",
+  SaM = "SaM",
+  SaA = "SaA",
+  So = "So",
+}
+/**
  * Type of a member of an event that is a working weekend
  */
 export type EventWWMember = {
-  eventID: number;
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-  anreise: string;
-  abreise: string;
-  auto: boolean;
-  plaetze: number;
-  vegetarier: boolean;
-  kommentar: string;
+  eventId: number;
+  mitgliedId: number;
+  firstName: string;
+  lastName: string;
+  arrival: Arrival;
+  departure: Departure;
+  car: boolean;
+  seats: number;
+  isVegetarian: boolean;
+  comment: string;
   status: string;
 };
 
@@ -51,7 +75,4 @@ export type EventDto = {
 /**
  * Type of the request to update an event
  */
-export type UpdateEventRequest = {
-  event: EventDto;
-  organizers: EventOrganizer[];
-};
+export type UpdateEventRequest = EventDto;

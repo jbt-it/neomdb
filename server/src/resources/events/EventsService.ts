@@ -2,6 +2,9 @@ import { EventDto } from "types/EventTypes";
 import { NotFoundError } from "../../types/Errors";
 import { EventMapper } from "./EventMapper";
 import { EventsRepository } from "./EventsRepository";
+import { MemberHasEvent } from "../../entities/MemberHasEvent";
+import { MemberHasEventWw } from "../../entities/MemberHasEventWw";
+import { Member } from "../../entities/Member";
 
 /**
  * Provides methods for retrieving, creating and updating events and its members/organizers
@@ -19,6 +22,24 @@ class EventsService {
     }
 
     return EventMapper.eventToEventDto(event);
+  };
+
+  /**
+   * Returns the members of the event with the given `eventId`
+   * @param eventId The ID of the event to return the members of
+   * @throws NotFoundError if the event with the given `eventID` does not exist in the database
+   */
+  public getEventOrganizers = async (eventId: number): Promise<Member[]> => {
+    const event = await EventsRepository.getEventByID(eventId);
+    if (event === null) {
+      throw new NotFoundError(`Event with ID ${eventId} not found`);
+    }
+
+    const organizers = event.memberHasEvents
+      .filter((memberHasEvent) => memberHasEvent.role === "Organisator")
+      .map((organizerHasEvent) => organizerHasEvent.member);
+
+    return organizers;
   };
 
   /**
@@ -52,20 +73,28 @@ class EventsService {
     event.network = updatedEvent.type === "Netzwerk";
     event.jbtGoes = updatedEvent.type === "JBT goes";
     event.others = updatedEvent.type === "Sonstige";
-    // TODO: Handle updating organizers and members
-    event.memberHasEvents = eventMembers.map((member) => ({
-      member: { memberId: member.memberID },
-      role: member.status === "Organisator" ? "Organisator" : "Teilnehmer",
-    }));
-    event.memberHasEventWws = updatedEvent.wwMembers.map((wwMember) => ({
-      member: { memberId: wwMember.mitgliedID },
-      arrival: wwMember.anreise,
-      departure: wwMember.abreise,
-      car: wwMember.auto,
-      seats: wwMember.plaetze,
-      vegetarian: wwMember.vegetarier,
-      comment: wwMember.kommentar,
-    }));
+    event.memberHasEvents = eventMembers.map(
+      (member) =>
+        new MemberHasEvent({
+          memberId: member.memberID,
+          eventId: event.eventId,
+          role: member.status === "Organisator" ? "Organisator" : "Teilnehmer",
+          registrationTime: new Date(),
+        })
+    );
+    event.memberHasEventWws = updatedEvent.wwMembers.map(
+      (wwMember) =>
+        new MemberHasEventWw({
+          memberId: wwMember.mitgliedId,
+          eventId: event.eventId,
+          arrival: wwMember.arrival,
+          departure: wwMember.departure,
+          car: wwMember.car,
+          seats: wwMember.seats,
+          isVegetarian: wwMember.isVegetarian,
+          comment: wwMember.comment,
+        })
+    );
   };
 }
 

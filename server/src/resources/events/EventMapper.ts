@@ -20,16 +20,16 @@ export class EventMapper {
 
   static memberHasEventToWwMember(memberHasEvent: MemberHasEventWw): EventWWMember {
     return {
-      eventID: memberHasEvent.eventId,
-      mitgliedID: memberHasEvent.memberId,
-      vorname: memberHasEvent.member.firstName,
-      nachname: memberHasEvent.member.lastName,
-      anreise: memberHasEvent.arrival,
-      abreise: memberHasEvent.departure,
-      auto: memberHasEvent.car,
-      plaetze: memberHasEvent.seats,
-      vegetarier: memberHasEvent.vegetarian,
-      kommentar: memberHasEvent.comment,
+      eventId: memberHasEvent.eventId,
+      mitgliedId: memberHasEvent.memberId,
+      firstName: memberHasEvent.member.firstName,
+      lastName: memberHasEvent.member.lastName,
+      arrival: memberHasEvent.arrival,
+      departure: memberHasEvent.departure,
+      car: memberHasEvent.car,
+      seats: memberHasEvent.seats,
+      isVegetarian: memberHasEvent.isVegetarian,
+      comment: memberHasEvent.comment,
       status: memberHasEvent.member?.memberStatus?.name ?? null,
     };
   }

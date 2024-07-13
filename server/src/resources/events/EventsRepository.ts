@@ -7,22 +7,19 @@ export const EventsRepository = AppDataSource.getRepository(Event).extend({
    * @param eventID The ID of the event to retrieve
    * @returns The event with the given `eventID` or `null` if no event with the given `eventID` exists
    */
-  getEventByID(eventID: number): Promise<Event | null> {
+  getEventByID(eventId: number): Promise<Event | null> {
     return this.findOne({
-      where: { eventID },
+      where: { eventId: eventId },
       relations: ["memberHasEvents", "memberHasEventWws", "memberHasEvents.member", "memberHasEventWws.member"],
     });
   },
+
+  /**
+   * Saves the given `event` to the database
+   * @param event The event to save
+   * @returns The saved event
+   */
   saveEvent(event: Event): Promise<Event> {
     return this.save(event);
-  },
-  addEventOrganizerByID(eventID: number, memberID: number): Promise<void> {
-    return this.createQueryBuilder("event").relation("org.").of(eventID).add(memberID);
-  },
-  deleteEventOrganizerByID(eventID: number, memberID: number): Promise<void> {
-    return this.createQueryBuilder("event").relation("organizers").of(eventID).remove(memberID);
-  },
-  addEventMemberByID(eventID: number, memberID: number): Promise<void> {
-    return this.createQueryBuilder("event").relation("members").of(eventID).add(memberID);
   },
 });

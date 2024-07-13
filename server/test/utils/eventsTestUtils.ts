@@ -1,21 +1,19 @@
-import EventsRepository from "../../src/resources/events/EventsRepository";
+import { EventsRepository } from "../../src/resources/events/EventsRepository";
 import { executeScript } from "./databaseUtils";
 
 class EventsTestUtils {
   clearEventsScript = "./test/scripts/events/db_events_clear.sql";
   fillEventsScript = "./test/scripts/events/db_events_fill.sql";
 
-  traineesRepository: EventsRepository = null;
   app: Express.Application = null;
 
   constructor(app: Express.Application) {
     this.app = app;
-    this.traineesRepository = new EventsRepository();
   }
 
   /**
-   * Fills the trainee database with data that is changed during tests
-   * (e.g. trainees)
+   * Fills the events database with data that is changed during tests
+   * (e.g. events)
    */
   setupEventsData = async () => {
     try {
@@ -23,12 +21,12 @@ class EventsTestUtils {
       await executeScript(this.fillEventsScript);
       console.log("> Database filled!");
     } catch (error) {
-      console.error(`> ERROR: Failed to setup trainee data: ${error}`);
+      console.error(`> ERROR: Failed to setup events data: ${error}`);
     }
   };
 
   /**
-   * Clears the trainee database
+   * Clears the events database
    */
   clearEventsData = async () => {
     try {
@@ -36,7 +34,7 @@ class EventsTestUtils {
       await executeScript(this.clearEventsScript);
       console.log("> Database cleared!");
     } catch (error) {
-      console.error(`> ERROR: Failed to clear trainee data: ${error}`);
+      console.error(`> ERROR: Failed to clear events data: ${error}`);
     }
   };
 }
