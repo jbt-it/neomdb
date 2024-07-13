@@ -73,8 +73,8 @@ CREATE TABLE `event` (
   `eventID` int NOT NULL,
   `eventname` varchar(255) NOT NULL,
   `beschreibung` mediumtext NOT NULL,
-  `datum` date DEFAULT NULL,
-  `ende` date DEFAULT NULL,
+  `event_beginn` date DEFAULT NULL,
+  `event_ende` date DEFAULT NULL,
   `startzeit` varchar(10) DEFAULT NULL,
   `endzeit` varchar(10) DEFAULT NULL,
   `ort` varchar(255) DEFAULT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE `event` (
   `maximaleTeilnehmer` int DEFAULT NULL,
   `jbtgoes` tinyint(1) NOT NULL DEFAULT '0',
   `ww` tinyint(1) NOT NULL DEFAULT '0',
-  `netzwerk` tinyint(1) NOT NULL DEFAULT '0'
+  `netzwerk` tinyint(1) NOT NULL DEFAULT '0',
   `sonstige` tinyint(1) NOT NULL DEFAULT '0',
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

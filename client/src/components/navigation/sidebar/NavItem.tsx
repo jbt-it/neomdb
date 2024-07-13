@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 import { ExpandLess, ExpandMore, SvgIconComponent } from "@mui/icons-material";
 import { Box, Collapse, List, ListItemButton } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-import { useAuth } from "../../../hooks/useAuth";
 import usePathname from "../../../hooks/usePathname";
 import { checkForPermission } from "../../../utils/authUtils";
+import { AuthContext } from "../../../context/auth-context/AuthContext";
 
 interface NavItemProps {
   item: {

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { checkForPermission } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * This file contains the ProtectedRoute component, which is responsible for rendering the protected routes of the application.
