@@ -31,7 +31,6 @@ TRUNCATE TABLE mdb.mmtracking_has_mitglied;
 TRUNCATE TABLE mdb.passwort_reset;
 TRUNCATE TABLE mdb.praktika;
 TRUNCATE TABLE mdb.projekt;
-TRUNCATE TABLE mdb.projekt_has_akquisekanal;
 TRUNCATE TABLE mdb.projekt_has_ansprechpartner;
 TRUNCATE TABLE mdb.projekt_has_kernkompetenz;
 TRUNCATE TABLE mdb.ressort;
