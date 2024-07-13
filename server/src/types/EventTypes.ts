@@ -1,24 +1,6 @@
 import { MemberField } from "./memberTypes";
 
 /**
- * Type of the updated event
- */
-export type Event = {
-  eventID: number;
-  name: string;
-  location: string | null;
-  startDate: string;
-  endDate: string;
-  startTime: string | null;
-  endTime: string | null;
-  registrationStart: string | null;
-  registrationEnd: string | null;
-  maxParticipants: number | null;
-  description: string;
-  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
-};
-
-/**
  * Type of an organizer of an event
  */
 export type EventOrganizer = MemberField;
@@ -27,14 +9,6 @@ export type EventOrganizer = MemberField;
  * Type of a member of an event
  */
 export type EventMember = MemberField;
-
-/**
- * Type of the request to update an event
- */
-export type UpdateEventRequest = {
-  event: Event;
-  organizers: EventOrganizer[];
-};
 
 /**
  * Type of a member of an event that is a working weekend
@@ -51,4 +25,33 @@ export type EventWWMember = {
   vegetarier: boolean;
   kommentar: string;
   status: string;
+};
+
+/**
+ * Type of the updated event
+ */
+export type EventDto = {
+  eventId: number;
+  name: string;
+  location: string | null;
+  startDate: Date;
+  endDate: Date;
+  startTime: string | null;
+  endTime: string | null;
+  registrationStart: Date | null;
+  registrationEnd: Date | null;
+  maxParticipants: number | null;
+  description: string;
+  type: "WW" | "Netzwerk" | "JBT goes" | "Sonstige" | "Workshop" | "Pflichtworkshop";
+  organizers: EventOrganizer[];
+  members: EventMember[]; // is empty for non-WW events
+  wwMembers: EventWWMember[]; // is empty for WW events
+};
+
+/**
+ * Type of the request to update an event
+ */
+export type UpdateEventRequest = {
+  event: EventDto;
+  organizers: EventOrganizer[];
 };

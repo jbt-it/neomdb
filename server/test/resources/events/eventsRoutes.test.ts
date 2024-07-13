@@ -159,9 +159,10 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
+      // Rework tests
       const updatedEvent: UpdateEventRequest = {
         event: {
-          eventID: 7,
+          eventId: 7,
           name: "Test Event Updated",
           location: "Test Location Updated",
           startDate: "2024-04-04",
@@ -206,9 +207,10 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
+      // Rework tests
       const updatedEvent: UpdateEventRequest = {
         event: {
-          eventID: 7,
+          eventId: 7,
           name: "Test Event Updated",
           location: "Test Location Updated",
           startDate: "2024-04-04",
@@ -247,9 +249,10 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 999;
+      // Rework tests
       const updatedEvent: UpdateEventRequest = {
         event: {
-          eventID: 999,
+          eventId: 999,
           name: "Test Event Updated",
           location: "Test Location Updated",
           startDate: "2024-04-04",
@@ -295,9 +298,10 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
+      // Rework tests
       const updatedEvent: UpdateEventRequest = {
         event: {
-          eventID: 7,
+          eventId: 7,
           name: "Test Event Updated",
           location: "Test Location Updated",
           startDate: "2024-04-04",

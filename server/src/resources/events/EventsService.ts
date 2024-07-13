@@ -1,117 +1,71 @@
-import { Event, EventMember, EventOrganizer, EventWWMember } from "types/EventTypes";
-import EventsRepository from "./EventsRepository";
-import { executeInTransaction } from "../../database";
+import { EventDto } from "types/EventTypes";
 import { NotFoundError } from "../../types/Errors";
+import { EventMapper } from "./EventMapper";
+import { EventsRepository } from "./EventsRepository";
 
 /**
  * Provides methods for retrieving, creating and updating events and its members/organizers
  */
 class EventsService {
-  eventRepository = new EventsRepository();
-
   /**
-   * Returns the event with the given `eventID`
-   * @param eventID The ID of the event to return
+   * Returns the event with the given `eventId`
+   * @param eventId The ID of the event to return
    * @throws NotFoundError if the event with the given `eventID` does not exist in the database
    */
-  public getEvent = async (eventID: number): Promise<Event> => {
-    const event = await this.eventRepository.getEventByID(eventID);
-
-    if (!event) {
-      throw new NotFoundError(`Event with ID ${eventID} not found`);
+  public getEvent = async (eventId: number): Promise<EventDto> => {
+    const event = await EventsRepository.getEventByID(eventId);
+    if (event === null) {
+      throw new NotFoundError(`Event with ID ${eventId} not found`);
     }
 
-    return event;
+    return EventMapper.eventToEventDto(event);
   };
 
   /**
-   * Returns the members of the event with the given `eventID`
-   * @param eventID The ID of the event to return the members of
-   * @throws NotFoundError if the event with the given `eventID` does not exist in the database
-   */
-  public getEventMembers = async (eventID: number): Promise<EventMember[]> => {
-    const event = await this.eventRepository.getEventByID(eventID);
-
-    if (!event) {
-      throw new NotFoundError(`Event with ID ${eventID} not found`);
-    }
-
-    return this.eventRepository.getEventMembersByEventID(eventID);
-  };
-
-  /**
-   * Returns the members of the working weekend event with the given `eventID`
-   * @param eventID The ID of the event to return the members of
-   * @throws NotFoundError if the event with the given `eventID` does not exist in the database
-   */
-  public getEventWWMembers = async (eventID: number): Promise<EventWWMember[]> => {
-    const event = await this.eventRepository.getEventByID(eventID);
-
-    if (!event) {
-      throw new NotFoundError(`Event with ID ${eventID} not found`);
-    }
-
-    return this.eventRepository.getEventWWMembersByEventID(eventID);
-  };
-
-  /**
-   * Returns the organizers of the event with the given `eventID`
-   * @param eventID The ID of the event to return the organizers of
-   * @throws NotFoundError if the event with the given `eventID` does not exist in the database
-   */
-  public getEventOrganizers = async (eventID: number): Promise<EventOrganizer[]> => {
-    const event = await this.eventRepository.getEventByID(eventID);
-
-    if (!event) {
-      throw new NotFoundError(`Event with ID ${eventID} not found`);
-    }
-
-    return this.eventRepository.getEventOrganizersByEventID(eventID);
-  };
-
-  /**
-   * Updates the event with the given `eventID` with the given `updatedEvent`
-   * @param eventID The ID of the event to update
+   * Updates the event with the given `eventId` with the given `updatedEvent`
+   * @param eventId The ID of the event to update
    * @param updatedEvent The updated event
-   * @param eventOrganizerIDs The IDs of the organizers of the event
    * @throws NotFoundError if the event with the given `eventID` does not exist in the database
    */
-  public updateEvent = async (eventID: number, updatedEvent: Event, eventOrganizerIDs: number[]): Promise<void> => {
-    const currentEvent = await this.eventRepository.getEventByID(eventID);
+  public updateEvent = async (eventId: number, updatedEvent: EventDto): Promise<void> => {
+    const event = await EventsRepository.getEventByID(eventId);
 
-    if (!currentEvent) {
-      throw new Error(`Event with ID ${eventID} not found`);
+    if (event === null) {
+      throw new Error(`Event with ID ${eventId} not found`);
     }
 
-    const currentEventOrganizers = await this.eventRepository.getEventOrganizersByEventID(eventID);
+    // Combine the organizers and members of the event
+    const eventMembers = updatedEvent.members.concat(updatedEvent.organizers);
 
-    // Create a list of members to add and to delete
-    const organizersToAdd = eventOrganizerIDs.filter(
-      (id) => !currentEventOrganizers.some((organizer) => organizer.memberID === id)
-    );
-    const organizersToDelete = currentEventOrganizers.filter(
-      (organizer) => !eventOrganizerIDs.some((id) => organizer.memberID === id)
-    );
-
-    const tasks = [];
-    tasks.push({
-      func: this.eventRepository.updateEventByID,
-      args: [eventID, updatedEvent],
-    });
-    organizersToAdd.forEach((memberID) => {
-      tasks.push({
-        func: this.eventRepository.addEventOrganizerByID,
-        args: [eventID, memberID],
-      });
-    });
-    organizersToDelete.forEach((member) => {
-      tasks.push({
-        func: this.eventRepository.deleteEventOrganizerByID,
-        args: [eventID, member.memberID],
-      });
-    });
-
-    await executeInTransaction(tasks);
+    // Update event data
+    event.eventName = updatedEvent.name;
+    event.location = updatedEvent.location;
+    event.eventBegin = updatedEvent.startDate;
+    event.eventEnd = updatedEvent.endDate;
+    event.startTime = updatedEvent.startTime;
+    event.endTime = updatedEvent.endTime;
+    event.registrationFrom = updatedEvent.registrationStart;
+    event.registrationTo = updatedEvent.registrationEnd;
+    event.maximumParticipants = updatedEvent.maxParticipants;
+    event.description = updatedEvent.description;
+    event.ww = updatedEvent.type === "WW";
+    event.network = updatedEvent.type === "Netzwerk";
+    event.jbtGoes = updatedEvent.type === "JBT goes";
+    event.others = updatedEvent.type === "Sonstige";
+    // TODO: Handle updating organizers and members
+    event.memberHasEvents = eventMembers.map((member) => ({
+      member: { memberId: member.memberID },
+      role: member.status === "Organisator" ? "Organisator" : "Teilnehmer",
+    }));
+    event.memberHasEventWws = updatedEvent.wwMembers.map((wwMember) => ({
+      member: { memberId: wwMember.mitgliedID },
+      arrival: wwMember.anreise,
+      departure: wwMember.abreise,
+      car: wwMember.auto,
+      seats: wwMember.plaetze,
+      vegetarian: wwMember.vegetarier,
+      comment: wwMember.kommentar,
+    }));
   };
 }
 

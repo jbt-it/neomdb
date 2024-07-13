@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
-import { Event, EventMember, EventWWMember, UpdateEventRequest } from "../../types/EventTypes";
+import { EventDto, EventMember, EventWWMember, UpdateEventRequest } from "../../types/EventTypes";
 import EventsService from "./EventsService";
 import { JWTPayload } from "../../types/authTypes";
 import { UnauthorizedError } from "../../types/Errors";
@@ -21,7 +21,7 @@ export class EventsController extends Controller {
    */
   @Get("{eventID}")
   @Security("jwt")
-  public async getEvent(@Path() eventID: number): Promise<Event> {
+  public async getEvent(@Path() eventID: number): Promise<EventDto> {
     return this.eventsService.getEvent(eventID);
   }
 
@@ -30,33 +30,33 @@ export class EventsController extends Controller {
    * @summary Retrieves the members of the event
    * @param eventID The ID of the event to retrieve the members of
    */
-  @Get("{eventID}/members")
+  /*   @Get("{eventID}/members")
   @Security("jwt")
   public async getEventMembers(@Path() eventID: number): Promise<EventMember[]> {
     return this.eventsService.getEventMembers(eventID);
-  }
+  } */
 
   /**
    * Retrieves the members of the working weekend event with the given `eventID`
    * @summary Retrieves the members of the working weekend event
    * @param eventID The ID of the event to retrieve the members of
    */
-  @Get("{eventID}/ww-members")
+  /*   @Get("{eventID}/ww-members")
   @Security("jwt")
   public async getEventWWMembers(@Path() eventID: number): Promise<EventWWMember[]> {
     return this.eventsService.getEventWWMembers(eventID);
-  }
+  } */
 
   /**
    * Retrieves the organizers of the event with the given `eventID`
    * @summary Retrieves the organizers of the event
    * @param eventID The ID of the event to retrieve the organizers of
    */
-  @Get("{eventID}/organizers")
+  /*  @Get("{eventID}/organizers")
   @Security("jwt")
   public async getEventOrganizers(@Path() eventID: number): Promise<EventMember[]> {
     return this.eventsService.getEventOrganizers(eventID);
-  }
+  } */
 
   /**
    * Updates the event with the given `eventID` with the given `updatedEvent`
@@ -96,6 +96,7 @@ export class EventsController extends Controller {
     @Body() requestBody: UpdateEventRequest,
     @Request() request: any
   ): Promise<void> {
+    // TODO: Rework controller logic
     const { organizers, event: updatedEvent } = requestBody;
     const organizerIDs = organizers.map((organizer) => organizer.memberID);
     const currentOrganizers = await this.eventsService.getEventOrganizers(eventID);
