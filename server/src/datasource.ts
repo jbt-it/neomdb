@@ -85,7 +85,7 @@ export const AppDataSource = new DataSource({
   password: dbConfig.password,
   database: dbConfig.database,
   entities: dbConfig.entities,
-  synchronize: true,
+  synchronize: dbConfig.synchronize,
   subscribers: dbConfig.subscribers,
   logging: false,
 });
