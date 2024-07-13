@@ -24,6 +24,31 @@ class EventsService {
     return event;
   };
 
+  public registerMemberForEvent = async (eventId: number, memberId: number): Promise<void> => {
+    // Call the method in the repository to add the member to the event
+    await this.eventRepository.addMemberToEvent(eventId, memberId);
+  };
+
+  // EventsService.ts
+  public getMemberEvents = async (memberId: number): Promise<Event[]> => {
+    return this.eventRepository.getMemberEventsByMemberId(memberId);
+  };
+
+  /**
+   * Returns a list of all events
+   * @throws NotFoundError if no events exist in the database
+   */
+  public getAllEvents = async (): Promise<Event[]> => {
+    const events = await this.eventRepository.getAllEvents();
+
+    if (events.length === 0) {
+      throw new NotFoundError("No events found");
+    }
+
+    // Hier wird davon ausgegangen, dass die Methode `getAllEvents` des Repositories die Events im richtigen Format zurückgibt
+    return events;
+  };
+
   /**
    * Returns the members of the event with the given `eventID`
    * @param eventID The ID of the event to return the members of
