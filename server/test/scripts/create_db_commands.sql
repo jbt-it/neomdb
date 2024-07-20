@@ -147,16 +147,18 @@ CREATE TABLE `feedbackfrage` (
 
 CREATE TABLE `generation` (
   `generationID` int NOT NULL,
-  `bezeichnung` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `bezeichnung` varchar(45) NOT NULL,
   `bewerbung_start` datetime DEFAULT NULL,
   `bewerbung_ende` datetime DEFAULT NULL,
-  `wwTermin` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `auswahlWETermin` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `auswahl_WE_Termin_start` date DEFAULT NULL,
+  `auswahl_WE_Termin_ende` date DEFAULT NULL,
+  `ww_Termin_start` date DEFAULT NULL,
+  `ww_Termin_ende` date DEFAULT NULL,
   `infoabendBesucher` int DEFAULT NULL,
   `tuercode` varchar(10) DEFAULT NULL,
   `wahl_start` datetime DEFAULT NULL,
   `wahl_ende` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
