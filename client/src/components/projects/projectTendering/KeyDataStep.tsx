@@ -241,7 +241,13 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           onChange={onChangeBtMax}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.estimatedProjectBTmax ? "Beratertage (Max) dürfen nicht leer sein" : ""}
+          helperText={
+            errors.estimatedProjectBTmax
+              ? estimatedProjectBTmax && estimatedProjectBTmin && estimatedProjectBTmax < estimatedProjectBTmin
+                ? "Beratertage (Max) dürfen nicht weniger als Beratertage (Min) sein"
+                : "Beratertage (Max) dürfen nicht leer sein"
+              : ""
+          }
           error={errors.estimatedProjectBTmax}
         />
       </Stack>
@@ -275,7 +281,15 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors }:
           onChange={onChangeEstimatedProjectMemberMax}
           disabled={isCompleted}
           inputProps={{ min: 0 }}
-          helperText={errors.estimatedProjectMemberMax ? "Projektmitglieder (Max) dürfen nicht leer sein" : ""}
+          helperText={
+            errors.estimatedProjectMemberMax
+              ? estimatedProjectMemberMin &&
+                estimatedProjectMemberMax &&
+                estimatedProjectMemberMax < estimatedProjectMemberMin
+                ? "Projektmitglieder (Max) dürfen nicht weniger als Projektmitglieder (Min) sein"
+                : "Projektmitglieder (Max) dürfen nicht leer sein"
+              : ""
+          }
           error={errors.estimatedProjectMemberMax}
         />
       </Stack>
