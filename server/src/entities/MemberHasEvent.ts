@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { Event } from "./Event";
 import { Member } from "./Member";
+import { EventMemberRole } from "../types/EventTypes";
 
 @Index("fk_mitglied_has_event_event1", ["eventId"], {})
 @Index("fk_mitglied_has_event_mitglied1", ["memberId"], {})
@@ -12,9 +13,8 @@ export class MemberHasEvent {
   @Column("int", { primary: true, name: "mitglied_mitgliedID" })
   memberId: number;
 
-  // TODO: Implement enum
-  @Column("enum", { name: "rolle", enum: ["Teilnehmer", "Organisator"] })
-  role: "Teilnehmer" | "Organisator";
+  @Column("enum", { name: "rolle", enum: EventMemberRole })
+  role: EventMemberRole;
 
   @Column("timestamp", {
     name: "anmeldezeitpunkt",

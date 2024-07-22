@@ -19,7 +19,7 @@ export const EventsRepository = AppDataSource.getRepository(Event).extend({
    * @param event The event to save
    * @returns The saved event
    */
-  saveEvent(event: Event): Promise<Event> {
+  upadteEvent(event: Event): Promise<Event> {
     return this.save(event);
   },
 });

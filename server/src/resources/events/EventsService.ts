@@ -45,10 +45,10 @@ class EventsService {
   /**
    * Updates the event with the given `eventId` with the given `updatedEvent`
    * @param eventId The ID of the event to update
-   * @param updatedEvent The updated event
+   * @param updatedEventDto The updated event
    * @throws NotFoundError if the event with the given `eventID` does not exist in the database
    */
-  public updateEvent = async (eventId: number, updatedEvent: EventDto): Promise<void> => {
+  public updateEvent = async (eventId: number, updatedEventDto: EventDto): Promise<void> => {
     const event = await EventsRepository.getEventByID(eventId);
 
     if (event === null) {
@@ -56,45 +56,11 @@ class EventsService {
     }
 
     // Combine the organizers and members of the event
-    const eventMembers = updatedEvent.members.concat(updatedEvent.organizers);
-
-    // Update event data
-    event.eventName = updatedEvent.name;
-    event.location = updatedEvent.location;
-    event.eventBegin = updatedEvent.startDate;
-    event.eventEnd = updatedEvent.endDate;
-    event.startTime = updatedEvent.startTime;
-    event.endTime = updatedEvent.endTime;
-    event.registrationFrom = updatedEvent.registrationStart;
-    event.registrationTo = updatedEvent.registrationEnd;
-    event.maximumParticipants = updatedEvent.maxParticipants;
-    event.description = updatedEvent.description;
-    event.ww = updatedEvent.type === "WW";
-    event.network = updatedEvent.type === "Netzwerk";
-    event.jbtGoes = updatedEvent.type === "JBT goes";
-    event.others = updatedEvent.type === "Sonstige";
-    event.memberHasEvents = eventMembers.map(
-      (member) =>
-        new MemberHasEvent({
-          memberId: member.memberID,
-          eventId: event.eventId,
-          role: member.status === "Organisator" ? "Organisator" : "Teilnehmer",
-          registrationTime: new Date(),
-        })
-    );
-    event.memberHasEventWws = updatedEvent.wwMembers.map(
-      (wwMember) =>
-        new MemberHasEventWw({
-          memberId: wwMember.mitgliedId,
-          eventId: event.eventId,
-          arrival: wwMember.arrival,
-          departure: wwMember.departure,
-          car: wwMember.car,
-          seats: wwMember.seats,
-          isVegetarian: wwMember.isVegetarian,
-          comment: wwMember.comment,
-        })
-    );
+    const eventMembers = updatedEventDto.members.concat(updatedEventDto.organizers);
+    const mappedEvent = EventMapper.eventDtoToEvent(updatedEventDto, eventMembers);
+    Object.assign(event, mappedEvent);
+    // TODO: Check Object.assign and Repostory.merge
+    await EventsRepository.upadteEvent(event);
   };
 }
 

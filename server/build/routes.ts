@@ -48,6 +48,11 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"newPassword":{"dataType":"string","required":true},"key":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EventMemberRole": {
+        "dataType": "refEnum",
+        "enums": ["Teilnehmer","Organisator"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberField": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
@@ -55,12 +60,12 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EventOrganizer": {
         "dataType": "refAlias",
-        "type": {"ref":"MemberField","validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"role":{"ref":"EventMemberRole","required":true}}},{"ref":"MemberField"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EventMember": {
         "dataType": "refAlias",
-        "type": {"ref":"MemberField","validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"role":{"ref":"EventMemberRole","required":true}}},{"ref":"MemberField"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Arrival": {
@@ -666,7 +671,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "eventId": {"dataType":"double","required":true},
             "memberId": {"dataType":"double","required":true},
-            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Teilnehmer"]},{"dataType":"enum","enums":["Organisator"]}],"required":true},
+            "role": {"ref":"EventMemberRole","required":true},
             "registrationTime": {"dataType":"datetime","required":true},
             "event": {"ref":"Event","required":true},
             "member": {"ref":"Member","required":true},

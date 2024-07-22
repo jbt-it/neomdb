@@ -49,7 +49,8 @@ export class EventsController extends Controller {
    *        "vorname": "Wolfgang",
    *        "nachname": "Luft",
    *        "status": "aktiv",
-   *        "name": "w.luft"
+   *        "name": "w.luft",
+   *       "role": "Organisator"
    *      }
    *    ],
    *   "members": [],

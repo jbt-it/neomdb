@@ -4,8 +4,9 @@ import app from "../../../src/app";
 import MemberTestUtils from "../../utils/memberTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import EventsTestUtils from "../../utils/eventsTestUtils";
-import { UpdateEventRequest } from "../../../src/types/EventTypes";
+import { EventMemberRole, UpdateEventRequest } from "../../../src/types/EventTypes";
 import { AppDataSource } from "../../../src/datasource";
+import e from "express";
 
 const authTestUtils = new AuthTestUtils(app);
 const eventsTestUtils = new EventsTestUtils(app);
@@ -95,40 +96,7 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
-      // Rework tests
-      const updatedEvent: UpdateEventRequest = {
-        eventId: 7,
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: new Date("2024-04-04"),
-        endDate: new Date("2025-05-05"),
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: new Date("2023-03-03"),
-        registrationEnd: new Date("2023-04-04"),
-        maxParticipants: 200,
-        description: "Test Description Updated",
-        type: "Sonstige",
-        organizers: [
-          {
-            memberID: 8167,
-            vorname: "Wolfgang",
-            nachname: "Luft",
-            status: "aktives Mitglied",
-            name: "w.luft",
-          },
-        ],
-        members: [
-          {
-            memberID: 8111,
-            nachname: "Frye",
-            vorname: "Brandon-Lee",
-            status: "Senior",
-            name: "b.frye",
-          },
-        ],
-        wwMembers: [],
-      };
+      const updatedEvent = eventsTestUtils.createUpdateEventRequestObject(eventID);
 
       // --- WHEN
       const response = await request(app)
@@ -151,49 +119,48 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
-      // Rework tests
-      const updatedEvent: UpdateEventRequest = {
-        eventId: 7,
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: new Date("2024-04-04"),
-        endDate: new Date("2025-05-05"),
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: new Date("2023-03-03"),
-        registrationEnd: new Date("2023-04-04"),
-        maxParticipants: 200,
-        description: "Test Description Updated",
-        type: "Sonstige",
-        organizers: [
-          {
-            memberID: 8167,
-            vorname: "Wolfgang",
-            nachname: "Luft",
-            status: "aktives Mitglied",
-            name: "w.luft",
-          },
-        ],
-        members: [
-          {
-            memberID: 8111,
-            nachname: "Frye",
-            vorname: "Brandon-Lee",
-            status: "Senior",
-            name: "b.frye",
-          },
-        ],
-        wwMembers: [],
-      };
+      const updatedEvent = eventsTestUtils.createUpdateEventRequestObject(eventID);
 
       // --- WHEN
       const response = await request(app)
         .put(`/api/events/${eventID}`)
         .send(updatedEvent)
         .set("Cookie", `token=${token}`);
+      const response2 = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(204);
+      const updatedEventFromDb = await eventsTestUtils.getEventFromDB(eventID);
+      expect(updatedEventFromDb.eventName).toEqual(updatedEvent.name);
+      expect(updatedEventFromDb.memberHasEvents).toHaveLength(2);
+      expect(updatedEventFromDb.memberHasEvents.filter((m) => m.role === EventMemberRole.Organizer)).toHaveLength(1);
+      expect(updatedEventFromDb.memberHasEvents.filter((m) => m.role === EventMemberRole.Participant)).toHaveLength(1);
+      expect(response2.status).toBe(204);
+    });
+
+    test("Should return 204 OK and update the ww event (with Permissions)", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+      const eventID = 10;
+      const updatedEvent = eventsTestUtils.createUpdateEventRequestObject(eventID, true);
+
+      // --- WHEN
+      const response = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+      const response2 = await request(app)
+        .put(`/api/events/${eventID}`)
+        .send(updatedEvent)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(204);
+      expect(response2.status).toBe(204);
     });
 
     test("Should return 404 Not Found", async () => {
@@ -201,40 +168,7 @@ describe("Test events routes", () => {
       const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 999;
-      // Rework tests
-      const updatedEvent: UpdateEventRequest = {
-        eventId: 999,
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: new Date("2024-04-04"),
-        endDate: new Date("2025-05-05"),
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: new Date("2023-03-03"),
-        registrationEnd: new Date("2023-04-04"),
-        maxParticipants: 200,
-        description: "Test Description Updated",
-        type: "Sonstige",
-        organizers: [
-          {
-            memberID: 8167,
-            vorname: "Wolfgang",
-            nachname: "Luft",
-            status: "aktives Mitglied",
-            name: "w.luft",
-          },
-        ],
-        members: [
-          {
-            memberID: 8111,
-            nachname: "Frye",
-            vorname: "Brandon-Lee",
-            status: "Senior",
-            name: "b.frye",
-          },
-        ],
-        wwMembers: [],
-      };
+      const updatedEvent = eventsTestUtils.createUpdateEventRequestObject(eventID);
 
       // --- WHEN
       const response = await request(app)
@@ -252,39 +186,7 @@ describe("Test events routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
       const eventID = 7;
       // Rework tests
-      const updatedEvent: UpdateEventRequest = {
-        eventId: 7,
-        name: "Test Event Updated",
-        location: "Test Location Updated",
-        startDate: new Date("2024-04-04"),
-        endDate: new Date("2025-05-05"),
-        startTime: "14:00",
-        endTime: "15:00",
-        registrationStart: new Date("2023-03-03"),
-        registrationEnd: new Date("2023-04-04"),
-        maxParticipants: 200,
-        description: "Test Description Updated",
-        type: "Sonstige",
-        organizers: [
-          {
-            memberID: 8167,
-            vorname: "Wolfgang",
-            nachname: "Luft",
-            status: "aktives Mitglied",
-            name: "w.luft",
-          },
-        ],
-        members: [
-          {
-            memberID: 8111,
-            nachname: "Frye",
-            vorname: "Brandon-Lee",
-            status: "Senior",
-            name: "b.frye",
-          },
-        ],
-        wwMembers: [],
-      };
+      const updatedEvent = eventsTestUtils.createUpdateEventRequestObject(eventID);
 
       // --- WHEN
       const response = await request(app)

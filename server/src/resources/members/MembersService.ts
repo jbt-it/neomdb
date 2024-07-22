@@ -364,7 +364,7 @@ class MembersService {
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = await MembersRepository.getMemberByID(memberID);
+    let member = await MembersRepository.getMemberByID(memberID);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
@@ -421,7 +421,7 @@ class MembersService {
     }
     if (updatePersonal) {
       // Update personal data
-      MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
+      member = MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
     }
     await MembersRepository.saveMember(member);
   };

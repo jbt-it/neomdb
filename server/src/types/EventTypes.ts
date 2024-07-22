@@ -1,14 +1,22 @@
 import { MemberField } from "./memberTypes";
 
 /**
+ * Enum for the role of a member of an event
+ */
+export enum EventMemberRole {
+  Participant = "Teilnehmer",
+  Organizer = "Organisator",
+}
+
+/**
  * Type of an organizer of an event
  */
-export type EventOrganizer = MemberField;
+export type EventOrganizer = { role: EventMemberRole } & MemberField;
 
 /**
  * Type of a member of an event
  */
-export type EventMember = MemberField;
+export type EventMember = { role: EventMemberRole } & MemberField;
 
 /**
  * Enum for the arrival of a member of a working weekend

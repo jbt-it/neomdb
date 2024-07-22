@@ -132,6 +132,14 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"EventMemberRole": {
+				"description": "Enum for the role of a member of an event",
+				"enum": [
+					"Teilnehmer",
+					"Organisator"
+				],
+				"type": "string"
+			},
 			"MemberField": {
 				"properties": {
 					"status": {
@@ -162,11 +170,41 @@
 				"description": "Type for a member field"
 			},
 			"EventOrganizer": {
-				"$ref": "#/components/schemas/MemberField",
+				"allOf": [
+					{
+						"properties": {
+							"role": {
+								"$ref": "#/components/schemas/EventMemberRole"
+							}
+						},
+						"required": [
+							"role"
+						],
+						"type": "object"
+					},
+					{
+						"$ref": "#/components/schemas/MemberField"
+					}
+				],
 				"description": "Type of an organizer of an event"
 			},
 			"EventMember": {
-				"$ref": "#/components/schemas/MemberField",
+				"allOf": [
+					{
+						"properties": {
+							"role": {
+								"$ref": "#/components/schemas/EventMemberRole"
+							}
+						},
+						"required": [
+							"role"
+						],
+						"type": "object"
+					},
+					{
+						"$ref": "#/components/schemas/MemberField"
+					}
+				],
 				"description": "Type of a member of an event"
 			},
 			"Arrival": {
@@ -2753,11 +2791,7 @@
 						"format": "double"
 					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"Teilnehmer",
-							"Organisator"
-						]
+						"$ref": "#/components/schemas/EventMemberRole"
 					},
 					"registrationTime": {
 						"type": "string",
@@ -4947,7 +4981,8 @@
 										"vorname": "Wolfgang",
 										"nachname": "Luft",
 										"status": "aktiv",
-										"name": "w.luft"
+										"name": "w.luft",
+										"role": "Organisator"
 									}
 								],
 								"members": [],
