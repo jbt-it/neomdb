@@ -38,6 +38,7 @@ interface NavItemChildProps {
  */
 const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
   const pathname = usePathname();
+  const pathParentName = pathname.split("/").slice(0, 2).join("/");
   const { auth } = useContext(AuthContext);
   const [activeChild, setActiveChild] = useState(false);
 
@@ -49,7 +50,7 @@ const NavItem = ({ item, openItem, setOpenItem }: NavItemProps) => {
     }
   }, [item.children, pathname]);
 
-  const active = item.path === pathname || activeChild;
+  const active = item.path === pathname || activeChild || item.path === pathParentName;
 
   /**
    * Checks if the user has the permission to view the NavBar item.

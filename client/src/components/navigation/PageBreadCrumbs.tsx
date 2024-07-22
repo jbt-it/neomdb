@@ -27,6 +27,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   kvp: "KVP",
   "passwort-aendern": "Passwort ändern",
   feedbackauswertung: "Feedbackauswertung",
+  projektausschreibung: "Projektausschreibung",
   finanzuebersicht: "Finanzübersicht",
 };
 
