@@ -18,36 +18,43 @@ export class MemberHasEventWw {
     nullable: true,
     enum: [
       "Freitag früh",
-      "Freitag Mittag",
-      "Freitag Abend",
-      "Samstag früh",
-      "Samstag Mittag",
-      "Samstag Abend",
-      "Nacht Samstag auf Sonntag",
+      "Freitag vor dem Mittagessen",
+      "Freitag vor dem Abendessen",
+      "Samstag vor dem Frühstück",
+      "Samstag vor dem Mittagessen",
+      "Samstag vor dem Abendessen",
+      "Samstag spät",
     ],
   })
   arrival:
     | "Freitag früh"
-    | "Freitag Mittag"
-    | "Freitag Abend"
-    | "Samstag frü"
-    | "Samstag Mittag"
-    | "Samstag Abend"
-    | "Nacht Samstag auf Sonntag"
+    | "Freitag vor dem Mittagessen"
+    | "Freitag vor dem Abendessen"
+    | "Samstag vor dem Frühstück"
+    | "Samstag vor dem Mittagessen"
+    | "Samstag vor dem Abendessen"
+    | "Samstag spät"
     | null;
 
   // TODO: Implement enum
   @Column("enum", {
     name: "abreise",
     nullable: true,
-    enum: ["Freitag Mittag", "Freitag Abend", "Samstag früh", "Samstag Mittag", "Samstag Abend", "Sonntag"],
+    enum: [
+      "Freitag nach dem Mittagessen",
+      "Freitag nach dem Abendessen",
+      "Samstag nach dem Frühstück",
+      "Samstag nach dem Mittagessen",
+      "Samstag nach dem Abendessen",
+      "Sonntag",
+    ],
   })
   departure:
-    | "Freitag Mittag"
-    | "Freitag Abend"
-    | "Samstag früh"
-    | "Samstag Mittag"
-    | "Samstag Abend"
+    | "Freitag nach dem Mittagessen"
+    | "Freitag nach dem Abendessen"
+    | "Samstag nach dem Frühstück"
+    | "Samstag nach dem Mittagessen"
+    | "Samstag nach dem Abendessen"
     | "Sonntag"
     | null;
 

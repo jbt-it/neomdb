@@ -395,14 +395,14 @@ INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle
 --
 
 INSERT INTO `mitglied_has_eventww` (`event_eventID`, `mitglied_mitgliedID`, `anreise`, `abreise`, `auto`, `plaetze`, `vegetarier`, `kommentar`) VALUES
-(5, 8111, 'Freitag Abend', 'Samstag Abend', 1, 2, 0, ''),
-(5, 8167, 'Freitag Abend', 'Samstag Mittag', 0, 0, 0, ''),
-(5, 8320, 'Freitag früh', 'Samstag Abend', 0, 0, 0, 'Ich halte den WS Angebot II'),
-(5, 8324, 'Freitag Abend', 'Samstag Mittag', 0, 0, 0, ''),
-(5, 8338, 'Freitag Abend', 'Samstag früh', 0, 0, 0, ''),
-(5, 8478, 'Freitag Abend', 'Samstag Mittag', 0, 0, 0, ''),
-(10, 8111, 'Freitag Mittag', 'Sonntag', 0, 0, 0, ''),
-(266, 8167, 'Nacht Samstag auf Sonntag', 'Sonntag', 0, 0, 0, '');
+(5, 8111, 'Freitag vor dem Abendessen', 'Samstag nach dem Abendessen', 1, 2, 0, ''),
+(5, 8167, 'Freitag vor dem Abendessen', 'Samstag nach dem Mittagessen', 0, 0, 0, ''),
+(5, 8320, 'Freitag früh', 'Samstag nach dem Abendessen', 0, 0, 0, 'Ich halte den WS Angebot II'),
+(5, 8324, 'Freitag vor dem Abendessen', 'Samstag nach dem Mittagessen', 0, 0, 0, ''),
+(5, 8338, 'Freitag vor dem Abendessen', 'Samstag nach dem Frühstück', 0, 0, 0, ''),
+(5, 8478, 'Samstag vor dem Frühstück', 'Samstag nach dem Abendessen', 0, 0, 0, ''),
+(10, 8111, 'Samstag vor dem Mittagessen', 'Sonntag', 0, 0, 0, ''),
+(266, 8167, 'Samstag spät', 'Sonntag', 0, 0, 0, '');
 
 
 --
