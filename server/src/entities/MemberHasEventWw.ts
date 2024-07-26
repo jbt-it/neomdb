@@ -16,17 +16,47 @@ export class MemberHasEventWw {
   @Column("enum", {
     name: "anreise",
     nullable: true,
-    enum: ["FrF", "FrM", "FrA", "SaF", "SaM", "SaA", "SaS"],
+    enum: [
+      "Freitag früh",
+      "Freitag vor dem Mittagessen",
+      "Freitag vor dem Abendessen",
+      "Samstag vor dem Frühstück",
+      "Samstag vor dem Mittagessen",
+      "Samstag vor dem Abendessen",
+      "Samstag spät",
+    ],
   })
-  arrival: "FrF" | "FrM" | "FrA" | "SaF" | "SaM" | "SaA" | "SaS" | null;
+  arrival:
+    | "Freitag früh"
+    | "Freitag vor dem Mittagessen"
+    | "Freitag vor dem Abendessen"
+    | "Samstag vor dem Frühstück"
+    | "Samstag vor dem Mittagessen"
+    | "Samstag vor dem Abendessen"
+    | "Samstag spät"
+    | null;
 
   // TODO: Implement enum
   @Column("enum", {
     name: "abreise",
     nullable: true,
-    enum: ["FrM", "FrA", "SaF", "SaM", "SaA", "So"],
+    enum: [
+      "Freitag nach dem Mittagessen",
+      "Freitag nach dem Abendessen",
+      "Samstag nach dem Frühstück",
+      "Samstag nach dem Mittagessen",
+      "Samstag nach dem Abendessen",
+      "Sonntag",
+    ],
   })
-  departure: "FrM" | "FrA" | "SaF" | "SaM" | "SaA" | "So" | null;
+  departure:
+    | "Freitag nach dem Mittagessen"
+    | "Freitag nach dem Abendessen"
+    | "Samstag nach dem Frühstück"
+    | "Samstag nach dem Mittagessen"
+    | "Samstag nach dem Abendessen"
+    | "Sonntag"
+    | null;
 
   @Column("tinyint", { name: "auto", nullable: true, width: 1 })
   car: boolean | null;
