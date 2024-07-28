@@ -51,6 +51,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
+import SendMail from "./pages/SendMail";
 
 /**
  * This component is responsible for rendering the app.
@@ -107,6 +108,7 @@ const App: React.FunctionComponent = () => {
             <Route path="passwort-aendern" element={<ChangePassword />} />
             <Route path="modularedarstellungtest" element={<InfoSectionTest />} />
             <Route path="modularesformulartest" element={<FieldSectionTest />} />
+            <Route path="mail" element={<SendMail />} />
             <Route
               path="/berechtigungen"
               element={
