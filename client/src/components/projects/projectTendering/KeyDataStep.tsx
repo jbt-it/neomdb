@@ -3,6 +3,7 @@ import React from "react";
 import { ProjectKeyData } from "../../../types/projectTypes";
 import { Stack, TextField, Typography } from "@mui/material";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface KeyDataStepProps {
   projectKeyData: ProjectKeyData;
@@ -36,6 +37,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
     estimatedProjectMemberMax,
     applicationEnd1,
   } = projectKeyData;
+  const isMobile = useResponsive("down", "sm");
 
   // Function to handle the change of the project name
   const onChangeProjectName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +100,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
 
   return (
     <Stack direction={"column"} spacing={1}>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektname:
         </Typography>
@@ -106,7 +112,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{projectName}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             value={projectName}
@@ -117,7 +123,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Einsatzort:
         </Typography>
@@ -125,7 +135,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{jobSite}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             value={jobSite}
@@ -134,7 +144,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Ausschreibungsdatum:
         </Typography>
@@ -142,7 +156,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{tenderDate?.format("DD.MM.YYYY")}</Typography>
         ) : (
           <DateTimePicker
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             slotProps={{
               textField: {
                 variant: "outlined",
@@ -154,7 +168,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Startschuss:
         </Typography>
@@ -162,7 +180,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectStart?.format("DD.MM.YYYY")}</Typography>
         ) : (
           <DatePicker
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             slotProps={{
               textField: {
                 variant: "outlined",
@@ -180,7 +198,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Dauer:
         </Typography>
@@ -188,7 +210,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectDuration}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             value={estimatedProjectDuration}
@@ -199,7 +221,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Konditionen:
         </Typography>
@@ -207,7 +233,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectEuroPerBT} € / BT</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -220,7 +246,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Konditionen (Bereich):
         </Typography>
@@ -230,7 +260,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           </Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -247,7 +277,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Beratertage (Min):
         </Typography>
@@ -255,7 +289,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectBTmin}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -268,7 +302,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Beratertage (Max):
         </Typography>
@@ -276,7 +314,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectBTmax}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -295,7 +333,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektmitglieder (Min):
         </Typography>
@@ -303,7 +345,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectMemberMin}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -316,7 +358,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektmitglieder (Max):
         </Typography>
@@ -324,7 +370,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{estimatedProjectMemberMax}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             type="number"
@@ -345,7 +391,11 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Bewerbungsfrist:
         </Typography>
@@ -353,7 +403,7 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           <Typography sx={{ flex: 3 }}>{applicationEnd1?.format("DD.MM.YYYY HH:mm")}</Typography>
         ) : (
           <DateTimePicker
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             slotProps={{
               textField: {
                 variant: "outlined",

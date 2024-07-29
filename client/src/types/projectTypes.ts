@@ -146,6 +146,21 @@ export type ProjectDescriptionData = {
   notes: string;
 };
 
+// Type of the project applicant Dto
+export type ProjectMembersDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  memberStatus: MemberStatus;
+  date: Date;
+  applicationDate: Date;
+  btAllocation: number | null;
+  expensesAllocation: number | null;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
+  freelancerContract: Date | null;
+  moneyTransferred: Date | null;
+};
+
 // Type of the project tendering data
 export type ProjectDetailsDto = {
   projectId: number;
@@ -223,19 +238,4 @@ export type ProjectTenderDto = {
   client: CompanyDto;
   members: MembersFieldDto[];
   qms: MembersFieldDto[];
-};
-
-// Type of the project applicant Dto
-export type ProjectMembersDto = {
-  memberId: number;
-  firstname: string;
-  lastname: string;
-  memberStatus: MemberStatus;
-  date: Date;
-  applicationDate: Date;
-  btAllocation: number | null;
-  expensesAllocation: number | null;
-  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
-  freelancerContract: Date | null;
-  moneyTransferred: Date | null;
 };

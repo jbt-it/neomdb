@@ -2,6 +2,7 @@ import React from "react";
 import { ProjectDescriptionData } from "../../../types/projectTypes";
 import { Checkbox, FormControl, FormControlLabel, FormGroup, Stack, TextField, Typography } from "@mui/material";
 import useProjects from "../../../hooks/projects/useProjects";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface ProjectDescriptionStepProps {
   projectDescriptionData: ProjectDescriptionData;
@@ -30,6 +31,7 @@ const ProjectDescriptionStep = ({
   const { situation, peculiarities, coreCompetencies, requirementProfile, referenceProjects, notes } =
     projectDescriptionData;
   const { allCoreCompetencies } = useProjects();
+  const isMobile = useResponsive("down", "sm");
 
   // Handle situation change
   const onChangeSituation = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +79,11 @@ const ProjectDescriptionStep = ({
 
   return (
     <Stack direction={"column"} spacing={1}>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Ausgangssituation/Zielsetzung:
         </Typography>
@@ -85,7 +91,7 @@ const ProjectDescriptionStep = ({
           <Typography sx={{ flex: 3 }}>{situation}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             multiline
@@ -95,7 +101,11 @@ const ProjectDescriptionStep = ({
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Besonderheiten:
         </Typography>
@@ -103,7 +113,7 @@ const ProjectDescriptionStep = ({
           <Typography sx={{ flex: 3 }}>{peculiarities}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             multiline
@@ -113,14 +123,18 @@ const ProjectDescriptionStep = ({
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Kernkompetenzen:
         </Typography>
         {!isEditMode ? (
           <Typography sx={{ flex: 3 }}>{coreCompetencies.map((c) => c.designation).join(", ")}</Typography>
         ) : (
-          <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.coreCompetencies}>
+          <FormControl sx={{ flex: 3, width: "100%" }} disabled={isCompleted} error={errors.coreCompetencies}>
             <FormGroup row onChange={onChangeCoreCompetencies}>
               {allCoreCompetencies.map((competency) => (
                 <FormControlLabel
@@ -145,7 +159,11 @@ const ProjectDescriptionStep = ({
           </FormControl>
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Anforderungsprofil:
         </Typography>
@@ -153,7 +171,7 @@ const ProjectDescriptionStep = ({
           <Typography sx={{ flex: 3 }}>{requirementProfile}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             multiline
@@ -163,7 +181,11 @@ const ProjectDescriptionStep = ({
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Referenzprojekte:
         </Typography>
@@ -171,7 +193,7 @@ const ProjectDescriptionStep = ({
           <Typography sx={{ flex: 3 }}>{referenceProjects}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             multiline
@@ -181,7 +203,11 @@ const ProjectDescriptionStep = ({
           />
         )}
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+      >
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Bemerkungen:
         </Typography>
@@ -189,7 +215,7 @@ const ProjectDescriptionStep = ({
           <Typography sx={{ flex: 3 }}>{notes}</Typography>
         ) : (
           <TextField
-            sx={{ flex: 3 }}
+            sx={{ flex: 3, width: "100%" }}
             variant="outlined"
             size="small"
             multiline

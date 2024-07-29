@@ -1,9 +1,9 @@
-import { Box, Button, Card, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { Button, Card, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import { ProjectMembersDto } from "../../../types/projectTypes";
-import InfoSection, { InformationField } from "../../general/InfoSection";
 import { MembersFieldDto } from "../../../types/membersTypes";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface ProjectDataProps {
   projectMembers: ProjectMembersDto[] | null;
@@ -15,13 +15,15 @@ interface ProjectDataProps {
 }
 
 const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, soldExpenses }: ProjectDataProps) => {
+  const isMobile = useResponsive("down", "sm");
+
   return (
     <Card sx={{ mt: 4, paddingX: 4, paddingY: 2 }}>
       <Typography variant="h6" component="h1" gutterBottom fontWeight={"bold"}>
         Daten zur Durchführung und Abrechnung
       </Typography>
       <Divider sx={{ borderColor: "#f6891f", mb: 3 }} />
-      <Stack direction={"row"} justifyContent={"space-between"}>
+      <Stack direction={isMobile ? "column" : "row"} justifyContent={"space-between"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Projektmitglieder:
         </Typography>
@@ -44,7 +46,7 @@ const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, so
           ))}
         </List>
       </Stack>
-      <Stack direction={"row"} justifyContent={"space-between"}>
+      <Stack direction={isMobile ? "column" : "row"} justifyContent={"space-between"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           QMs:
         </Typography>
@@ -61,25 +63,25 @@ const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, so
           ))}
         </List>
       </Stack>
-      <Stack direction={"row"}>
+      <Stack direction={isMobile ? "column" : "row"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Unterschriftsdatum:
         </Typography>
         <Typography sx={{ flex: 3 }}>{signatureDate ? signatureDate.toLocaleDateString() : "-"}</Typography>
       </Stack>
-      <Stack direction={"row"}>
+      <Stack direction={isMobile ? "column" : "row"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Konditionen:
         </Typography>
         <Typography sx={{ flex: 3 }}>{euroPerBT}</Typography>
       </Stack>
-      <Stack direction={"row"}>
+      <Stack direction={isMobile ? "column" : "row"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Verkaufte BT:
         </Typography>
         <Typography sx={{ flex: 3 }}>{soldBT}</Typography>
       </Stack>
-      <Stack direction={"row"}>
+      <Stack direction={isMobile ? "column" : "row"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
           Verkaufte Spesen:
         </Typography>

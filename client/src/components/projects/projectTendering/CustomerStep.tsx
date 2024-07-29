@@ -19,6 +19,7 @@ import {
 import NewCustomerDialog from "./NewCustomerDialog";
 import useCompanies from "../../../hooks/useCompanies";
 import useProjects from "../../../hooks/projects/useProjects";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface CustomerStepProps {
   customerData: CustomerData;
@@ -38,6 +39,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
   const allAcquisitionMethods = ["Kunde", "Alumni", "Kurator", "Partner", "PA", "JBTler"];
   const allAcquisitors = ["Pool", "GF Winter (GFW)", "GF Sommer (GFS)"];
   const [isNewCustomerDialogOpen, setIsNewCustomerDialogOpen] = React.useState(false);
+  const isMobile = useResponsive("down", "sm");
 
   const {
     name,
@@ -177,7 +179,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
         onSave={handleSaveNewCustomer}
       />
       <Stack direction={"column"} spacing={1}>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Altkunde/Neukunde:
           </Typography>
@@ -206,7 +212,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             </React.Fragment>
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Auftraggeber:
           </Typography>
@@ -214,7 +224,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{name}</Typography>
           ) : (
             <Autocomplete
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               size="small"
               renderInput={(params) => (
                 <TextField
@@ -232,14 +242,18 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Geheim:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{classified ? "Ja" : "Nein"}</Typography>
           ) : (
-            <Box sx={{ flex: 3 }}>
+            <Box sx={{ flex: 3, width: "100%" }}>
               <Checkbox
                 sx={{ paddingLeft: 0 }}
                 checked={classified}
@@ -249,7 +263,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             </Box>
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Branche:
           </Typography>
@@ -257,7 +275,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{industry?.description}</Typography>
           ) : (
             <Autocomplete
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               disabled={isCompleted}
               renderInput={(params) => (
                 <TextField
@@ -275,7 +293,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Kurzbeschreibung:
           </Typography>
@@ -283,7 +305,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{shortDescription}</Typography>
           ) : (
             <TextField
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               variant="outlined"
               size="small"
               value={shortDescription}
@@ -296,7 +318,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Straße:
           </Typography>
@@ -304,7 +330,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{street}</Typography>
           ) : (
             <TextField
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               variant="outlined"
               size="small"
               value={street}
@@ -313,7 +339,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             PLZ:
           </Typography>
@@ -321,7 +351,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{postalCode}</Typography>
           ) : (
             <TextField
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               variant="outlined"
               size="small"
               value={postalCode}
@@ -330,7 +360,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Ort:
           </Typography>
@@ -338,7 +372,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{city}</Typography>
           ) : (
             <TextField
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               variant="outlined"
               size="small"
               value={city}
@@ -347,7 +381,11 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Website:
           </Typography>
@@ -355,7 +393,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             <Typography sx={{ flex: 3 }}>{url}</Typography>
           ) : (
             <TextField
-              sx={{ flex: 3 }}
+              sx={{ flex: 3, width: "100%" }}
               variant="outlined"
               size="small"
               value={url}
@@ -364,14 +402,18 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Kontakt erwünscht:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{contactDesired ? "Ja" : "Nein"}</Typography>
           ) : (
-            <Box sx={{ flex: 3 }}>
+            <Box sx={{ flex: 3, width: "100%" }}>
               <Checkbox
                 sx={{ paddingLeft: 0 }}
                 checked={contactDesired}
@@ -381,14 +423,18 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             </Box>
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Ansprechpartner:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{contactPerson?.name}</Typography>
           ) : newContactPerson ? (
-            <Stack direction={"row"} sx={{ flex: 3 }} spacing={3}>
+            <Stack direction={"row"} sx={{ flex: 3, width: "100%" }} spacing={3}>
               <TextField
                 value={newContactPersonName}
                 onChange={onChangeNewContactPersonName}
@@ -404,7 +450,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
               </Button>
             </Stack>
           ) : (
-            <Stack direction={"row"} sx={{ flex: 3 }} spacing={3}>
+            <Stack direction={"row"} sx={{ flex: 3, width: "100%" }} spacing={3}>
               <Autocomplete
                 value={allContactPartners.find((cp) => cp.contactPersonId === contactPerson?.contactPersonId) || null}
                 options={allContactPartners.filter((contact) => contact.companyId === customerData.companyId)}
@@ -428,14 +474,18 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             </Stack>
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Akquiseverantwortlicher:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{acquisitor}</Typography>
           ) : (
-            <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitor}>
+            <FormControl sx={{ flex: 3, width: "100%" }} disabled={isCompleted} error={errors.acquisitor}>
               <Select value={acquisitor} onChange={onChangeAcquisitor} size="small">
                 {allAcquisitors.map((acquisitor) => (
                   <MenuItem key={acquisitor} value={acquisitor}>
@@ -453,14 +503,18 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             </FormControl>
           )}
         </Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Akquisemethode:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{acquisitionMethod}</Typography>
           ) : (
-            <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitionMethod}>
+            <FormControl sx={{ flex: 3, width: "100%" }} disabled={isCompleted} error={errors.acquisitionMethod}>
               <Select value={acquisitionMethod} onChange={onChangeAquisitionMethod} size="small">
                 {allAcquisitionMethods.map((method) => (
                   <MenuItem key={method} value={method}>

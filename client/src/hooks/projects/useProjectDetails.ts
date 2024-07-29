@@ -151,7 +151,7 @@ const useProjectDetails = (projectID: number) => {
       estimatedProjectMemberMin: 2,
       estimatedProjectMemberMax: 3,
       applicationStart1: dayjs("2024-02-10").toDate(),
-      applicationEnd1: dayjs("2024-02-15").toDate(),
+      applicationEnd1: dayjs("2024-07-15").toDate(),
       applicationStart2: null,
       applicationEnd2: null,
       situation:

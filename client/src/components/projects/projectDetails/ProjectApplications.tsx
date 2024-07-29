@@ -2,8 +2,10 @@ import React from "react";
 import useResponsive from "../../../hooks/useResponsive";
 import {
   Box,
-  Card,
+  Button,
+  Divider,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -16,12 +18,32 @@ import {
 import { ProjectMembersDto } from "../../../types/projectTypes";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
+import { Cancel, GroupAdd, RestartAlt, Share } from "@mui/icons-material";
 
 interface ProjectApplicationsProps {
   applicants: ProjectMembersDto[];
+  handleShareApplications: () => void;
+  handleTeamComposition: () => void;
+  handleStartSecondApplicationPhase: () => void;
+  handleCallOffProject: () => void;
+  isApplicationOpen: boolean;
+  isSecondApplicationPhase: boolean;
 }
 
-const ProjectApplications = ({ applicants }: ProjectApplicationsProps) => {
+/**
+ * ProjectApplications component for displaying project applications in a table
+ * @param applicants - The list of members who applied for the project
+ * @returns ProjectApplications component
+ */
+const ProjectApplications = ({
+  applicants,
+  handleShareApplications,
+  handleTeamComposition,
+  handleStartSecondApplicationPhase,
+  handleCallOffProject,
+  isApplicationOpen,
+  isSecondApplicationPhase,
+}: ProjectApplicationsProps) => {
   const isMobile = useResponsive("down", "sm");
   const theme = useTheme();
 
@@ -51,16 +73,67 @@ const ProjectApplications = ({ applicants }: ProjectApplicationsProps) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: 4 }}>
+      <Divider sx={{ borderColor: "#f6891f", mb: 2 }} />
+      {isApplicationOpen ? null : (
+        <Stack direction={"row"} sx={{ mb: 2 }} gap={4}>
+          <Button
+            variant="outlined"
+            color="info"
+            sx={{ fontWeight: 600 }}
+            startIcon={<Share />}
+            onClick={handleShareApplications}
+            size="small"
+          >
+            Bewerbungen teilen
+          </Button>
+          <Button
+            variant="outlined"
+            color="success"
+            sx={{ fontWeight: 600 }}
+            startIcon={<GroupAdd />}
+            onClick={handleTeamComposition}
+            size="small"
+          >
+            Teamzusammenstellung
+          </Button>
+          {isSecondApplicationPhase ? null : (
+            <Button
+              variant="outlined"
+              color="info"
+              sx={{ fontWeight: 600 }}
+              startIcon={<RestartAlt />}
+              onClick={handleStartSecondApplicationPhase}
+              size="small"
+            >
+              Zweite Bewerbungsphase
+            </Button>
+          )}
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{ fontWeight: 600 }}
+            startIcon={<Cancel />}
+            onClick={handleCallOffProject}
+            size="small"
+          >
+            Absagen
+          </Button>
+        </Stack>
+      )}
       <Typography sx={{ mb: 2 }}>Folgende Mitglieder haben sich bisher beworben:</Typography>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead sx={styles.tableHeader}>
             <TableRow>
               <TableCell sx={styles.tableHeaderCell}>Name, Vorname</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Mitgliedstatus</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Datum</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Details</TableCell>
+              {!isMobile ? (
+                <TableCell sx={styles.tableHeaderCell}>Mitgliedstatus</TableCell>
+              ) : (
+                <TableCell sx={styles.tableHeaderCell}>Details</TableCell>
+              )}
+              {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Datum</TableCell> : null}
+              {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Details</TableCell> : null}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -74,8 +147,8 @@ const ProjectApplications = ({ applicants }: ProjectApplicationsProps) => {
                     {applicant.lastname}, {applicant.firstname}
                   </Link>
                 </TableCell>
-                <TableCell>{applicant.memberStatus.name}</TableCell>
-                <TableCell>{dayjs(applicant.applicationDate).format("DD.MM.YYYY")}</TableCell>
+                {!isMobile ? <TableCell>{applicant.memberStatus.name}</TableCell> : null}
+                {!isMobile ? <TableCell>{dayjs(applicant.applicationDate).format("DD.MM.YYYY")}</TableCell> : null}
                 <TableCell>
                   <Link
                     to={`/projekte/bewerbung/${applicant.memberId}`}

@@ -21,21 +21,21 @@ const EditButtons = ({ isEditMode, handleEditProject, handleCancelEdit, handleSa
           variant="outlined"
           color="primary"
           sx={{ fontWeight: 600, mr: 2 }}
-          onClick={handleCancelEdit}
-          startIcon={<Close />}
-          size="small"
-        >
-          Abbrechen
-        </Button>
-        <Button
-          variant="outlined"
-          color="primary"
-          sx={{ fontWeight: 600, mr: 2 }}
           onClick={handleSaveProject}
           startIcon={<Save />}
           size="small"
         >
           Speichern
+        </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ fontWeight: 600, mr: 2 }}
+          onClick={handleCancelEdit}
+          startIcon={<Close />}
+          size="small"
+        >
+          Abbrechen
         </Button>
       </Stack>
     );

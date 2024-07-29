@@ -1,6 +1,6 @@
 import React from "react";
 import { Close, Edit, Save } from "@mui/icons-material";
-import { Button, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 
 interface MobileEditButtonsProps {
   isEditMode: boolean;
@@ -22,31 +22,19 @@ const MobileEditButtons = ({
   if (isEditMode) {
     return (
       <Stack direction={"row"} alignItems={"center"}>
-        <Button
-          variant="outlined"
-          onClick={handleCancelEdit}
-          startIcon={<Close />}
-          sx={{ fontSize: 10 }}
-          color="primary"
-        >
-          Abbrechen
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={handleSaveProject}
-          startIcon={<Save />}
-          sx={{ fontSize: 10 }}
-          color="primary"
-        >
-          Speichern
-        </Button>
+        <IconButton onClick={handleSaveProject} color="primary">
+          <Save />
+        </IconButton>
+        <IconButton onClick={handleCancelEdit} color="primary">
+          <Close />
+        </IconButton>
       </Stack>
     );
   } else {
     return (
-      <Button variant="outlined" onClick={handleEditProject} startIcon={<Edit />} sx={{ fontSize: 10 }} color="primary">
-        Bearbeiten
-      </Button>
+      <IconButton onClick={handleEditProject} color="primary">
+        <Edit />
+      </IconButton>
     );
   }
 };

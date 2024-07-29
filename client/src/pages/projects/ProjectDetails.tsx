@@ -1,5 +1,17 @@
 import React, { useContext, useState } from "react";
-import { Box, Button, Container, Paper, Stack, Step, StepButton, Stepper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  MobileStepper,
+  Paper,
+  Stack,
+  Step,
+  StepButton,
+  Stepper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
@@ -16,6 +28,8 @@ import EditButtons from "../../components/projects/projectDetails/EditButtons";
 import ProjectApplications from "../../components/projects/projectDetails/ProjectApplications";
 import ProjectData from "../../components/projects/projectDetails/ProjectData";
 import ProjectChip from "../../components/projects/projectCard/ProjectChip";
+import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import ChangeStatusButtons from "../../components/projects/projectDetails/ChangeStatusButtons";
 
 // Steps for the project tendering form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
@@ -24,14 +38,21 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  * Component to create a new project tendering
  * @returns - A form to create a new project tendering
  */
-const ProjectTendering = () => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const { projectDetails, saveProject } = useProjectDetails(Number(id));
   const [isEditMode, setIsEditMode] = useState(false);
   const { auth } = useContext(AuthContext);
   const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [10]);
-  const hasUserApplied = false;
+  const hasUserApplied = projectDetails?.members?.some((member) => member.memberId === auth.userID);
   const isMobile = useResponsive("down", "sm");
+  const theme = useTheme();
+  const isApplicationOpen = projectDetails?.applicationEnd1
+    ? projectDetails.applicationEnd1 > new Date()
+    : projectDetails?.applicationEnd2
+    ? projectDetails.applicationEnd2 > new Date()
+    : false;
+  const isSecondApplicationPhase = projectDetails?.applicationEnd2 !== null;
 
   if (!projectDetails) {
     return (
@@ -123,6 +144,81 @@ const ProjectTendering = () => {
   const [projectDescriptionDataErrors, setProjectDescriptionDataErrors] = React.useState<{ [key: string]: boolean }>({
     coreCompetencies: false,
   });
+
+  // Reset all fields to the initial state
+  const resetFields = () => {
+    setProjectKeyData({
+      projectName: projectDetails.projectName,
+      jobSite: projectDetails.jobSite,
+      tenderDate: dayjs(projectDetails.tenderDate),
+      estimatedProjectStart: dayjs(projectDetails.estimatedProjectStart),
+      estimatedProjectDuration: projectDetails.estimatedProjectDuration,
+      estimatedProjectEuroPerBT: projectDetails.estimatedProjectEuroPerBT,
+      estimatedProjectEuroPerBTrange: projectDetails.estimatedProjectEuroPerBTrange,
+      estimatedProjectBTmin: projectDetails.estimatedProjectBTmin,
+      estimatedProjectBTmax: projectDetails.estimatedProjectBTmax,
+      estimatedProjectMemberMin: projectDetails.estimatedProjectMemberMin,
+      estimatedProjectMemberMax: projectDetails.estimatedProjectMemberMax,
+      applicationStart1: dayjs(projectDetails.applicationStart1),
+      applicationEnd1: dayjs(projectDetails.applicationEnd1),
+      applicationStart2: projectDetails.applicationStart1 ? dayjs(projectDetails.applicationStart1) : null,
+      applicationEnd2: projectDetails.applicationEnd2 ? dayjs(projectDetails.applicationEnd2) : null,
+      kickoff: dayjs(projectDetails.kickoff),
+    });
+    setProjectKeyDataErrors({
+      projectName: false,
+      estimatedProjectStart: false,
+      estimatedProjectDuration: false,
+      estimatedProjectEuroPerBT: false,
+      estimatedProjectBTmin: false,
+      estimatedProjectBTmax: false,
+      estimatedProjectMemberMin: false,
+      estimatedProjectMemberMax: false,
+      applicationStart1: false,
+      applicationEnd1: false,
+      applicationStart2: false,
+      applicationEnd2: false,
+    });
+    setCustomerData({
+      companyId: projectDetails.client.companyId,
+      name: projectDetails.client.name,
+      shortDescription: projectDetails.client.shortDescription,
+      newCustomer: projectDetails.customerType === "Neukunde" ? true : false,
+      acquisitor: projectDetails.acquisitor,
+      acquisitionMethod: projectDetails.acquisitionMethod,
+      industry: projectDetails.client.industry,
+      contactPerson: projectDetails.contactPerson,
+      newContactPerson: projectDetails.newContactPerson,
+      newContactPersonName: "",
+      street: projectDetails.client.street,
+      postalCode: projectDetails.client.postalCode,
+      city: projectDetails.client.city,
+      addressAdditional: projectDetails.client.addressAdditional,
+      url: projectDetails.client.url,
+      importantInformation: projectDetails.client.importantInformation,
+      contactDesired: projectDetails.client.contactDesired,
+      classified: projectDetails.client.classified,
+    });
+    setCustomerDataErrors({
+      customer: false,
+      industry: false,
+      newCustomer: false,
+      contactPerson: false,
+      acquisitor: false,
+      newContactPersonName: false,
+    });
+    setProjectDescriptionData({
+      situation: projectDetails.situation,
+      peculiarities: projectDetails.peculiarities,
+      coreCompetencies: projectDetails.coreCompetencies,
+      requirementProfile: projectDetails.requirementProfile,
+      referenceProjects: projectDetails.referenceProjects,
+      notes: projectDetails.notes,
+    });
+    setProjectDescriptionDataErrors({
+      coreCompetencies: false,
+    });
+  };
 
   // Validate the project key data
   // Checks for projectName, estimatedProjectStart, estimatedProjectDuration, estimatedProjectEuroPerBT, estimatedProjectBTmin, estimatedProjectBTmax, estimatedProjectMemberMin, estimatedProjectMemberMax and applicationEnd1
@@ -450,13 +546,59 @@ const ProjectTendering = () => {
 
   // handles the click on the cancel button
   const handleCancelEdit = () => {
+    resetFields();
     setIsEditMode(false);
+  };
+
+  // handles the click on the accepted button
+  const handleOfferAccepted = () => {
+    alert("Offer accepted");
+  };
+
+  // handles the click on the rejected button
+  const handleOfferRejected = () => {
+    alert("Offer rejected");
+  };
+
+  // handles the click on the pitch lost button
+  const handlePitchLost = () => {
+    alert("Pitch lost");
+  };
+
+  // handles the click on the billing button
+  const handleBilling = () => {
+    alert("Billing");
+  };
+
+  // handles the click on the call off button
+  const handleCallOffProject = () => {
+    alert("Call off");
+  };
+
+  // handles the click on the share applications button
+  const handleShareApplications = () => {
+    alert("Share applications");
+  };
+
+  // handles the click on the team composition button
+  const handleTeamComposition = () => {
+    alert("Team composition");
+  };
+
+  // handles the click on the start second application phase button
+  const handleStartSecondApplicationPhase = () => {
+    alert("Start second application phase");
   };
 
   return (
     <Container maxWidth="lg">
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} sx={{ mb: 1 }}>
-        <Stack direction={"row"} gap={4} alignContent={"center"}>
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        justifyContent={"space-between"}
+        alignItems={isMobile ? "start" : "center"}
+        sx={{ mb: 1 }}
+      >
+        <Stack direction={"row"} gap={4} alignContent={"center"} justifyContent={"space-between"}>
           <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
             Projektdetails
           </Typography>
@@ -471,43 +613,128 @@ const ProjectTendering = () => {
               handleSaveProject={handleSaveProject}
             />
           ) : (
-            <EditButtons
-              isEditMode={isEditMode}
-              handleCancelEdit={handleCancelEdit}
-              handleEditProject={handleEditProject}
-              handleSaveProject={handleSaveProject}
-            />
+            <Stack direction={"row"}>
+              {!isEditMode ? (
+                <ChangeStatusButtons
+                  handleOfferAccepted={handleOfferAccepted}
+                  handleOfferRejected={handleOfferRejected}
+                  handlePitchLost={handlePitchLost}
+                  handleBilling={handleBilling}
+                  handleCallOff={handleCallOffProject}
+                  status={projectDetails.status}
+                />
+              ) : null}
+
+              <EditButtons
+                isEditMode={isEditMode}
+                handleCancelEdit={handleCancelEdit}
+                handleEditProject={handleEditProject}
+                handleSaveProject={handleSaveProject}
+              />
+            </Stack>
           )
         ) : null}
       </Stack>
-      <Paper sx={{ paddingX: 4, paddingY: 2 }}>
-        <Stepper nonLinear activeStep={activeStep} sx={{ marginLeft: -1 }}>
-          {steps.map((label, index) => (
-            <Step key={label}>
-              <StepButton color="inherit" onClick={handleStep(index)} sx={{ maxHeight: 2, borderRadius: 5 }}>
-                {label}
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
-        <React.Fragment>
-          <Box sx={{ marginTop: 3 }}>{renderStep(activeStep)}</Box>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2, ml: -1 }}>
-            <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} variant="outlined">
-              Zurück
-            </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleNext} sx={{ mr: 1 }} variant="outlined">
-              Weiter
-            </Button>
-          </Box>
-        </React.Fragment>
-      </Paper>
-      {projectDetails.status === "Bewerbung" ? (
-        hasUserApplied ? (
-          <Button variant="contained">Bewerbung zurückziehen</Button>
+      <Paper sx={{ paddingX: isMobile ? 2 : 4, paddingY: 2 }}>
+        {isMobile ? (
+          <>
+            <Typography sx={{ fontWeight: "bold", fontSize: 24 }} gutterBottom>
+              {steps[activeStep]}
+            </Typography>
+            <MobileStepper
+              variant="text"
+              steps={steps.length}
+              activeStep={activeStep}
+              position="static"
+              sx={{ mt: -1, mb: 2 }}
+              nextButton={
+                <Button size="small" onClick={handleNext} disabled={activeStep === steps.length - 1}>
+                  Next
+                  {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                </Button>
+              }
+              backButton={
+                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                  {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                  Back
+                </Button>
+              }
+            />
+            <Box>{renderStep(activeStep)}</Box>
+            <MobileStepper
+              variant="text"
+              steps={steps.length}
+              activeStep={activeStep}
+              position="static"
+              sx={{ mt: 2 }}
+              nextButton={
+                <Button size="small" onClick={handleNext} disabled={activeStep === steps.length - 1}>
+                  Next
+                  {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                </Button>
+              }
+              backButton={
+                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                  {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                  Back
+                </Button>
+              }
+            />
+          </>
         ) : (
-          <Stack direction={"row"} gap={3} alignItems={"center"} sx={{ my: 2 }} justifyContent={"space-between"}>
+          <React.Fragment>
+            <Stepper nonLinear activeStep={activeStep} sx={{ marginLeft: -1 }}>
+              {steps.map((label, index) => (
+                <Step key={label}>
+                  <StepButton color="inherit" onClick={handleStep(index)} sx={{ maxHeight: 2, borderRadius: 5 }}>
+                    {label}
+                  </StepButton>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              <Box sx={{ marginTop: 3 }}>{renderStep(activeStep)}</Box>
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2, ml: -1 }}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                  variant="outlined"
+                >
+                  Zurück
+                </Button>
+                <Box sx={{ flex: "1 1 auto" }} />
+                <Button onClick={handleNext} sx={{ mr: 1 }} variant="outlined">
+                  Weiter
+                </Button>
+              </Box>
+            </React.Fragment>
+          </React.Fragment>
+        )}
+      </Paper>
+      {projectDetails.status === "Bewerbung" && isApplicationOpen ? (
+        hasUserApplied ? (
+          <Stack
+            sx={{ mt: isMobile ? 4 : 2 }}
+            direction={isMobile ? "column" : "row"}
+            gap={3}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+          >
+            <Typography>Möchtest du deine Bewerbung zurückziehen?</Typography>
+            <Button variant="outlined" color="error">
+              Bewerbung zurückziehen
+            </Button>
+          </Stack>
+        ) : (
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            gap={3}
+            alignItems={"center"}
+            sx={{ mt: isMobile ? 4 : 2 }}
+            justifyContent={"space-between"}
+          >
             <Typography>Du hast dich noch nicht auf dieses Projekt beworben.</Typography>
             <Button variant="outlined" color="info">
               Jetzt bewerben
@@ -517,7 +744,17 @@ const ProjectTendering = () => {
       ) : null}
       {projectDetails.status === "Bewerbung" ? (
         hasProjectPermission &&
-        projectDetails.members.length > 0 && <ProjectApplications applicants={projectDetails.members} />
+        projectDetails.members.length > 0 && (
+          <ProjectApplications
+            applicants={projectDetails.members}
+            handleShareApplications={handleShareApplications}
+            handleTeamComposition={handleTeamComposition}
+            handleStartSecondApplicationPhase={handleStartSecondApplicationPhase}
+            handleCallOffProject={handleCallOffProject}
+            isApplicationOpen={isApplicationOpen}
+            isSecondApplicationPhase={isSecondApplicationPhase}
+          />
+        )
       ) : (
         <ProjectData
           projectMembers={projectDetails.members}
@@ -532,4 +769,4 @@ const ProjectTendering = () => {
   );
 };
 
-export default ProjectTendering;
+export default ProjectDetails;
