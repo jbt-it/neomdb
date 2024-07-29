@@ -1,13 +1,21 @@
-import React from "react";
-import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Box, Button, Container, Paper, Stack, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
 import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
-import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
 import dayjs from "dayjs";
-import useProjects from "../../hooks/projects/useProjects";
 import { showErrorMessage } from "../../utils/toastUtils";
+import { useParams } from "react-router-dom";
+import useProjectDetails from "../../hooks/projects/useProjectDetails";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
+import useResponsive from "../../hooks/useResponsive";
+import MobileEditButtons from "../../components/projects/projectDetails/MobileEditButtons";
+import EditButtons from "../../components/projects/projectDetails/EditButtons";
+import ProjectApplications from "../../components/projects/projectDetails/ProjectApplications";
+import ProjectData from "../../components/projects/projectDetails/ProjectData";
+import ProjectChip from "../../components/projects/projectCard/ProjectChip";
 
 // Steps for the project tendering form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
@@ -17,21 +25,40 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  * @returns - A form to create a new project tendering
  */
 const ProjectTendering = () => {
-  const { tenderProject, saveProject } = useProjects();
+  const { id } = useParams();
+  const { projectDetails, saveProject } = useProjectDetails(Number(id));
+  const [isEditMode, setIsEditMode] = useState(false);
+  const { auth } = useContext(AuthContext);
+  const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [10]);
+  const hasUserApplied = false;
+  const isMobile = useResponsive("down", "sm");
+
+  if (!projectDetails) {
+    return (
+      <Box>
+        <Typography>Es konnte kein Projekt mit dieser ID gefunden werden</Typography>
+      </Box>
+    );
+  }
+
   // Project key data initial state
   const [projectKeyData, setProjectKeyData] = React.useState<ProjectKeyData>({
-    projectName: "",
-    jobSite: "",
-    tenderDate: dayjs(), // will be shown but is disabled
-    estimatedProjectStart: undefined,
-    estimatedProjectDuration: "",
-    estimatedProjectEuroPerBT: undefined,
-    estimatedProjectEuroPerBTrange: undefined,
-    estimatedProjectBTmin: undefined,
-    estimatedProjectBTmax: undefined,
-    estimatedProjectMemberMin: undefined,
-    estimatedProjectMemberMax: undefined,
-    applicationEnd1: undefined,
+    projectName: projectDetails.projectName,
+    jobSite: projectDetails.jobSite,
+    tenderDate: dayjs(projectDetails.tenderDate),
+    estimatedProjectStart: dayjs(projectDetails.estimatedProjectStart),
+    estimatedProjectDuration: projectDetails.estimatedProjectDuration,
+    estimatedProjectEuroPerBT: projectDetails.estimatedProjectEuroPerBT,
+    estimatedProjectEuroPerBTrange: projectDetails.estimatedProjectEuroPerBTrange,
+    estimatedProjectBTmin: projectDetails.estimatedProjectBTmin,
+    estimatedProjectBTmax: projectDetails.estimatedProjectBTmax,
+    estimatedProjectMemberMin: projectDetails.estimatedProjectMemberMin,
+    estimatedProjectMemberMax: projectDetails.estimatedProjectMemberMax,
+    applicationStart1: dayjs(projectDetails.applicationStart1),
+    applicationEnd1: dayjs(projectDetails.applicationEnd1),
+    applicationStart2: projectDetails.applicationStart1 ? dayjs(projectDetails.applicationStart1) : null,
+    applicationEnd2: projectDetails.applicationEnd2 ? dayjs(projectDetails.applicationEnd2) : null,
+    kickoff: dayjs(projectDetails.kickoff),
   });
 
   // Errors for the project key data inital state
@@ -44,29 +71,32 @@ const ProjectTendering = () => {
     estimatedProjectBTmax: false,
     estimatedProjectMemberMin: false,
     estimatedProjectMemberMax: false,
+    applicationStart1: false,
     applicationEnd1: false,
+    applicationStart2: false,
+    applicationEnd2: false,
   });
 
   // Customer data initial state
   const [customerData, setCustomerData] = React.useState<CustomerData>({
-    companyId: -1,
-    name: "",
-    shortDescription: "",
-    newCustomer: undefined,
-    acquisitor: undefined,
-    acquisitionMethod: undefined,
-    industry: undefined,
-    contactPerson: undefined,
-    newContactPerson: false,
+    companyId: projectDetails.client.companyId,
+    name: projectDetails.client.name,
+    shortDescription: projectDetails.client.shortDescription,
+    newCustomer: projectDetails.customerType === "Neukunde" ? true : false,
+    acquisitor: projectDetails.acquisitor,
+    acquisitionMethod: projectDetails.acquisitionMethod,
+    industry: projectDetails.client.industry,
+    contactPerson: projectDetails.contactPerson,
+    newContactPerson: projectDetails.newContactPerson,
     newContactPersonName: "",
-    street: "",
-    postalCode: "",
-    city: "",
-    addressAdditional: "",
-    url: "",
-    importantInformation: "",
-    contactDesired: false,
-    classified: false,
+    street: projectDetails.client.street,
+    postalCode: projectDetails.client.postalCode,
+    city: projectDetails.client.city,
+    addressAdditional: projectDetails.client.addressAdditional,
+    url: projectDetails.client.url,
+    importantInformation: projectDetails.client.importantInformation,
+    contactDesired: projectDetails.client.contactDesired,
+    classified: projectDetails.client.classified,
   });
 
   // Errors for the customer data initial state
@@ -81,12 +111,12 @@ const ProjectTendering = () => {
 
   // Project Description data initial state
   const [projectDescriptionData, setProjectDescriptionData] = React.useState<ProjectDescriptionData>({
-    situation: "",
-    peculiarities: "",
-    coreCompetencies: [],
-    requirementProfile: "",
-    referenceProjects: "",
-    notes: "",
+    situation: projectDetails.situation,
+    peculiarities: projectDetails.peculiarities,
+    coreCompetencies: projectDetails.coreCompetencies,
+    requirementProfile: projectDetails.requirementProfile,
+    referenceProjects: projectDetails.referenceProjects,
+    notes: projectDetails.notes,
   });
 
   // Errors for the project description data initial state
@@ -105,7 +135,10 @@ const ProjectTendering = () => {
     } else {
       newErrors.projectName = false;
     }
-    if (!projectKeyData.estimatedProjectStart || projectKeyData.estimatedProjectStart.toDate() < new Date()) {
+    if (
+      !projectKeyData.estimatedProjectStart ||
+      (projectKeyData.tenderDate && projectKeyData.estimatedProjectStart < projectKeyData.tenderDate)
+    ) {
       newErrors.estimatedProjectStart = true;
       hasErrors = true;
     } else {
@@ -256,18 +289,10 @@ const ProjectTendering = () => {
 
   // states for the active step and the completed steps
   const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState<{
-    [k: number]: boolean;
-  }>({});
 
   // Get the total number of steps
   const totalSteps = () => {
     return steps.length;
-  };
-
-  // Get the number of completed steps
-  const completedSteps = () => {
-    return Object.keys(completed).length;
   };
 
   // Check if the current step is the last step
@@ -275,14 +300,9 @@ const ProjectTendering = () => {
     return activeStep === totalSteps() - 1;
   };
 
-  // Check if all steps are completed
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
-
   // Handle the tendering or saving of the project, depending on the tendering flag, determines if an email is sent to the members and if the projectApplicationEnd has to be set
-  const handleSaveProject = (tendering: boolean) => {
-    alert("Tender project");
+  const handleSaveProject = () => {
+    alert("Saving project");
     // All data should be set at this point, but check again to be sure
     if (
       !projectKeyData.projectName ||
@@ -299,20 +319,21 @@ const ProjectTendering = () => {
       customerData.companyId === -1 ||
       !projectDescriptionData.coreCompetencies ||
       projectDescriptionData.coreCompetencies.length === 0 ||
-      (customerData.newContactPerson ? !customerData.newContactPersonName : !customerData.contactPerson) ||
+      !customerData.contactPerson ||
       !projectKeyData.estimatedProjectEuroPerBT ||
       !customerData.newCustomer ||
-      (tendering && !projectKeyData.applicationEnd1)
+      !projectKeyData.applicationEnd1
     ) {
       // Show an error message if some data is missing
       showErrorMessage("Einige Daten fehlen oder sind fehlerhaft");
       return;
     }
     const data = {
+      projectId: projectDetails.projectId,
       projectName: projectKeyData.projectName,
       status: projectKeyData.tenderDate ? "Bewerbung" : "Durchführung",
       jobSite: projectKeyData.jobSite,
-      tenderDate: projectKeyData.tenderDate?.toDate(),
+      tenderDate: projectDetails.tenderDate,
       estimatedProjectStart: projectKeyData.estimatedProjectStart.toDate(),
       estimatedProjectDuration: projectKeyData.estimatedProjectDuration,
       estimatedProjectEuroPerBT: projectKeyData.estimatedProjectEuroPerBT,
@@ -321,10 +342,10 @@ const ProjectTendering = () => {
       estimatedProjectBTmax: projectKeyData.estimatedProjectBTmax,
       estimatedProjectMemberMin: projectKeyData.estimatedProjectMemberMin,
       estimatedProjectMemberMax: projectKeyData.estimatedProjectMemberMax,
-      applicationStart1: null,
+      applicationStart1: projectKeyData.applicationStart1 ? projectKeyData.applicationStart1.toDate() : null,
       applicationEnd1: projectKeyData.applicationEnd1?.toDate(),
-      applicationStart2: null,
-      applicationEnd2: null,
+      applicationStart2: projectKeyData.applicationStart2 ? projectKeyData.applicationStart2.toDate() : null,
+      applicationEnd2: projectKeyData.applicationEnd2 ? projectKeyData.applicationEnd2.toDate() : null,
       situation: projectDescriptionData.situation,
       peculiarities: projectDescriptionData.peculiarities,
       coreCompetencies: projectDescriptionData.coreCompetencies,
@@ -334,9 +355,9 @@ const ProjectTendering = () => {
       acquisitor: customerData.acquisitor,
       acquisitionMethod: customerData.acquisitionMethod,
       newContactPerson: customerData.newContactPerson,
-      contactPerson: customerData.contactPerson || customerData.newContactPersonName,
+      contactPerson: customerData.contactPerson,
       customerType: customerData.newCustomer ? "Neukunde" : "Altkunde",
-      kickoff: null,
+      kickoff: projectKeyData.kickoff ? projectKeyData.kickoff.toDate() : null,
       staffingCommittee: [],
       client: {
         companyId: customerData.companyId,
@@ -354,18 +375,19 @@ const ProjectTendering = () => {
       },
       members: [],
       qms: [],
+      signatureDate: null,
+      euroPerBT: null,
+      soldBT: null,
+      soldExpenses: null,
+      projectEnd: null,
+      invoicing: null,
     };
-    tendering ? tenderProject(data) : saveProject(data);
+    saveProject(data);
   };
 
   // Handle the next step
   const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
+    const newActiveStep = isLastStep() ? 0 : activeStep + 1;
     setActiveStep(newActiveStep);
   };
 
@@ -379,46 +401,6 @@ const ProjectTendering = () => {
     setActiveStep(step);
   };
 
-  // Handle the completion of a step
-  const handleComplete = () => {
-    // If the active step is the project key data step, validate the project key data and return if there are errors
-    if (activeStep === 0) {
-      if (validateProjectKeyData()) {
-        return;
-      }
-    }
-    // If the active step is the customer step, validate the customer data and return if there are errors
-    if (activeStep === 1) {
-      if (validateCustomerData()) {
-        return;
-      }
-    }
-    // If the active step is the project description step, validate the project description data and return if there are errors
-    if (activeStep === 2) {
-      if (validateProjectDescriptionData()) {
-        return;
-      }
-    }
-    // If there are no errors, set the step as completed and go to the next step
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
-
-  // Handle the reset of the steps
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
-
-  // Handle the editing of a step
-  const handleEdit = () => {
-    const newCompleted = { ...completed };
-    delete newCompleted[activeStep];
-    setCompleted(newCompleted);
-  };
-
   // Render the current step
   const renderStep = (step: number) => {
     switch (step) {
@@ -427,9 +409,8 @@ const ProjectTendering = () => {
           <KeyDataStep
             projectKeyData={projectKeyData}
             setProjectKeyData={setProjectKeyData}
-            isCompleted={completed[0]}
+            isEditMode={isEditMode}
             errors={projectKeyDataErrors}
-            isEditMode={true}
           />
         );
       case 1:
@@ -437,9 +418,8 @@ const ProjectTendering = () => {
           <CustomerStep
             customerData={customerData}
             setCustomerData={setCustomerData}
-            isCompleted={completed[1]}
+            isEditMode={isEditMode}
             errors={customerDataErrors}
-            isEditMode={true}
           />
         );
       case 2:
@@ -447,9 +427,8 @@ const ProjectTendering = () => {
           <ProjectDescriptionStep
             projectDescriptionData={projectDescriptionData}
             setProjectDescriptionData={setProjectDescriptionData}
-            isCompleted={completed[2]}
+            isEditMode={isEditMode}
             errors={projectDescriptionDataErrors}
-            isEditMode={true}
           />
         );
       default:
@@ -457,94 +436,98 @@ const ProjectTendering = () => {
           <KeyDataStep
             projectKeyData={projectKeyData}
             setProjectKeyData={setProjectKeyData}
-            isCompleted={completed[0]}
+            isEditMode={isEditMode}
             errors={projectKeyDataErrors}
           />
         );
     }
   };
 
+  // handles the click on the edit button
+  const handleEditProject = () => {
+    setIsEditMode(true);
+  };
+
+  // handles the click on the cancel button
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+  };
+
   return (
     <Container maxWidth="lg">
-      <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
-        Neue Projektausschreibung
-      </Typography>
+      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} sx={{ mb: 1 }}>
+        <Stack direction={"row"} gap={4} alignContent={"center"}>
+          <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
+            Projektdetails
+          </Typography>
+          <ProjectChip status={projectDetails.status} size={"medium"} />
+        </Stack>
+        {hasProjectPermission ? (
+          isMobile ? (
+            <MobileEditButtons
+              isEditMode={isEditMode}
+              handleCancelEdit={handleCancelEdit}
+              handleEditProject={handleEditProject}
+              handleSaveProject={handleSaveProject}
+            />
+          ) : (
+            <EditButtons
+              isEditMode={isEditMode}
+              handleCancelEdit={handleCancelEdit}
+              handleEditProject={handleEditProject}
+              handleSaveProject={handleSaveProject}
+            />
+          )
+        ) : null}
+      </Stack>
       <Paper sx={{ paddingX: 4, paddingY: 2 }}>
         <Stepper nonLinear activeStep={activeStep} sx={{ marginLeft: -1 }}>
           {steps.map((label, index) => (
-            <Step key={label} completed={completed[index]}>
+            <Step key={label}>
               <StepButton color="inherit" onClick={handleStep(index)} sx={{ maxHeight: 2, borderRadius: 5 }}>
                 {label}
               </StepButton>
             </Step>
           ))}
         </Stepper>
-        <div>
-          {allStepsCompleted() ? (
-            <React.Fragment>
-              {projectKeyData.applicationEnd1 ? (
-                <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
-                  Soll das Projekt ausgeschrieben werden?
-                </Typography>
-              ) : (
-                <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}>
-                  Soll das Projekt nachgetragen werden?
-                </Typography>
-              )}
-              <Typography sx={{ mt: 3, mb: 2 }} fontWeight={"bold"} fontSize={18}></Typography>
-              <SummaryDetails
-                projectKeyData={projectKeyData}
-                customerData={customerData}
-                projectDescriptionData={projectDescriptionData}
-              />
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                {projectKeyData.applicationEnd1 ? (
-                  <Button onClick={() => handleSaveProject(true)} variant="outlined">
-                    Ausschreiben
-                  </Button>
-                ) : (
-                  <Button onClick={() => handleSaveProject(false)} variant="outlined">
-                    Nachtragen
-                  </Button>
-                )}
-                <Box sx={{ flex: "1 2 auto" }} />
-                <Button onClick={handleReset} variant="outlined" color="info">
-                  Nochmals Bearbeiten
-                </Button>
-              </Box>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Box sx={{ marginTop: 3 }}>{renderStep(activeStep)}</Box>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2, ml: -1 }}>
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                  variant="outlined"
-                >
-                  Zurück
-                </Button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext} sx={{ mr: 1 }} variant="outlined">
-                  Weiter
-                </Button>
-                {activeStep !== steps.length &&
-                  (completed[activeStep] ? (
-                    <Button onClick={handleEdit} variant="outlined" color="info">
-                      Bearbeiten
-                    </Button>
-                  ) : (
-                    <Button onClick={handleComplete} variant="outlined">
-                      {completedSteps() === totalSteps() - 1 ? "Ausschreiben" : "Abschließen"}
-                    </Button>
-                  ))}
-              </Box>
-            </React.Fragment>
-          )}
-        </div>
+        <React.Fragment>
+          <Box sx={{ marginTop: 3 }}>{renderStep(activeStep)}</Box>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2, ml: -1 }}>
+            <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} variant="outlined">
+              Zurück
+            </Button>
+            <Box sx={{ flex: "1 1 auto" }} />
+            <Button onClick={handleNext} sx={{ mr: 1 }} variant="outlined">
+              Weiter
+            </Button>
+          </Box>
+        </React.Fragment>
       </Paper>
+      {projectDetails.status === "Bewerbung" ? (
+        hasUserApplied ? (
+          <Button variant="contained">Bewerbung zurückziehen</Button>
+        ) : (
+          <Stack direction={"row"} gap={3} alignItems={"center"} sx={{ my: 2 }} justifyContent={"space-between"}>
+            <Typography>Du hast dich noch nicht auf dieses Projekt beworben.</Typography>
+            <Button variant="outlined" color="info">
+              Jetzt bewerben
+            </Button>
+          </Stack>
+        )
+      ) : null}
+      {projectDetails.status === "Bewerbung" ? (
+        hasProjectPermission &&
+        projectDetails.members.length > 0 && <ProjectApplications applicants={projectDetails.members} />
+      ) : (
+        <ProjectData
+          projectMembers={projectDetails.members}
+          qms={projectDetails.qms}
+          euroPerBT={projectDetails.euroPerBT}
+          signatureDate={projectDetails.signatureDate}
+          soldBT={projectDetails.soldBT}
+          soldExpenses={projectDetails.soldExpenses}
+        />
+      )}
     </Container>
   );
 };

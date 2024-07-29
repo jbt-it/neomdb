@@ -2,6 +2,7 @@ import React from "react";
 import { TenderedProjectDto } from "../../../types/projectTypes";
 import { Box, Button, Card, CardActions, CardContent, Divider, Typography } from "@mui/material";
 import ProjectChip from "./ProjectChip";
+import { Link } from "react-router-dom";
 
 /**
  * Component for a tendered project card
@@ -27,9 +28,9 @@ const TenderedProjectCard = ({
         <Box sx={{ mb: 1 }}>
           <ProjectChip status={status} />
         </Box>
-        <Box>
+        <Link to={`/projekte/${projectId}`} style={{ textDecoration: "none", color: "black" }}>
           <Typography fontWeight="bold">{projectName}</Typography>
-        </Box>
+        </Link>
         <Divider sx={{ marginBottom: 2 }} />
         <Typography>{situation}</Typography>
         {applicationEnd1 ? (

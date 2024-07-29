@@ -18,13 +18,14 @@ import {
 } from "@mui/material";
 import NewCustomerDialog from "./NewCustomerDialog";
 import useCompanies from "../../../hooks/useCompanies";
-import useProjects from "../../../hooks/useProjects";
+import useProjects from "../../../hooks/projects/useProjects";
 
 interface CustomerStepProps {
   customerData: CustomerData;
   setCustomerData: React.Dispatch<React.SetStateAction<CustomerData>>;
-  isCompleted: boolean;
+  isCompleted?: boolean;
   errors: { [key: string]: boolean };
+  isEditMode?: boolean;
 }
 
 /**
@@ -33,7 +34,7 @@ interface CustomerStepProps {
  * @param setCustomerData - Function to change the customer data
  * @returns - A form to enter the customer data
  */
-const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: CustomerStepProps) => {
+const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEditMode }: CustomerStepProps) => {
   const allAcquisitionMethods = ["Kunde", "Alumni", "Kurator", "Partner", "PA", "JBTler"];
   const allAcquisitors = ["Pool", "GF Winter (GFW)", "GF Sommer (GFS)"];
   const [isNewCustomerDialogOpen, setIsNewCustomerDialogOpen] = React.useState(false);
@@ -180,165 +181,213 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Altkunde/Neukunde:
           </Typography>
-          <Box sx={{ flex: 2 }}>
-            <FormControl disabled={isCompleted}>
-              <Typography variant={"caption"} color={"error"} sx={{ display: errors.newCustomer ? "block" : "none" }}>
-                Bitte wählen Sie eine Option aus.
-              </Typography>
-              <RadioGroup row value={newCustomer} onChange={onChangeNewCustomer}>
-                <FormControlLabel value={false} control={<Radio />} label="Altkunde" />
-                <FormControlLabel value={true} control={<Radio />} label="Neukunde" />
-              </RadioGroup>
-            </FormControl>
-          </Box>
-          <Button variant="outlined" onClick={handleNewCustomerDialogOpen}>
-            Neuen Kunden erstellen
-          </Button>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{newCustomer ? "Neukunde" : "Altkunde"}</Typography>
+          ) : (
+            <React.Fragment>
+              <Box sx={{ flex: 2 }}>
+                <FormControl disabled={isCompleted}>
+                  <Typography
+                    variant={"caption"}
+                    color={"error"}
+                    sx={{ display: errors.newCustomer ? "block" : "none" }}
+                  >
+                    Bitte wählen Sie eine Option aus.
+                  </Typography>
+                  <RadioGroup row value={newCustomer} onChange={onChangeNewCustomer}>
+                    <FormControlLabel value={false} control={<Radio />} label="Altkunde" />
+                    <FormControlLabel value={true} control={<Radio />} label="Neukunde" />
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+              <Button variant="outlined" onClick={handleNewCustomerDialogOpen}>
+                Neuen Kunden erstellen
+              </Button>
+            </React.Fragment>
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Auftraggeber:
           </Typography>
-          <Autocomplete
-            sx={{ flex: 3 }}
-            size="small"
-            renderInput={(params) => (
-              <TextField
-                variant="outlined"
-                error={errors.customer}
-                helperText={errors.customer ? "Bitte gib einen Auftraggeber an." : ""}
-                {...params}
-              />
-            )}
-            value={allCompanies.find((company) => company.name === name) || null}
-            onChange={onChangeCustomerData}
-            disabled={isCompleted}
-            options={allCompanies}
-            getOptionLabel={(option) => option.name}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{name}</Typography>
+          ) : (
+            <Autocomplete
+              sx={{ flex: 3 }}
+              size="small"
+              renderInput={(params) => (
+                <TextField
+                  variant="outlined"
+                  error={errors.customer}
+                  helperText={errors.customer ? "Bitte gib einen Auftraggeber an." : ""}
+                  {...params}
+                />
+              )}
+              value={allCompanies.find((company) => company.name === name) || null}
+              onChange={onChangeCustomerData}
+              disabled={isCompleted}
+              options={allCompanies}
+              getOptionLabel={(option) => option.name}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Geheim:
           </Typography>
-          <Box sx={{ flex: 3 }}>
-            <Checkbox
-              sx={{ paddingLeft: 0 }}
-              checked={classified}
-              onChange={onChangeClassified}
-              disabled={isCompleted}
-            />
-          </Box>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{classified ? "Ja" : "Nein"}</Typography>
+          ) : (
+            <Box sx={{ flex: 3 }}>
+              <Checkbox
+                sx={{ paddingLeft: 0 }}
+                checked={classified}
+                onChange={onChangeClassified}
+                disabled={isCompleted}
+              />
+            </Box>
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Branche:
           </Typography>
-          <Autocomplete
-            sx={{ flex: 3 }}
-            disabled={isCompleted}
-            renderInput={(params) => (
-              <TextField
-                variant="outlined"
-                error={errors.industry}
-                helperText={errors.industry ? "Bitte wähle eine Branche aus." : ""}
-                {...params}
-              />
-            )}
-            options={allIndustries}
-            getOptionLabel={(option) => option.description}
-            value={allIndustries.find((ind) => ind.industryId === industry?.industryId) || null}
-            onChange={onChangeIndustry}
-            size="small"
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{industry?.description}</Typography>
+          ) : (
+            <Autocomplete
+              sx={{ flex: 3 }}
+              disabled={isCompleted}
+              renderInput={(params) => (
+                <TextField
+                  variant="outlined"
+                  error={errors.industry}
+                  helperText={errors.industry ? "Bitte wähle eine Branche aus." : ""}
+                  {...params}
+                />
+              )}
+              options={allIndustries}
+              getOptionLabel={(option) => option.description}
+              value={allIndustries.find((ind) => ind.industryId === industry?.industryId) || null}
+              onChange={onChangeIndustry}
+              size="small"
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Kurzbeschreibung:
           </Typography>
-          <TextField
-            sx={{ flex: 3 }}
-            variant="outlined"
-            size="small"
-            value={shortDescription}
-            onChange={onChangeShortDescription}
-            disabled={isCompleted}
-            multiline
-            rows={4}
-            helperText={errors.shortDescription ? "Bitte gib eine Kurzbeschreibung an." : ""}
-            error={errors.shortDescription}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{shortDescription}</Typography>
+          ) : (
+            <TextField
+              sx={{ flex: 3 }}
+              variant="outlined"
+              size="small"
+              value={shortDescription}
+              onChange={onChangeShortDescription}
+              disabled={isCompleted}
+              multiline
+              rows={4}
+              helperText={errors.shortDescription ? "Bitte gib eine Kurzbeschreibung an." : ""}
+              error={errors.shortDescription}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Straße:
           </Typography>
-          <TextField
-            sx={{ flex: 3 }}
-            variant="outlined"
-            size="small"
-            value={street}
-            onChange={onChangeStreet}
-            disabled={isCompleted}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{street}</Typography>
+          ) : (
+            <TextField
+              sx={{ flex: 3 }}
+              variant="outlined"
+              size="small"
+              value={street}
+              onChange={onChangeStreet}
+              disabled={isCompleted}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             PLZ:
           </Typography>
-          <TextField
-            sx={{ flex: 3 }}
-            variant="outlined"
-            size="small"
-            value={postalCode}
-            onChange={onChangePostalCode}
-            disabled={isCompleted}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{postalCode}</Typography>
+          ) : (
+            <TextField
+              sx={{ flex: 3 }}
+              variant="outlined"
+              size="small"
+              value={postalCode}
+              onChange={onChangePostalCode}
+              disabled={isCompleted}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Ort:
           </Typography>
-          <TextField
-            sx={{ flex: 3 }}
-            variant="outlined"
-            size="small"
-            value={city}
-            onChange={onChangeCity}
-            disabled={isCompleted}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{city}</Typography>
+          ) : (
+            <TextField
+              sx={{ flex: 3 }}
+              variant="outlined"
+              size="small"
+              value={city}
+              onChange={onChangeCity}
+              disabled={isCompleted}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Website:
           </Typography>
-          <TextField
-            sx={{ flex: 3 }}
-            variant="outlined"
-            size="small"
-            value={url}
-            onChange={onChangeUrl}
-            disabled={isCompleted}
-          />
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{url}</Typography>
+          ) : (
+            <TextField
+              sx={{ flex: 3 }}
+              variant="outlined"
+              size="small"
+              value={url}
+              onChange={onChangeUrl}
+              disabled={isCompleted}
+            />
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Kontakt erwünscht:
           </Typography>
-          <Box sx={{ flex: 3 }}>
-            <Checkbox
-              sx={{ paddingLeft: 0 }}
-              checked={contactDesired}
-              onChange={handleContactDesired}
-              disabled={isCompleted}
-            />
-          </Box>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{contactDesired ? "Ja" : "Nein"}</Typography>
+          ) : (
+            <Box sx={{ flex: 3 }}>
+              <Checkbox
+                sx={{ paddingLeft: 0 }}
+                checked={contactDesired}
+                onChange={handleContactDesired}
+                disabled={isCompleted}
+              />
+            </Box>
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Ansprechpartner:
           </Typography>
-          {newContactPerson ? (
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{contactPerson?.name}</Typography>
+          ) : newContactPerson ? (
             <Stack direction={"row"} sx={{ flex: 3 }} spacing={3}>
               <TextField
                 value={newContactPersonName}
@@ -383,43 +432,51 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors }: Cu
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Akquiseverantwortlicher:
           </Typography>
-          <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitor}>
-            <Select value={acquisitor} onChange={onChangeAcquisitor} size="small">
-              {allAcquisitors.map((acquisitor) => (
-                <MenuItem key={acquisitor} value={acquisitor}>
-                  {acquisitor}
-                </MenuItem>
-              ))}
-            </Select>
-            <Typography
-              variant={"caption"}
-              color={"error"}
-              sx={{ display: errors.acquisitor ? "block" : "none", marginLeft: 2 }}
-            >
-              Bitte wählen Sie eine Option aus.
-            </Typography>
-          </FormControl>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{acquisitor}</Typography>
+          ) : (
+            <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitor}>
+              <Select value={acquisitor} onChange={onChangeAcquisitor} size="small">
+                {allAcquisitors.map((acquisitor) => (
+                  <MenuItem key={acquisitor} value={acquisitor}>
+                    {acquisitor}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Typography
+                variant={"caption"}
+                color={"error"}
+                sx={{ display: errors.acquisitor ? "block" : "none", marginLeft: 2 }}
+              >
+                Bitte wählen Sie eine Option aus.
+              </Typography>
+            </FormControl>
+          )}
         </Stack>
         <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Akquisemethode:
           </Typography>
-          <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitionMethod}>
-            <Select value={acquisitionMethod} onChange={onChangeAquisitionMethod} size="small">
-              {allAcquisitionMethods.map((method) => (
-                <MenuItem key={method} value={method}>
-                  {method}
-                </MenuItem>
-              ))}
-            </Select>
-            <Typography
-              variant={"caption"}
-              color={"error"}
-              sx={{ display: errors.acquisitionMethod ? "block" : "none", marginLeft: 2 }}
-            >
-              Bitte wählen Sie eine Option aus.
-            </Typography>
-          </FormControl>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{acquisitionMethod}</Typography>
+          ) : (
+            <FormControl sx={{ flex: 3 }} disabled={isCompleted} error={errors.acquisitionMethod}>
+              <Select value={acquisitionMethod} onChange={onChangeAquisitionMethod} size="small">
+                {allAcquisitionMethods.map((method) => (
+                  <MenuItem key={method} value={method}>
+                    {method}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Typography
+                variant={"caption"}
+                color={"error"}
+                sx={{ display: errors.acquisitionMethod ? "block" : "none", marginLeft: 2 }}
+              >
+                Bitte wählen Sie eine Option aus.
+              </Typography>
+            </FormControl>
+          )}
         </Stack>
       </Stack>
     </>

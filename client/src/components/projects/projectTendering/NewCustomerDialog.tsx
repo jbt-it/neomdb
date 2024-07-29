@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import useProjects from "../../../hooks/useProjects";
+import useProjects from "../../../hooks/projects/useProjects";
 import { IndustryDto, NewCompanyDto } from "../../../types/projectTypes";
 
 interface NewCustomerDialogProps {
