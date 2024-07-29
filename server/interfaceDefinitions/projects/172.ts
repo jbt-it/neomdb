@@ -7,8 +7,8 @@ export type ExternalProjectExperience = {
 
 // Type for the application details
 export type ApplicationDetails = {
-    projectId: number,
-    projectName: string,
-    memberId: number,
-    type: string,
+  projectId: number;
+  projectName: string;
+  memberId: number;
+  type: string;
 };
