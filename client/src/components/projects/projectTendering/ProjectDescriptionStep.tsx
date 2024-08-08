@@ -78,7 +78,7 @@ const ProjectDescriptionStep = ({
   };
 
   return (
-    <Stack direction={"column"} spacing={1}>
+    <Stack direction={"column"} spacing={isMobile ? 2 : 1}>
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}

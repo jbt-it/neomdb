@@ -18,7 +18,7 @@ import {
 import { ProjectMembersDto } from "../../../types/projectTypes";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import { Cancel, GroupAdd, RestartAlt, Share } from "@mui/icons-material";
+import { Cancel, GroupAdd, RestartAlt, Send } from "@mui/icons-material";
 
 interface ProjectApplicationsProps {
   applicants: ProjectMembersDto[];
@@ -80,44 +80,44 @@ const ProjectApplications = ({
           <Button
             variant="outlined"
             color="info"
-            sx={{ fontWeight: 600 }}
-            startIcon={<Share />}
+            sx={{ fontWeight: 600, minHeight: 40 }}
+            startIcon={<Send />}
             onClick={handleShareApplications}
-            size="small"
+            size={isMobile ? "large" : "small"}
           >
-            Bewerbungen teilen
+            {isMobile ? null : "Bewerbungen teilen"}
           </Button>
           <Button
             variant="outlined"
             color="success"
-            sx={{ fontWeight: 600 }}
+            sx={{ fontWeight: 600, minHeight: 40 }}
             startIcon={<GroupAdd />}
             onClick={handleTeamComposition}
-            size="small"
+            size={isMobile ? "large" : "small"}
           >
-            Teamzusammenstellung
+            {isMobile ? null : "Teamzusammenstellung"}
           </Button>
           {isSecondApplicationPhase ? null : (
             <Button
               variant="outlined"
               color="info"
-              sx={{ fontWeight: 600 }}
+              sx={{ fontWeight: 600, minHeight: 40 }}
               startIcon={<RestartAlt />}
               onClick={handleStartSecondApplicationPhase}
-              size="small"
+              size={isMobile ? "large" : "small"}
             >
-              Zweite Bewerbungsphase
+              {isMobile ? null : "Zweite Bewerbungsphase"}
             </Button>
           )}
           <Button
             variant="outlined"
             color="error"
-            sx={{ fontWeight: 600 }}
+            sx={{ fontWeight: 600, minHeight: 40 }}
             startIcon={<Cancel />}
             onClick={handleCallOffProject}
-            size="small"
+            size={isMobile ? "large" : "small"}
           >
-            Absagen
+            {isMobile ? null : "Absagen"}
           </Button>
         </Stack>
       )}

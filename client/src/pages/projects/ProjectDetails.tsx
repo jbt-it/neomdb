@@ -31,12 +31,12 @@ import ProjectChip from "../../components/projects/projectCard/ProjectChip";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import ChangeStatusButtons from "../../components/projects/projectDetails/ChangeStatusButtons";
 
-// Steps for the project tendering form
+// Steps for the project details form
 const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
 
 /**
- * Component to create a new project tendering
- * @returns - A form to create a new project tendering
+ * Component to display the project details
+ * @returns ProjectDetails component
  */
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -77,7 +77,7 @@ const ProjectDetails = () => {
     estimatedProjectMemberMax: projectDetails.estimatedProjectMemberMax,
     applicationStart1: dayjs(projectDetails.applicationStart1),
     applicationEnd1: dayjs(projectDetails.applicationEnd1),
-    applicationStart2: projectDetails.applicationStart1 ? dayjs(projectDetails.applicationStart1) : null,
+    applicationStart2: projectDetails.applicationStart2 ? dayjs(projectDetails.applicationStart2) : null,
     applicationEnd2: projectDetails.applicationEnd2 ? dayjs(projectDetails.applicationEnd2) : null,
     kickoff: dayjs(projectDetails.kickoff),
   });
@@ -161,7 +161,7 @@ const ProjectDetails = () => {
       estimatedProjectMemberMax: projectDetails.estimatedProjectMemberMax,
       applicationStart1: dayjs(projectDetails.applicationStart1),
       applicationEnd1: dayjs(projectDetails.applicationEnd1),
-      applicationStart2: projectDetails.applicationStart1 ? dayjs(projectDetails.applicationStart1) : null,
+      applicationStart2: projectDetails.applicationStart2 ? dayjs(projectDetails.applicationStart2) : null,
       applicationEnd2: projectDetails.applicationEnd2 ? dayjs(projectDetails.applicationEnd2) : null,
       kickoff: dayjs(projectDetails.kickoff),
     });
@@ -306,12 +306,32 @@ const ProjectDetails = () => {
     } else {
       newErrors.estimatedProjectMemberMax = false;
     }
-    // only check if the applicationEnd is in the future if the date is set, the date can be empty/undefined if the project is not tendered but rather just saved
-    if (projectKeyData.applicationEnd1 ? projectKeyData.applicationEnd1.toDate() < new Date() : false) {
+    // check if the status is "Bewerbung" and if so check if the applicationEnd1 was changed or if the applicationEnd1 is null / undefined
+    if (
+      (projectDetails.status === "Bewerbung" &&
+        projectKeyData.applicationEnd1 &&
+        dayjs(projectDetails.applicationEnd1).diff(projectKeyData.applicationEnd1) !== 0 &&
+        projectKeyData.applicationEnd1 < dayjs()) ||
+      (projectDetails.status === "Bewerbung" && !projectKeyData.applicationEnd1)
+    ) {
       newErrors.applicationEnd1 = true;
       hasErrors = true;
     } else {
       newErrors.applicationEnd1 = false;
+    }
+    // check if the status is "Bewerbung" and if the applicationStart 2 is set and if so check if the applicationEnd2 was changed or if the applicationEnd2 is null / undefined
+    if (
+      (projectDetails.status === "Bewerbung" &&
+        projectDetails.applicationStart2 &&
+        projectKeyData.applicationEnd2 &&
+        dayjs(projectDetails.applicationEnd2).diff(projectKeyData.applicationEnd2) !== 0 &&
+        projectKeyData.applicationEnd2 < dayjs()) ||
+      (projectDetails.status === "Bewerbung" && projectDetails.applicationStart2 && !projectKeyData.applicationEnd2)
+    ) {
+      newErrors.applicationEnd2 = true;
+      hasErrors = true;
+    } else {
+      newErrors.applicationEnd2 = false;
     }
     setProjectKeyDataErrors(newErrors);
     return hasErrors;
@@ -396,8 +416,20 @@ const ProjectDetails = () => {
     return activeStep === totalSteps() - 1;
   };
 
-  // Handle the tendering or saving of the project, depending on the tendering flag, determines if an email is sent to the members and if the projectApplicationEnd has to be set
+  // Handle the saving of the project
   const handleSaveProject = () => {
+    if (validateProjectKeyData()) {
+      alert("Error in project key data");
+      return;
+    }
+    if (validateCustomerData()) {
+      alert("Error in project customer data");
+      return;
+    }
+    if (validateProjectDescriptionData()) {
+      alert("Error in project description data");
+      return;
+    }
     alert("Saving project");
     // All data should be set at this point, but check again to be sure
     if (
@@ -417,7 +449,6 @@ const ProjectDetails = () => {
       projectDescriptionData.coreCompetencies.length === 0 ||
       !customerData.contactPerson ||
       !projectKeyData.estimatedProjectEuroPerBT ||
-      !customerData.newCustomer ||
       !projectKeyData.applicationEnd1
     ) {
       // Show an error message if some data is missing
@@ -479,6 +510,7 @@ const ProjectDetails = () => {
       invoicing: null,
     };
     saveProject(data);
+    setIsEditMode(false);
   };
 
   // Handle the next step
@@ -507,6 +539,8 @@ const ProjectDetails = () => {
             setProjectKeyData={setProjectKeyData}
             isEditMode={isEditMode}
             errors={projectKeyDataErrors}
+            isProjectDeatails
+            projectStatus={projectDetails.status}
           />
         );
       case 1:

@@ -20,6 +20,7 @@ import NewCustomerDialog from "./NewCustomerDialog";
 import useCompanies from "../../../hooks/useCompanies";
 import useProjects from "../../../hooks/projects/useProjects";
 import useResponsive from "../../../hooks/useResponsive";
+import { Close } from "@mui/icons-material";
 
 interface CustomerStepProps {
   customerData: CustomerData;
@@ -178,7 +179,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
         onClose={() => setIsNewCustomerDialogOpen(false)}
         onSave={handleSaveNewCustomer}
       />
-      <Stack direction={"column"} spacing={1}>
+      <Stack direction={"column"} spacing={isMobile ? 2 : 1}>
         <Stack
           direction={isMobile ? "column" : "row"}
           justifyContent={"space-between"}
@@ -242,18 +243,14 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
             />
           )}
         </Stack>
-        <Stack
-          direction={isMobile ? "column" : "row"}
-          justifyContent={"space-between"}
-          alignItems={isMobile ? "start" : "center"}
-        >
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
           <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
             Geheim:
           </Typography>
           {!isEditMode ? (
             <Typography sx={{ flex: 3 }}>{classified ? "Ja" : "Nein"}</Typography>
           ) : (
-            <Box sx={{ flex: 3, width: "100%" }}>
+            <Box sx={{ flex: isMobile ? 1 : 3, width: "100%" }}>
               <Checkbox
                 sx={{ paddingLeft: 0 }}
                 checked={classified}
@@ -446,7 +443,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
                 helperText={errors.contactPerson ? "Bitte gib einen Ansprechpartner an." : ""}
               />
               <Button variant="outlined" onClick={onChangeNewContactPersonCancel} sx={{ flex: 1, maxHeight: 40 }}>
-                Abbrechen
+                {isMobile ? <Close /> : "Abbrechen"}
               </Button>
             </Stack>
           ) : (

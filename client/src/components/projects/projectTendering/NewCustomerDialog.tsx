@@ -14,6 +14,7 @@ import {
 import React from "react";
 import useProjects from "../../../hooks/projects/useProjects";
 import { IndustryDto, NewCompanyDto } from "../../../types/projectTypes";
+import useResponsive from "../../../hooks/useResponsive";
 
 interface NewCustomerDialogProps {
   open: boolean;
@@ -38,6 +39,8 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
 
   const [customerNameError, setCustomerNameError] = React.useState(false);
   const [industryError, setIndustryError] = React.useState(false);
+
+  const isMobile = useResponsive("down", "sm");
 
   // Reset all fields
   const resetStates = () => {
@@ -109,10 +112,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Name</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -125,10 +128,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Branche</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <Autocomplete
                 renderInput={(params) => (
                   <TextField
@@ -147,10 +150,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Kurzbeschreibung</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -163,10 +166,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Straße</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -177,10 +180,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Postleitzahl</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -191,10 +194,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Ort</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -205,10 +208,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Addresszusatz</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -219,10 +222,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Website</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -233,10 +236,10 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
             </Grid>
           </Grid>
           <Grid container item xs={12} alignItems={"center"}>
-            <Grid item xs={4}>
+            <Grid item xs={isMobile ? 12 : 4}>
               <Typography fontWeight={"bold"}>Wichtige Informationen</Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={isMobile ? 12 : 8}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -246,7 +249,7 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
               />
             </Grid>
           </Grid>
-          <Grid container item xs={6} alignItems={"center"}>
+          <Grid container item xs={isMobile ? 12 : 6} alignItems={"center"}>
             <Grid item xs={10}>
               <Typography fontWeight={"bold"}>Geheim</Typography>
             </Grid>
@@ -254,7 +257,7 @@ const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) =>
               <Checkbox checked={confidential} onChange={(event) => setConfidential(event.target.checked)} />
             </Grid>
           </Grid>
-          <Grid container item xs={6} alignItems={"center"}>
+          <Grid container item xs={isMobile ? 12 : 6} alignItems={"center"}>
             <Grid item xs={10}>
               <Typography fontWeight={"bold"}>Kontakt erwünscht</Typography>
             </Grid>

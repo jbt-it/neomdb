@@ -11,6 +11,8 @@ interface KeyDataStepProps {
   isCompleted?: boolean;
   errors: { [key: string]: boolean };
   isEditMode?: boolean;
+  isProjectDeatails?: boolean;
+  projectStatus?: string;
 }
 
 /**
@@ -20,9 +22,19 @@ interface KeyDataStepProps {
  * @param isCompleted - Flag to check if this section is completly filled
  * @param errors - The errors for the input fields
  * @param isEditMode - Flag to check if the form is in edit mode
+ * @param isProjectDeatails - Flag to check if the form is in project details mode
+ * @param projectStatus - The status of the project
  * @returns - The input fields for the key data step
  */
-const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, isEditMode }: KeyDataStepProps) => {
+const KeyDataStep = ({
+  projectKeyData,
+  setProjectKeyData,
+  isCompleted,
+  errors,
+  isEditMode,
+  isProjectDeatails: isProjectDetails,
+  projectStatus,
+}: KeyDataStepProps) => {
   const {
     projectName,
     jobSite,
@@ -35,9 +47,13 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
     estimatedProjectBTmax,
     estimatedProjectMemberMin,
     estimatedProjectMemberMax,
+    applicationStart1,
     applicationEnd1,
+    applicationStart2,
+    applicationEnd2,
   } = projectKeyData;
   const isMobile = useResponsive("down", "sm");
+  const isApplicationPhase = projectStatus === "Bewerbung";
 
   // Function to handle the change of the project name
   const onChangeProjectName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,8 +114,15 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
       : setProjectKeyData({ ...projectKeyData, applicationEnd1: undefined });
   };
 
+  // Function to handle the change of the application deadline 2
+  const onChangeApplicationEnd2 = (date: Dayjs | null) => {
+    date
+      ? setProjectKeyData({ ...projectKeyData, applicationEnd2: date })
+      : setProjectKeyData({ ...projectKeyData, applicationEnd2: undefined });
+  };
+
   return (
-    <Stack direction={"column"} spacing={1}>
+    <Stack direction={"column"} spacing={isMobile ? 2 : 1}>
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}
@@ -391,6 +414,33 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
           />
         )}
       </Stack>
+      {isProjectDetails ? (
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-between"}
+          alignItems={isMobile ? "start" : "center"}
+        >
+          <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
+            Bewerbungsbeginn:
+          </Typography>
+          {!isEditMode ? (
+            <Typography sx={{ flex: 3 }}>{applicationStart1?.format("DD.MM.YYYY HH:mm")}</Typography>
+          ) : (
+            <DateTimePicker
+              sx={{ flex: 3, width: "100%" }}
+              slotProps={{
+                textField: {
+                  variant: "outlined",
+                  size: "small",
+                },
+              }}
+              value={applicationStart1}
+              disabled={isCompleted || isProjectDetails}
+              minDate={dayjs()}
+            />
+          )}
+        </Stack>
+      ) : null}
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}
@@ -414,11 +464,68 @@ const KeyDataStep = ({ projectKeyData, setProjectKeyData, isCompleted, errors, i
             }}
             value={applicationEnd1}
             onChange={onChangeApplicationEnd1}
-            disabled={isCompleted}
+            disabled={isCompleted || !!applicationStart2 || !isApplicationPhase}
             minDate={dayjs()}
           />
         )}
       </Stack>
+      {isProjectDetails && !!applicationStart2 ? (
+        <>
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            justifyContent={"space-between"}
+            alignItems={isMobile ? "start" : "center"}
+          >
+            <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
+              Bewerbungsbeginn 2:
+            </Typography>
+            {!isEditMode ? (
+              <Typography sx={{ flex: 3 }}>{applicationStart2?.format("DD.MM.YYYY HH:mm")}</Typography>
+            ) : (
+              <DateTimePicker
+                sx={{ flex: 3, width: "100%" }}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    size: "small",
+                  },
+                }}
+                value={applicationStart2}
+                disabled
+                minDate={dayjs()}
+              />
+            )}
+          </Stack>
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            justifyContent={"space-between"}
+            alignItems={isMobile ? "start" : "center"}
+          >
+            <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
+              Bewerbungsfrist 2:
+            </Typography>
+            {!isEditMode ? (
+              <Typography sx={{ flex: 3 }}>{applicationEnd2?.format("DD.MM.YYYY HH:mm")}</Typography>
+            ) : (
+              <DateTimePicker
+                sx={{ flex: 3, width: "100%" }}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    size: "small",
+                    helperText: errors.applicationEnd2 ? "Bewerbungsfrist 2 muss in der Zukunft liegen" : "",
+                    error: errors.applicationEnd2,
+                  },
+                }}
+                value={applicationEnd2}
+                onChange={onChangeApplicationEnd2}
+                disabled={!isApplicationPhase}
+                minDate={dayjs()}
+              />
+            )}
+          </Stack>
+        </>
+      ) : null}
     </Stack>
   );
 };
