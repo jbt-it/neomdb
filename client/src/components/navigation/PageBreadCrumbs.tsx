@@ -28,6 +28,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   "passwort-aendern": "Passwort ändern",
   feedbackauswertung: "Feedbackauswertung",
   finanzuebersicht: "Finanzübersicht",
+  jahresbeitrag: "Jahresbeitrag",
 };
 
 /**
