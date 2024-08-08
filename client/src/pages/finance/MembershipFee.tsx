@@ -268,6 +268,16 @@ const MembershipFee: React.FunctionComponent = () => {
     });
   };
 
+  const handleCheckboxAll = () => {
+    setCheckedMembers((prevState) => {
+      const newCheckedState = [...prevState];
+      if (newCheckedState.length > 0) {
+        newCheckedState.length = 0;
+      }
+      return newCheckedState;
+    });
+  };
+
   /**
    * Handles the change event on the search filter input
    * @param event
@@ -602,6 +612,9 @@ const MembershipFee: React.FunctionComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button sx={styles.button} variant="contained" onClick={() => handleCheckboxAll()}>
+        Alle abwählen
+      </Button>
     </div>
   );
 };
