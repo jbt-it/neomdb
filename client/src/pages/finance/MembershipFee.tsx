@@ -270,9 +270,11 @@ const MembershipFee: React.FunctionComponent = () => {
 
   const handleCheckboxAll = () => {
     setCheckedMembers((prevState) => {
-      const newCheckedState = [...prevState];
+      let newCheckedState = [...prevState];
       if (newCheckedState.length > 0) {
         newCheckedState.length = 0;
+      } else {
+        newCheckedState = memberFinanceData.map((member) => member.memberId);
       }
       return newCheckedState;
     });
@@ -569,6 +571,11 @@ const MembershipFee: React.FunctionComponent = () => {
         {additionalFiltersState ? additionalFilters : null}
         <Box sx={styles.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</Box>
       </Paper>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button sx={styles.button} variant="contained" onClick={() => handleCheckboxAll()}>
+          Alle {checkedMembers.length > 0 ? "abwählen" : "auswählen"}
+        </Button>
+      </div>
       <TableContainer component={Paper} sx={styles.tableContainer}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -612,9 +619,6 @@ const MembershipFee: React.FunctionComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button sx={styles.button} variant="contained" onClick={() => handleCheckboxAll()}>
-        Alle abwählen
-      </Button>
     </div>
   );
 };
