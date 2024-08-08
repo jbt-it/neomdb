@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import {
   CoreCompetencyDto,
   IndustryDto,
+  ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,
   TenderedProjectDto,
@@ -11,7 +12,7 @@ import useCompanies from "./useCompanies";
 
 // CURRENTLY JUST A PLACEHOLDER UNTIL REACT QUERY IS IMPLEMENTED
 const useProjects = () => {
-  const { allCompanies } = useCompanies();
+  const { allCompaniesShort } = useCompanies();
 
   const allCoreCompetencies = [
     {
@@ -197,7 +198,7 @@ const useProjects = () => {
       projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
       status: "Abgeschlossen",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[0],
+      client: allCompaniesShort[0],
       coreCompetencies: [allCoreCompetencies[0], allCoreCompetencies[2]] as CoreCompetencyDto[],
       tenderDate: dayjs("2020-06-14"),
       kickoff: dayjs("2020-06-20"),
@@ -212,7 +213,7 @@ const useProjects = () => {
       projectName: "Implementierung und Optimierung von CRM-Systemen im Vertriebsbereich",
       status: "Abrechnung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[1],
+      client: allCompaniesShort[1],
       coreCompetencies: [
         {
           coreCompetencyId: 3,
@@ -236,7 +237,7 @@ const useProjects = () => {
       projectName: "Überprüfung und Neugestaltung der Lieferkettenprozesse in der Lebensmittelindustrie",
       status: "Abgelehnt",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[1],
+      client: allCompaniesShort[1],
       coreCompetencies: [
         {
           coreCompetencyId: 3,
@@ -260,7 +261,7 @@ const useProjects = () => {
       projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
       status: "Pitch verloren",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[2],
+      client: allCompaniesShort[2],
       coreCompetencies: [allCoreCompetencies[4], allCoreCompetencies[5]],
       tenderDate: dayjs("2021-03-11"),
       kickoff: dayjs("2021-03-16"),
@@ -275,7 +276,7 @@ const useProjects = () => {
       projectName: "Konzeption und Umsetzung einer digitalen Marketingkampagne für die ABC AG",
       status: "Nicht besetzt",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[3],
+      client: allCompaniesShort[3],
       coreCompetencies: allCoreCompetencies[2],
       tenderDate: dayjs("2021-06-14"),
       kickoff: null,
@@ -290,7 +291,7 @@ const useProjects = () => {
       projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
       status: "Angebot",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[4],
+      client: allCompaniesShort[4],
       coreCompetencies: [
         {
           coreCompetencyId: 5,
@@ -310,7 +311,7 @@ const useProjects = () => {
       projectName: "Planung und Koordination der Büroerweiterung für Start-up Unternehmen",
       status: "Durchführung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[5],
+      client: allCompaniesShort[5],
       coreCompetencies: allCoreCompetencies[5],
       tenderDate: dayjs("2023-010-10"),
       kickoff: dayjs("2023-10-20"),
@@ -325,7 +326,7 @@ const useProjects = () => {
       projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
       status: "Bewerbung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[6],
+      client: allCompaniesShort[6],
       coreCompetencies: allCoreCompetencies[6],
       tenderDate: dayjs("2024-02-10"),
       kickoff: null,
@@ -336,7 +337,15 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
-  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies };
+  const tenderProject = (newProject: ProjectDetailsDto) => {
+    console.log("Tendering project", newProject);
+  };
+
+  const saveProject = (newProject: ProjectDetailsDto) => {
+    console.log("Saving project", newProject);
+  };
+
+  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies, tenderProject, saveProject };
 };
 
 export default useProjects;
