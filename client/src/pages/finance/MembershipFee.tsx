@@ -24,6 +24,11 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -170,8 +175,11 @@ const MembershipFee: React.FunctionComponent = () => {
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
   const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
+  const [radioState, setRadioState] = useState<boolean>(true);
 
   const { dispatchAuth } = useContext(AuthContext);
+
+  const [openDialog, setOpenDialog] = useState(false);
 
   // Calculate the current year
   const currentYear = new Date().getFullYear();
@@ -184,6 +192,10 @@ const MembershipFee: React.FunctionComponent = () => {
   const year = futureDate.getFullYear();
 
   const formattedDate = `${day}.${month}.${year}`;
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
 
   // Retrieves the members
   const getMemberFinanceData: VoidFunction = useCallback(() => {
@@ -278,6 +290,14 @@ const MembershipFee: React.FunctionComponent = () => {
       }
       return newCheckedState;
     });
+  };
+
+  const handleRadioChange = (state: boolean) => {
+    if (state == true) {
+      setRadioState(false);
+    } else {
+      setRadioState(true);
+    }
   };
 
   /**
@@ -443,7 +463,7 @@ const MembershipFee: React.FunctionComponent = () => {
           </Button>
         </Grid>
         <Grid item>
-          <Button sx={styles.button} variant="contained">
+          <Button sx={styles.button} variant="contained" onClick={() => setOpenDialog(true)}>
             SEPA-XML erstellen
           </Button>
         </Grid>
@@ -532,8 +552,18 @@ const MembershipFee: React.FunctionComponent = () => {
               </Grid>
               <Grid item xs>
                 <RadioGroup row defaultValue="ja">
-                  <FormControlLabel value="ja" control={<Radio />} label="Ja" />
-                  <FormControlLabel value="nein" control={<Radio />} label="Nein" />
+                  <FormControlLabel
+                    value="ja"
+                    control={<Radio />}
+                    label="Ja"
+                    onChange={() => handleRadioChange(true)}
+                  />
+                  <FormControlLabel
+                    value="nein"
+                    control={<Radio />}
+                    label="Nein"
+                    onChange={() => handleRadioChange(false)}
+                  />
                 </RadioGroup>
               </Grid>
             </Grid>
@@ -619,6 +649,24 @@ const MembershipFee: React.FunctionComponent = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={openDialog} onClose={() => handleDialogClose()}>
+        <DialogTitle>Bestätigung</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {radioState
+              ? "WARNUNG: Es werden KEINE E-Mails an die ausgewählten Mitglieder gesendet. Dies muss noch gemacht werden, um das Gesetz einzuhalten"
+              : "WARNUNG: Es werden E-Mails an alle ausgewählten Mitglieder gesendet"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDialogClose()} color="primary">
+            Abbrechen
+          </Button>
+          <Button onClick={() => handleDialogClose()} color="primary">
+            Bestätigen
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
