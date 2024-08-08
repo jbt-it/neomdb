@@ -383,8 +383,8 @@ CREATE TABLE `mitglied_has_event` (
 CREATE TABLE `mitglied_has_eventww` (
   `event_eventID` int NOT NULL,
   `mitglied_mitgliedID` int NOT NULL,
-  `anreise` enum('FrF','FrM','FrA','SaF','SaM','SaA','SaS') DEFAULT NULL,
-  `abreise` enum('FrM','FrA','SaF','SaM','SaA','So') DEFAULT NULL,
+  `anreise` enum('Freitag früh','Freitag Mittag','Freitag Abend','Samstag früh','Samstag Mittag','Samstag Abend','Nacht Samstag auf Sonntag') DEFAULT NULL,
+  `abreise` enum('Freitag Mittag','Freitag Abend','Samstag früh','Samstag Mittag','Samstag Abend','Sonntag') DEFAULT NULL,
   `auto` tinyint(1) DEFAULT NULL,
   `plaetze` int DEFAULT NULL,
   `vegetarier` tinyint(1) DEFAULT NULL,
