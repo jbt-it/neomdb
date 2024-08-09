@@ -10,7 +10,7 @@ interface MobileEditButtonsProps {
 }
 
 /**
- * Component to render the edit buttons
+ * Component to render the edit, saving and cancel buttons for mobile
  * @returns - The edit buttons
  */
 const MobileEditButtons = ({

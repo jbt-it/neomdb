@@ -12,9 +12,14 @@ interface ApplicationPhaseButtonsProps {
 }
 
 /**
- * Component for the application phase buttons
- * @param param0
- * @returns
+ * Component for the change status buttons
+ * @param handleOfferAccepted - Function to handle the offer accepted button click
+ * @param handleOfferRejected - Function to handle the offer rejected button click
+ * @param handlePitchLost - Function to handle the pitch lost button click
+ * @param handleBilling - Function to handle the billing button click
+ * @param handleCallOff - Function to handle the call off button click
+ * @param status - The status of the project
+ * @returns The change status buttons depending on the status
  */
 const ChangeStatusButtons = ({
   handleOfferAccepted,

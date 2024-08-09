@@ -14,6 +14,16 @@ interface ProjectDataProps {
   soldExpenses: number | null;
 }
 
+/**
+ * ProjectData component to display the project members, qms and other data
+ * @param projectMembers - The members of the project
+ * @param qms - The qms of the project
+ * @param signatureDate - The signature date of the project
+ * @param euroPerBT - The euro per BT of the project
+ * @param soldBT - The sold BT of the project
+ * @param soldExpenses - The sold expenses of the project
+ * @returns A Card that displays the memebers, qms and other data of the project
+ */
 const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, soldExpenses }: ProjectDataProps) => {
   const isMobile = useResponsive("down", "sm");
 

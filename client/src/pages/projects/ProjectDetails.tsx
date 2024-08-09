@@ -13,9 +13,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
-import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
-import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
-import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
+import KeyDataStep from "../../components/projects/KeyDataStep";
+import CustomerStep from "../../components/projects/CustomerStep";
+import ProjectDescriptionStep from "../../components/projects/ProjectDescriptionStep";
 import dayjs from "dayjs";
 import { showErrorMessage } from "../../utils/toastUtils";
 import { useParams } from "react-router-dom";

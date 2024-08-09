@@ -12,9 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import useProjects from "../../../hooks/projects/useProjects";
-import { IndustryDto, NewCompanyDto } from "../../../types/projectTypes";
-import useResponsive from "../../../hooks/useResponsive";
+import useProjects from "../../hooks/projects/useProjects";
+import { IndustryDto, NewCompanyDto } from "../../types/projectTypes";
+import useResponsive from "../../hooks/useResponsive";
 
 interface NewCustomerDialogProps {
   open: boolean;
@@ -22,6 +22,13 @@ interface NewCustomerDialogProps {
   onSave: (newCustomer: NewCompanyDto) => void;
 }
 
+/**
+ * The NewCustomerDialog component displays a dialog to create a new customer
+ * @param open - boolean to open the dialog
+ * @param onClose - function to close the dialog
+ * @param onSave - function to save the new customer
+ * @returns the dialog to create a new customer
+ */
 const NewCustomerDialog = ({ open, onClose, onSave }: NewCustomerDialogProps) => {
   const { allIndustries } = useProjects();
 

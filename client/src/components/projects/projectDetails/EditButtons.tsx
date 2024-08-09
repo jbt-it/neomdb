@@ -10,7 +10,7 @@ interface EditButtonsProps {
 }
 
 /**
- * Component to render the edit buttons
+ * Component to render the edit, saving and cancel buttons
  * @returns - The edit buttons
  */
 const EditButtons = ({ isEditMode, handleEditProject, handleCancelEdit, handleSaveProject }: EditButtonsProps) => {

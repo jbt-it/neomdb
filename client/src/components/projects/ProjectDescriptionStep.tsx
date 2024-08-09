@@ -1,8 +1,8 @@
 import React from "react";
-import { ProjectDescriptionData } from "../../../types/projectTypes";
+import { ProjectDescriptionData } from "../../types/projectTypes";
 import { Checkbox, FormControl, FormControlLabel, FormGroup, Stack, TextField, Typography } from "@mui/material";
-import useProjects from "../../../hooks/projects/useProjects";
-import useResponsive from "../../../hooks/useResponsive";
+import useProjects from "../../hooks/projects/useProjects";
+import useResponsive from "../../hooks/useResponsive";
 
 interface ProjectDescriptionStepProps {
   projectDescriptionData: ProjectDescriptionData;

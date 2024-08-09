@@ -1,9 +1,9 @@
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
-import { ProjectKeyData } from "../../../types/projectTypes";
+import { ProjectKeyData } from "../../types/projectTypes";
 import { Stack, TextField, Typography } from "@mui/material";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
-import useResponsive from "../../../hooks/useResponsive";
+import useResponsive from "../../hooks/useResponsive";
 
 interface KeyDataStepProps {
   projectKeyData: ProjectKeyData;

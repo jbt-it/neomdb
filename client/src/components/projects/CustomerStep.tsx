@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from "react";
-import { CompanyDto, ContactPersonDto, CustomerData, IndustryDto, NewCompanyDto } from "../../../types/projectTypes";
+import { CompanyDto, ContactPersonDto, CustomerData, IndustryDto, NewCompanyDto } from "../../types/projectTypes";
 import {
   Autocomplete,
   Box,
@@ -17,9 +17,9 @@ import {
   Typography,
 } from "@mui/material";
 import NewCustomerDialog from "./NewCustomerDialog";
-import useCompanies from "../../../hooks/useCompanies";
-import useProjects from "../../../hooks/projects/useProjects";
-import useResponsive from "../../../hooks/useResponsive";
+import useCompanies from "../../hooks/useCompanies";
+import useProjects from "../../hooks/projects/useProjects";
+import useResponsive from "../../hooks/useResponsive";
 import { Close } from "@mui/icons-material";
 
 interface CustomerStepProps {
@@ -31,7 +31,7 @@ interface CustomerStepProps {
 }
 
 /**
- * Component to display the customer step of the project tendering form
+ * Component to display the customer step of the project tendering form or for the project details page
  * @param customerData - The customer data
  * @param setCustomerData - Function to change the customer data
  * @returns - A form to enter the customer data

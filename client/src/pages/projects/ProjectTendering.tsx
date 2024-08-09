@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
-import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
-import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
-import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
-import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
+import KeyDataStep from "../../components/projects/KeyDataStep";
+import CustomerStep from "../../components/projects/CustomerStep";
+import ProjectDescriptionStep from "../../components/projects/ProjectDescriptionStep";
+import SummaryDetails from "../../components/projects/SummaryDetails";
 import dayjs from "dayjs";
 import useProjects from "../../hooks/projects/useProjects";
 import { showErrorMessage } from "../../utils/toastUtils";
