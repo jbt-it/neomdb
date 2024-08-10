@@ -175,7 +175,7 @@ const MembershipFee: React.FunctionComponent = () => {
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
   const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
-  const [radioState, setRadioState] = useState<boolean>(true);
+  const [radioState, setRadioState] = useState<boolean>(false);
 
   const { dispatchAuth } = useContext(AuthContext);
 
