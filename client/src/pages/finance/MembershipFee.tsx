@@ -1,5 +1,5 @@
 /**
- * The FinanceOverview-Component displays all members in a table and displays options for filtering and sorting the members
+ * The MembershipFee-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -20,13 +20,17 @@ import {
   Box,
   styled,
   Button,
+  Checkbox,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { UnfoldMore, ExpandLess, ExpandMore, Edit, Save } from "@mui/icons-material";
+import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { useContext } from "react";
 import * as membersTypes from "../../types/membersTypes";
@@ -47,11 +51,11 @@ const StyledForm = styled("form")(({ theme }) => ({
 /**
  * Depicts a table with all members and a filter section to filter the members
  */
-const FinanceOverview: React.FunctionComponent = () => {
+const MembershipFee: React.FunctionComponent = () => {
   const theme = useTheme();
 
   /**
-   * Function which proivdes the styles of the FinanceOverview
+   * Function which proivdes the styles of the MembershipFee
    */
   const styles = {
     amountOfEntries: {
@@ -168,52 +172,34 @@ const FinanceOverview: React.FunctionComponent = () => {
   const [memberFinanceData, setMemberFinanceData] = useState<membersTypes.MemberFinanceDataType[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [accountFilter, setAccountFilter] = useState<string>("allMembers");
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
+  const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
+  const [radioState, setRadioState] = useState<boolean>(false);
 
   const { dispatchAuth } = useContext(AuthContext);
 
-  const [editState, setEditState] = useState<{ [key: number]: boolean }>({});
-  const [editData, setEditData] = useState<{ [key: number]: { accountHolder: string; iban: string; bic: string } }>({});
   const [openDialog, setOpenDialog] = useState(false);
-  const [currentEditId, setCurrentEditId] = useState<number | null>(null);
 
-  const handleEditClick = (memberId: number, memberData: membersTypes.MemberFinanceDataType) => {
-    setEditState({ ...editState, [memberId]: true });
-    setEditData({
-      ...editData,
-      [memberId]: { accountHolder: memberData.accountHolder, iban: memberData.iban, bic: memberData.bic },
-    });
-  };
+  // Calculate the current year
+  const currentYear = new Date().getFullYear();
 
-  const handleInputChange = (memberId: number, field: string, value: string) => {
-    setEditData({ ...editData, [memberId]: { ...editData[memberId], [field]: value } });
-  };
+  // Calculate the date 19 days from now
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 19);
+  const day = String(futureDate.getDate()).padStart(2, "0"); // Add leading zero if necessary
+  const month = String(futureDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const year = futureDate.getFullYear();
 
-  const handleSaveClick = (memberId: number) => {
-    setCurrentEditId(memberId);
-    setOpenDialog(true);
-  };
+  const formattedDate = `${day}.${month}.${year}`;
 
-  const handleDialogClose = (confirm: boolean) => {
-    if (confirm && currentEditId !== null) {
-      const updatedMembers = memberFinanceData.map((member) => {
-        if (member.memberId === currentEditId) {
-          return { ...member, ...editData[currentEditId] };
-        }
-        return member;
-      });
-      setMemberFinanceData(updatedMembers);
-    }
-    setEditState({ ...editState, [currentEditId!]: false });
+  const handleDialogClose = () => {
     setOpenDialog(false);
-    setCurrentEditId(null);
   };
 
   // Retrieves the members
   const getMemberFinanceData: VoidFunction = useCallback(() => {
-    setMemberFinanceData([
+    const data = [
       {
         memberId: 1,
         lastName: "Smith",
@@ -274,10 +260,50 @@ const FinanceOverview: React.FunctionComponent = () => {
         bic: "",
         lastchange: "2024-06-01T08:50:00Z",
       },
-    ]);
+    ];
+    setMemberFinanceData(data);
+    setCheckedMembers(data.map((member) => member.memberId));
   }, [dispatchAuth]);
 
   useEffect(() => getMemberFinanceData(), [getMemberFinanceData]);
+
+  /**
+   * Handles the checkbox checking
+   */
+  const handleCheckboxChange = (memberId: number) => {
+    setCheckedMembers((prevState) => {
+      const newCheckedState = [...prevState];
+      if (newCheckedState.includes(memberId)) {
+        const index = newCheckedState.indexOf(memberId);
+        newCheckedState.splice(index, 1);
+      } else {
+        newCheckedState.push(memberId);
+      }
+      return newCheckedState;
+    });
+  };
+
+  /**
+   * Handles the button to set all checkboxes
+   */
+  const handleCheckboxAll = () => {
+    setCheckedMembers((prevState) => {
+      let newCheckedState = [...prevState];
+      if (newCheckedState.length > 0) {
+        newCheckedState.length = 0;
+      } else {
+        newCheckedState = memberFinanceData.map((member) => member.memberId);
+      }
+      return newCheckedState;
+    });
+  };
+
+  /**
+   * Handles the changes of the radio buttons
+   */
+  const handleRadioChange: VoidFunction = () => {
+    setRadioState(!radioState);
+  };
 
   /**
    * Handles the change event on the search filter input
@@ -293,14 +319,6 @@ const FinanceOverview: React.FunctionComponent = () => {
    */
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setStatusFilter(event.target.value);
-  };
-
-  /**
-   * Handles the change event on the account filter input
-   * @param event
-   */
-  const handleAccountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setAccountFilter(event.target.value);
   };
 
   /**
@@ -322,20 +340,6 @@ const FinanceOverview: React.FunctionComponent = () => {
       filteredMembers = filteredMembers.filter((member) => {
         return member.memberStatus.toString() === statusFilter;
       });
-    }
-
-    // Filters by account
-    if (accountFilter !== "allMembers") {
-      if (accountFilter === "hasAccount") {
-        filteredMembers = filteredMembers.filter((member) => {
-          return member.iban.toString() !== "" && member.bic.toString() !== "";
-        });
-      }
-      if (accountFilter === "noAccount") {
-        filteredMembers = filteredMembers.filter((member) => {
-          return member.iban.toString() === "" || member.bic.toString() === "";
-        });
-      }
     }
 
     // Filters by search input
@@ -457,21 +461,113 @@ const FinanceOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <Grid container spacing={3}>
+      <Grid container spacing={4} sx={{ paddingBottom: "20px" }}>
         <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/jahresbeitrag/`}>
-            Jahresbeitrag
+          <Button sx={styles.button} variant="contained" component={Link} to={`/finanzuebersicht/`}>
+            Zurück
           </Button>
         </Grid>
         <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/wwbeitrag/`}>
-            WW-Beitrag
+          <Button sx={styles.button} variant="contained" onClick={() => setOpenDialog(true)}>
+            SEPA-XML erstellen
           </Button>
         </Grid>
-        <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/sonstigereinzug/`}>
-            Sonstiger Einzug
-          </Button>
+      </Grid>
+      <Grid container spacing={1} sx={{ paddingBottom: "10px" }}>
+        <Grid item xs={12}>
+          <Typography variant="body1" sx={{ paddingRight: "200px" }}>
+            <strong>Wichtige Information:</strong> Um einen Beitrag per SEPA-Lastschrift einzuziehen, müssen die
+            betroffenen Mitglieder 2 Wochen vorab informiert werden. Dazu wird beim Generieren der SEPA-XML-Datei eine{" "}
+            <strong>E-Mail verschickt</strong>, die jeden JBT-ler informiert, der etwas bezahlen muss. In der E-Mail
+            enthalten sind der zu zahlende Betrag, die IBAN, von der abgebucht wird (zur Kontrolle), sowie ein Hinweis
+            darauf, dass innerhalb von 14 Tagen <strong>widersprochen</strong> werden kann. Deswegen muss mit dem
+            weiteren Verwenden der XML-Datei 14 Tage <strong>gewartet</strong> werden! Erst dann kann die Lastschrift
+            veranlasst werden (z.B. in StarMoney), wobei darauf geachtet werden muss, dass die Bank weitere 2 Tage vor
+            der eigentlichen Durchführung der Lastschrift die Datei bekommen muss. Dementsprechend weit in der Zukunft
+            (14+2 Tage plus Puffer plus Wochenende) sollte das Ausführungsdatum liegen.
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">Verwendungszweck:</Typography>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  defaultValue={`JBT-Jahresbeitrag ${currentYear}`}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "36px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8px 14px",
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">ID der Abbuchung:</Typography>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  defaultValue={`JBT-JB-${currentYear}`}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "36px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8px 14px",
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">Ausführungsdatum:</Typography>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  defaultValue={formattedDate}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "36px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8px 14px",
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">Mails versenden:</Typography>
+              </Grid>
+              <Grid item xs>
+                <RadioGroup row defaultValue="ja">
+                  <FormControlLabel value="ja" control={<Radio />} label="Ja" onChange={() => handleRadioChange()} />
+                  <FormControlLabel
+                    value="nein"
+                    control={<Radio />}
+                    label="Nein"
+                    onChange={() => handleRadioChange()}
+                  />
+                </RadioGroup>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Paper sx={styles.filterContainer}>
@@ -497,20 +593,6 @@ const FinanceOverview: React.FunctionComponent = () => {
                 <MenuItem value={"Alumnus"}>Alumnus</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={6} sm={3} sx={styles.accountFilterMain}>
-              <TextField
-                label="Kontodaten"
-                sx={styles.filterElement}
-                color="primary"
-                onChange={handleAccountChange}
-                value={accountFilter}
-                select
-              >
-                <MenuItem value={"allMembers"}>alle Mitglieder</MenuItem>
-                <MenuItem value={"noAccount"}>fehlende Kontodaten</MenuItem>
-                <MenuItem value={"hasAccount"}>vorhandene Kontodaten</MenuItem>
-              </TextField>
-            </Grid>
           </Grid>
           <IconButton aria-label="more filter options" sx={styles.filterBtn} onClick={toggleFilters} size="large">
             {additionalFiltersState ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
@@ -519,6 +601,11 @@ const FinanceOverview: React.FunctionComponent = () => {
         {additionalFiltersState ? additionalFilters : null}
         <Box sx={styles.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</Box>
       </Paper>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button sx={styles.button} variant="contained" onClick={() => handleCheckboxAll()}>
+          Alle {checkedMembers.length > 0 ? "abwählen" : "auswählen"}
+        </Button>
+      </div>
       <TableContainer component={Paper} sx={styles.tableContainer}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -532,10 +619,7 @@ const FinanceOverview: React.FunctionComponent = () => {
                 </Box>
               </TableCell>
               <TableCell sx={styles.tableHeadCell}>Status</TableCell>
-              <TableCell sx={styles.tableHeadCell}>Inhaber</TableCell>
-              <TableCell sx={styles.tableHeadCell}>IBAN</TableCell>
-              <TableCell sx={styles.tableHeadCell}>BIC</TableCell>
-              <TableCell sx={styles.tableHeadCell}></TableCell>
+              <TableCell sx={styles.tableHeadCell}>Jahresbeitrag (30,00€) einziehen</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -550,62 +634,36 @@ const FinanceOverview: React.FunctionComponent = () => {
                 </TableCell>
                 <TableCell>{member.memberStatus}</TableCell>
                 <TableCell>
-                  {editState[member.memberId] ? (
-                    <TextField
-                      value={editData[member.memberId].accountHolder}
-                      onChange={(e) => handleInputChange(member.memberId, "accountHolder", e.target.value)}
-                    />
-                  ) : (
-                    member.accountHolder
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editState[member.memberId] ? (
-                    <TextField
-                      value={editData[member.memberId].iban}
-                      onChange={(e) => handleInputChange(member.memberId, "iban", e.target.value)}
-                    />
-                  ) : (
-                    member.iban
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editState[member.memberId] ? (
-                    <TextField
-                      value={editData[member.memberId].bic}
-                      onChange={(e) => handleInputChange(member.memberId, "bic", e.target.value)}
-                    />
-                  ) : (
-                    member.bic
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editState[member.memberId] ? (
-                    <IconButton onClick={() => handleSaveClick(member.memberId)}>
-                      <Save />
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handleEditClick(member.memberId, member)}>
-                      <Edit />
-                    </IconButton>
-                  )}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checkedMembers.includes(member.memberId)}
+                        onChange={() => handleCheckboxChange(member.memberId)}
+                      />
+                    }
+                    label=""
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
+      <Dialog open={openDialog} onClose={() => handleDialogClose()}>
         <DialogTitle>Bestätigung</DialogTitle>
         <DialogContent>
-          <DialogContentText>Änderungen speichern?</DialogContentText>
+          <DialogContentText>
+            {radioState
+              ? "WARNUNG: Es werden KEINE E-Mails an die ausgewählten Mitglieder gesendet. Dies muss noch gemacht werden, um das Gesetz einzuhalten"
+              : "WARNUNG: Es werden E-Mails an alle ausgewählten Mitglieder gesendet"}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleDialogClose(false)} color="primary">
-            Nein
+          <Button onClick={() => handleDialogClose()} color="primary">
+            Abbrechen
           </Button>
-          <Button onClick={() => handleDialogClose(true)} color="primary">
-            Ja
+          <Button onClick={() => handleDialogClose()} color="primary">
+            Bestätigen
           </Button>
         </DialogActions>
       </Dialog>
@@ -613,4 +671,4 @@ const FinanceOverview: React.FunctionComponent = () => {
   );
 };
 
-export default FinanceOverview;
+export default MembershipFee;
