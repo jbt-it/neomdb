@@ -267,6 +267,9 @@ const MembershipFee: React.FunctionComponent = () => {
 
   useEffect(() => getMemberFinanceData(), [getMemberFinanceData]);
 
+  /**
+   * Handles the checkbox checking
+   */
   const handleCheckboxChange = (memberId: number) => {
     setCheckedMembers((prevState) => {
       const newCheckedState = [...prevState];
@@ -280,6 +283,9 @@ const MembershipFee: React.FunctionComponent = () => {
     });
   };
 
+  /**
+   * Handles the button to set all checkboxes
+   */
   const handleCheckboxAll = () => {
     setCheckedMembers((prevState) => {
       let newCheckedState = [...prevState];
@@ -292,12 +298,11 @@ const MembershipFee: React.FunctionComponent = () => {
     });
   };
 
-  const handleRadioChange = (state: boolean) => {
-    if (state == true) {
-      setRadioState(false);
-    } else {
-      setRadioState(true);
-    }
+  /**
+   * Handles the changes of the radio buttons
+   */
+  const handleRadioChange: VoidFunction = () => {
+    setRadioState(!radioState);
   };
 
   /**
@@ -552,17 +557,12 @@ const MembershipFee: React.FunctionComponent = () => {
               </Grid>
               <Grid item xs>
                 <RadioGroup row defaultValue="ja">
-                  <FormControlLabel
-                    value="ja"
-                    control={<Radio />}
-                    label="Ja"
-                    onChange={() => handleRadioChange(true)}
-                  />
+                  <FormControlLabel value="ja" control={<Radio />} label="Ja" onChange={() => handleRadioChange()} />
                   <FormControlLabel
                     value="nein"
                     control={<Radio />}
                     label="Nein"
-                    onChange={() => handleRadioChange(false)}
+                    onChange={() => handleRadioChange()}
                   />
                 </RadioGroup>
               </Grid>
