@@ -42,6 +42,7 @@ import ProjectOverview from "./pages/projects/ProjectOverview";
 
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
+import MembershipFee from "./pages/finance/MembershipFee";
 
 // other pages
 import Login from "./pages/Login";
@@ -51,6 +52,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
+import ProjectTendering from "./pages/projects/ProjectTendering";
 
 /**
  * This component is responsible for rendering the app.
@@ -82,21 +84,35 @@ const App: React.FunctionComponent = () => {
             <Route path="internes-projekt/:id" element={<InternalProject />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
-            <Route path="projekte" element={<ProjectOverview />} />
-            <Route path="veranstaltungen" element={<EventsOverview />} />
-            <Route path="veranstaltungen/:id" element={<EventDetails />} />
-            <Route path="workshops" element={<WorkshopsOverview />} />
-            <Route path="workshops/:id" element={<WorkshopDetails />} />
-            <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
-            <Route path="workshops/:workshopID/:workshopInstanceID/feedback/" element={<WorkshopInstanceFeedback />} />
-            <Route
-              path="workshops/:workshopID/:workshopInstanceID/feedbackauswertung"
-              element={
-                <ProtectedRoutes permissionIDs={[4]}>
-                  <WorkshopInstanceEvaluation />
-                </ProtectedRoutes>
-              }
-            />
+            <Route path="projekte">
+              <Route index element={<ProjectOverview />} />
+              <Route
+                path="projektausschreibung"
+                element={
+                  <ProtectedRoutes permissionIDs={[19]}>
+                    <ProjectTendering />
+                  </ProtectedRoutes>
+                }
+              />
+            </Route>
+            <Route path="veranstaltungen">
+              <Route index element={<EventsOverview />} />
+              <Route path=":id" element={<EventDetails />} />
+            </Route>
+            <Route path="workshops">
+              <Route index element={<WorkshopsOverview />} />
+              <Route path=":id" element={<WorkshopDetails />} />
+              <Route path=":id/:id" element={<WorkshopInstanceDetails />} />
+              <Route path=":workshopID/:workshopInstanceID/feedback" element={<WorkshopInstanceFeedback />} />
+              <Route
+                path=":workshopID/:workshopInstanceID/feedbackauswertung"
+                element={
+                  <ProtectedRoutes permissionIDs={[4]}>
+                    <WorkshopInstanceEvaluation />
+                  </ProtectedRoutes>
+                }
+              />
+            </Route>
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
@@ -120,6 +136,14 @@ const App: React.FunctionComponent = () => {
               element={
                 <ProtectedRoutes permissionIDs={[6]}>
                   <FinanceOverview />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="jahresbeitrag"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <MembershipFee />
                 </ProtectedRoutes>
               }
             />
