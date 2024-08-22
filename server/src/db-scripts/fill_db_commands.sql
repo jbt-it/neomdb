@@ -2573,16 +2573,16 @@ INSERT INTO `schulungsfeedback_has_mitglied` (`schulungsfeedback_schulungsfeedba
 -- Daten für Tabelle `schulungsinstanz`
 --
 
-INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
-(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
-(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
-(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
-(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
-(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
-(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
-(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS11', 30, NULL, NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
-(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
-(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
+INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `name`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `beschreibung`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
+(6802, 8301, 'Abgeschlossen', 'Präsentationstechnik', '2012-11-11', '09:15:00', '14:30:00', 'Working Weekend', 25, 'Sehr sehr wichtig, PowerPoint ist mein Leben!', NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
+(6805, 8325, 'Abgeschlossen', 'Angebots- Workshop für Mitglieder', '2012-11-10', '09:30:00', '17:30:00', 'Working Weekend', 25, 'Naja, die Nachzügler die mal wieder verschlafen haben. Na gut wollen wir mal nicht so sein.',NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
+(6806, 8302, 'Abgeschlossen', 'Akquise & Verhandlungstechnik', '2012-11-09', '09:30:00', '18:00:00', 'Working Weekend', 25, 'Der GF muss Umsatz generieren, wie ein schlauer Hügel bereits sagte:"Ohne Moos nichts los." ', NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
+(6809, 8305, 'Abgeschlossen', 'Netzwerke', '2012-11-09', '20:00:00', '20:20:00', 'Working Weekend', 25, 'Ich verstehe unter Netzwerke nur IP, TCP, UDP und das alte OSI-Modell.',NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
+(6826, 8301, 'Abgeschlossen', 'Präsentationstechnik', '2013-05-06', '08:30:00', '15:00:00', 'Working Weekend', 25, 'Es ist jetzt möglich die KI Folien generieren zu lassen. Etwas sus...', NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
+(6828, 8300, 'Abgeschlossen', 'Projektmanagement', '2013-05-04', '09:00:00', '18:30:00', 'Working Weekend', 25, 'Braucht sowieso keiner, viel wichtiger ist es wie man Rekursionsgleichungen, welche log beinhalten, lösen kann. In computer science, the Akra–Bazzi method, or Akra–Bazzi theorem, is used to analyze the asymptotic behavior of the mathematical recurrences that appear in the analysis of divide and conquer algorithms where the sub-problems have substantially different sizes. It is a generalization of the master theorem for divide-and-conquer recurrences, which assumes that the sub-problems have equal size.', NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
+(6837, 8326, 'Abgeschlossen', 'Prozessmanagement', '2013-06-14', '19:00:00', '22:00:00', 'Uni Hohenheim, HS11', 30, 'Einfach den Prozess mit Taskmanager beenden.', NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
+(6850, 8325, 'Abgeschlossen', 'Angebots- Workshop für Mitglieder', '2013-11-16', '10:00:00', '17:00:00', 'WW', 35, 'GF macht zu wenig Umsatz', NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
+(6862, 8302, 'Abgeschlossen', 'Akquise & Verhandlungstechnik', '2014-05-02', '12:00:00', '19:00:00', 'WW', 20, 'Das macht mehr Sinn: Der Hauptsatz der Laufzeitfunktionen – oder oft auch aus dem Englischen als Master-Theorem entlehnt – ist ein Spezialfall des Akra-Bazzi-Theorems und bietet eine schnelle Lösung für die Frage, in welcher Laufzeitklasse eine gegebene rekursiv definierte Funktion liegt. Mit dem Master-Theorem kann allerdings nicht jede rekursiv definierte Funktion gelöst werden. Lässt sich keiner der drei möglichen Fälle des Master-Theorems auf die Funktion T anwenden, so muss man die Komplexitätsklasse der Funktion anderweitig berechnen.',NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
 
 
 --

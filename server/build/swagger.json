@@ -2866,6 +2866,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"name": {
+						"type": "string"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
@@ -2883,10 +2886,12 @@
 					},
 					"startTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"endTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"location": {
@@ -2898,7 +2903,7 @@
 						"format": "double",
 						"nullable": true
 					},
-					"speakers": {
+					"description": {
 						"type": "string",
 						"nullable": true
 					},
@@ -2935,13 +2940,14 @@
 				"required": [
 					"workshopInstanceId",
 					"workshopId",
+					"name",
 					"status",
 					"date",
 					"startTime",
 					"endTime",
 					"location",
 					"maximumParticipants",
-					"speakers",
+					"description",
 					"targetGroup",
 					"registrationFrom",
 					"registrationUntil",

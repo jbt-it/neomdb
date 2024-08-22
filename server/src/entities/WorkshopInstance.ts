@@ -13,6 +13,9 @@ export class WorkshopInstance {
   @Column("int", { name: "schulung_schulungID" })
   workshopId: number;
 
+  @Column("varchar", { name: "name", nullable: false, length: 150 })
+  name: string;
+
   // TODO: Implement enum
   @Column("enum", {
     name: "status",
@@ -24,13 +27,11 @@ export class WorkshopInstance {
   @Column("date", { name: "datum", nullable: true })
   date: Date | null;
 
-  // TODO: Date?
-  @Column("varchar", { name: "startzeit", nullable: true, length: 10 })
-  startTime: string | null;
+  @Column("time", { name: "startzeit", nullable: true })
+  startTime: Date | null;
 
-  // TODO: Date?
-  @Column("varchar", { name: "endzeit", nullable: true, length: 10 })
-  endTime: string | null;
+  @Column("time", { name: "endzeit", nullable: true })
+  endTime: Date | null;
 
   @Column("varchar", { name: "ort", nullable: true, length: 45 })
   location: string | null;
@@ -38,8 +39,8 @@ export class WorkshopInstance {
   @Column("int", { name: "maximaleTeilnehmer", nullable: true })
   maximumParticipants: number | null;
 
-  @Column("text", { name: "referenten", nullable: true })
-  speakers: string | null;
+  @Column("text", { name: "beschreibung", nullable: true })
+  description: string | null;
 
   @Column("text", { name: "zielgruppe", nullable: true })
   targetGroup: string | null;

@@ -725,13 +725,14 @@ CREATE TABLE `schulungsfeedback_noten` (
 CREATE TABLE `schulungsinstanz` (
   `schulungsinstanzID` int NOT NULL,
   `schulung_schulungID` int NOT NULL,
+  `name` varchar(150) NOT NULL,
   `status` enum('Anmeldung','Anmeldung abgeschlossen','Feedback','Abgeschlossen') DEFAULT NULL,
   `datum` date DEFAULT NULL,
-  `startzeit` varchar(10) DEFAULT NULL,
-  `endzeit` varchar(10) DEFAULT NULL,
+  `startzeit` time DEFAULT NULL,
+  `endzeit` time DEFAULT NULL,
   `ort` varchar(45) DEFAULT NULL,
   `maximaleTeilnehmer` int DEFAULT NULL,
-  `referenten` text,
+  `beschreibung` text,
   `zielgruppe` text,
   `anmeldungVon` datetime DEFAULT NULL,
   `anmeldungBis` datetime DEFAULT NULL
