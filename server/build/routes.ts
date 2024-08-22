@@ -147,6 +147,7 @@ const models: TsoaRoute.Models = {
             "languages": {"dataType":"array","array":{"dataType":"refObject","ref":"Language"},"required":true},
             "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
             "internalProject": {"ref":"InternalProject","required":true},
+            "referencedWorkshops": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopInstanceHasReferent"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -736,6 +737,7 @@ const models: TsoaRoute.Models = {
             "memberHasWorkshopInstances": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasWorkshopInstance"},"required":true},
             "workshopFeedbacks": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedback"},"required":true},
             "workshop": {"ref":"Workshop","required":true},
+            "referents": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopInstanceHasReferent"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -799,6 +801,17 @@ const models: TsoaRoute.Models = {
             "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Pflichtworkshop"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Externer Workshop"]},{"dataType":"enum","enums":[null]}],"required":true},
             "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "workshopInstances": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopInstance"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WorkshopInstanceHasReferent": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopInstanceId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "workshopInstance": {"ref":"WorkshopInstance","required":true},
+            "member": {"ref":"Member","required":true},
         },
         "additionalProperties": false,
     },

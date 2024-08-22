@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGenerat
 import { MemberHasWorkshopInstance } from "./MemberHasWorkshopInstance";
 import { WorkshopFeedback } from "./WorkshopFeedback";
 import { Workshop } from "./Workshop";
+import { WorkshopInstanceHasReferent } from "./WorkshopInstanceHasReferent";
 
 @Index("schulungsinstanzID_UNIQUE", ["workshopInstanceId"], { unique: true })
 @Index("fk_Schulunginstanz_Schulungen1", ["workshopInstanceId"], {})
@@ -63,4 +64,7 @@ export class WorkshopInstance {
   })
   @JoinColumn([{ name: "schulung_schulungID", referencedColumnName: "workshopId" }])
   workshop: Workshop;
+
+  @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.workshopInstance)
+  referents: WorkshopInstanceHasReferent[];
 }

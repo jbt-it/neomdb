@@ -31,6 +31,7 @@ import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
+import { WorkshopInstanceHasReferent } from "./WorkshopInstanceHasReferent";
 import { booleanTransformer } from "../utils/dataTransformer";
 
 @Index("name", ["name"], { unique: true })
@@ -390,4 +391,7 @@ export class Member {
   @ManyToOne(() => InternalProject, (internalProject) => internalProject.members)
   @JoinColumn({ name: "internesprojekt", referencedColumnName: "internalProjectId" })
   internalProject: InternalProject;
+
+  @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.member)
+  referencedWorkshops: WorkshopInstanceHasReferent[];
 }

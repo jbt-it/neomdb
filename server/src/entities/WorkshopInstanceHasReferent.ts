@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGenerat
 import { WorkshopInstance } from "./WorkshopInstance";
 import { Member } from "./Member";
 
+@Index("fk_Schulunginstanz_Schulungen1", ["workshopInstanceId"], {})
 @Entity("schulungsinstanz_has_referenten", { schema: "mdb" })
 export class WorkshopInstanceHasReferent {
   @Column("int", { primary: true, name: "schulungsinstanz_schulungsinstanzID" })
@@ -10,9 +11,11 @@ export class WorkshopInstanceHasReferent {
   @Column("int", { primary: true, name: "mitglied_mitgliedID" })
   memberId: number;
 
-  @JoinColumn([{ name: "schulungsinstanz_schulungsinstanzID", referencedColumnName: "schulungsinstanzID" }])
-  WorkshopInstance: WorkshopInstance;
+  @ManyToOne(() => WorkshopInstance, (workshopInstance) => workshopInstance.referents)
+  @JoinColumn({ name: "schulungsinstanz_schulungsinstanzID" })
+  workshopInstance: WorkshopInstance;
 
-  @JoinColumn([{ name: "mitglied_mitgliedID", referencedColumnName: "memberId" }])
+  @ManyToOne(() => Member, (member) => member.referencedWorkshops)
+  @JoinColumn({ name: "mitglied_mitgliedID" })
   member: Member;
 }
