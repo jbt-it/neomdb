@@ -16,6 +16,6 @@ export class WorkshopInstanceHasReferent {
   workshopInstance: WorkshopInstance;
 
   @ManyToOne(() => Member, (member) => member.referencedWorkshops)
-  @JoinColumn({ name: "mitglied_mitgliedID" })
+  @JoinColumn({ name: "mitglied_mitgliedID", foreignKeyConstraintName: "fk_mitglied_mitgliedID" })
   member: Member;
 }

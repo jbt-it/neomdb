@@ -62,7 +62,11 @@ export class WorkshopInstance {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
-  @JoinColumn([{ name: "schulung_schulungID", referencedColumnName: "workshopId" }])
+  @JoinColumn({
+    name: "schulung_schulungID",
+    referencedColumnName: "workshopId",
+    foreignKeyConstraintName: "fk_schulung_schulungID",
+  })
   workshop: Workshop;
 
   @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.workshopInstance)
