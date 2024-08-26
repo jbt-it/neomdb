@@ -7,7 +7,7 @@ import { Permission } from "../types/globalTypes";
  * @returns true if at least one of the `permissions` are included in `memberPermissions`
  */
 export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permissions: number[]) => {
-  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionID === element));
+  return permissions.some((element) => memberPermissions.some((permission) => permission.permissionId === element));
 };
 
 /**
@@ -18,4 +18,17 @@ export const doesPermissionsHaveSomeOf = (memberPermissions: Permission[], permi
  */
 export const doesRolesHaveSomeOf = (memberRoles: number[], roles: number[]) => {
   return roles.some((element) => memberRoles.includes(element));
+};
+
+/**
+ * Checks if the currently logged in user has the permission numbers specified
+ * @param permissionNumbers numbers/ids of the permissions (can be empty to indicate, that the user must have at least one permission)
+ * @returns true if the user has the given permissions
+ */
+export const checkForPermission = (memberPermissions: Permission[], permissionNumbers: number[]) => {
+  if (permissionNumbers.length === 0) {
+    // Check if the given permissionNumbers array contains at least one permission id.
+    return memberPermissions.length > 0;
+  }
+  return doesPermissionsHaveSomeOf(memberPermissions, permissionNumbers);
 };

@@ -4,15 +4,19 @@
  */
 
 import React from "react";
-import { Zoom, Fab, useScrollTrigger, Theme } from "@mui/material";
+import { Zoom, Fab, useScrollTrigger, useTheme, Box } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { createStyles, makeStyles } from "@mui/styles";
 
 /**
- * Function which proivdes the styles of the ScrollTopBtn
+ * A button, which scrolls back to the top of the page, when clicked
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const ScrollTopBtn: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the ScrollTopBtn
+   */
+  const styles = {
     scrollTopBtn: {
       position: "fixed",
       bottom: theme.spacing(5.5),
@@ -31,14 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
         color: "white",
       },
     },
-  })
-);
-
-/**
- * A button, which scrolls back to the top of the page, when clicked
- */
-const ScrollTopBtn: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
 
   const trigger = useScrollTrigger();
 
@@ -48,11 +45,11 @@ const ScrollTopBtn: React.FunctionComponent = () => {
 
   return (
     <Zoom in={trigger}>
-      <div onClick={handleClick} role="presentation" className={classes.scrollTopBtn}>
-        <Fab className={classes.scrollTopFab} size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon className={classes.scrollTopIcon} />
+      <Box onClick={handleClick} role="presentation" sx={styles.scrollTopBtn}>
+        <Fab sx={styles.scrollTopFab} size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon sx={styles.scrollTopIcon} />
         </Fab>
-      </div>
+      </Box>
     </Zoom>
   );
 };

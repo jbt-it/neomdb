@@ -1,24 +1,35 @@
 /**
  * Component that handles the login process
  */
-import React, { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
-
+import React, { useContext, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
-import { Paper, Grid, Button, TextField, Theme, Link } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Paper, Grid, Button, TextField, useTheme, styled, Typography } from "@mui/material";
 import JBTLogoBlack from "../assets/jbt-logo-black.png";
 import { authReducerActionType } from "../types/globalTypes";
-import { useAuth } from "../hooks/useAuth";
+import { AuthContext } from "../context/auth-context/AuthContext";
+
+/**
+ * The styled form component
+ */
+const StyledForm = styled("form")<{ children?: React.ReactNode }>(({ theme }) => ({
+  width: "65%",
+  marginTop: theme.spacing(1),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}));
 
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
+
+  const theme = useTheme();
 
   /**
    * Styles
    */
-  const useStyles = makeStyles((theme: Theme) => ({
+  const styles = {
     paper: {
       marginTop: theme.spacing(8),
       paddingBottom: theme.spacing(3),
@@ -58,9 +69,7 @@ const Login: React.FunctionComponent = () => {
       textDecoration: "none",
       pointerEvents: "none",
     },
-  }));
-
-  const classes = useStyles();
+  };
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -79,7 +88,7 @@ const Login: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          const userID = res.data.mitgliedID;
+          const userID = res.data.memberId;
           const userName = res.data.name;
           const permissions = res.data.permissions;
           const roles = res.data.roles;
@@ -100,44 +109,6 @@ const Login: React.FunctionComponent = () => {
   };
 
   /**
-   * Gets the password correct state of the password field, depending on if a previous login attempt failed
-   */
-  const getPasswordField: VoidFunction = () => {
-    if (failedLogin) {
-      return (
-        <TextField
-          error
-          className={classes.inputfield}
-          id="password"
-          label="Passwort"
-          type="password"
-          helperText="Passwort oder Benutzername sind nicht korrekt"
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
-          onKeyUp={handleKeyUp}
-          fullWidth
-        />
-      );
-    }
-    return (
-      <TextField
-        className={classes.inputfield}
-        id="password"
-        label="Passwort"
-        type="password"
-        value={password}
-        onChange={(event) => {
-          setPassword(event.target.value);
-        }}
-        onKeyUp={handleKeyUp}
-        fullWidth
-      />
-    );
-  };
-
-  /**
    * Check if Capslock is enabled
    */
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -155,50 +126,70 @@ const Login: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="login">
-      <Grid container spacing={0} alignItems="center" justifyContent="center">
-        <Grid item xs={10} sm={8} md={6} lg={4}>
-          <Paper className={classes.paper}>
-            <img className={classes.JBTLogoBlack} src={JBTLogoBlack} alt="JBT-Logo" />
-            <h1>Login</h1>
-            <form
-              className={classes.login}
-              id="loginform"
-              onSubmit={(event) => {
-                login(event);
+    <Grid container spacing={0} alignItems="center" justifyContent="center">
+      <Grid item xs={10} sm={8} md={6} lg={4}>
+        <Paper sx={styles.paper}>
+          <img style={styles.JBTLogoBlack} src={JBTLogoBlack} alt="JBT-Logo" />
+          <h1>Login</h1>
+          <StyledForm
+            id="loginform"
+            onSubmit={(event) => {
+              login(event);
+            }}
+          >
+            <TextField
+              error={failedLogin}
+              sx={styles.inputfield}
+              id="username"
+              label="Benutzername"
+              autoComplete="username"
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
               }}
-            >
-              <TextField
-                className={classes.inputfield}
-                id="username"
-                label="Benutzername"
-                type="text"
-                value={username}
-                onChange={(event) => {
-                  setUsername(event.target.value);
-                }}
-                onKeyUp={handleKeyUp}
-                fullWidth
-              />
-              {getPasswordField()}
-              <Button className={classes.submit} variant="contained" fullWidth color="primary" type="submit">
-                Login
-              </Button>
-              <Grid container>
-                <Grid item xs className={classes.linkItem}>
-                  <NavLink to="/passwort-vergessen">Forgot Password?</NavLink>
-                </Grid>
-                <Grid item xs className={classes.warningItem}>
-                  <Link id="capswarning" variant="body2" className={classes.warningText}>
-                    {setCapsLockWaring()}
-                  </Link>
-                </Grid>
+              onKeyUp={handleKeyUp}
+              fullWidth
+            />
+            <TextField
+              error={failedLogin}
+              sx={styles.inputfield}
+              id="password"
+              label="Passwort"
+              type="password"
+              autoComplete="current-password"
+              helperText={failedLogin ? "Passwort oder Benutzername sind nicht korrekt" : ""}
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+              onKeyUp={handleKeyUp}
+              fullWidth
+            />
+            <Button sx={styles.submit} variant="contained" fullWidth color="primary" type="submit">
+              Login
+            </Button>
+            <Grid container>
+              <Grid item xs sx={styles.linkItem}>
+                <Link
+                  style={{
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                  }}
+                  to="/passwort-vergessen"
+                >
+                  Forgot Password?
+                </Link>
               </Grid>
-            </form>
-          </Paper>
-        </Grid>
+              <Grid item xs sx={styles.warningItem}>
+                <Typography id="capswarning" variant="body2" sx={styles.warningText}>
+                  {setCapsLockWaring()}
+                </Typography>
+              </Grid>
+            </Grid>
+          </StyledForm>
+        </Paper>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

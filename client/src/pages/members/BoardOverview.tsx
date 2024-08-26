@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { makeStyles, createStyles } from "@mui/styles";
-import { Theme, Paper, Typography, Grid, Divider, ButtonBase } from "@mui/material";
-import PageBar from "../../components/navigation/PageBar";
+import { Paper, Typography, Grid, Divider, ButtonBase, useTheme } from "@mui/material";
 import JBTLogoBlack from "../../assets/jbt-logo-black.png";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
@@ -9,8 +7,14 @@ import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import * as membersTypes from "../../types/membersTypes";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const DirectorOverview: React.FunctionComponent = () => {
+  const { dispatchAuth } = useContext(AuthContext);
+  const [directorPositions, setDirectorPositions] = useState<membersTypes.DirectorDetailsDto[]>();
+  const theme = useTheme();
+
+  const navigate = useNavigate();
+
+  const styles = {
     paperContainer: {
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
@@ -59,20 +63,12 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: "auto",
       marginRight: "auto",
     },
-  })
-);
-
-const DirectorOverview: React.FunctionComponent = () => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
-  const [directorPositions, setDirectorPositions] = useState<membersTypes.DirectorDetails[]>();
-
-  const classes = useStyles();
-  const navigate = useNavigate();
+  };
 
   const getDirectorPositions = () => {
     let mounted = true;
     api
-      .get(`/members/director-positions?includeDirectorMembers=true`, {
+      .get(`/members/director-positions/details`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -96,12 +92,12 @@ const DirectorOverview: React.FunctionComponent = () => {
     getDirectorPositions();
   }, []);
 
-  const renderDirectorImageAndName = (position: membersTypes.DirectorDetails) => {
-    if (position.mitgliedID === null) {
+  const renderDirectorImageAndName = (position: membersTypes.DirectorDetailsDto) => {
+    if (position.memberId === null) {
       return (
-        <Grid item xs={12} lg={2} className={classes.memberDisplay}>
+        <Grid item xs={12} lg={2} sx={styles.memberDisplay}>
           <Grid item xs={12}>
-            <img className={`${classes.memberImage} ${classes.alignCenter}`} alt="Profile" src={JBTLogoBlack} />
+            <img style={(styles.memberImage, styles.alignCenter)} alt="Profile" src={JBTLogoBlack} />
           </Grid>
           <Grid item xs={12}>
             <Typography align="center" variant="h6" color="primary">
@@ -112,22 +108,16 @@ const DirectorOverview: React.FunctionComponent = () => {
       );
     } else {
       return (
-        <Grid item xs={12} lg={2} className={classes.memberDisplay}>
+        <Grid item xs={12} lg={2} sx={styles.memberDisplay}>
           <Grid item xs={12}>
-            <ButtonBase
-              onClick={() => navigate(`/gesamtuebersicht/${position.mitgliedID}`)}
-              className={classes.alignCenter}
-            >
-              <img className={classes.memberImage} alt="Profile" src={JBTLogoBlack} />
+            <ButtonBase onClick={() => navigate(`/gesamtuebersicht/${position.memberId}`)} sx={styles.alignCenter}>
+              <img style={styles.memberImage} alt="Profile" src={JBTLogoBlack} />
             </ButtonBase>
           </Grid>
           <Grid item xs={12}>
-            <ButtonBase
-              onClick={() => navigate(`/gesamtuebersicht/${position.mitgliedID}`)}
-              className={classes.fullWidth}
-            >
+            <ButtonBase onClick={() => navigate(`/gesamtuebersicht/${position.memberId}`)} sx={styles.fullWidth}>
               <Typography align="center" variant="h6" color="primary">
-                {`${position.vorname} ${position.nachname}`}
+                {`${position.firstname} ${position.lastname}`}
               </Typography>
             </ButtonBase>
           </Grid>
@@ -140,16 +130,16 @@ const DirectorOverview: React.FunctionComponent = () => {
     if (directorPositions) {
       return directorPositions.map((position) => {
         return (
-          <Grid container className={classes.memberContainer} key={position.evpostenID}>
+          <Grid container sx={styles.memberContainer} key={position.directorId}>
             {renderDirectorImageAndName(position)}
             <Grid item xs={9} lg={10}>
               <Grid item xs={12}>
                 <Typography variant="h5">
-                  {position.geschlecht === 0 ? position.bezeichnung_weiblich : position.bezeichnung_maennlich}
+                  {position.gender ? position.designationMale : position.designationFemale}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>{position.kurzvorstellung}</Typography>
+                <Typography>{position.shortIntroduction}</Typography>
               </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -162,17 +152,12 @@ const DirectorOverview: React.FunctionComponent = () => {
   };
 
   return (
-    <div>
-      <div className="content-page">
-        <Paper className={classes.paperContainer}>
-          <Typography variant="h4" className={classes.paperHeaderText}>
-            Der aktuelle Vorstand
-          </Typography>
-          {renderDirectorPositions()}
-        </Paper>
-      </div>
-      <PageBar pageTitle="Der Vorstand" />
-    </div>
+    <Paper sx={styles.paperContainer}>
+      <Typography variant="h4" sx={styles.paperHeaderText}>
+        Der aktuelle Vorstand
+      </Typography>
+      {renderDirectorPositions()}
+    </Paper>
   );
 };
 

@@ -1,10 +1,6 @@
 import React from "react";
 import { FormControl, Select, MenuItem, SelectChangeEvent, Typography, Stack } from "@mui/material";
-
-interface Generation {
-  generationID: number;
-  bezeichnung: string;
-}
+import { Generation } from "../../../types/traineesTypes";
 
 interface GenerationSelectionProps {
   selectedGeneration: string | null;
@@ -35,8 +31,8 @@ const GenerationSelection: React.FC<GenerationSelectionProps> = ({
         <Select value={selectedGeneration} onChange={handleGenerationChange} MenuProps={MenuProps} sx={{ height: 40 }}>
           {generations.length > 0 ? (
             generations.map((generation) => (
-              <MenuItem key={generation.generationID} value={generation.bezeichnung}>
-                {generation.bezeichnung}
+              <MenuItem key={generation.generationId} value={generation.description}>
+                {generation.description}
               </MenuItem>
             ))
           ) : (

@@ -27,7 +27,7 @@ export const replaceSpecialCharacters = (str: string) => {
  * @param string The string to get the color from
  * @returns The color
  */
-function stringToColor(string: string) {
+export const stringToColor = (string: string) => {
   let hash = 0;
   let i;
 
@@ -42,19 +42,19 @@ function stringToColor(string: string) {
     color += `00${value.toString(16)}`.slice(-2);
   }
   return color;
-}
+};
 
 /**
  * Returns the first and last name initials of a name
  * @param name The name to get the initials from
  * @returns The initials of the name
  */
-export function stringAvatar(name: string) {
+export const stringAvatar = (name: string, sx?: any) => {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      fontSize: "5rem",
+      ...sx,
     },
     children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
   };
-}
+};

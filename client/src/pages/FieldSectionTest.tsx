@@ -2,17 +2,7 @@
  * Component that handles the not found error
  */
 import React, { useState } from "react";
-import { Theme } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
 import FieldSection, { Field } from "../components/general/FieldSection";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-    },
-  })
-);
 
 const FieldSectionTest: React.FunctionComponent = () => {
   const [text, setText] = useState<string>("");

@@ -1,18 +1,20 @@
 /**
  * The TraineePreferences-Component lets admins manually add members and change the status of existing members
  */
-import React, { useState, useEffect } from "react";
-import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button } from "@mui/material";
-import PageBar from "../../components/navigation/PageBar";
-import api from "../../utils/api";
-import { makeStyles, createStyles } from "@mui/styles";
+import React, { useState } from "react";
+import { Paper, Divider, TextField, MenuItem, Grid, Typography, Button, useTheme, Box } from "@mui/material";
 import { showErrorMessage } from "../../utils/toastUtils";
 
 /**
- * Function which proivdes the styles of the TraineePreferences
+ * Options to create a new member and to change the status of members
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const TraineePreferences: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the TraineePreferences
+   */
+  const styles = {
     // Header text of a paper marking a section of a page
     paperHeaderText: {
       marginLeft: theme.spacing(1),
@@ -56,15 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
     inputButton: {
       margin: theme.spacing(1),
     },
-  })
-);
-
-/**
- * Options to create a new member and to change the status of members
- */
-const TraineePreferences: React.FunctionComponent = () => {
-  const classes = useStyles();
-
+  };
   const [ressortFirst, setRessortFirst] = useState<string>("");
   const [ressortSecond, setRessortSecond] = useState<string>("");
   const [ressortThird, setRessortThird] = useState<string>("");
@@ -242,13 +236,13 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderRessortSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Ressort
         </Typography>
         <TextField
           label="1. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortFirstChange}
           value={ressortFirst}
           select
@@ -258,7 +252,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="2. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortSecondChange}
           value={ressortSecond}
           select
@@ -268,7 +262,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="3. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortThirdChange}
           value={ressortThird}
           select
@@ -298,13 +292,13 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderMentorSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Mentor
         </Typography>
         <TextField
           label="1. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorFirstChange}
           value={mentorFirst}
           select
@@ -314,7 +308,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="2. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorSecondChange}
           value={mentorSecond}
           select
@@ -324,7 +318,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="3. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorThirdChange}
           value={mentorThird}
           select
@@ -354,14 +348,14 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderIPSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Internes Projekt
         </Typography>
         <Grid item xs={12}>
           <TextField
             label="1. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPFirstChange}
             value={ipFirst}
             select
@@ -373,7 +367,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 1. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -381,12 +375,12 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={ipMotivationFirst}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="2. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPSecondChange}
             value={ipSecond}
             select
@@ -398,7 +392,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 2. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -406,12 +400,12 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={ipMotivationSecond}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="3. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPThirdChange}
             value={ipThird}
             select
@@ -423,7 +417,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 3. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -431,39 +425,36 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={ipMotivationThird}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
       </div>
     );
   };
 
   return (
-    <div>
-      <div className="content-page">
-        <Paper className={classes.paperContainer}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h5" className={classes.paperHeaderText}>
-                Trainee Wahl
-              </Typography>
-              <Typography className={classes.paperText}>
-                Hier kannst du Präferenzen für dein Wunsch Ressort, Mentor und Internes Projekt abgeben.<br></br>
-                Bitte bedenke, dass du deine Präferenzen bis spätestens <b>{dateString}</b> anpassen kannst.
-              </Typography>
-              <Divider className={classes.paperHeaderDivider} />
-              {renderRessortSelection()}
-              <Divider className={classes.paperHeaderDivider} />
-              {renderMentorSelection()}
-              <Divider className={classes.paperHeaderDivider} />
-              {renderIPSelection()}
-              <Button variant="outlined" color="primary" className={classes.inputButton}>
-                Präferenzen Speichern
-              </Button>
-            </Grid>
+    <Box>
+      <Paper sx={styles.paperContainer}>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Trainee Wahl
+            </Typography>
+            <Typography sx={styles.paperText}>
+              Hier kannst du Präferenzen für dein Wunsch Ressort, Mentor und Internes Projekt abgeben.<br></br>
+              Bitte bedenke, dass du deine Präferenzen bis spätestens <b>{dateString}</b> anpassen kannst.
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderRessortSelection()}
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderMentorSelection()}
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderIPSelection()}
+            <Button variant="outlined" color="primary" sx={styles.inputButton}>
+              Präferenzen Speichern
+            </Button>
           </Grid>
-        </Paper>
-      </div>
-      <PageBar pageTitle="Trainee Wahl" />
-    </div>
+        </Grid>
+      </Paper>
+    </Box>
   );
 };
 

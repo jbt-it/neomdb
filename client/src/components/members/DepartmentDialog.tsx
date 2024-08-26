@@ -1,22 +1,33 @@
 /*
  * Dialog component for displaying input fields for changing department infos
  */
-import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, Theme } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
-import React, { memo, useContext, useState } from "react";
-import { DepartmentDetails } from "../../types/membersTypes";
-import api from "../../utils/api";
-import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
-import { AuthContext } from "../../context/auth-context/AuthContext";
-import { authReducerActionType } from "../../types/globalTypes";
-import { AxiosError } from "axios";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme } from "@mui/material";
+import React, { memo, useState } from "react";
+import { DepartmentDetailsDto, UpdateDepartmentDto } from "../../types/membersTypes";
 import { AxiosResponse } from "axios";
+import useDepartments from "../../hooks/members/useDepartments";
 
 /**
- * Function which proivdes the styles of the dialog department component
+ * Props for the department dialog component
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+interface DepartmentDialogProps {
+  title: string;
+  isOpen: boolean;
+  onClose: () => void;
+  department: DepartmentDetailsDto;
+}
+
+/**
+ * Displays dialog with textfields for editing department infos
+ * @returns Dialog with textfields
+ */
+const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((props: DepartmentDialogProps) => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the dialog department component
+   */
+  const styles = {
     fullWidth: {
       width: "100%",
     },
@@ -33,30 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
-  })
-);
+  };
 
-/**
- * Props for the department dialog component
- */
-interface DepartmentDialogProps {
-  title: string;
-  isOpen: boolean;
-  onClose: () => void;
-  department: DepartmentDetails;
-}
-
-/**
- * Displays dialog with textfields for editing department infos
- * @returns Dialog with textfields
- */
-const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((props: DepartmentDialogProps) => {
-  const classes = useStyles();
   const { title, isOpen, onClose, department } = props;
-  const { dispatchAuth } = useContext(AuthContext);
+  const { updateDepartmentDetails } = useDepartments();
 
-  const [goalLink, setGoalLink] = useState(department.linkZielvorstellung);
-  const [organisationLink, setOrganisationLink] = useState(department.linkOrganigramm);
+  const [goalLink, setGoalLink] = useState(department.linkObjectivePresentation);
+  const [organisationLink, setOrganisationLink] = useState(department.linkOrganigram);
 
   /**
    * Saves the changed links of the department
@@ -65,22 +59,10 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
     event.preventDefault(); // Prevents the page from reloading
 
     // Given department object with changed goal and organisation links
-    const editedDepartment = { ...department, linkZielvorstellung: goalLink, linkOrganigramm: organisationLink };
-    api
-      .put(`/members/departments/${editedDepartment.ressortID}`, editedDepartment)
-      .then((res: AxiosResponse) => {
-        if (res.status === 204) {
-          showSuccessMessage("Aktualisierung erfolgreich!");
-          onClose();
-        }
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        } else if (err.response?.status === 500) {
-          showErrorMessage("Aktualisierung ist fehlgeschlagen!");
-        }
-      });
+    const editedDepartment = { ...department, linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
+    updateDepartmentDetails(editedDepartment).then((response: AxiosResponse<UpdateDepartmentDto>) => {
+      response.status === 204 ? onClose() : null;
+    });
   };
 
   return (
@@ -91,7 +73,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField
-                className={classes.fullWidth}
+                sx={styles.fullWidth}
                 required
                 color="primary"
                 id="goal-link-field"
@@ -103,7 +85,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TextField
-                className={classes.fullWidth}
+                sx={styles.fullWidth}
                 color="primary"
                 required
                 id="organisation-link-field"
@@ -116,11 +98,11 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <hr />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-              <Button className={classes.cancelButton} variant="contained" onClick={onClose}>
+            <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+              <Button sx={styles.cancelButton} variant="contained" onClick={onClose}>
                 Abbrechen
               </Button>
-              <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+              <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                 Änderungen speichern
               </Button>
             </Grid>

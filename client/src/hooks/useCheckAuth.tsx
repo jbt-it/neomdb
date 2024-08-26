@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import api from "../utils/api";
 import { authReducerActionType } from "../types/globalTypes";
-import { useAuth } from "../hooks/useAuth";
+import { AuthContext } from "../context/auth-context/AuthContext";
 
 /**
  * This hook is responsible for checking if the user is authenticated.
@@ -14,7 +14,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export const useCheckAuth = () => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const { dispatchAuth } = useAuth();
+  const { dispatchAuth } = useContext(AuthContext);
 
   const checkAuth = useCallback(() => {
     setIsAuthLoading(true);
@@ -23,7 +23,7 @@ export const useCheckAuth = () => {
       .then((res) => {
         // If the retrieval of the user data is succesfull the user is authenticated
         if (res.status === 200) {
-          const userID = res.data.mitgliedID;
+          const userID = res.data.memberId;
           const userName = res.data.name;
           const permissions = res.data.permissions;
           const roles = res.data.roles;

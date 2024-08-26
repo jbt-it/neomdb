@@ -1,6 +1,6 @@
 // React imports
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PrivateRoutes from "./components/routing/PrivateRoutes";
 import PublicRoutes from "./components/routing/PublicRoutes";
 import ProtectedRoutes from "./components/routing/ProtectedRoutes";
@@ -38,6 +38,13 @@ import WorkshopDetails from "./pages/events/WorkshopDetails";
 import EventDetails from "./pages/events/EventDetails";
 import EventsOverview from "./pages/events/EventsOverview";
 
+// project pages
+import ProjectOverview from "./pages/projects/ProjectOverview";
+
+// finance pages
+import FinanceOverview from "./pages/finance/FinanceOverview";
+import MembershipFee from "./pages/finance/MembershipFee";
+
 // other pages
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -46,6 +53,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
+import ProjectTendering from "./pages/projects/ProjectTendering";
 
 /**
  * This component is responsible for rendering the app.
@@ -55,7 +63,7 @@ import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluatio
 const App: React.FunctionComponent = () => {
   return (
     <LocalizationProvider adapterLocale="de" dateAdapter={AdapterDayjs}>
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
           <Route element={<PublicRoutes />}>
             <Route path="/login" element={<Login />} />
@@ -78,21 +86,35 @@ const App: React.FunctionComponent = () => {
             <Route path="internes-projekt/:id" element={<InternalProject />} />
             <Route path="geburtstage" element={<Dashboard />} />
             <Route path="kuratoren" element={<Dashboard />} />
-            <Route path="projekte" element={<Dashboard />} />
-            <Route path="veranstaltungen" element={<EventsOverview />} />
-            <Route path="veranstaltungen/:id" element={<EventDetails />} />
-            <Route path="workshops" element={<WorkshopsOverview />} />
-            <Route path="workshops/:id" element={<WorkshopDetails />} />
-            <Route path="workshops/:id/:id" element={<WorkshopInstanceDetails />} />
-            <Route path="workshops/:workshopID/:workshopInstanceID/feedback/" element={<WorkshopInstanceFeedback />} />
-            <Route
-              path="workshops/:workshopID/:workshopInstanceID/feedbackauswertung"
-              element={
-                <ProtectedRoutes permissionIDs={[4]}>
-                  <WorkshopInstanceEvaluation />
-                </ProtectedRoutes>
-              }
-            />
+            <Route path="projekte">
+              <Route index element={<ProjectOverview />} />
+              <Route
+                path="projektausschreibung"
+                element={
+                  <ProtectedRoutes permissionIDs={[19]}>
+                    <ProjectTendering />
+                  </ProtectedRoutes>
+                }
+              />
+            </Route>
+            <Route path="veranstaltungen">
+              <Route index element={<EventsOverview />} />
+              <Route path=":id" element={<EventDetails />} />
+            </Route>
+            <Route path="workshops">
+              <Route index element={<WorkshopsOverview />} />
+              <Route path=":id" element={<WorkshopDetails />} />
+              <Route path=":id/:id" element={<WorkshopInstanceDetails />} />
+              <Route path=":workshopID/:workshopInstanceID/feedback" element={<WorkshopInstanceFeedback />} />
+              <Route
+                path=":workshopID/:workshopInstanceID/feedbackauswertung"
+                element={
+                  <ProtectedRoutes permissionIDs={[4]}>
+                    <WorkshopInstanceEvaluation />
+                  </ProtectedRoutes>
+                }
+              />
+            </Route>
             <Route path="mm-tracking" element={<Dashboard />} />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
@@ -111,10 +133,26 @@ const App: React.FunctionComponent = () => {
                 </ProtectedRoutes>
               }
             />
+            <Route
+              path="finanzuebersicht"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <FinanceOverview />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="jahresbeitrag"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <MembershipFee />
+                </ProtectedRoutes>
+              }
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </LocalizationProvider>
   );
 };

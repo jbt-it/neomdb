@@ -1,16 +1,15 @@
-/*
- * Definition of used types within the auth module
- */
+import { Permission } from "../entities/Permission";
+import { DirectorPermissionDelegationDto, MemberPermissionAssignmentDto } from "./memberTypes";
 
 /**
- * Type for the user of the application
- * A user is a member abstracted to the details needed for authentication
+ * Type of the permission assignment (permission of a member or a director)
  */
-export type User = {
-  mitgliedID: number;
+export type PermissionAssignmentDto = {
+  permissionID: number;
   name: string;
-  passwordHash?: string;
-  permissions: string;
+  description: string;
+  members: MemberPermissionAssignmentDto[];
+  directors: DirectorPermissionDelegationDto[];
 };
 
 /**
@@ -22,13 +21,6 @@ export type UserLoginRequest = {
 };
 
 /**
- * Type of query results of the permission retrieval
- */
-export type DirectorPermissionsQueryResult = {
-  permissions: string;
-};
-
-/**
  * Type of the request to change the password of a user
  */
 export type UserChangePasswordRequest = {
@@ -36,6 +28,36 @@ export type UserChangePasswordRequest = {
   userName: string;
   oldPassword: string;
   newPassword: string;
+};
+
+/**
+ * Type for the user of the application
+ * A user is a member abstracted to the details needed for authentication
+ */
+export type User = {
+  memberId: number;
+  name: string;
+  passwordHash?: string;
+  permissions: Permission[];
+};
+
+/**
+ * Type of the permission
+ */
+export type PermissionDTO = {
+  permissionId: number;
+  canDelegate: boolean;
+  directorId?: number;
+};
+
+/**
+ * Type of the payload of the json web token
+ */
+export type JWTPayload = {
+  memberId: number;
+  name: string;
+  permissions: PermissionDTO[];
+  roles: number[];
 };
 
 /**
@@ -52,53 +74,4 @@ export type UserResetPasswordRequest = {
   email: string;
   key: string;
   newPassword: string;
-};
-
-/**
- * Type of the permission
- */
-export type Permission = {
-  permissionID: number;
-  canDelegate: boolean;
-  directorID?: number;
-};
-
-/**
- * Type of the permission assignment (permission of a member or a director)
- */
-export type PermissionAssignment = {
-  name: string;
-  mitgliedID: number;
-  permissionID: number;
-  canDelegate: boolean;
-};
-
-/**
- * Type of the payload if the jason web token
- */
-export type JWTPayload = {
-  mitgliedID: number;
-  name: string;
-  permissions: Permission[];
-  roles: number[];
-};
-
-/**
- * Type of the payload of the signed jason web token
- */
-export type SignedJWTPayload = {
-  mitgliedID: number;
-  name: string;
-  permissions: Permission[];
-  iat: number;
-  exp: number;
-};
-
-/**
- * Type of the password reset entry
- */
-export type PasswordResetEntry = {
-  mitglied_jbt_email: string;
-  datediff: number;
-  token: string;
 };

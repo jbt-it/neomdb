@@ -128,7 +128,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
       <Skeleton variant="rounded" sx={{ height: 500 }} />
     </Stack>
   ) : (
-    <Container sx={{ ml: isMobile ? 0 : 3, maxWidth: 800 }}>
+    <Container sx={{ maxWidth: 800 }}>
       <Stack
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-between"}
@@ -199,7 +199,7 @@ const WorkshopInstanceEvaluation: React.FunctionComponent = () => {
                       return (
                         <ListItem key={mitglied.mitgliedID} sx={{ display: "list-item" }} disablePadding disableGutters>
                           <Link
-                            to={`/gesamtuebersicht${mitglied.mitgliedID}`}
+                            to={`/gesamtuebersicht/${mitglied.mitgliedID}`}
                             style={{ textDecoration: "none", color: "inherit" }}
                           >
                             {mitglied.vorname} {mitglied.nachname}

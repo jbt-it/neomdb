@@ -1,5 +1,9 @@
 import AuthService from "./AuthService";
 import { Body, Post, Route, Controller, Request, Get, Security, Patch, Tags } from "@tsoa/runtime";
+import { generateJWT } from "../utils/jwtUtils";
+import { getCookieOptionsAsString } from "./cookieConfig";
+import { UnauthorizedError } from "../types/Errors";
+import * as nodemailer from "nodemailer";
 import {
   JWTPayload,
   UserChangePasswordRequest,
@@ -7,10 +11,7 @@ import {
   UserLoginRequest,
   UserResetPasswordRequest,
 } from "../types/authTypes";
-import { generateJWT } from "../utils/jwtUtils";
-import { getCookieOptionsAsString } from "./cookieConfig";
-import { UnauthorizedError } from "../types/Errors";
-import * as nodemailer from "nodemailer";
+import { ExpressRequest } from "../types/expressTypes";
 
 /**
  * Controller for the authentication
@@ -47,7 +48,7 @@ export class AuthController extends Controller {
    */
   @Get("me")
   @Security("jwt")
-  public async getUserData(@Request() request: any): Promise<JWTPayload> {
+  public async getUserData(@Request() request: ExpressRequest): Promise<JWTPayload> {
     const user = request.user as JWTPayload;
     const payload = await this.authService.getUserData(user.name);
     const token = generateJWT(payload);
@@ -72,7 +73,10 @@ export class AuthController extends Controller {
   // TODO: Use @Post("change-password") instead of @Patch("change-password")
   @Patch("change-password")
   @Security("jwt")
-  public async changePassword(@Body() requestBody: UserChangePasswordRequest, @Request() request: any): Promise<void> {
+  public async changePassword(
+    @Body() requestBody: UserChangePasswordRequest,
+    @Request() request: ExpressRequest
+  ): Promise<void> {
     const user = request.user;
     if (user.name !== requestBody.userName) {
       throw new UnauthorizedError("You are not allowed to change the password of another user");
@@ -124,7 +128,7 @@ export class AuthController extends Controller {
         "Es gab eine Anfrage, dein Passwort für die MDB zu ändern! \n" +
         "Falls du diese Anfrage nicht gestellt haben, ignoriere bitte diese E-Mail oder wende dich an das Ressort IT. \n" +
         "Andernfalls verwende bitte die folgende URL, um dein Passwort zu ändern: \n\n" +
-        "http://localhost:3000/#/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
+        "http://localhost:3000/passwort-vergessen-zuruecksetzten/" + // TODO use actual website instead of localhost
         token +
         "\n\n" +
         "\n\n" +
@@ -132,7 +136,7 @@ export class AuthController extends Controller {
         "Dein Ressort IT",
     };
     // TODO: Handle Errors
-    transport.sendMail(mailOptions);
+    // transport.sendMail(mailOptions);
   }
 
   /**
