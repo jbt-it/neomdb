@@ -3,7 +3,7 @@ import { WorkshopInstance } from "./WorkshopInstance";
 import { Member } from "./Member";
 
 @Index("fk_Schulunginstanz_Schulungen1", ["workshopInstanceId"], {})
-@Entity("schulungsinstanz_has_referenten", { schema: "mdb" })
+@Entity("schulungsinstanz_has_referent", { schema: "mdb" })
 export class WorkshopInstanceHasReferent {
   @Column("int", { primary: true, name: "schulungsinstanz_schulungsinstanzID" })
   workshopInstanceId: number;

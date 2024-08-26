@@ -2586,6 +2586,19 @@ INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `st
 
 
 --
+-- Daten für Tabelle `schulungsinstanz_has_referent`
+--
+
+INSERT INTO `schulungsinstanz_has_referent` (`schulungsinstanz_schulungsinstanzID`, `mitglied_mitgliedID`) VALUES
+(6805, 8167),
+(6806, 8111),
+(6806, 8364),
+(6809, 8167),
+(6809, 8222),
+(6850, 8331);
+
+
+--
 -- Daten für Tabelle `sprachen`
 --
 
