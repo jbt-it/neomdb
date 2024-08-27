@@ -7,6 +7,10 @@ import {
   getMemberImage,
   updateMemberDetails as updateMemberDetailsApi,
   saveMemberImage as saveMemberImageApi,
+  getMemberDirectorPositions,
+  addDirectorPosition as addDirectorPositionApi,
+  deleteDirectorPosition as deleteDirectorPositionApi,
+  changeDirectorPosition as changeDirectorPositionApi,
 } from "../../api/members";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { useContext } from "react";
@@ -48,6 +52,19 @@ const useMemberDetails = (memberID: number) => {
   });
 
   const memberImage = memberImageData ? (memberImageData.data as MemberImage) : null;
+
+  // ----------------------------------------------------------------------------------
+  // getMemberDirectorPositions query
+  const {
+    data: memberDirectorPositionsData,
+    isLoading: isMemberDirectorPositionsLoading,
+    isError: isMemberDirectorPositionsError,
+  } = useQuery({
+    queryKey: ["memberDirectorPositions", memberID],
+    queryFn: () => getMemberDirectorPositions(memberID),
+  });
+
+  const memberDirectorPositions = memberDirectorPositionsData ? memberDirectorPositionsData.data : [];
 
   // ----------------------------------------------------------------------------------
 
@@ -115,6 +132,84 @@ const useMemberDetails = (memberID: number) => {
   };
 
   // ----------------------------------------------------------------------------------
+  // addDirectorPosition mutation
+  const { mutateAsync: mutateAddDirectorPosition } = useMutation({
+    mutationFn: addDirectorPositionApi,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Fehler beim Hinzufügen der Position!");
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["memberDirectorPositions", memberID] }); // Invalidate the memberDirectorPositions data to refetch the data
+      showSuccessMessage("Position wurde erfolgreich hinzugefügt!");
+    },
+  });
+
+  /**
+   * Function to add a new director position to the member
+   * @param directorID - The ID of the director
+   * @param from - The start date of the position
+   * @param until - The end date of the position
+   * @returns The new director position
+   */
+  const addDirectorPosition = async (directorID: number, from: Date, until: Date) => {
+    return await mutateAddDirectorPosition({ directorID, memberID, from, until });
+  };
+
+  // ----------------------------------------------------------------------------------
+  // changeDirectorPosition mutation
+  const { mutateAsync: mutateChangeDirectorPosition } = useMutation({
+    mutationFn: changeDirectorPositionApi,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Fehler beim Ändern der Position!");
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["memberDirectorPositions", memberID] }); // Invalidate the memberDirectorPositions data to refetch the data
+      showSuccessMessage("Position wurde erfolgreich geändert!");
+    },
+  });
+
+  /**
+   * Function to change the director position of a member
+   * @param directorID - The ID of the director
+   * @param from - The start date of the position
+   * @param until - The end date of the position
+   * @returns void
+   */
+  const changeDirectorPosition = async (directorID: number, from: Date, until: Date) => {
+    return await mutateChangeDirectorPosition({ directorID, memberID, from, until });
+  };
+
+  // ----------------------------------------------------------------------------------
+
+  // ############
+  // DELETE QUERIES
+  // ############
+
+  const { mutateAsync: mutateDeleteDirectorPosition } = useMutation({
+    mutationFn: deleteDirectorPositionApi,
+    onError: (err: AxiosError) => {
+      showErrorMessage("Fehler beim Löschen der Position!");
+      if (err.response?.status === 401) {
+        dispatchAuth({ type: authReducerActionType.deauthenticate });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["memberDirectorPositions", memberID] }); // Invalidate the memberDirectorPositions data to refetch the data
+      showSuccessMessage("Position wurde erfolgreich gelöscht!");
+    },
+  });
+
+  const deleteDirectorPosition = async (directorID: number) => {
+    return await mutateDeleteDirectorPosition({ memberID, directorID });
+  };
+
+  // ----------------------------------------------------------------------------------
   return {
     memberDetails,
     isMemberDetailsLoading,
@@ -124,6 +219,12 @@ const useMemberDetails = (memberID: number) => {
     isMemberImageLoading,
     isMemberImageError,
     saveMemberImage,
+    memberDirectorPositions,
+    isMemberDirectorPositionsLoading,
+    isMemberDirectorPositionsError,
+    addDirectorPosition,
+    changeDirectorPosition,
+    deleteDirectorPosition,
   };
 };
 

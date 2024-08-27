@@ -3704,10 +3704,12 @@
 			"MemberDirectorPositionsDto": {
 				"properties": {
 					"until": {
-						"type": "string"
+						"type": "string",
+						"format": "date-time"
 					},
 					"from": {
-						"type": "string"
+						"type": "string",
+						"format": "date-time"
 					},
 					"shortName": {
 						"type": "string"

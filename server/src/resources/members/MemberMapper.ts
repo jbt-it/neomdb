@@ -20,9 +20,6 @@ import {
   MenteeDto,
   MentorDto,
 } from "../../types/memberTypes";
-import { Director } from "entities/Director";
-import { dir } from "console";
-
 /**
  * Provides methods to map a member to a dto (data transfer object) or vice versa
  */
@@ -344,5 +341,15 @@ export class MemberMapper {
   }
   static itSkillDtosToItSkills(memberId: number, itSkillDtos: ItSkillDto[]): ItSkill[] {
     return itSkillDtos.map((itSkillDto) => this.itSkillDtoToItSkill(memberId, itSkillDto));
+  }
+
+  static memberHasDirectorPositionsToDirectorPositionsDto(memberHasDirectorPositions: MemberHasDirectorPosition) {
+    return {
+      directorId: memberHasDirectorPositions.directorId,
+      memberId: memberHasDirectorPositions.memberId,
+      shortName: memberHasDirectorPositions.director.shortName,
+      from: memberHasDirectorPositions.from,
+      until: memberHasDirectorPositions.until,
+    };
   }
 }

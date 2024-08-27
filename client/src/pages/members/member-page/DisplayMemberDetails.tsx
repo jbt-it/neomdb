@@ -33,7 +33,6 @@ import { ExpandLess, ExpandMore, AddCircleOutline, Clear, Add } from "@mui/icons
 import { Link } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { transfromDateToSQLDate } from "../../../utils/dateUtils";
 import { stringToDate } from "../../../utils/dateUtils";
 import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
@@ -52,14 +51,13 @@ interface DisplayMemberDetailsProps {
   memberDetails: membersTypes.MemberDetailsDto;
   isOwner: boolean;
   memberImage: membersTypes.MemberImage | null;
-  memberDirectorPositions: membersTypes.MemberDirectorPositions[];
+  memberDirectorPositions: membersTypes.MemberDirectorPositionsDto[];
   directorPositions: membersTypes.DirectorPositionDto[];
   updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
-  deleteDirectorPosition: (evpostenID: number, mitgliedID: number) => void;
-  addDirectorPosition: (evpostenID: number, mitgliedID: number, von: string, bis: string) => void;
-  changeDirectorPosition: (evpostenID: number, mitgliedID: number, von: string, bis: string) => void;
-  getMemberDirectorPositions: () => void;
+  deleteDirectorPosition: (directorId: number) => void;
+  addDirectorPosition: (directorID: number, from: Date, until: Date) => void;
+  changeDirectorPosition: (directorId: number, from: Date, until: Date) => void;
 }
 
 /**
@@ -77,7 +75,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     deleteDirectorPosition,
     addDirectorPosition,
     changeDirectorPosition,
-    getMemberDirectorPositions,
   } = props;
   const theme = useTheme();
 
@@ -248,7 +245,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     },
   };
 
-  type EditedMemberDirectorPositions = membersTypes.MemberDirectorPositions & { delete: boolean };
+  type EditedMemberDirectorPositions = membersTypes.MemberDirectorPositionsDto & { delete: boolean };
 
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
@@ -744,10 +741,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         <Box sx={styles.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.firstname} ${memberDetails.lastname}`}</Typography>
           {memberDirectorPositions.map((position, index) => {
-            if (new Date(position.von) <= new Date() && new Date(position.bis) >= new Date()) {
+            if (new Date(position.from) <= new Date() && new Date(position.until) >= new Date()) {
               return (
                 <Typography key={index}>
-                  <i>{`${position.kuerzel}`}</i>
+                  <i>{`${position.shortName}`}</i>
                 </Typography>
               );
             } else {
@@ -774,32 +771,30 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 
   /**
    * Changes the von value of the director position to be inserted
-   * @param mitgliedID
-   * @param evpostenID
+   * @param memberID
+   * @param directorId
    * @param von
    * @returns
    */
-  const setEVEintragVon = (mitgliedID: number, evpostenID: number, von: Dayjs | null) => {
-    if (von === null) {
+  const setEVEintragVon = (memberID: number, directorId: number, from: Dayjs | null) => {
+    if (from === null) {
       return;
     }
 
-    const stringVon = transfromDateToSQLDate(von.toDate());
-
-    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
     setEditedMemberDirectorPositions((prevPositions) =>
       prevPositions.map((position) => {
-        // Check if the position matches the provided mitgliedID and evpostenID
-        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
-          if (von > dayjs(position.bis)) {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.memberId === directorId) {
+          if (from > dayjs(position.until)) {
             showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
             return position;
           } else {
             // If it matches, update the von and bis properties
             return {
               ...position,
-              bis: transfromDateToSQLDate(dayjs(position.bis).toDate()),
-              von: stringVon,
+              until: position.until,
+              from: from.toDate(),
             };
           }
         } else {
@@ -812,31 +807,30 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 
   /**
    * Changes the bis value of the director position to be inserted
-   * @param mitgliedID
-   * @param evpostenID
+   * @param memberID
+   * @param directorId
    * @param bis
    * @returns
    */
-  const setEVEintragBis = (mitgliedID: number, evpostenID: number, bis: Dayjs | null) => {
-    if (bis === null) {
+  const setEVEintragBis = (memberID: number, directorId: number, until: Dayjs | null) => {
+    if (until === null) {
       return;
     }
-    const stringBis = transfromDateToSQLDate(bis.toDate());
 
-    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
     setEditedMemberDirectorPositions((prevPositions) =>
       prevPositions.map((position) => {
-        // Check if the position matches the provided mitgliedID and evpostenID
-        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
-          if (dayjs(position.von) > bis) {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.directorId === directorId) {
+          if (dayjs(position.from) > until) {
             showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
             return position;
           } else {
             // If it matches, update the von and bis properties
             return {
               ...position,
-              bis: stringBis,
-              von: transfromDateToSQLDate(dayjs(position.von).toDate()),
+              until: until.toDate(),
+              from: position.from,
             };
           }
         } else {
@@ -849,16 +843,16 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 
   /**
    * Removes an entry to the list of ev posten
-   * @param mitgliedID
-   * @param evpostenID
+   * @param memberID
+   * @param directorId
    * @param del
    */
-  const setEVEintragDelete = (mitgliedID: number, evpostenID: number, del: boolean) => {
-    // Find an entry of the editedMemberDirectorPositions that matches mitgliedID and evpostenID and change the von and bis to the parameters given to the function
+  const setEVEintragDelete = (memberID: number, directorId: number, del: boolean) => {
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
     setEditedMemberDirectorPositions((prevPositions) =>
       prevPositions.map((position) => {
-        // Check if the position matches the provided mitgliedID and evpostenID
-        if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.directorId === directorId) {
           // If it matches, update the von and bis properties
           return {
             ...position,
@@ -874,20 +868,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 
   /**
    * Adds a new entry to the list of ev posten
-   * @param mitgliedID
-   * @param evpostenID
+   * @param memberId
+   * @param directorId
    * @param von
    * @param bis
    * @returns
    */
-  const addEVEintrag = (mitgliedID: number, evpostenID: number, von: Dayjs | null, bis: Dayjs | null) => {
-    if (bis === null || von === null) {
+  const addEVEintrag = (memberId: number, directorId: number, from: Dayjs | null, until: Dayjs | null) => {
+    if (until === null || from === null) {
       return;
     }
 
     let posExists = false;
     memberDirectorPositions.forEach((position) => {
-      if (position.mitgliedID === mitgliedID && position.evpostenID === evpostenID) {
+      if (position.memberId === memberId && position.directorId === directorId) {
         posExists = true;
         return;
       }
@@ -898,27 +892,24 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       return;
     }
 
-    let kuerzel = "";
+    let shortName = "";
     directorPositions.forEach((position) => {
-      if (position.directorId === evpostenID) {
-        kuerzel = position.shortName;
+      if (position.directorId === directorId) {
+        shortName = position.shortName;
         return;
       }
     });
 
-    if (kuerzel === "") {
+    if (shortName === "") {
       return;
     }
 
-    const stringBis = transfromDateToSQLDate(bis.toDate());
-    const stringVon = transfromDateToSQLDate(von.toDate());
-
     const newEntry: EditedMemberDirectorPositions = {
-      evpostenID,
-      mitgliedID,
-      kuerzel,
-      von: stringVon,
-      bis: stringBis,
+      directorId,
+      memberId,
+      shortName,
+      from: from.toDate(),
+      until: until.toDate(),
       delete: false,
     };
 
@@ -937,12 +928,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       let foundValue = false;
       let update = false;
       memberDirectorPositions.forEach((oldPosition) => {
-        if (
-          editedPosition.evpostenID === oldPosition.evpostenID &&
-          editedPosition.mitgliedID === oldPosition.mitgliedID
-        ) {
+        if (editedPosition.directorId === oldPosition.directorId && editedPosition.memberId === oldPosition.memberId) {
           foundValue = true;
-          if (editedPosition.bis !== oldPosition.bis || editedPosition.von !== oldPosition.von) {
+          if (editedPosition.until !== oldPosition.until || editedPosition.from !== oldPosition.from) {
             update = true;
             return;
           }
@@ -951,24 +939,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
 
       if (!foundValue) {
         if (!editedPosition.delete) {
-          await addDirectorPosition(
-            editedPosition.evpostenID,
-            editedPosition.mitgliedID,
-            editedPosition.von,
-            editedPosition.bis
-          );
+          await addDirectorPosition(editedPosition.directorId, editedPosition.from, editedPosition.until);
         }
         rowsChanged += 1;
       } else if (editedPosition.delete) {
-        await deleteDirectorPosition(editedPosition.evpostenID, editedPosition.mitgliedID);
+        await deleteDirectorPosition(editedPosition.directorId);
         rowsChanged += 1;
       } else if (update) {
-        await changeDirectorPosition(
-          editedPosition.evpostenID,
-          editedPosition.mitgliedID,
-          editedPosition.von,
-          editedPosition.bis
-        );
+        await changeDirectorPosition(editedPosition.directorId, editedPosition.from, editedPosition.until);
         rowsChanged += 1;
       }
     });
@@ -977,8 +955,6 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     await Promise.all(promises);
 
     if (rowsChanged > 0) {
-      // Retrieve edited page
-      await getMemberDirectorPositions();
       showSuccessMessage("Änderungen erfolgreich gespeichert.");
     } else {
       showErrorMessage("Es wurden keine Änderungen vorgenommen.");
@@ -1034,10 +1010,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           >
                             <DatePicker
                               label="von"
-                              value={dayjs(position.von)}
-                              onChange={(newValue) =>
-                                setEVEintragVon(position.mitgliedID, position.evpostenID, newValue)
-                              }
+                              value={dayjs(position.from)}
+                              onChange={(newValue) => setEVEintragVon(position.memberId, position.directorId, newValue)}
                             />
                           </TableCell>
                           <TableCell
@@ -1045,16 +1019,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           >
                             <DatePicker
                               label="bis"
-                              value={dayjs(position.bis)}
-                              onChange={(newValue) =>
-                                setEVEintragBis(position.mitgliedID, position.evpostenID, newValue)
-                              }
+                              value={dayjs(position.until)}
+                              onChange={(newValue) => setEVEintragBis(position.memberId, position.directorId, newValue)}
                             />
                           </TableCell>
                           <TableCell
                             sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
                           >
-                            {position.kuerzel}
+                            {position.shortName}
                           </TableCell>
                           <TableCell
                             sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
@@ -1063,7 +1035,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                               color="primary"
                               checked={position.delete}
                               onChange={(event) =>
-                                setEVEintragDelete(position.mitgliedID, position.evpostenID, event.target.checked)
+                                setEVEintragDelete(position.memberId, position.directorId, event.target.checked)
                               }
                             />
                           </TableCell>

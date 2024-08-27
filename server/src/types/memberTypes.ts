@@ -340,8 +340,8 @@ export type MemberDirectorPositionsDto = {
   directorId: number;
   memberId: number;
   shortName: string;
-  from: string;
-  until: string;
+  from: Date;
+  until: Date;
 };
 
 export type AddDirectorPositionRequestDto = {

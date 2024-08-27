@@ -112,11 +112,14 @@ class MembersService {
    * Retrieves all director positions of the member
    */
   getMemberDirectorPositions = async (memberID: number) => {
-    const memberDirectorPositions = MemberHasDirectorPositionRepository.getMemberDirectorPositions(memberID);
+    const memberDirectorPositions = await MemberHasDirectorPositionRepository.getMemberDirectorPositions(memberID);
     if (memberDirectorPositions === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
-    return memberDirectorPositions;
+
+    return (memberDirectorPositions ?? []).map((position) =>
+      MemberMapper.memberHasDirectorPositionsToDirectorPositionsDto(position)
+    );
   };
 
   /**

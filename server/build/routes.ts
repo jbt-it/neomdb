@@ -916,7 +916,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberDirectorPositionsDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"until":{"dataType":"string","required":true},"from":{"dataType":"string","required":true},"shortName":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"shortName":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DepartmentDetailsDto": {

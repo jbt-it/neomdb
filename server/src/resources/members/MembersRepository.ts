@@ -289,7 +289,7 @@ export const MemberHasDirectorPositionRepository = AppDataSource.getRepository(M
    * @param memberID The id of the member
    * @returns The member's director positions
    */
-  getMemberDirectorPositions(memberID: number): Promise<MemberDirectorPositionsDto[]> {
+  getMemberDirectorPositions(memberID: number): Promise<MemberHasDirectorPosition[]> {
     return this.find({
       where: {
         member: { memberId: memberID },

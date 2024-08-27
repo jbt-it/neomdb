@@ -1,6 +1,13 @@
 import api from "../utils/api";
 import { AxiosResponse } from "axios";
-import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto, UpdateDepartmentDto } from "../types/membersTypes";
+import {
+  DepartmentDetailsDto,
+  DepartmentMemberDto,
+  DirectorDetailsDto,
+  DirectorDto,
+  DirectorPositionDto,
+  UpdateDepartmentDto,
+} from "../types/membersTypes";
 
 //-----------------------------------------------------------------------------------------------------------------------
 // GET ROUTES
@@ -36,6 +43,22 @@ export const getCurrentDirectors = async (): Promise<AxiosResponse<DirectorDto[]
  */
 export const getAllDirectors = async (): Promise<AxiosResponse<DirectorDto[]>> => {
   return await api.get("/members/directors?current=false");
+};
+
+/**
+ * Get all director positions
+ * @returns An array of all director positions of type DirectorPosition
+ */
+export const getDirectorPositions = async (): Promise<AxiosResponse<DirectorPositionDto[]>> => {
+  return await api.get("/members/director-positions");
+};
+
+/**
+ * Get all director positions with details
+ * @returns An array of all director positions with details of type DirectorDetails
+ */
+export const getDirectorPositionsDetails = async (): Promise<AxiosResponse<DirectorDetailsDto[]>> => {
+  return await api.get("/members/director-positions/details");
 };
 
 //-----------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,3 @@
-import { all } from "axios";
 import { CompanyDto, CompanyShortDto, ContactPersonDto, IndustryDto } from "../types/projectTypes";
 
 const useCompanies = () => {

@@ -8,6 +8,8 @@ import {
   getCurrentDirectors,
   getDepartmentMembers,
   getDepartments,
+  getDirectorPositions,
+  getDirectorPositionsDetails,
   updateDepartment,
 } from "../../api/departments";
 import { authReducerActionType } from "../../types/globalTypes";
@@ -63,6 +65,28 @@ const useDepartments = () => {
 
   const allDirectors = (allDirectorsData?.data as DirectorDto[]) || [];
 
+  // ----------------------------------------------------------------------------------
+
+  // getAllDirectorPositions query
+  const { data: allDirectorPositionsData } = useQuery({
+    queryKey: ["allDirectorPositions"],
+    queryFn: getDirectorPositions,
+  });
+
+  const allDirectorPositions = allDirectorPositionsData?.data || [];
+
+  // ----------------------------------------------------------------------------------
+
+  // getAllDirectorPositions query
+  const { data: directorPositionsData } = useQuery({
+    queryKey: ["allDirectorPositionsDetails"],
+    queryFn: getDirectorPositionsDetails,
+  });
+
+  const directorPositions = directorPositionsData?.data || [];
+
+  // ----------------------------------------------------------------------------------
+
   // ############
   //  UPDATES
   // ############
@@ -97,6 +121,8 @@ const useDepartments = () => {
     departmentMembers,
     currentDirectors,
     allDirectors,
+    allDirectorPositions,
+    directorPositions,
     updateDepartmentDetails,
   };
 };

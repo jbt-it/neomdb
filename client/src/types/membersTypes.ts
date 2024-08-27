@@ -116,14 +116,14 @@ export type DirectorDetailsDto = {
 };
 
 /**
- * Type of director position
+ * Type of the member director positions dto
  */
-export type MemberDirectorPositions = {
-  evpostenID: number;
-  mitgliedID: number;
-  kuerzel: string;
-  von: string;
-  bis: string;
+export type MemberDirectorPositionsDto = {
+  directorId: number;
+  memberId: number;
+  shortName: string;
+  from: Date;
+  until: Date;
 };
 
 /**
@@ -492,4 +492,22 @@ export type StatusOverview = {
 export type CreateMemberResponseDto = {
   memberId: number;
   statusOverview: StatusOverview;
+};
+
+/**
+ * Type of the add director request params
+ */
+export type AddDirectorRequestParams = {
+  directorID: number;
+  memberID: number;
+  from: Date;
+  until: Date;
+};
+
+/**
+ * Type of the delete director position request params
+ */
+export type DeleteDirectorPositionRequestParams = {
+  memberID: number;
+  directorID: number;
 };
