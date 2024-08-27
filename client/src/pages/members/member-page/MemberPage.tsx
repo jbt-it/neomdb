@@ -16,8 +16,17 @@ const MemberProfile: React.FunctionComponent = () => {
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   const { members, languages, itSkills } = useMembers();
-  const { departments } = useDepartments();
-  const { memberDetails, memberImage, updateMemberDetails, saveMemberImage } = useMemberDetails(Number(params.id));
+  const { departments, allDirectorPositions } = useDepartments();
+  const {
+    memberDetails,
+    memberImage,
+    updateMemberDetails,
+    saveMemberImage,
+    memberDirectorPositions,
+    addDirectorPosition,
+    changeDirectorPosition,
+    deleteDirectorPosition,
+  } = useMemberDetails(Number(params.id));
 
   useEffect(
     () =>
@@ -28,22 +37,25 @@ const MemberProfile: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        {memberDetails ? (
-          <DisplayMemberDetails
-            members={members}
-            listOfPermissions={auth.permissions}
-            departments={departments}
-            listOfLanguages={languages}
-            listOfEDVSkills={itSkills}
-            memberDetails={memberDetails}
-            isOwner={isOwner}
-            memberImage={memberImage}
-            updateMemberDetails={updateMemberDetails}
-            saveMemberImage={saveMemberImage}
-          />
-        ) : null}
-      </div>
+      {memberDetails ? (
+        <DisplayMemberDetails
+          members={members}
+          listOfPermissions={auth.permissions}
+          departments={departments}
+          listOfLanguages={languages}
+          listOfItSkills={itSkills}
+          memberDetails={memberDetails}
+          isOwner={isOwner}
+          memberImage={memberImage}
+          updateMemberDetails={updateMemberDetails}
+          memberDirectorPositions={memberDirectorPositions}
+          directorPositions={allDirectorPositions}
+          deleteDirectorPosition={deleteDirectorPosition}
+          addDirectorPosition={addDirectorPosition}
+          changeDirectorPosition={changeDirectorPosition}
+          saveMemberImage={saveMemberImage}
+        />
+      ) : null}
     </div>
   );
 };

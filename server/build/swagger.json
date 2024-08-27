@@ -3451,6 +3451,144 @@
 				"type": "object",
 				"description": "Type of the director (partial member with department and role information)"
 			},
+			"DirectorPositionDto": {
+				"properties": {
+					"sequence": {
+						"type": "number",
+						"format": "double"
+					},
+					"content": {
+						"type": "string"
+					},
+					"shortIntroduction": {
+						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"designationFemale": {
+						"type": "string"
+					},
+					"designationMale": {
+						"type": "string"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"sequence",
+					"content",
+					"shortIntroduction",
+					"jbtEmail",
+					"shortName",
+					"departmentId",
+					"designationFemale",
+					"designationMale",
+					"directorId"
+				],
+				"type": "object",
+				"description": "Type of the director position dto"
+			},
+			"DirectorDetailsDto": {
+				"properties": {
+					"sequence": {
+						"type": "number",
+						"format": "double"
+					},
+					"content": {
+						"type": "string"
+					},
+					"shortIntroduction": {
+						"type": "string"
+					},
+					"jbtEmail": {
+						"type": "string"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"designationFemale": {
+						"type": "string"
+					},
+					"designationMale": {
+						"type": "string"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"until": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"gender": {
+						"type": "boolean"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"sequence",
+					"content",
+					"shortIntroduction",
+					"jbtEmail",
+					"shortName",
+					"departmentId",
+					"designationFemale",
+					"designationMale",
+					"directorId",
+					"until",
+					"from",
+					"gender",
+					"lastname",
+					"firstname",
+					"memberId"
+				],
+				"type": "object",
+				"description": "Type of the director details dto"
+			},
+			"AddDirectorPositionRequestDto": {
+				"properties": {
+					"until": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"until",
+					"from"
+				],
+				"type": "object"
+			},
 			"StatusOverview": {
 				"properties": {
 					"wikiErrorMsg": {
@@ -3563,6 +3701,37 @@
 				"type": "object",
 				"description": "Type of the request to create a member"
 			},
+			"MemberDirectorPositionsDto": {
+				"properties": {
+					"until": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"directorId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"until",
+					"from",
+					"shortName",
+					"memberId",
+					"directorId"
+				],
+				"type": "object"
+			},
 			"DepartmentDetailsDto": {
 				"properties": {
 					"linkOrganigram": {
@@ -3659,7 +3828,7 @@
 				"type": "object",
 				"description": "Type of the member permission asignment dto used for the permission page"
 			},
-			"DirectorPositionDto": {
+			"DirectorPermissionDelegationDto": {
 				"properties": {
 					"shortName": {
 						"type": "string"
@@ -3678,13 +3847,13 @@
 					"directorId"
 				],
 				"type": "object",
-				"description": "Type of the director position dto"
+				"description": "Type of the director position permission delegation"
 			},
 			"PermissionAssignmentDto": {
 				"properties": {
 					"directors": {
 						"items": {
-							"$ref": "#/components/schemas/DirectorPositionDto"
+							"$ref": "#/components/schemas/DirectorPermissionDelegationDto"
 						},
 						"type": "array"
 					},
@@ -4093,6 +4262,33 @@
 				],
 				"type": "object",
 				"description": "Type of the member details dto used for the member details page"
+			},
+			"ChangeDirectorDetailsRequestDto": {
+				"properties": {
+					"until": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"from": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					},
+					"directorID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"until",
+					"from",
+					"memberID",
+					"directorID"
+				],
+				"type": "object"
 			},
 			"MembersFieldDto": {
 				"properties": {
@@ -4910,6 +5106,218 @@
 				]
 			}
 		},
+		"/members/director-positions": {
+			"get": {
+				"operationId": "GetDirectorPositions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DirectorPositionDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all director positions",
+				"summary": "Gets all director positions",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/director-positions/details": {
+			"get": {
+				"operationId": "GetDirectorsDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DirectorDetailsDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the details of the current directors",
+				"summary": "Get details of the current directors",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/members/{id}/director-positions/{directorPositionID}": {
+			"delete": {
+				"operationId": "DeleteDirectorPositions",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Deletes the director position of the member. If the member has multiple director positions with the same id, all are deleted.",
+				"summary": "Deletes the director position of the member",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "The member id",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The director position id",
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddDirectorPosition",
+				"responses": {
+					"201": {
+						"description": ""
+					}
+				},
+				"description": "Adds a new director position to the member",
+				"summary": "Adds a new director position",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the member to update",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The id of the director role",
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The dates of the director position to add",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddDirectorPositionRequestDto",
+								"description": "The dates of the director position to add"
+							},
+							"example": {
+								"from": "2024-01-01",
+								"until": "2024-12-12"
+							}
+						}
+					}
+				}
+			},
+			"patch": {
+				"operationId": "UpdateDirectorPosition",
+				"responses": {
+					"204": {
+						"description": ""
+					}
+				},
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": [
+							"1"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "directorPositionID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddDirectorPositionRequestDto"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/members/{id}/status": {
 			"patch": {
 				"operationId": "UpdateMemberStatus",
@@ -4965,6 +5373,47 @@
 						}
 					}
 				}
+			}
+		},
+		"/members/{id}/director-positions": {
+			"get": {
+				"operationId": "GetMemberDirectorPositions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MemberDirectorPositionsDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves all directory roles of the user",
+				"summary": "Get directory roles of user",
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/members/departments": {
@@ -5397,6 +5846,35 @@
 								],
 								"mentees": [],
 								"mentor": null
+							}
+						}
+					}
+				}
+			}
+		},
+		"/members/change-director": {
+			"post": {
+				"operationId": "ChangeDirector",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Members"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangeDirectorDetailsRequestDto"
 							}
 						}
 					}

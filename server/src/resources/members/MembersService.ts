@@ -10,6 +10,7 @@ import { DepartmentMapper } from "./DepartmentMapper";
 import { DepartmentRepository } from "./DepartmentRepository";
 import { MemberMapper } from "./MemberMapper";
 import {
+  DirectorRepository,
   ItSkillsRepository,
   LanguagesRepository,
   MemberHasDirectorPositionRepository,
@@ -18,6 +19,7 @@ import {
   PermissionsRepository,
 } from "./MembersRepository";
 import { PermissionMapper } from "./PermissionMapper";
+import { AppDataSource } from "./../../datasource";
 
 /**
  * Provides methods to execute member related service functionalities
@@ -104,6 +106,95 @@ class MembersService {
       directors = await MemberHasDirectorPositionRepository.getAllDirectors();
     }
     return directors.map((director) => MemberMapper.memberToDirectorDto(director));
+  };
+
+  /**
+   * Retrieves all director positions of the member
+   */
+  getMemberDirectorPositions = async (memberID: number) => {
+    const memberDirectorPositions = await MemberHasDirectorPositionRepository.getMemberDirectorPositions(memberID);
+    if (memberDirectorPositions === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+
+    return (memberDirectorPositions ?? []).map((position) =>
+      MemberMapper.memberHasDirectorPositionsToDirectorPositionsDto(position)
+    );
+  };
+
+  /**
+   * Retrieves all director positions
+   */
+  getDirectorPositions = async () => {
+    const directorPositions = await DirectorRepository.getDirectorPositions();
+
+    return directorPositions;
+  };
+
+  /**
+   * Retrieves the board of directors
+   */
+  getCurrentDirectorsDetails = async () => {
+    const boardOfDirectors = await MemberHasDirectorPositionRepository.getCurrentDirectors();
+
+    return boardOfDirectors.map((director) => MemberMapper.directorToDirectorDetailsDto(director));
+  };
+
+  /**
+   * Deletes the director position of the member
+   */
+  deleteDirectorPositions = async (memberID: number, directorID: number) => {
+    return await MemberHasDirectorPositionRepository.deleteDirectorPosition(memberID, directorID);
+  };
+
+  /**
+   * Adds the director position to the member
+   */
+  addDirectorPosition = async (memberID: number, directorID: number, from: Date, until: Date) => {
+    if (from > until) {
+      throw new ConflictError(`from date cannot be later than until date`);
+    }
+    return await MemberHasDirectorPositionRepository.saveDirectorPosition(memberID, directorID, from, until);
+  };
+
+  /**
+   * Updates the director position of the member
+   * @param memberID - The id of the member
+   * @param directorID - The id of the director
+   * @param from - The start date of the director position
+   * @param until - The end date of the director position
+   * @returns - The updated director position
+   */
+  updateDirectorPosition = async (memberID: number, directorID: number, from: Date, until: Date) => {
+    if (from > until) {
+      throw new ConflictError(`from date cannot be later than until date`);
+    }
+    return await MemberHasDirectorPositionRepository.saveDirectorPosition(memberID, directorID, from, until);
+  };
+
+  /**
+   * Changes the director to the given member
+   * @throws NotFoundError if no department was found
+   */
+  changeDirector = async (directorID: number, memberID: number, from: Date, until: Date) => {
+    if (directorID === null) {
+      throw new NotFoundError(`Department with id ${directorID} not found`);
+    }
+
+    if (from > until) {
+      throw new ConflictError(`from date cannot be later than until date`);
+    }
+
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      await MemberHasDirectorPositionRepository.endDirectorPositionTerm(directorID, transactionalEntityManager);
+      await MemberHasDirectorPositionRepository.saveDirectorPosition(
+        memberID,
+        directorID,
+        from,
+        until,
+        transactionalEntityManager
+      );
+    });
   };
 
   /**

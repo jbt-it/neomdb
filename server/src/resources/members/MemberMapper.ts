@@ -8,8 +8,9 @@ import { JWTPayload, PermissionDTO, User } from "../../types/authTypes";
 import {
   DepartmentMemberDto,
   DepartmentPartialDto,
+  DirectorDetailsDto,
   DirectorDto,
-  DirectorPositionDto,
+  DirectorPermissionDelegationDto,
   ItSkillDto,
   LanguageDto,
   MemberDetailsDto,
@@ -19,7 +20,6 @@ import {
   MenteeDto,
   MentorDto,
 } from "../../types/memberTypes";
-
 /**
  * Provides methods to map a member to a dto (data transfer object) or vice versa
  */
@@ -86,7 +86,9 @@ export class MemberMapper {
       department: this.departmentToDepartmentPartialDto(member.department),
     };
   }
-  static directorHasPermissionToDirectorPositionDto(directorHasPermission: DirectorHasPermission): DirectorPositionDto {
+  static directorHasPermissionToDirectorPermissionDelegation(
+    directorHasPermission: DirectorHasPermission
+  ): DirectorPermissionDelegationDto {
     return {
       directorId: directorHasPermission.directorId,
       shortName: directorHasPermission.director.shortName,
@@ -126,6 +128,26 @@ export class MemberMapper {
       designationMale: member.director.designationMale,
       designationFemale: member.director.designationFemale,
       directorId: member.director.directorId,
+    };
+  }
+
+  static directorToDirectorDetailsDto(director: MemberHasDirectorPosition): DirectorDetailsDto {
+    return {
+      memberId: director.memberId,
+      firstname: director.member.firstName,
+      lastname: director.member.lastName,
+      gender: director.member.gender,
+      from: director.from,
+      until: director.until,
+      directorId: director.directorId,
+      designationMale: director.director.designationMale,
+      designationFemale: director.director.designationFemale,
+      departmentId: director.director.departmentId,
+      shortName: director.director.shortName,
+      jbtEmail: director.director.jbtEmail,
+      shortIntroduction: director.director.shortIntroduction,
+      content: director.director.content,
+      sequence: director.director.sequence,
     };
   }
 
@@ -319,5 +341,15 @@ export class MemberMapper {
   }
   static itSkillDtosToItSkills(memberId: number, itSkillDtos: ItSkillDto[]): ItSkill[] {
     return itSkillDtos.map((itSkillDto) => this.itSkillDtoToItSkill(memberId, itSkillDto));
+  }
+
+  static memberHasDirectorPositionsToDirectorPositionsDto(memberHasDirectorPositions: MemberHasDirectorPosition) {
+    return {
+      directorId: memberHasDirectorPositions.directorId,
+      memberId: memberHasDirectorPositions.memberId,
+      shortName: memberHasDirectorPositions.director.shortName,
+      from: memberHasDirectorPositions.from,
+      until: memberHasDirectorPositions.until,
+    };
   }
 }

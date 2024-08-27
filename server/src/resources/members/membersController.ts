@@ -20,15 +20,20 @@ import { checkDepartmentAccess } from "../../middleware/authorization";
 import { UnauthorizedError } from "../../types/Errors";
 import { JWTPayload, PermissionAssignmentDto } from "../../types/authTypes";
 import {
+  AddDirectorPositionRequestDto,
   AssignPermissionToMemberRequestDto,
+  ChangeDirectorDetailsRequestDto,
   CreateMemberRequestDto,
   CreateMemberResponseDto,
   DepartmentDetailsDto,
   DepartmentMemberDto,
+  DirectorDetailsDto,
   DirectorDto,
+  DirectorPositionDto,
   ItSkillsValue,
   LanguageValue,
   MemberDetailsDto,
+  MemberDirectorPositionsDto,
   MemberImage,
   MemberPartialDto,
   StatusOverview,
@@ -124,6 +129,81 @@ export class MembersController extends Controller {
   }
 
   /**
+   * Retrieves all director positions
+   * @summary Gets all director positions
+   */
+  @Get("director-positions")
+  @Security("jwt")
+  public async getDirectorPositions(): Promise<DirectorPositionDto[]> {
+    const directorPositions = await this.membersService.getDirectorPositions();
+
+    return directorPositions;
+  }
+
+  /**
+   * Retrieves the details of the current directors
+   * @summary Get details of the current directors
+   */
+  @Get("director-positions/details")
+  @Security("jwt")
+  public async getDirectorsDetails(): Promise<DirectorDetailsDto[]> {
+    const directorsDetails = await this.membersService.getCurrentDirectorsDetails();
+    return directorsDetails;
+  }
+
+  /**
+   * Deletes the director position of the member. If the member has multiple director positions with the same id, all are deleted.
+   * @summary Deletes the director position of the member
+   * @param id The member id
+   * @param directorPositionID The director position id
+   */
+  @Delete("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  public async deleteDirectorPositions(@Path() id: number, @Path() directorPositionID: number): Promise<void> {
+    return await this.membersService.deleteDirectorPositions(id, directorPositionID);
+  }
+
+  /**
+   * Adds a new director position to the member
+   * @summary Adds a new director position
+   *
+   * @param id The id of the member to update
+   * @param directorPositionID The id of the director role
+   * @param requestBody The dates of the director position to add
+   *
+   * @example requestBody {
+   *   "from": "2024-01-01",
+   *   "until": "2024-12-12"
+   * }
+   */
+  @Post("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  @SuccessResponse("201")
+  public async addDirectorPosition(
+    @Path() id: number,
+    @Path() directorPositionID: number,
+    @Body() requestBody: AddDirectorPositionRequestDto
+  ): Promise<void> {
+    return await this.membersService.addDirectorPosition(id, directorPositionID, requestBody.from, requestBody.until);
+  }
+
+  @Patch("{id}/director-positions/{directorPositionID}")
+  @Security("jwt", ["1"])
+  @SuccessResponse("204")
+  public async updateDirectorPosition(
+    @Path() id: number,
+    @Path() directorPositionID: number,
+    @Body() requestBody: AddDirectorPositionRequestDto
+  ): Promise<void> {
+    return await this.membersService.updateDirectorPosition(
+      id,
+      directorPositionID,
+      requestBody.from,
+      requestBody.until
+    );
+  }
+
+  /**
    * Creates a new member in the database and creates accounts
    * for the different systems (exchange, mediawiki)
    * @summary Create a new member
@@ -209,6 +289,17 @@ export class MembersController extends Controller {
   public async updateMemberStatus(@Path() id: number, @Body() requestBody: { memberStatus: string }): Promise<void> {
     const status = requestBody.memberStatus;
     await this.membersService.updateMemberStatus(id, status);
+  }
+
+  /**
+   * Retrieves all directory roles of the user
+   * @summary Get directory roles of user
+   */
+  @Get("{id}/director-positions")
+  @Security("jwt")
+  public async getMemberDirectorPositions(@Path() id: number): Promise<MemberDirectorPositionsDto[]> {
+    const memberDirectorPositions = await this.membersService.getMemberDirectorPositions(id);
+    return memberDirectorPositions;
   }
 
   /**
@@ -501,5 +592,16 @@ export class MembersController extends Controller {
     } else {
       throw new UnauthorizedError("Authorization failed: You are not permitted to do this");
     }
+  }
+
+  @Post("change-director")
+  @Security("jwt")
+  public async changeDirector(
+    @Body() requestBody: ChangeDirectorDetailsRequestDto,
+    @Request() request: any
+  ): Promise<void> {
+    const { directorID, memberID, from, until } = requestBody;
+
+    await this.membersService.changeDirector(directorID, memberID, from, until);
   }
 }

@@ -884,6 +884,21 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"designationMale":{"dataType":"string","required":true},"designationFemale":{"dataType":"string","required":true},"gender":{"dataType":"boolean","required":true},"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"directorId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorPositionDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"sequence":{"dataType":"double","required":true},"content":{"dataType":"string","required":true},"shortIntroduction":{"dataType":"string","required":true},"jbtEmail":{"dataType":"string","required":true},"shortName":{"dataType":"string","required":true},"departmentId":{"dataType":"double","required":true},"designationFemale":{"dataType":"string","required":true},"designationMale":{"dataType":"string","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorDetailsDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"sequence":{"dataType":"double","required":true},"content":{"dataType":"string","required":true},"shortIntroduction":{"dataType":"string","required":true},"jbtEmail":{"dataType":"string","required":true},"shortName":{"dataType":"string","required":true},"departmentId":{"dataType":"double","required":true},"designationFemale":{"dataType":"string","required":true},"designationMale":{"dataType":"string","required":true},"directorId":{"dataType":"double","required":true},"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"gender":{"dataType":"boolean","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AddDirectorPositionRequestDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StatusOverview": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wikiErrorMsg":{"dataType":"string","required":true},"wikiSuccesful":{"dataType":"boolean","required":true},"nextcloudErrorMsg":{"dataType":"string","required":true},"nextcloudSuccesful":{"dataType":"boolean","required":true},"mailListErrorMsg":{"dataType":"string","required":true},"mailListSuccesful":{"dataType":"boolean","required":true},"mailErrorMsg":{"dataType":"string","required":true},"mailSuccesful":{"dataType":"boolean","required":true},"queryErrorMsg":{"dataType":"string","required":true},"querySuccesful":{"dataType":"boolean","required":true}},"validators":{}},
@@ -897,6 +912,11 @@ const models: TsoaRoute.Models = {
     "CreateMemberRequestDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationId":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"gender":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mobile":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"birthday":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberDirectorPositionsDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"shortName":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DepartmentDetailsDto": {
@@ -924,14 +944,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DirectorPositionDto": {
+    "DirectorPermissionDelegationDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shortName":{"dataType":"string","required":true},"canDelegate":{"dataType":"boolean","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PermissionAssignmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directors":{"dataType":"array","array":{"dataType":"refAlias","ref":"DirectorPositionDto"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberPermissionAssignmentDto"},"required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directors":{"dataType":"array","array":{"dataType":"refAlias","ref":"DirectorPermissionDelegationDto"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberPermissionAssignmentDto"},"required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AssignPermissionToMemberRequestDto": {
@@ -967,6 +987,11 @@ const models: TsoaRoute.Models = {
     "MemberDetailsDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mentor":{"dataType":"union","subSchemas":[{"ref":"MentorDto"},{"dataType":"enum","enums":[null]}]},"mentees":{"dataType":"array","array":{"dataType":"refAlias","ref":"MenteeDto"}},"itSkills":{"dataType":"array","array":{"dataType":"refAlias","ref":"ItSkillDto"}},"languages":{"dataType":"array","array":{"dataType":"refAlias","ref":"LanguageDto"}},"bic":{"dataType":"string"},"iban":{"dataType":"string"},"accountHolder":{"dataType":"string"},"firstAidTraining":{"dataType":"boolean","required":true},"drivingLicense":{"dataType":"double","required":true},"lastChange":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},"canQM":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"canPL":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"commitment":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"apprenticeship":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"specializations":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studyEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"studyStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"courseOfStudy":{"dataType":"string","required":true},"university":{"dataType":"string","required":true},"email2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"phone2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"city2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"postalCode2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"street2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"email1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"phone1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"city1":{"dataType":"string","required":true},"postalCode1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"street1":{"dataType":"string","required":true},"employer":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"department":{"dataType":"union","subSchemas":[{"ref":"DepartmentPartialDto"},{"dataType":"enum","enums":[null]}],"required":true},"exitedSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"passiveSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"activeSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"seniorSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"alumnusSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"memberSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"traineeSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"internalProject":{"dataType":"union","subSchemas":[{"ref":"InternalProject"},{"dataType":"enum","enums":[null]}],"required":true},"generation":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"memberStatus":{"ref":"MemberStatusDto","required":true},"jbtEmail":{"dataType":"string","required":true},"mobile":{"dataType":"string","required":true},"birthday":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"gender":{"dataType":"boolean","required":true},"firstname":{"dataType":"string","required":true},"lastname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChangeDirectorDetailsRequestDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"memberID":{"dataType":"double","required":true},"directorID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MembersFieldDto": {
@@ -1297,6 +1322,139 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/members/director-positions',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getDirectorPositions)),
+
+            function MembersController_getDirectorPositions(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.getDirectorPositions.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/members/director-positions/details',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getDirectorsDetails)),
+
+            function MembersController_getDirectorsDetails(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.getDirectorsDetails.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/members/:id/director-positions/:directorPositionID',
+            authenticateMiddleware([{"jwt":["1"]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.deleteDirectorPositions)),
+
+            function MembersController_deleteDirectorPositions(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    directorPositionID: {"in":"path","name":"directorPositionID","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.deleteDirectorPositions.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/members/:id/director-positions/:directorPositionID',
+            authenticateMiddleware([{"jwt":["1"]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.addDirectorPosition)),
+
+            function MembersController_addDirectorPosition(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    directorPositionID: {"in":"path","name":"directorPositionID","required":true,"dataType":"double"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AddDirectorPositionRequestDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.addDirectorPosition.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 201, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/api/members/:id/director-positions/:directorPositionID',
+            authenticateMiddleware([{"jwt":["1"]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.updateDirectorPosition)),
+
+            function MembersController_updateDirectorPosition(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    directorPositionID: {"in":"path","name":"directorPositionID","required":true,"dataType":"double"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AddDirectorPositionRequestDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.updateDirectorPosition.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 204, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/api/members',
             authenticateMiddleware([{"jwt":["1"]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
@@ -1344,6 +1502,32 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.updateMemberStatus.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/members/:id/director-positions',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getMemberDirectorPositions)),
+
+            function MembersController_getMemberDirectorPositions(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.getMemberDirectorPositions.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -1607,6 +1791,33 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.updateMember.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/members/change-director',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(MembersController)),
+            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.changeDirector)),
+
+            function MembersController_changeDirector(request: any, response: any, next: any) {
+            const args = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ChangeDirectorDetailsRequestDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new MembersController();
+
+
+              const promise = controller.changeDirector.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

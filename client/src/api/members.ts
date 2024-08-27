@@ -1,11 +1,15 @@
 import api from "../utils/api";
 import { AxiosResponse } from "axios";
 import {
+  AddDirectorRequestParams,
   AddMemberParams,
   CreateMemberResponseDto,
+  DeleteDirectorPositionRequestParams,
+  DirectorPositionDto,
   ItSkill,
   Language,
   MemberDetailsDto,
+  MemberDirectorPositionsDto,
   MemberImage,
   MemberPartialDto,
   UpdateMemberImageParams,
@@ -58,6 +62,15 @@ export const getITSkills = async (): Promise<AxiosResponse<ItSkill[]>> => {
   return await api.get("/members/edv-skills");
 };
 
+/**
+ * Get director positions of the current member
+ */
+export const getMemberDirectorPositions = async (
+  memberID: number
+): Promise<AxiosResponse<MemberDirectorPositionsDto[]>> => {
+  return await api.get(`/members/${memberID}/director-positions`);
+};
+
 //-----------------------------------------------------------------------------------------------------------------------
 // UPDATE ROUTES
 
@@ -106,4 +119,51 @@ export const saveMemberImage = async ({ image, memberID }: UpdateMemberImagePara
  */
 export const addMember = async (member: AddMemberParams): Promise<AxiosResponse<CreateMemberResponseDto>> => {
   return await api.post("/members", member);
+};
+
+/**
+ * Add a new director position to the member
+ * @param directorId - The ID of the director
+ * @param memberId - The ID of the member
+ * @param from - The start date of the position
+ * @param until - The end date of the position
+ * @returns The new director position
+ */
+export const addDirectorPosition = async ({
+  directorID,
+  memberID,
+  from,
+  until,
+}: AddDirectorRequestParams): Promise<AxiosResponse<void>> => {
+  return await api.post(`/members/${memberID}/director-positions/${directorID}`, { from, until });
+};
+
+/**
+ * Delete a director position of a member
+ * @param memberID - The ID of the member
+ * @param directorID - The ID of the director position
+ * @returns void
+ */
+export const deleteDirectorPosition = async ({
+  memberID,
+  directorID,
+}: DeleteDirectorPositionRequestParams): Promise<AxiosResponse<void>> => {
+  return await api.delete(`/members/${memberID}/director-positions/${directorID}`);
+};
+
+/**
+ * Change the director position of a member
+ * @param directorID - The ID of the director position
+ * @param memberID - The ID of the member
+ * @param from - The start date of the position
+ * @param until - The end date of the position
+ * @returns void
+ */
+export const changeDirectorPosition = async ({
+  directorID,
+  memberID,
+  from,
+  until,
+}: AddDirectorRequestParams): Promise<AxiosResponse<void>> => {
+  return await api.patch(`/members/${memberID}/director-positions/${directorID}`, { from, until });
 };

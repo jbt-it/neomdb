@@ -10,7 +10,7 @@ export class PermissionMapper {
       description: permission.description,
       members: permission.members.map((member) => MemberMapper.memberToMemberPermissionAssignmentDto(member)),
       directors: permission.directorHasPermissions.map((dhp) =>
-        MemberMapper.directorHasPermissionToDirectorPositionDto(dhp)
+        MemberMapper.directorHasPermissionToDirectorPermissionDelegation(dhp)
       ),
     };
   }

@@ -1,5 +1,5 @@
-import { ItSkillsValue, LanguageValue, NewMember } from "types/memberTypes";
-import { EntityManager, LessThan, MoreThan } from "typeorm";
+import { ItSkillsValue, LanguageValue, MemberDirectorPositionsDto, NewMember } from "types/memberTypes";
+import { EntityManager, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual } from "typeorm";
 import { AppDataSource } from "../../datasource";
 import { Generation } from "../../entities/Generation";
 import { ItSkill } from "../../entities/ItSkill";
@@ -9,6 +9,7 @@ import { MemberHasDirectorPosition } from "../../entities/MemberHasDirectorPosit
 import { MemberStatus } from "../../entities/MemberStatus";
 import { Permission } from "../../entities/Permission";
 import { PermissionDTO } from "../../types/authTypes";
+import { Director } from "../../entities/Director";
 
 /**
  * Creates and exports the Members Repository
@@ -222,6 +223,24 @@ export const PermissionsRepository = AppDataSource.getRepository(Permission).ext
 });
 
 /**
+ * Creates and exports the Director Repository
+ */
+export const DirectorRepository = AppDataSource.getRepository(Director).extend({
+  /**
+   * Retrieves all director positions
+   * @param includeDirectorMembers Include names of director members if true
+   * @returns All director positions
+   */
+  getDirectorPositions(): Promise<Director[]> {
+    return this.find({
+      order: {
+        sequence: "ASC",
+      },
+    });
+  },
+});
+
+/**
  * Creates and exports the MemberHasDirectorPosition Repository
  */
 export const MemberHasDirectorPositionRepository = AppDataSource.getRepository(MemberHasDirectorPosition).extend({
@@ -263,6 +282,83 @@ export const MemberHasDirectorPositionRepository = AppDataSource.getRepository(M
       .andWhere("memberHasDirectorPositions.from <= NOW()")
       .andWhere("memberHasDirectorPositions.until >= NOW()")
       .getRawMany();
+  },
+
+  /**
+   * Retrieves the member's director positions
+   * @param memberID The id of the member
+   * @returns The member's director positions
+   */
+  getMemberDirectorPositions(memberID: number): Promise<MemberHasDirectorPosition[]> {
+    return this.find({
+      where: {
+        member: { memberId: memberID },
+      },
+      relations: ["director", "member"],
+    });
+  },
+
+  /**
+   * Deletes the director position of the member
+   * @param memberID The member id
+   * @param directorID The director position
+   */
+  deleteDirectorPosition(memberID: number, directorID: number): Promise<void> {
+    return this.delete({
+      member: { memberId: memberID },
+      director: { directorId: directorID },
+    });
+  },
+
+  /**
+   * Saves a new director position to the member or changes a current director position
+   * @param memberID The id of the member
+   * @param directorID The id of the director
+   * @param from The start date of the director position
+   * @param until The end date of the director position
+   * @param transactionalEntityManager The transactional entity manager
+   */
+  saveDirectorPosition(
+    memberID: number,
+    directorID: number,
+    from: Date,
+    until: Date,
+    transactionalEntityManager?: EntityManager
+  ): Promise<void> {
+    return transactionalEntityManager
+      ? this.save({ memberId: memberID, directorId: directorID, from, until }, transactionalEntityManager)
+      : this.save({ memberId: memberID, directorId: directorID, from, until });
+  },
+
+  /**
+   * End the term of a director position
+   * @param directorID The id of the director
+   * @param transactionalEntityManager The transactional entity manager
+   * @returns A promise that resolves when the director position term is ended
+   */
+  endDirectorPositionTerm(directorID: number, transactionalEntityManager?: EntityManager): Promise<void> {
+    return transactionalEntityManager
+      ? this.update(
+          {
+            director: { directorId: directorID },
+            from: LessThanOrEqual(new Date()),
+            until: MoreThanOrEqual(new Date()),
+          },
+          {
+            until: new Date(new Date().setDate(new Date().getDate() - 1)),
+          },
+          transactionalEntityManager
+        )
+      : this.update(
+          {
+            director: { directorId: directorID },
+            from: LessThanOrEqual(new Date()),
+            until: MoreThanOrEqual(new Date()),
+          },
+          {
+            until: new Date(new Date().setDate(new Date().getDate() - 1)),
+          }
+        );
   },
 });
 

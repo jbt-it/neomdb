@@ -1,9 +1,9 @@
 /**
  * The DislpayMemberDetails-Component displays details of a member
  */
-
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import {
+  Checkbox,
   Grid,
   Typography,
   IconButton,
@@ -18,40 +18,64 @@ import {
   MenuItem,
   createFilterOptions,
   Autocomplete,
+  Modal,
+  Paper,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
   useTheme,
   Box,
 } from "@mui/material";
-import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
-import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
+import { ExpandLess, ExpandMore, AddCircleOutline, Clear, Add } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { stringToDate } from "../../../utils/dateUtils";
+import { showErrorMessage, showSuccessMessage } from "../../../utils/toastUtils";
+import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
+import MemberImage from "../../../components/general/MemberImage";
+import InfoCard from "../../../components/general/InfoCard";
 import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
-import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
-import InfoCard from "../../../components/general/InfoCard";
-import MemberImage from "../../../components/general/MemberImage";
-import { stringToDate } from "../../../utils/dateUtils";
-import { Link } from "react-router-dom";
+import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
 
-/**
- * Interface for the props of the DisplayMemberDetails
- */
 interface DisplayMemberDetailsProps {
   members: membersTypes.MemberPartialDto[];
   listOfPermissions: globalTypes.Permission[];
   departments: membersTypes.DepartmentPartialDto[];
   listOfLanguages: membersTypes.Language[];
-  listOfEDVSkills: membersTypes.ItSkill[];
+  listOfItSkills: membersTypes.ItSkill[];
   memberDetails: membersTypes.MemberDetailsDto;
   isOwner: boolean;
   memberImage: membersTypes.MemberImage | null;
+  memberDirectorPositions: membersTypes.MemberDirectorPositionsDto[];
+  directorPositions: membersTypes.DirectorPositionDto[];
   updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
   saveMemberImage: (file: File) => void;
+  deleteDirectorPosition: (directorId: number) => void;
+  addDirectorPosition: (directorID: number, from: Date, until: Date) => void;
+  changeDirectorPosition: (directorId: number, from: Date, until: Date) => void;
 }
 
 /**
  * Displays the member details
  */
 const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
-  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
+  const {
+    members,
+    departments,
+    listOfLanguages,
+    listOfItSkills: listOfEDVSkills,
+    memberDetails,
+    memberDirectorPositions,
+    directorPositions,
+    deleteDirectorPosition,
+    addDirectorPosition,
+    changeDirectorPosition,
+  } = props;
   const theme = useTheme();
 
   /**
@@ -181,13 +205,61 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
+    vorstandSubmitButton: {
+      margin: theme.spacing(1, 1, 0, 0),
+      maxHeight: "37px",
+    },
+    vorstandCancelButton: {
+      margin: theme.spacing(1, 0, 0, 0),
+      maxHeight: "37px",
+    },
+    tableSecondLastRow: {
+      borderBottomWidth: "1px",
+      borderBottomColor: theme.palette.primary.main,
+      borderBottomStyle: "solid",
+    },
+    modalPaper: {
+      overflowY: "auto",
+      position: "absolute",
+      margin: "auto",
+      top: "20%",
+      left: "10%",
+      right: "10%",
+      bottom: "20%",
+      width: "60%",
+      display: "flex",
+      justifyContent: "center",
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+    tableContainer: {
+      maxHeight: (window.screen.height - 75) * 0.8,
+    },
+    tableHeadCell: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    },
+    paperHeaderText: {
+      marginLeft: theme.spacing(1),
+      marginTop: theme.spacing(1),
+    },
   };
+
+  type EditedMemberDirectorPositions = membersTypes.MemberDirectorPositionsDto & { delete: boolean };
 
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
 
   // Filter of languages for the autocomplete component
   const itFilter = createFilterOptions<membersTypes.ItSkill>();
+
+  const [isEditingEVPosition, setIsEditingEVPosition] = useState(false);
+  const [editedMemberDirectorPositions, setEditedMemberDirectorPositions] = useState<EditedMemberDirectorPositions[]>(
+    []
+  );
+  const [vonValue, setVonValue] = useState<Dayjs | null>(dayjs());
+  const [bisValue, setBisValue] = useState<Dayjs | null>(dayjs());
+  const [evPosition, setEVPosition] = useState(-1);
 
   const [careerOpen, setCareerOpen] = useState(false);
   const [lastname] = useState(memberDetails.lastname);
@@ -441,6 +513,10 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.languages || []);
   const [itSkills, dispatchItSkills] = useReducer(itSkillsReducer, memberDetails?.itSkills || []);
 
+  useEffect(() => {
+    setEditedMemberDirectorPositions(props.memberDirectorPositions.map((position) => ({ ...position, delete: false })));
+  }, [props.memberDirectorPositions]);
+
   /**
    * Submits the changed data
    * @param event FormEvent
@@ -664,11 +740,359 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
         />
         <Box sx={styles.imageSectionText}>
           <Typography variant="h6">{`${memberDetails.firstname} ${memberDetails.lastname}`}</Typography>
+          {memberDirectorPositions.map((position, index) => {
+            if (new Date(position.from) <= new Date() && new Date(position.until) >= new Date()) {
+              return (
+                <Typography key={index}>
+                  <i>{`${position.shortName}`}</i>
+                </Typography>
+              );
+            } else {
+              return;
+            }
+          })}
           <Typography>
             <i>{`${memberDetails.memberStatus?.name}`}</i>
           </Typography>
+          {doesPermissionsHaveSomeOf(props.listOfPermissions, [1]) && (
+            <Button
+              variant="contained"
+              onClick={() => {
+                setIsEditingEVPosition(true);
+              }}
+            >
+              EV Posten
+            </Button>
+          )}
         </Box>
       </Box>
+    );
+  };
+
+  /**
+   * Changes the von value of the director position to be inserted
+   * @param memberID
+   * @param directorId
+   * @param von
+   * @returns
+   */
+  const setEVEintragVon = (memberID: number, directorId: number, from: Dayjs | null) => {
+    if (from === null) {
+      return;
+    }
+
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.memberId === directorId) {
+          if (from > dayjs(position.until)) {
+            showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
+            return position;
+          } else {
+            // If it matches, update the von and bis properties
+            return {
+              ...position,
+              until: position.until,
+              from: from.toDate(),
+            };
+          }
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  /**
+   * Changes the bis value of the director position to be inserted
+   * @param memberID
+   * @param directorId
+   * @param bis
+   * @returns
+   */
+  const setEVEintragBis = (memberID: number, directorId: number, until: Dayjs | null) => {
+    if (until === null) {
+      return;
+    }
+
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.directorId === directorId) {
+          if (dayjs(position.from) > until) {
+            showErrorMessage("Das von Datum muss vor dem bis Datum liegen");
+            return position;
+          } else {
+            // If it matches, update the von and bis properties
+            return {
+              ...position,
+              until: until.toDate(),
+              from: position.from,
+            };
+          }
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  /**
+   * Removes an entry to the list of ev posten
+   * @param memberID
+   * @param directorId
+   * @param del
+   */
+  const setEVEintragDelete = (memberID: number, directorId: number, del: boolean) => {
+    // Find an entry of the editedMemberDirectorPositions that matches memberID and directorId and change the von and bis to the parameters given to the function
+    setEditedMemberDirectorPositions((prevPositions) =>
+      prevPositions.map((position) => {
+        // Check if the position matches the provided memberID and directorId
+        if (position.memberId === memberID && position.directorId === directorId) {
+          // If it matches, update the von and bis properties
+          return {
+            ...position,
+            delete: del,
+          };
+        } else {
+          // If it doesn't match, return the position unchanged
+          return position;
+        }
+      })
+    );
+  };
+
+  /**
+   * Adds a new entry to the list of ev posten
+   * @param memberId
+   * @param directorId
+   * @param von
+   * @param bis
+   * @returns
+   */
+  const addEVEintrag = (memberId: number, directorId: number, from: Dayjs | null, until: Dayjs | null) => {
+    if (until === null || from === null) {
+      return;
+    }
+
+    let posExists = false;
+    memberDirectorPositions.forEach((position) => {
+      if (position.memberId === memberId && position.directorId === directorId) {
+        posExists = true;
+        return;
+      }
+    });
+
+    if (posExists) {
+      showErrorMessage("Ein Mitglied kann jeden EV Posten nur einmal belegen.");
+      return;
+    }
+
+    let shortName = "";
+    directorPositions.forEach((position) => {
+      if (position.directorId === directorId) {
+        shortName = position.shortName;
+        return;
+      }
+    });
+
+    if (shortName === "") {
+      return;
+    }
+
+    const newEntry: EditedMemberDirectorPositions = {
+      directorId,
+      memberId,
+      shortName,
+      from: from.toDate(),
+      until: until.toDate(),
+      delete: false,
+    };
+
+    setEditedMemberDirectorPositions((prevState) => [...prevState, newEntry]);
+  };
+
+  /**
+   * Loops through all entries of ev posten and checks which need to be updated, deleted or added
+   * and adds them to the database
+   */
+  const saveEVPosten = async () => {
+    let rowsChanged = 0;
+
+    // Use map to create an array of promises
+    const promises = editedMemberDirectorPositions.map(async (editedPosition) => {
+      let foundValue = false;
+      let update = false;
+      memberDirectorPositions.forEach((oldPosition) => {
+        if (editedPosition.directorId === oldPosition.directorId && editedPosition.memberId === oldPosition.memberId) {
+          foundValue = true;
+          if (editedPosition.until !== oldPosition.until || editedPosition.from !== oldPosition.from) {
+            update = true;
+            return;
+          }
+        }
+      });
+
+      if (!foundValue) {
+        if (!editedPosition.delete) {
+          await addDirectorPosition(editedPosition.directorId, editedPosition.from, editedPosition.until);
+        }
+        rowsChanged += 1;
+      } else if (editedPosition.delete) {
+        await deleteDirectorPosition(editedPosition.directorId);
+        rowsChanged += 1;
+      } else if (update) {
+        await changeDirectorPosition(editedPosition.directorId, editedPosition.from, editedPosition.until);
+        rowsChanged += 1;
+      }
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(promises);
+
+    if (rowsChanged > 0) {
+      showSuccessMessage("Änderungen erfolgreich gespeichert.");
+    } else {
+      showErrorMessage("Es wurden keine Änderungen vorgenommen.");
+    }
+  };
+
+  // Closes the edit ev posten modal without saving
+  const cancelEditEVPosten = () => {
+    setIsEditingEVPosition(false);
+    setEditedMemberDirectorPositions(props.memberDirectorPositions.map((position) => ({ ...position, delete: false })));
+  };
+
+  /**
+   * Renders the modal that displays all director posts that the member has and lets the user make changes
+   */
+  const renderEVPosten: VoidFunction = () => {
+    return (
+      <Modal
+        open={isEditingEVPosition}
+        onClose={() => cancelEditEVPosten()}
+        aria-labelledby="EV Posten zuweisen"
+        aria-describedby="Zuweisung eines EV Posten"
+      >
+        <Paper sx={styles.modalPaper}>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={styles.paperHeaderText}>
+                Vorstandsämter bearbeiten
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6" sx={styles.paperHeaderText}>
+                Jedes Mitglied kann ein bestimmtes Vorstandsamt nur einmal besetzen.
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TableContainer component={Paper} sx={styles.tableContainer}>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={styles.tableHeadCell}>EV Amt von</TableCell>
+                      <TableCell sx={styles.tableHeadCell}>EV Amt bis</TableCell>
+                      <TableCell sx={styles.tableHeadCell}>EV Amt</TableCell>
+                      <TableCell sx={styles.tableHeadCell}>Löschen</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {editedMemberDirectorPositions.map((position, index) => {
+                      return (
+                        <TableRow hover key={index}>
+                          <TableCell
+                            sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
+                          >
+                            <DatePicker
+                              label="von"
+                              value={dayjs(position.from)}
+                              onChange={(newValue) => setEVEintragVon(position.memberId, position.directorId, newValue)}
+                            />
+                          </TableCell>
+                          <TableCell
+                            sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
+                          >
+                            <DatePicker
+                              label="bis"
+                              value={dayjs(position.until)}
+                              onChange={(newValue) => setEVEintragBis(position.memberId, position.directorId, newValue)}
+                            />
+                          </TableCell>
+                          <TableCell
+                            sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
+                          >
+                            {position.shortName}
+                          </TableCell>
+                          <TableCell
+                            sx={index === editedMemberDirectorPositions.length - 1 ? styles.tableSecondLastRow : null}
+                          >
+                            <Checkbox
+                              color="primary"
+                              checked={position.delete}
+                              onChange={(event) =>
+                                setEVEintragDelete(position.memberId, position.directorId, event.target.checked)
+                              }
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    <TableRow hover key={999}>
+                      <TableCell>
+                        <DatePicker label="von" value={vonValue} onChange={(newValue) => setVonValue(newValue)} />
+                      </TableCell>
+                      <TableCell>
+                        <DatePicker label="bis" value={bisValue} onChange={(newValue) => setBisValue(newValue)} />
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          label="EV Position"
+                          defaultValue={-1}
+                          value={evPosition}
+                          onChange={(event) => setEVPosition(event.target.value as number)}
+                        >
+                          {directorPositions.map((position, index) => {
+                            return (
+                              <MenuItem key={index} value={position.directorId}>
+                                {position.shortName}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          aria-label="add"
+                          disabled={evPosition < 0 || !vonValue || !bisValue}
+                          onClick={() => addEVEintrag(memberDetails.memberId, evPosition, vonValue, bisValue)}
+                        >
+                          <Add />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+            <Button sx={styles.vorstandSubmitButton} variant="contained" color="primary" onClick={() => saveEVPosten()}>
+              Änderungen speichern
+            </Button>
+            <Button
+              sx={styles.vorstandCancelButton}
+              variant="contained"
+              color="secondary"
+              onClick={() => cancelEditEVPosten()}
+            >
+              Abbrechen
+            </Button>
+          </Grid>
+        </Paper>
+      </Modal>
     );
   };
 
@@ -1774,6 +2198,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     <Box sx={styles.displayMemberDetailsRoot}>
       <Grid container spacing={3}>
         <>
+          {renderEVPosten()}
           {renderImage()}
           {renderGeneralInformation()}
           {renderGeneralInformationDialog()}

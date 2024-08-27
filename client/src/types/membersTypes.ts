@@ -72,11 +72,58 @@ export type DepartmentDetailsDto = {
 };
 
 /**
+ * Type of director position
+ */
+export type DirectorPositionDto = {
+  directorId: number;
+  designationMale: string;
+  designationFemale: string;
+  departmentId: number;
+  shortName: string;
+  jbtEmail: string;
+  shortIntroduction: string;
+  content: string;
+  sequence: number;
+};
+
+/**
  * Type of the request to update a department
  */
 export type UpdateDepartmentDto = {
   linkObjectivePresentation: string;
   linkOrganigram: string;
+};
+
+/**
+ * Type of director details
+ */
+export type DirectorDetailsDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  gender: boolean;
+  from: Date;
+  until: Date;
+  directorId: number;
+  designationMale: string;
+  designationFemale: string;
+  departmentId: number;
+  shortName: string;
+  jbtEmail: string;
+  shortIntroduction: string;
+  content: string;
+  sequence: number;
+};
+
+/**
+ * Type of the member director positions dto
+ */
+export type MemberDirectorPositionsDto = {
+  directorId: number;
+  memberId: number;
+  shortName: string;
+  from: Date;
+  until: Date;
 };
 
 /**
@@ -148,7 +195,7 @@ export type AssignPermissionToMemberRequestDto = {
 /**
  * Type of the director position dto
  */
-export type DirectorPositionDto = {
+export type DirectorPermissionDelegationDto = {
   directorId: number;
   canDelegate: boolean;
   shortName: string;
@@ -162,7 +209,7 @@ export type PermissionAssignmentDto = {
   name: string;
   description: string;
   members: MemberPermissionAssignmentDto[];
-  directors: DirectorPositionDto[];
+  directors: DirectorPermissionDelegationDto[];
 };
 
 /**
@@ -445,4 +492,22 @@ export type StatusOverview = {
 export type CreateMemberResponseDto = {
   memberId: number;
   statusOverview: StatusOverview;
+};
+
+/**
+ * Type of the add director request params
+ */
+export type AddDirectorRequestParams = {
+  directorID: number;
+  memberID: number;
+  from: Date;
+  until: Date;
+};
+
+/**
+ * Type of the delete director position request params
+ */
+export type DeleteDirectorPositionRequestParams = {
+  memberID: number;
+  directorID: number;
 };

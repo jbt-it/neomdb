@@ -1,5 +1,5 @@
 import { Permission } from "../entities/Permission";
-import { DirectorPositionDto, MemberPermissionAssignmentDto } from "./memberTypes";
+import { DirectorPermissionDelegationDto, MemberPermissionAssignmentDto } from "./memberTypes";
 
 /**
  * Type of the permission assignment (permission of a member or a director)
@@ -9,7 +9,7 @@ export type PermissionAssignmentDto = {
   name: string;
   description: string;
   members: MemberPermissionAssignmentDto[];
-  directors: DirectorPositionDto[];
+  directors: DirectorPermissionDelegationDto[];
 };
 
 /**

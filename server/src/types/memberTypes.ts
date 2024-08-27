@@ -135,9 +135,9 @@ export type DepartmentMemberDto = {
 };
 
 /**
- * Type of the director position dto
+ * Type of the director position permission delegation
  */
-export type DirectorPositionDto = {
+export type DirectorPermissionDelegationDto = {
   directorId: number;
   canDelegate: boolean;
   shortName: string;
@@ -157,6 +157,42 @@ export type DirectorDto = {
   gender: boolean;
   designationFemale: string;
   designationMale: string;
+};
+
+/**
+ * Type of the director details dto
+ */
+export type DirectorDetailsDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  gender: boolean;
+  from: Date;
+  until: Date;
+  directorId: number;
+  designationMale: string;
+  designationFemale: string;
+  departmentId: number;
+  shortName: string;
+  jbtEmail: string;
+  shortIntroduction: string;
+  content: string;
+  sequence: number;
+};
+
+/**
+ * Type of the director position dto
+ */
+export type DirectorPositionDto = {
+  directorId: number;
+  designationMale: string;
+  designationFemale: string;
+  departmentId: number;
+  shortName: string;
+  jbtEmail: string;
+  shortIntroduction: string;
+  content: string;
+  sequence: number;
 };
 
 /**
@@ -298,4 +334,24 @@ export type CreateMemberResponseDto = {
 export type AssignPermissionToMemberRequestDto = {
   memberId: number;
   permissionID: number;
+};
+
+export type MemberDirectorPositionsDto = {
+  directorId: number;
+  memberId: number;
+  shortName: string;
+  from: Date;
+  until: Date;
+};
+
+export type AddDirectorPositionRequestDto = {
+  from: Date;
+  until: Date;
+};
+
+export type ChangeDirectorDetailsRequestDto = {
+  directorID: number;
+  memberID: number;
+  from: Date;
+  until: Date;
 };

@@ -112,7 +112,7 @@ const DirectorsHistory: React.FunctionComponent = () => {
     },
     tableHeadCell: {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.secondary,
+      color: theme.palette.primary.contrastText,
     },
     tableHeadSortBtn: {
       display: "flex",
