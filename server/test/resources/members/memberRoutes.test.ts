@@ -516,7 +516,7 @@ describe("Test member routes", () => {
       expect(response.status).toBe(201);
     });
 
-    test("should return 500 for adding a director positions to the member", async () => {
+    test("should return 409 for adding a director positions to the member", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -532,7 +532,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(409);
     });
 
     test("should return 403 for adding a director positions to the member", async () => {
@@ -866,7 +866,7 @@ describe("Test member routes", () => {
       expect(response.status).toBe(204);
     });
 
-    test("should return 500 for malformatted date", async () => {
+    test("should return 409 for malformatted date", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -885,7 +885,7 @@ describe("Test member routes", () => {
         .set("Cookie", `token=${token}`);
 
       // --- THEN
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(409);
     });
 
     test("should return 403 for unautherized user", async () => {
