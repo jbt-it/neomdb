@@ -39,6 +39,7 @@ TRUNCATE TABLE mdb.schulungsfeedback;
 TRUNCATE TABLE mdb.schulungsfeedback_has_feedbackfrage;
 TRUNCATE TABLE mdb.schulungsfeedback_has_mitglied;
 TRUNCATE TABLE mdb.schulungsinstanz;
+TRUNCATE TABLE mdb.schulungsinstanz_has_referent;
 TRUNCATE TABLE mdb.sprachen;
 TRUNCATE TABLE mdb.trace;
 TRUNCATE TABLE mdb.traineebewerber;

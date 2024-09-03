@@ -578,6 +578,12 @@
 					},
 					"internalProject": {
 						"$ref": "#/components/schemas/InternalProject"
+					},
+					"referencedWorkshops": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopInstanceHasReferent"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -678,7 +684,8 @@
 					"workshopFeedbackHasMembers",
 					"languages",
 					"traineeApplicants",
-					"internalProject"
+					"internalProject",
+					"referencedWorkshops"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2866,6 +2873,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"name": {
+						"type": "string"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
@@ -2883,10 +2893,12 @@
 					},
 					"startTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"endTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"location": {
@@ -2898,7 +2910,7 @@
 						"format": "double",
 						"nullable": true
 					},
-					"speakers": {
+					"description": {
 						"type": "string",
 						"nullable": true
 					},
@@ -2930,24 +2942,32 @@
 					},
 					"workshop": {
 						"$ref": "#/components/schemas/Workshop"
+					},
+					"referents": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopInstanceHasReferent"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"workshopInstanceId",
 					"workshopId",
+					"name",
 					"status",
 					"date",
 					"startTime",
 					"endTime",
 					"location",
 					"maximumParticipants",
-					"speakers",
+					"description",
 					"targetGroup",
 					"registrationFrom",
 					"registrationUntil",
 					"memberHasWorkshopInstances",
 					"workshopFeedbacks",
-					"workshop"
+					"workshop",
+					"referents"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3138,6 +3158,32 @@
 					"type",
 					"description",
 					"workshopInstances"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopInstanceHasReferent": {
+				"properties": {
+					"workshopInstanceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"workshopInstance": {
+						"$ref": "#/components/schemas/WorkshopInstance"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"workshopInstanceId",
+					"memberId",
+					"workshopInstance",
+					"member"
 				],
 				"type": "object",
 				"additionalProperties": false
