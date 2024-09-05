@@ -43,6 +43,7 @@ import ProjectOverview from "./pages/projects/ProjectOverview";
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
 import MembershipFee from "./pages/finance/MembershipFee";
+import MiscFee from "./pages/finance/MiscFee";
 
 // other pages
 import Login from "./pages/Login";
@@ -144,6 +145,14 @@ const App: React.FunctionComponent = () => {
               element={
                 <ProtectedRoutes permissionIDs={[6]}>
                   <MembershipFee />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="sonstigereinzug"
+              element={
+                <ProtectedRoutes permissionIDs={[6]}>
+                  <MiscFee />
                 </ProtectedRoutes>
               }
             />

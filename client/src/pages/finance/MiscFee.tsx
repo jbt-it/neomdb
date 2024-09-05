@@ -1,5 +1,5 @@
 /**
- * The MembershipFee-Component displays all members in a table and displays options for filtering and sorting the members
+ * The MiscFee-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -54,11 +54,11 @@ const StyledForm = styled("form")(({ theme }) => ({
 /**
  * Depicts a table with all members and a filter section to filter the members
  */
-const MembershipFee: React.FunctionComponent = () => {
+const MiscFee: React.FunctionComponent = () => {
   const theme = useTheme();
 
   /**
-   * Function which proivdes the styles of the MembershipFee
+   * Function which provides the styles of the MiscFee
    */
   const styles = {
     amountOfEntries: {
@@ -170,7 +170,6 @@ const MembershipFee: React.FunctionComponent = () => {
       text-decoration: underline;
     }
   `;
-
   // Calculate the current year
   const currentYear = new Date().getFullYear();
 
@@ -194,6 +193,7 @@ const MembershipFee: React.FunctionComponent = () => {
   const [paymentReason, setPaymentReason] = useState<string>("JBT goes");
   const [bookingId, setBookingId] = useState<string>(`JBT-GO-${currentYear}`);
   const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
+  const [amount, setAmount] = useState<string>("");
 
   const { dispatchAuth } = useContext(AuthContext);
 
@@ -333,6 +333,17 @@ const MembershipFee: React.FunctionComponent = () => {
       setBookingDate(date);
     } else {
       setBookingDate(formattedDate);
+    }
+  };
+
+  /**
+   * Handles the change event on the amount input
+   */
+  const handleAmount = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    const euroRegex = /^[0-9]*([,][0-9]{0,2})?$/;
+    if (value === "" || euroRegex.test(value)) {
+      setAmount(value);
     }
   };
 
@@ -587,6 +598,34 @@ const MembershipFee: React.FunctionComponent = () => {
             </Grid>
             <Grid item container alignItems="center" spacing={2} xs={12}>
               <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">Variabler Betrag:</Typography>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "36px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8px 14px",
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                  }}
+                  inputProps={{
+                    inputMode: "decimal",
+                    pattern: "[0-9]*[,]{0,1}[0-9]{0,2}",
+                  }}
+                  value={amount}
+                  onChange={handleAmount}
+                />
+              </Grid>
+            </Grid>
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
                 <Typography variant="body1">Mails versenden:</Typography>
               </Grid>
               <Grid item xs>
@@ -653,7 +692,7 @@ const MembershipFee: React.FunctionComponent = () => {
                 </Box>
               </TableCell>
               <TableCell sx={styles.tableHeadCell}>Status</TableCell>
-              <TableCell sx={styles.tableHeadCell}>Jahresbeitrag (30,00€) einziehen</TableCell>
+              <TableCell sx={styles.tableHeadCell}>Betrag einziehen</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -705,4 +744,4 @@ const MembershipFee: React.FunctionComponent = () => {
   );
 };
 
-export default MembershipFee;
+export default MiscFee;
