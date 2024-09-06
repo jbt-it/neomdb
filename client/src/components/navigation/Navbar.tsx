@@ -109,7 +109,14 @@ const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
   );
 
   return (
-    <AppBar>
+    <AppBar
+      sx={{
+        position: "fixed",
+        top: 0,
+        width: "100%",
+        zIndex: 1400,
+      }}
+    >
       <Toolbar
         sx={{
           display: "flex",

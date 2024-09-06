@@ -53,6 +53,7 @@ import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
 import ProjectTendering from "./pages/projects/ProjectTendering";
+import ProjectApplication from "./pages/projects/ProjectApplication";
 
 /**
  * This component is responsible for rendering the app.
@@ -94,6 +95,7 @@ const App: React.FunctionComponent = () => {
                   </ProtectedRoutes>
                 }
               />
+              <Route path="projektbewerbung/:id" element={<ProjectApplication />} />
             </Route>
             <Route path="veranstaltungen">
               <Route index element={<EventsOverview />} />
