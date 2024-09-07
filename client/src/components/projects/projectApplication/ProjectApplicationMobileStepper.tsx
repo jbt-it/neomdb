@@ -11,6 +11,7 @@ interface ProjectApplicationMobileStepperProps {
   steps: { label: string; description: string }[];
   isLastStep: () => boolean;
   handleComplete: () => void;
+  checkRequiredFields: () => boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ const ProjectApplicationMobileStepper = ({
   steps,
   isLastStep,
   handleComplete,
+  checkRequiredFields,
 }: ProjectApplicationMobileStepperProps) => {
   const theme = useTheme();
 
@@ -71,7 +73,7 @@ const ProjectApplicationMobileStepper = ({
         }}
         nextButton={
           isLastStep() ? (
-            <Button size="small" onClick={handleComplete}>
+            <Button size="small" onClick={handleComplete} disabled={checkRequiredFields()}>
               Bewebern
             </Button>
           ) : (

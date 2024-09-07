@@ -189,6 +189,9 @@ const steps = [
   },
 ];
 
+/**
+ * Props for the project application form
+ */
 interface ProjectApplicationProps {
   projectApplicationData?: ProjectApplicationDto;
 }
@@ -247,6 +250,17 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
   // Handles the completion of the application
   const handleCompleteApplication = () => {
     setIsApplicationCompleted(true);
+  };
+
+  // Check if all required fields are filled
+  const checkRequiredFields = () => {
+    if (applicationData.availability === "Mit Einschränkung" && applicationData.restriction === "") {
+      return true;
+    }
+    if (secrecyAgreement && applicationData.availability !== null) {
+      return false;
+    }
+    return true;
   };
 
   // Renders the respective step
@@ -311,6 +325,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
             steps={steps}
             isLastStep={isLastStep}
             handleComplete={handleCompleteApplication}
+            checkRequiredFields={checkRequiredFields}
           />
         ) : (
           <ProjectApplicationStepper
@@ -322,6 +337,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
             steps={steps}
             isLastStep={isLastStep}
             handleComplete={handleCompleteApplication}
+            checkRequiredFields={checkRequiredFields}
           />
         )
       ) : (

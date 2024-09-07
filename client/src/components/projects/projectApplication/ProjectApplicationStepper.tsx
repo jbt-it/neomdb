@@ -10,6 +10,7 @@ interface ProjectApplicationStepperProps {
   renderStep: (step: number) => JSX.Element;
   steps: { label: string; description: string }[];
   handleComplete: () => void;
+  checkRequiredFields: () => boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ const ProjectApplicationStepper = ({
   steps,
   isLastStep,
   handleComplete,
+  checkRequiredFields,
 }: ProjectApplicationStepperProps) => {
   return (
     <Paper sx={{ paddingX: 4, paddingY: 2 }}>
@@ -55,7 +57,7 @@ const ProjectApplicationStepper = ({
             Weiter
           </Button>
           {isLastStep() && (
-            <Button onClick={handleComplete} variant="outlined">
+            <Button onClick={handleComplete} variant="outlined" disabled={checkRequiredFields()}>
               Bewerben
             </Button>
           )}
