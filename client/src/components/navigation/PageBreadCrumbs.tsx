@@ -30,6 +30,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   projektausschreibung: "Projektausschreibung",
   finanzuebersicht: "Finanzübersicht",
   jahresbeitrag: "Jahresbeitrag",
+  projektbewerbung: "Projektbewerbung",
 };
 
 /**
@@ -57,6 +58,8 @@ const PageBreadCrumbs = () => {
       displayName = "Veranstaltungsdetails"; // For dynamic event pages under Veranstaltungen
     } else if (value.match(/^\d+$/) && array[index - 1] === "internes-projekt") {
       displayName = "Details Internes Projekt"; // For dynamic ip pages under Internes Projekt
+    } else if (value.match(/^\d+$/) && array[index - 1] === "projektbewerbung") {
+      displayName = "Externes Projekt"; // For dynamic project pages under Projektbewerbung
     } else {
       displayName = staticPathToNameMap[value] || value; // Use mapped name or raw value
     }
