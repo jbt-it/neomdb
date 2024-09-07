@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Icon, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
 import WorkExperienceStep from "../../components/projects/projectApplication/WorkExperienceStep";
@@ -17,6 +17,8 @@ import {
   PosionOfMemberDto,
   WorkshopsHeldByMember,
 } from "../../types/membersTypes";
+import { CheckCircle } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const workshopsMockData: Workshop[] = [
   {
@@ -341,50 +343,28 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
           />
         )
       ) : (
-        <Box>
-          <Typography variant="body1" component="h2" gutterBottom>
-            Bewerbung erfolgreich abgeschickt
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.internship}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.apprenticeship}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.studentJob}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.seminarPapers}
-          </Typography>
-          {applicationData.workshops.map((workshop: Workshop) => (
-            <Typography variant="body1" component="h2" gutterBottom>
-              {workshop.schulungsName}
-            </Typography>
-          ))}
-          {applicationData.internalCommitment?.map((commitment) => (
-            <Typography variant="body1" component="h2" gutterBottom>
-              {commitment}
-            </Typography>
-          ))}
-          {applicationData.preliminaryWork?.map((preliminaryWork) => (
-            <Typography variant="body1" component="h2" gutterBottom>
-              {preliminaryWork}
-            </Typography>
-          ))}
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.extraordinaryCommitment}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.availability}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.restriction}
-          </Typography>
-          <Typography variant="body1" component="h2" gutterBottom>
-            {applicationData.motivation}
-          </Typography>
-        </Box>
+        <Paper
+          sx={{
+            margin: isMobile ? 2 : 0,
+            minHeight: 300,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Stack direction={"column"} alignItems={"center"} spacing={5}>
+            <Stack direction={"column"} alignItems={"center"} spacing={1}>
+              <CheckCircle color="success" sx={{ fontSize: 50 }} />
+              <Typography fontWeight={"bold"} gutterBottom align="center">
+                Deine Bewerbung wurde erfolgreich abgeschickt!
+              </Typography>
+            </Stack>
+            <Link to={"/projekte"} style={{ textDecoration: "none" }}>
+              <Typography color={"primary"}>Zurück zu den Projekten</Typography>
+            </Link>
+          </Stack>
+        </Paper>
       )}
     </Box>
   );
