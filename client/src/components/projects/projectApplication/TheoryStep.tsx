@@ -1,6 +1,5 @@
-import { Box, Checkbox, Grid, ListItem, ListItemIcon, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
-import useResponsive from "../../../hooks/useResponsive";
+import { Box, Checkbox, Grid, ListItem, ListItemIcon, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { ProjectApplicationDto } from "../../../types/projectTypes";
 import { Workshop } from "../../../types/eventTypes";
 
@@ -77,8 +76,6 @@ const WorkshopList = ({ workshops, applicationData, setApplicationData }: Worksh
  * @returns the respective theoretical knowledge step of the project application form
  */
 const TheoryStep = ({ applicationData, setApplicationData, workshops }: TheoryStepProps) => {
-  const isMobile = useResponsive("down", "sm");
-
   // Function to handle the change of the seminar papers
   const onChangeSeminarPapers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setApplicationData({ ...applicationData, seminarPapers: event.target.value });
