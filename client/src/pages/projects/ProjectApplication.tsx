@@ -1,4 +1,4 @@
-import { Box, Icon, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Icon, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
 import WorkExperienceStep from "../../components/projects/projectApplication/WorkExperienceStep";
@@ -361,7 +361,9 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
               </Typography>
             </Stack>
             <Link to={"/projekte"} style={{ textDecoration: "none" }}>
-              <Typography color={"primary"}>Zurück zu den Projekten</Typography>
+              <Button color={"primary"} variant="contained">
+                Zurück zu den Projekten
+              </Button>
             </Link>
           </Stack>
         </Paper>
