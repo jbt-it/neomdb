@@ -1,6 +1,12 @@
 import dayjs from "dayjs";
 import { MembersFieldDto } from "../../types/membersTypes";
-import { ContactPersonDto, CoreCompetencyDto, ProjectMembersDto, ProjectDetailsDto } from "../../types/projectTypes";
+import {
+  ContactPersonDto,
+  CoreCompetencyDto,
+  ProjectMembersDto,
+  ProjectDetailsDto,
+  ProjectApplicantDto,
+} from "../../types/projectTypes";
 import useCompanies from "../useCompanies";
 import useProjects from "./useProjects";
 
@@ -186,7 +192,115 @@ const useProjectDetails = (projectID: number) => {
     console.log("Saving project", newProject);
   };
 
-  return { projectDetails, saveProject };
+  const projectApplications: ProjectApplicantDto[] = [
+    {
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 3,
+        name: "Senior",
+      },
+      university: "Universität Hohenheim",
+      courseOfStudy: "Wirtschaftswissenschaften",
+      specializations: "Controlling,, Externe Unternehmensrechnung und Bewertung, Business Optimization",
+      applicationDate: new Date(),
+      internship: "Kain & Company",
+      apprenticeship: "Ja",
+      studentJob: "Nein",
+      seminarPapers: "Ja",
+      workshops: [],
+      internalCommitment: null,
+      externalProjects: [],
+      preliminaryWork: null,
+      extraordinaryCommitment: "Nein",
+      availability: "Ohne Einschränkung",
+      restriction: "Keine",
+      motivation: "Ich möchte gerne an dem Projekt teilnehmen, weil ich mich für das Thema interessiere.",
+    },
+    {
+      memberId: 8167,
+      firstname: "Wolfgang U",
+      lastname: "Luft",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
+      university: "Universität Hohenheim",
+      courseOfStudy: "Wirtschaftswissenschaften",
+      specializations: "Master of Science - Marketing",
+      applicationDate: new Date(),
+      internship: "McRinsey & Company",
+      apprenticeship: "Nein",
+      studentJob: "Ja",
+      seminarPapers: "Nein",
+      workshops: [],
+      internalCommitment: ["Teamleiter"],
+      externalProjects: [
+        {
+          projectId: 1,
+          projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
+          projectStart: new Date(),
+          projectEnd: null,
+          status: "Durchführung",
+          type: "Mitglied",
+          btAllocation: 0,
+        },
+      ],
+      preliminaryWork: ["Schreiben des Angebots"],
+      extraordinaryCommitment: "Ja",
+      availability: "Mit Einschränkung",
+      restriction: "Keine",
+      motivation: "Ich möchte gerne an dem Projekt teilnehmen, weil ich mich für das Thema interessiere.",
+    },
+    {
+      memberId: 8324,
+      firstname: "Miruna",
+      lastname: "Decker",
+      memberStatus: {
+        memberStatusId: 2,
+        name: "aktives Mitglied",
+      },
+      university: "Universität Hohenheim",
+      courseOfStudy: "Wirtschaftswissenschaften",
+      specializations: "Marktorientiertes Management; Information Systems; Interne Managementfunktionen",
+      applicationDate: new Date(),
+      internship: "BZG",
+      apprenticeship: "Nein",
+      studentJob: "Ja",
+      seminarPapers: "Nein",
+      workshops: [],
+      internalCommitment: ["Vorstandstätigkeit", "Teamleiter"],
+      externalProjects: [
+        {
+          projectId: 1,
+          projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
+          projectStart: new Date(),
+          projectEnd: null,
+          status: "PL",
+          type: "Mitglied",
+          btAllocation: 0,
+        },
+        {
+          projectId: 2,
+          projectName: "Aufnahme und Analyse von Prozessen im Vertrieb",
+          projectStart: new Date(),
+          projectEnd: new Date(),
+          status: "Abgeschlossen",
+          type: "PL",
+          btAllocation: 10,
+        },
+      ],
+      preliminaryWork: null,
+      extraordinaryCommitment: "Ja",
+      availability: "Mit Einschränkung",
+      restriction: "Keine",
+      motivation:
+        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.   Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.   Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.   Duis utem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.  At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.  Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus.   Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.   Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.   Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.   Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo",
+    },
+  ];
+
+  return { projectDetails, saveProject, projectApplicants, projectApplications };
 };
 
 export default useProjectDetails;

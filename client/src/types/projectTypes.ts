@@ -255,3 +255,36 @@ export type ProjectApplicationDto = {
   restriction: string | null;
   motivation: string | null;
 };
+
+export type ProjectExperienceDto = {
+  projectId: number;
+  projectName: string;
+  projectStart: Date;
+  projectEnd: Date | null;
+  status: string;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
+  btAllocation: number | null;
+};
+
+export type ProjectApplicantDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  memberStatus: MemberStatus;
+  university: string;
+  courseOfStudy: string;
+  specializations: string | null;
+  applicationDate: Date;
+  internship: string | null;
+  apprenticeship: string | null;
+  studentJob: string | null;
+  seminarPapers: string | null;
+  workshops: Workshop[];
+  internalCommitment: ("Vorstandstätigkeit" | "Teamleiter")[] | null;
+  externalProjects: ProjectExperienceDto[];
+  preliminaryWork: ("Herstellung des Erstkontakts" | "Schreiben des Angebots")[] | null;
+  extraordinaryCommitment: string | null;
+  availability: "Ohne Einschränkung" | "Mit Einschränkung" | null;
+  restriction: string | null;
+  motivation: string | null;
+};
