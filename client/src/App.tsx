@@ -132,30 +132,18 @@ const App: React.FunctionComponent = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
-              path="finanzuebersicht"
-              element={
-                <ProtectedRoutes permissionIDs={[6]}>
-                  <FinanceOverview />
-                </ProtectedRoutes>
-              }
-            />
-            <Route
-              path="jahresbeitrag"
-              element={
-                <ProtectedRoutes permissionIDs={[6]}>
-                  <MembershipFee />
-                </ProtectedRoutes>
-              }
-            />
-            <Route
-              path="sonstigereinzug"
-              element={
-                <ProtectedRoutes permissionIDs={[6]}>
-                  <MiscFee />
-                </ProtectedRoutes>
-              }
-            />
+            <Route path="finanzuebersicht">
+              <Route
+                index
+                element={
+                  <ProtectedRoutes permissionIDs={[6]}>
+                    <FinanceOverview />
+                  </ProtectedRoutes>
+                }
+              />
+              <Route path="jahresbeitrag" element={<MembershipFee />} />
+              <Route path="sonstigereinzug" element={<MiscFee />} />
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

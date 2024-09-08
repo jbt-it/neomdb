@@ -459,17 +459,17 @@ const FinanceOverview: React.FunctionComponent = () => {
     <div>
       <Grid container spacing={3}>
         <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/jahresbeitrag/`}>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/finanzuebersicht/jahresbeitrag`}>
             Jahresbeitrag
           </Button>
         </Grid>
         <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/wwbeitrag/`}>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/finanzuebersicht/wwbeitrag`}>
             WW-Beitrag
           </Button>
         </Grid>
         <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/sonstigereinzug/`}>
+          <Button sx={styles.button} variant="contained" component={Link} to={`/finanzuebersicht/sonstigereinzug`}>
             Sonstiger Einzug
           </Button>
         </Grid>
