@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
-import { MembersFieldDto } from "./membersTypes";
 import { Workshop } from "./eventTypes";
+import { MembersFieldDto, MemberStatus } from "./membersTypes";
 
 // Type of the core competency DTO
 export type CoreCompetencyDto = {
@@ -103,12 +103,16 @@ export type ProjectKeyData = {
   estimatedProjectStart: Dayjs | undefined;
   estimatedProjectDuration: string;
   estimatedProjectEuroPerBT: number | undefined;
-  estimatedProjectEuroPerBTrange: number | undefined;
+  estimatedProjectEuroPerBTrange: number | null | undefined;
   estimatedProjectBTmin: number | undefined;
   estimatedProjectBTmax: number | undefined;
   estimatedProjectMemberMin: number | undefined;
   estimatedProjectMemberMax: number | undefined;
+  applicationStart1?: Dayjs | null;
   applicationEnd1: Dayjs | undefined;
+  applicationStart2?: Dayjs | null;
+  applicationEnd2?: Dayjs | null;
+  kickoff?: Dayjs | null;
 };
 
 // Type of the customer data for the project tendering
@@ -143,9 +147,66 @@ export type ProjectDescriptionData = {
   notes: string;
 };
 
+// Type of the project applicant Dto
+export type ProjectMembersDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  memberStatus: MemberStatus;
+  date: Date;
+  applicationDate: Date;
+  btAllocation: number | null;
+  expensesAllocation: number | null;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
+  freelancerContract: Date | null;
+  moneyTransferred: Date | null;
+};
+
 // Type of the project tendering data
 export type ProjectDetailsDto = {
   projectId: number;
+  projectName: string;
+  jobSite: string;
+  status: string;
+  tenderDate: Date | undefined;
+  estimatedProjectStart: Date;
+  estimatedProjectDuration: string;
+  estimatedProjectEuroPerBT: number;
+  estimatedProjectEuroPerBTrange: number | undefined | null;
+  estimatedProjectBTmin: number;
+  estimatedProjectBTmax: number;
+  estimatedProjectMemberMin: number;
+  estimatedProjectMemberMax: number;
+  applicationStart1: Date | null;
+  applicationEnd1: Date | undefined | null;
+  applicationStart2: Date | null;
+  applicationEnd2: Date | null;
+  situation: string;
+  peculiarities: string;
+  coreCompetencies: CoreCompetencyDto[];
+  requirementProfile: string;
+  referenceProjects: string;
+  notes: string;
+  acquisitor: string;
+  acquisitionMethod: string;
+  newContactPerson: boolean;
+  contactPerson: ContactPersonDto;
+  customerType: string;
+  kickoff: Date | null;
+  staffingCommittee: MembersFieldDto[];
+  client: CompanyDto;
+  members: ProjectMembersDto[];
+  qms: MembersFieldDto[];
+  signatureDate: Date | null;
+  euroPerBT: number | null;
+  soldBT: number | null;
+  soldExpenses: number | null;
+  projectEnd: Date | null;
+  invoicing: Date | null;
+};
+
+// Type of the project tendering data
+export type ProjectTenderDto = {
   projectName: string;
   jobSite: string;
   status: string;
@@ -178,12 +239,6 @@ export type ProjectDetailsDto = {
   client: CompanyDto;
   members: MembersFieldDto[];
   qms: MembersFieldDto[];
-  signatureDate: Date | null;
-  euroPerBT: number | null;
-  soldBT: number | null;
-  soldExpenses: number | null;
-  projectEnd: Date | null;
-  invoicing: Date | null;
 };
 
 // Type of the project application DTO
