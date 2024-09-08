@@ -29,12 +29,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  InputAdornment,
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { useContext } from "react";
 import * as membersTypes from "../../types/membersTypes";
 import { Link } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
 
 // styled form component
 const StyledForm = styled("form")(({ theme }) => ({
@@ -168,19 +171,6 @@ const MembershipFee: React.FunctionComponent = () => {
     }
   `;
 
-  const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
-  const [memberFinanceData, setMemberFinanceData] = useState<membersTypes.MemberFinanceDataType[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [sortOption, setSortOption] = useState<string>("");
-  const [nameSort, setNameSort] = useState<string>("");
-  const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
-  const [radioState, setRadioState] = useState<boolean>(false);
-
-  const { dispatchAuth } = useContext(AuthContext);
-
-  const [openDialog, setOpenDialog] = useState(false);
-
   // Calculate the current year
   const currentYear = new Date().getFullYear();
 
@@ -191,7 +181,23 @@ const MembershipFee: React.FunctionComponent = () => {
   const month = String(futureDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
   const year = futureDate.getFullYear();
 
-  const formattedDate = `${day}.${month}.${year}`;
+  const formattedDate = dayjs(`${day}.${month}.${year}`, "DD.MM.YYYY");
+
+  const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
+  const [memberFinanceData, setMemberFinanceData] = useState<membersTypes.MemberFinanceDataType[]>([]);
+  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [sortOption, setSortOption] = useState<string>("");
+  const [nameSort, setNameSort] = useState<string>("");
+  const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
+  const [radioState, setRadioState] = useState<boolean>(false);
+  const [paymentReason, setPaymentReason] = useState<string>("JBT goes");
+  const [bookingId, setBookingId] = useState<string>(`JBT-GO-${currentYear}`);
+  const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
+
+  const { dispatchAuth } = useContext(AuthContext);
+
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -303,6 +309,31 @@ const MembershipFee: React.FunctionComponent = () => {
    */
   const handleRadioChange: VoidFunction = () => {
     setRadioState(!radioState);
+  };
+
+  /**
+   * Handles the change event on the payment reason input
+   */
+  const handlePaymentReason = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setPaymentReason(event.target.value);
+  };
+
+  /**
+   * Handles the change event on the booking ID input
+   */
+  const handleBookingId = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setBookingId(event.target.value);
+  };
+
+  /**
+   * Handles the change event on the booking date input
+   */
+  const handleBookingDate = (date: Dayjs | null): void => {
+    if (date !== null) {
+      setBookingDate(date);
+    } else {
+      setBookingDate(formattedDate);
+    }
   };
 
   /**
@@ -497,7 +528,6 @@ const MembershipFee: React.FunctionComponent = () => {
                 <TextField
                   variant="outlined"
                   fullWidth
-                  defaultValue={`JBT-Jahresbeitrag ${currentYear}`}
                   sx={{
                     "& .MuiInputBase-root": {
                       height: "36px",
@@ -506,6 +536,8 @@ const MembershipFee: React.FunctionComponent = () => {
                       padding: "8px 14px",
                     },
                   }}
+                  value={paymentReason}
+                  onChange={handlePaymentReason}
                 />
               </Grid>
             </Grid>
@@ -518,7 +550,6 @@ const MembershipFee: React.FunctionComponent = () => {
                 <TextField
                   variant="outlined"
                   fullWidth
-                  defaultValue={`JBT-JB-${currentYear}`}
                   sx={{
                     "& .MuiInputBase-root": {
                       height: "36px",
@@ -527,6 +558,8 @@ const MembershipFee: React.FunctionComponent = () => {
                       padding: "8px 14px",
                     },
                   }}
+                  value={bookingId}
+                  onChange={handleBookingId}
                 />
               </Grid>
             </Grid>
@@ -536,11 +569,11 @@ const MembershipFee: React.FunctionComponent = () => {
                 <Typography variant="body1">Ausführungsdatum:</Typography>
               </Grid>
               <Grid item xs>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  defaultValue={formattedDate}
+                <DatePicker
+                  value={bookingDate}
+                  onChange={handleBookingDate}
                   sx={{
+                    width: "100%",
                     "& .MuiInputBase-root": {
                       height: "36px",
                     },
@@ -548,6 +581,7 @@ const MembershipFee: React.FunctionComponent = () => {
                       padding: "8px 14px",
                     },
                   }}
+                  slotProps={{ textField: { variant: "outlined" } }}
                 />
               </Grid>
             </Grid>
