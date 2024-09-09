@@ -1,13 +1,21 @@
 import React from "react";
 import { ProjectApplicantDto } from "../../types/projectTypes";
-import { List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import { List, ListItem, Stack, Typography } from "@mui/material";
 import useResponsive from "../../hooks/useResponsive";
 import { Link } from "react-router-dom";
 
+/**
+ * Props for the ProjectApplicationDetails component
+ */
 interface ProjectApplicationDetailsProps {
   projectApplication: ProjectApplicantDto;
 }
 
+/**
+ * Displays the details of a project application
+ * @param projectApplication the project application to display
+ * @returns the project application details
+ */
 const ProjectApplicationDetails = ({ projectApplication }: ProjectApplicationDetailsProps) => {
   const isMobile = useResponsive("down", "sm");
   return (

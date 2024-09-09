@@ -13,12 +13,16 @@ import {
 } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, OpenInNew } from "@mui/icons-material";
 import useProjectDetails from "../../hooks/projects/useProjectDetails";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProjectApplicationDetails from "../../components/projects/ProjectApplicationDetails";
 import { stringAvatar } from "../../utils/stringUtils";
 
+/**
+ * Project Applications overview page
+ * @returns ProjectApplication page
+ */
 const ProjectApplications = () => {
   const isMobile = useResponsive("down", "sm");
   const { id } = useParams();
@@ -38,6 +42,7 @@ const ProjectApplications = () => {
     },
   };
 
+  // handles the column count for the project applications
   const handleColumns = (event: React.MouseEvent<HTMLElement>, newAlignment: number) => {
     setColumns(newAlignment);
   };
@@ -192,6 +197,14 @@ const ProjectApplications = () => {
                     </Stack>
                     {!isMobile && <Typography sx={{ ml: 1, mr: 1 }}>-</Typography>}
                     <Typography>{application.memberStatus.name}</Typography>
+                    {!isMobile && (
+                      <Link
+                        to={`/projekte/${id}/projektbewerbungen/${application.memberId}`}
+                        style={{ marginLeft: "auto", marginRight: 30, color: "inherit", textDecoration: "none" }}
+                      >
+                        <OpenInNew />
+                      </Link>
+                    )}
                   </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
