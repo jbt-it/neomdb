@@ -256,6 +256,7 @@ export type ProjectApplicationDto = {
   motivation: string | null;
 };
 
+// Type of the project application DTO
 export type ProjectExperienceDto = {
   projectId: number;
   projectName: string;
@@ -266,6 +267,7 @@ export type ProjectExperienceDto = {
   btAllocation: number | null;
 };
 
+// Type of the project applicant DTO
 export type ProjectApplicantDto = {
   memberId: number;
   firstname: string;
@@ -287,4 +289,12 @@ export type ProjectApplicantDto = {
   availability: "Ohne Einschränkung" | "Mit Einschränkung" | null;
   restriction: string | null;
   motivation: string | null;
+};
+
+// Type of the previous project application DTO
+export type PreviousExternalProjectDto = {
+  memberId: number;
+  projectId: number;
+  projectName: string;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
 };

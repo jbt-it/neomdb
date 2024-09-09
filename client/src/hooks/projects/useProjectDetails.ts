@@ -97,6 +97,22 @@ const useProjectDetails = (projectID: number) => {
       freelancerContract: dayjs("2024-02-10").toDate(),
       moneyTransferred: dayjs("2024-02-10").toDate(),
     },
+    {
+      memberId: 8222,
+      firstname: "Talha",
+      lastname: "Driscoll",
+      memberStatus: {
+        memberStatusId: 3,
+        name: "Senior",
+      },
+      date: dayjs("2024-02-10").toDate(),
+      applicationDate: dayjs("2024-02-10").toDate(),
+      btAllocation: null,
+      expensesAllocation: null,
+      type: "Bewerbung",
+      freelancerContract: dayjs("2024-02-10").toDate(),
+      moneyTransferred: dayjs("2024-02-10").toDate(),
+    },
   ] as ProjectMembersDto[];
   const allProjectDetails = [
     {

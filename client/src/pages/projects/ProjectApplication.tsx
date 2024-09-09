@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
 import WorkExperienceStep from "../../components/projects/projectApplication/WorkExperienceStep";
