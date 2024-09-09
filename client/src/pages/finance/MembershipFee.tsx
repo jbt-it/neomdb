@@ -191,8 +191,8 @@ const MembershipFee: React.FunctionComponent = () => {
   const [nameSort, setNameSort] = useState<string>("");
   const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
   const [radioState, setRadioState] = useState<boolean>(false);
-  const [paymentReason, setPaymentReason] = useState<string>("JBT goes");
-  const [bookingId, setBookingId] = useState<string>(`JBT-GO-${currentYear}`);
+  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Jahresbeitrag ${currentYear}`);
+  const [bookingId, setBookingId] = useState<string>(`JBT-JB-${currentYear}`);
   const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
 
   const { dispatchAuth } = useContext(AuthContext);

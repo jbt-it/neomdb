@@ -169,8 +169,6 @@ const WWFee: React.FunctionComponent = () => {
       text-decoration: underline;
     }
   `;
-  // Calculate the current year
-  const currentYear = new Date().getFullYear();
 
   // Calculate the date 19 days from now
   const futureDate = new Date();
@@ -193,8 +191,8 @@ const WWFee: React.FunctionComponent = () => {
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
   const [radioState, setRadioState] = useState<boolean>(false);
-  const [paymentReason, setPaymentReason] = useState<string>("JBT goes");
-  const [bookingId, setBookingId] = useState<string>(`JBT-GO-${currentYear}`);
+  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Working-Weekend MONTH/YEAR`);
+  const [bookingId, setBookingId] = useState<string>(`JBT-WW-MONTH-YEAR`);
   const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
   const [amount, setAmount] = useState<string>("");
   const [selectedAmounts, setSelectedAmounts] = useState<SelectedAmount[]>([]);
@@ -206,6 +204,25 @@ const WWFee: React.FunctionComponent = () => {
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
+
+  // Retrieves the WW date
+  const getWWDate: VoidFunction = useCallback(() => {
+    const data = [
+      {
+        eventId: 5,
+        date: "2023-11-15",
+      },
+    ];
+    const wwDate = data[0].date;
+
+    const year = wwDate.split("-")[0];
+    const month = wwDate.split("-")[1];
+
+    setPaymentReason(`JBT-Working-Weekend ${month}/${year}`);
+    setBookingId(`JBT-WW-${month}-${year}`);
+  }, [dispatchAuth, setPaymentReason, setBookingId]);
+
+  useEffect(() => getWWDate(), [getWWDate]);
 
   // Retrieves the members
   const getMemberFinanceData: VoidFunction = useCallback(() => {
@@ -276,24 +293,57 @@ const WWFee: React.FunctionComponent = () => {
 
   useEffect(() => getMemberFinanceData(), [getMemberFinanceData]);
 
+  // Retrieves the WW payment amount for the members
+  const getWWFeeData: VoidFunction = useCallback(() => {
+    const data = [
+      {
+        memberId: 1,
+        amount: "15,00",
+      },
+      {
+        memberId: 2,
+        amount: "00,00",
+      },
+      {
+        memberId: 3,
+        amount: "40,00",
+      },
+      {
+        memberId: 4,
+        amount: "30,00",
+      },
+      {
+        memberId: 5,
+        amount: "15,00",
+      },
+      {
+        memberId: 6,
+        amount: "00,00",
+      },
+    ];
+    setSelectedAmounts(data);
+  }, [dispatchAuth]);
+
+  useEffect(() => getWWFeeData(), [getWWFeeData]);
+
+  /**
+   * Handles the changes of the radio buttons for the payment amount
+   */
   const handleRadioAmount = (event: ChangeEvent<HTMLInputElement>, memberId: number) => {
     const { value } = event.target;
     setSelectedAmounts((prev) => {
-      // Check if the member already has an entry
       const existingEntry = prev.find((entry) => entry.memberId === memberId);
 
       if (existingEntry) {
-        // Update the existing entry's amount
         return prev.map((entry) => (entry.memberId === memberId ? { ...entry, amount: value } : entry));
       } else {
-        // Add a new entry for this member
         return [...prev, { memberId, amount: value }];
       }
     });
   };
 
   /**
-   * Handles the changes of the radio buttons
+   * Handles the changes of the radio buttons for the emails
    */
   const handleRadioChange: VoidFunction = () => {
     setRadioState(!radioState);
