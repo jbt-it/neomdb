@@ -173,8 +173,8 @@ const WWFee: React.FunctionComponent = () => {
   // Calculate the date 19 days from now
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + 19);
-  const day = String(futureDate.getDate()).padStart(2, "0"); // Add leading zero if necessary
-  const month = String(futureDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(futureDate.getDate()).padStart(2, "0");
+  const month = String(futureDate.getMonth() + 1).padStart(2, "0");
   const year = futureDate.getFullYear();
 
   const formattedDate = dayjs(`${day}.${month}.${year}`, "DD.MM.YYYY");
@@ -191,8 +191,8 @@ const WWFee: React.FunctionComponent = () => {
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
   const [radioState, setRadioState] = useState<boolean>(false);
-  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Working-Weekend MONTH/YEAR`);
-  const [bookingId, setBookingId] = useState<string>(`JBT-WW-MONTH-YEAR`);
+  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Working-Weekend`);
+  const [bookingId, setBookingId] = useState<string>(`JBT-WW`);
   const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
   const [amount, setAmount] = useState<string>("");
   const [selectedAmounts, setSelectedAmounts] = useState<SelectedAmount[]>([]);
