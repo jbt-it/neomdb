@@ -85,7 +85,7 @@ const CommitmentStep = ({
           </FormGroup>
         </Stack>
         <Stack direction={"column"} justifyContent={"space-between"} alignItems={"left"} flex={1}>
-          <Typography fontWeight={"bold"}>Vorleistungen bei der Akquiset:</Typography>
+          <Typography fontWeight={"bold"}>Vorleistungen bei der Akquise:</Typography>
           <FormGroup>
             <FormControlLabel
               control={
