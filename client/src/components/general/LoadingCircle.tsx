@@ -4,6 +4,7 @@
 import { Avatar, Typography, Box, Stack } from "@mui/material";
 import React from "react";
 import Lenni from "../../assets/lenni.jpeg";
+import loading from "../../assets/loading.png";
 
 /**
  * Function which proivdes the styles of the LoadingCircle
@@ -33,10 +34,11 @@ const styles = {
  * @returns An Avatar and text
  */
 const LoadingCircle = () => {
+  const i = Math.random();
   return (
     <Stack sx={styles.loading}>
       <Box>
-        <Avatar sx={styles.rotating} src={Lenni} />
+        <Avatar sx={styles.rotating} src={i > 0.4 ? Lenni : loading} />
         <style>
           {`
             @keyframes spin {
