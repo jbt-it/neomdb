@@ -133,6 +133,9 @@ export class Project {
   @Column("tinyint", { name: "APbeiEV", nullable: true, width: 1 })
   APatEV: boolean | null;
 
+  @Column("tinyint", { name: "APgehalten", nullable: true, width: 1 })
+  APHold: boolean | null;
+
   @Column("tinyint", { name: "evaluationBeiEV", nullable: true, width: 1 })
   evaluationAtEV: boolean | null;
 
