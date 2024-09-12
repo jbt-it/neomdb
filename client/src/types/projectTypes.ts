@@ -189,7 +189,8 @@ export type ProjectDetailsDto = {
   acquisitor: string;
   acquisitionMethod: string;
   newContactPerson: boolean;
-  contactPerson: ContactPersonDto;
+  newContactPersonName?: string;
+  contactPerson: ContactPersonDto | undefined;
   customerType: string;
   kickoff: Date | null;
   staffingCommittee: MembersFieldDto[];

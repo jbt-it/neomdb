@@ -446,10 +446,12 @@ const ProjectDetails = () => {
       customerData.companyId === -1 ||
       !projectDescriptionData.coreCompetencies ||
       projectDescriptionData.coreCompetencies.length === 0 ||
-      !customerData.contactPerson ||
+      (customerData.newContactPerson && customerData.newContactPersonName != "") ||
+      (!customerData.newContactPerson && !customerData.contactPerson) ||
       !projectKeyData.estimatedProjectEuroPerBT ||
       !projectKeyData.applicationEnd1
     ) {
+      alert(customerData.contactPerson);
       // Show an error message if some data is missing
       showErrorMessage("Einige Daten fehlen oder sind fehlerhaft");
       return;
@@ -481,6 +483,7 @@ const ProjectDetails = () => {
       acquisitor: customerData.acquisitor,
       acquisitionMethod: customerData.acquisitionMethod,
       newContactPerson: customerData.newContactPerson,
+      newContactPersonName: customerData.newContactPersonName,
       contactPerson: customerData.contactPerson,
       customerType: customerData.newCustomer ? "Neukunde" : "Altkunde",
       kickoff: projectKeyData.kickoff ? projectKeyData.kickoff.toDate() : null,
