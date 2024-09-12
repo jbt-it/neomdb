@@ -43,6 +43,8 @@ import ProjectOverview from "./pages/projects/ProjectOverview";
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
 import MembershipFee from "./pages/finance/MembershipFee";
+import MiscFee from "./pages/finance/MiscFee";
+import WWFee from "./pages/finance/WWFee";
 
 // other pages
 import Login from "./pages/Login";
@@ -133,22 +135,19 @@ const App: React.FunctionComponent = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
-              path="finanzuebersicht"
-              element={
-                <ProtectedRoutes permissionIDs={[6]}>
-                  <FinanceOverview />
-                </ProtectedRoutes>
-              }
-            />
-            <Route
-              path="jahresbeitrag"
-              element={
-                <ProtectedRoutes permissionIDs={[6]}>
-                  <MembershipFee />
-                </ProtectedRoutes>
-              }
-            />
+            <Route path="finanzuebersicht">
+              <Route
+                index
+                element={
+                  <ProtectedRoutes permissionIDs={[6]}>
+                    <FinanceOverview />
+                  </ProtectedRoutes>
+                }
+              />
+              <Route path="jahresbeitrag" element={<MembershipFee />} />
+              <Route path="sonstigereinzug" element={<MiscFee />} />
+              <Route path="wwbeitrag" element={<WWFee />} />
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
