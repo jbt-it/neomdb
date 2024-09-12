@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import {
   CoreCompetencyDto,
   IndustryDto,
+  ProjectApplicantDto,
   ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,

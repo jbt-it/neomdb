@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
-import { MembersFieldDto, MemberStatus } from "./membersTypes";
 import { Workshop } from "./eventTypes";
+import { MembersFieldDto, MemberStatus } from "./membersTypes";
 
 // Type of the core competency DTO
 export type CoreCompetencyDto = {
@@ -256,4 +256,47 @@ export type ProjectApplicationDto = {
   availability: "Ohne Einschränkung" | "Mit Einschränkung" | null;
   restriction: string | null;
   motivation: string | null;
+};
+
+// Type of the project application DTO
+export type ProjectExperienceDto = {
+  projectId: number;
+  projectName: string;
+  projectStart: Date;
+  projectEnd: Date | null;
+  status: string;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
+  btAllocation: number | null;
+};
+
+// Type of the project applicant DTO
+export type ProjectApplicantDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  memberStatus: MemberStatus;
+  university: string;
+  courseOfStudy: string;
+  specializations: string | null;
+  applicationDate: Date;
+  internship: string | null;
+  apprenticeship: string | null;
+  studentJob: string | null;
+  seminarPapers: string | null;
+  workshops: Workshop[];
+  internalCommitment: ("Vorstandstätigkeit" | "Teamleiter")[] | null;
+  externalProjects: ProjectExperienceDto[];
+  preliminaryWork: ("Herstellung des Erstkontakts" | "Schreiben des Angebots")[] | null;
+  extraordinaryCommitment: string | null;
+  availability: "Ohne Einschränkung" | "Mit Einschränkung" | null;
+  restriction: string | null;
+  motivation: string | null;
+};
+
+// Type of the previous project application DTO
+export type PreviousExternalProjectDto = {
+  memberId: number;
+  projectId: number;
+  projectName: string;
+  type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
 };

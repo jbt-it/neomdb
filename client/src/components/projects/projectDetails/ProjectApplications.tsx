@@ -3,6 +3,10 @@ import useResponsive from "../../../hooks/useResponsive";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Paper,
   Stack,
@@ -16,9 +20,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { ProjectMembersDto } from "../../../types/projectTypes";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { Cancel, GroupAdd, RestartAlt, Send } from "@mui/icons-material";
+import PreviousProjectAppications from "./PreviousProjectAppications";
 
 interface ProjectApplicationsProps {
   applicants: ProjectMembersDto[];
@@ -46,6 +51,9 @@ const ProjectApplications = ({
 }: ProjectApplicationsProps) => {
   const isMobile = useResponsive("down", "sm");
   const theme = useTheme();
+  const { id } = useParams();
+  const [openPreviousApplications, setOpenPreviousApplications] = React.useState(false);
+  const [selectedMember, setSelectedMember] = React.useState<ProjectMembersDto | null>(null);
 
   const styles = {
     tableHeaderCell: {
@@ -72,8 +80,34 @@ const ProjectApplications = ({
     },
   };
 
+  // Open the dialog for the previous applications
+  const handleOpenPreviousApplications = (memberId: number) => {
+    setSelectedMember(applicants.find((applicant) => applicant.memberId === memberId) || null);
+    setOpenPreviousApplications(true);
+  };
+
+  // Close the dialog for the previous applications
+  const handleClosePreviousApplications = () => {
+    setOpenPreviousApplications(false);
+  };
+
   return (
     <Box sx={{ mt: 4 }}>
+      {openPreviousApplications && selectedMember ? (
+        <Dialog onClose={handleClosePreviousApplications} open={openPreviousApplications} maxWidth="md" fullWidth>
+          <DialogTitle borderBottom={1} borderColor={"primary.main"}>
+            Alte Projektbewerbungen von {selectedMember.firstname} {selectedMember.lastname}
+          </DialogTitle>
+          <DialogContent>
+            <PreviousProjectAppications memberId={selectedMember.memberId} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClosePreviousApplications} color="primary">
+              Schließen
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
       <Divider sx={{ borderColor: "#f6891f", mb: 2 }} />
       {isApplicationOpen ? null : (
         <Stack direction={"row"} sx={{ mb: 2 }} gap={4}>
@@ -133,7 +167,8 @@ const ProjectApplications = ({
                 <TableCell sx={styles.tableHeaderCell}>Details</TableCell>
               )}
               {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Datum</TableCell> : null}
-              {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Details</TableCell> : null}
+              {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Bewerbung</TableCell> : null}
+              {!isMobile ? <TableCell sx={styles.tableHeaderCell}>Vorherige Bewerbungen</TableCell> : null}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -151,12 +186,26 @@ const ProjectApplications = ({
                 {!isMobile ? <TableCell>{dayjs(applicant.applicationDate).format("DD.MM.YYYY")}</TableCell> : null}
                 <TableCell>
                   <Link
-                    to={`/projekte/bewerbung/${applicant.memberId}`}
+                    to={`/projekte/${id}/projektbewerbungen/${applicant.memberId}`}
                     style={{ textDecoration: "none", color: "black" }}
                   >
-                    Details
+                    <Button variant="outlined" color="primary" size="small">
+                      Details {!isMobile && "anzeigen"}
+                    </Button>
                   </Link>
                 </TableCell>
+                {!isMobile && (
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="info"
+                      size="small"
+                      onClick={() => handleOpenPreviousApplications(applicant.memberId)}
+                    >
+                      Alte Bewerbungen
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

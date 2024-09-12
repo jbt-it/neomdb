@@ -31,6 +31,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   finanzuebersicht: "Finanzübersicht",
   jahresbeitrag: "Jahresbeitrag",
   projektbewerbung: "Projektbewerbung",
+  projektbewerbungen: "Projektbewerbungen",
   sonstigereinzug: "Sonstiger Einzug",
   wwbeitrag: "Working Weekend Beitrag",
 };
@@ -64,6 +65,8 @@ const PageBreadCrumbs = () => {
       displayName = "Externes Projekt"; // For dynamic project pages under Projektbewerbung
     } else if (value.match(/^\d+$/) && array[index - 1] === "projekte") {
       displayName = "Projektdetails"; // For dynamic project pages under Projekte
+    } else if (value.match(/^\d+$/) && array[index - 1] === "projektbewerbungen") {
+      displayName = "Projektbewerbungsdetails"; // For dynamic project pages under Projektbewerbungen
     } else {
       displayName = staticPathToNameMap[value] || value; // Use mapped name or raw value
     }
