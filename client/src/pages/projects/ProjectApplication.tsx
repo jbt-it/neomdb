@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
 import WorkExperienceStep from "../../components/projects/projectApplication/WorkExperienceStep";
@@ -214,6 +214,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
       studentJob: "",
       seminarPapers: "",
       workshops: [],
+      additionalWorkshops: "",
       internalCommitment: [],
       preliminaryWork: [],
       extraordinaryCommitment: null,
@@ -251,6 +252,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
 
   // Handles the completion of the application
   const handleCompleteApplication = () => {
+    console.log("Application data: ", applicationData);
     setIsApplicationCompleted(true);
   };
 

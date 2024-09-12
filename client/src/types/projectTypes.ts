@@ -193,6 +193,7 @@ export type ProjectApplicationDto = {
   studentJob: string | null;
   seminarPapers: string | null;
   workshops: Workshop[];
+  additionalWorkshops: string | null;
   internalCommitment: ("Vorstandstätigkeit" | "Teamleiter")[] | null;
   preliminaryWork: ("Herstellung des Erstkontakts" | "Schreiben des Angebots")[] | null;
   extraordinaryCommitment: string | null;
