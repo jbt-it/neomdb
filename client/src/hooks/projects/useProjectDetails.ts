@@ -205,6 +205,7 @@ const useProjectDetails = (projectID: number) => {
 
   const projectDetails = allProjectDetails.find((project) => project.projectId === projectID);
   const saveProject = (newProject: ProjectDetailsDto) => {
+    alert("Saving project");
     console.log("Saving project", newProject);
   };
 
