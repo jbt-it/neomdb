@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 import { MembersFieldDto, MemberStatus } from "./membersTypes";
+import { Workshop } from "./eventTypes";
 
 // Type of the core competency DTO
 export type CoreCompetencyDto = {
@@ -239,4 +240,20 @@ export type ProjectTenderDto = {
   client: CompanyDto;
   members: MembersFieldDto[];
   qms: MembersFieldDto[];
+};
+
+// Type of the project application DTO
+export type ProjectApplicationDto = {
+  internship: string | null;
+  apprenticeship: string | null;
+  studentJob: string | null;
+  seminarPapers: string | null;
+  workshops: Workshop[];
+  additionalWorkshops: string | null;
+  internalCommitment: ("Vorstandstätigkeit" | "Teamleiter")[] | null;
+  preliminaryWork: ("Herstellung des Erstkontakts" | "Schreiben des Angebots")[] | null;
+  extraordinaryCommitment: string | null;
+  availability: "Ohne Einschränkung" | "Mit Einschränkung" | null;
+  restriction: string | null;
+  motivation: string | null;
 };

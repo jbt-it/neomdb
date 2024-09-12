@@ -55,7 +55,9 @@ const TenderedProjectCard = ({
         ) : null}
       </CardContent>
       <CardActions sx={{ justifyContent: "space-between" }}>
-        <Button variant="contained">Bewerben</Button>
+        <Link to={`/projekte/projektbewerbung/${projectId}`} style={{ textDecoration: "none" }}>
+          <Button variant="contained">Bewerben</Button>
+        </Link>
         <Button variant="outlined">Mehr Informationen</Button>
       </CardActions>
     </Card>
