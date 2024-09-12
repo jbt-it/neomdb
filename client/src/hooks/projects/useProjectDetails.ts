@@ -323,6 +323,7 @@ const useProjectDetails = (projectID: number) => {
     notes: string,
     kickOffDate: Date
   ) => {
+    alert("Saving project team composition");
     console.log(
       "Saving project team composition",
       notes,

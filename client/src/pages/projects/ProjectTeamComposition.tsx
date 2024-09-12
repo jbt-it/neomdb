@@ -82,14 +82,23 @@ const ProjectTeamComposition = () => {
   const [projectManager, setProjectManager] = React.useState<ProjectMembersDto | null>(null);
 
   // Map current directors to MembersFieldDto
-  const ev = currentDirectors.map(
-    (director) =>
-      ({
-        memberId: director.memberId,
-        firstname: director.firstname,
-        lastname: director.lastname,
-      } as MembersFieldDto)
-  );
+  const staffingDirectors = currentDirectors
+    .filter(
+      (director) =>
+        director.directorId === 1 ||
+        director.directorId === 2 ||
+        director.directorId === 3 ||
+        director.directorId === 4 ||
+        director.directorId === 5
+    )
+    .map(
+      (director) =>
+        ({
+          memberId: director.memberId,
+          firstname: director.firstname,
+          lastname: director.lastname,
+        } as MembersFieldDto)
+    );
   // Map members to MembersFieldDto
   const selectableStaffingCommittee = [
     ...members
@@ -102,7 +111,7 @@ const ProjectTeamComposition = () => {
             lastname: member.lastname,
           } as MembersFieldDto)
       ),
-    ...ev,
+    ...staffingDirectors,
   ];
 
   const [staffingCommittee, setStaffingCommittee] = React.useState<MembersFieldDto[]>(
@@ -298,23 +307,30 @@ const ProjectTeamComposition = () => {
             <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
               Kick-Off:
             </Typography>
-            <DatePicker
-              sx={{ flex: 3, width: "100%" }}
-              slotProps={{
-                textField: {
-                  variant: "outlined",
-                  size: "small",
-                },
-              }}
-              value={kickOffDate}
-              onChange={onChangeEstimatedProjectStart}
-            />
+            <Stack direction={"column"} sx={{ flex: 3, width: "100%" }}>
+              <DatePicker
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    size: "small",
+                  },
+                }}
+                minDate={dayjs()}
+                value={kickOffDate}
+                onChange={onChangeEstimatedProjectStart}
+              />
+              {!kickOffDate || kickOffDate < dayjs() ? (
+                <Typography variant={"caption"} color={"error"}>
+                  Kickof Datum muss in der Zukunft liegen.
+                </Typography>
+              ) : null}
+            </Stack>
           </Stack>
           <Stack direction={isMobile ? "column" : "row"} justifyContent={"space-between"} alignItems={"start"}>
             <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
               Besetzungsgremium:
             </Typography>
-            <Box flex={isMobile ? 1 : 3}>
+            <Stack direction={"column"} flex={isMobile ? 1 : 3}>
               <MemberSelection
                 onChangeCallback={handleStaffingCommitteeSelection}
                 addMember={addStaffingCommitteeMember}
@@ -322,7 +338,12 @@ const ProjectTeamComposition = () => {
                 selectedMembers={staffingCommittee}
                 selectableMembers={selectableStaffingCommittee}
               />
-            </Box>
+              {staffingCommittee.length < 4 || staffingCommittee.length > 6 ? (
+                <Typography variant={"caption"} color={"error"}>
+                  Es müssen mindestens 4 Mitglieder im Besetzungsgremium sein.
+                </Typography>
+              ) : null}
+            </Stack>
           </Stack>
         </Stack>
       </Paper>
@@ -415,7 +436,14 @@ const ProjectTeamComposition = () => {
         <Button
           variant="contained"
           color="success"
-          disabled={projectMembers.length === 0 || !projectManager}
+          disabled={
+            projectMembers.length === 0 ||
+            !projectManager ||
+            !kickOffDate ||
+            kickOffDate < dayjs() ||
+            staffingCommittee.length < 4 ||
+            staffingCommittee.length > 6
+          }
           onClick={handleSaveTeamComposition}
         >
           <Groups />
