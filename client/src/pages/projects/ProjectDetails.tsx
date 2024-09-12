@@ -430,7 +430,6 @@ const ProjectDetails = () => {
       alert("Error in project description data");
       return;
     }
-    alert("Saving project");
     // All data should be set at this point, but check again to be sure
     if (
       !projectKeyData.projectName ||
