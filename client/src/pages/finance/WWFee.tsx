@@ -1,8 +1,8 @@
 /**
- * The MembershipFee-Component displays all members in a table and displays options for filtering and sorting the members
+ * The WWFee-Component displays all members in a table and displays options for filtering and sorting the members
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import {
   Paper,
   Table,
@@ -20,7 +20,6 @@ import {
   Box,
   styled,
   Button,
-  Checkbox,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -54,11 +53,11 @@ const StyledForm = styled("form")(({ theme }) => ({
 /**
  * Depicts a table with all members and a filter section to filter the members
  */
-const MembershipFee: React.FunctionComponent = () => {
+const WWFee: React.FunctionComponent = () => {
   const theme = useTheme();
 
   /**
-   * Function which proivdes the styles of the MembershipFee
+   * Function which provides the styles of the WWFee
    */
   const styles = {
     amountOfEntries: {
@@ -171,17 +170,19 @@ const MembershipFee: React.FunctionComponent = () => {
     }
   `;
 
-  // Calculate the current year
-  const currentYear = new Date().getFullYear();
-
   // Calculate the date 19 days from now
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + 19);
-  const day = String(futureDate.getDate()).padStart(2, "0"); // Add leading zero if necessary
-  const month = String(futureDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(futureDate.getDate()).padStart(2, "0");
+  const month = String(futureDate.getMonth() + 1).padStart(2, "0");
   const year = futureDate.getFullYear();
 
   const formattedDate = dayjs(`${day}.${month}.${year}`, "DD.MM.YYYY");
+
+  interface SelectedAmount {
+    memberId: number;
+    amount: string;
+  }
 
   const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [memberFinanceData, setMemberFinanceData] = useState<membersTypes.MemberFinanceDataType[]>([]);
@@ -189,11 +190,12 @@ const MembershipFee: React.FunctionComponent = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [sortOption, setSortOption] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
-  const [checkedMembers, setCheckedMembers] = useState<number[]>([]);
   const [radioState, setRadioState] = useState<boolean>(false);
-  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Jahresbeitrag ${currentYear}`);
-  const [bookingId, setBookingId] = useState<string>(`JBT-JB-${currentYear}`);
+  const [paymentReason, setPaymentReason] = useState<string>(`JBT-Working-Weekend`);
+  const [bookingId, setBookingId] = useState<string>(`JBT-WW`);
   const [bookingDate, setBookingDate] = useState<Dayjs>(formattedDate);
+  const [amount, setAmount] = useState<string>("");
+  const [selectedAmounts, setSelectedAmounts] = useState<SelectedAmount[]>([]);
 
   const { dispatchAuth } = useContext(AuthContext);
 
@@ -202,6 +204,25 @@ const MembershipFee: React.FunctionComponent = () => {
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
+
+  // Retrieves the WW date
+  const getWWDate: VoidFunction = useCallback(() => {
+    const data = [
+      {
+        eventId: 5,
+        date: "2023-11-15",
+      },
+    ];
+    const wwDate = data[0].date;
+
+    const year = wwDate.split("-")[0];
+    const month = wwDate.split("-")[1];
+
+    setPaymentReason(`JBT-Working-Weekend ${month}/${year}`);
+    setBookingId(`JBT-WW-${month}-${year}`);
+  }, [dispatchAuth, setPaymentReason, setBookingId]);
+
+  useEffect(() => getWWDate(), [getWWDate]);
 
   // Retrieves the members
   const getMemberFinanceData: VoidFunction = useCallback(() => {
@@ -268,44 +289,61 @@ const MembershipFee: React.FunctionComponent = () => {
       },
     ];
     setMemberFinanceData(data);
-    setCheckedMembers(data.map((member) => member.memberId));
   }, [dispatchAuth]);
 
   useEffect(() => getMemberFinanceData(), [getMemberFinanceData]);
 
+  // Retrieves the WW payment amount for the members
+  const getWWFeeData: VoidFunction = useCallback(() => {
+    const data = [
+      {
+        memberId: 1,
+        amount: "15,00",
+      },
+      {
+        memberId: 2,
+        amount: "00,00",
+      },
+      {
+        memberId: 3,
+        amount: "40,00",
+      },
+      {
+        memberId: 4,
+        amount: "30,00",
+      },
+      {
+        memberId: 5,
+        amount: "15,00",
+      },
+      {
+        memberId: 6,
+        amount: "00,00",
+      },
+    ];
+    setSelectedAmounts(data);
+  }, [dispatchAuth]);
+
+  useEffect(() => getWWFeeData(), [getWWFeeData]);
+
   /**
-   * Handles the checkbox checking
+   * Handles the changes of the radio buttons for the payment amount
    */
-  const handleCheckboxChange = (memberId: number) => {
-    setCheckedMembers((prevState) => {
-      const newCheckedState = [...prevState];
-      if (newCheckedState.includes(memberId)) {
-        const index = newCheckedState.indexOf(memberId);
-        newCheckedState.splice(index, 1);
+  const handleRadioAmount = (event: ChangeEvent<HTMLInputElement>, memberId: number) => {
+    const { value } = event.target;
+    setSelectedAmounts((prev) => {
+      const existingEntry = prev.find((entry) => entry.memberId === memberId);
+
+      if (existingEntry) {
+        return prev.map((entry) => (entry.memberId === memberId ? { ...entry, amount: value } : entry));
       } else {
-        newCheckedState.push(memberId);
+        return [...prev, { memberId, amount: value }];
       }
-      return newCheckedState;
     });
   };
 
   /**
-   * Handles the button to set all checkboxes
-   */
-  const handleCheckboxAll = () => {
-    setCheckedMembers((prevState) => {
-      let newCheckedState = [...prevState];
-      if (newCheckedState.length > 0) {
-        newCheckedState.length = 0;
-      } else {
-        newCheckedState = memberFinanceData.map((member) => member.memberId);
-      }
-      return newCheckedState;
-    });
-  };
-
-  /**
-   * Handles the changes of the radio buttons
+   * Handles the changes of the radio buttons for the emails
    */
   const handleRadioChange: VoidFunction = () => {
     setRadioState(!radioState);
@@ -333,6 +371,17 @@ const MembershipFee: React.FunctionComponent = () => {
       setBookingDate(date);
     } else {
       setBookingDate(formattedDate);
+    }
+  };
+
+  /**
+   * Handles the change event on the amount input
+   */
+  const handleAmount = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    const euroRegex = /^[0-9]*([,][0-9]{0,2})?$/;
+    if (value === "" || euroRegex.test(value)) {
+      setAmount(value);
     }
   };
 
@@ -499,7 +548,13 @@ const MembershipFee: React.FunctionComponent = () => {
           </Button>
         </Grid>
         <Grid item>
-          <Button sx={styles.button} variant="contained" onClick={() => setOpenDialog(true)}>
+          <Button
+            sx={styles.button}
+            variant="contained"
+            onClick={() => {
+              setOpenDialog(true);
+            }}
+          >
             SEPA-XML erstellen
           </Button>
         </Grid>
@@ -587,6 +642,34 @@ const MembershipFee: React.FunctionComponent = () => {
             </Grid>
             <Grid item container alignItems="center" spacing={2} xs={12}>
               <Grid item sx={{ width: "200px" }}>
+                <Typography variant="body1">Variabler Betrag:</Typography>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "36px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "8px 14px",
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                  }}
+                  inputProps={{
+                    inputMode: "decimal",
+                    pattern: "[0-9]*[,]{0,1}[0-9]{0,2}",
+                  }}
+                  value={amount}
+                  onChange={handleAmount}
+                />
+              </Grid>
+            </Grid>
+            <Grid item container alignItems="center" spacing={2} xs={12}>
+              <Grid item sx={{ width: "200px" }}>
                 <Typography variant="body1">Mails versenden:</Typography>
               </Grid>
               <Grid item xs>
@@ -635,11 +718,6 @@ const MembershipFee: React.FunctionComponent = () => {
         {additionalFiltersState ? additionalFilters : null}
         <Box sx={styles.amountOfEntries}>{`${getFilteredAndSortedMembers().length} Einträge`}</Box>
       </Paper>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={styles.button} variant="contained" onClick={() => handleCheckboxAll()}>
-          Alle {checkedMembers.length > 0 ? "abwählen" : "auswählen"}
-        </Button>
-      </div>
       <TableContainer component={Paper} sx={styles.tableContainer}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -653,7 +731,22 @@ const MembershipFee: React.FunctionComponent = () => {
                 </Box>
               </TableCell>
               <TableCell sx={styles.tableHeadCell}>Status</TableCell>
-              <TableCell sx={styles.tableHeadCell}>Jahresbeitrag (30,00€) einziehen</TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <div>
+                  <span style={{ display: "block" }}>Variabler</span>
+                  <span style={{ display: "block" }}>Betrag</span>
+                </div>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <div>
+                  <span style={{ display: "block" }}>Nichts</span>
+                  <span style={{ display: "block" }}>abbuchen</span>
+                </div>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>20,00 €</TableCell>
+              <TableCell sx={styles.tableHeadCell}>15,00 €</TableCell>
+              <TableCell sx={styles.tableHeadCell}>40,00 €</TableCell>
+              <TableCell sx={styles.tableHeadCell}>30,00 €</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -668,14 +761,45 @@ const MembershipFee: React.FunctionComponent = () => {
                 </TableCell>
                 <TableCell>{member.memberStatus}</TableCell>
                 <TableCell>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checkedMembers.includes(member.memberId)}
-                        onChange={() => handleCheckboxChange(member.memberId)}
-                      />
-                    }
-                    label=""
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === amount}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value={amount}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === "00,00"}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value="00,00"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === "20,00"}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value="20,00"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === "15,00"}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value="15,00"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === "40,00"}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value="40,00"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Radio
+                    checked={selectedAmounts.find((entry) => entry.memberId === member.memberId)?.amount === "30,00"}
+                    onChange={(event) => handleRadioAmount(event, member.memberId)}
+                    value="30,00"
                   />
                 </TableCell>
               </TableRow>
@@ -705,4 +829,4 @@ const MembershipFee: React.FunctionComponent = () => {
   );
 };
 
-export default MembershipFee;
+export default WWFee;

@@ -169,6 +169,7 @@ const CustomerStep = ({ customerData, setCustomerData, isCompleted, errors, isEd
 
   // Handle new contact person cancel
   const onChangeNewContactPersonCancel = () => {
+    setCustomerData({ ...customerData, newContactPersonName: "" });
     setCustomerData({ ...customerData, newContactPerson: false });
   };
 

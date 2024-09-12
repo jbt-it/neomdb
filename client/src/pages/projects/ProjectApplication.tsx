@@ -214,6 +214,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
       studentJob: "",
       seminarPapers: "",
       workshops: [],
+      additionalWorkshops: "",
       internalCommitment: [],
       preliminaryWork: [],
       extraordinaryCommitment: null,
@@ -251,6 +252,7 @@ const ProjectApplication = ({ projectApplicationData }: ProjectApplicationProps)
 
   // Handles the completion of the application
   const handleCompleteApplication = () => {
+    console.log("Application data: ", applicationData);
     setIsApplicationCompleted(true);
   };
 

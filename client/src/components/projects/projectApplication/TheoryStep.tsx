@@ -81,6 +81,11 @@ const TheoryStep = ({ applicationData, setApplicationData, workshops }: TheorySt
     setApplicationData({ ...applicationData, seminarPapers: event.target.value });
   };
 
+  // Function to handle the change of the additional workshops
+  const onChangeAdditionalWorkshops = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApplicationData({ ...applicationData, additionalWorkshops: event.target.value });
+  };
+
   return (
     <Stack direction={"column"} spacing={3}>
       <Stack direction={"column"} justifyContent={"space-between"} alignItems={"left"}>
@@ -108,6 +113,20 @@ const TheoryStep = ({ applicationData, setApplicationData, workshops }: TheorySt
             setApplicationData={setApplicationData}
           />
         </Box>
+      </Stack>
+      <Stack direction={"column"} justifyContent={"space-between"} alignItems={"left"}>
+        <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
+          Weitere Workshops:
+        </Typography>
+        <TextField
+          sx={{ flex: 3 }}
+          variant="outlined"
+          size="small"
+          multiline
+          minRows={3}
+          value={applicationData.additionalWorkshops}
+          onChange={onChangeAdditionalWorkshops}
+        />
       </Stack>
     </Stack>
   );
