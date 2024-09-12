@@ -446,12 +446,11 @@ const ProjectDetails = () => {
       customerData.companyId === -1 ||
       !projectDescriptionData.coreCompetencies ||
       projectDescriptionData.coreCompetencies.length === 0 ||
-      (customerData.newContactPerson && customerData.newContactPersonName != "") ||
+      (customerData.newContactPerson && customerData.newContactPersonName === "") ||
       (!customerData.newContactPerson && !customerData.contactPerson) ||
       !projectKeyData.estimatedProjectEuroPerBT ||
       !projectKeyData.applicationEnd1
     ) {
-      alert(customerData.contactPerson);
       // Show an error message if some data is missing
       showErrorMessage("Einige Daten fehlen oder sind fehlerhaft");
       return;
