@@ -1,6 +1,6 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import React from "react";
-import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../../types/projectTypes";
+import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
 
 interface SummaryDetailsProps {
   projectKeyData: ProjectKeyData;
@@ -8,6 +8,13 @@ interface SummaryDetailsProps {
   projectDescriptionData: ProjectDescriptionData;
 }
 
+/**
+ * Render the summary details of the project
+ * @param projectKeyData - The project key data
+ * @param customerData - The customer data
+ * @param projectDescriptionData - The project description data
+ * @returns - The summary details of the project
+ */
 const SummaryDetails = ({ projectKeyData, customerData, projectDescriptionData }: SummaryDetailsProps) => {
   return (
     <Stack direction={"column"} spacing={1}>

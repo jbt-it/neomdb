@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Button, Container, Paper, Step, StepButton, Stepper, Typography } from "@mui/material";
 import { CustomerData, ProjectDescriptionData, ProjectKeyData } from "../../types/projectTypes";
-import KeyDataStep from "../../components/projects/projectTendering/KeyDataStep";
-import CustomerStep from "../../components/projects/projectTendering/CustomerStep";
-import ProjectDescriptionStep from "../../components/projects/projectTendering/ProjectDescriptionStep";
-import SummaryDetails from "../../components/projects/projectTendering/SummaryDetails";
+import KeyDataStep from "../../components/projects/KeyDataStep";
+import CustomerStep from "../../components/projects/CustomerStep";
+import ProjectDescriptionStep from "../../components/projects/ProjectDescriptionStep";
+import SummaryDetails from "../../components/projects/SummaryDetails";
 import dayjs from "dayjs";
-import useProjects from "../../hooks/useProjects";
+import useProjects from "../../hooks/projects/useProjects";
 import { showErrorMessage } from "../../utils/toastUtils";
 
 // Steps for the project tendering form
@@ -309,7 +309,6 @@ const ProjectTendering = () => {
       return;
     }
     const data = {
-      projectId: -1,
       projectName: projectKeyData.projectName,
       status: projectKeyData.tenderDate ? "Bewerbung" : "Durchführung",
       jobSite: projectKeyData.jobSite,
@@ -355,12 +354,6 @@ const ProjectTendering = () => {
       },
       members: [],
       qms: [],
-      signatureDate: null,
-      euroPerBT: null,
-      soldBT: null,
-      soldExpenses: null,
-      projectEnd: null,
-      invoicing: null,
     };
     tendering ? tenderProject(data) : saveProject(data);
   };
@@ -436,6 +429,7 @@ const ProjectTendering = () => {
             setProjectKeyData={setProjectKeyData}
             isCompleted={completed[0]}
             errors={projectKeyDataErrors}
+            isEditMode={true}
           />
         );
       case 1:
@@ -445,6 +439,7 @@ const ProjectTendering = () => {
             setCustomerData={setCustomerData}
             isCompleted={completed[1]}
             errors={customerDataErrors}
+            isEditMode={true}
           />
         );
       case 2:
@@ -454,6 +449,7 @@ const ProjectTendering = () => {
             setProjectDescriptionData={setProjectDescriptionData}
             isCompleted={completed[2]}
             errors={projectDescriptionDataErrors}
+            isEditMode={true}
           />
         );
       default:
