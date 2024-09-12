@@ -28,9 +28,9 @@ const TenderedProjectCard = ({
         <Box sx={{ mb: 1 }}>
           <ProjectChip status={status} />
         </Box>
-        <Box>
+        <Link to={`/projekte/${projectId}`} style={{ textDecoration: "none", color: "black" }}>
           <Typography fontWeight="bold">{projectName}</Typography>
-        </Box>
+        </Link>
         <Divider sx={{ marginBottom: 2 }} />
         <Typography>{situation}</Typography>
         {applicationEnd1 ? (
