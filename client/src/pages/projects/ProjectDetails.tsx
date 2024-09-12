@@ -791,6 +791,7 @@ const ProjectDetails = () => {
           signatureDate={projectDetails.signatureDate}
           soldBT={projectDetails.soldBT}
           soldExpenses={projectDetails.soldExpenses}
+          projectId={projectDetails.projectId}
         />
       )}
     </Container>
