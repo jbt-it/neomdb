@@ -59,6 +59,7 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
+import ProjectTeamComposition from "./pages/projects/ProjectTeamComposition";
 
 /**
  * This component is responsible for rendering the app.
@@ -102,8 +103,30 @@ const App: React.FunctionComponent = () => {
               />
               <Route path="projektbewerbung/:id" element={<ProjectApplication />} />
               <Route path=":id" element={<ProjectDetails />} />
-              <Route path=":id/projektbewerbungen" element={<ProjectApplications />} />
-              <Route path=":id/projektbewerbungen/:memberId" element={<ProjectApplicationDetailsPage />} />
+              <Route
+                path=":id/projektbewerbungen"
+                element={
+                  <ProtectedRoutes permissionIDs={[19]}>
+                    <ProjectApplications />
+                  </ProtectedRoutes>
+                }
+              />
+              <Route
+                path=":id/projektbewerbungen/:memberId"
+                element={
+                  <ProtectedRoutes permissionIDs={[19]}>
+                    <ProjectApplicationDetailsPage />
+                  </ProtectedRoutes>
+                }
+              />
+              <Route
+                path=":id/projektbesetzung"
+                element={
+                  <ProtectedRoutes permissionIDs={[19]}>
+                    <ProjectTeamComposition />
+                  </ProtectedRoutes>
+                }
+              />
             </Route>
             <Route path="veranstaltungen">
               <Route index element={<EventsOverview />} />

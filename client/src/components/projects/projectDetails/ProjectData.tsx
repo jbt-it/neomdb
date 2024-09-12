@@ -12,6 +12,7 @@ interface ProjectDataProps {
   euroPerBT: number | null;
   soldBT: number | null;
   soldExpenses: number | null;
+  projectId: number;
 }
 
 /**
@@ -24,7 +25,15 @@ interface ProjectDataProps {
  * @param soldExpenses - The sold expenses of the project
  * @returns A Card that displays the memebers, qms and other data of the project
  */
-const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, soldExpenses }: ProjectDataProps) => {
+const ProjectData = ({
+  projectMembers,
+  qms,
+  signatureDate,
+  euroPerBT,
+  soldBT,
+  soldExpenses,
+  projectId,
+}: ProjectDataProps) => {
   const isMobile = useResponsive("down", "sm");
 
   return (
@@ -39,18 +48,22 @@ const ProjectData = ({ projectMembers, qms, signatureDate, euroPerBT, soldBT, so
         </Typography>
         <List sx={{ flex: 3, m: 0 }} disablePadding>
           {projectMembers?.map((member) => (
-            <ListItem
-              key={member.memberId}
-              sx={{ p: 0, marginTop: -0.5 }}
-              component={Link}
-              to={`/gesamtuebersicht/${member.memberId}`}
-            >
+            <ListItem key={member.memberId} sx={{ p: 0, marginTop: -0.5 }}>
               <Stack direction={"row"} gap={2}>
-                <ListItemText
-                  primary={`${member.firstname} ${member.lastname}${member.type === "PL" ? " (PL)" : ""}`}
-                  sx={{ color: "black" }}
-                />
-                <Button>Bewerbung</Button>
+                <Link to={`/gesamtuebersicht/${member.memberId}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <ListItemText
+                    primary={`${member.firstname} ${member.lastname}${member.type === "PL" ? " (PL)" : ""}`}
+                    sx={{ color: "black" }}
+                  />
+                </Link>
+                <Button>
+                  <Link
+                    to={`/projekte/${projectId}/projektbewerbungen/${member.memberId}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    Bewerbung
+                  </Link>
+                </Button>
               </Stack>
             </ListItem>
           ))}

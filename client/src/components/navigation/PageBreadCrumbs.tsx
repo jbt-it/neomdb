@@ -30,10 +30,11 @@ const staticPathToNameMap: { [key: string]: string } = {
   projektausschreibung: "Projektausschreibung",
   finanzuebersicht: "Finanzübersicht",
   jahresbeitrag: "Jahresbeitrag",
-  projektbewerbung: "Projektbewerbung",
-  projektbewerbungen: "Projektbewerbungen",
   sonstigereinzug: "Sonstiger Einzug",
   wwbeitrag: "Working Weekend Beitrag",
+  projektbewerbung: "Projektbewerbung",
+  projektbewerbungen: "Projektbewerbungen",
+  projektbesetzung: "Projektbesetzung",
 };
 
 /**

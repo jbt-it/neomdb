@@ -18,7 +18,7 @@ import CustomerStep from "../../components/projects/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/ProjectDescriptionStep";
 import dayjs from "dayjs";
 import { showErrorMessage } from "../../utils/toastUtils";
-import { useParams } from "react-router-dom";
+import { redirect, useParams } from "react-router-dom";
 import useProjectDetails from "../../hooks/projects/useProjectDetails";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -615,11 +615,6 @@ const ProjectDetails = () => {
     alert("Share applications");
   };
 
-  // handles the click on the team composition button
-  const handleTeamComposition = () => {
-    alert("Team composition");
-  };
-
   // handles the click on the start second application phase button
   const handleStartSecondApplicationPhase = () => {
     alert("Start second application phase");
@@ -783,7 +778,6 @@ const ProjectDetails = () => {
           <ProjectApplications
             applicants={projectDetails.members}
             handleShareApplications={handleShareApplications}
-            handleTeamComposition={handleTeamComposition}
             handleStartSecondApplicationPhase={handleStartSecondApplicationPhase}
             handleCallOffProject={handleCallOffProject}
             isApplicationOpen={isApplicationOpen}
@@ -798,6 +792,7 @@ const ProjectDetails = () => {
           signatureDate={projectDetails.signatureDate}
           soldBT={projectDetails.soldBT}
           soldExpenses={projectDetails.soldExpenses}
+          projectId={projectDetails.projectId}
         />
       )}
     </Container>

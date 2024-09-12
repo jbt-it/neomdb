@@ -28,7 +28,6 @@ import PreviousProjectAppications from "./PreviousProjectAppications";
 interface ProjectApplicationsProps {
   applicants: ProjectMembersDto[];
   handleShareApplications: () => void;
-  handleTeamComposition: () => void;
   handleStartSecondApplicationPhase: () => void;
   handleCallOffProject: () => void;
   isApplicationOpen: boolean;
@@ -43,7 +42,6 @@ interface ProjectApplicationsProps {
 const ProjectApplications = ({
   applicants,
   handleShareApplications,
-  handleTeamComposition,
   handleStartSecondApplicationPhase,
   handleCallOffProject,
   isApplicationOpen,
@@ -126,10 +124,11 @@ const ProjectApplications = ({
             color="success"
             sx={{ fontWeight: 600, minHeight: 40 }}
             startIcon={<GroupAdd />}
-            onClick={handleTeamComposition}
             size={isMobile ? "large" : "small"}
           >
-            {isMobile ? null : "Teamzusammenstellung"}
+            <Link to={`/projekte/${id}/projektbesetzung`} style={{ textDecoration: "none", color: "inherit" }}>
+              {isMobile ? null : "Teamzusammenstellung"}
+            </Link>
           </Button>
           {isSecondApplicationPhase ? null : (
             <Button
