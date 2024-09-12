@@ -4,6 +4,7 @@ import {
   CoreCompetencyDto,
   IndustryDto,
   ProjectApplicantDto,
+  ProjectBillingCheckmarksDto,
   ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,
@@ -339,6 +340,54 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
+  const projectsInBilling = [
+    {
+      projectId: 2,
+      projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
+      status: "Abrechnung",
+      APatEV: true,
+      APHold: true,
+      evaluationAtEV: true,
+      DLatEV: true,
+      offerInAlfresco: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+    {
+      projectId: 5,
+      projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
+      status: "Abrechnung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+    {
+      projectId: 9,
+      projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
+      status: "Durchführung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      consultingContractProvided: false,
+      teamContractProvided: false,
+      qmApproval: false,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+  ] as ProjectBillingCheckmarksDto[];
+
   const tenderProject = (newProject: ProjectTenderDto) => {
     console.log("Tendering project", newProject);
   };
@@ -353,6 +402,7 @@ const useProjects = () => {
     allProjects,
     allIndustries,
     allCoreCompetencies,
+    projectsInBilling,
     tenderProject,
     saveProject,
   };

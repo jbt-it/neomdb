@@ -8,6 +8,7 @@ import useProjects from "../../hooks/projects/useProjects";
 import useResponsive from "../../hooks/useResponsive";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
+import ProjectBillingOverview from "../../components/projects/ProjectBillingOverview";
 
 /**
  * ProjectOverview component
@@ -50,7 +51,7 @@ const ProjectOverview = () => {
         <AllProjects projects={allProjects} />
       </TabPanel>
       <TabPanel value="billing">
-        <p>Abrechnung</p>
+        <ProjectBillingOverview />
       </TabPanel>
     </TabContext>
   );

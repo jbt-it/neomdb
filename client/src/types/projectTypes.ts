@@ -300,3 +300,20 @@ export type PreviousExternalProjectDto = {
   projectName: string;
   type: "Bewerbung" | "Mitglied" | "PL" | "QM" | null;
 };
+
+// Type of the project billing checkmarks DTO
+export type ProjectBillingCheckmarksDto = {
+  projectId: number;
+  projectName: string;
+  status: string;
+  APatEV: boolean;
+  APHold: boolean;
+  evaluationAtEV: boolean;
+  DLatEV: boolean;
+  offerInAlfresco: boolean;
+  consultingContractProvided: boolean;
+  teamContractProvided: boolean;
+  qmApproval: boolean;
+  freelancerContractExistingForAllMembers: boolean;
+  moneyTransferredForAllMembers: boolean;
+};
