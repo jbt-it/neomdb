@@ -258,16 +258,6 @@ const ProjectTeamComposition = () => {
             alignItems={isMobile ? "start" : "center"}
           >
             <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
-              Status:
-            </Typography>
-            <Typography sx={{ flex: 3 }}>{projectDetails?.status}</Typography>
-          </Stack>
-          <Stack
-            direction={isMobile ? "column" : "row"}
-            justifyContent={"space-between"}
-            alignItems={isMobile ? "start" : "center"}
-          >
-            <Typography fontWeight={"bold"} sx={{ flex: 1 }}>
               Projektmitglieder (Min):
             </Typography>
             <Typography sx={{ flex: 3 }}>{projectDetails?.estimatedProjectMemberMin}</Typography>
