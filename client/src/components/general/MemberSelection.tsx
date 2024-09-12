@@ -12,7 +12,7 @@ interface MemberSelectionProps {
   memberstatus?: string[];
   onChangeCallback: (event: React.SyntheticEvent, value: MembersFieldDto | null) => void;
   addMember: () => void;
-  removeMember: (mitgliedID: number) => void;
+  removeMember: (memberId: number) => void;
 }
 
 /**
@@ -64,13 +64,14 @@ const MemberSelection: React.FunctionComponent<MemberSelectionProps> = ({
   return (
     <div>
       {selectedMembers.map((member, index) => (
-        <Stack key={index} direction="row" spacing={1} marginTop={2} alignItems="center">
+        <Stack key={index} direction="row" spacing={1} marginTop={index === 0 ? 0 : 2} alignItems="center">
           <Autocomplete
             disablePortal
             autoSelect
             sx={styles.fieldItem}
             id={`members-${index}`}
             options={selectableMembers}
+            size="small"
             filterOptions={(options, state) => {
               const isMemberStatusIncluded = (member: MembersFieldDto) =>
                 memberstatus ? memberstatus.includes(member.memberStatus?.name || "") : true;

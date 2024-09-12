@@ -316,7 +316,24 @@ const useProjectDetails = (projectID: number) => {
     },
   ];
 
-  return { projectDetails, saveProject, projectApplicants, projectApplications };
+  const saveProjectTeamComposition = (
+    staffingCommittee: MembersFieldDto[],
+    projectManager: ProjectMembersDto,
+    projectMembers: ProjectMembersDto[],
+    notes: string,
+    kickOffDate: Date
+  ) => {
+    console.log(
+      "Saving project team composition",
+      notes,
+      projectMembers,
+      projectManager,
+      staffingCommittee,
+      kickOffDate
+    );
+  };
+
+  return { projectDetails, saveProject, projectApplicants, projectApplications, saveProjectTeamComposition };
 };
 
 export default useProjectDetails;

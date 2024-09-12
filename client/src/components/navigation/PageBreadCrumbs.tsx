@@ -34,6 +34,7 @@ const staticPathToNameMap: { [key: string]: string } = {
   wwbeitrag: "Working Weekend Beitrag",
   projektbewerbung: "Projektbewerbung",
   projektbewerbungen: "Projektbewerbungen",
+  projektbesetzung: "Projektbesetzung",
 };
 
 /**
