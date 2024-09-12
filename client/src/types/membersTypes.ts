@@ -446,3 +446,41 @@ export type CreateMemberResponseDto = {
   memberId: number;
   statusOverview: StatusOverview;
 };
+
+/**
+ * Type of the expertise of a member
+ */
+export type ExpertiseOfMemberDto = {
+  memberId: number;
+  expertiseId: number;
+  designation: string;
+  value: string;
+};
+
+/**
+ * Type of the internship of a member
+ */
+export type InternshipOfMemberDto = {
+  memberId: number;
+  company: string;
+  description: string;
+};
+
+/**
+ * Type of the position of a member
+ */
+export type PosionOfMemberDto = {
+  memberId: number;
+  designation: string;
+  from: Date;
+  until: Date;
+};
+
+/**
+ * Type of the workshops held by a member
+ */
+export type WorkshopsHeldByMember = {
+  memberId: number;
+  workshopInstanceId: number;
+  name: string;
+};

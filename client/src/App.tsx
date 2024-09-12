@@ -39,6 +39,11 @@ import EventsOverview from "./pages/events/EventsOverview";
 
 // project pages
 import ProjectOverview from "./pages/projects/ProjectOverview";
+import ProjectDetails from "./pages/projects/ProjectDetails";
+import ProjectTendering from "./pages/projects/ProjectTendering";
+import ProjectApplication from "./pages/projects/ProjectApplication";
+import ProjectApplications from "./pages/projects/ProjectApplications";
+import ProjectApplicationDetailsPage from "./pages/projects/ProjectApplicationDetails";
 
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
@@ -54,7 +59,6 @@ import InfoSectionTest from "./pages/InfoSectionTest";
 import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
-import ProjectTendering from "./pages/projects/ProjectTendering";
 
 /**
  * This component is responsible for rendering the app.
@@ -96,6 +100,10 @@ const App: React.FunctionComponent = () => {
                   </ProtectedRoutes>
                 }
               />
+              <Route path="projektbewerbung/:id" element={<ProjectApplication />} />
+              <Route path=":id" element={<ProjectDetails />} />
+              <Route path=":id/projektbewerbungen" element={<ProjectApplications />} />
+              <Route path=":id/projektbewerbungen/:memberId" element={<ProjectApplicationDetailsPage />} />
             </Route>
             <Route path="veranstaltungen">
               <Route index element={<EventsOverview />} />

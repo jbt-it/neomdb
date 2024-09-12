@@ -1,18 +1,20 @@
-import { MembersFieldDto } from "../types/membersTypes";
+import { MembersFieldDto } from "../../types/membersTypes";
 import dayjs from "dayjs";
 import {
   CoreCompetencyDto,
   IndustryDto,
+  ProjectApplicantDto,
   ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,
+  ProjectTenderDto,
   TenderedProjectDto,
-} from "../types/projectTypes";
-import useCompanies from "./useCompanies";
+} from "../../types/projectTypes";
+import useCompanies from "../useCompanies";
 
 // CURRENTLY JUST A PLACEHOLDER UNTIL REACT QUERY IS IMPLEMENTED
 const useProjects = () => {
-  const { allCompaniesShort } = useCompanies();
+  const { allCompaniesShort, allContactPartners, allCompanies } = useCompanies();
 
   const allCoreCompetencies = [
     {
@@ -337,15 +339,23 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
-  const tenderProject = (newProject: ProjectDetailsDto) => {
+  const tenderProject = (newProject: ProjectTenderDto) => {
     console.log("Tendering project", newProject);
   };
 
-  const saveProject = (newProject: ProjectDetailsDto) => {
+  const saveProject = (newProject: ProjectTenderDto) => {
     console.log("Saving project", newProject);
   };
 
-  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies, tenderProject, saveProject };
+  return {
+    projects,
+    tenderedProjects,
+    allProjects,
+    allIndustries,
+    allCoreCompetencies,
+    tenderProject,
+    saveProject,
+  };
 };
 
 export default useProjects;
