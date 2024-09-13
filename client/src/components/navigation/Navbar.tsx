@@ -1,7 +1,17 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { AppBar, styled, alpha, Toolbar, Box, IconButton, Typography, InputBase, Avatar, Theme } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
+import {
+  AppBar,
+  styled,
+  alpha,
+  Toolbar,
+  Box,
+  IconButton,
+  Typography,
+  InputBase,
+  Avatar,
+  useTheme,
+} from "@mui/material";
 import { Menu, Search } from "@mui/icons-material";
 import useResponsive from "../../hooks/useResponsive";
 import AccountPopover from "./AccountPopover";
@@ -38,36 +48,6 @@ const SearchIcon = styled("div")(({ theme }) => ({
   alignItems: "center",
 }));
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: "100%",
-      position: "absolute",
-      pointerEvents: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "white",
-    },
-    searchInputRoot: {
-      color: "white",
-    },
-    searchInputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("sm")]: {
-        width: "12ch",
-        "&:focus": {
-          width: "20ch",
-        },
-      },
-    },
-  })
-);
-
 /**
  * Type of the Props that the Navbar receives
  */
@@ -80,8 +60,8 @@ interface NavbarProps {
  * @param onOpenDrawer Function to open the Drawer
  */
 const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
-  const classes = useStyles();
-  const lgUp = useResponsive("up", "lg");
+  const lgUp = useResponsive("up", "md");
+  const theme = useTheme();
 
   const renderContent = (
     <>
@@ -104,11 +84,22 @@ const Navbar = ({ onOpenDrawer }: NavbarProps): JSX.Element => {
             <Search />
           </SearchIcon>
           <InputBase
-            placeholder="Suche..."
-            classes={{
-              root: classes.searchInputRoot,
-              input: classes.searchInputInput,
+            sx={{
+              color: "white",
+              "& .MuiInputBase-input": {
+                padding: (theme) => theme.spacing(1, 1, 1, 0),
+                paddingLeft: (theme) => `calc(1em + ${theme.spacing(4)})`,
+                transition: (theme) => theme.transitions.create("width"),
+                width: "100%",
+                [theme.breakpoints.up("sm")]: {
+                  width: "12ch",
+                  "&:focus": {
+                    width: "20ch",
+                  },
+                },
+              },
             }}
+            placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
           />
         </SearchField>

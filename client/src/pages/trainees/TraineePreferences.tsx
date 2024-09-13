@@ -2,79 +2,74 @@
  * The TraineePreferences-Component lets trainees give preferences on their mentor, ip and ressort choice
  */
 import React, { useState, useEffect, useCallback, useContext } from "react";
-import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button } from "@mui/material";
-import PageBar from "../../components/navigation/PageBar";
+import { Paper, Divider, TextField, MenuItem, Grid, Theme, Typography, Button, useTheme } from "@mui/material";
 import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
-import { styled } from "@mui/system";
 //import { makeStyles, createStyles } from "@mui/styles";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { Generation, InternalProject, TraineePreference } from "../../types/traineesTypes";
-import { Department, Member, Mentor } from "../../types/membersTypes";
+import { DepartmentPartialDto, MemberPartialDto, MentorDto } from "../../types/membersTypes";
 import { AxiosError } from "axios";
-
-/**
- * Function which proivdes the styles of the TraineePreferences
- */
-//const useStyles = makeStyles((theme: Theme) =>
-const useStyles = styled((theme: Theme) => ({
-  // Header text of a paper marking a section of a page
-  paperHeaderText: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-  },
-  paperText: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-  },
-  // Header divider of a paper marking a section of a page
-  paperHeaderDivider: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
-  paperContainer: {
-    marginBottom: "10px",
-  },
-  inputContainer: {
-    padding: theme.spacing(1),
-  },
-  selectionElement: {
-    [theme.breakpoints.up("md")]: {
-      margin: theme.spacing(1),
-      width: "155px",
-    },
-    [theme.breakpoints.down("md")]: {
-      margin: theme.spacing(1),
-      width: "120px",
-    },
-    [theme.breakpoints.down("sm")]: {
-      margin: theme.spacing(1),
-      width: "120px",
-    },
-  },
-  motivationalText: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
-  inputButton: {
-    margin: theme.spacing(1),
-  },
-}));
 
 /**
  * Options to create a new member and to change the status of members
  */
 const TraineePreferences: React.FunctionComponent = () => {
-  const classes = useStyles();
+  const theme = useTheme();
+
+  const styles = {
+    // Header text of a paper marking a section of a page
+    paperHeaderText: {
+      marginLeft: theme.spacing(1),
+      marginTop: theme.spacing(1),
+    },
+    paperText: {
+      marginLeft: theme.spacing(1),
+      marginTop: theme.spacing(1),
+    },
+    // Header divider of a paper marking a section of a page
+    paperHeaderDivider: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+    },
+    paperContainer: {
+      marginBottom: "10px",
+    },
+    inputContainer: {
+      padding: theme.spacing(1),
+    },
+    selectionElement: {
+      [theme.breakpoints.up("md")]: {
+        margin: theme.spacing(1),
+        width: "155px",
+      },
+      [theme.breakpoints.down("md")]: {
+        margin: theme.spacing(1),
+        width: "120px",
+      },
+      [theme.breakpoints.down("sm")]: {
+        margin: theme.spacing(1),
+        width: "120px",
+      },
+    },
+    motivationalText: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
+    inputButton: {
+      margin: theme.spacing(1),
+    },
+  };
+
   const { auth, dispatchAuth } = useContext(AuthContext);
 
   const [traineePreferences, setTraineePreferences] = useState<TraineePreference>();
   const [generation, setGeneration] = useState<Generation>();
-  const [departements, setDepartements] = useState<Department[]>([]);
-  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [departments, setDepartments] = useState<DepartmentPartialDto[]>([]);
+  const [mentors, setMentors] = useState<MentorDto[]>([]);
   const [internalprojects, setInternalprojects] = useState<InternalProject[]>([]);
 
   // Test data
@@ -158,9 +153,9 @@ const TraineePreferences: React.FunctionComponent = () => {
   }, [dispatchAuth]);
 
   /**
-   * Retrieves all departements
+   * Retrieves all departments
    */
-  const getDepartements: VoidFunction = useCallback(() => {
+  const getDepartments: VoidFunction = useCallback(() => {
     // Variable for checking, if the component is mounted
     let mounted = true;
     api
@@ -170,7 +165,7 @@ const TraineePreferences: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            setDepartements(res.data);
+            setDepartments(res.data);
           }
         }
       })
@@ -202,9 +197,9 @@ const TraineePreferences: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             console.log(res.data);
-            const memberData: Member = res.data;
-            getInternalProjects(memberData.generation);
-            getMentors(memberData.generation);
+            const memberData: MemberPartialDto = res.data;
+            getInternalProjects(memberData.generationId);
+            getMentors(memberData.generationId);
           }
         }
       })
@@ -223,21 +218,21 @@ const TraineePreferences: React.FunctionComponent = () => {
   }, [dispatchAuth]);
 
   useEffect(() => getTraineeGeneration(), [getTraineeGeneration]);
-  useEffect(() => getDepartements(), [getDepartements]);
+  useEffect(() => getDepartments(), [getDepartments]);
   useEffect(() => getPreferences(), [getPreferences]);
 
   /**
-   * Handles the change event on the first departement preference
+   * Handles the change event on the first department preference
    * @param event
    */
   const handleRessortFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const departement = departements.find((departement) => departement.ressortID === newValue);
-    if (!departement?.kuerzel) {
+    const department = departments.find((department) => department.departmentId === newValue);
+    if (!department?.shortName) {
       showErrorMessage("Ungültige Präferenz");
       return;
     }
-    const newKuerzel = departement.kuerzel;
+    const newKuerzel = department.shortName;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_ressort2 === newValue || traineePreferences.wahl_ressort3 === newValue) {
@@ -255,17 +250,17 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the second departement preference
+   * Handles the change event on the second department preference
    * @param event
    */
   const handleRessortSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const departement = departements.find((departement) => departement.ressortID === newValue);
-    if (!departement?.kuerzel) {
+    const department = departments.find((department) => department.departmentId === newValue);
+    if (!department?.shortName) {
       showErrorMessage("Ungültige Präferenz");
       return;
     }
-    const newKuerzel = departement.kuerzel;
+    const newKuerzel = department.shortName;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort3 === newValue) {
@@ -277,17 +272,17 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the second departement preference
+   * Handles the change event on the second department preference
    * @param event
    */
   const handleRessortThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const departement = departements.find((departement) => departement.ressortID === newValue);
-    if (!departement?.kuerzel) {
+    const department = departments.find((department) => department.departmentId === newValue);
+    if (!department?.shortName) {
       showErrorMessage("Ungültige Präferenz");
       return;
     }
-    const newKuerzel = departement.kuerzel;
+    const newKuerzel = department.shortName;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort2 === newValue) {
@@ -386,17 +381,17 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the first departement preference
+   * Handles the change event on the first department preference
    * @param event
    */
   const handleMentorFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
-    if (!mentor?.name) {
+    const mentor = mentors.find((mentor) => mentor.memberId === newValue);
+    if (!mentor?.firstname) {
       showErrorMessage("Ungültiger Mentor");
       return;
     }
-    const newName = mentor.name;
+    const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_mentor2 === newValue || traineePreferences.wahl_mentor3 === newValue) {
@@ -408,17 +403,17 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the second departement preference
+   * Handles the change event on the second department preference
    * @param event
    */
   const handleMentorSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
-    if (!mentor?.name) {
+    const mentor = mentors.find((mentor) => mentor.memberId === newValue);
+    if (!mentor?.firstname) {
       showErrorMessage("Ungültiger Mentor");
       return;
     }
-    const newName = mentor.name;
+    const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor3 === newValue) {
@@ -430,17 +425,17 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Handles the change event on the second departement preference
+   * Handles the change event on the second department preference
    * @param event
    */
   const handleMentorThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const mentor = mentors.find((mentor) => mentor.mitgliedID === newValue);
-    if (!mentor?.name) {
+    const mentor = mentors.find((mentor) => mentor.memberId === newValue);
+    if (!mentor?.firstname) {
       showErrorMessage("Ungültiger Mentor");
       return;
     }
-    const newName = mentor.name;
+    const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
       if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor2 === newValue) {
@@ -499,14 +494,14 @@ const TraineePreferences: React.FunctionComponent = () => {
   };
 
   /**
-   * Renders the different selection possibilities for the departement
+   * Renders the different selection possibilities for the department
    * @returns A map of jsx elements
    */
   const renderRessortItems = () => {
-    return departements.map((departement) => {
+    return departments.map((department) => {
       return (
-        <MenuItem key={departement.ressortID} value={departement.ressortID}>
-          {departement.bezeichnung}
+        <MenuItem key={department.departmentId} value={department.departmentId}>
+          {department.shortName}
         </MenuItem>
       );
     });
@@ -519,13 +514,13 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderRessortSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Ressort
         </Typography>
         <TextField
           label="1. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortFirstChange}
           value={traineePreferences?.wahl_ressort1 || ""}
           select
@@ -535,7 +530,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="2. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortSecondChange}
           value={traineePreferences?.wahl_ressort2 || ""}
           select
@@ -545,7 +540,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="3. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleRessortThirdChange}
           value={traineePreferences?.wahl_ressort3 || ""}
           select
@@ -562,10 +557,10 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const renderMentorItems = () => {
     return mentors.map((mentor) => {
-      if (mentor.mitgliedID) {
+      if (mentor.memberId) {
         return (
-          <MenuItem key={mentor.mitgliedID} value={mentor.mitgliedID}>
-            {mentor.vorname + " " + mentor.nachname}
+          <MenuItem key={mentor.memberId} value={mentor.memberId}>
+            {mentor.firstname + " " + mentor.lastname}
           </MenuItem>
         );
       }
@@ -579,13 +574,13 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderMentorSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Mentor
         </Typography>
         <TextField
           label="1. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorFirstChange}
           value={traineePreferences?.wahl_mentor1 || ""}
           select
@@ -595,7 +590,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="2. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorSecondChange}
           value={traineePreferences?.wahl_mentor2 || ""}
           select
@@ -605,7 +600,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         <TextField
           label="3. Präferenz"
           color="primary"
-          className={classes.selectionElement}
+          sx={styles.selectionElement}
           onChange={handleMentorThirdChange}
           value={traineePreferences?.wahl_mentor3 || ""}
           select
@@ -637,14 +632,14 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderIPSelection = () => {
     return (
       <div>
-        <Typography variant="h5" className={classes.paperHeaderText}>
+        <Typography variant="h5" sx={styles.paperHeaderText}>
           Internes Projekt
         </Typography>
         <Grid item xs={12}>
           <TextField
             label="1. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPFirstChange}
             value={traineePreferences?.wahl_internesprojekt1 || ""}
             select
@@ -656,7 +651,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 1. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -664,12 +659,12 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={traineePreferences?.wahl_internesprojekt1_motivation}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="2. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPSecondChange}
             value={traineePreferences?.wahl_internesprojekt2 || ""}
             select
@@ -681,7 +676,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 2. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -689,12 +684,12 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={traineePreferences?.wahl_internesprojekt2_motivation}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
         <Grid item xs={12}>
           <TextField
             label="3. Präferenz"
             color="primary"
-            className={classes.selectionElement}
+            sx={styles.selectionElement}
             onChange={handleIPThirdChange}
             value={traineePreferences?.wahl_internesprojekt3 || ""}
             select
@@ -706,7 +701,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           <TextField
             label="Motivationstext 3. Präferenz"
             color="primary"
-            className={classes.motivationalText}
+            sx={styles.motivationalText}
             fullWidth
             multiline
             rows={10}
@@ -714,38 +709,35 @@ const TraineePreferences: React.FunctionComponent = () => {
             value={traineePreferences?.wahl_internesprojekt3_motivation}
           ></TextField>
         </Grid>
-        <Divider className={classes.paperHeaderDivider} />
+        <Divider sx={styles.paperHeaderDivider} />
       </div>
     );
   };
 
   return (
     <div>
-      <div className="content-page">
-        <Paper className={classes.paperContainer}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h5" className={classes.paperHeaderText}>
-                Trainee Wahl
-              </Typography>
-              <Typography className={classes.paperText}>
-                Hier kannst du Präferenzen für dein Wunsch Ressort, Mentor und Internes Projekt abgeben.<br></br>
-                Bitte bedenke, dass du deine Präferenzen bis spätestens <b>{dateString}</b> anpassen kannst.
-              </Typography>
-              <Divider className={classes.paperHeaderDivider} />
-              {renderRessortSelection()}
-              <Divider className={classes.paperHeaderDivider} />
-              {renderMentorSelection()}
-              <Divider className={classes.paperHeaderDivider} />
-              {renderIPSelection()}
-              <Button variant="contained" color="primary" className={classes.inputButton} onClick={savePreferences}>
-                Präferenzen Speichern
-              </Button>
-            </Grid>
+      <Paper sx={styles.paperContainer}>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Trainee Wahl
+            </Typography>
+            <Typography sx={styles.paperText}>
+              Hier kannst du Präferenzen für dein Wunsch Ressort, Mentor und Internes Projekt abgeben.<br></br>
+              Bitte bedenke, dass du deine Präferenzen bis spätestens <b>{dateString}</b> anpassen kannst.
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderRessortSelection()}
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderMentorSelection()}
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderIPSelection()}
+            <Button variant="contained" color="primary" sx={styles.inputButton} onClick={savePreferences}>
+              Präferenzen Speichern
+            </Button>
           </Grid>
-        </Paper>
-      </div>
-      <PageBar pageTitle="Trainee Wahl" />
+        </Grid>
+      </Paper>
     </div>
   );
 };

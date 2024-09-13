@@ -1,46 +1,35 @@
 import * as bcrypt from "bcryptjs";
 import fs from "fs/promises";
-import {
-  CreateMemberRequest,
-  EdvSkill,
-  Language,
-  Member,
-  MemberDetails,
-  MemberPartial,
-  MemberStatus,
-  Mentee,
-  Mentor,
-  NewMember,
-  StatusOverview,
-  UpdateDepartmentRequest,
-} from "types/membersTypes";
-import { getPathOfImage } from "../../utils/assetsUtils";
-import AuthRepository from "../../auth/AuthRepository";
-import { executeInTransaction } from "../../database";
-import { NotFoundError, QueryError } from "../../types/Errors";
-import { Permission, User } from "../../types/authTypes";
-import { createUserDataPayload } from "../../utils/authUtils";
-import { createCurrentTimestamp } from "../../utils/dateUtils";
-import { getRandomString } from "../../utils/stringUtils";
-import TraineesRepository from "../trainees/TraineesRepository";
-import MembersRepository from "./MembersRepository";
 import path from "path";
+import { GenerationRepository } from "../trainees/GenerationRepository";
+import { ConflictError, NotFoundError, QueryError } from "../../types/Errors";
+import { CreateMemberRequestDto, MemberDetailsDto, StatusOverview, UpdateDepartmentDto } from "../../types/memberTypes";
+import { getPathOfImage } from "../../utils/assetsUtils";
+import { getRandomString } from "../../utils/stringUtils";
+import { DepartmentMapper } from "./DepartmentMapper";
+import { DepartmentRepository } from "./DepartmentRepository";
+import { MemberMapper } from "./MemberMapper";
+import {
+  ItSkillsRepository,
+  LanguagesRepository,
+  MemberHasDirectorPositionRepository,
+  MemberStatusRespository,
+  MembersRepository,
+  PermissionsRepository,
+} from "./MembersRepository";
+import { PermissionMapper } from "./PermissionMapper";
+import { TraineeRepository } from "resources/trainees/TraineeRepository";
 
 /**
  * Provides methods to execute member related service functionalities
  */
 class MembersService {
-  membersRepository = new MembersRepository();
-  traineesRepository = new TraineesRepository();
-  authRepository = new AuthRepository();
-
   /**
    * Retrieves a list of all members
    */
   getMemberList = async () => {
-    const memberList: MemberPartial[] = await this.membersRepository.getMembers();
-
-    return memberList;
+    const memberList = await MembersRepository.getMembersWithDepartment();
+    return memberList.map((member) => MemberMapper.memberToMemberPartialDto(member));
   };
 
   /**
@@ -48,7 +37,7 @@ class MembersService {
    * @param memberID The id of the member
    */
   getMemberByID = async (memberID: number) => {
-    return await this.membersRepository.getMemberByID(memberID, false);
+    return await MembersRepository.getMemberByID(memberID);
   };
 
   /**
@@ -56,34 +45,12 @@ class MembersService {
    * @throws NotFoundError if no member was found
    */
   getMemberDetails = async (memberID: number, withFinancialData: boolean) => {
-    const member: Member = await this.membersRepository.getMemberByID(memberID, withFinancialData);
-
-    if (member === null) {
+    const memberDetails = await MembersRepository.getMemberDetailsByID(memberID);
+    if (memberDetails === null) {
       throw new NotFoundError(`Member with id ${memberID} not found`);
     }
 
-    const languagesQuery: Promise<Language[]> = this.membersRepository.getLanguagesByMemberID(memberID);
-    const edvSkillsQuery: Promise<EdvSkill[]> = this.membersRepository.getEdvSkillsByMemberID(memberID);
-    const mentorQuery: Promise<Mentor> = this.membersRepository.getMentorByMemberID(memberID);
-    const menteesQuers: Promise<Mentee[]> = this.membersRepository.getMenteesByMemberID(memberID);
-
-    // Executing all queries concurrently
-    const results = await Promise.all([languagesQuery, edvSkillsQuery, mentorQuery, menteesQuers]);
-
-    const languages = results[0];
-    const edvSkills = results[1];
-    const mentor = results[2];
-    const mentees = results[3];
-
-    // Combine the four parts for the complete member dto
-    const memberDto: MemberDetails = {
-      ...member,
-      mentor,
-      mentees,
-      sprachen: languages,
-      edvkenntnisse: edvSkills,
-    };
-    return memberDto;
+    return MemberMapper.membertoMemberDetailsDto(memberDetails, withFinancialData);
   };
 
   /**
@@ -123,59 +90,63 @@ class MembersService {
 
     // Write file to disk
     await fs.writeFile(filePath, fileContents);
+    return this.getMemberImage(imageFolderPath, parseInt(imageName));
   };
 
   /**
    * Retrieves a list of all members grouped by their department
    */
   getMembersOfDepartments = async () => {
-    const membersOfDepartments = await this.membersRepository.getMembersGroupedByDepartment();
+    const membersOfDepartments = await MembersRepository.getActiveMembersWithDepartmentAndWithDirectorPositions();
 
-    return membersOfDepartments;
+    return membersOfDepartments.map((member) => MemberMapper.memberToDepartmentMemberDto(member));
   };
 
   /**
    * Retrieves all directors or only the current directors if `onlyCurrent` is true
    */
   getDirectors = async (onlyCurrent: boolean) => {
-    const directors = await this.membersRepository.getDirectors(onlyCurrent);
-
-    return directors;
+    let directors = [];
+    if (onlyCurrent) {
+      directors = await MemberHasDirectorPositionRepository.getCurrentDirectors();
+    } else {
+      directors = await MemberHasDirectorPositionRepository.getAllDirectors();
+    }
+    return directors.map((director) => MemberMapper.memberToDirectorDto(director));
   };
 
   /**
    * Retrieves all departments
    */
   getDepartments = async () => {
-    const departments = await this.membersRepository.getDepartments();
+    const departments = await DepartmentRepository.getDepartments();
 
-    return departments;
+    return departments.map((department) => DepartmentMapper.departmentToDepartmentDetailsDto(department));
   };
 
   /**
    * Updates the department with the given id
    * @throws NotFoundError if no department was found
    */
-  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentRequest) => {
-    const department = await this.membersRepository.getDepartmentByID(departmentID);
+  updateDepartment = async (departmentID: number, updateDepartmentRequest: UpdateDepartmentDto) => {
+    const department = await DepartmentRepository.getDepartmentById(departmentID);
 
     if (department === null) {
       throw new NotFoundError(`Department with id ${departmentID} not found`);
     }
 
-    await this.membersRepository.updateDepartmentByID(
-      departmentID,
-      updateDepartmentRequest.linkOrganigramm,
-      updateDepartmentRequest.linkZielvorstellung
-    );
+    // Update department data
+    department.linkObjectivePresentation = updateDepartmentRequest.linkObjectivePresentation;
+    department.linkOrganigram = updateDepartmentRequest.linkOrganigram;
+
+    await DepartmentRepository.saveDepartment(department);
   };
 
   /**
    * Retrieves all language values
    */
   getLanguageValues = async () => {
-    const languageValues = await this.membersRepository.getLanguageValues();
-
+    const languageValues = await LanguagesRepository.getLanguageValues();
     return languageValues;
   };
 
@@ -183,7 +154,7 @@ class MembersService {
    * Retrieves all edv skill values
    */
   getEdvSkillValues = async () => {
-    const edvSkillValues = await this.membersRepository.getEdvSkillValues();
+    const edvSkillValues = await ItSkillsRepository.getItSkillValues();
 
     return edvSkillValues;
   };
@@ -192,7 +163,7 @@ class MembersService {
    * Retrieves all permissions
    */
   getPermissions = async () => {
-    const permissions = await this.membersRepository.getPermissions();
+    const permissions = await PermissionsRepository.getPermissions();
 
     return permissions;
   };
@@ -201,27 +172,8 @@ class MembersService {
    * Retrieves all permission assignments
    */
   getPermissionAssignments = async () => {
-    const permissionAssignments = await this.membersRepository.getPermissionAssignments();
-
-    return permissionAssignments;
-  };
-
-  /**
-   * Retrieves permissions of a member with the given `memberID`
-   */
-  getPermissionsByMemberID = async (memberID: number) => {
-    const user: User = await this.authRepository.getUserByID(memberID);
-
-    if (user === null) {
-      throw new NotFoundError(`No member found with id ${memberID}`);
-    }
-
-    const directorPermissions: Permission[] = await this.membersRepository.getDirectorPermissionsByMemberID(memberID);
-
-    const payload = createUserDataPayload(user, directorPermissions);
-    const permissions = { permissions: payload.permissions };
-
-    return permissions;
+    const permissionAssignments = await PermissionsRepository.getPermissionWithAssignments();
+    return permissionAssignments.map((permission) => PermissionMapper.permissionToPermissionAssignment(permission));
   };
 
   /**
@@ -229,8 +181,8 @@ class MembersService {
    * @throws NotFoundError if the member or the permission does not exist
    */
   addPermissionToMember = async (memberID: number, permissionID: number) => {
-    const memberQuery = this.membersRepository.getMemberByID(memberID, false);
-    const permissionQuery = this.membersRepository.getPermissionByID(permissionID);
+    const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
+    const permissionQuery = PermissionsRepository.getPermissionByID(permissionID);
     // Executing both queries concurrently
     const results = await Promise.all([memberQuery, permissionQuery]);
 
@@ -244,14 +196,31 @@ class MembersService {
       throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
     }
 
-    await this.membersRepository.addPermissionToMember(memberID, permissionID);
+    member.permissions.push(permission);
+    await MembersRepository.saveMember(member);
   };
 
   /**
-   * Retrieves all permissions of a member
+   * Deletes a permission from a member
    */
   deletePermissionFromMember = async (memberID: number, permissionID: number) => {
-    await this.membersRepository.deletePermissionFromMember(memberID, permissionID);
+    const memberQuery = MembersRepository.getMemberByIDWithPermissions(memberID);
+    const permissionQuery = PermissionsRepository.getPermissionByID(permissionID);
+    // Executing both queries concurrently
+    const results = await Promise.all([memberQuery, permissionQuery]);
+
+    const member = results[0];
+    const permission = results[1];
+
+    if (member === null) {
+      throw new NotFoundError(`Member with id ${memberID} does not exist`);
+    }
+    if (permission === null) {
+      throw new NotFoundError(`Permission with id ${permissionID} does not exist`);
+    }
+
+    member.permissions = member.permissions.filter((p) => p.permissionId !== permissionID);
+    await MembersRepository.saveMember(member);
   };
 
   /**
@@ -267,7 +236,7 @@ class MembersService {
     let newUserName = "";
 
     // Search for memberName to check if it already exists
-    const resultFirstQuery = await this.authRepository.getUserByName(memberName);
+    const resultFirstQuery = await MembersRepository.getMemberByName(memberName);
     // Check if memberName already exists
     if (resultFirstQuery === null) {
       newUserName = memberName;
@@ -277,7 +246,7 @@ class MembersService {
     let duplicateCounter = 1;
     // If name is already taken create name v.nachname1 (or v.nachname2 etc.)
     while (newUserName === "") {
-      const result = await this.authRepository.getUserByName(memberName + duplicateCounter);
+      const result = await MembersRepository.getMemberByName(memberName + duplicateCounter);
       // Check if the member with the new name already exists
       if (result === null) {
         newUserName = memberName + duplicateCounter;
@@ -322,43 +291,42 @@ class MembersService {
   /**
    * Creates new accounts for a member
    */
-  createAccountsOfMember = async (newMemberRequest: CreateMemberRequest, statusOverview: StatusOverview) => {
+  createAccountsOfMember = async (newMemberRequest: CreateMemberRequestDto, statusOverview: StatusOverview) => {
     // Create jbtMail and newUserName
     const { newUserName, jbtMail } = await this.createJBTMailAndNameOfMember(newMemberRequest.name);
 
-    let memberID = null;
+    let memberId = null;
     // Create member in database
     try {
-      const { password: newPassword, ...member } = newMemberRequest;
-      const passwordHash = await bcrypt.hash(newPassword, 10);
+      const { ...member } = newMemberRequest;
+      const password = Math.random().toString(36).slice(2, 11);
+      const passwordHash = await bcrypt.hash(password, 10);
       const departmentID = 8; // Default department "Ohne Ressort"
       const statusID = 1; // Default status of member is "trainee"
 
       let newMember = member;
-      if (member.generation !== null) {
+      if (member.generationId !== null) {
         // Check if the generation exists
-        const generation = await this.traineesRepository.getGenerationByID(member.generation);
+        const generation = await GenerationRepository.getGenerationByID(member.generationId);
         if (generation === null) {
-          throw new NotFoundError(`Generation with id ${member.generation} does not exist`);
+          throw new NotFoundError(`Generation with id ${member.generationId} does not exist`);
         }
       } else {
-        // Retrieve the generations and select the newest one
-        const generations = await this.traineesRepository.getGenerations(true);
-        // Because the generations are sorted descending by date, the first element is the newest one
-        const newestGeneration = generations[0];
+        const currentGenerationId = await GenerationRepository.getCurrentGenerationId();
         // Add the generation to the member
-        newMember = { ...member, generation: newestGeneration.generationID };
+        newMember = { ...member, generationId: currentGenerationId };
       }
-
-      memberID = await this.membersRepository.createMember(
-        newMember as NewMember,
-        newUserName,
-        passwordHash,
-        statusID,
-        getRandomString(16),
-        jbtMail,
-        departmentID
-      );
+      memberId = await MembersRepository.createMember({
+        ...newMember,
+        name: newUserName,
+        passwordHash: passwordHash,
+        memberStatusId: statusID,
+        jbtEmail: jbtMail,
+        email2: newMember.email,
+        departmentId: departmentID,
+        icalToken: getRandomString(16),
+        traineeSince: new Date(),
+      });
       statusOverview.querySuccesful = true;
 
       // TODO: Add mail account creation
@@ -386,93 +354,110 @@ class MembersService {
         statusOverview.queryErrorMsg = error.message;
       }
     }
-    return { memberID, statusOverview };
+    return { memberId, statusOverview };
   };
 
   /**
    * Updates details of the member with the given `memberID`
    * @param memberID The id of the member
-   * @param updatedMember The updated member data
-   * @param mentor The updated mentor data
-   * @param updatedLanguages The updated languages
-   * @param updatedEdvSkills The updated edv skills
+   * @param updatedMember The updated member details
    * @param updateCritical Whether to update critical data
    * @param updatePersonal Whether to update personal data
    * @throws NotFoundError if the member does not exist
    */
   updateMemberDetails = async (
     memberID: number,
-    updatedMember: Member,
-    mentor: Mentor,
-    updatedLanguages: Language[],
-    updatedEdvSkills: EdvSkill[],
+    updatedMember: MemberDetailsDto,
     updateCritical: boolean,
     updatePersonal: boolean
   ) => {
     // Check if member exists
-    const member = await this.membersRepository.getMemberByID(memberID, false);
+    const member = await MembersRepository.getMemberByID(memberID);
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
-    // Check if potential new mentor exists (if set)
-    if (mentor && mentor.mitgliedID !== null) {
-      const mentorInDB = this.membersRepository.getMentorByMemberID(mentor.mitgliedID);
-      if (mentorInDB === null) {
-        throw new NotFoundError(`Mentor with id ${mentor?.mitgliedID} does not exist`);
-      }
-    }
 
-    // Create timestamp for last change
-    const updatedLastChange = createCurrentTimestamp();
-
-    // Fill tasks to be executed in transaction
-    const tasks = [];
+    // Update critical data
     if (updateCritical) {
-      // Add update tasks for critical data
-      tasks.push({
-        func: this.membersRepository.updateMemberCriticalDataByID,
-        args: [memberID, updatedMember, mentor],
-      });
+      // Check if department exists
+      const department = await DepartmentRepository.getDepartmentById(updatedMember.department.departmentId);
+      if (department === null) {
+        throw new NotFoundError(`Department with id ${updatedMember.department.departmentId} does not exist`);
+      }
+
+      // Check if generation exists
+      const generation = await GenerationRepository.getGenerationByID(updatedMember.generation);
+      if (generation === null) {
+        throw new NotFoundError(`Generation with id ${updatedMember.generation} does not exist`);
+      }
+
+      // Check if member status exists
+      const memberStatus = await MemberStatusRespository.getMemberStatusByID(updatedMember.memberStatus.memberStatusId);
+      if (memberStatus === null) {
+        throw new NotFoundError(`Member status with id ${updatedMember.memberStatus} does not exist`);
+      }
+
+      // Check if potential new mentor exists (if set)
+      if (updatedMember.mentor && updatedMember.mentor.memberId !== null) {
+        const mentorInDB = await MembersRepository.getMemberByID(updatedMember.mentor.memberId);
+        if (mentorInDB === null) {
+          throw new NotFoundError(`Mentor with id ${updatedMember.mentor?.memberId} does not exist`);
+        }
+
+        // When mentor is set, check if mentor is not the same as the member
+        if (mentorInDB.memberId === memberID) {
+          throw new ConflictError("Mentor cannot be the same as the member");
+        }
+
+        // When mentor is set, the mentor can be updated
+        member.mentorId = updatedMember.mentor.memberId;
+      }
+      member.department = department;
+      member.generation = generation;
+
+      // Update the rest of the critical data
+      member.memberStatus = memberStatus;
+      member.traineeSince = updatedMember.traineeSince;
+      member.memberSince = updatedMember.memberSince;
+      member.alumnusSince = updatedMember.alumnusSince;
+      member.seniorSince = updatedMember.seniorSince;
+      member.passiveSince = updatedMember.passiveSince;
+      member.exitedSince = updatedMember.exitedSince;
+      member.commitment = updatedMember.commitment;
+      member.canPL = updatedMember.canPL;
+      member.canQM = updatedMember.canQM;
     }
     if (updatePersonal) {
-      // Add update tasks for personal data
-      tasks.push({
-        func: this.membersRepository.updateMemberPersonalDataByID,
-        args: [memberID, updatedMember, updatedLastChange],
-      });
-      // Add update tasks for languages and edv skills
-      tasks.push({
-        func: this.membersRepository.updateMemberLanguagesByID,
-        args: [memberID, updatedLanguages],
-      });
-      tasks.push({
-        func: this.membersRepository.updateMemberEdvSkillsByID,
-        args: [memberID, updatedEdvSkills],
-      });
+      // Update personal data
+      MemberMapper.personalMemberDetailsDtoToMember(memberID, member, updatedMember);
     }
-
-    // Execute all tasks in transaction
-    await executeInTransaction(tasks);
+    await MembersRepository.saveMember(member);
   };
 
   /**
    * Updates the status of a member
    * @throws NotFoundError if the member does not exist
    */
-  updateMemberStatus = async (memberID: number, status: MemberStatus) => {
+  updateMemberStatus = async (memberID: number, status: string) => {
     // Check if member exists
-    const member = await this.membersRepository.getMemberByID(memberID, false);
+    const member = await MembersRepository.getMemberByID(memberID);
+    const memberStatus = await MemberStatusRespository.getMemberStatusByName(status);
+
     if (member === null) {
       throw new NotFoundError(`Member with id ${memberID} does not exist`);
     }
 
-    if (member.mitgliedstatus === status) {
+    if (!memberStatus) {
+      throw new Error("Status not found.");
+    }
+
+    if (member.memberStatus.name === status) {
       // Member already has the new status
       return;
     }
 
-    const lastChangeTime = createCurrentTimestamp();
-    await this.membersRepository.updateMemberStatusByID(memberID, lastChangeTime, status);
+    member.memberStatus = memberStatus;
+    await MembersRepository.saveMember(member);
   };
 }
 

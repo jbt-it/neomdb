@@ -3,7 +3,6 @@
  */
 
 import React, { useReducer, useState } from "react";
-import { makeStyles, createStyles } from "@mui/styles";
 import {
   Grid,
   Typography,
@@ -19,27 +18,46 @@ import {
   MenuItem,
   createFilterOptions,
   Autocomplete,
-  Theme,
+  useTheme,
+  Box,
 } from "@mui/material";
 import { ExpandLess, ExpandMore, AddCircleOutline, Clear } from "@mui/icons-material";
-import { NavLink } from "react-router-dom";
 import JBTLogoBlack from "../../../assets/jbt-logo-black.png";
-import {
-  transformSQLStringToGermanDate,
-  transformGermanDateToSQLString,
-  transformStringToSQLString,
-} from "../../../utils/dateUtils";
 import * as membersTypes from "../../../types/membersTypes";
 import * as globalTypes from "../../../types/globalTypes";
 import { doesPermissionsHaveSomeOf } from "../../../utils/authUtils";
 import InfoCard from "../../../components/general/InfoCard";
 import MemberImage from "../../../components/general/MemberImage";
+import { stringToDate } from "../../../utils/dateUtils";
+import { Link } from "react-router-dom";
 
 /**
- * Function which proivdes the styles of the MemberPage
+ * Interface for the props of the DisplayMemberDetails
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+interface DisplayMemberDetailsProps {
+  members: membersTypes.MemberPartialDto[];
+  listOfPermissions: globalTypes.Permission[];
+  departments: membersTypes.DepartmentPartialDto[];
+  listOfLanguages: membersTypes.Language[];
+  listOfEDVSkills: membersTypes.ItSkill[];
+  memberDetails: membersTypes.MemberDetailsDto;
+  isOwner: boolean;
+  memberImage: membersTypes.MemberImage | null;
+  updateMemberDetails: (data: membersTypes.MemberDetailsDto) => void;
+  saveMemberImage: (file: File) => void;
+}
+
+/**
+ * Displays the member details
+ */
+const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
+  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the MemberPage
+   */
+  const styles = {
     displayMemberDetailsRoot: {
       flexGrow: 1,
     },
@@ -163,89 +181,69 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1, 0, 1, 1),
       color: "white",
     },
-  })
-);
-
-/**
- * Interface for the props of the DisplayMemberDetails
- */
-interface DisplayMemberDetailsProps {
-  members: membersTypes.Member[];
-  listOfPermissions: globalTypes.Permission[];
-  departments: membersTypes.Department[];
-  listOfLanguages: membersTypes.Language[];
-  listOfEDVSkills: membersTypes.EDVSkill[];
-  memberDetails: membersTypes.MemberDetails;
-  isOwner: boolean;
-  memberImage: membersTypes.MemberImage | null;
-  updateMemberDetails: (data: membersTypes.MemberDetails) => void;
-  saveMemberImage: (file: File) => void;
-  getMemberDetails: () => void;
-}
-
-/**
- * Displays the member details
- */
-const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> = (props: DisplayMemberDetailsProps) => {
-  const classes = useStyles();
+  };
 
   // Filter of languages for the autocomplete component
   const langFilter = createFilterOptions<membersTypes.Language>();
 
   // Filter of languages for the autocomplete component
-  const edvFilter = createFilterOptions<membersTypes.EDVSkill>();
-
-  const { members, departments, listOfLanguages, listOfEDVSkills, memberDetails } = props;
+  const itFilter = createFilterOptions<membersTypes.ItSkill>();
 
   const [careerOpen, setCareerOpen] = useState(false);
-  const [lastname] = useState(memberDetails.nachname);
-  const [name] = useState<string>(memberDetails.vorname);
-  const [birthday, setBirthday] = useState<string>(transformSQLStringToGermanDate(memberDetails.geburtsdatum));
-  const [smartphone, setSmartphone] = useState<string>(memberDetails.handy ? memberDetails.handy : "");
-  const [jbtMail, setJbtMail] = useState<string>(memberDetails.jbt_email);
-  const [memberState] = useState<string>(memberDetails.mitgliedstatus);
-  const [department, setDepartment] = useState<string | null>(memberDetails.ressort);
-  const [mentorState, setMentorState] = useState<membersTypes.Mentor | null>(
+  const [lastname] = useState(memberDetails.lastname);
+  const [name] = useState<string>(memberDetails.firstname);
+  const [birthday, setBirthday] = useState<Date | null>(memberDetails.birthday);
+  const [smartphone, setSmartphone] = useState<string>(memberDetails.mobile ? memberDetails.mobile : "");
+  const [jbtMail, setJbtMail] = useState<string>(memberDetails.jbtEmail);
+  const [memberState] = useState<membersTypes.MemberStatus>(memberDetails.memberStatus);
+  const [department, setDepartment] = useState<membersTypes.DepartmentPartialDto | null>(memberDetails.department);
+  const [mentorState, setMentorState] = useState<membersTypes.MentorDto | null>(
     memberDetails.mentor ? memberDetails.mentor : null
   );
-  const [employer, setEmployer] = useState<string>(memberDetails.arbeitgeber ? memberDetails.arbeitgeber : "");
-  const [street1, setStreet1] = useState<string>(memberDetails.strasse1 ? memberDetails.strasse1 : "");
-  const [plz1State, setPlz1State] = useState<string>(memberDetails.plz1 ? memberDetails.plz1.toString() : "");
-  const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.ort1 ? memberDetails.ort1 : "");
-  const [telephone1] = useState<string>(memberDetails.tel1 ? memberDetails.tel1.toString() : "");
+  const [employer, setEmployer] = useState<string>(memberDetails.employer ? memberDetails.employer : "");
+  const [street1, setStreet1] = useState<string>(memberDetails.street1 ? memberDetails.street1 : "");
+  const [plz1State, setPlz1State] = useState<string>(
+    memberDetails.postalCode1 ? memberDetails.postalCode1.toString() : ""
+  );
+  const [placeOfResidence1, setPlaceOfResidence1] = useState<string>(memberDetails.city1 ? memberDetails.city1 : "");
+  const [telephone1] = useState<string>(memberDetails.phone1 ? memberDetails.phone1.toString() : "");
   const [email1State] = useState<string>(memberDetails.email1 || "");
-  const [street2] = useState<string>(memberDetails.strasse2 ? memberDetails.strasse2 : "");
-  const [plz2State] = useState<string>(memberDetails.plz2 ? memberDetails.plz2.toString() : "");
-  const [placeOfResidence2] = useState<string>(memberDetails.ort2 ? memberDetails.ort2 : "");
-  const [telephone2] = useState<string>(memberDetails.tel2 ? memberDetails.tel2.toString() : "");
+  const [street2] = useState<string>(memberDetails.street2 ? memberDetails.street2 : "");
+  const [plz2State] = useState<string>(memberDetails.postalCode2 ? memberDetails.postalCode2.toString() : "");
+  const [placeOfResidence2] = useState<string>(memberDetails.city2 ? memberDetails.city2 : "");
+  const [telephone2] = useState<string>(memberDetails.phone2 ? memberDetails.phone2.toString() : "");
   const [email2State] = useState<string>(memberDetails.email2 ? memberDetails.email2 : "");
-  const [university, setUniversity] = useState<string>(memberDetails.hochschule);
-  const [courseOfStudy, setCourseOfStudy] = useState<string>(memberDetails.studiengang);
-  const [startOfStudy, setStartOfStudy] = useState<string>(transformSQLStringToGermanDate(memberDetails.studienbeginn));
-  const [endOfStudy, setEndOfStudy] = useState<string>(transformSQLStringToGermanDate(memberDetails.studienende));
-  const [speciality, setSpeciality] = useState<string>(memberDetails.vertiefungen ? memberDetails.vertiefungen : "");
+  const [university, setUniversity] = useState<string>(memberDetails.university ? memberDetails.university : "");
+  const [courseOfStudy, setCourseOfStudy] = useState<string>(
+    memberDetails.courseOfStudy ? memberDetails.courseOfStudy : ""
+  );
+  const [startOfStudy, setStartOfStudy] = useState<Date | null>(memberDetails.studyStart);
+  const [endOfStudy, setEndOfStudy] = useState<Date | null>(memberDetails.studyEnd);
+  const [speciality, setSpeciality] = useState<string>(
+    memberDetails.specializations ? memberDetails.specializations : ""
+  );
   const [apprenticeship, setApprenticeship] = useState<string>(
-    memberDetails.ausbildung ? memberDetails.ausbildung : ""
+    memberDetails.apprenticeship ? memberDetails.apprenticeship : ""
   );
   const [accountHolder, setAccountHolder] = useState<string>(
-    memberDetails.kontoinhaber ? memberDetails.kontoinhaber : ""
+    memberDetails.accountHolder ? memberDetails.accountHolder : ""
   );
   const [ibanState, setIbanState] = useState<string>(memberDetails?.iban || "");
   const [bicState, setBicState] = useState<string>(memberDetails?.bic || "");
-  const [engagementState] = useState<string>(memberDetails.engagement ? memberDetails.engagement : "");
-  const [driversLicense] = useState<boolean>(memberDetails.fuehrerschein);
-  const [firstAid] = useState<boolean>(memberDetails.ersthelferausbildung);
-  const [traineeSince, setTraineeSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.trainee_seit));
-  const [memberSince, setMemberSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.mitglied_seit));
-  const [seniorSince, setSeniorSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.senior_seit));
-  const [alumniSince, setAlumniSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.alumnus_seit));
-  const [passiveSince, setPassiveSince] = useState<string>(transformSQLStringToGermanDate(memberDetails.passiv_seit));
+  const [commitmentState] = useState<string>(memberDetails.commitment ? memberDetails.commitment : "");
+  const [driversLicense] = useState<boolean>(memberDetails.drivingLicense > 0);
+  const [firstAid] = useState<boolean>(memberDetails.firstAidTraining);
+  const [traineeSince, setTraineeSince] = useState<Date | null>(memberDetails.traineeSince);
+  const [memberSince, setMemberSince] = useState<Date | null>(memberDetails.memberSince);
+  const [seniorSince, setSeniorSince] = useState<Date | null>(memberDetails.seniorSince);
+  const [alumniSince, setAlumniSince] = useState<Date | null>(memberDetails.alumnusSince);
+  const [passiveSince, setPassiveSince] = useState<Date | null>(memberDetails.passiveSince);
   const [generalInfoDialogOpen, setGeneralInfoDialogOpen] = useState<boolean>(false);
   const [clubInfoDialogOpen, setClubInfoDialogOpen] = useState<boolean>(false);
   const [studyInfoDialogOpen, setStudyInfoDialogOpen] = useState<boolean>(false);
   const [paymentInfoDialogOpen, setPaymentInfoDialogOpen] = useState<boolean>(false);
   const [qualificationInfoDialogOpen, setQualificationInfoDialogOpen] = useState<boolean>(false);
-  const [menteeList] = useState<membersTypes.Mentee[]>(memberDetails?.mentees || []);
+  const [menteeList] = useState<membersTypes.MenteeDto[]>(memberDetails?.mentees || []);
 
   /**
    * Saves the changes of the image
@@ -265,7 +263,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @returns true it there would be a duplicate
    */
   const checkLanguagesForDuplicates = (list: membersTypes.LanguageOfMember[], value: string) => {
-    return list.filter((language) => language.wert === value).length !== 0;
+    return list.filter((language) => language.value === value).length !== 0;
   };
 
   /**
@@ -279,26 +277,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const updateLanguages = (
     list: membersTypes.LanguageOfMember[],
     index: number,
-    value: string,
+    value: string | number,
     typeOfValue: string
   ) => {
-    // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
-        // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          wert: value,
+          value: value as string,
         };
         newList[index] = updatedLanguage;
         return newList;
       }
       case "NIVEAU": {
-        // Updates the language
         const updatedLanguage: membersTypes.LanguageOfMember = {
           ...list[index],
-          niveau: value,
+          level: Number(value), // Ensure it's a number
         };
         newList[index] = updatedLanguage;
         return newList;
@@ -329,23 +324,23 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             return state;
           }
           return updateLanguages(state, action.payload.index, action.payload.lang.inputValue, "WERT");
-        } else if (action.payload.lang.wert) {
-          if (checkLanguagesForDuplicates(state, action.payload.lang.wert)) {
+        } else if (action.payload.lang.value) {
+          if (checkLanguagesForDuplicates(state, action.payload.lang.value)) {
             return state;
           }
-          return updateLanguages(state, action.payload.index, action.payload.lang.wert, "WERT");
+          return updateLanguages(state, action.payload.index, action.payload.lang.value, "WERT");
         } else {
           return state;
         }
       }
       case membersTypes.languagesReducerActionType.addNewLanguageWithNiveau: {
-        return updateLanguages(state, action.payload.index, action.payload.niveau, "NIVEAU");
+        return updateLanguages(state, action.payload.index, Number(action.payload.niveau), "NIVEAU"); // Ensure it's a number
       }
       case membersTypes.languagesReducerActionType.addEmptyLanguage: {
-        return [...state, { wert: "", niveau: "" }];
+        return [...state, { memberId: memberDetails.memberId, value: "", level: 0 }]; // Initialize level as a number
       }
       case membersTypes.languagesReducerActionType.deleteLanguage: {
-        return state.filter((value) => !(value.wert === action.payload.lang.wert));
+        return state.filter((value) => !(value.value === action.payload.lang.value));
       }
       default:
         return state;
@@ -358,8 +353,8 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param value the new value that should be inserted
    * @returns true it there would be a duplicate
    */
-  const checkEdvSkillsForDuplicates = (list: membersTypes.EDVSkillOfMember[], value: string) => {
-    return list.filter((edvSkill) => edvSkill.wert === value).length !== 0;
+  const checkEdvSkillsForDuplicates = (list: membersTypes.ItSkillOfMember[], value: string) => {
+    return list.filter((itSkill) => itSkill.value === value).length !== 0;
   };
 
   /**
@@ -371,28 +366,25 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @returns An updated list of languages
    */
   const updateEdvSkills = (
-    list: membersTypes.EDVSkillOfMember[],
+    list: membersTypes.ItSkillOfMember[],
     index: number,
-    value: string,
+    value: string | number,
     typeOfValue: string
   ) => {
-    // Creates a copy of the current list of languages
     const newList = [...list];
     switch (typeOfValue) {
       case "WERT": {
-        // Updates the language
-        const updatedEdvSkill: membersTypes.EDVSkillOfMember = {
+        const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          wert: value,
+          value: value as string,
         };
         newList[index] = updatedEdvSkill;
         return newList;
       }
       case "NIVEAU": {
-        // Updates the language
-        const updatedEdvSkill: membersTypes.EDVSkillOfMember = {
+        const updatedEdvSkill: membersTypes.ItSkillOfMember = {
           ...list[index],
-          niveau: value,
+          level: Number(value), // Ensure it's a number
         };
         newList[index] = updatedEdvSkill;
         return newList;
@@ -409,45 +401,45 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    * @param action the action that should be performed
    * @returns the new state of the edvSkills
    */
-  const edvSkillsReducer = (state: membersTypes.EDVSkillOfMember[], action: membersTypes.edvSkillsReducerAction) => {
+  const itSkillsReducer = (state: membersTypes.ItSkillOfMember[], action: membersTypes.itSkillsReducerAction) => {
     switch (action.type) {
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsString: {
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsString: {
         if (checkEdvSkillsForDuplicates(state, action.payload.value)) {
           return state;
         }
         return updateEdvSkills(state, action.payload.index, action.payload.value, "WERT");
       }
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject: {
-        if (action.payload.edvSkill.inputValue) {
-          if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.inputValue)) {
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsObject: {
+        if (action.payload.itSkill.inputValue) {
+          if (checkEdvSkillsForDuplicates(state, action.payload.itSkill.inputValue)) {
             return state;
           }
-          return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.inputValue, "WERT");
-        } else if (action.payload.edvSkill.wert) {
-          if (checkEdvSkillsForDuplicates(state, action.payload.edvSkill.wert)) {
+          return updateEdvSkills(state, action.payload.index, action.payload.itSkill.inputValue, "WERT");
+        } else if (action.payload.itSkill.value) {
+          if (checkEdvSkillsForDuplicates(state, action.payload.itSkill.value)) {
             return state;
           }
-          return updateEdvSkills(state, action.payload.index, action.payload.edvSkill.wert, "WERT");
+          return updateEdvSkills(state, action.payload.index, action.payload.itSkill.value, "WERT");
         } else {
           return state;
         }
       }
-      case membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithNiveau: {
-        return updateEdvSkills(state, action.payload.index, action.payload.niveau, "NIVEAU");
+      case membersTypes.itSkillsReducerActionType.addNewItSkillWithNiveau: {
+        return updateEdvSkills(state, action.payload.index, Number(action.payload.level), "NIVEAU"); // Ensure it's a number
       }
-      case membersTypes.edvSkillsReducerActionType.addEmptyEdvSkill: {
-        return [...state, { wert: "", niveau: "" }];
+      case membersTypes.itSkillsReducerActionType.addEmptyItSkill: {
+        return [...state, { memberId: memberDetails.memberId, value: "", level: 0 }]; // Initialize level as a number
       }
-      case membersTypes.edvSkillsReducerActionType.deleteEdvSkill: {
-        return state.filter((value) => !(value.wert === action.payload.edvSkill.wert));
+      case membersTypes.itSkillsReducerActionType.deleteItSkill: {
+        return state.filter((value) => !(value.value === action.payload.itSkill.value));
       }
       default:
         return state;
     }
   };
 
-  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.sprachen || []);
-  const [edvSkills, dispatchEdvSkills] = useReducer(edvSkillsReducer, memberDetails?.edvkenntnisse || []);
+  const [languages, dispatchLanguages] = useReducer(languagesReducer, memberDetails?.languages || []);
+  const [itSkills, dispatchItSkills] = useReducer(itSkillsReducer, memberDetails?.itSkills || []);
 
   /**
    * Submits the changed data
@@ -455,57 +447,62 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const newDepartment = {
+      departmentId: department?.departmentId,
+      name: department?.name,
+      shortName: department?.shortName,
+    } as membersTypes.DepartmentPartialDto;
 
     // Data which will be submitted
-    const data = {
-      mitgliedID: memberDetails.mitgliedID,
-      nachname: lastname,
-      vorname: name,
-      geschlecht: memberDetails.geschlecht,
-      geburtsdatum: transformGermanDateToSQLString(birthday),
-      handy: smartphone,
-      jbt_email: jbtMail,
-      mitgliedstatus: memberState,
+    const data: membersTypes.MemberDetailsDto = {
+      memberId: memberDetails.memberId,
+      lastname: lastname,
+      firstname: name,
+      gender: Boolean(memberDetails.gender),
+      birthday: birthday,
+      mobile: smartphone,
+      jbtEmail: jbtMail,
+      memberStatus: memberState,
       generation: memberDetails.generation,
-      internesprojekt: memberDetails.internesprojekt,
-      mentor: mentorState,
-      trainee_seit: transformGermanDateToSQLString(traineeSince),
-      mitglied_seit: transformGermanDateToSQLString(memberSince),
-      alumnus_seit: transformGermanDateToSQLString(alumniSince),
-      senior_seit: transformGermanDateToSQLString(seniorSince),
-      aktiv_seit: transformStringToSQLString(memberDetails.aktiv_seit),
-      passiv_seit: transformGermanDateToSQLString(passiveSince),
-      ausgetreten_seit: memberDetails.ausgetreten_seit,
-      ressort: department,
-      arbeitgeber: employer,
-      strasse1: street1,
-      plz1: plz1State ? parseInt(plz1State, 10) : null,
-      ort1: placeOfResidence1,
-      tel1: parseInt(telephone1, 10),
+      internalProject: memberDetails.internalProject,
+      traineeSince: traineeSince,
+      memberSince: memberSince,
+      alumnusSince: alumniSince,
+      seniorSince: seniorSince,
+      activeSince: memberDetails.activeSince,
+      passiveSince: passiveSince,
+      exitedSince: memberDetails.exitedSince,
+      department: newDepartment,
+      employer: employer,
+      street1: street1,
+      postalCode1: plz1State,
+      city1: placeOfResidence1,
+      phone1: telephone1,
       email1: email1State,
-      strasse2: street2,
-      plz2: plz2State ? parseInt(plz2State, 10) : null,
-      ort2: placeOfResidence2,
-      tel2: parseInt(telephone2, 10),
+      street2: street2,
+      postalCode2: plz2State,
+      city2: placeOfResidence2,
+      phone2: telephone2,
       email2: email2State,
-      hochschule: university,
-      studiengang: courseOfStudy,
-      studienbeginn: transformGermanDateToSQLString(startOfStudy),
-      studienende: transformGermanDateToSQLString(endOfStudy),
-      vertiefungen: speciality,
-      ausbildung: apprenticeship,
-      kontoinhaber: accountHolder,
+      university: university,
+      courseOfStudy: courseOfStudy,
+      studyStart: startOfStudy,
+      studyEnd: endOfStudy,
+      specializations: speciality,
+      apprenticeship: apprenticeship,
+      commitment: commitmentState,
+      canPL: memberDetails.canPL,
+      canQM: memberDetails.canQM,
+      lastChange: new Date(),
+      drivingLicense: driversLicense ? 1 : 0,
+      firstAidTraining: Boolean(firstAid),
+      accountHolder: accountHolder,
       iban: ibanState,
       bic: bicState,
-      engagement: engagementState,
-      canPL: transformStringToSQLString(memberDetails.canPL),
-      canQM: transformStringToSQLString(memberDetails.canQM),
-      lastchange: "",
-      fuehrerschein: driversLicense ? true : false, // API does only support true and false and not 0 and 1
-      ersthelferausbildung: firstAid ? true : false, // API does only support true and false and not 0 and 1
-      sprachen: languages,
+      languages: languages.map((lang) => ({ ...lang, level: Number(lang.level) })),
+      itSkills: itSkills.map((itSkill) => ({ ...itSkill, level: Number(itSkill.level) })),
       mentees: menteeList,
-      edvkenntnisse: edvSkills,
+      mentor: mentorState,
     };
     props.updateMemberDetails(data);
     handleGeneralInfoDialogClose();
@@ -656,7 +653,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
    */
   const renderImage: VoidFunction = () => {
     return (
-      <div className={classes.imageSection}>
+      <Box sx={styles.imageSection}>
         <MemberImage
           base64={props.memberImage?.base64}
           mimeType={props.memberImage?.mimeType}
@@ -665,13 +662,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           size={240}
           onImageChange={props.isOwner ? saveImage : undefined}
         />
-        <div className={classes.imageSectionText}>
-          <Typography variant="h6">{`${memberDetails.vorname} ${memberDetails.nachname}`}</Typography>
+        <Box sx={styles.imageSectionText}>
+          <Typography variant="h6">{`${memberDetails.firstname} ${memberDetails.lastname}`}</Typography>
           <Typography>
-            <i>{`${memberDetails.mitgliedstatus}`}</i>
+            <i>{`${memberDetails.memberStatus?.name}`}</i>
           </Typography>
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   };
 
@@ -690,38 +687,36 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner || doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
           handleEdit={handleGeneralInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.geburtsdatum)}
-              </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.handy}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.jbt_email}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.strasse1}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.plz1}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{"PLATZHALTER"}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.arbeitgeber}</Typography>
-            </div>
-          </div>
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Geburtsdatum:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.birthday?.toString()}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Handy:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.mobile}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>JBT-E-Mail:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.jbtEmail}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Straße/Hausnummer:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.street1}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>PLZ/Ort:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.postalCode1}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Messenger:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{"PLATZHALTER"}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Arbeitgeber:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.employer}</Typography>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -733,44 +728,44 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   const renderCareerItems: VoidFunction = () => {
     return (
       <div>
-        {memberDetails.passiv_seit ? (
+        {memberDetails.passiveSince ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Passives Mitglied"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.passiv_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.passiveSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.alumnus_seit ? (
+        {memberDetails.alumnusSince ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Alumna*Alumnus"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.alumnus_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.alumnusSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.senior_seit ? (
+        {memberDetails.seniorSince ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Senior"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.senior_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.seniorSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.mitglied_seit ? (
+        {memberDetails.memberSince ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Aktives Mitglied"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.mitglied_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.memberSince.toString()}`}</Typography>
           </div>
         ) : null}
-        {memberDetails.trainee_seit ? (
+        {memberDetails.traineeSince ? (
           <div>
-            <Typography className={classes.categoryItem}>
+            <Typography sx={styles.categoryItem}>
               <strong>{"Trainee"}</strong>
             </Typography>
-            <Typography>{`Seit ${transformSQLStringToGermanDate(memberDetails.trainee_seit)}`}</Typography>
+            <Typography>{`Seit ${memberDetails.traineeSince.toString()}`}</Typography>
           </div>
         ) : null}
         <hr />
@@ -793,49 +788,60 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
           handleEdit={handleClubInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.ressort}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
-                {memberDetails.mentor && memberDetails.mentor.vorname && memberDetails.mentor.nachname ? (
-                  <NavLink to={`/gesamtuebersicht/${memberDetails.mentor.mitgliedID}`} className={classes.categoryLine}>
-                    {`${memberDetails.mentor.vorname} ${memberDetails.mentor.nachname}`}
-                  </NavLink>
+          <Box sx={styles.category}>
+            <Box sx={styles.category}>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Ressort:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.department?.name}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Mentor:&nbsp;&nbsp;</Typography>
+                {memberDetails.mentor && memberDetails.mentor.firstname && memberDetails.mentor.lastname ? (
+                  <Link
+                    to={`/gesamtuebersicht/${memberDetails.mentor.memberId}`}
+                    style={{
+                      paddingTop: "12.5px",
+                      paddingBottom: "11.5px",
+                      textAlign: "right",
+                      textDecoration: "none",
+                      color: theme.palette.text.secondary,
+                    }}
+                  >
+                    {`${memberDetails.mentor.firstname} ${memberDetails.mentor.lastname}`}
+                  </Link>
                 ) : (
                   ""
                 )}
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Mentees:</Typography>
-                <div className={classes.categoryItemList}>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Mentees:</Typography>
+                <Box sx={styles.categoryItemList}>
                   {menteeList.map((mentee, index) => {
                     return (
                       <Typography
-                        className={classes.categoryLine}
+                        sx={styles.categoryLine}
                         key={index}
-                      >{`${mentee.vorname} ${mentee.nachname}`}</Typography>
+                      >{`${mentee.firstname} ${mentee.lastname}`}</Typography>
                     );
                   })}
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div className={classes.subCategoryHeader}>
-                  <Typography>Werdegang</Typography>
-                  <IconButton aria-label="expand career" onClick={toggleCareerState} size="large">
-                    {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
-                  </IconButton>
-                </div>
-                <hr />
-                {careerOpen ? renderCareerItems() : null}
-              </div>
-            </div>
-          </div>
+                </Box>
+              </Box>
+            </Box>
+            <Box>
+              <Box>
+                <>
+                  <Box sx={styles.subCategoryHeader}>
+                    <Typography>Werdegang</Typography>
+                    <IconButton aria-label="expand career" onClick={toggleCareerState} size="large">
+                      {careerOpen ? <ExpandLess fontSize="inherit" /> : <ExpandMore fontSize="inherit" />}
+                    </IconButton>
+                  </Box>
+                  <hr />
+                  {careerOpen ? renderCareerItems() : null}
+                </>
+              </Box>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -855,32 +861,28 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner}
           handleEdit={handleStudyInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.hochschule}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.studiengang}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.studienbeginn)}
-              </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>
-                {transformSQLStringToGermanDate(memberDetails.studienende)}
-              </Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.vertiefungen}</Typography>
-            </div>
-          </div>
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Hochschule:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.university}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studiengang:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.courseOfStudy}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studienbeginn:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.studyStart?.toString()}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Studienende:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.studyEnd?.toString()}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Vertiefungen:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.specializations}</Typography>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -901,20 +903,20 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             isEditable={props.isOwner}
             handleEdit={handlePaymentInfoDialogOpen}
           >
-            <div className={classes.category}>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.kontoinhaber}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.iban}</Typography>
-              </div>
-              <div className={classes.categoryItem}>
-                <Typography className={classes.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
-                <Typography className={classes.categoryLine}>{memberDetails.bic}</Typography>
-              </div>
-            </div>
+            <Box sx={styles.category}>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>Kontoinhaber:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.accountHolder}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>IBAN:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.iban}</Typography>
+              </Box>
+              <Box sx={styles.categoryItem}>
+                <Typography sx={styles.categoryLine}>BIC:&nbsp;&nbsp;</Typography>
+                <Typography sx={styles.categoryLine}>{memberDetails.bic}</Typography>
+              </Box>
+            </Box>
           </InfoCard>
         </Grid>
       );
@@ -937,36 +939,34 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           isEditable={props.isOwner}
           handleEdit={handleQualificationInfoDialogOpen}
         >
-          <div className={classes.category}>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
-              <Typography className={classes.categoryLine}>{memberDetails.ausbildung}</Typography>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>Sprachen:</Typography>
-              <div className={classes.categoryItemList}>
-                {(memberDetails?.sprachen || []).map((language) => {
+          <Box sx={styles.category}>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Ausbildung:&nbsp;&nbsp;</Typography>
+              <Typography sx={styles.categoryLine}>{memberDetails.apprenticeship}</Typography>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>Sprachen:</Typography>
+              <Box sx={styles.categoryItemList}>
+                {(memberDetails?.languages || []).map((language) => {
                   return (
-                    <Typography className={classes.categoryLine}>
-                      {`${language.wert}: ${getLanguageNiveauLabel(parseInt(language.niveau, 10))}`}
+                    <Typography sx={styles.categoryLine}>
+                      {`${language.value}: ${getLanguageNiveauLabel(language.level)}`}
                     </Typography>
                   );
                 })}
-              </div>
-            </div>
-            <div className={classes.categoryItem}>
-              <Typography className={classes.categoryLine}>EDV-Kenntnisse:</Typography>
-              <div className={classes.categoryItemList}>
-                {(memberDetails?.edvkenntnisse || []).map((edv) => {
+              </Box>
+            </Box>
+            <Box sx={styles.categoryItem}>
+              <Typography sx={styles.categoryLine}>EDV-Kenntnisse:</Typography>
+              <Box sx={styles.categoryItemList}>
+                {(memberDetails?.itSkills || []).map((it) => {
                   return (
-                    <Typography className={classes.categoryLine}>
-                      {`${edv.wert}: ${getEDVNiveauLabel(parseInt(edv.niveau, 10))}`}
-                    </Typography>
+                    <Typography sx={styles.categoryLine}>{`${it.value}: ${getEDVNiveauLabel(it.level)}`}</Typography>
                   );
                 })}
-              </div>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -979,17 +979,17 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     return (
       <Grid item xs={12} sm={12}>
         <InfoCard title={"Projekte (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
-          <div className={classes.category}>
+          <Box sx={styles.category}>
             <div>
-              <Typography className={classes.categoryItem}>
+              <Typography sx={styles.categoryItem}>
                 <strong>{"Name des Projekts"}</strong>
               </Typography>
-              <Typography className={classes.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
-              <Typography className={classes.categoryItem}>{`Rolle: ${""}`}</Typography>
-              <Typography className={classes.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Projektzeitraum: von ${""} bis ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Rolle: ${""}`}</Typography>
+              <Typography sx={styles.categoryItem}>{`Geleistete BT: ${""}`}</Typography>
             </div>
             <hr />
-          </div>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -1002,14 +1002,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
     return (
       <Grid item xs={12} sm={12}>
         <InfoCard title={"Workshops (# Anzahl)"} isExpandable={true} defaultExpanded={true} isEditable={false}>
-          <div className={classes.category}>
-            <div className={classes.workshopItem}>
+          <Box sx={styles.category}>
+            <Box sx={styles.workshopItem}>
               <Typography>{`${"DATUM"}`}</Typography>
               <Typography>{`${"ART DES WS"}`}</Typography>
               <Typography>{`${"NAME"}`}</Typography>
               <Typography>{`${"GEHALTEN"}`}</Typography>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </InfoCard>
       </Grid>
     );
@@ -1033,8 +1033,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
           <form autoComplete="off" onSubmit={submit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use DatePicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled
@@ -1043,13 +1044,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={birthday}
                   onChange={(event) => {
-                    setBirthday(event.target.value);
+                    setBirthday(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1064,7 +1065,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   required
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
@@ -1079,7 +1080,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1094,7 +1095,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1109,7 +1110,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={6} sm={6} md={6} lg={6}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   required
                   color="primary"
                   disabled={!props.isOwner}
@@ -1124,7 +1125,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="employer-field"
@@ -1139,11 +1140,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleGeneralInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleGeneralInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1177,12 +1178,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   options={departments}
                   onChange={(event, newDepartment) => {
                     if (newDepartment) {
-                      setDepartment(newDepartment.bezeichnung);
+                      setDepartment(newDepartment);
                     }
                   }}
-                  defaultValue={departments.filter((dep) => dep.bezeichnung === department)[0]}
-                  getOptionLabel={(dep) => `${dep.bezeichnung}`}
-                  className={classes.fullWidth}
+                  /* TODO: Check waht happens if department is null! */
+                  defaultValue={departments.filter((dep) => dep.name === department?.name)[0]}
+                  getOptionLabel={(dep) => `${dep.name}`}
+                  sx={styles.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Ressort" variant="outlined" />}
                 />
               </Grid>
@@ -1194,22 +1196,22 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   onChange={(event, newMentor) => {
                     if (newMentor) {
                       setMentorState({
-                        mitgliedID: newMentor.mitgliedID,
-                        name: newMentor.vorname.charAt(0) + newMentor.nachname,
-                        vorname: newMentor.vorname,
-                        nachname: newMentor.nachname,
+                        memberId: newMentor.memberId,
+                        firstname: newMentor.firstname,
+                        lastname: newMentor.lastname,
                       });
                     }
                   }}
-                  defaultValue={members.filter((memb) => memb.mitgliedID === mentorState?.mitgliedID)[0]}
-                  getOptionLabel={(member) => `${member.vorname} ${member.nachname}`}
-                  className={classes.fullWidth}
+                  defaultValue={members.filter((memb) => memb.memberId === mentorState?.memberId)[0]}
+                  getOptionLabel={(member) => `${member.firstname} ${member.lastname}`}
+                  sx={styles.fullWidth}
                   renderInput={(params) => <TextField {...params} label="Mentor" variant="outlined" />}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="passive-member-field"
@@ -1217,13 +1219,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={passiveSince}
                   onChange={(event) => {
-                    setPassiveSince(event.target.value);
+                    setPassiveSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="alumni-field"
@@ -1231,13 +1234,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={alumniSince}
                   onChange={(event) => {
-                    setAlumniSince(event.target.value);
+                    setAlumniSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="senior-field"
@@ -1245,13 +1249,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={seniorSince}
                   onChange={(event) => {
-                    setSeniorSince(event.target.value);
+                    setSeniorSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="member-field"
@@ -1259,13 +1264,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={memberSince}
                   onChange={(event) => {
-                    setMemberSince(event.target.value);
+                    setMemberSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!doesPermissionsHaveSomeOf(props.listOfPermissions, [1])}
                   id="trainee-field"
@@ -1273,18 +1279,18 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={traineeSince}
                   onChange={(event) => {
-                    setTraineeSince(event.target.value);
+                    setTraineeSince(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleClubInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleClubInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1314,7 +1320,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="uni-field"
@@ -1328,7 +1334,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="course-of-study-field"
@@ -1341,8 +1347,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="start-of-study-field"
@@ -1350,13 +1357,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={startOfStudy}
                   onChange={(event) => {
-                    setStartOfStudy(event.target.value);
+                    setStartOfStudy(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
+                {/* TODO: Use datepicker */}
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="end-of-study-field"
@@ -1364,13 +1372,13 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                   variant="outlined"
                   value={endOfStudy}
                   onChange={(event) => {
-                    setEndOfStudy(event.target.value);
+                    setEndOfStudy(stringToDate(event.target.value));
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="speciality-field"
@@ -1385,11 +1393,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handleStudyInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleStudyInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1419,7 +1427,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="account-holder-field"
@@ -1445,12 +1453,12 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           sm={8}
                           md={6}
                           lg={4}
-                          className={classes.dialogListItem}
+                          sx={styles.dialogListItem}
                           key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
-                              value={language.wert}
+                              value={language.value}
                               onChange={(event, newValue) => {
                                 if (typeof newValue === "string") {
                                   dispatchLanguages({
@@ -1471,7 +1479,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (params.inputValue !== "") {
                                   filtered.push({
                                     inputValue: params.inputValue,
-                                    wert: `"${params.inputValue}" hinzufügen`,
+                                    value: `"${params.inputValue}" hinzufügen`,
                                   });
                                 }
                                 return filtered;
@@ -1483,18 +1491,18 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (typeof option === "string") {
                                   return option;
                                 }
-                                return option.wert;
+                                return option.value;
                               }}
                               freeSolo
                               renderInput={(params) => <TextField {...params} label="Sprache" variant="outlined" />}
                             />
                           </Grid>
                           <Grid item xs={5}>
-                            <FormControl className={classes.fullWidth}>
+                            <FormControl sx={styles.fullWidth}>
                               <InputLabel id="language-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="language-niveau-select-label"
-                                value={language.niveau}
+                                value={language.level}
                                 onChange={(event) => {
                                   dispatchLanguages({
                                     type: membersTypes.languagesReducerActionType.addNewLanguageWithNiveau,
@@ -1531,11 +1539,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         </Grid>
                       );
                     })}
-                    <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                    <Grid item xs={12} sm={2} md={2} lg={2} sx={styles.addListItemBtn}>
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={languages.some((lang) => lang.wert === "" || lang.niveau === "")}
+                        disabled={languages.some((lang) => lang.value === "" || lang.level === 0)}
                         onClick={() =>
                           dispatchLanguages({
                             type: membersTypes.languagesReducerActionType.addEmptyLanguage,
@@ -1553,7 +1561,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                       <Typography>EDV-Kenntnisse:</Typography>
                     </Grid>
-                    {edvSkills.map((edv, index) => {
+                    {itSkills.map((edv, index) => {
                       return (
                         <Grid
                           item
@@ -1563,33 +1571,33 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                           sm={8}
                           md={6}
                           lg={4}
-                          className={classes.dialogListItem}
+                          sx={styles.dialogListItem}
                           key={index}
                         >
                           <Grid item xs={5}>
                             <Autocomplete
-                              value={edv.wert}
+                              value={edv.value}
                               onChange={(event, newValue) => {
                                 if (typeof newValue === "string") {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsString,
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsString,
                                     payload: { index, value: newValue },
                                   });
                                 } else if ((newValue && newValue.inputValue) || newValue) {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithValueAsObject,
-                                    payload: { index, edvSkill: newValue },
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithValueAsObject,
+                                    payload: { index, itSkill: newValue },
                                   });
                                 }
                               }}
                               filterOptions={(options, params) => {
-                                const filtered = edvFilter(options, params);
+                                const filtered = itFilter(options, params);
 
                                 // Suggest the creation of a new value
                                 if (params.inputValue !== "") {
                                   filtered.push({
                                     inputValue: params.inputValue,
-                                    wert: `"${params.inputValue}" hinzufügen`,
+                                    value: `"${params.inputValue}" hinzufügen`,
                                   });
                                 }
                                 return filtered;
@@ -1601,7 +1609,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                                 if (typeof option === "string") {
                                   return option;
                                 }
-                                return option.wert;
+                                return option.value;
                               }}
                               freeSolo
                               renderInput={(params) => (
@@ -1610,17 +1618,17 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                             />
                           </Grid>
                           <Grid item xs={5}>
-                            <FormControl className={classes.fullWidth}>
+                            <FormControl sx={styles.fullWidth}>
                               <InputLabel id="edv-skill-niveau-select-label">Niveau</InputLabel>
                               <Select
                                 labelId="edv-skill-niveau-select-label"
-                                value={edv.niveau}
+                                value={edv.level}
                                 onChange={(event) => {
-                                  dispatchEdvSkills({
-                                    type: membersTypes.edvSkillsReducerActionType.addNewEdvSkillWithNiveau,
+                                  dispatchItSkills({
+                                    type: membersTypes.itSkillsReducerActionType.addNewItSkillWithNiveau,
                                     payload: {
                                       index,
-                                      niveau: "" + event.target.value,
+                                      level: "" + event.target.value,
                                     },
                                   });
                                 }}
@@ -1636,9 +1644,9 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                               aria-label="delete"
                               color="primary"
                               onClick={() =>
-                                dispatchEdvSkills({
-                                  type: membersTypes.edvSkillsReducerActionType.deleteEdvSkill,
-                                  payload: { edvSkill: edv },
+                                dispatchItSkills({
+                                  type: membersTypes.itSkillsReducerActionType.deleteItSkill,
+                                  payload: { itSkill: edv },
                                 })
                               }
                               size="large"
@@ -1649,14 +1657,14 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
                         </Grid>
                       );
                     })}
-                    <Grid item xs={12} sm={2} md={2} lg={2} className={classes.addListItemBtn}>
+                    <Grid item xs={12} sm={2} md={2} lg={2} sx={styles.addListItemBtn}>
                       <IconButton
                         aria-label="add"
                         color="primary"
-                        disabled={edvSkills.some((edv) => edv.wert === "" || edv.niveau === "")}
+                        disabled={itSkills.some((edv) => edv.value === "" || edv.level === 0)}
                         onClick={() => {
-                          dispatchEdvSkills({
-                            type: membersTypes.edvSkillsReducerActionType.addEmptyEdvSkill,
+                          dispatchItSkills({
+                            type: membersTypes.itSkillsReducerActionType.addEmptyItSkill,
                           });
                         }}
                         size="large"
@@ -1670,15 +1678,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button
-                  className={classes.cancelButton}
-                  variant="contained"
-                  onClick={handleQualificationInfoDialogClose}
-                >
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handleQualificationInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1708,7 +1712,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="account-holder-field"
@@ -1722,7 +1726,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="iban-field"
@@ -1736,7 +1740,7 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
-                  className={classes.fullWidth}
+                  sx={styles.fullWidth}
                   color="primary"
                   disabled={!props.isOwner}
                   id="bic-field"
@@ -1751,11 +1755,11 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <hr />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} className={classes.submitContainer}>
-                <Button className={classes.cancelButton} variant="contained" onClick={handlePaymentInfoDialogClose}>
+              <Grid item xs={12} sm={12} md={12} lg={12} sx={styles.submitContainer}>
+                <Button sx={styles.cancelButton} variant="contained" onClick={handlePaymentInfoDialogClose}>
                   Abbrechen
                 </Button>
-                <Button className={classes.submitButton} variant="contained" color="primary" type="submit">
+                <Button sx={styles.submitButton} variant="contained" color="primary" type="submit">
                   Änderungen speichern
                 </Button>
               </Grid>
@@ -1767,26 +1771,28 @@ const DisplayMemberDetails: React.FunctionComponent<DisplayMemberDetailsProps> =
   };
 
   return (
-    <div className={classes.displayMemberDetailsRoot}>
+    <Box sx={styles.displayMemberDetailsRoot}>
       <Grid container spacing={3}>
-        {renderImage()}
-        {renderGeneralInformation()}
-        {renderGeneralInformationDialog()}
-        {renderClubInformation()}
-        {renderClubInformationDialog()}
-        {renderProjectList()}
-        {renderWorkshopList()}
-        {renderQualificationInformation()}
-        {renderQualificationInformationDialog()}
-        {renderStudyInformation()}
-        {renderStudyInformationDialog()}
-        {renderPaymentInformation()}
-        {renderPaymentInformationDialog()}
+        <>
+          {renderImage()}
+          {renderGeneralInformation()}
+          {renderGeneralInformationDialog()}
+          {renderClubInformation()}
+          {renderClubInformationDialog()}
+          {renderProjectList()}
+          {renderWorkshopList()}
+          {renderQualificationInformation()}
+          {renderQualificationInformationDialog()}
+          {renderStudyInformation()}
+          {renderStudyInformationDialog()}
+          {renderPaymentInformation()}
+          {renderPaymentInformationDialog()}
+        </>
         <Grid item>
-          <strong>Letzte Änderung: {transformSQLStringToGermanDate(memberDetails.lastchange)}</strong>
+          <strong>Letzte Änderung: {memberDetails.lastChange?.toString()}</strong>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

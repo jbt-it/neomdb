@@ -1,18 +1,17 @@
-import { Body, Controller, Get, Patch, Path, Query, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
-import TraineesService from "./TraineesService";
-import { Mentor } from "../../types/membersTypes";
+import { Generation } from "../../entities/Generation";
+import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
+//import { Generation } from "../../entities/Generation";
+import { MembersFieldDto, MentorDto } from "../../types/memberTypes";
 import {
-  Generation,
-  InternalProject,
-  JBTMail,
-  Trainee,
-  TraineeAssignment,
-  TraineePreference,
-  TraineeMotivation,
-  TraineeProgress,
-  UpdateVotingDeadlinesRequest,
-} from "../../types/traineesTypes";
+  InternalProjectDto,
+  TraineeAssignmentDto,
+  TraineeChoiceDto,
+  TraineeMotivationDto,
+  TraineeProgressDto,
+  UpdateVotingDeadlinesRequestDto,
+} from "../../types/traineeTypes";
 import MembersService from "../members/MembersService";
+import TraineesService from "./TraineesService";
 
 /**
  * Controller for the trainees
@@ -31,9 +30,8 @@ export class TraineesController extends Controller {
    */
   @Get("")
   @Security("jwt")
-  public async getTrainees(): Promise<Trainee[]> {
+  public async getTrainees(): Promise<MembersFieldDto[]> {
     const trainees = await this.traineesService.getTrainees();
-
     return trainees;
   }
 
@@ -44,7 +42,7 @@ export class TraineesController extends Controller {
    */
   @Get("ip/{id}")
   @Security("jwt")
-  public async getIP(@Path() id: number): Promise<InternalProject> {
+  public async getIP(@Path() id: number): Promise<InternalProjectDto> {
     const ip = this.traineesService.getIPByID(id);
 
     return ip;
@@ -57,8 +55,8 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/trainee-choices")
   @Security("jwt", ["14"])
-  public async getTraineePreferencesOfGeneration(@Path() id: number): Promise<TraineePreference[]> {
-    const choices = await this.traineesService.getTraineePreferencesByGenerationID(id);
+  public async getTraineeChoicesOfGeneration(@Path() id: number): Promise<TraineeChoiceDto[]> {
+    const choices = await this.traineesService.getTraineeChoicesByGenerationID(id);
 
     return choices;
   }
@@ -70,7 +68,7 @@ export class TraineesController extends Controller {
    */
   @Get("/{id}/trainee-choices")
   @Security("jwt")
-  public async getTraineePreferencesOfMember(@Path() id: number): Promise<TraineePreference> {
+  public async getTraineePreferencesOfMember(@Path() id: number): Promise<TraineeChoiceDto> {
     const choices = await this.traineesService.getTraineePreferencesByMemberID(id);
 
     return choices;
@@ -83,10 +81,7 @@ export class TraineesController extends Controller {
    */
   @Put("/{id}/trainee-choices")
   @Security("jwt")
-  public async setTraineePreferencesOfMember(
-    @Path() id: number,
-    @Body() requestBody: TraineePreference
-  ): Promise<void> {
+  public async setTraineePreferencesOfMember(@Path() id: number, @Body() requestBody: TraineeChoiceDto): Promise<void> {
     await this.traineesService.setTraineePreferencesByMemberID(id, requestBody);
   }
 
@@ -138,31 +133,30 @@ export class TraineesController extends Controller {
    */
   @Put("ip/{id}")
   @Security("jwt", ["15"])
-  public async updateIP(@Path() id: number, @Body() requestBody: InternalProject): Promise<void> {
+  public async updateIP(@Path() id: number, @Body() requestBody: InternalProjectDto): Promise<void> {
     await this.traineesService.updateIPByID(id, requestBody);
-  }
-
-  /**
-   * Retrieves the mails for the specified internal projects
-   * @summary Get ip team mails
-   * @param id id of the internal project
-   */
-  @Get("ip/{id}/mails")
-  @Security("jwt")
-  public async getIPTeamMails(@Path() id: number): Promise<JBTMail[]> {
-    const mails = await this.traineesService.getTraineeMailsByIpID(id);
-
-    return mails;
   }
 
   /**
    * Retrieves information about all generations
    * @summary Get generations
    */
-  @Get("generations")
+  @Get("generations/")
   @Security("jwt")
-  public async getGenerations(@Query("current") current: boolean): Promise<Generation[]> {
-    const generations = await this.traineesService.getGenerations(current);
+  public async getGenerations(): Promise<Generation[]> {
+    const generations = await this.traineesService.getGenerations(false);
+
+    return generations;
+  }
+
+  /**
+   * Retrieves information about the current generation
+   * @summary Get current generation
+   */
+  @Get("generations/current")
+  @Security("jwt")
+  public async getCurrentGeneration(): Promise<Generation[]> {
+    const generations = await this.traineesService.getGenerations(true);
 
     return generations;
   }
@@ -174,7 +168,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/motivation")
   @Security("jwt", ["14"])
-  public async getTraineeMotivation(@Path() id: number): Promise<TraineeMotivation[]> {
+  public async getTraineeMotivation(@Path() id: number): Promise<TraineeMotivationDto[]> {
     const motivation = await this.traineesService.getTraineeMotivationsByGenerationID(id);
 
     return motivation;
@@ -187,14 +181,17 @@ export class TraineesController extends Controller {
    * @param requestBody start and end date of the voting
    *
    * @example requestBody {
-   * "votingStart": "2021-01-01",
-   * "votingEnd": "2021-01-01"
+   * "electionStart": "2021-01-01 18:00:00",
+   * "electionEnd": "2021-01-31 20:00:00"
    * }
    */
   @Post("generations/{id}/set-deadline")
   @Security("jwt", ["14"])
-  public async setVotingDeadline(@Path() id: number, @Body() requestBody: UpdateVotingDeadlinesRequest): Promise<void> {
-    await this.traineesService.updateVotingDeadline(id, requestBody.votingStart, requestBody.votingEnd);
+  public async setElectionDeadline(
+    @Path() id: number,
+    @Body() requestBody: UpdateVotingDeadlinesRequestDto
+  ): Promise<void> {
+    await this.traineesService.updateElectionDeadline(id, requestBody.electionStart, requestBody.electionEnd);
   }
 
   /**
@@ -212,7 +209,7 @@ export class TraineesController extends Controller {
   // TODO: Use @Post("{id}/assignment") instead of @Patch("{id}/assignment")
   @Patch("{id}/assignment")
   @Security("jwt", ["14"])
-  public async setTraineeAssignment(@Path() id: number, @Body() requestBody: TraineeAssignment): Promise<void> {
+  public async setTraineeAssignment(@Path() id: number, @Body() requestBody: TraineeAssignmentDto): Promise<void> {
     await this.traineesService.updateAssignmentByMemberID(id, requestBody);
   }
 
@@ -223,7 +220,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/mentors")
   @Security("jwt", ["14"])
-  public async getMentorsOfGeneration(@Path() id: number): Promise<Mentor[]> {
+  public async getMentorsOfGeneration(@Path() id: number): Promise<MentorDto[]> {
     const mentors = await this.traineesService.getMentorsByGenerationID(id);
 
     return mentors;
@@ -248,7 +245,7 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/internal-projects")
   @Security("jwt", ["14"])
-  public async getInternalProjectsOfGeneration(@Path() id: number): Promise<InternalProject[]> {
+  public async getInternalProjectsOfGeneration(@Path() id: number): Promise<InternalProjectDto[]> {
     const internalProjects = await this.traineesService.getInternalProjectsByGenerationID(id);
 
     return internalProjects;
@@ -260,7 +257,7 @@ export class TraineesController extends Controller {
    */
   @Get("ips/current")
   @Security("jwt")
-  public async getCurrentIPs(): Promise<InternalProject[]> {
+  public async getCurrentIPs(): Promise<InternalProjectDto[]> {
     const ips = await this.traineesService.getInternalProjects(true);
 
     return ips;
@@ -272,7 +269,7 @@ export class TraineesController extends Controller {
    */
   @Get("ips/all")
   @Security("jwt")
-  public async getAllIPs(): Promise<InternalProject[]> {
+  public async getAllIPs(): Promise<InternalProjectDto[]> {
     const ips = await this.traineesService.getInternalProjects(false);
 
     return ips;
@@ -285,10 +282,10 @@ export class TraineesController extends Controller {
    */
   @Get("generations/{id}/trainee-progress")
   @Security("jwt", ["14"])
-  public async getTraineeProgress(@Path() id: number): Promise<TraineeProgress[]> {
-    const ips = await this.traineesService.getTraineeProgress(id);
+  public async getTraineeProgress(@Path() id: number): Promise<TraineeProgressDto[]> {
+    const traineeProgress = await this.traineesService.getTraineeProgress(id);
 
-    return ips;
+    return traineeProgress;
   }
 
   /**

@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   Paper,
-  Link,
   Divider,
   Table,
   TableBody,
@@ -13,7 +12,6 @@ import {
   TableHead,
   TableRow,
   Grid,
-  Theme,
   Typography,
   Button,
   RadioGroup,
@@ -21,10 +19,10 @@ import {
   FormControlLabel,
   TextField,
   MenuItem,
+  Link,
   Modal,
+  useTheme,
 } from "@mui/material";
-import PageBar from "../../components/navigation/PageBar";
-import { makeStyles, createStyles } from "@mui/styles";
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
 import { TraineePreference, Generation, InternalProject, TraineeAssignment, Trainee } from "../../types/traineesTypes";
@@ -32,13 +30,18 @@ import { AuthContext } from "../../context/auth-context/AuthContext";
 import { authReducerActionType } from "../../types/globalTypes";
 import api from "../../utils/api";
 import { transformSQLStringToGermanDate } from "../../utils/dateUtils";
-import { Department, Mentor } from "../../types/membersTypes";
+import { DepartmentPartialDto, MentorDto } from "../../types/membersTypes";
 
 /**
- * Function which proivdes the styles of the AssignTraineePreferences
+ * Options to create a new member and to change the status of members
  */
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const AssignTrainees: React.FunctionComponent = () => {
+  const theme = useTheme();
+
+  /**
+   * Function which proivdes the styles of the AssignTraineePreferences
+   */
+  const styles = {
     // Header text of a paper marking a section of a page
     paperHeaderText: {
       marginLeft: theme.spacing(1),
@@ -104,6 +107,7 @@ const useStyles = makeStyles((theme: Theme) =>
     linkText: {
       textDecoration: "none",
       boxShadow: "none",
+      color: "black",
     },
     motivationalTextPaper: {
       overflowY: "auto",
@@ -122,14 +126,7 @@ const useStyles = makeStyles((theme: Theme) =>
     otherSelect: {
       minWidth: "80px",
     },
-  })
-);
-
-/**
- * Options to create a new member and to change the status of members
- */
-const AssignTrainees: React.FunctionComponent = () => {
-  const classes = useStyles();
+  };
 
   const { dispatchAuth } = useContext(AuthContext);
 
@@ -137,8 +134,8 @@ const AssignTrainees: React.FunctionComponent = () => {
   const [openedTrainee, setOpenedTrainee] = useState<null | TraineePreference>(null);
   const [traineePreferences, setTraineePreferences] = useState<TraineePreference[]>([]);
   const [generation, setGeneration] = useState<Generation>();
-  const [departements, setDepartements] = useState<Department[]>([]);
-  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [departements, setDepartements] = useState<DepartmentPartialDto[]>([]);
+  const [mentors, setMentors] = useState<MentorDto[]>([]);
   const [internalprojects, setInternalprojects] = useState<InternalProject[]>([]);
 
   /**
@@ -398,33 +395,33 @@ const AssignTrainees: React.FunctionComponent = () => {
 
   const renderMotivationalTexts = (
     <Modal open={showMotivationalTexts} onClose={closeMotivationalTexts}>
-      <Paper className={classes.motivationalTextPaper}>
+      <Paper sx={styles.motivationalTextPaper}>
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für{" "}
               {openedTrainee?.wahl_internesprojekt1_kuerzel === null
                 ? "n/a"
                 : openedTrainee?.wahl_internesprojekt1_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt1_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt1_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für{" "}
               {openedTrainee?.wahl_internesprojekt2_kuerzel === null
                 ? "n/a"
                 : openedTrainee?.wahl_internesprojekt2_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt2_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
-            <Typography variant="h5" className={classes.paperHeaderText}>
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt2_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            <Typography variant="h5" sx={styles.paperHeaderText}>
               Motivation für{" "}
               {openedTrainee?.wahl_internesprojekt3_kuerzel === null
                 ? "n/a"
                 : openedTrainee?.wahl_internesprojekt3_kuerzel}
             </Typography>
-            <Typography className={classes.paperText}>{openedTrainee?.wahl_internesprojekt3_motivation}</Typography>
-            <Divider className={classes.paperHeaderDivider} />
+            <Typography sx={styles.paperText}>{openedTrainee?.wahl_internesprojekt3_motivation}</Typography>
+            <Divider sx={styles.paperHeaderDivider} />
           </Grid>
         </Grid>
       </Paper>
@@ -432,23 +429,23 @@ const AssignTrainees: React.FunctionComponent = () => {
   );
 
   const renderPreferences = (
-    <TableContainer component={Paper} className={classes.tableContainer}>
+    <TableContainer component={Paper} sx={styles.tableContainer}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Trainee</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Ressort</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Mentor</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography>Internes Projekt</Typography>
             </TableCell>
-            <TableCell className={classes.tableHeadCell}>
+            <TableCell sx={styles.tableHeadCell}>
               <Typography></Typography>
             </TableCell>
           </TableRow>
@@ -456,16 +453,15 @@ const AssignTrainees: React.FunctionComponent = () => {
         <TableBody>
           {traineePreferences.map((trainee, index) => (
             <TableRow hover key={index}>
-              <TableCell component="th" scope="row" className={classes.tableCell}>
+              <TableCell component="th" scope="row" sx={styles.tableCell}>
                 <Typography color="secondary">
                   <Link
-                    color="textPrimary"
-                    underline="hover"
-                    href={`#/gesamtuebersicht/${trainee.mitgliedID}`}
+                    href={`/gesamtuebersicht/${trainee.mitgliedID}`}
+                    style={styles.linkText}
                   >{`${trainee.vorname} ${trainee.nachname}`}</Link>
                 </Typography>
               </TableCell>
-              <TableCell className={classes.tableCell}>
+              <TableCell sx={styles.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
                     disabled={trainee.wahl_ressort1 === null}
@@ -517,7 +513,7 @@ const AssignTrainees: React.FunctionComponent = () => {
                     label={
                       <TextField
                         select
-                        className={classes.otherSelect}
+                        sx={styles.otherSelect}
                         label="Andere"
                         value={
                           trainee.wahl_ressort !== null &&
@@ -531,8 +527,8 @@ const AssignTrainees: React.FunctionComponent = () => {
                       >
                         {departements.map((departement) => {
                           return (
-                            <MenuItem key={departement.ressortID} value={departement.ressortID}>
-                              {departement.kuerzel}
+                            <MenuItem key={departement.departmentId} value={departement.departmentId}>
+                              {departement.shortName}
                             </MenuItem>
                           );
                         })}
@@ -541,7 +537,7 @@ const AssignTrainees: React.FunctionComponent = () => {
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell className={classes.tableCell}>
+              <TableCell sx={styles.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
                     disabled={trainee.wahl_mentor1 === null}
@@ -593,7 +589,7 @@ const AssignTrainees: React.FunctionComponent = () => {
                     label={
                       <TextField
                         select
-                        className={classes.otherSelect}
+                        sx={styles.otherSelect}
                         label="Andere"
                         value={
                           trainee.wahl_mentor !== null &&
@@ -606,10 +602,10 @@ const AssignTrainees: React.FunctionComponent = () => {
                         onChange={(event) => changeMentorChoice(trainee.mitgliedID, event.target.value.toString())}
                       >
                         {mentors.map((mentor) => {
-                          if (mentor.mitgliedID) {
+                          if (mentor.memberId) {
                             return (
-                              <MenuItem key={mentor.mitgliedID} value={mentor.mitgliedID}>
-                                {mentor.name}
+                              <MenuItem key={mentor.memberId} value={mentor.memberId}>
+                                {mentor.firstname.charAt(0) + "." + mentor.lastname}
                               </MenuItem>
                             );
                           }
@@ -619,7 +615,7 @@ const AssignTrainees: React.FunctionComponent = () => {
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell className={classes.tableCell}>
+              <TableCell sx={styles.tableCell}>
                 <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
                   <FormControlLabel
                     disabled={trainee.wahl_internesprojekt1 === null}
@@ -686,7 +682,7 @@ const AssignTrainees: React.FunctionComponent = () => {
                     label={
                       <TextField
                         select
-                        className={classes.otherSelect}
+                        sx={styles.otherSelect}
                         label="Andere"
                         value={
                           trainee.wahl_internesprojekt !== null &&
@@ -712,9 +708,9 @@ const AssignTrainees: React.FunctionComponent = () => {
                   />
                 </RadioGroup>
               </TableCell>
-              <TableCell className={classes.attachementCell}>
+              <TableCell sx={styles.attachementCell}>
                 <Button
-                  className={classes.attachementCell}
+                  sx={styles.attachementCell}
                   onClick={() => {
                     openMotivationalTexts(trainee);
                   }}
@@ -731,34 +727,31 @@ const AssignTrainees: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="content-page">
-        {renderMotivationalTexts}
-        <Paper className={classes.paperContainer}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h5" className={classes.paperHeaderText}>
-                Trainee-Zuteilung {generation?.bezeichnung}
-              </Typography>
-              <Typography className={classes.paperText}>
-                Hier können die Präferenzen für die Wahl von Ressort, Mentor und Internem Projekt der Trainees zugeteilt
-                werden.<br></br>
-                Die Daten werden bei Änderung automatisch zwischengespeichert.<br></br>
-                Sobald eine neue Traineegeneration angelegt wird, können die Zuteilungen nicht mehr geändert werden.
-                <br></br>
-                Startdatum Präferenzwahlen:{" "}
-                <b>{generation ? transformSQLStringToGermanDate(generation.wahl_start.toString()) : ""}</b>
-                <br></br>
-                Enddatum Präferenzwahlen:{" "}
-                <b>{generation ? transformSQLStringToGermanDate(generation.wahl_ende.toString()) : ""}</b>
-                <br></br>
-              </Typography>
-              <Divider className={classes.paperHeaderDivider} />
-              {renderPreferences}
-            </Grid>
+      {renderMotivationalTexts}
+      <Paper sx={styles.paperContainer}>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={styles.paperHeaderText}>
+              Trainee-Zuteilung {generation?.bezeichnung}
+            </Typography>
+            <Typography sx={styles.paperText}>
+              Hier können die Präferenzen für die Wahl von Ressort, Mentor und Internem Projekt der Trainees zugeteilt
+              werden.<br></br>
+              Die Daten werden bei Änderung automatisch zwischengespeichert.<br></br>
+              Sobald eine neue Traineegeneration angelegt wird, können die Zuteilungen nicht mehr geändert werden.
+              <br></br>
+              Startdatum Präferenzwahlen:{" "}
+              <b>{generation ? transformSQLStringToGermanDate(generation.wahl_start.toString()) : ""}</b>
+              <br></br>
+              Enddatum Präferenzwahlen:{" "}
+              <b>{generation ? transformSQLStringToGermanDate(generation.wahl_ende.toString()) : ""}</b>
+              <br></br>
+            </Typography>
+            <Divider sx={styles.paperHeaderDivider} />
+            {renderPreferences}
           </Grid>
-        </Paper>
-      </div>
-      <PageBar pageTitle="Trainee-Zuteilung" />
+        </Grid>
+      </Paper>
     </div>
   );
 };

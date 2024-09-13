@@ -2,19 +2,18 @@
  * Contains all members types for the frontend
  */
 
-import { Dayjs } from "dayjs";
-import { MembersField } from "./membersTypes";
+import { MembersFieldDto } from "./membersTypes";
 
 /**
  * Type of a trainee
  */
 export type Trainee = {
-  mitgliedID: number;
-  vorname: string;
-  nachname: string;
-  generation: number;
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  generationId: number;
   generationBezeichnung: string;
-  internesprojekt: number;
+  internalProjectId: number;
   AngebotBeiEV: boolean;
   APgehalten: boolean;
   DLbeiEV: boolean;
@@ -66,8 +65,8 @@ export type InternalProject = {
   APBeiEV: boolean;
   APGehalten: string | null;
   DLBeiEV: boolean;
-  projektmitglieder: MembersField[] | null;
-  qualitaetsmanager: MembersField[] | null;
+  projektmitglieder: MembersFieldDto[] | null;
+  qualitaetsmanager: MembersFieldDto[] | null;
 };
 
 export type InternalProjectAll = {
@@ -85,16 +84,15 @@ export type InternalProjectAll = {
 };
 
 export type Generation = {
-  generationID: number;
-  bezeichnung: string;
-  bewerbung_start: Date;
-  bewerbung_ende: Date;
-  wwTermin: string;
-  auswahlWETermin: string;
-  infoabendBesucher: number;
-  tuercode: number;
-  wahl_start: Date;
-  wahl_ende: Date;
+  generationId: number;
+  description: string;
+  applicationStart: Date | null;
+  applicationEnd: Date | null;
+  wwDate: string | null;
+  selectionWeDate: string | null;
+  infoEveningVisitors: number | null;
+  doorCode: string | null;
+  electionEnd: Date | null;
 };
 
 export type Pflichtworkshops = {
@@ -105,23 +103,23 @@ export type Pflichtworkshops = {
 };
 
 /**
- * Type of the Ip Info
+ * Type of the internal project of a member
  */
-export type InternalProjectDetails = {
-  internesProjektID: number;
-  projektname: string;
-  kuerzel: string;
+export type InternalProjectDto = {
+  internalProjectId: number;
   generation: number;
-  generationsBezeichnung: string;
-  kickoff: Dayjs | null | undefined;
-  AngebotBeiEV: boolean | undefined;
-  ZPBeiEV: boolean | undefined;
-  ZPGehalten: Dayjs | null | undefined;
-  APBeiEV: boolean | undefined;
-  APGehalten: Dayjs | null | undefined;
-  DLBeiEV: boolean | undefined;
-  projektmitglieder: MembersField[];
-  qualitaetsmanager: MembersField[];
+  generationName: string;
+  projectName: string;
+  abbreviation: string;
+  kickoff: Date | null;
+  offerAtEv: boolean;
+  zpAtEv: boolean;
+  zpHeld: Date | null;
+  apAtEv: boolean;
+  apHeld: Date | null;
+  dlAtEv: boolean;
+  members: MembersFieldDto[] | null;
+  qualityManagers: MembersFieldDto[] | null;
 };
 
 /**

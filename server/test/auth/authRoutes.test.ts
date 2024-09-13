@@ -3,25 +3,40 @@ import request from "supertest";
 import app from "../../src/app";
 import MemberTestUtils from "../utils/memberTestUtils";
 import AuthTestUtils from "../utils/authTestUtils";
+import { AppDataSource } from "../../src/datasource";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
 
 describe("Test auth routes", () => {
   // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-  beforeAll(() => {
-    return memberTestUtils.initMemberData(); // Executes after every test
+  beforeAll(async () => {
+    // Initialize the data source
+    await AppDataSource.initialize();
   });
 
-  beforeEach(() => {
-    return memberTestUtils.setupMemberData(); // Executes before every test
-  });
-  afterEach(() => {
-    return memberTestUtils.clearMemberData(); // Executes after every test
+  beforeEach(async () => {
+    // Populate the database with test data before each test
+    await memberTestUtils.initMemberData();
+    await memberTestUtils.setupMemberData();
   });
 
-  afterAll(() => {
-    return memberTestUtils.clearInitMemberData();
+  afterEach(async () => {
+    // Clean up the database after each test
+    const source = AppDataSource;
+    const entities = source.entityMetadatas;
+
+    await source.query(`SET FOREIGN_KEY_CHECKS = 0;`);
+    for (const entity of entities) {
+      const repository = source.getRepository(entity.name);
+      await repository.query(`DELETE FROM ${entity.tableName}`);
+    }
+    await source.query(`SET FOREIGN_KEY_CHECKS = 1;`);
+  });
+
+  afterAll(async () => {
+    // Close the data source
+    await AppDataSource.destroy();
   });
 
   // --------------------------- TESTS --------------------------- \\
@@ -82,7 +97,7 @@ describe("Test auth routes", () => {
 
       // --- THEN
       expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveProperty("mitgliedID");
+      expect(response.body).toHaveProperty("memberId");
       expect(response.body).toHaveProperty("name");
       expect(response.body).toHaveProperty("permissions");
       expect(response.body).toHaveProperty("roles");

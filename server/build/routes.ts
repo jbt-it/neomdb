@@ -16,14 +16,14 @@ import type { RequestHandler, Router } from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Permission": {
+    "PermissionDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directorID":{"dataType":"double"},"canDelegate":{"dataType":"boolean","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directorId":{"dataType":"double"},"canDelegate":{"dataType":"boolean","required":true},"permissionId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "JWTPayload": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"roles":{"dataType":"array","array":{"dataType":"double"},"required":true},"permissions":{"dataType":"array","array":{"dataType":"refAlias","ref":"Permission"},"required":true},"name":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"roles":{"dataType":"array","array":{"dataType":"double"},"required":true},"permissions":{"dataType":"array","array":{"dataType":"refAlias","ref":"PermissionDTO"},"required":true},"name":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserLoginRequest": {
@@ -46,19 +46,837 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"newPassword":{"dataType":"string","required":true},"key":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MemberStatus": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Trainee"]},{"dataType":"enum","enums":["aktives Mitglied"]},{"dataType":"enum","enums":["Senior"]},{"dataType":"enum","enums":["Alumnus"]},{"dataType":"enum","enums":["passives Mitglied"]},{"dataType":"enum","enums":["Ausgetretene"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MemberPartial": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastchange":{"dataType":"string","required":true},"ressort":{"dataType":"string","required":true},"mitgliedstatus":{"ref":"MemberStatus","required":true},"jbt_email":{"dataType":"string","required":true},"handy":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "firstname": {"dataType":"string","required":true},
+            "lastname": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "passwordHash": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "password": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "icalToken": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "gender": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "birthday": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "mobile": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "fax": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "jbtEmail": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberStatusId": {"dataType":"double","required":true},
+            "generationId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "internalProjectId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "internalProjectOld": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "mentorId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "alumnusSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "seniorSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "activeSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "passiveSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "exitedSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "departmentId": {"dataType":"double","required":true},
+            "employer": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "street1": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "postalCode1": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "city1": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "phone1": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "email1": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "street2": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "postalCode2": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "city2": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "phone2": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "email2": {"dataType":"string","required":true},
+            "university": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "courseOfStudy": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyStart": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyEnd": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "specializations": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeship": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "accountHolder": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "iban": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "bic": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "commitment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "remarks": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "departure": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "departureDate": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "picture": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "canPL": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "canQM": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "lastChange": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "otherWs": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "drivingLicense": {"dataType":"double","required":true},
+            "drivingLicense2": {"dataType":"double","required":true},
+            "drivingLicense3": {"dataType":"double","required":true},
+            "firstAidTraining": {"dataType":"boolean","required":true},
+            "choiceMentor": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceMentor1": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceMentor2": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceMentor3": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject1": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject1Motivation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject2": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject2Motivation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject3": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceInternalProject3Motivation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceDepartment": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceDepartment1": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceDepartment2": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "choiceDepartment3": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "notes": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "itSkills": {"dataType":"array","array":{"dataType":"refObject","ref":"ItSkill"},"required":true},
+            "generations": {"dataType":"array","array":{"dataType":"refObject","ref":"Generation"},"required":true},
+            "internalProjectsAsQm": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
+            "generation": {"ref":"Generation","required":true},
+            "mentor": {"ref":"Member","required":true},
+            "mentees": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "memberStatus": {"ref":"MemberStatus","required":true},
+            "department": {"ref":"Department","required":true},
+            "departmentChoice": {"ref":"Department","required":true},
+            "departmentChoice1": {"ref":"Department","required":true},
+            "departmentChoice2": {"ref":"Department","required":true},
+            "departmentChoice3": {"ref":"Department","required":true},
+            "internalProjectChoice": {"ref":"InternalProject","required":true},
+            "internalProjectChoice1": {"ref":"InternalProject","required":true},
+            "internalProjectChoice2": {"ref":"InternalProject","required":true},
+            "internalProjectChoice3": {"ref":"InternalProject","required":true},
+            "mentorChoice": {"ref":"Member","required":true},
+            "mentorChoice1": {"ref":"Member","required":true},
+            "mentorChoice2": {"ref":"Member","required":true},
+            "mentorChoice3": {"ref":"Member","required":true},
+            "memberHasOtherPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasOtherPosition"},"required":true},
+            "permissions": {"dataType":"array","array":{"dataType":"refObject","ref":"Permission"},"required":true},
+            "memberHasEvents": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEvent"},"required":true},
+            "memberHasEventwws": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEventWw"},"required":true},
+            "memberHasDirectorPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasDirectorPosition"},"required":true},
+            "memberHasExpertises": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasExpertise"},"required":true},
+            "memberHasProjects": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasProject"},"required":true},
+            "memberHasWorkshopInstances": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasWorkshopInstance"},"required":true},
+            "memberHasStatuses": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasStatus"},"required":true},
+            "mmtrackings": {"dataType":"array","array":{"dataType":"refObject","ref":"Mmtracking"},"required":true},
+            "passwordReset": {"ref":"PasswordReset","required":true},
+            "internships": {"dataType":"array","array":{"dataType":"refObject","ref":"Internship"},"required":true},
+            "workshopFeedbackHasMembers": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedbackHasMember"},"required":true},
+            "languages": {"dataType":"array","array":{"dataType":"refObject","ref":"Language"},"required":true},
+            "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
+            "internalProject": {"ref":"InternalProject","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ItSkill": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "value": {"dataType":"string","required":true},
+            "level": {"dataType":"double","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Generation": {
+        "dataType": "refObject",
+        "properties": {
+            "generationId": {"dataType":"double","required":true},
+            "description": {"dataType":"string","required":true},
+            "applicationStart": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationEnd": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "wwDate": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selectionWeDate": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "infoEveningVisitors": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "doorCode": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "electionStart": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "electionEnd": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "mentors": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
+            "internalProjects": {"dataType":"array","array":{"dataType":"refObject","ref":"InternalProject"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicant": {
+        "dataType": "refObject",
+        "properties": {
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "generation": {"dataType":"double","required":true},
+            "applicationDate": {"dataType":"datetime","required":true},
+            "invited": {"dataType":"boolean","required":true},
+            "toBeAdmitted": {"dataType":"boolean","required":true},
+            "admitted": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "firstName": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "lastName": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "gender": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "picture": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "birthDate": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "mobilePhone": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "landlinePhone": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "email": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "homeAddressStreet": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "homeAddressNumber": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "homeAddressPostalCode": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "homeAddressCity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyAddressStreet": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyAddressNumber": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyAddressPostalCode": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyAddressCity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "enrolledDegree": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "enrolledUniversity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "enrolledSubject": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "enrolledOtherSubject": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyStart": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studySemester": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyFirstMajor": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studySecondMajor": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studyThirdMajor": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "bachelorSubject": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "bachelorUniversity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeshipJob": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeshipCompany": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeshipLocation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeshipStart": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeshipEnd": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "occupation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "occupationCompany": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "occupationLocation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "occupationStart": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "occupationEnd": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "itSkills": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "hobbies": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "timeInvestment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "motivation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment1": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment2": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment3": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment4": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment5": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment6": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment7": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "selfAssessment8": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "flyer": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "posters": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "lectures": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "friends": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "internet": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "others": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "othersText": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workingWeekend": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "availabilityWorkingWeekend": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["kannImmer"]},{"dataType":"enum","enums":["nichtFR"]},{"dataType":"enum","enums":["nichtSA"]},{"dataType":"enum","enums":["nichtSO"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "socialMedia": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "campusRally": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "partner": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "newsletter": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "admittedMember": {"ref":"Member","required":true},
+            "generationEntity": {"ref":"Generation","required":true},
+            "traineeApplicantVoluntarySchools": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantVoluntarySchool"},"required":true},
+            "traineeApplicantVoluntaryStudies": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantVoluntaryStudy"},"required":true},
+            "traineeApplicantHiwis": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantHiwi"},"required":true},
+            "traineeApplicantInternships": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantInternship"},"required":true},
+            "traineeApplicantLanguages": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantLanguage"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantVoluntarySchool": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "activity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantVoluntaryStudy": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "activity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantHiwi": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "activity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "company": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "location": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "start": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "end": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantInternship": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "activity": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "company": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "location": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "start": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "end": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantLanguage": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "language": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "languageLevel": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "InternalProject": {
+        "dataType": "refObject",
+        "properties": {
+            "internalProjectId": {"dataType":"double","required":true},
+            "generationId": {"dataType":"double","required":true},
+            "projectName": {"dataType":"string","required":true},
+            "abbreviation": {"dataType":"string","required":true},
+            "kickoff": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "offerAtEv": {"dataType":"boolean","required":true},
+            "zpAtEv": {"dataType":"boolean","required":true},
+            "zpHeld": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apAtEv": {"dataType":"boolean","required":true},
+            "apHeld": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "dlAtEv": {"dataType":"boolean","required":true},
+            "qualityManagers": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "generation": {"ref":"Generation","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberStatus": {
+        "dataType": "refObject",
+        "properties": {
+            "memberStatusId": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "memberHasStatuses": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasStatus"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Department": {
+        "dataType": "refObject",
+        "properties": {
+            "departmentId": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "shortName": {"dataType":"string","required":true},
+            "jbtEmail": {"dataType":"string","required":true},
+            "linkObjectivePresentation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "linkOrganigram": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "shortPresentation": {"dataType":"string","required":true},
+            "content": {"dataType":"string","required":true},
+            "director": {"ref":"Director","required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DirectorHasPermission": {
+        "dataType": "refObject",
+        "properties": {
+            "directorId": {"dataType":"double","required":true},
+            "permissionId": {"dataType":"double","required":true},
+            "canDelegate": {"dataType":"boolean","required":true},
+            "permission": {"ref":"Permission","required":true},
+            "director": {"ref":"Director","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Permission": {
+        "dataType": "refObject",
+        "properties": {
+            "permissionId": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "directorHasPermissions": {"dataType":"array","array":{"dataType":"refObject","ref":"DirectorHasPermission"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Director": {
+        "dataType": "refObject",
+        "properties": {
+            "directorId": {"dataType":"double","required":true},
+            "designationMale": {"dataType":"string","required":true},
+            "designationFemale": {"dataType":"string","required":true},
+            "departmentId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "shortName": {"dataType":"string","required":true},
+            "jbtEmail": {"dataType":"string","required":true},
+            "shortIntroduction": {"dataType":"string","required":true},
+            "content": {"dataType":"string","required":true},
+            "sequence": {"dataType":"double","required":true},
+            "department": {"ref":"Department","required":true},
+            "directorHasPermissions": {"dataType":"array","array":{"dataType":"refObject","ref":"DirectorHasPermission"},"required":true},
+            "memberHasDirectorPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasDirectorPosition"},"required":true},
+            "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasDirectorPosition": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "directorId": {"dataType":"double","required":true},
+            "from": {"dataType":"datetime","required":true},
+            "until": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "director": {"ref":"Director","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Project": {
+        "dataType": "refObject",
+        "properties": {
+            "projectId": {"dataType":"double","required":true},
+            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Bewerbung"]},{"dataType":"enum","enums":["Angebot"]},{"dataType":"enum","enums":["Durchführung"]},{"dataType":"enum","enums":["Abrechnung"]},{"dataType":"enum","enums":["Abgeschlossen"]},{"dataType":"enum","enums":["NichtBesetzt"]},{"dataType":"enum","enums":["PitchVerloren"]},{"dataType":"enum","enums":["AngebotAbgelehnt"]},{"dataType":"enum","enums":["Abgebrochen"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "projectName": {"dataType":"string","required":true},
+            "applicationsKey": {"dataType":"string","required":true},
+            "clientId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "clientConfidential": {"dataType":"boolean","required":true},
+            "sectorOld": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "companyOld": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "note": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "kickoff": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "projectEnd": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationStart1": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationEnd1": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationStart2": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationEnd2": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "signatureDate": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "invoicing": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "invoiceNumber": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "accountingSince": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "soldBT": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "performedBT": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "soldExpenses": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "euroPerBT": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "APatEV": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "evaluationAtEV": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "DLatEV": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "moneyReceived": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "paymentDelay": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "consultingContractProvided": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "teamContractProvided": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "offerInAlfresco": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "deviationFromStandard": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "qmApproval": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "jobSite": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "tenderDate": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectStart": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectDuration": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectBTmin": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectBTmax": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectEuroPerBT": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectEuroPerBTrange": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectMemberMin": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "estimatedProjectMemberMax": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "staffingCommittee": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "customerType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Altkunde"]},{"dataType":"enum","enums":["Neukunde"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "customerLocationOld": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "customerAddress1Old": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "customerAddress2Old": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "customerAddress3Old": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "acquisitorId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "acquisitionMethod": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Kunde"]},{"dataType":"enum","enums":["Alumni"]},{"dataType":"enum","enums":["Kurator"]},{"dataType":"enum","enums":["Partner"]},{"dataType":"enum","enums":["PA"]},{"dataType":"enum","enums":["JBTler"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "clientInformationOld": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "situation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "peculiarities": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "coreCompetency": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "requirementProfile": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "referenceProjects": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "netSalesPriceVariable": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "ownCloud": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberHasProjects": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasProject"},"required":true},
+            "acquisitor": {"ref":"Director","required":true},
+            "client": {"ref":"Company","required":true},
+            "industry": {"ref":"Industry","required":true},
+            "contactPersons": {"dataType":"array","array":{"dataType":"refObject","ref":"ContactPerson"},"required":true},
+            "coreCompetencies": {"dataType":"array","array":{"dataType":"refObject","ref":"CoreCompetency"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasProject": {
+        "dataType": "refObject",
+        "properties": {
+            "projectId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "btAllocation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "expensesAllocation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Bewerbung"]},{"dataType":"enum","enums":["Mitglied"]},{"dataType":"enum","enums":["PL"]},{"dataType":"enum","enums":["QM"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "date": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "applicationDate": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "freelancerContract": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "moneyTransferred": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "semester": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "internship": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "apprenticeship": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "studentJob": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "seminarPapers": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshops": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "internalCommitment": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Vorstandstätigkeit"]},{"dataType":"enum","enums":["Teamleiter"]}]}},{"dataType":"enum","enums":[null]}],"required":true},
+            "preliminaryWork": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Herstellung des Erstkontakts"]},{"dataType":"enum","enums":["Schreiben des Angebots"]}]}},{"dataType":"enum","enums":[null]}],"required":true},
+            "extraordinaryCommitment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "availability": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Ohne Einschränkung"]},{"dataType":"enum","enums":["Mit Einschränkung"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "restriction": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "motivation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "member": {"ref":"Member","required":true},
+            "project": {"ref":"Project","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Company": {
+        "dataType": "refObject",
+        "properties": {
+            "companyId": {"dataType":"double","required":true},
+            "prospect": {"dataType":"boolean","required":true},
+            "name": {"dataType":"string","required":true},
+            "industryId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "shortDescription": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "addressAdditional": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "street": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "postalCode": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "city": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "url": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "importantInformation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "revenueStrength": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "projectNumber": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "btAmount": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "satisfaction": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "contactDesired": {"dataType":"boolean","required":true},
+            "contactChannel": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "classified": {"dataType":"boolean","required":true},
+            "contactPersons": {"dataType":"array","array":{"dataType":"refObject","ref":"ContactPerson"},"required":true},
+            "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
+            "industry": {"ref":"Industry","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ContactPerson": {
+        "dataType": "refObject",
+        "properties": {
+            "contactPersonId": {"dataType":"double","required":true},
+            "companyId": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "company": {"ref":"Company","required":true},
+            "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Industry": {
+        "dataType": "refObject",
+        "properties": {
+            "industryId": {"dataType":"double","required":true},
+            "description": {"dataType":"string","required":true},
+            "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
+            "company": {"dataType":"array","array":{"dataType":"refObject","ref":"Company"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CoreCompetency": {
+        "dataType": "refObject",
+        "properties": {
+            "coreCompetencyId": {"dataType":"double","required":true},
+            "designation": {"dataType":"string","required":true},
+            "projects": {"dataType":"array","array":{"dataType":"refObject","ref":"Project"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasOtherPosition": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "otherPositionId": {"dataType":"double","required":true},
+            "from": {"dataType":"string","required":true},
+            "until": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "otherPosition": {"ref":"OtherPosition","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OtherPosition": {
+        "dataType": "refObject",
+        "properties": {
+            "otherPositionId": {"dataType":"double","required":true},
+            "descriptionMale": {"dataType":"string","required":true},
+            "descriptionFemale": {"dataType":"string","required":true},
+            "briefIntroduction": {"dataType":"string","required":true},
+            "content": {"dataType":"string","required":true},
+            "memberHasOtherPositions": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasOtherPosition"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasEvent": {
+        "dataType": "refObject",
+        "properties": {
+            "eventId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Teilnehmer"]},{"dataType":"enum","enums":["Organisator"]}],"required":true},
+            "registrationTime": {"dataType":"datetime","required":true},
+            "event": {"ref":"Event","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Event": {
+        "dataType": "refObject",
+        "properties": {
+            "eventId": {"dataType":"double","required":true},
+            "eventName": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "date": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "end": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "registrationFrom": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "registrationTo": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "location": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "startTime": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "endTime": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "ww": {"dataType":"boolean","required":true},
+            "network": {"dataType":"boolean","required":true},
+            "maximumParticipants": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "jbtGoes": {"dataType":"boolean","required":true},
+            "others": {"dataType":"boolean","required":true},
+            "memberHasEvents": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEvent"},"required":true},
+            "memberHasEventWws": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasEventWw"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasEventWw": {
+        "dataType": "refObject",
+        "properties": {
+            "eventId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "arrival": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["FrF"]},{"dataType":"enum","enums":["FrM"]},{"dataType":"enum","enums":["FrA"]},{"dataType":"enum","enums":["SaF"]},{"dataType":"enum","enums":["SaM"]},{"dataType":"enum","enums":["SaA"]},{"dataType":"enum","enums":["SaS"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "departure": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["FrM"]},{"dataType":"enum","enums":["FrA"]},{"dataType":"enum","enums":["SaF"]},{"dataType":"enum","enums":["SaM"]},{"dataType":"enum","enums":["SaA"]},{"dataType":"enum","enums":["So"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "car": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "seats": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "vegetarian": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "event": {"ref":"Event","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasExpertise": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "expertiseId": {"dataType":"double","required":true},
+            "value": {"dataType":"string","required":true},
+            "expertise": {"ref":"Expertise","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Expertise": {
+        "dataType": "refObject",
+        "properties": {
+            "expertiseId": {"dataType":"double","required":true},
+            "designation": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberHasExpertise": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasExpertise"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasWorkshopInstance": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopInstanceId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Anmeldung"]},{"dataType":"enum","enums":["Teilnehmer"]},{"dataType":"enum","enums":["Referent"]}],"required":true},
+            "date": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "present": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
+            "feedbackGiven": {"dataType":"boolean","required":true},
+            "member": {"ref":"Member","required":true},
+            "workshopInstance": {"ref":"WorkshopInstance","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WorkshopInstance": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopInstanceId": {"dataType":"double","required":true},
+            "workshopId": {"dataType":"double","required":true},
+            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Anmeldung"]},{"dataType":"enum","enums":["Anmeldung abgeschlossen"]},{"dataType":"enum","enums":["Feedback"]},{"dataType":"enum","enums":["Abgeschlossen"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "date": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "startTime": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "endTime": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "location": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "maximumParticipants": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "speakers": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "targetGroup": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "registrationFrom": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "registrationUntil": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberHasWorkshopInstances": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasWorkshopInstance"},"required":true},
+            "workshopFeedbacks": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedback"},"required":true},
+            "workshop": {"ref":"Workshop","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WorkshopFeedbackHasFeedbackQuestion": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopFeedbackId": {"dataType":"double","required":true},
+            "feedbackQuestionId": {"dataType":"double","required":true},
+            "grade": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "feedbackQuestion": {"ref":"FeedbackQuestion","required":true},
+            "workshopFeedback": {"ref":"WorkshopFeedback","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FeedbackQuestion": {
+        "dataType": "refObject",
+        "properties": {
+            "feedbackQuestionId": {"dataType":"double","required":true},
+            "question": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshopFeedbackHasFeedbackQuestions": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedbackHasFeedbackQuestion"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WorkshopFeedback": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopFeedbackId": {"dataType":"double","required":true},
+            "workshopInstanceId": {"dataType":"double","required":true},
+            "date": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshopLevel": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "contentFeedback": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "presentationFeedback": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshopNeed": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshopInstance": {"ref":"WorkshopInstance","required":true},
+            "workshopFeedbackHasFeedbackQuestions": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedbackHasFeedbackQuestion"},"required":true},
+            "workshopFeedbackHasMembers": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopFeedbackHasMember"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WorkshopFeedbackHasMember": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopFeedbackId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "grade": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "member": {"ref":"Member","required":true},
+            "workshopFeedback": {"ref":"WorkshopFeedback","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Workshop": {
+        "dataType": "refObject",
+        "properties": {
+            "workshopId": {"dataType":"double","required":true},
+            "workshopName": {"dataType":"string","required":true},
+            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Pflichtworkshop"]},{"dataType":"enum","enums":["Workshop"]},{"dataType":"enum","enums":["Externer Workshop"]},{"dataType":"enum","enums":[null]}],"required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "workshopInstances": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopInstance"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasStatus": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "date": {"dataType":"datetime","required":true},
+            "memberStatusId": {"dataType":"double","required":true},
+            "note": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberStatus": {"ref":"MemberStatus","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Mmtracking": {
+        "dataType": "refObject",
+        "properties": {
+            "mmtrackingId": {"dataType":"double","required":true},
+            "date": {"dataType":"datetime","required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PasswordReset": {
+        "dataType": "refObject",
+        "properties": {
+            "memberJbtEmail": {"dataType":"string","required":true},
+            "date": {"dataType":"datetime","required":true},
+            "salt": {"dataType":"buffer","required":true},
+            "token": {"dataType":"string","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Internship": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "company": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "description": {"dataType":"string","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Language": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "value": {"dataType":"string","required":true},
+            "level": {"dataType":"double","required":true},
+            "member": {"ref":"Member","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DepartmentPartialDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"bic":{"dataType":"string"},"iban":{"dataType":"string"},"kontoinhaber":{"dataType":"string"},"ersthelferausbildung":{"dataType":"boolean","required":true},"fuehrerschein":{"dataType":"boolean","required":true},"lastchange":{"dataType":"string","required":true},"canQM":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"canPL":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"engagement":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ausbildung":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"vertiefungen":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studienende":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studienbeginn":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studiengang":{"dataType":"string","required":true},"hochschule":{"dataType":"string","required":true},"email2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"tel2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ort2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"plz2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"strasse2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"email1":{"dataType":"string","required":true},"tel1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ort1":{"dataType":"string","required":true},"plz1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"strasse1":{"dataType":"string","required":true},"arbeitgeber":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ressort":{"dataType":"string","required":true},"ausgetreten_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"passiv_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"aktiv_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"senior_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"alumnus_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mitglied_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"trainee_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internesprojekt":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"generation":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mitgliedstatus":{"ref":"MemberStatus","required":true},"jbt_email":{"dataType":"string","required":true},"handy":{"dataType":"string","required":true},"geburtsdatum":{"dataType":"string","required":true},"geschlecht":{"dataType":"double","required":true},"vorname":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shortName":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"departmentId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberPartialDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastChange":{"dataType":"datetime","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"memberStatus":{"ref":"MemberStatus","required":true},"jbtEmail":{"dataType":"string","required":true},"mobile":{"dataType":"string","required":true},"internalProjectId":{"dataType":"double","required":true},"generationId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberImage": {
@@ -66,14 +884,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mimeType":{"dataType":"string","required":true},"base64":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DepartmentMember": {
+    "DepartmentMemberDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"bezeichnung":{"dataType":"string","required":true},"ressort":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"department":{"ref":"DepartmentPartialDto","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Director": {
+    "DirectorDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"kuerzel":{"dataType":"string","required":true},"bezeichnung_maennlich":{"dataType":"string","required":true},"bezeichnung_weiblich":{"dataType":"string","required":true},"geschlecht":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true},"evpostenID":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"designationMale":{"dataType":"string","required":true},"designationFemale":{"dataType":"string","required":true},"gender":{"dataType":"boolean","required":true},"until":{"dataType":"datetime","required":true},"from":{"dataType":"datetime","required":true},"department":{"ref":"DepartmentPartialDto","required":true},"directorId":{"dataType":"double","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "StatusOverview": {
@@ -81,124 +899,119 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wikiErrorMsg":{"dataType":"string","required":true},"wikiSuccesful":{"dataType":"boolean","required":true},"nextcloudErrorMsg":{"dataType":"string","required":true},"nextcloudSuccesful":{"dataType":"boolean","required":true},"mailListErrorMsg":{"dataType":"string","required":true},"mailListSuccesful":{"dataType":"boolean","required":true},"mailErrorMsg":{"dataType":"string","required":true},"mailSuccesful":{"dataType":"boolean","required":true},"queryErrorMsg":{"dataType":"string","required":true},"querySuccesful":{"dataType":"boolean","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateMemberResponse": {
+    "CreateMemberResponseDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"statusOverview":{"ref":"StatusOverview","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"statusOverview":{"ref":"StatusOverview","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateMemberRequest": {
+    "CreateMemberRequestDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"traineeSeit":{"dataType":"string","required":true},"password":{"dataType":"string","required":true},"generation":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"geschlecht":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"handy":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"geburtsdatum":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationId":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"gender":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mobile":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"birthday":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Department": {
+    "DepartmentDetailsDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true},"jbt_email":{"dataType":"string","required":true},"kuerzel":{"dataType":"string","required":true},"bezeichnung":{"dataType":"string","required":true},"ressortID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigram":{"dataType":"string","required":true},"linkObjectivePresentation":{"dataType":"string","required":true},"jbtEmail":{"dataType":"string","required":true},"shortName":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"departmentId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateDepartmentRequest": {
+    "UpdateDepartmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigramm":{"dataType":"string","required":true},"linkZielvorstellung":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"linkOrganigram":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"linkObjectivePresentation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Value": {
+    "LanguageValue": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wert":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"language":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PermissionAssignment": {
+    "ItSkillsValue": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"canDelegate":{"dataType":"boolean","required":true},"permissionID":{"dataType":"double","required":true},"mitgliedID":{"dataType":"double","required":true},"name":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"itSkill":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AssignPermissionToMemberRequest": {
+    "MemberPermissionAssignmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"permissionID":{"dataType":"double","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Language": {
+    "DirectorPositionDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"niveau":{"dataType":"double","required":true},"wert":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shortName":{"dataType":"string","required":true},"canDelegate":{"dataType":"boolean","required":true},"directorId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "EdvSkill": {
+    "PermissionAssignmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"niveau":{"dataType":"double","required":true},"wert":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"directors":{"dataType":"array","array":{"dataType":"refAlias","ref":"DirectorPositionDto"},"required":true},"members":{"dataType":"array","array":{"dataType":"refAlias","ref":"MemberPermissionAssignmentDto"},"required":true},"description":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"permissionID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Mentee": {
+    "AssignPermissionToMemberRequestDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"permissionID":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Mentor": {
+    "MemberStatusDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generationID":{"dataType":"double"},"nachname":{"dataType":"string"},"vorname":{"dataType":"string"},"name":{"dataType":"string"},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"memberStatusId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MemberDetails": {
+    "LanguageDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mentor":{"dataType":"union","subSchemas":[{"ref":"Mentor"},{"dataType":"enum","enums":[null]}]},"mentees":{"dataType":"array","array":{"dataType":"refAlias","ref":"Mentee"}},"edvkenntnisse":{"dataType":"array","array":{"dataType":"refAlias","ref":"EdvSkill"}},"sprachen":{"dataType":"array","array":{"dataType":"refAlias","ref":"Language"}},"bic":{"dataType":"string"},"iban":{"dataType":"string"},"kontoinhaber":{"dataType":"string"},"ersthelferausbildung":{"dataType":"boolean","required":true},"fuehrerschein":{"dataType":"boolean","required":true},"lastchange":{"dataType":"string","required":true},"canQM":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"canPL":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"engagement":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ausbildung":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"vertiefungen":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studienende":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studienbeginn":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studiengang":{"dataType":"string","required":true},"hochschule":{"dataType":"string","required":true},"email2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"tel2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ort2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"plz2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"strasse2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"email1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"tel1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ort1":{"dataType":"string","required":true},"plz1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"strasse1":{"dataType":"string","required":true},"arbeitgeber":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ressort":{"dataType":"string","required":true},"ausgetreten_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"passiv_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"aktiv_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"senior_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"alumnus_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mitglied_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"trainee_seit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internesprojekt":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"generation":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mitgliedstatus":{"ref":"MemberStatus","required":true},"jbt_email":{"dataType":"string","required":true},"handy":{"dataType":"string","required":true},"geburtsdatum":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"geschlecht":{"dataType":"double","required":true},"vorname":{"dataType":"string","required":true},"nachname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"level":{"dataType":"double","required":true},"value":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Trainee": {
+    "ItSkillDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"generation":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"level":{"dataType":"double","required":true},"value":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MembersField": {
+    "MenteeDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mitgliedstatus":{"ref":"MemberStatus"},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InternalProject": {
+    "MentorDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"qualitaetsmanager":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersField"}},{"dataType":"enum","enums":[null]}],"required":true},"projektmitglieder":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersField"}},{"dataType":"enum","enums":[null]}],"required":true},"DLBeiEV":{"dataType":"boolean","required":true},"APGehalten":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"APBeiEV":{"dataType":"boolean","required":true},"ZPGehalten":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"ZPBeiEV":{"dataType":"boolean","required":true},"AngebotBeiEV":{"dataType":"boolean","required":true},"kickoff":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"kuerzel":{"dataType":"string","required":true},"projektname":{"dataType":"string","required":true},"generationsBezeichnung":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"internesProjektID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineePreference": {
+    "MemberDetailsDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_internesprojekt3_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1_motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt3_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_internesprojekt":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort3_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort2_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort1_kuerzel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_ressort":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor3_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor2_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor1_name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wahl_mentor":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"mentor":{"dataType":"union","subSchemas":[{"ref":"MentorDto"},{"dataType":"enum","enums":[null]}]},"mentees":{"dataType":"array","array":{"dataType":"refAlias","ref":"MenteeDto"}},"itSkills":{"dataType":"array","array":{"dataType":"refAlias","ref":"ItSkillDto"}},"languages":{"dataType":"array","array":{"dataType":"refAlias","ref":"LanguageDto"}},"bic":{"dataType":"string"},"iban":{"dataType":"string"},"accountHolder":{"dataType":"string"},"firstAidTraining":{"dataType":"boolean","required":true},"drivingLicense":{"dataType":"double","required":true},"lastChange":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},"canQM":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"canPL":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"commitment":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"apprenticeship":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"specializations":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"studyEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"studyStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"courseOfStudy":{"dataType":"string","required":true},"university":{"dataType":"string","required":true},"email2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"phone2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"city2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"postalCode2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"street2":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"email1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"phone1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"city1":{"dataType":"string","required":true},"postalCode1":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"street1":{"dataType":"string","required":true},"employer":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"department":{"dataType":"union","subSchemas":[{"ref":"DepartmentPartialDto"},{"dataType":"enum","enums":[null]}],"required":true},"exitedSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"passiveSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"activeSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"seniorSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"alumnusSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"memberSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"traineeSince":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"internalProject":{"dataType":"union","subSchemas":[{"ref":"InternalProject"},{"dataType":"enum","enums":[null]}],"required":true},"generation":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"memberStatus":{"ref":"MemberStatusDto","required":true},"jbtEmail":{"dataType":"string","required":true},"mobile":{"dataType":"string","required":true},"birthday":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"gender":{"dataType":"boolean","required":true},"firstname":{"dataType":"string","required":true},"lastname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "JBTMail": {
+    "MembersFieldDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"memberStatus":{"ref":"MemberStatusDto"},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Generation": {
+    "InternalProjectDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_ende":{"dataType":"datetime","required":true},"wahl_start":{"dataType":"datetime","required":true},"tuercode":{"dataType":"double","required":true},"infoabendBesucher":{"dataType":"double","required":true},"auswahlWETermin":{"dataType":"string","required":true},"wwTermin":{"dataType":"string","required":true},"bewerbung_ende":{"dataType":"datetime","required":true},"bewerbung_start":{"dataType":"datetime","required":true},"bezeichnung":{"dataType":"string","required":true},"generationID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"qualityManagers":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"members":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refAlias","ref":"MembersFieldDto"}},{"dataType":"enum","enums":[null]}],"required":true},"dlAtEv":{"dataType":"boolean","required":true},"apHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"apAtEv":{"dataType":"boolean","required":true},"zpHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"zpAtEv":{"dataType":"boolean","required":true},"offerAtEv":{"dataType":"boolean","required":true},"kickoff":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"abbreviation":{"dataType":"string","required":true},"projectName":{"dataType":"string","required":true},"generationName":{"dataType":"string","required":true},"generation":{"dataType":"double","required":true},"internalProjectId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeMotivation": {
+    "TraineeChoiceDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wahl_internesprojekt3_motivation":{"dataType":"string","required":true},"wahl_internesprojekt2_motivation":{"dataType":"string","required":true},"wahl_internesprojekt1_motivation":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"internalProjectChoice3Motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice3ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice2Motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice2ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice1Motivation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice1ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoiceShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"internalProjectChoice":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice3ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice2ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice1ShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoiceShortName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"departmentChoice":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice3Name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice3":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice2Name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice2":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice1Name":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice1":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoiceName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"mentorChoice":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateVotingDeadlinesRequest": {
+    "TraineeMotivationDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"votingEnd":{"dataType":"string","required":true},"votingStart":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"internalProject3Motivation":{"dataType":"string","required":true},"internalProject2Motivation":{"dataType":"string","required":true},"internalProject1Motivation":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeAssignment": {
+    "UpdateVotingDeadlinesRequestDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"mentorID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"ipID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"datetime","required":true},"electionStart":{"dataType":"datetime","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InternalProjectAndTrainee": {
+    "TraineeAssignmentDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"DLbeiEV":{"dataType":"boolean","required":true},"APgehalten":{"dataType":"string","required":true},"APbeiEV":{"dataType":"boolean","required":true},"ZPgehalten":{"dataType":"string","required":true},"ZPbeiEV":{"dataType":"boolean","required":true},"AngebotBeiEV":{"dataType":"boolean","required":true},"kuerzel":{"dataType":"string","required":true},"projektname":{"dataType":"string","required":true},"internesprojekt":{"dataType":"double","required":true},"generation":{"dataType":"double","required":true},"nachname":{"dataType":"string","required":true},"vorname":{"dataType":"string","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"departmentID":{"dataType":"double","required":true},"mentorID":{"dataType":"double","required":true},"ipID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Workshop": {
+    "TraineeProgressDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"feedbackAbgegeben":{"dataType":"double","required":true},"schulungsname":{"dataType":"string","required":true},"schulungsinstanzID":{"dataType":"double","required":true},"mitgliedID":{"dataType":"double","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TraineeProgress": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"InternalProjectAndTrainee"},{"ref":"Workshop"}],"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"excelBasics":{"dataType":"boolean","required":true},"safetyTraining":{"dataType":"boolean","required":true},"dataPrivacyTraining":{"dataType":"boolean","required":true},"strategyAndOrganisation":{"dataType":"boolean","required":true},"msPowerpoint":{"dataType":"boolean","required":true},"departmentQualityManagement":{"dataType":"boolean","required":true},"departmentNetwork":{"dataType":"boolean","required":true},"departmentFinanceAndLaw":{"dataType":"boolean","required":true},"acquisitionNegotiationTechnique":{"dataType":"boolean","required":true},"rhetoricPresentationTechnique":{"dataType":"boolean","required":true},"projectManagement":{"dataType":"boolean","required":true},"dlAtEv":{"dataType":"boolean","required":true},"apHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"apAtEv":{"dataType":"boolean","required":true},"zpHeld":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"zpAtEv":{"dataType":"boolean","required":true},"offerAtEv":{"dataType":"boolean","required":true},"abbreviation":{"dataType":"string","required":true},"projectName":{"dataType":"string","required":true},"internalProjectID":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"generationID":{"dataType":"double","required":true},"memberStatus":{"ref":"MemberStatusDto","required":true},"lastname":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"memberID":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -527,7 +1340,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_createMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMemberRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -554,7 +1367,7 @@ export function RegisterRoutes(app: Router) {
             function MembersController_updateMemberStatus(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"mitgliedstatus":{"ref":"MemberStatus","required":true}}},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"memberStatus":{"dataType":"string","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -606,7 +1419,7 @@ export function RegisterRoutes(app: Router) {
             function MembersController_updateDepartment(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateDepartmentRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateDepartmentDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -727,33 +1540,6 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/members/:id/permissions',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(MembersController)),
-            ...(fetchMiddlewares<RequestHandler>(MembersController.prototype.getPermissionsByMemberID)),
-
-            function MembersController_getPermissionsByMemberID(request: any, response: any, next: any) {
-            const args = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new MembersController();
-
-
-              const promise = controller.getPermissionsByMemberID.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/api/members/permissions',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MembersController)),
@@ -761,7 +1547,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_assignPermissionToMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequestDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -788,7 +1574,7 @@ export function RegisterRoutes(app: Router) {
 
             function MembersController_unassignPermissionFromMember(request: any, response: any, next: any) {
             const args = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AssignPermissionToMemberRequestDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -843,7 +1629,7 @@ export function RegisterRoutes(app: Router) {
             function MembersController_updateMember(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"MemberDetails"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"MemberDetailsDto"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
@@ -917,9 +1703,9 @@ export function RegisterRoutes(app: Router) {
         app.get('/api/trainees/generations/:id/trainee-choices',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineePreferencesOfGeneration)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getTraineeChoicesOfGeneration)),
 
-            function TraineesController_getTraineePreferencesOfGeneration(request: any, response: any, next: any) {
+            function TraineesController_getTraineeChoicesOfGeneration(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
@@ -933,7 +1719,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new TraineesController();
 
 
-              const promise = controller.getTraineePreferencesOfGeneration.apply(controller, validatedArgs as any);
+              const promise = controller.getTraineeChoicesOfGeneration.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -974,7 +1760,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_setTraineePreferencesOfMember(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineePreference"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineeChoiceDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1001,7 +1787,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_updateIP(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"InternalProject"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"InternalProjectDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1020,32 +1806,6 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/trainees/ip/:id/mails',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController)),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getIPTeamMails)),
-
-            function TraineesController_getIPTeamMails(request: any, response: any, next: any) {
-            const args = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new TraineesController();
-
-
-              const promise = controller.getIPTeamMails.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/api/trainees/generations',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
@@ -1053,7 +1813,6 @@ export function RegisterRoutes(app: Router) {
 
             function TraineesController_getGenerations(request: any, response: any, next: any) {
             const args = {
-                    current: {"in":"query","name":"current","required":true,"dataType":"boolean"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1066,6 +1825,31 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.getGenerations.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/trainees/generations/current',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.getCurrentGeneration)),
+
+            function TraineesController_getCurrentGeneration(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new TraineesController();
+
+
+              const promise = controller.getCurrentGeneration.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -1101,12 +1885,12 @@ export function RegisterRoutes(app: Router) {
         app.post('/api/trainees/generations/:id/set-deadline',
             authenticateMiddleware([{"jwt":["14"]}]),
             ...(fetchMiddlewares<RequestHandler>(TraineesController)),
-            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setVotingDeadline)),
+            ...(fetchMiddlewares<RequestHandler>(TraineesController.prototype.setElectionDeadline)),
 
-            function TraineesController_setVotingDeadline(request: any, response: any, next: any) {
+            function TraineesController_setElectionDeadline(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequest"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateVotingDeadlinesRequestDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1118,7 +1902,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new TraineesController();
 
 
-              const promise = controller.setVotingDeadline.apply(controller, validatedArgs as any);
+              const promise = controller.setElectionDeadline.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -1133,7 +1917,7 @@ export function RegisterRoutes(app: Router) {
             function TraineesController_setTraineeAssignment(request: any, response: any, next: any) {
             const args = {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineeAssignment"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TraineeAssignmentDto"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -1,17 +1,17 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useContext, useEffect, useState } from "react";
 import { Stack, Typography, Container } from "@mui/material";
 
 import WorkshopButton from "../../components/events/workshops/WorkshopButton";
 
 import { Workshop } from "../../types/eventTypes";
 
-import { useAuth } from "../../hooks/useAuth";
 import useResponsive from "../../hooks/useResponsive";
 
 import { schulung as res } from "../../mock/events/schulung";
 import WorkshopsOverviewTable from "../../components/events/workshops/WorkshopsOverviewTable";
 import WorkshopsOverviewCard from "../../components/events/workshops/WorkshopsOverviewCard";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 
 /**
  * Component to display a table or cards of all workshops
@@ -19,7 +19,7 @@ import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
  */
 const WorkshopsOverview: FunctionComponent = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
-  const { auth } = useAuth();
+  const { auth } = useContext(AuthContext);
   const { permissions } = auth;
   const hasWorkshopPermission = doesPermissionsHaveSomeOf(permissions, [4]);
 
@@ -37,13 +37,13 @@ const WorkshopsOverview: FunctionComponent = () => {
   }, []);
 
   return (
-    <Container sx={{ ml: isMobile ? 0 : 2, mr: isMobile ? 0 : 2 }}>
+    <Container>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
         alignContent={"center"}
-        sx={{ mb: 2, maxWidth: "98%" }}
+        sx={{ mb: 2 }}
       >
         <Typography variant="h5" component="h1" gutterBottom fontWeight={"bold"}>
           Alle Workshops

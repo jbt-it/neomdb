@@ -1,35 +1,41 @@
-import { describe, expect, test, beforeAll, beforeEach, afterEach, afterAll } from "@jest/globals";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
 import request from "supertest";
 import app from "../../../src/app";
-import MemberTestUtils from "../../utils/memberTestUtils";
+import { AppDataSource } from "../../../src/datasource";
 import AuthTestUtils from "../../utils/authTestUtils";
-import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
 
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
-beforeAll(() => {
-  //try {
-  return memberTestUtils.initMemberData();
-  // await setupMemberData();
-  // } catch (error) {
-  //console.log(error);
-  // } // Executes after every test
-  // await initMemberData(); // Executes before the first test
-  // await setupMemberData();
+beforeAll(async () => {
+  // Initialize the data source
+  await AppDataSource.initialize();
 });
 
-beforeEach(() => {
-  return memberTestUtils.setupMemberData(); // Executes before every test
+beforeEach(async () => {
+  // Populate the database with test data before each test
+  await memberTestUtils.initMemberData();
+  await memberTestUtils.setupMemberData();
 });
 
-afterEach(() => {
-  return memberTestUtils.clearMemberData();
+afterEach(async () => {
+  // Clean up the database after each test
+  const source = AppDataSource;
+  const entities = source.entityMetadatas;
+
+  await source.query(`SET FOREIGN_KEY_CHECKS = 0;`);
+  for (const entity of entities) {
+    const repository = source.getRepository(entity.name);
+    await repository.query(`DELETE FROM ${entity.tableName}`);
+  }
+  await source.query(`SET FOREIGN_KEY_CHECKS = 1;`);
 });
 
-afterAll(() => {
-  return memberTestUtils.clearInitMemberData();
+afterAll(async () => {
+  // Close the data source
+  await AppDataSource.destroy();
 });
 
 describe("Test member routes", () => {
@@ -116,7 +122,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(3);
+      expect(response.body).toHaveLength(5);
     });
   });
 
@@ -212,7 +218,7 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(85);
+      expect(response.body).toHaveLength(25);
     });
   });
 
@@ -223,14 +229,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8222;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8222;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).not.toBeNull();
       expect(response.body.kontoinhaber).not.toBeNull();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
+      expect(response.body.memberId).toBe(memberId);
     });
 
     test("should return 200 for admin user on other profile", async () => {
@@ -239,14 +245,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8222;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8222;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).not.toBeNull();
       expect(response.body.kontoinhaber).not.toBeNull();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
+      expect(response.body.memberId).toBe(memberId);
     });
 
     test("should return 200 for getting normal user on other profile", async () => {
@@ -255,49 +261,14 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8364;
-      const response = await request(app).get(`/api/members/${mitgliedID}`).send().set("Cookie", `token=${token}`);
+      const memberId = 8364;
+      const response = await request(app).get(`/api/members/${memberId}`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(200);
       expect(response.body.iban).toBeUndefined();
       expect(response.body.kontoinhaber).toBeUndefined();
-      expect(response.body.mitgliedID).toBe(mitgliedID);
-    });
-  });
-
-  describe("GET /:id/permissions", () => {
-    test("should return 200 for EV geeting own Permission", async () => {
-      // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
-      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-      // --- WHEN
-      const mitgliedID = 8324;
-      const response = await request(app)
-        .get(`/api/members/${mitgliedID}/permissions`)
-        .send()
-        .set("Cookie", `token=${token}`);
-
-      // --- THEN
-      expect(response.status).toBe(200);
-      expect(response.body.permissions).toEqual(loginResponse.body.permissions);
-    });
-
-    test("should return 403 for member without permissions getting Permissions of a member", async () => {
-      // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
-      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
-
-      // --- WHEN
-      const mitgliedID = 8167;
-      const response = await request(app)
-        .get(`/api/members/${mitgliedID}/permissions`)
-        .send()
-        .set("Cookie", `token=${token}`);
-
-      // --- THEN
-      expect(response.status).toBe(403);
+      expect(response.body.memberId).toBe(memberId);
     });
   });
 
@@ -311,28 +282,26 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "j.pinkman",
-        geburtsdatum: "2000-04-01",
-        password: "s3cre7",
-        handy: "0176/123456",
-        geschlecht: "1",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 1,
+        generationId: 15,
         email: "j.pinkman@lethimcook.com",
       };
       const response = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(201);
-      expect(response.body.memberID).toBeDefined();
+      expect(response.body.memberId).toBeDefined();
       expect(response.body.statusOverview.querySuccesful).toBe(true);
 
-      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(response.body.memberID);
+      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(response.body.memberId);
       expect(memberFromDB).not.toBeNull();
-      expect(memberFromDB.mitgliedID).toBe(response.body.memberID);
-      expect(memberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(memberFromDB.memberId).toBe(response.body.memberId);
+      expect(memberFromDB.memberStatus.name).toBe("Trainee");
     });
 
     test("should return 403 for creating a new member without permission", async () => {
@@ -342,15 +311,13 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "j.pinkman",
-        geburtsdatum: "2000-04-01",
-        password: "s3cre7",
-        handy: "0176/123456",
-        geschlecht: "1",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 1,
+        generationId: 15,
         email: "j.pinkman@lethimcook.com",
       };
       const response = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
@@ -367,41 +334,39 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const newMember = {
-        vorname: "Jesse",
-        nachname: "Pinkman",
+        firstName: "Jesse",
+        lastName: "Pinkman",
         name: "jesse.pinkman",
-        geburtsdatum: "2000-05-01",
-        password: "s3cre7",
-        handy: "0176/1234567",
-        geschlecht: "0",
-        generation: "15",
-        traineeSeit: createCurrentTimestamp(),
-        email: "j.pinkman@cookpot.com",
+        birthday: new Date("2000-04-01"),
+        mobile: "0176/123456",
+        gender: 0,
+        generationId: 15,
+        email: "j.pinkman@lethimcook.com",
       };
       const firstResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
       const secondResponse = await request(app).post("/api/members/").send(newMember).set("Cookie", `token=${token}`);
       // --- THEN
-      const firstMemberFromDB = await memberTestUtils.getMemberByIDFromDB(firstResponse.body.memberID);
-      const secondMemberFromDB = await memberTestUtils.getMemberByIDFromDB(secondResponse.body.memberID);
+      const firstMemberFromDB = await memberTestUtils.getMemberByIDFromDB(firstResponse.body.memberId);
+      const secondMemberFromDB = await memberTestUtils.getMemberByIDFromDB(secondResponse.body.memberId);
 
       expect(firstResponse.status).toBe(201);
-      expect(firstResponse.body.memberID).toBeDefined();
+      expect(firstResponse.body.memberId).toBeDefined();
       expect(firstResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(firstMemberFromDB).not.toBeNull();
-      expect(firstMemberFromDB.mitgliedID).toBe(firstResponse.body.memberID);
-      expect(firstMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(firstMemberFromDB.memberId).toBe(firstResponse.body.memberId);
+      expect(firstMemberFromDB.memberStatus.name).toBe("Trainee");
 
       expect(secondResponse.status).toBe(201);
-      expect(secondResponse.body.memberID).toBeDefined();
+      expect(secondResponse.body.memberId).toBeDefined();
       expect(secondResponse.body.statusOverview.querySuccesful).toBe(true);
 
       expect(secondMemberFromDB).not.toBeNull();
-      expect(secondMemberFromDB.mitgliedID).toBe(secondResponse.body.memberID);
-      expect(secondMemberFromDB.mitgliedstatus).toBe("Trainee");
+      expect(secondMemberFromDB.memberId).toBe(secondResponse.body.memberId);
+      expect(secondMemberFromDB.memberStatus.name).toBe("Trainee");
 
-      expect(firstMemberFromDB.jbt_email).toBe("jesse.pinkman@studentische-beratung.de");
-      expect(secondMemberFromDB.jbt_email).toBe("jesse.pinkman1@studentische-beratung.de");
+      expect(firstMemberFromDB.jbtEmail).toBe("jesse.pinkman@studentische-beratung.de");
+      expect(secondMemberFromDB.jbtEmail).toBe("jesse.pinkman1@studentische-beratung.de");
     });
   });
 
@@ -412,28 +377,28 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(201);
     });
 
-    test("should return 403 for deligate without havig permission", async () => {
+    test("should return 403 for deligate without having permission", async () => {
       // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -447,16 +412,16 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 9999;
+      const memberId = 9999;
       const permissionID = 8;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(404);
-      expect(JSON.parse(response.text).message).toBe(`Member with id ${memberID} does not exist`);
+      expect(JSON.parse(response.text).message).toBe(`Member with id ${memberId} does not exist`);
     });
 
     test("should return 403 for deligate permission not existing", async () => {
@@ -465,11 +430,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 9999;
       const response = await request(app)
         .post("/api/members/permissions")
-        .send({ memberID, permissionID })
+        .send({ memberId, permissionID })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -486,12 +451,12 @@ describe("Test member routes", () => {
 
       // --- WHEN
       const departmentID = 1;
-      const linkZielvorstellung =
+      const linkObjectivePresentation =
         "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/hwekfoiwfjGFHCkhdllewlj12Q?e=JHVUZFZU";
-      const linkOrganigramm = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
+      const linkOrganigram = "https://juniorbusiness.sharepoint.com/:f:/s/RessortIT/kffkCDZTFU54698?e=GUJGZZU";
       const response = await request(app)
         .put(`/api/members/departments/${departmentID}`)
-        .send({ linkZielvorstellung, linkOrganigramm })
+        .send({ linkObjectivePresentation, linkOrganigram })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -525,83 +490,97 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8111;
+      const memberId = 8111;
       const memberInfo = {
-        mitgliedID,
-        vorname: "Brandon-Lee",
-        nachname: "Frye",
-        jbt_email: "b.frye@studentische-beratung.de",
-        geschlecht: 1,
-        geburtsdatum: "1990-06-05",
-        handy: "0162/9846320",
-        mitgliedstatus: "passives Mitglied",
+        memberId,
+        firstname: "Brandon-Lee",
+        lastname: "Frye",
+        jbtEmail: "b.frye@studentische-beratung.de",
+        gender: Boolean(1),
+        birthday: new Date("1990-06-05"),
+        mobile: "0162/9846320",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
         generation: null,
-        internesprojekt: null,
-        trainee_seit: "2011-04-30",
-        mitglied_seit: "2012-11-30",
-        alumnus_seit: null,
-        senior_seit: null,
-        aktiv_seit: "2012-11-30",
-        passiv_seit: null,
-        ausgetreten_seit: null,
-        ressort: "Mitglieder",
-        arbeitgeber: "Versicherung Deutschland",
-        strasse1: "Woodsman Ave 61",
-        plz1: "70364",
-        ort1: "Stuttgart",
-        tel1: null,
+        internalProject: null,
+        traineeSince: new Date("2011-04-30"),
+        memberSince: new Date("2012-11-30"),
+        alumnusSince: null,
+        seniorSince: null,
+        activeSince: new Date("2012-11-30"),
+        passiveSince: null,
+        exitedSince: null,
+        department: {
+          departmentId: 5,
+          name: "Mitglieder",
+          shortName: "MIT",
+        },
+        employer: "Versicherung Deutschland",
+        street1: "Woodsman Ave 61",
+        postalCode1: "70364",
+        city1: "Stuttgart",
+        phone1: null,
         email1: "brandon-lee@gmx.de",
-        strasse2: "Budapester Straße 96",
-        plz2: "56370",
-        ort2: "Rheinland-Pfalz",
-        tel2: "07042/984365",
+        street2: "Budapester Straße 96",
+        postalCode2: "56370",
+        city2: "Rheinland-Pfalz",
+        phone2: "07042/984365",
         email2: "brandon-lee@gmx.de",
-        hochschule: "Universität Hohenheim",
-        studiengang: "Master of Financial Management",
-        studienbeginn: "2014-09-30T22:00:00.000Z",
-        studienende: null,
-        vertiefungen: "Controlling und Unternehmensrechnung",
-        ausbildung: null,
-        engagement: null,
-        canPL: "2013-12-22",
-        canQM: "2013-12-22",
-        lastchange: "1899-11-29",
-        fuehrerschein: false,
-        ersthelferausbildung: false,
+        university: "Universität Hohenheim",
+        courseOfStudy: "Master of Financial Management",
+        studyStart: new Date("2014-09-30T22:00:00.000Z"),
+        studyEnd: null,
+        specializations: "Controlling und Unternehmensrechnung",
+        apprenticeship: null,
+        commitment: null,
+        canPL: new Date("2013-12-22"),
+        canQM: new Date("2013-12-22"),
+        drivingLicense: 0,
+        firstAidTraining: false,
         mentor: null,
         mentees: [],
-        sprachen: [
+        languages: [
           {
-            wert: "Deutsch",
-            niveau: 5,
+            memberId: memberId,
+            value: "Deutsch",
+            level: 5,
           },
+          { memberId: memberId, value: "English", level: 3 },
           {
-            wert: "English",
-            niveau: 3,
-          },
-          {
-            wert: "Französisch",
-            niveau: 1,
+            memberId: memberId,
+            value: "Französisch",
+            level: 1,
           },
         ],
-        edvkenntnisse: [
+        itSkills: [
           {
-            wert: "MS-Office",
-            niveau: 3,
+            memberId: memberId,
+            value: "MS-Office",
+            level: 3,
           },
           {
-            wert: "PHP",
-            niveau: 1,
+            memberId: memberId,
+            value: "PHP",
+            level: 1,
           },
         ],
       };
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}`)
+        .patch(`/api/members/${memberId}`)
         .send(memberInfo)
         .set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(204);
+
+      // Check if the member was updated correctly in the database
+      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(memberId);
+      expect(memberFromDB).not.toBeNull();
+      expect(memberFromDB.memberId).toBe(memberId);
+      expect(memberFromDB.firstName).toBe(memberInfo.firstname);
+      expect(memberFromDB.lastChange).not.toBeNull();
     });
 
     test("should return 403 for update member with permission", async () => {
@@ -610,78 +589,86 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8111;
+      const memberId = 8111;
       const memberInfo = {
-        mitgliedID,
-        vorname: "Brandon-Lee",
-        nachname: "Frye",
-        jbt_email: "b.frye@studentische-beratung.de",
-        geschlecht: 1,
-        geburtsdatum: "1990-06-05",
-        handy: "0162/9846320",
-        mitgliedstatus: "passives Mitglied",
+        memberId,
+        firstname: "Brandon-Lee",
+        lastname: "Frye",
+        jbtEmail: "b.frye@studentische-beratung.de",
+        gender: Boolean(1),
+        birthday: new Date("1990-06-05"),
+        mobile: "0162/9846320",
+        memberStatus: {
+          memberStatusId: 4,
+          name: "passives Mitglied",
+        },
         generation: null,
-        internesprojekt: null,
-        trainee_seit: "2011-04-30",
-        mitglied_seit: "2012-11-30",
-        alumnus_seit: null,
-        senior_seit: null,
-        aktiv_seit: "2012-11-30",
-        passiv_seit: null,
-        ausgetreten_seit: null,
-        ressort: "Mitglieder",
-        arbeitgeber: "Versicherung Deutschland",
-        strasse1: "Woodsman Ave 61",
-        plz1: "70364",
-        ort1: "Stuttgart",
-        tel1: null,
+        internalProject: null,
+        traineeSince: new Date("2011-04-30"),
+        memberSince: new Date("2012-11-30"),
+        alumnusSince: null,
+        seniorSince: null,
+        activeSince: new Date("2012-11-30"),
+        passiveSince: null,
+        exitedSince: null,
+        department: {
+          departmentId: 5,
+          name: "Mitglieder",
+          shortName: "MIT",
+        },
+        employer: "Versicherung Deutschland",
+        street1: "Woodsman Ave 61",
+        postalCode1: "70364",
+        city1: "Stuttgart",
+        phone1: null,
         email1: "brandon-lee@gmx.de",
-        strasse2: "Budapester Straße 96",
-        plz2: "56370",
-        ort2: "Rheinland-Pfalz",
-        tel2: "07042/984365",
+        street2: "Budapester Straße 96",
+        postalCode2: "56370",
+        city2: "Rheinland-Pfalz",
+        phone2: "07042/984365",
         email2: "brandon-lee@gmx.de",
-        hochschule: "Universität Hohenheim",
-        studiengang: "Master of Financial Management",
-        studienbeginn: "2014-09-30T22:00:00.000Z",
-        studienende: null,
-        vertiefungen: "Controlling und Unternehmensrechnung",
-        ausbildung: null,
-        engagement: null,
-        canPL: "2013-12-22",
-        canQM: "2013-12-22",
-        lastchange: "1899-11-29",
-        fuehrerschein: false,
-        ersthelferausbildung: false,
+        university: "Universität Hohenheim",
+        courseOfStudy: "Master of Financial Management",
+        studyStart: new Date("2014-09-30T22:00:00.000Z"),
+        studyEnd: null,
+        specializations: "Controlling und Unternehmensrechnung",
+        apprenticeship: null,
+        commitment: null,
+        canPL: new Date("2013-12-22"),
+        canQM: new Date("2013-12-22"),
+        lastChange: new Date("1899-11-29"),
+        drivingLicense: 0,
+        firstAidTraining: false,
         mentor: null,
         mentees: [],
-        sprachen: [
+        languages: [
           {
-            wert: "Deutsch",
-            niveau: 5,
+            memberId: memberId,
+            value: "Deutsch",
+            level: 5,
           },
+          { memberId: memberId, value: "English", level: 3 },
           {
-            wert: "English",
-            niveau: 3,
-          },
-          {
-            wert: "Französisch",
-            niveau: 1,
+            memberId: memberId,
+            value: "Französisch",
+            level: 1,
           },
         ],
-        edvkenntnisse: [
+        itSkills: [
           {
-            wert: "MS-Office",
-            niveau: 3,
+            memberId: memberId,
+            value: "MS-Office",
+            level: 3,
           },
           {
-            wert: "PHP",
-            niveau: 1,
+            memberId: memberId,
+            value: "PHP",
+            level: 1,
           },
         ],
       };
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}`)
+        .patch(`/api/members/${memberId}`)
         .send(memberInfo)
         .set("Cookie", `token=${token}`);
 
@@ -697,11 +684,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8167;
-      const mitgliedstatus = "passives Mitglied";
+      const memberId = 8167;
+      const memberStatus = "passives Mitglied";
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}/status`)
-        .send({ mitgliedstatus })
+        .patch(`/api/members/${memberId}/status`)
+        .send({ memberStatus })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -731,11 +718,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const mitgliedID = 8167;
-      const mitgliedstatus = "unbekannt";
+      const memberId = 8167;
+      const memberStatus = "unbekannt";
       const response = await request(app)
-        .patch(`/api/members/${mitgliedID}/status`)
-        .send({ mitgliedstatus })
+        .patch(`/api/members/${memberId}/status`)
+        .send({ memberStatus })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -750,11 +737,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8167;
+      const memberId = 8167;
       const permissionID = 8;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -767,11 +754,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8167;
+      const memberId = 8167;
       const permissionID = 1;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -780,15 +767,15 @@ describe("Test member routes", () => {
 
     test("should return 403 for delete member's permission without permission as normal member", async () => {
       // --- GIVEN
-      const loginResponse = await authTestUtils.performLogin("w.luft", "s3cre7");
+      const loginResponse = await authTestUtils.performLogin("r.norton", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 5;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
@@ -801,11 +788,11 @@ describe("Test member routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberID = 8320;
+      const memberId = 8320;
       const permissionID = 200;
       const response = await request(app)
         .delete(`/api/members/permissions`)
-        .send({ permissionID, memberID })
+        .send({ permissionID, memberId })
         .set("Cookie", `token=${token}`);
 
       // --- THEN
