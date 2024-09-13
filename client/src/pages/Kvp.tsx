@@ -162,8 +162,8 @@ ${radioState}
 
   return (
     <div>
-      <Grid container spacing={2} sx={{ paddingTop: "50px" }}>
-        <Grid item container alignItems="center" spacing={0} xs={12} sx={{ paddingBottom: "50px" }}>
+      <Grid container spacing={2} sx={{ paddingTop: "30px" }}>
+        <Grid item container alignItems="center" spacing={0} xs={12}>
           <Grid item sx={{ width: "80px" }}>
             <Typography variant="body1">Absender:</Typography>
           </Grid>
@@ -172,6 +172,8 @@ ${radioState}
               {memberDetails?.firstname} {memberDetails?.lastname}
             </Typography>
           </Grid>
+        </Grid>
+        <Grid item container alignItems="center" spacing={0} xs={12}>
           <Grid item sx={{ width: "140px" }}>
             <Typography variant="body1">Absenderadresse:</Typography>
           </Grid>
