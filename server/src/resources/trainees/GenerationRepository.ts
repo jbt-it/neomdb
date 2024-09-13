@@ -18,8 +18,19 @@ export const GenerationRepository = AppDataSource.getRepository(Generation).exte
    * Retrieves all generations
    * @returns The generations
    */
-  getGenerations(): Promise<Generation[]> {
-    return this.find();
+  async getGenerations(current: boolean): Promise<Generation[]> {
+    let result;
+    if (current) {
+      result = await AppDataSource.getRepository(Generation)
+        .createQueryBuilder("generation")
+        .orderBy("generationID", "DESC")
+        .limit(1)
+        .getOne();
+    } else {
+      result = this.find();
+    }
+
+    return result;
   },
 
   /**

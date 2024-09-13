@@ -89,6 +89,7 @@ const TraineePreferences: React.FunctionComponent = () => {
       })
       .then((res) => {
         if (res.status === 200) {
+          console.log(res.data);
           setInternalprojects(res.data);
         }
       })
@@ -135,6 +136,7 @@ const TraineePreferences: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             const prefs: TraineePreference = res.data;
+            console.log(prefs);
             setTraineePreferences(prefs);
           }
         }
@@ -196,7 +198,6 @@ const TraineePreferences: React.FunctionComponent = () => {
       .then((res) => {
         if (res.status === 200) {
           if (mounted) {
-            console.log(res.data);
             const memberData: MemberPartialDto = res.data;
             getInternalProjects(memberData.generationId);
             getMentors(memberData.generationId);
@@ -235,14 +236,14 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newKuerzel = department.shortName;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_ressort2 === newValue || traineePreferences.wahl_ressort3 === newValue) {
+      if (traineePreferences.departmentChoice2 === newValue || traineePreferences.departmentChoice3 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
         return;
       } else {
         const newPrefs: TraineePreference = {
           ...traineePreferences,
-          wahl_ressort1: newValue,
-          wahl_ressort1_kuerzel: newKuerzel,
+          departmentChoice1: newValue,
+          departmentChoice1ShortName: newKuerzel,
         };
         setTraineePreferences(newPrefs);
       }
@@ -263,10 +264,14 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newKuerzel = department.shortName;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort3 === newValue) {
+      if (traineePreferences.departmentChoice1 === newValue || traineePreferences.departmentChoice3 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
-        setTraineePreferences({ ...traineePreferences, wahl_ressort2: newValue, wahl_ressort2_kuerzel: newKuerzel });
+        setTraineePreferences({
+          ...traineePreferences,
+          departmentChoice2: newValue,
+          departmentChoice2ShortName: newKuerzel,
+        });
       }
     }
   };
@@ -285,10 +290,14 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newKuerzel = department.shortName;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_ressort1 === newValue || traineePreferences.wahl_ressort2 === newValue) {
+      if (traineePreferences.departmentChoice1 === newValue || traineePreferences.departmentChoice2 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
-        setTraineePreferences({ ...traineePreferences, wahl_ressort3: newValue, wahl_ressort3_kuerzel: newKuerzel });
+        setTraineePreferences({
+          ...traineePreferences,
+          departmentChoice3: newValue,
+          departmentChoice3ShortName: newKuerzel,
+        });
       }
     }
   };
@@ -299,24 +308,24 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleIPFirstChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
-    if (!internalProject?.kuerzel) {
+    const internalProject = internalprojects.find((internalProject) => internalProject.internalProjectId === newValue);
+    if (!internalProject?.abbreviation) {
       showErrorMessage("Ungültiges Internes Projekt");
       return;
     }
-    const newKuerzel = internalProject.kuerzel;
+    const newKuerzel = internalProject.abbreviation;
 
     if (traineePreferences) {
       if (
-        traineePreferences.wahl_internesprojekt2 === newValue ||
-        traineePreferences.wahl_internesprojekt3 === newValue
+        traineePreferences.internalProjectChoice2 === newValue ||
+        traineePreferences.internalProjectChoice3 === newValue
       ) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
         setTraineePreferences({
           ...traineePreferences,
-          wahl_internesprojekt1: newValue,
-          wahl_internesprojekt1_kuerzel: newKuerzel,
+          internalProjectChoice1: newValue,
+          internalProjectChoice1ShortName: newKuerzel,
         });
       }
     }
@@ -328,24 +337,24 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleIPSecondChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
-    if (!internalProject?.kuerzel) {
+    const internalProject = internalprojects.find((internalProject) => internalProject.internalProjectId === newValue);
+    if (!internalProject?.abbreviation) {
       showErrorMessage("Ungültiges Internes Projekt");
       return;
     }
-    const newKuerzel = internalProject.kuerzel;
+    const newKuerzel = internalProject.abbreviation;
 
     if (traineePreferences) {
       if (
-        traineePreferences.wahl_internesprojekt1 === newValue ||
-        traineePreferences.wahl_internesprojekt3 === newValue
+        traineePreferences.internalProjectChoice1 === newValue ||
+        traineePreferences.internalProjectChoice3 === newValue
       ) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
         setTraineePreferences({
           ...traineePreferences,
-          wahl_internesprojekt2: newValue,
-          wahl_internesprojekt2_kuerzel: newKuerzel,
+          internalProjectChoice2: newValue,
+          internalProjectChoice2ShortName: newKuerzel,
         });
       }
     }
@@ -357,24 +366,24 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleIPThirdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = parseInt(event.target.value);
-    const internalProject = internalprojects.find((internalProject) => internalProject.internesProjektID === newValue);
-    if (!internalProject?.kuerzel) {
+    const internalProject = internalprojects.find((internalProject) => internalProject.internalProjectId === newValue);
+    if (!internalProject?.abbreviation) {
       showErrorMessage("Ungültiges Internes Projekt");
       return;
     }
-    const newKuerzel = internalProject.kuerzel;
+    const newKuerzel = internalProject.abbreviation;
 
     if (traineePreferences) {
       if (
-        traineePreferences.wahl_internesprojekt1 === newValue ||
-        traineePreferences.wahl_internesprojekt2 === newValue
+        traineePreferences.internalProjectChoice1 === newValue ||
+        traineePreferences.internalProjectChoice2 === newValue
       ) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
         setTraineePreferences({
           ...traineePreferences,
-          wahl_internesprojekt3: newValue,
-          wahl_internesprojekt3_kuerzel: newKuerzel,
+          internalProjectChoice3: newValue,
+          internalProjectChoice3ShortName: newKuerzel,
         });
       }
     }
@@ -394,10 +403,10 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_mentor2 === newValue || traineePreferences.wahl_mentor3 === newValue) {
+      if (traineePreferences.mentorChoice2 === newValue || traineePreferences.mentorChoice3 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
-        setTraineePreferences({ ...traineePreferences, wahl_mentor1: newValue, wahl_mentor1_name: newName });
+        setTraineePreferences({ ...traineePreferences, mentorChoice1: newValue, mentorChoice1Name: newName });
       }
     }
   };
@@ -416,10 +425,10 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor3 === newValue) {
+      if (traineePreferences.mentorChoice1 === newValue || traineePreferences.mentorChoice3 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
-        setTraineePreferences({ ...traineePreferences, wahl_mentor2: newValue, wahl_mentor2_name: newName });
+        setTraineePreferences({ ...traineePreferences, mentorChoice2: newValue, mentorChoice2Name: newName });
       }
     }
   };
@@ -438,10 +447,10 @@ const TraineePreferences: React.FunctionComponent = () => {
     const newName = mentor.firstname.charAt(0) + "." + mentor.lastname;
 
     if (traineePreferences) {
-      if (traineePreferences.wahl_mentor1 === newValue || traineePreferences.wahl_mentor2 === newValue) {
+      if (traineePreferences.mentorChoice1 === newValue || traineePreferences.mentorChoice2 === newValue) {
         showErrorMessage("Für jede Präferenz muss eine andere Wahl getroffen werden");
       } else {
-        setTraineePreferences({ ...traineePreferences, wahl_mentor3: newValue, wahl_mentor3_name: newName });
+        setTraineePreferences({ ...traineePreferences, mentorChoice3: newValue, mentorChoice3Name: newName });
       }
     }
   };
@@ -452,7 +461,7 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleFirstIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (traineePreferences) {
-      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt1_motivation: event.target.value });
+      setTraineePreferences({ ...traineePreferences, internalProjectChoice1Motivation: event.target.value });
     }
   };
 
@@ -462,7 +471,7 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleSecondIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (traineePreferences) {
-      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt2_motivation: event.target.value });
+      setTraineePreferences({ ...traineePreferences, internalProjectChoice2Motivation: event.target.value });
     }
   };
 
@@ -472,11 +481,12 @@ const TraineePreferences: React.FunctionComponent = () => {
    */
   const handleThirdIPMotivationChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (traineePreferences) {
-      setTraineePreferences({ ...traineePreferences, wahl_internesprojekt3_motivation: event.target.value });
+      setTraineePreferences({ ...traineePreferences, internalProjectChoice3Motivation: event.target.value });
     }
   };
 
   const savePreferences = () => {
+    console.log(traineePreferences);
     api
       .put(`/trainees/${auth.userID}/trainee-choices`, traineePreferences)
       .then((res) => {
@@ -522,7 +532,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleRessortFirstChange}
-          value={traineePreferences?.wahl_ressort1 || ""}
+          value={traineePreferences?.departmentChoice1 || ""}
           select
         >
           {renderRessortItems()}
@@ -532,7 +542,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleRessortSecondChange}
-          value={traineePreferences?.wahl_ressort2 || ""}
+          value={traineePreferences?.departmentChoice2 || ""}
           select
         >
           {renderRessortItems()}
@@ -542,7 +552,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleRessortThirdChange}
-          value={traineePreferences?.wahl_ressort3 || ""}
+          value={traineePreferences?.departmentChoice3 || ""}
           select
         >
           {renderRessortItems()}
@@ -582,7 +592,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleMentorFirstChange}
-          value={traineePreferences?.wahl_mentor1 || ""}
+          value={traineePreferences?.mentorChoice1 || ""}
           select
         >
           {renderMentorItems()}
@@ -592,7 +602,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleMentorSecondChange}
-          value={traineePreferences?.wahl_mentor2 || ""}
+          value={traineePreferences?.mentorChoice2 || ""}
           select
         >
           {renderMentorItems()}
@@ -602,7 +612,7 @@ const TraineePreferences: React.FunctionComponent = () => {
           color="primary"
           sx={styles.selectionElement}
           onChange={handleMentorThirdChange}
-          value={traineePreferences?.wahl_mentor3 || ""}
+          value={traineePreferences?.mentorChoice3 || ""}
           select
         >
           {renderMentorItems()}
@@ -618,8 +628,8 @@ const TraineePreferences: React.FunctionComponent = () => {
   const renderIPItems = () => {
     return internalprojects.map((internalproject) => {
       return (
-        <MenuItem key={internalproject.internesProjektID} value={internalproject.internesProjektID}>
-          {internalproject.projektname}
+        <MenuItem key={internalproject.internalProjectId} value={internalproject.internalProjectId}>
+          {internalproject.projectName}
         </MenuItem>
       );
     });
@@ -641,7 +651,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             sx={styles.selectionElement}
             onChange={handleIPFirstChange}
-            value={traineePreferences?.wahl_internesprojekt1 || ""}
+            value={traineePreferences?.internalProjectChoice1 || ""}
             select
           >
             {renderIPItems()}
@@ -656,7 +666,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleFirstIPMotivationChange}
-            value={traineePreferences?.wahl_internesprojekt1_motivation}
+            value={traineePreferences?.internalProjectChoice1Motivation}
           ></TextField>
         </Grid>
         <Divider sx={styles.paperHeaderDivider} />
@@ -666,7 +676,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             sx={styles.selectionElement}
             onChange={handleIPSecondChange}
-            value={traineePreferences?.wahl_internesprojekt2 || ""}
+            value={traineePreferences?.internalProjectChoice2 || ""}
             select
           >
             {renderIPItems()}
@@ -681,7 +691,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleSecondIPMotivationChange}
-            value={traineePreferences?.wahl_internesprojekt2_motivation}
+            value={traineePreferences?.internalProjectChoice2Motivation}
           ></TextField>
         </Grid>
         <Divider sx={styles.paperHeaderDivider} />
@@ -691,7 +701,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             color="primary"
             sx={styles.selectionElement}
             onChange={handleIPThirdChange}
-            value={traineePreferences?.wahl_internesprojekt3 || ""}
+            value={traineePreferences?.internalProjectChoice3 || ""}
             select
           >
             {renderIPItems()}
@@ -706,7 +716,7 @@ const TraineePreferences: React.FunctionComponent = () => {
             multiline
             rows={10}
             onChange={handleThirdIPMotivationChange}
-            value={traineePreferences?.wahl_internesprojekt3_motivation}
+            value={traineePreferences?.internalProjectChoice3Motivation}
           ></TextField>
         </Grid>
         <Divider sx={styles.paperHeaderDivider} />

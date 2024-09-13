@@ -49,7 +49,7 @@ const TraineeSection: React.FunctionComponent = () => {
         if (res.status === 200) {
           if (mounted) {
             setGenerations(res.data.reverse());
-            setSelectedGeneration(res.data[0].description);
+            setSelectedGeneration(res.data[0].bezeichnung);
             setIsLoadingGenerations(false);
           }
         }

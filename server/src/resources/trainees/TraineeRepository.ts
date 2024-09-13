@@ -4,6 +4,7 @@ import { Department } from "../../entities/Department";
 import { Member } from "../../entities/Member";
 import { MemberHasWorkshopInstance } from "../../entities/MemberHasWorkshopInstance";
 import { MandatoryWorkshopFeedback } from "../../types/traineeTypes";
+import { TraineeChoiceDto } from "types/traineeTypes";
 
 export const TraineeRepository = AppDataSource.getRepository(Member).extend({
   /**
@@ -43,6 +44,70 @@ export const TraineeRepository = AppDataSource.getRepository(Member).extend({
       departmentId: department,
     });
   },
+
+  /**
+   * Get all choices of trainees of a generation
+   * @param generationID id of the generation
+   * @throws QueryError if the query fails
+   */
+  getTraineePreferencesByMemberID(memberID: number): Promise<Member> {
+    return this.findOne({
+      where: { memberId: memberID },
+      relations: [
+        "departmentChoice",
+        "departmentChoice1",
+        "departmentChoice2",
+        "departmentChoice3",
+        "internalProjectChoice",
+        "internalProjectChoice1",
+        "internalProjectChoice2",
+        "internalProjectChoice3",
+        "mentorChoice",
+        "mentorChoice1",
+        "mentorChoice2",
+        "mentorChoice3",
+      ],
+    });
+  },
+
+  setTraineePreferencesByMemberID(memberId: number, preferences: TraineeChoiceDto): Promise<void> {
+    return this.update(memberId, {
+      departmentChoice: preferences.departmentChoice,
+      departmentChoice1: preferences.departmentChoice1,
+      departmentChoice2: preferences.departmentChoice2,
+      departmentChoice3: preferences.departmentChoice3,
+      mentorChoice: preferences.mentorChoice,
+      mentorChoice1: preferences.mentorChoice1,
+      mentorChoice2: preferences.mentorChoice2,
+      mentorChoice3: preferences.mentorChoice3,
+      internalProjectChoice: preferences.internalProjectChoice,
+      internalProjectChoice1: preferences.internalProjectChoice1,
+      choiceInternalProject1Motivation: preferences.internalProjectChoice1Motivation,
+      internalProjectChoice2: preferences.internalProjectChoice2,
+      choiceInternalProject2Motivation: preferences.internalProjectChoice2Motivation,
+      internalProjectChoice3: preferences.internalProjectChoice3,
+      choiceInternalProject3Motivation: preferences.internalProjectChoice3Motivation,
+    });
+  },
+  /*
+  setTraineePreferencesByMemberID(memberId: number, preferences: TraineeChoiceDto): Promise<void> {
+    return this.update(memberId, {
+      departmentChoice: preferences.departmentChoice,
+      departmentChoice1: preferences.departmentChoice1,
+      departmentChoice2: preferences.departmentChoice2,
+      departmentChoice3: preferences.departmentChoice3,
+      mentorChoice: preferences.mentorChoice,
+      mentorChoice1: preferences.mentorChoice1,
+      mentorChoice2: preferences.mentorChoice2,
+      mentorChoice3: preferences.mentorChoice3,
+      internalProjectChoice: preferences.internalProjectChoice,
+      internalProjectChoice1: preferences.internalProjectChoice1,
+      internalProjectChoice1Motivation: preferences.internalProjectChoice1Motivation,
+      internalProjectChoice2: preferences.internalProjectChoice2,
+      internalProjectChoice3: preferences.internalProjectChoice3,
+    });
+  },
+  */
 });
 export const MemberHasWorkshopInstanceRepository = AppDataSource.getRepository(MemberHasWorkshopInstance).extend({
   /**

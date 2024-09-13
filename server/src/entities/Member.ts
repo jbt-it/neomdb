@@ -48,10 +48,10 @@ export class Member {
   memberId: number;
 
   @Column("varchar", { name: "vorname", length: 30 })
-  firstName: string;
+  firstname: string;
 
   @Column("varchar", { name: "nachname", length: 30 })
-  lastName: string;
+  lastname: string;
 
   @Column("varchar", { name: "name", unique: true, length: 60 })
   name: string;
@@ -335,6 +335,90 @@ export class Member {
   })
   @JoinColumn([{ name: "ressort", referencedColumnName: "departmentId" }])
   department: Department;
+
+  @ManyToOne(() => Department, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_ressort", referencedColumnName: "departmentId" }])
+  departmentChoice: Department;
+
+  @ManyToOne(() => Department, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_ressort1", referencedColumnName: "departmentId" }])
+  departmentChoice1: Department;
+
+  @ManyToOne(() => Department, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_ressort2", referencedColumnName: "departmentId" }])
+  departmentChoice2: Department;
+
+  @ManyToOne(() => Department, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_ressort3", referencedColumnName: "departmentId" }])
+  departmentChoice3: Department;
+
+  @ManyToOne(() => InternalProject, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_internesprojekt", referencedColumnName: "internalProjectId" }])
+  internalProjectChoice: InternalProject;
+
+  @ManyToOne(() => InternalProject, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_internesprojekt1", referencedColumnName: "internalProjectId" }])
+  internalProjectChoice1: InternalProject;
+
+  @ManyToOne(() => InternalProject, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_internesprojekt2", referencedColumnName: "internalProjectId" }])
+  internalProjectChoice2: InternalProject;
+
+  @ManyToOne(() => InternalProject, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_internesprojekt3", referencedColumnName: "internalProjectId" }])
+  internalProjectChoice3: InternalProject;
+
+  @ManyToOne(() => Member, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_mentor", referencedColumnName: "memberId" }])
+  mentorChoice: Member;
+
+  @ManyToOne(() => Member, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_mentor1", referencedColumnName: "memberId" }])
+  mentorChoice1: Member;
+
+  @ManyToOne(() => Member, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_mentor2", referencedColumnName: "memberId" }])
+  mentorChoice2: Member;
+
+  @ManyToOne(() => Member, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "wahl_mentor3", referencedColumnName: "memberId" }])
+  mentorChoice3: Member;
 
   @OneToMany(() => MemberHasOtherPosition, (memberHasOtherPosition) => memberHasOtherPosition.member)
   memberHasOtherPositions: MemberHasOtherPosition[];

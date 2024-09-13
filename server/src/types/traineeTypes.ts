@@ -24,21 +24,36 @@ export type InternalProjectDto = {
  * Type of the trainee choice of a member
  */
 export type TraineeChoiceDto = {
-  memberID: number;
+  memberId: number;
   firstname: string;
   lastname: string;
-  choice_mentor: number;
-  choice_mentor1: number;
-  choice_mentor2: number;
-  choice_mentor3: number;
-  choice_internalProject: number;
-  choice_internalProject1: number;
-  choice_internalProject2: number;
-  choice_internalProject3: number;
-  choice_department: number;
-  choice_department1: number;
-  choice_department2: number;
-  choice_department3: number;
+  mentorChoice: number | null;
+  mentorChoiceName: string | null;
+  mentorChoice1: number | null;
+  mentorChoice1Name: string | null;
+  mentorChoice2: number | null;
+  mentorChoice2Name: string | null;
+  mentorChoice3: number | null;
+  mentorChoice3Name: string | null;
+  departmentChoice: number | null;
+  departmentChoiceShortName: string | null;
+  departmentChoice1: number | null;
+  departmentChoice1ShortName: string | null;
+  departmentChoice2: number | null;
+  departmentChoice2ShortName: string | null;
+  departmentChoice3: number | null;
+  departmentChoice3ShortName: string | null;
+  internalProjectChoice: number | null;
+  internalProjectChoiceShortName: string | null;
+  internalProjectChoice1: number | null;
+  internalProjectChoice1ShortName: string | null;
+  internalProjectChoice1Motivation: string | null;
+  internalProjectChoice2: number | null;
+  internalProjectChoice2ShortName: string | null;
+  internalProjectChoice2Motivation: string | null;
+  internalProjectChoice3: number | null;
+  internalProjectChoice3ShortName: string | null;
+  internalProjectChoice3Motivation: string | null;
 };
 
 /**

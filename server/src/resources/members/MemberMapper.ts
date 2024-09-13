@@ -46,8 +46,8 @@ export class MemberMapper {
   static memberToMenteeDto(member: Member): MenteeDto {
     return {
       memberId: member.memberId,
-      lastname: member.lastName,
-      firstname: member.firstName,
+      lastname: member.lastname,
+      firstname: member.firstname,
     };
   }
   static memberToMentorDto(member: Member): MentorDto {
@@ -55,16 +55,16 @@ export class MemberMapper {
     return member
       ? {
           memberId: member.memberId,
-          lastname: member.lastName,
-          firstname: member.firstName,
+          lastname: member.lastname,
+          firstname: member.firstname,
         }
       : null;
   }
   static memberToMemberFieldDto(member: Member): MembersFieldDto {
     return {
       memberId: member.memberId,
-      lastname: member.lastName,
-      firstname: member.firstName,
+      lastname: member.lastname,
+      firstname: member.firstname,
       memberStatus: member.memberStatus,
     };
   }
@@ -81,8 +81,8 @@ export class MemberMapper {
   static memberToDepartmentMemberDto(member: Member): DepartmentMemberDto {
     return {
       memberId: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
+      firstname: member.firstname,
+      lastname: member.lastname,
       department: this.departmentToDepartmentPartialDto(member.department),
     };
   }
@@ -96,15 +96,15 @@ export class MemberMapper {
   static memberToMemberPermissionAssignmentDto(member: Member): MemberPermissionAssignmentDto {
     return {
       memberId: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
+      firstname: member.firstname,
+      lastname: member.lastname,
     };
   }
   static memberToMemberPartialDto(member: Member): MemberPartialDto {
     return {
       memberId: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
+      firstname: member.firstname,
+      lastname: member.lastname,
       generationId: member.generationId,
       internalProjectId: member.internalProjectId,
       mobile: member.mobile,
@@ -117,8 +117,8 @@ export class MemberMapper {
   static memberToDirectorDto(member: MemberHasDirectorPosition): DirectorDto {
     return {
       memberId: member.memberId,
-      firstname: member.member.firstName,
-      lastname: member.member.lastName,
+      firstname: member.member.firstname,
+      lastname: member.member.lastname,
       gender: member.member.gender,
       from: member.from,
       until: member.until,
@@ -150,8 +150,8 @@ export class MemberMapper {
     if (!withFinancialData) {
       return {
         memberId: member.memberId,
-        lastname: member.lastName,
-        firstname: member.firstName,
+        lastname: member.lastname,
+        firstname: member.firstname,
         gender: member.gender,
         birthday: member.birthday,
         mobile: member.mobile,
@@ -198,8 +198,8 @@ export class MemberMapper {
     } else {
       return {
         memberId: member.memberId,
-        lastname: member.lastName,
-        firstname: member.firstName,
+        lastname: member.lastname,
+        firstname: member.firstname,
         gender: member.gender,
         birthday: member.birthday,
         mobile: member.mobile,

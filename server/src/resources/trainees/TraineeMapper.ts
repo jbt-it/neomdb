@@ -11,23 +11,38 @@ import { InternalProject } from "../../entities/InternalProject";
 export class TraineeMapper {
   // --- To DTO mapper functions
 
-  static memberToTraineeChoiceDto(member: Member): TraineeChoiceDto {
+  static traineeToTraineeChoiceDto(member: Member): TraineeChoiceDto {
     return {
-      memberID: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
-      choice_mentor: member.choiceMentor,
-      choice_mentor1: member.choiceMentor1,
-      choice_mentor2: member.choiceMentor2,
-      choice_mentor3: member.choiceMentor3,
-      choice_internalProject: member.choiceInternalProject,
-      choice_internalProject1: member.choiceInternalProject1,
-      choice_internalProject2: member.choiceInternalProject2,
-      choice_internalProject3: member.choiceInternalProject3,
-      choice_department: member.choiceDepartment,
-      choice_department1: member.choiceDepartment1,
-      choice_department2: member.choiceDepartment2,
-      choice_department3: member.choiceDepartment3,
+      memberId: member.memberId,
+      firstname: member.firstname,
+      lastname: member.lastname,
+      mentorChoice: member.mentor?.memberId ?? null,
+      mentorChoiceName: member.mentor?.name ?? null,
+      mentorChoice1: member.mentorChoice1?.memberId ?? null,
+      mentorChoice1Name: member.mentorChoice1?.name ?? null,
+      mentorChoice2: member.mentorChoice2?.memberId ?? null,
+      mentorChoice2Name: member.mentorChoice2?.name ?? null,
+      mentorChoice3: member.mentorChoice3?.memberId ?? null,
+      mentorChoice3Name: member.mentorChoice3?.name ?? null,
+      internalProjectChoice: member.internalProject?.internalProjectId ?? null,
+      internalProjectChoiceShortName: member.internalProject?.projectName ?? null,
+      internalProjectChoice1: member.internalProjectChoice1?.internalProjectId ?? null,
+      internalProjectChoice1ShortName: member.internalProjectChoice1?.projectName ?? null,
+      internalProjectChoice1Motivation: member.choiceInternalProject1Motivation ?? null,
+      internalProjectChoice2: member.internalProjectChoice2?.internalProjectId ?? null,
+      internalProjectChoice2ShortName: member.internalProjectChoice2?.projectName ?? null,
+      internalProjectChoice2Motivation: member.choiceInternalProject2Motivation ?? null,
+      internalProjectChoice3: member.internalProjectChoice3?.internalProjectId ?? null,
+      internalProjectChoice3ShortName: member.internalProjectChoice3?.projectName ?? null,
+      internalProjectChoice3Motivation: member.choiceInternalProject3Motivation ?? null,
+      departmentChoice: member.department?.departmentId ?? null,
+      departmentChoiceShortName: member.department?.shortName ?? null,
+      departmentChoice1: member.departmentChoice1?.departmentId ?? null,
+      departmentChoice1ShortName: member.departmentChoice1?.shortName ?? null,
+      departmentChoice2: member.departmentChoice2?.departmentId ?? null,
+      departmentChoice2ShortName: member.departmentChoice2?.shortName ?? null,
+      departmentChoice3: member.departmentChoice3?.departmentId ?? null,
+      departmentChoice3ShortName: member.departmentChoice3?.shortName ?? null,
     };
   }
 
@@ -43,8 +58,8 @@ export class TraineeMapper {
   static memberToMentorDto(member: Member): MentorDto {
     return {
       memberId: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
+      firstname: member.firstname,
+      lastname: member.lastname,
     };
   }
 
@@ -56,8 +71,8 @@ export class TraineeMapper {
   ): TraineeProgressDto {
     return {
       memberID: member.memberId,
-      firstname: member.firstName,
-      lastname: member.lastName,
+      firstname: member.firstname,
+      lastname: member.lastname,
       memberStatus: {
         memberStatusId: member.memberStatusId,
         name: member.memberStatus.name,
