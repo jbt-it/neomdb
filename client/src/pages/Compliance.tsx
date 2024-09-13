@@ -131,9 +131,11 @@ const Compliance: React.FunctionComponent = () => {
   const [complianceMail, setComplianceMail] = useState<string>("");
   const [checkedAnonymous, setCheckedAnonymous] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const handleDialogClose = () => {
     setOpenDialog(false);
+    setError("");
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +144,10 @@ const Compliance: React.FunctionComponent = () => {
   };
 
   const handleSubmit = () => {
+    if (complianceMessage.trim() === "") {
+      setError("Bitte gebe eine Nachricht ein.");
+      return;
+    }
     const complianceContent = `
 Absender: ${memberDetails?.firstname} ${memberDetails?.lastname}
 Absenderadresse: ${memberDetails?.jbtEmail}
@@ -151,6 +157,7 @@ Folgender Compliance-Verstoß liegt vor:
 ${complianceMessage}
     `;
     setComplianceMail(complianceContent);
+    setOpenDialog(true);
   };
 
   return (
@@ -204,6 +211,7 @@ ${complianceMessage}
                 },
               }}
             />
+            {error && <Typography color="error">{error}</Typography>}
           </Grid>
         </Grid>
         <Grid item>
@@ -212,7 +220,6 @@ ${complianceMessage}
             variant="contained"
             onClick={() => {
               handleSubmit();
-              setOpenDialog(true);
             }}
           >
             Compliance-Beschwerde abschicken

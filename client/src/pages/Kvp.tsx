@@ -134,6 +134,8 @@ const Kvp: React.FunctionComponent = () => {
   const { memberDetails } = useMemberDetails(auth.userID!);
   const [kvpMail, setKvpMail] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [emptyErrorField, setEmptyErrorField] = useState<string>("");
+  const [emptyErrorDescriptionField, setEmptyErrorDescriptionField] = useState<string>("");
 
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -144,6 +146,21 @@ const Kvp: React.FunctionComponent = () => {
   };
 
   const handleSubmit = () => {
+    if (errorField.trim() === "" || errorDescriptionField.trim() === "") {
+      if (errorField.trim() === "") {
+        setEmptyErrorField("Bitte nicht leer lassen");
+      } else {
+        setEmptyErrorField("");
+      }
+      if (errorDescriptionField.trim() === "") {
+        setEmptyErrorDescriptionField("Bitte nicht leer lassen");
+      } else {
+        setEmptyErrorDescriptionField("");
+      }
+      return;
+    }
+    setEmptyErrorField("");
+    setEmptyErrorDescriptionField("");
     const kvpContent = `
 Absender: ${memberDetails?.firstname} ${memberDetails?.lastname}
 Absenderadresse: ${memberDetails?.jbtEmail}
@@ -158,6 +175,7 @@ Diesen Fehler bewerte ich als:
 ${radioState}
     `;
     setKvpMail(kvpContent);
+    setOpenDialog(true);
   };
 
   return (
@@ -200,6 +218,7 @@ ${radioState}
                 },
               }}
             />
+            {emptyErrorField && <Typography color="error">{emptyErrorField}</Typography>}
           </Grid>
         </Grid>
         <Grid item container alignItems="center" spacing={2} xs={12}>
@@ -221,6 +240,7 @@ ${radioState}
                 },
               }}
             />
+            {emptyErrorDescriptionField && <Typography color="error">{emptyErrorDescriptionField}</Typography>}
           </Grid>
         </Grid>
         <Grid item container alignItems="center" spacing={2} xs={12}>
@@ -262,7 +282,6 @@ ${radioState}
             variant="contained"
             onClick={() => {
               handleSubmit();
-              setOpenDialog(true);
             }}
           >
             Kvp-Report abschicken
