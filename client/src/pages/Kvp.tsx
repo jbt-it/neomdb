@@ -126,7 +126,7 @@ const Kvp: React.FunctionComponent = () => {
     },
   };
 
-  const [radioState, setRadioState] = useState<string>("unwichtig");
+  const [radioState, setRadioState] = useState<string>("Unwichtig");
   const [errorField, setErrorField] = useState<string>("");
   const [errorDescriptionField, setErrorDescriptionField] = useState<string>("");
   const [suggestionField, setSuggestionField] = useState<string>("");
