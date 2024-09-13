@@ -150,13 +150,10 @@ Absenderadresse: ${memberDetails?.jbtEmail}
 
 An folgender Stelle befindet sich ein Fehler:
 ${errorField}
-
 Es handelt sich um den Fehler:
 ${errorDescriptionField}
-
 Verbesserungsvorschlag:
 ${suggestionField}
-
 Diesen Fehler bewerte ich als:
 ${radioState}
     `;
@@ -251,9 +248,9 @@ ${radioState}
           </Grid>
           <Grid item xs>
             <RadioGroup row value={radioState} onChange={handleRadioChange}>
-              <FormControlLabel value="unwichtig" control={<Radio />} label="Unwichtig" />
-              <FormControlLabel value="mittel" control={<Radio />} label="Mittel" />
-              <FormControlLabel value="wichtig" control={<Radio />} label="Wichtig" />
+              <FormControlLabel value="Unwichtig" control={<Radio />} label="Unwichtig" />
+              <FormControlLabel value="Mittel" control={<Radio />} label="Mittel" />
+              <FormControlLabel value="Wichtig" control={<Radio />} label="Wichtig" />
             </RadioGroup>
           </Grid>
         </Grid>
