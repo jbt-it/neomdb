@@ -6,6 +6,9 @@ import {
   ProjectMembersDto,
   ProjectDetailsDto,
   ProjectApplicantDto,
+  ProjectBillingDetailsDto,
+  MembersBillingDto,
+  MemberBTAllocationDto,
 } from "../../types/projectTypes";
 import useCompanies from "../useCompanies";
 import useProjects from "./useProjects";
@@ -317,6 +320,148 @@ const useProjectDetails = (projectID: number) => {
     },
   ];
 
+  const projectBillingDetails = [
+    {
+      projectId: 2,
+      projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
+      status: "Abrechnung",
+      APatEV: true,
+      APHold: true,
+      evaluationAtEV: true,
+      DLatEV: true,
+      offerInAlfresco: true,
+      deviationFromStandard: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      CRMEntryExists: true,
+      paymentDelay: false,
+      moneyReceived: true,
+      signatureDate: new Date("2024-02-10"),
+      euroPerBT: 400,
+      soldBT: 46.13,
+      soldExpenses: 0,
+      membersBilling: [
+        {
+          memberId: 8167,
+          firstname: "Wolfgang",
+          lastname: "Luft",
+          type: "PL",
+          freelancerContract: new Date("2024-02-10"),
+          moneyTransferred: new Date("2024-06-30"),
+          btAllocation: 36.13,
+          expensesAllocation: 0,
+        },
+        {
+          memberId: 8222,
+          firstname: "Talha",
+          lastname: "Driscoll",
+          type: "Mitglied",
+          freelancerContract: new Date("2024-02-10"),
+          moneyTransferred: new Date("2024-06-30"),
+          btAllocation: 10,
+          expensesAllocation: 0,
+        },
+        {
+          memberId: 8331,
+          firstname: "Jorja",
+          lastname: "Bautista",
+          type: "QM",
+          freelancerContract: new Date("2024-02-10"),
+          moneyTransferred: new Date("2024-06-30"),
+          btAllocation: 0,
+          expensesAllocation: 0,
+        },
+      ] as MembersBillingDto[],
+    },
+    {
+      projectId: 5,
+      projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
+      status: "Durchführung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      deviationFromStandard: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      CRMEntryExists: true,
+      paymentDelay: false,
+      signatureDate: new Date("2024-02-10"),
+      euroPerBT: 400,
+      soldBT: 10.5,
+      soldExpenses: 150,
+      membersBilling: [
+        {
+          memberId: 8167,
+          firstname: "Wolfgang",
+          lastname: "Luft",
+          type: "PL",
+          freelancerContract: new Date(),
+          moneyTransferred: null,
+          btAllocation: 8,
+          expensesAllocation: 0,
+        },
+        {
+          memberId: 8222,
+          firstname: "Talha",
+          lastname: "Driscoll",
+          type: "Mitglied",
+          freelancerContract: new Date(),
+          moneyTransferred: null,
+          btAllocation: 2.5,
+          expensesAllocation: null,
+        },
+      ] as MembersBillingDto[],
+    },
+    {
+      projectId: 9,
+      projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
+      status: "Durchführung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      deviationFromStandard: false,
+      consultingContractProvided: false,
+      teamContractProvided: false,
+      qmApproval: false,
+      CRMEntryExists: true,
+      paymentDelay: true,
+      signatureDate: new Date("2024-02-10"),
+      euroPerBT: null,
+      soldBT: null,
+      soldExpenses: null,
+      membersBilling: [
+        {
+          memberId: 8167,
+          firstname: "Wolfgang",
+          lastname: "Luft",
+          type: "PL",
+          freelancerContract: null,
+          moneyTransferred: null,
+          btAllocation: null,
+          expensesAllocation: null,
+        },
+        {
+          memberId: 8222,
+          firstname: "Talha",
+          type: "QM",
+          lastname: "Driscoll",
+          freelancerContract: null,
+          moneyTransferred: null,
+          btAllocation: null,
+          expensesAllocation: null,
+        },
+      ] as MembersBillingDto[],
+    },
+  ] as ProjectBillingDetailsDto[];
+
+  const projectBillingDetailsDto = projectBillingDetails.find((project) => project.projectId === projectID);
+
   const saveProjectTeamComposition = (
     staffingCommittee: MembersFieldDto[],
     projectManager: ProjectMembersDto,
@@ -335,7 +480,36 @@ const useProjectDetails = (projectID: number) => {
     );
   };
 
-  return { projectDetails, saveProject, projectApplicants, projectApplications, saveProjectTeamComposition };
+  // handle save BT allocation
+  const saveBTAllocation = (allocations: MemberBTAllocationDto[]) => {
+    alert("BT-Aufteilung gespeichert siehe Konsole");
+    console.log(allocations);
+  };
+
+  const checkProjectBillingCheckmark = (checkmark: string) => {
+    alert("Checkmark " + checkmark + " gespeichert");
+  };
+
+  const checkFreelancerContract = (memberId: number) => {
+    alert("Freelancer contract for member " + memberId + " checked");
+  };
+
+  const checkMoneyTransferred = (memberId: number) => {
+    alert("Money transferred for member " + memberId + " checked");
+  };
+
+  return {
+    projectDetails,
+    saveProject,
+    projectApplicants,
+    projectApplications,
+    saveProjectTeamComposition,
+    projectBillingDetailsDto,
+    saveBTAllocation,
+    checkProjectBillingCheckmark,
+    checkFreelancerContract,
+    checkMoneyTransferred,
+  };
 };
 
 export default useProjectDetails;

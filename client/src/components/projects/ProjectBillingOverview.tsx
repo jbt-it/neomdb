@@ -61,7 +61,7 @@ const ProjectBillingOverview = () => {
               key={project.projectId}
               sx={styles.tableRow}
               component={Link}
-              to={`/projekte/${project.projectId}`}
+              to={`/projekte/${project.projectId}/projektabrechnung`}
             >
               <TableCell>{project.projectName}</TableCell>
               <TableCell>{project.status}</TableCell>

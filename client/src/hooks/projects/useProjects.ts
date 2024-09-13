@@ -353,8 +353,8 @@ const useProjects = () => {
       consultingContractProvided: true,
       teamContractProvided: true,
       qmApproval: true,
-      freelancerContractExistingForAllMembers: false,
-      moneyTransferredForAllMembers: false,
+      freelancerContractExistingForAllMembers: true,
+      moneyTransferredForAllMembers: true,
     },
     {
       projectId: 5,
