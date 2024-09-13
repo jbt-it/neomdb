@@ -7,6 +7,7 @@ import {
   PeopleAlt,
   SvgIconComponent,
   TrendingUp,
+  DoNotTouch,
 } from "@mui/icons-material";
 
 interface NavItem {
@@ -34,6 +35,8 @@ export const getIconByName = (name: string) => {
       return MoreHoriz;
     case "EmojiObjects":
       return EmojiObjects;
+    case "DoNotTouch":
+      return DoNotTouch;
     case "TrendingUp":
       return TrendingUp;
     default:
@@ -142,6 +145,11 @@ const navConfig: NavItem[] = [
     title: "KVP",
     path: "/kvp",
     icon: getIconByName("EmojiObjects"),
+  },
+  {
+    title: "Compliance",
+    path: "/compliance",
+    icon: getIconByName("DoNotTouch"),
   },
 ];
 

@@ -153,6 +153,7 @@ const App: React.FunctionComponent = () => {
             <Route path="weitere-funktionen" element={<Dashboard />} />
             <Route path="mitgliederverwaltung" element={<MemberManagement />} />
             <Route path="kvp" element={<Dashboard />} />
+            <Route path="compliance" element={<Dashboard />} />
             <Route path="passwort-aendern" element={<ChangePassword />} />
             <Route path="modularedarstellungtest" element={<InfoSectionTest />} />
             <Route path="modularesformulartest" element={<FieldSectionTest />} />
