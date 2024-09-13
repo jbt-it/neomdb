@@ -61,6 +61,7 @@ import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
 import ProjectTeamComposition from "./pages/projects/ProjectTeamComposition";
 import Kvp from "./pages/Kvp";
+import Compliance from "./pages/Compliance";
 
 /**
  * This component is responsible for rendering the app.
@@ -154,7 +155,7 @@ const App: React.FunctionComponent = () => {
             <Route path="weitere-funktionen" element={<Dashboard />} />
             <Route path="mitgliederverwaltung" element={<MemberManagement />} />
             <Route path="kvp" element={<Kvp />} />
-            <Route path="compliance" element={<Dashboard />} />
+            <Route path="compliance" element={<Compliance />} />
             <Route path="passwort-aendern" element={<ChangePassword />} />
             <Route path="modularedarstellungtest" element={<InfoSectionTest />} />
             <Route path="modularesformulartest" element={<FieldSectionTest />} />
