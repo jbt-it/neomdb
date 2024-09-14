@@ -140,7 +140,6 @@ const CompanyOverview: React.FunctionComponent = () => {
 
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [industryFilter, setIndustryFilter] = useState<string>("");
-  const [nameSort, setNameSort] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("");
   const { allCompanies, allContactPartners } = useCompanies();
   const { allIndustries } = useProjects();
@@ -170,11 +169,9 @@ const CompanyOverview: React.FunctionComponent = () => {
   const getContactPartnersByCompany = (): { [key: number]: string } => {
     return allContactPartners.reduce((acc, contactPartner) => {
       const { companyId, name } = contactPartner;
-      // If the company already exists in the accumulator, append the name to the existing string
       if (acc[companyId]) {
         acc[companyId] += `, ${name}`;
       } else {
-        // Otherwise, create a new entry for the company
         acc[companyId] = name;
       }
       return acc;
@@ -191,6 +188,7 @@ const CompanyOverview: React.FunctionComponent = () => {
       ...company,
       numberProjects: company.numberProjects ?? 0,
     }));
+
     // Filter by industry
     if (industryFilter !== "") {
       filteredCompanies = filteredCompanies.filter((company) => {
