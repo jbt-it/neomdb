@@ -40,7 +40,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           component="img"
           src={jbtLogo}
         />
-        <Typography variant="body1" textAlign={isMobile ? "start" : "center"}>
+        <Typography variant="body1" textAlign={isMobile ? "start" : "center"} fontSize={isMobile ? 14 : 18}>
           Herzlich willkommen zur Online-Bewerbung für das <strong>Junior Business Team</strong>! Nimm dir bitte kurz
           Zeit, um die Fragen auf den folgenden Seiten auszufüllen. Überall, wo ein grünes Plus steht (z.B. bei
           Praktika) kannst du durch einen Klick darauf mehrere Felder öffnen. Nach Bewerbungsschluss erhältst du dann
