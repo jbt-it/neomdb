@@ -138,7 +138,7 @@ const Compliance: React.FunctionComponent = () => {
     setError("");
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     setCheckedAnonymous(checked);
   };
@@ -184,7 +184,7 @@ ${complianceMessage}
         <Grid item container alignItems="center" spacing={2} xs={12}>
           <Grid item xs>
             <FormControlLabel
-              control={<Checkbox checked={checkedAnonymous} onChange={handleChange} />}
+              control={<Checkbox checked={checkedAnonymous} onChange={handleCheckboxChange} />}
               label="Anonym versenden"
             />
           </Grid>
