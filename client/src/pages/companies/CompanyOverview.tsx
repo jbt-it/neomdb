@@ -138,16 +138,12 @@ const CompanyOverview: React.FunctionComponent = () => {
     }
   `;
 
-  const [additionalFiltersState, setAddtionalFiltersState] = useState(false);
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [industryFilter, setIndustryFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("");
   const { allCompanies, allContactPartners } = useCompanies();
   const { allIndustries } = useProjects();
-  const [sortOption, setSortOption] = useState<{ attribute: string; direction: "asc" | "desc" }>({
-    attribute: "name",
-    direction: "asc",
-  });
 
   const { auth } = useContext(AuthContext);
   const hasCrmPermissions = doesPermissionsHaveSomeOf(auth.permissions, [13]);
@@ -191,8 +187,10 @@ const CompanyOverview: React.FunctionComponent = () => {
    * Filters and sorts the company data and returns it
    */
   const getFilteredAndSortedCompanies = (): CompanyDto[] => {
-    let filteredCompanies = allCompanies;
-
+    let filteredCompanies = allCompanies.map((company) => ({
+      ...company,
+      numberProjects: company.numberProjects ?? 0,
+    }));
     // Filter by industry
     if (industryFilter !== "") {
       filteredCompanies = filteredCompanies.filter((company) => {
@@ -211,83 +209,85 @@ const CompanyOverview: React.FunctionComponent = () => {
       );
     });
 
-    const sortByAttribute = (attribute: string, direction: "asc" | "desc") => {
-      return (a: CompanyDto, b: CompanyDto) => {
-        const aValue = a[attribute as keyof CompanyDto];
-        const bValue = b[attribute as keyof CompanyDto];
-
-        if (aValue === undefined) return direction === "asc" ? 1 : -1;
-        if (bValue === undefined) return direction === "asc" ? -1 : 1;
-
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          return direction === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-        }
-
-        if (aValue < bValue) return direction === "asc" ? -1 : 1;
-        if (aValue > bValue) return direction === "asc" ? 1 : -1;
-
-        return 0;
-      };
-    };
-
-    //  return filteredCompanies.sort(sortByAttribute(sortOption.attribute, sortOption.direction));
-
     let sortedCompanies = filteredCompanies;
 
-    // Sort by name
-    if (nameSort === "up") {
+    // Sort by attribute
+    if (sortBy === "nameAsc") {
       sortedCompanies = sortedCompanies.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
-    } else if (nameSort === "down") {
+    } else if (sortBy === "nameDesc") {
       sortedCompanies = sortedCompanies.sort((a, b) => {
         return -a.name.localeCompare(b.name);
+      });
+    } else if (sortBy === "industryAsc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return a.industry.description.localeCompare(b.industry.description);
+      });
+    } else if (sortBy === "industryDesc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return -a.industry.description.localeCompare(b.industry.description);
+      });
+    } else if (sortBy === "urlAsc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return a.url.localeCompare(b.url);
+      });
+    } else if (sortBy === "urlDesc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return -a.url.localeCompare(b.url);
+      });
+    } else if (sortBy === "contactPartnerAsc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        const contactPartnersA = contactPartnersMap[a.companyId] || "";
+        const contactPartnersB = contactPartnersMap[b.companyId] || "";
+        return contactPartnersA.localeCompare(contactPartnersB);
+      });
+    } else if (sortBy === "contactPartnerDesc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        const contactPartnersA = contactPartnersMap[a.companyId] || "";
+        const contactPartnersB = contactPartnersMap[b.companyId] || "";
+        return -contactPartnersA.localeCompare(contactPartnersB);
+      });
+    } else if (sortBy === "numberProjectsAsc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return a.numberProjects - b.numberProjects;
+      });
+    } else if (sortBy === "numberProjectsDesc") {
+      sortedCompanies = sortedCompanies.sort((a, b) => {
+        return b.numberProjects - a.numberProjects;
       });
     }
     return sortedCompanies;
   };
 
-  const handleSortChange = (attribute: string) => {
-    setSortOption((prev) => ({
-      attribute,
-      direction: prev.attribute === attribute && prev.direction === "asc" ? "desc" : "asc",
-    }));
+  /**
+   * Toggles the sort direction for a given attribute
+   * @param attribute - The attribute to sort by (e.g., 'name', 'industry', 'url', etc.)
+   */
+  const toggleSort = (attribute: string) => {
+    setSortBy((prevSortBy) => {
+      if (prevSortBy === `${attribute}Asc`) {
+        return `${attribute}Desc`;
+      } else if (prevSortBy === `${attribute}Desc`) {
+        return "";
+      } else {
+        return `${attribute}Asc`;
+      }
+    });
   };
 
   /**
-   * Toggles between the name sort options
+   * Returns the sort icon for the given attribute
+   * @param attribute - The attribute to get the sort icon for
    */
-  const toggleNameSort: VoidFunction = () => {
-    switch (nameSort) {
-      case "": {
-        setNameSort("up");
-        break;
-      }
-      case "up": {
-        setNameSort("down");
-        break;
-      }
-      case "down": {
-        setNameSort("");
-        break;
-      }
-    }
-  };
-
-  /**
-   * Returns the sort icon for the name column
-   */
-  const getNameSortIcon: VoidFunction = () => {
-    switch (nameSort) {
-      case "": {
-        return <UnfoldMore />;
-      }
-      case "up": {
-        return <ExpandLess />;
-      }
-      case "down": {
+  const getSortIcon = (attribute: string) => {
+    switch (sortBy) {
+      case `${attribute}Asc`:
         return <ExpandMore />;
-      }
+      case `${attribute}Desc`:
+        return <ExpandLess />;
+      default:
+        return <UnfoldMore />;
     }
   };
 
@@ -336,17 +336,45 @@ const CompanyOverview: React.FunctionComponent = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={styles.tableHeadCell}>
-                <Box sx={styles.tableHeadSortBtn} onClick={toggleNameSort}>
+                <Box sx={styles.tableHeadSortBtn} onClick={() => toggleSort("name")}>
                   <>
                     Name
-                    {getNameSortIcon()}
+                    {getSortIcon("name")}
                   </>
                 </Box>
               </TableCell>
-              <TableCell sx={styles.tableHeadCell}>Branche</TableCell>
-              <TableCell sx={styles.tableHeadCell}>Webseite</TableCell>
-              <TableCell sx={styles.tableHeadCell}>Ansprechpartner</TableCell>
-              <TableCell sx={styles.tableHeadCell}>#Projekte</TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={() => toggleSort("industry")}>
+                  <>
+                    Branche
+                    {getSortIcon("industry")}
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={() => toggleSort("url")}>
+                  <>
+                    Webseite
+                    {getSortIcon("url")}
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={() => toggleSort("contactPartner")}>
+                  <>
+                    Ansprechpartner
+                    {getSortIcon("contactPartner")}
+                  </>
+                </Box>
+              </TableCell>
+              <TableCell sx={styles.tableHeadCell}>
+                <Box sx={styles.tableHeadSortBtn} onClick={() => toggleSort("numberProjects")}>
+                  <>
+                    #Projekte
+                    {getSortIcon("numberProjects")}
+                  </>
+                </Box>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
