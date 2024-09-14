@@ -830,6 +830,12 @@
 					},
 					"internalProject": {
 						"$ref": "#/components/schemas/InternalProject"
+					},
+					"referencedWorkshops": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopInstanceHasReferent"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -930,7 +936,8 @@
 					"workshopFeedbackHasMembers",
 					"languages",
 					"traineeApplicants",
-					"internalProject"
+					"internalProject",
+					"referencedWorkshops"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -980,12 +987,24 @@
 						"format": "date-time",
 						"nullable": true
 					},
-					"wwDate": {
+					"selectionWeDateStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
-					"selectionWeDate": {
+					"selectionWeDateEnd": {
 						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateEnd": {
+						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"infoEveningVisitors": {
@@ -1037,8 +1056,10 @@
 					"description",
 					"applicationStart",
 					"applicationEnd",
-					"wwDate",
-					"selectionWeDate",
+					"selectionWeDateStart",
+					"selectionWeDateEnd",
+					"wwDateStart",
+					"wwDateEnd",
 					"infoEveningVisitors",
 					"doorCode",
 					"electionStart",
@@ -2837,6 +2858,14 @@
 						"format": "date-time",
 						"nullable": true
 					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
 					"registrationFrom": {
 						"type": "string",
 						"format": "date-time",
@@ -2847,15 +2876,12 @@
 						"format": "date-time",
 						"nullable": true
 					},
+					"maximumParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"location": {
-						"type": "string",
-						"nullable": true
-					},
-					"startTime": {
-						"type": "string",
-						"nullable": true
-					},
-					"endTime": {
 						"type": "string",
 						"nullable": true
 					},
@@ -2864,11 +2890,6 @@
 					},
 					"network": {
 						"type": "boolean"
-					},
-					"maximumParticipants": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
 					},
 					"jbtGoes": {
 						"type": "boolean"
@@ -2895,14 +2916,14 @@
 					"description",
 					"eventBegin",
 					"eventEnd",
-					"registrationFrom",
-					"registrationTo",
-					"location",
 					"startTime",
 					"endTime",
+					"registrationFrom",
+					"registrationTo",
+					"maximumParticipants",
+					"location",
 					"ww",
 					"network",
-					"maximumParticipants",
 					"jbtGoes",
 					"others",
 					"memberHasEvents",
@@ -2922,18 +2943,27 @@
 						"format": "double"
 					},
 					"arrival": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/Arrival"
-							}
+						"type": "string",
+						"enum": [
+							"Freitag früh",
+							"Freitag vor dem Mittagessen",
+							"Freitag vor dem Abendessen",
+							"Samstag vor dem Frühstück",
+							"Samstag vor dem Mittagessen",
+							"Samstag vor dem Abendessen",
+							"Samstag spät"
 						],
 						"nullable": true
 					},
 					"departure": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/Departure"
-							}
+						"type": "string",
+						"enum": [
+							"Freitag nach dem Mittagessen",
+							"Freitag nach dem Abendessen",
+							"Samstag nach dem Frühstück",
+							"Samstag nach dem Mittagessen",
+							"Samstag nach dem Abendessen",
+							"Sonntag"
 						],
 						"nullable": true
 					},
@@ -3091,6 +3121,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"name": {
+						"type": "string"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
@@ -3108,10 +3141,12 @@
 					},
 					"startTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"endTime": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"location": {
@@ -3123,7 +3158,7 @@
 						"format": "double",
 						"nullable": true
 					},
-					"speakers": {
+					"description": {
 						"type": "string",
 						"nullable": true
 					},
@@ -3155,24 +3190,32 @@
 					},
 					"workshop": {
 						"$ref": "#/components/schemas/Workshop"
+					},
+					"referents": {
+						"items": {
+							"$ref": "#/components/schemas/WorkshopInstanceHasReferent"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"workshopInstanceId",
 					"workshopId",
+					"name",
 					"status",
 					"date",
 					"startTime",
 					"endTime",
 					"location",
 					"maximumParticipants",
-					"speakers",
+					"description",
 					"targetGroup",
 					"registrationFrom",
 					"registrationUntil",
 					"memberHasWorkshopInstances",
 					"workshopFeedbacks",
-					"workshop"
+					"workshop",
+					"referents"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3363,6 +3406,32 @@
 					"type",
 					"description",
 					"workshopInstances"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkshopInstanceHasReferent": {
+				"properties": {
+					"workshopInstanceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"workshopInstance": {
+						"$ref": "#/components/schemas/WorkshopInstance"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"workshopInstanceId",
+					"memberId",
+					"workshopInstance",
+					"member"
 				],
 				"type": "object",
 				"additionalProperties": false

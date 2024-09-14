@@ -1,17 +1,21 @@
-import { MembersFieldDto } from "../types/membersTypes";
+import { MembersFieldDto } from "../../types/membersTypes";
 import dayjs from "dayjs";
 import {
   CoreCompetencyDto,
   IndustryDto,
+  ProjectApplicantDto,
+  ProjectBillingCheckmarksDto,
+  ProjectDetailsDto,
   ProjectOverviewDto,
   ProjectShortDto,
+  ProjectTenderDto,
   TenderedProjectDto,
-} from "../types/projectTypes";
-import useCompanies from "./useCompanies";
+} from "../../types/projectTypes";
+import useCompanies from "../useCompanies";
 
 // CURRENTLY JUST A PLACEHOLDER UNTIL REACT QUERY IS IMPLEMENTED
 const useProjects = () => {
-  const { allCompanies } = useCompanies();
+  const { allCompaniesShort, allContactPartners, allCompanies } = useCompanies();
 
   const allCoreCompetencies = [
     {
@@ -197,7 +201,7 @@ const useProjects = () => {
       projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
       status: "Abgeschlossen",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[0],
+      client: allCompaniesShort[0],
       coreCompetencies: [allCoreCompetencies[0], allCoreCompetencies[2]] as CoreCompetencyDto[],
       tenderDate: dayjs("2020-06-14"),
       kickoff: dayjs("2020-06-20"),
@@ -212,7 +216,7 @@ const useProjects = () => {
       projectName: "Implementierung und Optimierung von CRM-Systemen im Vertriebsbereich",
       status: "Abrechnung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[1],
+      client: allCompaniesShort[1],
       coreCompetencies: [
         {
           coreCompetencyId: 3,
@@ -236,7 +240,7 @@ const useProjects = () => {
       projectName: "Überprüfung und Neugestaltung der Lieferkettenprozesse in der Lebensmittelindustrie",
       status: "Abgelehnt",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[1],
+      client: allCompaniesShort[1],
       coreCompetencies: [
         {
           coreCompetencyId: 3,
@@ -260,7 +264,7 @@ const useProjects = () => {
       projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
       status: "Pitch verloren",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[2],
+      client: allCompaniesShort[2],
       coreCompetencies: [allCoreCompetencies[4], allCoreCompetencies[5]],
       tenderDate: dayjs("2021-03-11"),
       kickoff: dayjs("2021-03-16"),
@@ -275,7 +279,7 @@ const useProjects = () => {
       projectName: "Konzeption und Umsetzung einer digitalen Marketingkampagne für die ABC AG",
       status: "Nicht besetzt",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[3],
+      client: allCompaniesShort[3],
       coreCompetencies: allCoreCompetencies[2],
       tenderDate: dayjs("2021-06-14"),
       kickoff: null,
@@ -290,7 +294,7 @@ const useProjects = () => {
       projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
       status: "Angebot",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[4],
+      client: allCompaniesShort[4],
       coreCompetencies: [
         {
           coreCompetencyId: 5,
@@ -310,7 +314,7 @@ const useProjects = () => {
       projectName: "Planung und Koordination der Büroerweiterung für Start-up Unternehmen",
       status: "Durchführung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[5],
+      client: allCompaniesShort[5],
       coreCompetencies: allCoreCompetencies[5],
       tenderDate: dayjs("2023-010-10"),
       kickoff: dayjs("2023-10-20"),
@@ -325,7 +329,7 @@ const useProjects = () => {
       projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
       status: "Bewerbung",
       projectMembers: projectMembers as MembersFieldDto[],
-      client: allCompanies[6],
+      client: allCompaniesShort[6],
       coreCompetencies: allCoreCompetencies[6],
       tenderDate: dayjs("2024-02-10"),
       kickoff: null,
@@ -336,7 +340,72 @@ const useProjects = () => {
     },
   ] as ProjectOverviewDto[];
 
-  return { projects, tenderedProjects, allProjects, allIndustries, allCoreCompetencies };
+  const projectsInBilling = [
+    {
+      projectId: 2,
+      projectName: "Entwurf und Realisierung einer Schulungsreihe für neue Softwaretools",
+      status: "Abrechnung",
+      APatEV: true,
+      APHold: true,
+      evaluationAtEV: true,
+      DLatEV: true,
+      offerInAlfresco: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+    {
+      projectId: 5,
+      projectName: "Durchführung und Auswertung einer Mitarbeiterzufriedenheitsstudie",
+      status: "Abrechnung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      consultingContractProvided: true,
+      teamContractProvided: true,
+      qmApproval: true,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+    {
+      projectId: 9,
+      projectName: "Erstellung und Analyse einer Risikomanagementstrategie für Finanzdienstleister",
+      status: "Durchführung",
+      APatEV: false,
+      APHold: false,
+      evaluationAtEV: false,
+      DLatEV: false,
+      offerInAlfresco: true,
+      consultingContractProvided: false,
+      teamContractProvided: false,
+      qmApproval: false,
+      freelancerContractExistingForAllMembers: false,
+      moneyTransferredForAllMembers: false,
+    },
+  ] as ProjectBillingCheckmarksDto[];
+
+  const tenderProject = (newProject: ProjectTenderDto) => {
+    console.log("Tendering project", newProject);
+  };
+
+  const saveProject = (newProject: ProjectTenderDto) => {
+    console.log("Saving project", newProject);
+  };
+
+  return {
+    projects,
+    tenderedProjects,
+    allProjects,
+    allIndustries,
+    allCoreCompetencies,
+    projectsInBilling,
+    tenderProject,
+    saveProject,
+  };
 };
 
 export default useProjects;

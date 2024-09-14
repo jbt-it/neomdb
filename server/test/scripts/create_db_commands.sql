@@ -147,16 +147,18 @@ CREATE TABLE `feedbackfrage` (
 
 CREATE TABLE `generation` (
   `generationID` int NOT NULL,
-  `bezeichnung` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `bezeichnung` varchar(45) NOT NULL,
   `bewerbung_start` datetime DEFAULT NULL,
   `bewerbung_ende` datetime DEFAULT NULL,
-  `wwTermin` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `auswahlWETermin` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `auswahl_WE_Termin_start` date DEFAULT NULL,
+  `auswahl_WE_Termin_ende` date DEFAULT NULL,
+  `ww_Termin_start` date DEFAULT NULL,
+  `ww_Termin_ende` date DEFAULT NULL,
   `infoabendBesucher` int DEFAULT NULL,
   `tuercode` varchar(10) DEFAULT NULL,
   `wahl_start` datetime DEFAULT NULL,
   `wahl_ende` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -381,8 +383,8 @@ CREATE TABLE `mitglied_has_event` (
 CREATE TABLE `mitglied_has_eventww` (
   `event_eventID` int NOT NULL,
   `mitglied_mitgliedID` int NOT NULL,
-  `anreise` enum('FrF','FrM','FrA','SaF','SaM','SaA','SaS') DEFAULT NULL,
-  `abreise` enum('FrM','FrA','SaF','SaM','SaA','So') DEFAULT NULL,
+  `anreise` enum('Freitag früh','Freitag Mittag','Freitag Abend','Samstag früh','Samstag Mittag','Samstag Abend','Nacht Samstag auf Sonntag') DEFAULT NULL,
+  `abreise` enum('Freitag Mittag','Freitag Abend','Samstag früh','Samstag Mittag','Samstag Abend','Sonntag') DEFAULT NULL,
   `auto` tinyint(1) DEFAULT NULL,
   `plaetze` int DEFAULT NULL,
   `vegetarier` tinyint(1) DEFAULT NULL,
@@ -723,13 +725,14 @@ CREATE TABLE `schulungsfeedback_noten` (
 CREATE TABLE `schulungsinstanz` (
   `schulungsinstanzID` int NOT NULL,
   `schulung_schulungID` int NOT NULL,
+  `name` varchar(150) NOT NULL,
   `status` enum('Anmeldung','Anmeldung abgeschlossen','Feedback','Abgeschlossen') DEFAULT NULL,
   `datum` date DEFAULT NULL,
-  `startzeit` varchar(10) DEFAULT NULL,
-  `endzeit` varchar(10) DEFAULT NULL,
+  `startzeit` time DEFAULT NULL,
+  `endzeit` time DEFAULT NULL,
   `ort` varchar(45) DEFAULT NULL,
   `maximaleTeilnehmer` int DEFAULT NULL,
-  `referenten` text,
+  `beschreibung` text,
   `zielgruppe` text,
   `anmeldungVon` datetime DEFAULT NULL,
   `anmeldungBis` datetime DEFAULT NULL

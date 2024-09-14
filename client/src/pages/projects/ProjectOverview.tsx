@@ -4,10 +4,11 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyProjects from "../../components/projects/MyProjects";
 import ProjectTenders from "../../components/projects/ProjectTenders";
 import AllProjects from "../../components/projects/allProjectsOverview/AllProjects";
-import useProjects from "../../hooks/useProjects";
+import useProjects from "../../hooks/projects/useProjects";
 import useResponsive from "../../hooks/useResponsive";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
+import ProjectBillingOverview from "../../components/projects/ProjectBillingOverview";
 
 /**
  * ProjectOverview component
@@ -50,7 +51,7 @@ const ProjectOverview = () => {
         <AllProjects projects={allProjects} />
       </TabPanel>
       <TabPanel value="billing">
-        <p>Abrechnung</p>
+        <ProjectBillingOverview />
       </TabPanel>
     </TabContext>
   );

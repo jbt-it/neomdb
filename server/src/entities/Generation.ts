@@ -19,11 +19,17 @@ export class Generation {
   @Column("datetime", { name: "bewerbung_ende", nullable: true })
   applicationEnd: Date | null;
 
-  @Column("varchar", { name: "wwTermin", nullable: true, length: 45 })
-  wwDate: string | null;
+  @Column("date", { name: "auswahl_WE_Termin_start", nullable: true })
+  selectionWeDateStart: Date | null;
 
-  @Column("varchar", { name: "auswahlWETermin", nullable: true, length: 45 })
-  selectionWeDate: string | null;
+  @Column("date", { name: "auswahl_WE_Termin_ende", nullable: true })
+  selectionWeDateEnd: Date | null;
+
+  @Column("date", { name: "ww_Termin_start", nullable: true })
+  wwDateStart: Date | null;
+
+  @Column("date", { name: "ww_Termin_ende", nullable: true })
+  wwDateEnd: Date | null;
 
   @Column("int", { name: "infoabendBesucher", nullable: true })
   infoEveningVisitors: number | null;

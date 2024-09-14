@@ -89,7 +89,7 @@ const AllProjectsTable = ({ projects, onChangeSortBy, sortedBy }: AllProjectsTab
           </TableRow>
         </TableHead>
         {projects.map((project) => (
-          <TableRow key={project.projectId} sx={styles.tableRow} component={Link} to={`/projekt/${project.projectId}`}>
+          <TableRow key={project.projectId} sx={styles.tableRow} component={Link} to={`/projekte/${project.projectId}`}>
             <TableCell sx={[styles.tableCell, { maxWidth: 200 }]}>{project.projectName}</TableCell>
             <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.client.industry.description}</TableCell>
             <TableCell sx={[styles.tableCell, { maxWidth: 100 }]}>{project.client.name}</TableCell>
