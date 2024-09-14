@@ -404,6 +404,10 @@ const ProjectDataDialog = ({
               textField: {
                 variant: "outlined",
                 size: "small",
+                helperText: signatureDate?.isAfter(dayjs())
+                  ? "Unterschriftsdatum darf nicht in der Zukunft liegen"
+                  : "",
+                error: signatureDate?.isAfter(dayjs()),
               },
             }}
             maxDate={dayjs()}
@@ -463,7 +467,11 @@ const ProjectDataDialog = ({
         <Button onClick={handleProjectDataDialogCancle}>Abbrechen</Button>
         <Button
           onClick={handleProjectDataSave}
-          disabled={selectedProjectMembers.length === 0 || !selectedProjectMembers.some((m) => m.type === "PL")}
+          disabled={
+            selectedProjectMembers.length === 0 ||
+            !selectedProjectMembers.some((m) => m.type === "PL") ||
+            signatureDate?.isAfter(dayjs())
+          }
         >
           Speichern
         </Button>
