@@ -6,6 +6,7 @@ import { AddCircle } from "@mui/icons-material";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import useResponsive from "../../hooks/useResponsive";
+import { Link } from "react-router-dom";
 
 interface ProjectTendersProps {
   tenderedProjects: TenderedProjectDto[];
@@ -24,14 +25,10 @@ const ProjectTenders = ({ tenderedProjects }: ProjectTendersProps) => {
   return (
     <>
       {hasPermissionExternalProject ? (
-        <Button
-          variant="outlined"
-          color={"info"}
-          startIcon={<AddCircle />}
-          sx={{ height: 40, marginBottom: 4 }}
-          href="/projekte/projektausschreibung"
-        >
-          <Typography fontSize={isMobile ? 12 : 14}>Projekt ausschreiben</Typography>
+        <Button variant="outlined" color={"info"} startIcon={<AddCircle />} sx={{ height: 40, marginBottom: 4 }}>
+          <Link to="/projekte/projektausschreibung" style={{ textDecoration: "none", color: "inherit" }}>
+            <Typography fontSize={isMobile ? 12 : 14}>Projekt ausschreiben</Typography>
+          </Link>
         </Button>
       ) : null}
       <Grid container>
