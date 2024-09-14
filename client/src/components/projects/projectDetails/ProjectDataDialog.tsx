@@ -24,49 +24,45 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 /**
  * QualificationWarning Interface for the QM qualification warning dialog
  */
-interface QualificationWarningProps {
+interface WarningDialogProps {
   open: boolean;
   handleAccept: () => void;
   handleCancel: () => void;
+  type: "QM" | "PL" | "Mitglied";
 }
 
 /**
- * QMQualificationWarning component to display a warning if a member has no QM qualification
- * @param open - boolean if the dialog is open
- * @param handleClose - function to close the dialog and continue the process
- * @param handleCancel - function to cancel the dialog
- * @returns a dialog to display a warning if a member has no QM qualification
- */
-const QMQualificationWarning = ({ open, handleAccept, handleCancel }: QualificationWarningProps) => {
-  return (
-    <Dialog open={open} onClose={handleCancel}>
-      <DialogContent>
-        Dieses Mitglied hat noch keine QM-Befähigung, das heißt es muss vom EV eine außerordentliche Befähigung erteilt
-        werden. <br />
-        Soll der Vorgang fortgesetzt werden?
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCancel}>Abbrechen</Button>
-        <Button onClick={handleAccept}>OK</Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-/**
- * PLQualificationWarning Interface for the PL qualification warning dialog
+ * Warning component to display a warning if a member has no QM qualification
  * @param open - boolean if the dialog is open
  * @param handleAccept - function to close the dialog and continue the process
  * @param handleCancel - function to cancel the dialog
- * @returns a dialog to display a warning if a member has no PL qualification
+ * @returns a dialog to display a warning if a member has no QM qualification, PL qualification or signed the confidentiality agreement
  */
-const PLQualificationWarning = ({ open, handleAccept, handleCancel }: QualificationWarningProps) => {
+const WarningDialog = ({ open, handleAccept, handleCancel, type }: WarningDialogProps) => {
   return (
     <Dialog open={open} onClose={handleCancel}>
       <DialogContent>
-        Dieses Mitglied hat noch keine PL-Befähigung, das heißt es muss vom EV eine außerordentliche Befähigung erteilt
-        werden. <br />
-        Soll der Vorgang fortgesetzt werden?
+        {type === "QM" ? (
+          <Box>
+            <Typography>
+              Dieses Mitglied hat noch keine QM-Befähigung, das heißt es muss vom EV eine außerordentliche Befähigung
+              erteilt werden.
+            </Typography>
+            <br />
+            <Typography>Soll der Vorgang fortgesetzt werden?</Typography>
+          </Box>
+        ) : type === "PL" ? (
+          <Box>
+            <Typography>
+              Dieses Mitglied hat noch keine PL-Befähigung, das heißt es muss vom EV eine außerordentliche Befähigung
+              erteilt werden.
+            </Typography>
+            <br />
+            <Typography>Soll der Vorgang fortgesetzt werden?</Typography>
+          </Box>
+        ) : (
+          <Typography>Wurde die Geheimhaltungserklärung unterschrieben?</Typography>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel}>Abbrechen</Button>
@@ -139,6 +135,12 @@ const ProjectDataDialog = ({
   const [qmWarningOpen, setQMWarningOpen] = useState(false);
   const [plWarningOpen, setPLWarningOpen] = useState(false);
   const [selectedPL, setSelectedPL] = useState<number | null>(null);
+  const [ndaWarningOpen, setNDAWarningOpen] = useState(false);
+  const selectableMembers = members.filter(
+    (member) =>
+      selectedProjectMembers.every((pm) => pm.memberId !== member.memberId) &&
+      selectedQms.every((qm) => qm.memberId !== member.memberId)
+  );
 
   // save the project data and close the dialog
   const handleProjectDataSave = () => {
@@ -168,6 +170,7 @@ const ProjectDataDialog = ({
 
   // handle the change of a project member selection
   const handleMemberSelectionChange = (event: React.SyntheticEvent, value: MembersFieldDto | null) => {
+    setNDAWarningOpen(true);
     event.persist();
     const index = Number(event.currentTarget.id.split("-")[1]);
     if (value !== null) {
@@ -289,21 +292,41 @@ const ProjectDataDialog = ({
     setQMWarningOpen(false);
   };
 
+  // handle the NDA warning dialog accept
+  const handleNDAWarningAccept = () => {
+    setNDAWarningOpen(false);
+  };
+
+  // handle the NDA warning dialog cancel
+  const handleNDAWarningCancle = () => {
+    // remove the last added project member
+    setSelectedProjectMembers(selectedProjectMembers.slice(0, selectedProjectMembers.length - 1));
+    setNDAWarningOpen(false);
+  };
+
   return (
     <Dialog open={projectDataDialogOpen} onClose={handleProjectDataDialogCancle}>
       <DialogTitle fontWeight={"bold"} minWidth={500}>
         Projektdaten bearbeiten
       </DialogTitle>
       <DialogContent>
-        <QMQualificationWarning
+        <WarningDialog
           open={qmWarningOpen}
           handleAccept={handleQMWarningAccept}
           handleCancel={handleQMWarningCancle}
+          type="QM"
         />
-        <PLQualificationWarning
+        <WarningDialog
           open={plWarningOpen}
           handleAccept={handlePLWarningAccept}
           handleCancel={hadlePLWarningCancle}
+          type="PL"
+        />
+        <WarningDialog
+          open={ndaWarningOpen}
+          handleAccept={handleNDAWarningAccept}
+          handleCancel={handleNDAWarningCancle}
+          type="Mitglied"
         />
         <Stack spacing={1}>
           <Typography fontWeight={"bold"}>Projektmitglieder:</Typography>
@@ -315,7 +338,7 @@ const ProjectDataDialog = ({
                   disablePortal
                   autoSelect
                   id={`members-${index}`}
-                  options={members.filter((m) => selectedProjectMembers.every((pm) => pm.memberId !== m.memberId))}
+                  options={selectableMembers}
                   size="small"
                   getOptionLabel={(option: MembersFieldDto) =>
                     option.firstname && option.lastname ? `${option.firstname} ${option.lastname}` : ""
@@ -361,9 +384,7 @@ const ProjectDataDialog = ({
                 onClick={() => addProjectMember()}
                 aria-label="add"
                 color="primary"
-                disabled={
-                  members.filter((m) => selectedProjectMembers.every((pm) => pm.memberId !== m.memberId)).length === 0
-                }
+                disabled={selectableMembers.length === 0}
               >
                 <AddCircleOutlineIcon />
               </IconButton>
@@ -371,7 +392,7 @@ const ProjectDataDialog = ({
           </Stack>
           <Typography fontWeight={"bold"}>QMs:</Typography>
           <MemberSelection
-            selectableMembers={members.filter((m) => projectMembers.every((pm) => pm.memberId !== m.memberId))}
+            selectableMembers={selectableMembers}
             selectedMembers={selectedQms}
             onChangeCallback={handleQMSelectionChange}
             addMember={addQm}
