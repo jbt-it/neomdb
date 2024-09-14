@@ -17,6 +17,16 @@ interface ProjectDataProps {
   projectId: number;
   hasProjectPermission: boolean;
   isPL: boolean;
+  saveProjectData: (
+    projectMembers: ProjectMembersDto[],
+    qms: MembersFieldDto[],
+    signatureDate: Date | null,
+    conditions: number | null,
+    soldBT: number | null,
+    soldExpenses: number | null
+  ) => void;
+  checkHasPlQualification: (memberId: number) => boolean;
+  checkHasQMQualification: (memberId: number) => boolean;
 }
 
 /**
@@ -39,19 +49,33 @@ const ProjectData = ({
   projectId,
   hasProjectPermission,
   isPL,
+  saveProjectData,
+  checkHasPlQualification,
+  checkHasQMQualification,
 }: ProjectDataProps) => {
   const isMobile = useResponsive("down", "sm");
   const [projectDataDialogOpen, setProjectDataDialogOpen] = useState(false);
 
+  // Open the dialog to edit the project data
   const handleProjectDataDialogOpen = () => {
     setProjectDataDialogOpen(true);
   };
 
+  // Close the project data dialog
   const handleProjectDataDialogClose = () => {
     setProjectDataDialogOpen(false);
   };
 
-  const handleProjectDataSave = () => {
+  // Save the data
+  const handleProjectDataSave = (
+    projectMembers: ProjectMembersDto[],
+    qms: MembersFieldDto[],
+    signatureDate: Date | null,
+    conditions: number | null,
+    soldBT: number | null,
+    soldExpenses: number | null
+  ) => {
+    saveProjectData(projectMembers, qms, signatureDate, conditions, soldBT, soldExpenses);
     setProjectDataDialogOpen(false);
   };
 
@@ -67,6 +91,8 @@ const ProjectData = ({
         projectConditions={euroPerBT}
         projectSoldBT={soldBT}
         projectSoldExpenses={soldExpenses}
+        checkHasPlQualification={checkHasPlQualification}
+        checkHasQMQualification={checkHasQMQualification}
       />
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h6" component="h1" gutterBottom fontWeight={"bold"}>

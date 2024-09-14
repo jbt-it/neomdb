@@ -40,7 +40,8 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  */
 const ProjectDetails = () => {
   const { id } = useParams();
-  const { projectDetails, saveProject } = useProjectDetails(Number(id));
+  const { projectDetails, saveProject, saveProjectData, checkHasPlQualification, checkHasQMQualification } =
+    useProjectDetails(Number(id));
   const [isEditMode, setIsEditMode] = useState(false);
   const { auth } = useContext(AuthContext);
   const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [10]);
@@ -798,6 +799,9 @@ const ProjectDetails = () => {
           projectId={projectDetails.projectId}
           hasProjectPermission={hasProjectPermission}
           isPL={isPL}
+          saveProjectData={saveProjectData}
+          checkHasPlQualification={checkHasPlQualification}
+          checkHasQMQualification={checkHasQMQualification}
         />
       )}
     </Container>

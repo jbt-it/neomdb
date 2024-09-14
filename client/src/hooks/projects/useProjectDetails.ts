@@ -47,12 +47,12 @@ const useProjectDetails = (projectID: number) => {
       moneyTransferred: dayjs("2024-02-10").toDate(),
     },
     {
-      memberId: 8222,
-      firstname: "Talha",
-      lastname: "Driscoll",
+      memberId: 8111,
+      firstname: "Brandon-Lee",
+      lastname: "Frye",
       memberStatus: {
-        memberStatusId: 2,
-        name: "aktives Mitglied",
+        memberStatusId: 1,
+        name: "Trainee",
       },
       date: dayjs("2024-02-10").toDate(),
       applicationDate: dayjs("2024-02-10").toDate(),
@@ -498,6 +498,32 @@ const useProjectDetails = (projectID: number) => {
     alert("Money transferred for member " + memberId + " checked");
   };
 
+  const saveProjectData = (
+    projectMembers: ProjectMembersDto[],
+    qms: MembersFieldDto[],
+    signatureDate: Date | null,
+    conditions: number | null,
+    soldBT: number | null,
+    soldExpenses: number | null
+  ) => {
+    alert("Saving project data");
+    console.log("Saving project data", projectMembers, qms, signatureDate, conditions, soldBT, soldExpenses);
+  };
+
+  const checkHasPlQualification = (memberId: number) => {
+    if (memberId === 8167 || memberId === 8222 || memberId === 8320) {
+      return true;
+    }
+    return false;
+  };
+
+  const checkHasQMQualification = (memberId: number) => {
+    if (memberId === 8167 || memberId === 8222) {
+      return true;
+    }
+    return false;
+  };
+
   return {
     projectDetails,
     saveProject,
@@ -509,6 +535,9 @@ const useProjectDetails = (projectID: number) => {
     checkProjectBillingCheckmark,
     checkFreelancerContract,
     checkMoneyTransferred,
+    checkHasPlQualification,
+    checkHasQMQualification,
+    saveProjectData,
   };
 };
 
