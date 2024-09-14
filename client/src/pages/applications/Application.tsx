@@ -79,20 +79,7 @@ const Application = () => {
     currentGeneration.applicationStart < new Date() &&
     currentGeneration.applicationEnd > new Date()
   ) {
-    return (
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          minWidth: "100vw",
-          background: "#f1f1f1",
-        }}
-      >
-        <ApplicationForm generation={currentGeneration} />
-      </Container>
-    );
+    return <ApplicationForm generation={currentGeneration} />;
   }
 
   // Else the application phase has ended

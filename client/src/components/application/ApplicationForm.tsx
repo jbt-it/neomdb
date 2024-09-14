@@ -1,62 +1,166 @@
 import React from "react";
-import { Generation } from "../../types/traineesTypes";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import ApplicationStart from "./ApplicationStart";
 import useResponsive from "../../hooks/useResponsive";
-import jbtLogo from "../../assets/jbt-logo.png";
-import dayjs from "dayjs";
+import ApplicationMobileStepper from "./ApplicationMobileStepper";
+import { Generation } from "../../types/traineesTypes";
+import { Container, Stack, TextField, Typography } from "@mui/material";
+import ApplicationStepper from "./ApplicationStepper";
+
+const steps = [
+  {
+    label: "Persönliche Daten",
+    description: "Persönliche Daten",
+  },
+  {
+    label: "Studium/Ausbildung",
+    description: "Studium/Ausbildung",
+  },
+  {
+    label: "Praxiserfahrung",
+    description: "Praxiserfahrung",
+  },
+  {
+    label: "Sprachen / IT",
+    description: "Sprachen / IT-Kenntnisse",
+  },
+  {
+    label: "Freizeit",
+    description: "Angaben zur Freizeit",
+  },
+  {
+    label: "Motivation",
+    description: "Motivation",
+  },
+  {
+    label: "Selbsteinschätzung",
+    description: "Selbsteinschätzung",
+  },
+  {
+    label: "Feedback",
+    description: "Feedback",
+  },
+];
 
 /**
- * Interface for the props of the ApplicationForm component
+ * The interface for the application form
  */
 interface ApplicationFormProps {
   generation: Generation;
 }
 
 /**
- * This component displays the application form for the Junior Business Team
- * @param generation The generation for which the application form is displayed
- * @returns the application form component
+ * The application form as a stepper or the welcome page
+ * @param generation The current generation
+ * @returns The application form as a stepper or the welcome page
  */
 const ApplicationForm = ({ generation }: ApplicationFormProps) => {
-  const isMobile = useResponsive("down", "sm");
+  const [isApplying, setIsApplying] = React.useState(false);
+  const isMobile = useResponsive("down", "md");
+  const [activeStep, setActiveStep] = React.useState(0);
+  const maxSteps = steps.length;
+
+  // Check if the current step is the last step
+  const isLastStep = () => {
+    return activeStep === maxSteps - 1;
+  };
+  // Handles the next step
+  const handleNext = () => {
+    isLastStep() ? setActiveStep(0) : setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  // Handles the previous step
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  // Handle click on step
+  const handleStep = (step: number) => () => {
+    setActiveStep(step);
+  };
+
+  // Handles the application start
+  const handleSetIsApplying = () => {
+    setIsApplying(true);
+  };
+
+  // Handles the application completion
+  const handleApply = () => {
+    console.log("Apply");
+    alert("Bewerbung abgeschickt");
+  };
+
+  // Renders the current step
+  const renderStep = (step: number) => {
+    return (
+      <Stack spacing={3}>
+        <Typography variant="h5">{steps[step].description}</Typography>
+        <TextField helperText="1" minRows={3} variant="outlined" />
+      </Stack>
+    );
+  };
+
+  if (isApplying) {
+    return isMobile ? (
+      <Container
+        sx={{
+          minHeight: "100vh",
+          minWidth: "100vw",
+          background: "#f1f1f1",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "start",
+        }}
+      >
+        <ApplicationMobileStepper
+          activeStep={activeStep}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          maxSteps={maxSteps}
+          renderStep={renderStep}
+          steps={steps}
+          isLastStep={isLastStep}
+          handleComplete={handleApply}
+          checkRequiredFields={() => false}
+        />
+      </Container>
+    ) : (
+      <Container
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          minWidth: "100vw",
+          background: "#f1f1f1",
+        }}
+      >
+        <ApplicationStepper
+          activeStep={activeStep}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          handleStep={handleStep}
+          steps={steps.map((step) => step.label)}
+          isLastStep={isLastStep}
+          completed={new Array(maxSteps).fill(false)}
+          handleComplete={handleApply}
+          renderStep={renderStep}
+        />
+      </Container>
+    );
+  }
   return (
-    <Paper
-      elevation={10}
+    <Container
       sx={{
-        minHeight: "50vh",
-        minWidth: isMobile ? "80vw" : "55vw",
-        maxWidth: "70vw",
-        borderRadius: 20,
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        display: "flex",
-        p: 5,
-        m: 4,
+        minHeight: "100vh",
+        minWidth: "100vw",
+        background: "#f1f1f1",
       }}
     >
-      <Stack justifyContent={"center"} alignItems={"center"} spacing={6}>
-        <Box
-          sx={{ maxHeight: isMobile ? "50vh" : "25vh", maxWidth: isMobile ? "50vw" : "25vw" }}
-          component="img"
-          src={jbtLogo}
-        />
-        <Typography variant="body1" textAlign={isMobile ? "start" : "center"} fontSize={isMobile ? 16 : 18}>
-          Herzlich willkommen zur Online-Bewerbung für das <strong>Junior Business Team</strong>! Nimm dir bitte kurz
-          Zeit, um die Fragen auf den folgenden Seiten auszufüllen. Überall, wo ein grünes Plus steht (z.B. bei
-          Praktika) kannst du durch einen Klick darauf mehrere Felder öffnen. Nach Bewerbungsschluss erhältst du dann
-          von uns eine Rückmeldung bezüglich des Auswahlwochenendes. Am Auswahlwochenende findet ein Kennenlerngespräch
-          statt und du hast die Möglichkeit, dein Können in einer kleinen Case Study unter Beweis zu stellen. Bei Fragen
-          kannst du dich an <strong>mitglieder@studentische-beratung.de</strong> wenden. Solltest du Probleme beim
-          Hochladen einer Datei haben, sende diese bitte per Email an{" "}
-          <strong>bewerbung@studentische-beratung.de</strong>. Viel Erfolg beim Ausfüllen! Die Bewerbungsphase endet am{" "}
-          <strong>{dayjs(generation.applicationEnd).format("DD.MM.YYYY")}</strong> um{" "}
-          <strong>{dayjs(generation.applicationEnd).format("hh:mm")}</strong>.
-        </Typography>
-        <Button variant="contained" color="primary" fullWidth>
-          Jetzt bewerben
-        </Button>
-      </Stack>
-    </Paper>
+      <ApplicationStart generation={generation} handleSetIsApplying={handleSetIsApplying} />
+    </Container>
   );
 };
 
