@@ -15,6 +15,7 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
   const [openTools, setOpenTools] = useState(false);
   const [openEvents, setOpenEvents] = useState(false);
   const [openProjects, setOpenProjects] = useState(false);
+  const [openKvp, setOpenKvp] = useState(false);
 
   const handleOpenMitglieder = () => {
     setOpenMitglieder(!openMitglieder);
@@ -26,6 +27,9 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     }
     if (openProjects) {
       setOpenProjects(false);
+    }
+    if (openKvp) {
+      setOpenKvp(false);
     }
   };
 
@@ -40,6 +44,9 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     if (openProjects) {
       setOpenProjects(false);
     }
+    if (openKvp) {
+      setOpenKvp(false);
+    }
   };
 
   const handleOpenEvents = () => {
@@ -53,9 +60,32 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     if (openProjects) {
       setOpenProjects(false);
     }
+    if (openKvp) {
+      setOpenKvp(false);
+    }
   };
+
   const handleOpenProjects = () => {
     setOpenProjects(!openProjects);
+    if (openKvp) {
+      setOpenKvp(false);
+    }
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
+    }
+  };
+
+  const handleOpenKvp = () => {
+    setOpenKvp(!openKvp);
+    if (openProjects) {
+      setOpenProjects(false);
+    }
     if (openMitglieder) {
       setOpenMitglieder(false);
     }
@@ -105,6 +135,8 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
                 ? openEvents
                 : item.title === "Projekte"
                 ? openProjects
+                : item.title === "KVP"
+                ? openKvp
                 : undefined
             }
             setOpenItem={
@@ -116,6 +148,8 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
                 ? handleOpenEvents
                 : item.title === "Projekte"
                 ? handleOpenProjects
+                : item.title === "KVP"
+                ? handleOpenKvp
                 : undefined
             }
           />
