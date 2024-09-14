@@ -2,7 +2,7 @@
  * The CompanyOverview-Component displays all companies in a table and displays options for filtering and sorting the companies
  */
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Paper,
   Table,
@@ -22,6 +22,8 @@ import {
 } from "@mui/material";
 import { UnfoldMore, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
+import { AuthContext } from "../../context/auth-context/AuthContext";
 import { CompanyDto } from "../../types/projectTypes";
 import useCompanies from "../../hooks/useCompanies";
 import useProjects from "../../hooks/projects/useProjects";
@@ -146,6 +148,9 @@ const CompanyOverview: React.FunctionComponent = () => {
     attribute: "name",
     direction: "asc",
   });
+
+  const { auth } = useContext(AuthContext);
+  const hasCrmPermissions = doesPermissionsHaveSomeOf(auth.permissions, [13]);
 
   /**
    * Handles the change event on the search filter input
@@ -288,13 +293,15 @@ const CompanyOverview: React.FunctionComponent = () => {
 
   return (
     <div>
-      <Grid container spacing={3}>
-        <Grid item>
-          <Button sx={styles.button} variant="contained" component={Link} to={`/unternehmen/neu`}>
-            Neuen Kunden anlegen
-          </Button>
+      {hasCrmPermissions && (
+        <Grid container spacing={3}>
+          <Grid item>
+            <Button sx={styles.button} variant="contained" component={Link} to={`/unternehmen/neu`}>
+              Neuen Kunden anlegen
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
       <Paper sx={styles.filterContainer}>
         <StyledForm noValidate autoComplete="off">
           <Grid container spacing={1}>
