@@ -14,6 +14,7 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
   const [openMitglieder, setOpenMitglieder] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openEvents, setOpenEvents] = useState(false);
+  const [openProjects, setOpenProjects] = useState(false);
 
   const handleOpenMitglieder = () => {
     setOpenMitglieder(!openMitglieder);
@@ -22,6 +23,9 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     }
     if (openEvents) {
       setOpenEvents(false);
+    }
+    if (openProjects) {
+      setOpenProjects(false);
     }
   };
 
@@ -33,6 +37,9 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     if (openEvents) {
       setOpenEvents(false);
     }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
   };
 
   const handleOpenEvents = () => {
@@ -42,6 +49,21 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
     }
     if (openTools) {
       setOpenTools(false);
+    }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
+  };
+  const handleOpenProjects = () => {
+    setOpenProjects(!openProjects);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
     }
   };
 
@@ -81,6 +103,8 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
                 ? openTools
                 : item.title === "Veranstaltungen"
                 ? openEvents
+                : item.title === "Projekte"
+                ? openProjects
                 : undefined
             }
             setOpenItem={
@@ -90,6 +114,8 @@ const SidebarMobile = ({ openDrawer, onCloseDrawer, onOpenDrawer }: SidebarMobil
                 ? handleOpenTools
                 : item.title === "Veranstaltungen"
                 ? handleOpenEvents
+                : item.title === "Projekte"
+                ? handleOpenProjects
                 : undefined
             }
           />

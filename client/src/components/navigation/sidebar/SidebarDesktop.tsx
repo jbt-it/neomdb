@@ -7,6 +7,7 @@ const SidebarDesktop = () => {
   const [openMitglieder, setOpenMitglieder] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openEvents, setOpenEvents] = useState(false);
+  const [openProjects, setOpenProjects] = useState(false);
 
   const handleOpenMitglieder = () => {
     setOpenMitglieder(!openMitglieder);
@@ -15,6 +16,9 @@ const SidebarDesktop = () => {
     }
     if (openEvents) {
       setOpenEvents(false);
+    }
+    if (openProjects) {
+      setOpenProjects(false);
     }
   };
 
@@ -26,6 +30,9 @@ const SidebarDesktop = () => {
     if (openEvents) {
       setOpenEvents(false);
     }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
   };
 
   const handleOpenEvents = () => {
@@ -35,6 +42,22 @@ const SidebarDesktop = () => {
     }
     if (openTools) {
       setOpenTools(false);
+    }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
+  };
+
+  const handleOpenProjects = () => {
+    setOpenProjects(!openProjects);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
     }
   };
 
@@ -61,6 +84,8 @@ const SidebarDesktop = () => {
                 ? openTools
                 : item.title === "Veranstaltungen"
                 ? openEvents
+                : item.title === "Projekte"
+                ? openProjects
                 : undefined
             }
             setOpenItem={
@@ -70,6 +95,8 @@ const SidebarDesktop = () => {
                 ? handleOpenTools
                 : item.title === "Veranstaltungen"
                 ? handleOpenEvents
+                : item.title === "Projekte"
+                ? handleOpenProjects
                 : undefined
             }
           />

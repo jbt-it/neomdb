@@ -98,6 +98,16 @@ const navConfig: NavItem[] = [
     title: "Projekte",
     path: "/projekte",
     icon: getIconByName("TrendingUp"),
+    children: [
+      {
+        title: "Projekte",
+        path: "/projekte",
+      },
+      {
+        title: "Unternehmen",
+        path: "/unternehmen",
+      },
+    ],
   },
   {
     title: "Veranstaltungen",
