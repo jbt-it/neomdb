@@ -6,6 +6,7 @@ import useResponsive from "../../hooks/useResponsive";
 import jbtLogo from "../../assets/jbt-logo.png";
 import dayjs from "dayjs";
 import ApplicationForm from "../../components/application/ApplicationForm";
+import { ApplicationProvider } from "../../context/ApplicationContext";
 
 // Current generation data
 const CurrentGeneration = {
@@ -45,7 +46,7 @@ const Application = () => {
         }}
       >
         <Paper
-          elevation={10}
+          elevation={3}
           sx={{
             minHeight: "50vh",
             minWidth: isMobile ? "80vw" : "55vw",
@@ -79,7 +80,11 @@ const Application = () => {
     currentGeneration.applicationStart < new Date() &&
     currentGeneration.applicationEnd > new Date()
   ) {
-    return <ApplicationForm generation={currentGeneration} />;
+    return (
+      <ApplicationProvider>
+        <ApplicationForm generation={currentGeneration} />
+      </ApplicationProvider>
+    );
   }
 
   // Else the application phase has ended
@@ -95,7 +100,7 @@ const Application = () => {
       }}
     >
       <Paper
-        elevation={10}
+        elevation={3}
         sx={{
           minHeight: "50vh",
           minWidth: isMobile ? "80vw" : "55vw",

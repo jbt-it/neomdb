@@ -22,7 +22,7 @@ const ApplicationStart = ({ generation, handleSetIsApplying }: ApplicationStartP
   const isMobile = useResponsive("down", "sm");
   return (
     <Paper
-      elevation={10}
+      elevation={3}
       sx={{
         minHeight: "50vh",
         minWidth: isMobile ? "80vw" : "55vw",

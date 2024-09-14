@@ -55,6 +55,7 @@ const ApplicationStepper = ({
         flex: 1,
         margin: 5,
       }}
+      elevation={3}
     >
       <Stack direction={"column"} justifyContent={"space-evenly"} sx={{ flex: 1, height: "100%" }}>
         <Stepper nonLinear activeStep={activeStep} sx={{ flex: 0 }} alternativeLabel={useAlternativeLabel}>
@@ -66,7 +67,19 @@ const ApplicationStepper = ({
             </Step>
           ))}
         </Stepper>
-        <Box sx={{ flex: 1, overflow: "auto", mt: 2 }}>{renderStep(activeStep)}</Box>
+        <Box
+          sx={{
+            flex: 1,
+            overflow: "auto",
+            mt: 2,
+            pt: 2,
+            maxWidth: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          {renderStep(activeStep)}
+        </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} variant="outlined">
             Zurück

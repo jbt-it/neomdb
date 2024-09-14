@@ -3,8 +3,17 @@ import ApplicationStart from "./ApplicationStart";
 import useResponsive from "../../hooks/useResponsive";
 import ApplicationMobileStepper from "./ApplicationMobileStepper";
 import { Generation } from "../../types/traineesTypes";
-import { Container, Stack, TextField, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import ApplicationStepper from "./ApplicationStepper";
+import PersonalDataStep from "./PersonalDataStep";
+import StudyStep from "./StudyStep";
+import WorkExperienceStep from "./WorkExperienceStep";
+import LanguagesStep from "./LanguagesStep";
+import HobbiesStep from "./HobbiesStep";
+import MotivationStep from "./MotivationStep";
+import SelfEvaluationStep from "./SelfEvaluationStep";
+import FeedbackStep from "./FeedbackStep";
+import { useApplicationContext } from "../../context/ApplicationContext";
 
 const steps = [
   {
@@ -58,6 +67,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   const isMobile = useResponsive("down", "md");
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = steps.length;
+  const { applicationState } = useApplicationContext();
 
   // Check if the current step is the last step
   const isLastStep = () => {
@@ -85,18 +95,32 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
 
   // Handles the application completion
   const handleApply = () => {
-    console.log("Apply");
+    console.log(applicationState);
     alert("Bewerbung abgeschickt");
   };
 
   // Renders the current step
   const renderStep = (step: number) => {
-    return (
-      <Stack spacing={3}>
-        <Typography variant="h5">{steps[step].description}</Typography>
-        <TextField helperText="1" minRows={3} variant="outlined" />
-      </Stack>
-    );
+    switch (step) {
+      case 0:
+        return <PersonalDataStep />;
+      case 1:
+        return <StudyStep />;
+      case 2:
+        return <WorkExperienceStep />;
+      case 3:
+        return <LanguagesStep />;
+      case 4:
+        return <HobbiesStep />;
+      case 5:
+        return <MotivationStep />;
+      case 6:
+        return <SelfEvaluationStep />;
+      case 7:
+        return <FeedbackStep />;
+      default:
+        return <PersonalDataStep />;
+    }
   };
 
   if (isApplying) {
