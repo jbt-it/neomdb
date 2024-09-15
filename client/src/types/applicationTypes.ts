@@ -1,3 +1,22 @@
+// Definition of the ApplicationHiwiStudentJob type
+export type ApplicationPracticalExperience = {
+  id: number;
+  activity: string | null;
+  company: string | null;
+  location: string | null;
+  start: Date | undefined;
+  end: Date | undefined;
+};
+
+export type ApplicationPracticalExperienceError = {
+  id: number;
+  activity: boolean;
+  company: boolean;
+  location: boolean;
+  start: boolean;
+  end: boolean;
+};
+
 // Definition of the Application type
 export type Application = {
   firstName: string;
@@ -33,11 +52,16 @@ export type Application = {
   apprenticeshipLocation: string | null;
   apprenticeshipStart: string | null;
   apprenticeshipEnd: string | null;
+  hasOccupation: boolean;
   occupation: string | null;
   occupationCompany: string | null;
   occupationLocation: string | null;
   occupationStart: string | null;
   occupationEnd: string | null;
+  internship: ApplicationPracticalExperience[];
+  hiwiStudentJob: ApplicationPracticalExperience[];
+  voluntarySchool: string[];
+  voluntaryStudy: string[];
   itSkills: string | null;
   hobbies: string | null;
   timeInvestment: string | null;
@@ -102,6 +126,8 @@ export type ApplicationError = {
   occupationLocation: boolean;
   occupationStart: boolean;
   occupationEnd: boolean;
+  internship: ApplicationPracticalExperienceError[];
+  hiwiStudentJob: ApplicationPracticalExperienceError[];
   itSkills: boolean;
   hobbies: boolean;
   timeInvestment: boolean;

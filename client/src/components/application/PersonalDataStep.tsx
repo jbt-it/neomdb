@@ -326,11 +326,11 @@ const PersonalDataStep = () => {
           </Stack>
         </Stack>
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
+      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1} flex={1}>
         <Typography fontWeight="bold" fontSize={18} flex={1}>
           Bild:
         </Typography>
-        <Box flex={3}>
+        <Box flex={2}>
           <input
             ref={inputFileRef}
             type="file"
@@ -344,6 +344,7 @@ const PersonalDataStep = () => {
               variant="contained"
               component="span"
               size="small"
+              fullWidth={isMobile ? true : false}
               sx={{
                 padding: 1,
                 backgroundColor: "primary.main",

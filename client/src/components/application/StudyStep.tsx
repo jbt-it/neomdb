@@ -4,6 +4,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Stack,
   TextField,
@@ -21,9 +22,11 @@ const universities = [
   "Universität Hohenheim",
   "Universität Stuttgart",
   "Hochschule der Medien",
+  "Duale Hochschule Baden-Württemberg",
   "Hochschule für Technik",
   "Hochschule Esslingen",
-  "Duale Hochschule Baden-Württemberg",
+  "Hochschule für Wirtschaft und Umwelt",
+  "Universität Tübingen",
 ];
 // a list of courses of study
 const courseOfStudy = [
@@ -159,6 +162,7 @@ const StudyStep = () => {
             Studienbeginn:
           </Typography>
           <DatePicker
+            views={["month", "year"]}
             sx={{ flex: 2, width: "100%" }}
             slotProps={{
               textField: {
@@ -201,7 +205,6 @@ const StudyStep = () => {
             variant="outlined"
             sx={{ flex: 2 }}
             size="small"
-            required
             label="1. Vertiefung"
             value={applicationState.studyFirstMajor}
             onChange={(e) => {
@@ -217,7 +220,6 @@ const StudyStep = () => {
             variant="outlined"
             sx={{ flex: 2 }}
             size="small"
-            required
             label="2. Vertiefung"
             value={applicationState.studySecondMajor}
             onChange={(e) => {
@@ -233,7 +235,6 @@ const StudyStep = () => {
             variant="outlined"
             sx={{ flex: 2 }}
             size="small"
-            required
             label="3. Vertiefung"
             value={applicationState.studyThirdMajor}
             onChange={(e) => {
@@ -251,7 +252,7 @@ const StudyStep = () => {
                 variant="outlined"
                 sx={{ flex: 2 }}
                 size="small"
-                required
+                required={applicationState.enrolledDegree === "Master"}
                 label="Studienfach Bachelor"
                 value={applicationState.bachelorSubject}
                 onChange={(e) => {
@@ -278,8 +279,8 @@ const StudyStep = () => {
           </>
         ) : null}
       </Stack>
-      <Stack spacing={2}>
-        <Stack direction={"row"} spacing={3} alignItems={"center"}>
+      <Stack spacing={0} alignItems="center" justifyContent={"center"}>
+        <Stack direction={"row"} spacing={3} alignItems={"center"} width={"100%"}>
           <Typography fontWeight="bold" fontSize={18}>
             Angaben zur Berufsausbildung
           </Typography>
@@ -291,7 +292,16 @@ const StudyStep = () => {
           </IconButton>
         </Stack>
         {applicationState.apprenticeship ? (
-          <Stack spacing={3}>
+          <Stack
+            spacing={2}
+            width={"90%"}
+            border={1}
+            borderRadius={isMobile ? 5 : 10}
+            component={Paper}
+            elevation={0}
+            borderColor={"#c4c4c4"}
+            padding={3}
+          >
             <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
               <Typography fontWeight="bold" fontSize={18} flex={1}>
                 Ausbildungsberuf:
@@ -346,6 +356,7 @@ const StudyStep = () => {
               </Typography>
               <DatePicker
                 sx={{ flex: 2, width: "100%" }}
+                views={["month", "year"]}
                 slotProps={{
                   textField: {
                     variant: "outlined",
@@ -367,6 +378,7 @@ const StudyStep = () => {
                 Ende:
               </Typography>
               <DatePicker
+                views={["month", "year"]}
                 sx={{ flex: 2, width: "100%" }}
                 slotProps={{
                   textField: {
