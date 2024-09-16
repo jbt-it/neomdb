@@ -50,14 +50,14 @@ export type Application = {
   apprenticeshipJob: string | null;
   apprenticeshipCompany: string | null;
   apprenticeshipLocation: string | null;
-  apprenticeshipStart: string | null;
-  apprenticeshipEnd: string | null;
+  apprenticeshipStart: Date | null;
+  apprenticeshipEnd: Date | null;
   hasOccupation: boolean;
   occupation: string | null;
   occupationCompany: string | null;
   occupationLocation: string | null;
-  occupationStart: string | null;
-  occupationEnd: string | null;
+  occupationStart: Date | null;
+  occupationEnd: Date | null;
   internship: ApplicationPracticalExperience[];
   hiwiStudentJob: ApplicationPracticalExperience[];
   voluntarySchool: string[];

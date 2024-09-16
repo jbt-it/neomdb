@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
-import useResponsive from "../../hooks/useResponsive";
+import useResponsive from "../../../hooks/useResponsive";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { FileUpload } from "@mui/icons-material";
-import { useApplicationContext } from "../../context/ApplicationContext";
+import { useApplicationContext } from "../../../context/ApplicationContext";
+import ApplicationTextInput from "../inputs/ApplicationTextInput";
+import ApplicationDateInput from "../inputs/ApplicationDateInput";
 
 /**
  * The personal data step of the application form
@@ -108,38 +109,24 @@ const PersonalDataStep = () => {
 
   return (
     <Stack direction={"column"} width={isMobile ? "100%" : "60%"} spacing={2}>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Vorname:
-        </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="Vorname"
-          value={applicationState.firstName}
-          onChange={(e) => {
-            updateApplicationState("firstName", e.target.value);
-          }}
-        />
-      </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Nachname:
-        </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="Nachname"
-          value={applicationState.lastName}
-          onChange={(e) => {
-            updateApplicationState("lastName", e.target.value);
-          }}
-        />
-      </Stack>
+      <ApplicationTextInput
+        value={applicationState.firstName}
+        label="Vorname"
+        attributeName="firstName"
+        onChange={(e) => {
+          updateApplicationState("firstName", e.target.value);
+        }}
+        required={true}
+      />
+      <ApplicationTextInput
+        value={applicationState.lastName}
+        label="Nachname"
+        attributeName="lastName"
+        onChange={(e) => {
+          updateApplicationState("lastName", e.target.value);
+        }}
+        required={true}
+      />
       <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
         <Typography fontWeight="bold" fontSize={18} flex={1}>
           Geschlecht:
@@ -159,76 +146,41 @@ const PersonalDataStep = () => {
           </Select>
         </FormControl>
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Geburtsdatum:
-        </Typography>
-        <DatePicker
-          sx={{ flex: 2, width: "100%" }}
-          slotProps={{
-            textField: {
-              variant: "outlined",
-              size: "small",
-              required: true,
-              label: "Geburtsdatum",
-            },
-          }}
-          minDate={minBirthDate}
-          maxDate={maxBirthDate}
-          value={applicationState.birthDate ? dayjs(applicationState.birthDate) : undefined}
-          onChange={handleBirthDateChange}
-        />
-      </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Handynummer:
-        </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="Handynummer"
-          value={applicationState.mobilePhone}
-          onChange={handlePhoneNumberChange}
-          error={applicationErrorState.mobilePhone}
-          helperText={applicationErrorState.mobilePhone ? "Bitte geben Sie eine gültige deutsche Handynummer ein." : ""}
-        />
-      </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          E-Mail-Adresse:
-        </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="E-Mail-Adresse"
-          type="email"
-          value={applicationState.email}
-          onChange={handleEmailChange}
-          error={applicationErrorState.email}
-          helperText={applicationErrorState.email ? "Bitte geben Sie eine gültige E-Mail-Adresse ein." : ""}
-        />
-      </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          E-Mail-Adresse bestätigen:
-        </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="E-Mail-Adresse"
-          type="email"
-          value={applicationState.confirmEmail}
-          onChange={handleConfirmEmailChange}
-          error={applicationErrorState.confirmEmail}
-          helperText={applicationErrorState.confirmEmail ? "Die E-Mail-Adressen stimmen nicht überein." : ""}
-        />
-      </Stack>
+      <ApplicationDateInput
+        label="Geburtsdatum"
+        value={applicationState.birthDate}
+        onChange={handleBirthDateChange}
+        minDate={minBirthDate}
+        maxDate={maxBirthDate}
+        error={applicationErrorState.birthDate}
+      />
+      <ApplicationTextInput
+        value={applicationState.mobilePhone}
+        label="Handynummer"
+        attributeName="mobilePhone"
+        onChange={handlePhoneNumberChange}
+        error={applicationErrorState.mobilePhone}
+        helperText={applicationErrorState.mobilePhone ? "Bitte geben Sie eine gültige deutsche Handynummer ein." : ""}
+        required={true}
+      />
+      <ApplicationTextInput
+        value={applicationState.email}
+        label="E-Mail-Adresse"
+        attributeName="email"
+        onChange={handleEmailChange}
+        error={applicationErrorState.email}
+        helperText={applicationErrorState.email ? "Bitte geben Sie eine gültige E-Mail-Adresse ein." : ""}
+        required={true}
+      />
+      <ApplicationTextInput
+        value={applicationState.confirmEmail}
+        label="E-Mail-Adresse bestätigen"
+        attributeName="confirmEmail"
+        onChange={handleConfirmEmailChange}
+        error={applicationErrorState.confirmEmail}
+        helperText={applicationErrorState.confirmEmail ? "Die E-Mail-Adressen stimmen nicht überein." : ""}
+        required={true}
+      />
       <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
         <Typography fontWeight="bold" fontSize={18} flex={1}>
           Heimatanschrift:

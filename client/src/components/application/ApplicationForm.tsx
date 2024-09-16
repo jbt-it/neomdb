@@ -5,14 +5,14 @@ import ApplicationMobileStepper from "./ApplicationMobileStepper";
 import { Generation } from "../../types/traineesTypes";
 import { Container } from "@mui/material";
 import ApplicationStepper from "./ApplicationStepper";
-import PersonalDataStep from "./PersonalDataStep";
-import StudyStep from "./StudyStep";
-import WorkExperienceStep from "./WorkExperienceStep";
-import LanguagesStep from "./LanguagesStep";
-import HobbiesStep from "./HobbiesStep";
-import MotivationStep from "./MotivationStep";
-import SelfEvaluationStep from "./SelfEvaluationStep";
-import FeedbackStep from "./FeedbackStep";
+import PersonalDataStep from "./steps/PersonalDataStep";
+import StudyStep from "./steps/StudyStep";
+import WorkExperienceStep from "./steps/WorkExperienceStep";
+import LanguagesStep from "./steps/LanguagesStep";
+import HobbiesStep from "./steps/HobbiesStep";
+import MotivationStep from "./steps/MotivationStep";
+import SelfEvaluationStep from "./steps/SelfEvaluationStep";
+import FeedbackStep from "./steps/FeedbackStep";
 import { useApplicationContext } from "../../context/ApplicationContext";
 
 const steps = [

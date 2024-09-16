@@ -16,7 +16,7 @@ interface ApplicationContextProps {
   updateApplicationErrorState: (attributeName: string, attributeValue: boolean) => void;
   resetApprenticeship: () => void;
   resetOccupation: () => void;
-  addHiwiStudentJob: (type: string) => void;
+  addPracticalExperienceJob: (type: string) => void;
   removePracticalExperienceJob: (type: string, jobId: number) => void;
   updatePracticalExperience: (type: string, job: ApplicationPracticalExperience) => void;
   updatePracticalExperienceError: (type: string, jobId: number, errorName: string, errorValue: boolean) => void;
@@ -252,10 +252,8 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
   const addPracticalExperienceJob = (type: string) => {
     const newJob = initializePracticalExperience();
     const newJobError = initializePracticalExperienceError();
-    newJob.id =
-      applicationState.hiwiStudentJob.length > 0
-        ? applicationState.hiwiStudentJob[applicationState.hiwiStudentJob.length - 1].id + 1
-        : 1;
+    const jobType = type === "internship" ? applicationState.internship : applicationState.hiwiStudentJob;
+    newJob.id = jobType.length > 0 ? jobType[jobType.length - 1].id + 1 : 1;
     newJobError.id = newJob.id;
     if (type === "internship") {
       setApplicationState((prevState) => ({
@@ -352,7 +350,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
         updateApplicationErrorState,
         resetApprenticeship,
         resetOccupation,
-        addHiwiStudentJob: addPracticalExperienceJob,
+        addPracticalExperienceJob,
         removePracticalExperienceJob,
         updatePracticalExperience,
         updatePracticalExperienceError,

@@ -41,18 +41,32 @@ const ApplicationStart = ({ generation, handleSetIsApplying }: ApplicationStartP
           component="img"
           src={jbtLogo}
         />
-        <Typography variant="body1" textAlign={isMobile ? "start" : "center"} fontSize={isMobile ? 16 : 18}>
-          Herzlich willkommen zur Online-Bewerbung für das <strong>Junior Business Team</strong>! Nimm dir bitte kurz
-          Zeit, um die Fragen auf den folgenden Seiten auszufüllen. Überall, wo ein grünes Plus steht (z.B. bei
-          Praktika) kannst du durch einen Klick darauf mehrere Felder öffnen. Nach Bewerbungsschluss erhältst du dann
-          von uns eine Rückmeldung bezüglich des Auswahlwochenendes. Am Auswahlwochenende findet ein Kennenlerngespräch
-          statt und du hast die Möglichkeit, dein Können in einer kleinen Case Study unter Beweis zu stellen. Bei Fragen
-          kannst du dich an <strong>mitglieder@studentische-beratung.de</strong> wenden. Solltest du Probleme beim
-          Hochladen einer Datei haben, sende diese bitte per Email an{" "}
-          <strong>bewerbung@studentische-beratung.de</strong>. Viel Erfolg beim Ausfüllen! Die Bewerbungsphase endet am{" "}
-          <strong>{dayjs(generation.applicationEnd).format("DD.MM.YYYY")}</strong> um{" "}
-          <strong>{dayjs(generation.applicationEnd).format("hh:mm")}</strong>.
-        </Typography>
+        <Box width={isMobile ? "100%" : "70%"}>
+          <Typography variant="body1" textAlign={"start"} fontSize={isMobile ? 16 : 18}>
+            Herzlich willkommen zur Online-Bewerbung für das <strong>Junior Business Team</strong>!
+            <br />
+            <br />
+            Nimm dir bitte kurz Zeit, um die Fragen auf den folgenden Seiten auszufüllen.
+            <br />
+            Überall, wo ein grünes Plus steht (z.B. bei Praktika) kannst du durch einen Klick darauf mehrere Felder
+            öffnen. Nach Bewerbungsschluss erhältst du dann von uns eine Rückmeldung bezüglich des Auswahlwochenendes.
+            Am Auswahlwochenende findet ein Kennenlerngespräch statt und du hast die Möglichkeit, dein Können in einer
+            kleinen Case Study unter Beweis zu stellen. Bei Fragen kannst du dich an{" "}
+            <strong>mitglieder@studentische-beratung.de</strong> wenden.
+            <br />
+            <br />
+            Solltest du Probleme beim Hochladen einer Datei haben, sende diese bitte per Email an{" "}
+            <strong>bewerbung@studentische-beratung.de</strong>.
+            <br />
+            <br />
+            Viel Erfolg beim Ausfüllen!
+            <br />
+            <br />
+            Die Bewerbungsphase endet am <strong>
+              {dayjs(generation.applicationEnd).format("DD.MM.YYYY")}
+            </strong> um <strong>{dayjs(generation.applicationEnd).format("hh:mm")}</strong>.
+          </Typography>
+        </Box>
         <Button variant="contained" color="primary" fullWidth onClick={handleSetIsApplying}>
           Jetzt bewerben
         </Button>
