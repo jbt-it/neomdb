@@ -17,6 +17,12 @@ export type ApplicationPracticalExperienceError = {
   end: boolean;
 };
 
+export type Skill = {
+  id: number;
+  name: string;
+  level: number;
+};
+
 // Definition of the Application type
 export type Application = {
   firstName: string;
@@ -62,7 +68,8 @@ export type Application = {
   hiwiStudentJob: ApplicationPracticalExperience[];
   voluntarySchool: string[];
   voluntaryStudy: string[];
-  itSkills: string | null;
+  languages: Skill[];
+  itSkills: Skill[];
   hobbies: string | null;
   timeInvestment: string | null;
   motivation: string | null;
@@ -74,17 +81,20 @@ export type Application = {
   selfAssessment6: number | null;
   selfAssessment7: number | null;
   selfAssessment8: number | null;
-  flyer: boolean | null;
-  lectures: boolean | null;
-  internet: boolean | null;
-  others: boolean | null;
-  othersText: string | null;
-  workingWeekend: boolean | null;
-  availabilityWorkingWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
-  socialMedia: number | null;
-  campusRally: number | null;
-  partner: number | null;
-  newsletter: number | null;
+  flyer: boolean;
+  posters: boolean;
+  lectures: boolean;
+  friends: boolean;
+  informationStand: boolean;
+  internet: boolean;
+  others: boolean;
+  othersText: string;
+  workingWeekend: boolean;
+  socialMedia: boolean;
+  campusRally: boolean;
+  partner: boolean;
+  newsletter: boolean;
+  availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 };
 
 // Definition of the ApplicationError type
@@ -128,6 +138,7 @@ export type ApplicationError = {
   occupationEnd: boolean;
   internship: ApplicationPracticalExperienceError[];
   hiwiStudentJob: ApplicationPracticalExperienceError[];
+  languages: boolean;
   itSkills: boolean;
   hobbies: boolean;
   timeInvestment: boolean;
@@ -146,7 +157,7 @@ export type ApplicationError = {
   others: boolean;
   othersText: boolean;
   workingWeekend: boolean;
-  availabilityWorkingWeekend: boolean;
+  availabilitySelectionWeekend: boolean;
   socialMedia: boolean;
   campusRally: boolean;
   partner: boolean;

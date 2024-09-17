@@ -1082,7 +1082,7 @@
 						"type": "boolean",
 						"nullable": true
 					},
-					"availabilityWorkingWeekend": {
+					"availabilitySelectionWeekend": {
 						"type": "string",
 						"enum": [
 							"kannImmer",
@@ -1108,6 +1108,11 @@
 						"nullable": true
 					},
 					"newsletter": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"informationStand": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
@@ -1213,11 +1218,12 @@
 					"others",
 					"othersText",
 					"workingWeekend",
-					"availabilityWorkingWeekend",
+					"availabilitySelectionWeekend",
 					"socialMedia",
 					"campusRally",
 					"partner",
 					"newsletter",
+					"informationStand",
 					"admittedMember",
 					"generationEntity",
 					"traineeApplicantVoluntarySchools",

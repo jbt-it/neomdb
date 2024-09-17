@@ -2,7 +2,6 @@ import { Stack, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
-import useResponsive from "../../../hooks/useResponsive";
 
 /**
  * The interface for the application date input
@@ -16,6 +15,7 @@ interface ApplicationDateInputProps {
   maxDate: Dayjs;
   error: boolean;
   helperText?: string;
+  required?: boolean;
 }
 
 /**
@@ -39,12 +39,14 @@ const ApplicationDateInput = ({
   maxDate,
   error,
   helperText,
+  required,
 }: ApplicationDateInputProps) => {
-  const isMobile = useResponsive("down", "md");
   return (
-    <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-      <Typography fontWeight="bold" fontSize={18} flex={1}>
-        {label}:
+    <Stack direction={"column"}>
+      <Typography fontWeight="bold" flex={1} width={"100%"} color={"#7d7d7d"}>
+        <label htmlFor={label}>
+          {label} {required && <span style={{ color: "red" }}>*</span>}
+        </label>
       </Typography>
       <DatePicker
         sx={{ flex: 2, width: "100%" }}
@@ -53,8 +55,6 @@ const ApplicationDateInput = ({
           textField: {
             variant: "outlined",
             size: "small",
-            required: true,
-            label: label,
             helperText: error ? helperText : "",
             error: error,
           },

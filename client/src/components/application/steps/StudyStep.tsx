@@ -14,7 +14,7 @@ import { useApplicationContext } from "../../../context/ApplicationContext";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
-import Job from "../Job";
+import Job from "../inputs/Job";
 import ApplicationTextInput from "../inputs/ApplicationTextInput";
 import ApplicationDateInput from "../inputs/ApplicationDateInput";
 
@@ -87,18 +87,20 @@ const StudyStep = () => {
   };
 
   return (
-    <Stack width={isMobile ? "100%" : "60%"} spacing={5}>
-      <Stack direction={"column"} spacing={2}>
-        <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-          <Typography fontWeight="bold" fontSize={18} flex={1}>
-            Angestrebter Abschluss:
+    <Stack width={"100%"} spacing={6}>
+      <Stack spacing={1}>
+        <Typography fontWeight={"bold"} fontSize={20}>
+          Studium
+        </Typography>
+        <Stack>
+          <Typography fontWeight="bold" flex={1} color={"#7d7d7d"}>
+            <label>
+              Angestrebter Abschluss <span style={{ color: "red" }}>*</span>
+            </label>
           </Typography>
           <FormControl fullWidth sx={{ flex: 2 }} size="small">
-            <InputLabel>Abschluss *</InputLabel>
             <Select
               size="small"
-              required
-              label="Abschluss"
               value={applicationState.enrolledDegree}
               onChange={(e) => updateApplicationState("enrolledDegree", e.target.value)}
             >
@@ -107,9 +109,11 @@ const StudyStep = () => {
             </Select>
           </FormControl>
         </Stack>
-        <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-          <Typography fontWeight="bold" fontSize={18} flex={1}>
-            Hochschule:
+        <Stack>
+          <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+            <label>
+              Hochschule <span style={{ color: "red" }}>*</span>
+            </label>
           </Typography>
           <Autocomplete
             options={universities}
@@ -120,12 +124,14 @@ const StudyStep = () => {
             value={applicationState.enrolledUniversity}
             onChange={(e, value) => updateApplicationState("enrolledUniversity", value)}
             onInputChange={(e, value) => updateApplicationState("enrolledUniversity", value)}
-            renderInput={(params) => <TextField variant="outlined" {...params} required label="Hochschule" />}
+            renderInput={(params) => <TextField variant="outlined" {...params} />}
           />
         </Stack>
-        <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-          <Typography fontWeight="bold" fontSize={18} flex={1}>
-            Studienfach:
+        <Stack>
+          <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+            <label>
+              Studienfach <span style={{ color: "red" }}>*</span>
+            </label>
           </Typography>
           <Autocomplete
             options={courseOfStudy}
@@ -136,7 +142,7 @@ const StudyStep = () => {
             value={applicationState.enrolledSubject}
             onChange={(e, value) => updateApplicationState("enrolledSubject", value)}
             onInputChange={(e, value) => updateApplicationState("enrolledSubject", value)}
-            renderInput={(params) => <TextField variant="outlined" {...params} required label="Studienfach" />}
+            renderInput={(params) => <TextField variant="outlined" {...params} />}
           />
         </Stack>
         <ApplicationDateInput
@@ -148,6 +154,7 @@ const StudyStep = () => {
           maxDate={dayjs()}
           error={applicationErrorState.studyStart}
           helperText="Bitte gib einen gültigen Studienbeginn an"
+          required
         />
         <ApplicationTextInput
           value={applicationState.studySemester || ""}
@@ -160,6 +167,7 @@ const StudyStep = () => {
           inputProps={{ min: 1 }}
           error={applicationErrorState.studySemester}
           helperText="Bitte gib ein gültiges Fachsemester an"
+          required
         />
         <ApplicationTextInput
           label="1. Vertiefung"
@@ -194,7 +202,6 @@ const StudyStep = () => {
               onChange={(e) => {
                 updateApplicationState("bachelorSubject", e.target.value);
               }}
-              required={applicationState.enrolledDegree === "Master"}
             />
             <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
               <Typography fontWeight="bold" fontSize={18} flex={1}>
@@ -217,7 +224,7 @@ const StudyStep = () => {
       </Stack>
       <Stack spacing={0}>
         <Stack direction={"row"} spacing={3} alignItems={"center"} width={"100%"}>
-          <Typography fontWeight="bold" fontSize={18}>
+          <Typography fontWeight="bold" fontSize={20}>
             Angaben zur Berufsausbildung
           </Typography>
           <IconButton

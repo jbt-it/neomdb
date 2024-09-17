@@ -117,7 +117,14 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
       case 6:
         return <SelfEvaluationStep />;
       case 7:
-        return <FeedbackStep />;
+        return (
+          <FeedbackStep
+            wwStart={generation.wwDateStart}
+            wwEnd={generation.wwDateEnd}
+            selectionWeDateStart={generation.selectionWeDateStart}
+            selectionWeDateEnd={generation.selectionWeDateEnd}
+          />
+        );
       default:
         return <PersonalDataStep />;
     }

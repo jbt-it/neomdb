@@ -1,6 +1,5 @@
 import { Stack, TextField, Typography } from "@mui/material";
 import React from "react";
-import useResponsive from "../../../hooks/useResponsive";
 
 /**
  * The interface for the application text input
@@ -11,13 +10,13 @@ interface ApplicationTextInputProps {
   attributeName: string;
   inputType?: string;
   inputProps?: any;
-  required?: boolean;
   onChange: {
     (e: any): void;
     (event: React.ChangeEvent<HTMLInputElement>): void;
   };
   error?: boolean;
   helperText?: string;
+  required?: boolean;
 }
 
 /**
@@ -36,29 +35,29 @@ const ApplicationTextInput = ({
   label,
   inputType,
   inputProps,
-  required,
   onChange,
   error,
   helperText,
+  required,
 }: ApplicationTextInputProps) => {
-  const isMobile = useResponsive("down", "md");
   return (
-    <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-      <Typography fontWeight="bold" fontSize={18} flex={1}>
-        {label}:
+    <Stack direction={"column"} width={"100%"}>
+      <Typography fontWeight={"bold"} flex={1} width={"100%"} color={"#7d7d7d"}>
+        <label htmlFor={label}>
+          {label} {required && <span style={{ color: "red" }}>*</span>}
+        </label>
       </Typography>
       <TextField
         variant="outlined"
         sx={{ flex: 2 }}
         size="small"
-        required={required}
-        label={label}
         value={value}
         type={inputType ? inputType : "text"}
         inputProps={inputProps ? inputProps : {}}
         onChange={onChange}
         error={error}
         helperText={error ? helperText : ""}
+        fullWidth
       />
     </Stack>
   );

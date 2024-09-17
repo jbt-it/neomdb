@@ -4,14 +4,14 @@ import React from "react";
 import useResponsive from "../../../hooks/useResponsive";
 import { useApplicationContext } from "../../../context/ApplicationContext";
 import { ApplicationPracticalExperience } from "../../../types/applicationTypes";
-import Job from "../Job";
+import Job from "../inputs/Job";
 
 /**
  * The work experience step of the application form
  * @returns The work experience step
  */
 const WorkExperienceStep = () => {
-  const isMobile = useResponsive("down", "md");
+  const isMobile = useResponsive("down", "sm");
   const {
     applicationState,
     updateApplicationState,
@@ -98,10 +98,10 @@ const WorkExperienceStep = () => {
   };
 
   return (
-    <Stack spacing={isMobile ? 4 : 0} width={isMobile ? "100%" : "60%"}>
-      <Stack marginBottom={applicationState.hasOccupation ? 4 : 0}>
+    <Stack spacing={6} width={"100%"}>
+      <Stack>
         <Stack direction={"row"} spacing={3} alignItems={"center"}>
-          <Typography fontWeight="bold" fontSize={18}>
+          <Typography fontWeight="bold" fontSize={20}>
             Berufliche Tätigkeit
           </Typography>
           <IconButton
@@ -126,9 +126,9 @@ const WorkExperienceStep = () => {
           />
         ) : null}
       </Stack>
-      <Stack marginBottom={applicationState.internship.length > 0 ? 4 : 0}>
+      <Stack>
         <Stack direction={"row"} spacing={3} alignItems={"center"}>
-          <Typography fontWeight="bold" fontSize={18}>
+          <Typography fontWeight="bold" fontSize={20}>
             Praktika
           </Typography>
           <IconButton
@@ -140,7 +140,7 @@ const WorkExperienceStep = () => {
             {<AddCircle />}
           </IconButton>
         </Stack>
-        <Stack spacing={2}>
+        <Stack spacing={4}>
           {applicationState.internship.map((job) => {
             return (
               <Job
@@ -161,9 +161,9 @@ const WorkExperienceStep = () => {
           })}
         </Stack>
       </Stack>
-      <Stack marginBottom={applicationState.hiwiStudentJob.length > 0 ? 4 : 0}>
+      <Stack>
         <Stack direction={"row"} spacing={3} alignItems={"center"}>
-          <Typography fontWeight="bold" fontSize={18}>
+          <Typography fontWeight="bold" fontSize={20}>
             Hiwi- / Werkstudententätigkeit / Nebenjob
           </Typography>
           <IconButton
@@ -196,10 +196,10 @@ const WorkExperienceStep = () => {
           })}
         </Stack>
       </Stack>
-      <Stack spacing={1} marginBottom={applicationState.voluntarySchool.length > 0 ? 4 : 0}>
+      <Stack spacing={1} marginBottom={applicationState.voluntarySchool.length > 0 ? 6 : 0}>
         <Stack spacing={isMobile ? 0 : -1}>
           <Stack direction={"row"} spacing={3} alignItems={"center"}>
-            <Typography fontWeight="bold" fontSize={18}>
+            <Typography fontWeight="bold" fontSize={20}>
               Ehrenamtliche Tätigkeit / Engagement in der Schulzeit
             </Typography>
             <IconButton
@@ -242,10 +242,10 @@ const WorkExperienceStep = () => {
             : null}
         </Stack>
       </Stack>
-      <Stack spacing={1} marginBottom={applicationState.voluntaryStudy.length > 0 ? 2 : 0}>
+      <Stack spacing={1}>
         <Stack spacing={isMobile ? 0 : -1}>
           <Stack direction={"row"} spacing={3} alignItems={"center"}>
-            <Typography fontWeight="bold" fontSize={18}>
+            <Typography fontWeight="bold" fontSize={20}>
               Ehrenamtliche Tätigkeit / Engagement im Studium
             </Typography>
             <IconButton

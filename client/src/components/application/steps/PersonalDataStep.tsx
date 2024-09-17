@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import useResponsive from "../../../hooks/useResponsive";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { FileUpload } from "@mui/icons-material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
@@ -108,179 +108,194 @@ const PersonalDataStep = () => {
   };
 
   return (
-    <Stack direction={"column"} width={isMobile ? "100%" : "60%"} spacing={2}>
-      <ApplicationTextInput
-        value={applicationState.firstName}
-        label="Vorname"
-        attributeName="firstName"
-        onChange={(e) => {
-          updateApplicationState("firstName", e.target.value);
-        }}
-        required={true}
-      />
-      <ApplicationTextInput
-        value={applicationState.lastName}
-        label="Nachname"
-        attributeName="lastName"
-        onChange={(e) => {
-          updateApplicationState("lastName", e.target.value);
-        }}
-        required={true}
-      />
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Geschlecht:
+    <Stack direction={"column"} width={"100%"} spacing={4}>
+      <Stack spacing={1}>
+        <Typography fontWeight={"bold"} fontSize={20}>
+          Persönliche Daten
         </Typography>
-        <FormControl fullWidth sx={{ flex: 2 }} size="small">
-          <InputLabel>Geschlecht *</InputLabel>
-          <Select
-            size="small"
-            required
-            label="Geschlecht"
-            value={applicationState.gender}
-            onChange={(e) => updateApplicationState("gender", e.target.value)}
-          >
-            <MenuItem value={"male"}>männlich</MenuItem>
-            <MenuItem value={"female"}>weiblich</MenuItem>
-            <MenuItem value={"divers"}>divers</MenuItem>
-          </Select>
-        </FormControl>
+        <ApplicationTextInput
+          value={applicationState.firstName}
+          label="Vorname"
+          attributeName="firstName"
+          onChange={(e) => {
+            updateApplicationState("firstName", e.target.value);
+          }}
+          required
+        />
+        <ApplicationTextInput
+          value={applicationState.lastName}
+          label="Nachname"
+          attributeName="lastName"
+          onChange={(e) => {
+            updateApplicationState("lastName", e.target.value);
+          }}
+          required
+        />
+        <Stack direction={"column"} alignItems={isMobile ? "normal" : "center"}>
+          <Typography fontWeight="bold" flex={1} width={"100%"} color={"#7d7d7d"}>
+            <label>
+              Geschlecht <span style={{ color: "red" }}>*</span>
+            </label>
+          </Typography>
+          <FormControl fullWidth sx={{ flex: 2 }} size="small">
+            <Select
+              size="small"
+              value={applicationState.gender}
+              onChange={(e) => updateApplicationState("gender", e.target.value)}
+            >
+              <MenuItem value={"male"}>männlich</MenuItem>
+              <MenuItem value={"female"}>weiblich</MenuItem>
+              <MenuItem value={"divers"}>divers</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
+        <ApplicationDateInput
+          label="Geburtsdatum"
+          value={applicationState.birthDate}
+          onChange={handleBirthDateChange}
+          minDate={minBirthDate}
+          maxDate={maxBirthDate}
+          error={applicationErrorState.birthDate}
+          required
+        />
       </Stack>
-      <ApplicationDateInput
-        label="Geburtsdatum"
-        value={applicationState.birthDate}
-        onChange={handleBirthDateChange}
-        minDate={minBirthDate}
-        maxDate={maxBirthDate}
-        error={applicationErrorState.birthDate}
-      />
-      <ApplicationTextInput
-        value={applicationState.mobilePhone}
-        label="Handynummer"
-        attributeName="mobilePhone"
-        onChange={handlePhoneNumberChange}
-        error={applicationErrorState.mobilePhone}
-        helperText={applicationErrorState.mobilePhone ? "Bitte geben Sie eine gültige deutsche Handynummer ein." : ""}
-        required={true}
-      />
-      <ApplicationTextInput
-        value={applicationState.email}
-        label="E-Mail-Adresse"
-        attributeName="email"
-        onChange={handleEmailChange}
-        error={applicationErrorState.email}
-        helperText={applicationErrorState.email ? "Bitte geben Sie eine gültige E-Mail-Adresse ein." : ""}
-        required={true}
-      />
-      <ApplicationTextInput
-        value={applicationState.confirmEmail}
-        label="E-Mail-Adresse bestätigen"
-        attributeName="confirmEmail"
-        onChange={handleConfirmEmailChange}
-        error={applicationErrorState.confirmEmail}
-        helperText={applicationErrorState.confirmEmail ? "Die E-Mail-Adressen stimmen nicht überein." : ""}
-        required={true}
-      />
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Heimatanschrift:
+      <Stack spacing={1}>
+        <Typography fontWeight={"bold"} fontSize={20}>
+          Kontaktdaten
         </Typography>
-        <Stack direction={"column"} sx={{ flex: 2 }} spacing={1}>
-          <Stack direction={"row"} spacing={2}>
-            <TextField
-              variant="outlined"
-              sx={{ flex: isMobile ? 2 : 5 }}
-              size="small"
-              label="Straße"
-              value={applicationState.homeAddressStreet}
-              onChange={(e) => {
-                updateApplicationState("homeAddressStreet", e.target.value);
-              }}
-            />
-            <TextField
-              variant="outlined"
-              sx={{ flex: 1 }}
-              size="small"
-              label="Nr."
-              type="number"
-              inputProps={{ min: 1 }}
-              value={applicationState.homeAddressNumber}
-              onChange={(e) => {
-                updateApplicationState("homeAddressNumber", e.target.value);
-              }}
-            />
+        <ApplicationTextInput
+          value={applicationState.mobilePhone}
+          label="Handynummer"
+          attributeName="mobilePhone"
+          onChange={handlePhoneNumberChange}
+          error={applicationErrorState.mobilePhone}
+          helperText={applicationErrorState.mobilePhone ? "Bitte geben Sie eine gültige deutsche Handynummer ein." : ""}
+          required
+        />
+        <ApplicationTextInput
+          value={applicationState.email}
+          label="E-Mail-Adresse"
+          attributeName="email"
+          onChange={handleEmailChange}
+          error={applicationErrorState.email}
+          helperText={applicationErrorState.email ? "Bitte geben Sie eine gültige E-Mail-Adresse ein." : ""}
+          required
+        />
+        <ApplicationTextInput
+          value={applicationState.confirmEmail}
+          label="E-Mail-Adresse bestätigen"
+          attributeName="confirmEmail"
+          onChange={handleConfirmEmailChange}
+          error={applicationErrorState.confirmEmail}
+          helperText={applicationErrorState.confirmEmail ? "Die E-Mail-Adressen stimmen nicht überein." : ""}
+          required
+        />
+      </Stack>
+      <Stack spacing={1}>
+        <Typography fontWeight={"bold"} fontSize={20}>
+          Adresse
+        </Typography>
+        <Stack spacing={1}>
+          <Typography fontWeight="bold" flex={1} color={"#7d7d7d"}>
+            Heimatanschrift
+          </Typography>
+          <Stack direction={"column"} sx={{ flex: 2 }} spacing={1}>
+            <Stack direction={"row"} spacing={2}>
+              <TextField
+                variant="outlined"
+                sx={{ flex: isMobile ? 2 : 5 }}
+                size="small"
+                label="Straße"
+                value={applicationState.homeAddressStreet}
+                onChange={(e) => {
+                  updateApplicationState("homeAddressStreet", e.target.value);
+                }}
+              />
+              <TextField
+                variant="outlined"
+                sx={{ flex: 1 }}
+                size="small"
+                label="Nr."
+                type="number"
+                inputProps={{ min: 1 }}
+                value={applicationState.homeAddressNumber}
+                onChange={(e) => {
+                  updateApplicationState("homeAddressNumber", e.target.value);
+                }}
+              />
+            </Stack>
+            <Stack direction={"row"} spacing={2}>
+              <TextField
+                variant="outlined"
+                sx={{ flex: 2 }}
+                size="small"
+                label="PLZ"
+                type="number"
+                inputProps={{ min: 1 }}
+                value={applicationState.homeAddressPostalCode}
+                onChange={(e) => {
+                  updateApplicationState("homeAddressPostalCode", e.target.value);
+                }}
+              />
+              <TextField variant="outlined" sx={{ flex: 4 }} size="small" label="Ort" />
+            </Stack>
           </Stack>
-          <Stack direction={"row"} spacing={2}>
-            <TextField
-              variant="outlined"
-              sx={{ flex: 2 }}
-              size="small"
-              label="PLZ"
-              type="number"
-              inputProps={{ min: 1 }}
-              value={applicationState.homeAddressPostalCode}
-              onChange={(e) => {
-                updateApplicationState("homeAddressPostalCode", e.target.value);
-              }}
-            />
-            <TextField variant="outlined" sx={{ flex: 4 }} size="small" label="Ort" />
+        </Stack>
+        <Stack spacing={1}>
+          <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+            Studienanschrift
+          </Typography>
+          <Stack direction={"column"} sx={{ flex: 2 }} spacing={1}>
+            <Stack direction={"row"} spacing={2}>
+              <TextField
+                variant="outlined"
+                sx={{ flex: isMobile ? 2 : 5 }}
+                size="small"
+                label="Straße"
+                value={applicationState.studyAddressStreet}
+                onChange={(e) => {
+                  updateApplicationState("studyAddressStreet", e.target.value);
+                }}
+              />
+              <TextField
+                variant="outlined"
+                sx={{ flex: 1 }}
+                size="small"
+                label="Nr."
+                type="number"
+                inputProps={{ min: 1 }}
+                value={applicationState.studyAddressNumber}
+                onChange={(e) => {
+                  updateApplicationState("studyAddressNumber", e.target.value);
+                }}
+              />
+            </Stack>
+            <Stack direction={"row"} spacing={2}>
+              <TextField
+                variant="outlined"
+                sx={{ flex: 2 }}
+                size="small"
+                label="PLZ"
+                type="number"
+                inputProps={{ min: 1 }}
+              />
+              <TextField
+                variant="outlined"
+                sx={{ flex: 4 }}
+                size="small"
+                label="Ort"
+                value={applicationState.studyAddressCity}
+                onChange={(e) => {
+                  updateApplicationState("studyAddressCity", e.target.value);
+                }}
+              />
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Studienanschrift:
-        </Typography>
-        <Stack direction={"column"} sx={{ flex: 2 }} spacing={1}>
-          <Stack direction={"row"} spacing={2}>
-            <TextField
-              variant="outlined"
-              sx={{ flex: isMobile ? 2 : 5 }}
-              size="small"
-              label="Straße"
-              value={applicationState.studyAddressStreet}
-              onChange={(e) => {
-                updateApplicationState("studyAddressStreet", e.target.value);
-              }}
-            />
-            <TextField
-              variant="outlined"
-              sx={{ flex: 1 }}
-              size="small"
-              label="Nr."
-              type="number"
-              inputProps={{ min: 1 }}
-              value={applicationState.studyAddressNumber}
-              onChange={(e) => {
-                updateApplicationState("studyAddressNumber", e.target.value);
-              }}
-            />
-          </Stack>
-          <Stack direction={"row"} spacing={2}>
-            <TextField
-              variant="outlined"
-              sx={{ flex: 2 }}
-              size="small"
-              label="PLZ"
-              type="number"
-              inputProps={{ min: 1 }}
-            />
-            <TextField
-              variant="outlined"
-              sx={{ flex: 4 }}
-              size="small"
-              label="Ort"
-              value={applicationState.studyAddressCity}
-              onChange={(e) => {
-                updateApplicationState("studyAddressCity", e.target.value);
-              }}
-            />
-          </Stack>
-        </Stack>
-      </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1} flex={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Bild:
+      <Stack direction={"column"} spacing={1} flex={1}>
+        <Typography fontWeight="bold" fontSize={20} flex={1}>
+          Bild
         </Typography>
         <Box flex={2}>
           <input

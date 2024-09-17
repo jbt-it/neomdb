@@ -262,7 +262,7 @@ export class TraineeApplicant {
     nullable: true,
     enum: ["kannImmer", "nichtFR", "nichtSA", "nichtSO"],
   })
-  availabilityWorkingWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
+  availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 
   @Column("tinyint", { name: "socialmedia", nullable: true })
   socialMedia: number | null;
@@ -275,6 +275,9 @@ export class TraineeApplicant {
 
   @Column("int", { name: "newsletter", nullable: true })
   newsletter: number | null;
+
+  @Column("int", { name: "infostand", nullable: true })
+  informationStand: number | null;
 
   @ManyToOne(() => Member, (member) => member.traineeApplicants, {
     onDelete: "NO ACTION",

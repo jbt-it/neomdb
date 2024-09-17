@@ -20,6 +20,9 @@ interface ApplicationContextProps {
   removePracticalExperienceJob: (type: string, jobId: number) => void;
   updatePracticalExperience: (type: string, job: ApplicationPracticalExperience) => void;
   updatePracticalExperienceError: (type: string, jobId: number, errorName: string, errorValue: boolean) => void;
+  addSkill: (skillType: string) => void;
+  removeSkill: (skillType: string, skillId: number) => void;
+  updateSkill: (skillType: string, skillId: number, attributeName: string, attributeValue: any) => void;
 }
 
 const ApplicationContext = createContext<ApplicationContextProps | undefined>(undefined);
@@ -74,7 +77,8 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     hiwiStudentJob: [],
     voluntarySchool: [],
     voluntaryStudy: [],
-    itSkills: null,
+    languages: [],
+    itSkills: [],
     hobbies: null,
     timeInvestment: null,
     motivation: null,
@@ -86,17 +90,20 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     selfAssessment6: null,
     selfAssessment7: null,
     selfAssessment8: null,
-    flyer: null,
-    lectures: null,
-    internet: null,
-    others: null,
-    othersText: null,
-    workingWeekend: null,
-    availabilityWorkingWeekend: null,
-    socialMedia: null,
-    campusRally: null,
-    partner: null,
-    newsletter: null,
+    flyer: false,
+    posters: false,
+    lectures: false,
+    friends: false,
+    informationStand: false,
+    internet: false,
+    others: false,
+    othersText: "",
+    workingWeekend: false,
+    socialMedia: false,
+    campusRally: false,
+    partner: false,
+    newsletter: false,
+    availabilitySelectionWeekend: null,
   });
 
   const [applicationErrorState, setApplicationErrorState] = useState<ApplicationError>({
@@ -139,6 +146,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     occupationEnd: false,
     internship: [],
     hiwiStudentJob: [],
+    languages: false,
     itSkills: false,
     hobbies: false,
     timeInvestment: false,
@@ -157,7 +165,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     others: false,
     othersText: false,
     workingWeekend: false,
-    availabilityWorkingWeekend: false,
+    availabilitySelectionWeekend: false,
     socialMedia: false,
     campusRally: false,
     partner: false,
@@ -341,6 +349,70 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * Adds a new skill to the application state based on the skill type
+   * @param skillType - The type of the skill
+   */
+  const addSkill = (skillType: string) => {
+    const skills = skillType === "it" ? applicationState.itSkills : applicationState.languages;
+    const newSkillId = skills.length > 0 ? skills[skills.length - 1].id + 1 : 1;
+    if (skillType === "language") {
+      setApplicationState({
+        ...applicationState,
+        languages: [...skills, { id: newSkillId, name: "", level: 0 }],
+      });
+    } else if (skillType === "it") {
+      setApplicationState({
+        ...applicationState,
+        itSkills: [...skills, { id: newSkillId, name: "", level: 0 }],
+      });
+    }
+  };
+
+  /**
+   * Removes a skill from the application state based on the skill type and skill id
+   * @param skillType - The type of the skill
+   * @param skillId - The id of the skill
+   */
+  const removeSkill = (skillType: string, skillId: number) => {
+    if (skillType === "language") {
+      setApplicationState({
+        ...applicationState,
+        languages: applicationState.languages.filter((skill) => skill.id !== skillId),
+      });
+    } else if (skillType === "it") {
+      setApplicationState({
+        ...applicationState,
+        itSkills: applicationState.itSkills.filter((skill) => skill.id !== skillId),
+      });
+    }
+  };
+
+  /**
+   * Updates a skill in the application state based on the skill type, skill id, attribute name, and attribute value
+   * @param skillType - The type of the skill
+   * @param skillId - The id of the skill
+   * @param attributeName - The name of the attribute
+   * @param attributeValue - The value of the attribute
+   */
+  const updateSkill = (skillType: string, skillId: number, attributeName: string, attributeValue: any) => {
+    if (skillType === "language") {
+      setApplicationState({
+        ...applicationState,
+        languages: applicationState.languages.map((skill) =>
+          skill.id === skillId ? { ...skill, [attributeName]: attributeValue } : skill
+        ),
+      });
+    } else if (skillType === "it") {
+      setApplicationState({
+        ...applicationState,
+        itSkills: applicationState.itSkills.map((skill) =>
+          skill.id === skillId ? { ...skill, [attributeName]: attributeValue } : skill
+        ),
+      });
+    }
+  };
+
   return (
     <ApplicationContext.Provider
       value={{
@@ -354,6 +426,9 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
         removePracticalExperienceJob,
         updatePracticalExperience,
         updatePracticalExperienceError,
+        addSkill,
+        removeSkill,
+        updateSkill,
       }}
     >
       {children}

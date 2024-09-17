@@ -54,11 +54,22 @@ const ApplicationStepper = ({
         flexDirection: "column",
         flex: 1,
         margin: 5,
+        maxWidth: "1400px",
       }}
       elevation={3}
     >
-      <Stack direction={"column"} justifyContent={"space-evenly"} sx={{ flex: 1, height: "100%" }}>
-        <Stepper nonLinear activeStep={activeStep} sx={{ flex: 0 }} alternativeLabel={useAlternativeLabel}>
+      <Stack
+        direction={"column"}
+        alignItems={"center"}
+        justifyContent={"space-evenly"}
+        sx={{ flex: 1, height: "100%" }}
+      >
+        <Stepper
+          nonLinear
+          activeStep={activeStep}
+          sx={{ flex: 0, width: "100%" }}
+          alternativeLabel={useAlternativeLabel}
+        >
           {steps.map((label, index) => (
             <Step key={label} completed={completed[index]}>
               <StepButton color="inherit" onClick={handleStep(index)} sx={{ borderRadius: 5, maxHeight: "50%" }}>
@@ -73,14 +84,15 @@ const ApplicationStepper = ({
             overflow: "auto",
             mt: 2,
             pt: 2,
-            maxWidth: "100%",
             display: "flex",
             justifyContent: "center",
+            width: "60%",
+            maxWidth: "800px",
           }}
         >
           {renderStep(activeStep)}
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box sx={{ display: "flex", flexDirection: "row", marginTop: 6 }} width={"60%"}>
           <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} variant="outlined">
             Zurück
           </Button>

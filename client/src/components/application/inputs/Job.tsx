@@ -2,8 +2,8 @@ import { IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
-import useResponsive from "../../hooks/useResponsive";
-import { ApplicationPracticalExperience } from "../../types/applicationTypes";
+import useResponsive from "../../../hooks/useResponsive";
+import { ApplicationPracticalExperience } from "../../../types/applicationTypes";
 import { RemoveCircle } from "@mui/icons-material";
 
 /**
@@ -152,7 +152,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
 
   return (
     <Stack
-      spacing={2}
+      spacing={1}
       border={1}
       borderRadius={isMobile ? 5 : 10}
       component={Paper}
@@ -160,17 +160,17 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
       borderColor={"#c4c4c4"}
       padding={3}
     >
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          {labelActivity}
+      <Stack direction={"column"}>
+        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <label htmlFor={labelActivity}>
+            {labelActivity} <span style={{ color: "red" }}>*</span>
+          </label>
         </Typography>
         <Stack direction={"row"} spacing={1} flex={2}>
           <TextField
             variant="outlined"
             sx={{ flex: 2 }}
             size="small"
-            required
-            label={labelActivity}
             value={activity}
             onChange={handleActivityChange}
           />
@@ -181,37 +181,27 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
           )}
         </Stack>
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Unternehmen:
+      <Stack>
+        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <label htmlFor={labelActivity}>
+            Unternehmen <span style={{ color: "red" }}>*</span>
+          </label>
         </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="Unternehmen"
-          value={company}
-          onChange={handleCompanyChange}
-        />
+        <TextField variant="outlined" sx={{ flex: 2 }} size="small" value={company} onChange={handleCompanyChange} />
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Ort:
+      <Stack>
+        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <label htmlFor={labelActivity}>
+            Ort <span style={{ color: "red" }}>*</span>
+          </label>
         </Typography>
-        <TextField
-          variant="outlined"
-          sx={{ flex: 2 }}
-          size="small"
-          required
-          label="Ort"
-          value={location}
-          onChange={handleLocationChange}
-        />
+        <TextField variant="outlined" sx={{ flex: 2 }} size="small" value={location} onChange={handleLocationChange} />
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Beginn:
+      <Stack>
+        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <label htmlFor={labelActivity}>
+            Beginn <span style={{ color: "red" }}>*</span>
+          </label>
         </Typography>
         <DatePicker
           sx={{ flex: 2, width: "100%" }}
@@ -220,8 +210,6 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             textField: {
               variant: "outlined",
               size: "small",
-              required: true,
-              label: "Beginn",
               helperText: startError ? "Bitte gib einen gültigen Beginn an" : "",
               error: startError,
             },
@@ -240,9 +228,11 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
           onChange={handleStartChange}
         />
       </Stack>
-      <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-        <Typography fontWeight="bold" fontSize={18} flex={1}>
-          Ende:
+      <Stack>
+        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <label htmlFor={labelActivity}>
+            Ende <span style={{ color: "red" }}>*</span>
+          </label>
         </Typography>
         <DatePicker
           views={["month", "year"]}
@@ -251,8 +241,6 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             textField: {
               variant: "outlined",
               size: "small",
-              required: true,
-              label: "Ende",
               helperText: endError ? "Bitte gib ein gültiges Ende an" : "",
               error: endError,
             },
