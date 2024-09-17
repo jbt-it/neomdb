@@ -13,8 +13,7 @@ interface ApplicationMobileStepperProps {
   renderStep: (step: number) => JSX.Element;
   steps: { label: string; description: string }[];
   isLastStep: () => boolean;
-  handleComplete: () => void;
-  checkRequiredFields: () => boolean;
+  handleApply: () => void;
 }
 
 /**
@@ -26,8 +25,7 @@ interface ApplicationMobileStepperProps {
  * @param renderStep The function to render the step
  * @param steps The steps of the stepper
  * @param isLastStep The function to check if the current step is the last step
- * @param handleComplete The function to handle the completion of the form
- * @param checkRequiredFields The function to check if all required fields are filled
+ * @param handleApply The function to handle the completion of the form
  * @returns the respective mobile stepper for the application form
  */
 const ApplicationMobileStepper = ({
@@ -38,8 +36,7 @@ const ApplicationMobileStepper = ({
   renderStep,
   steps,
   isLastStep,
-  handleComplete,
-  checkRequiredFields,
+  handleApply,
 }: ApplicationMobileStepperProps) => {
   const theme = useTheme();
 
@@ -88,7 +85,7 @@ const ApplicationMobileStepper = ({
         }}
         nextButton={
           isLastStep() ? (
-            <Button size="small" onClick={handleComplete} disabled={checkRequiredFields()}>
+            <Button size="small" onClick={handleApply}>
               Bewebern
             </Button>
           ) : (

@@ -39,7 +39,7 @@ const WorkExperienceStep = () => {
    * @param arg1 - The attribute name or type of the practical experience job
    * @param arg2 - The attribute value or job object of the practical experience job
    */
-  const handleUpdateState = (arg1: string, arg2: string | Date | ApplicationPracticalExperience | undefined) => {
+  const handleUpdateState = (arg1: string, arg2: string | Date | ApplicationPracticalExperience | undefined | null) => {
     if (typeof arg2 === "object" && arg2 !== null && "id" in arg2) {
       // Call updatePracticalExperience with (type: string, updatedJob: ApplicationPracticalExperience)
       updatePracticalExperience(arg1, arg2 as ApplicationPracticalExperience);
@@ -58,8 +58,8 @@ const WorkExperienceStep = () => {
    */
   const handleUpdateErrorState = (arg1: string, arg2: boolean | number, errorName?: string, errorValue?: boolean) => {
     if (typeof arg2 === "boolean") {
-      // Call updateApplicationErrorState with (attributeName: string, attributeValue: boolean)
-      updateApplicationErrorState(arg1, arg2);
+      // Call updateApplicationErrorState with an object containing the attribute update
+      updateApplicationErrorState({ [arg1]: arg2 });
     } else {
       // Call updatePracticalExperienceError with (type: string, jobId: number, errorName: string, errorValue: boolean)
       updatePracticalExperienceError(arg1, arg2 as number, errorName as string, errorValue as boolean);
@@ -121,6 +121,9 @@ const WorkExperienceStep = () => {
             end={applicationState.occupationEnd || undefined}
             updateState={updateApplicationState}
             updateErrorState={handleUpdateErrorState}
+            activityError={applicationErrorState.occupation}
+            companyError={applicationErrorState.occupationCompany}
+            locationError={applicationErrorState.occupationLocation}
             startError={applicationErrorState.occupationStart}
             endError={applicationErrorState.occupationEnd}
           />
@@ -152,6 +155,9 @@ const WorkExperienceStep = () => {
                 end={job.end || undefined}
                 updateState={handleUpdateState}
                 updateErrorState={handleUpdateErrorState}
+                activityError={applicationErrorState.internship.find((e) => e.id === job.id)?.activity || false}
+                companyError={applicationErrorState.internship.find((e) => e.id === job.id)?.company || false}
+                locationError={applicationErrorState.internship.find((e) => e.id === job.id)?.location || false}
                 startError={applicationErrorState.internship.find((e) => e.id === job.id)?.start || false}
                 endError={applicationErrorState.internship.find((e) => e.id === job.id)?.end || false}
                 removePracticalExperienceJob={removePracticalExperienceJob}
@@ -187,6 +193,9 @@ const WorkExperienceStep = () => {
                 end={job.end || undefined}
                 updateState={handleUpdateState}
                 updateErrorState={handleUpdateErrorState}
+                activityError={applicationErrorState.hiwiStudentJob.find((e) => e.id === job.id)?.activity || false}
+                companyError={applicationErrorState.hiwiStudentJob.find((e) => e.id === job.id)?.company || false}
+                locationError={applicationErrorState.hiwiStudentJob.find((e) => e.id === job.id)?.location || false}
                 startError={applicationErrorState.hiwiStudentJob.find((e) => e.id === job.id)?.start || false}
                 endError={applicationErrorState.hiwiStudentJob.find((e) => e.id === job.id)?.end || false}
                 removePracticalExperienceJob={removePracticalExperienceJob}

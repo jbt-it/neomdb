@@ -9,7 +9,7 @@ import { useApplicationContext } from "../../../context/ApplicationContext";
  */
 const HobbiesStep = () => {
   const isMobile = useResponsive("down", "sm");
-  const { applicationState, updateApplicationState } = useApplicationContext();
+  const { applicationState, applicationErrorState, updateApplicationState } = useApplicationContext();
 
   return (
     <Stack width={"100%"} spacing={6}>
@@ -53,6 +53,8 @@ const HobbiesStep = () => {
           size="small"
           multiline
           minRows={6}
+          error={applicationErrorState.timeInvestment}
+          helperText={applicationErrorState.timeInvestment ? "Bitte gib deine zeitliche Verfügbarkeit an." : ""}
         />
       </Stack>
     </Stack>

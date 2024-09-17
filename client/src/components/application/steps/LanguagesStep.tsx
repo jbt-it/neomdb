@@ -9,7 +9,7 @@ import Skill from "../inputs/Skill";
  * @returns The languages step of the application form
  */
 const LanguagesStep = () => {
-  const { applicationState, addSkill, updateSkill, removeSkill } = useApplicationContext();
+  const { applicationState, applicationErrorState, addSkill, updateSkill, removeSkill } = useApplicationContext();
 
   /**
    * Change the name of the skill with the given id and type
@@ -52,6 +52,8 @@ const LanguagesStep = () => {
               key={skill.id}
               type={"language"}
               skill={skill}
+              errorName={applicationErrorState.languages.find((error) => error.id === skill.id)?.name || false}
+              errorLevel={applicationErrorState.languages.find((error) => error.id === skill.id)?.level || false}
               onNameChange={changeSkillName}
               onLevelChange={changeSkillLevel}
               removeSkill={removeSkill}
@@ -78,6 +80,8 @@ const LanguagesStep = () => {
               key={skill.id}
               type={"it"}
               skill={skill}
+              errorName={applicationErrorState.itSkills.find((error) => error.id === skill.id)?.name || false}
+              errorLevel={applicationErrorState.itSkills.find((error) => error.id === skill.id)?.level || false}
               onNameChange={changeSkillName}
               onLevelChange={changeSkillLevel}
               removeSkill={removeSkill}

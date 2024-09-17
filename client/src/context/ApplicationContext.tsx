@@ -13,7 +13,7 @@ interface ApplicationContextProps {
   applicationState: Application;
   updateApplicationState: (attributeName: string, attributeValue: any) => void;
   applicationErrorState: ApplicationError;
-  updateApplicationErrorState: (attributeName: string, attributeValue: boolean) => void;
+  updateApplicationErrorState: (updates: Partial<ApplicationError>) => void;
   resetApprenticeship: () => void;
   resetOccupation: () => void;
   addPracticalExperienceJob: (type: string) => void;
@@ -134,6 +134,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     studyThirdMajor: false,
     bachelorSubject: false,
     bachelorUniversity: false,
+    apprenticeship: false,
     apprenticeshipJob: false,
     apprenticeshipCompany: false,
     apprenticeshipLocation: false,
@@ -146,8 +147,10 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     occupationEnd: false,
     internship: [],
     hiwiStudentJob: [],
-    languages: false,
-    itSkills: false,
+    voluntarySchool: false,
+    voluntaryStudy: false,
+    languages: [],
+    itSkills: [],
     hobbies: false,
     timeInvestment: false,
     motivation: false,
@@ -186,8 +189,8 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
    * @param attributeName - The name of the attribute to update
    * @param attributeValue - The value to update the attribute with
    */
-  const updateApplicationErrorState = (attributeName: string, attributeValue: boolean) => {
-    setApplicationErrorState({ ...applicationErrorState, [attributeName]: attributeValue });
+  const updateApplicationErrorState = (updates: Partial<ApplicationError>) => {
+    setApplicationErrorState({ ...applicationErrorState, ...updates });
   };
 
   /**

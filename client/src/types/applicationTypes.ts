@@ -4,10 +4,11 @@ export type ApplicationPracticalExperience = {
   activity: string | null;
   company: string | null;
   location: string | null;
-  start: Date | undefined;
-  end: Date | undefined;
+  start: Date | undefined | null;
+  end: Date | undefined | null;
 };
 
+// Definition of the ApplicationHiwiStudentJobError type
 export type ApplicationPracticalExperienceError = {
   id: number;
   activity: boolean;
@@ -17,10 +18,18 @@ export type ApplicationPracticalExperienceError = {
   end: boolean;
 };
 
+// Definition of the Skill type
 export type Skill = {
   id: number;
   name: string;
   level: number;
+};
+
+// Definition of the SkillError type
+export type SkillError = {
+  id: number;
+  name: boolean;
+  level: boolean;
 };
 
 // Definition of the Application type
@@ -126,6 +135,7 @@ export type ApplicationError = {
   studyThirdMajor: boolean;
   bachelorSubject: boolean;
   bachelorUniversity: boolean;
+  apprenticeship: boolean;
   apprenticeshipJob: boolean;
   apprenticeshipCompany: boolean;
   apprenticeshipLocation: boolean;
@@ -138,8 +148,10 @@ export type ApplicationError = {
   occupationEnd: boolean;
   internship: ApplicationPracticalExperienceError[];
   hiwiStudentJob: ApplicationPracticalExperienceError[];
-  languages: boolean;
-  itSkills: boolean;
+  voluntarySchool: boolean;
+  voluntaryStudy: boolean;
+  languages: SkillError[];
+  itSkills: SkillError[];
   hobbies: boolean;
   timeInvestment: boolean;
   motivation: boolean;

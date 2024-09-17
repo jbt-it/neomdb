@@ -16,11 +16,14 @@ interface JobProps {
   location: string;
   start: Date | undefined;
   end: Date | undefined;
+  activityError: boolean;
+  companyError: boolean;
+  locationError: boolean;
   startError: boolean;
   endError: boolean;
   updateState: {
     (type: string, job: ApplicationPracticalExperience): void;
-    (attributeName: string, attributeValue: string | Date | undefined): void;
+    (attributeName: string, attributeValue: string | Date | undefined | null): void;
   };
   updateErrorState: {
     (attributeName: string, attributeValue: boolean): void;
@@ -58,7 +61,21 @@ const isStudentJobProps = (props: JobProps | StudentJobProps): props is StudentJ
  * @returns The job component
  */
 const Job: React.FC<JobProps | StudentJobProps> = (props) => {
-  const { type, activity, company, location, start, end, startError, endError, updateState, updateErrorState } = props;
+  const {
+    type,
+    activity,
+    company,
+    location,
+    start,
+    end,
+    activityError,
+    companyError,
+    locationError,
+    startError,
+    endError,
+    updateState,
+    updateErrorState,
+  } = props;
   const isMobile = useResponsive("down", "sm");
 
   // Label for the different job types
@@ -100,21 +117,31 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
   };
 
   // Helper function to update state
-  const updateField = (field: string, value: Date | undefined | string) => {
+  const updateField = (field: string, value: Date | undefined | string | null) => {
+    const isDate = field === "start" || field === "end";
     if (isStudentJobProps(props) && (type === "hiwiStudentJob" || type === "internship")) {
       updateState(type, { ...props.job, [field]: value });
     } else {
-      updateState(field, value);
+      if (type === "apprenticeship" && isDate) {
+        updateState(field === "start" ? "apprenticeshipStart" : "apprenticeshipEnd", value);
+      } else if (type === "occupation" && isDate) {
+        updateState(field === "start" ? "occupationStart" : "occupationEnd", value);
+      } else {
+        updateState(field, value);
+      }
     }
   };
 
   // Handles the start date change
   const handleStartChange = (date: Dayjs | null) => {
     if (date && (date.isBefore(dayjs().subtract(10, "year")) || date.isAfter(dayjs()))) {
+      updateField("start", null); // Set to null when invalid
       updateError("start", true);
     } else if (date && end && date.isAfter(dayjs(end))) {
+      updateField("start", null); // Set to null when invalid
       updateError("start", true);
     } else {
+      console.log(date);
       updateField("start", date?.toDate());
       updateError("start", false);
     }
@@ -123,8 +150,10 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
   // Handles the end date change
   const handleEndChange = (date: Dayjs | null) => {
     if (date && (date.isBefore(dayjs().subtract(10, "year")) || date.isAfter(dayjs()))) {
+      updateField("end", null); // Set to null when invalid
       updateError("end", true);
     } else if (date && start && date.isBefore(dayjs(start))) {
+      updateField("end", null); // Set to null when invalid
       updateError("end", true);
     } else {
       updateField("end", date?.toDate());
@@ -161,7 +190,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
       padding={3}
     >
       <Stack direction={"column"}>
-        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+        <Typography fontWeight="bold" color={activityError ? "error" : "#7d7d7d"} flex={1}>
           <label htmlFor={labelActivity}>
             {labelActivity} <span style={{ color: "red" }}>*</span>
           </label>
@@ -173,6 +202,14 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             size="small"
             value={activity}
             onChange={handleActivityChange}
+            error={activityError}
+            helperText={
+              activityError
+                ? type === "apprenticeship"
+                  ? "Bitte gib einen gültigen Ausbildungsberuf an."
+                  : "Bitte gib eine gültige Tätigkeit an."
+                : ""
+            }
           />
           {isStudentJobProps(props) && (
             <IconButton onClick={() => props.removePracticalExperienceJob(type, props.job.id)} color={"error"}>
@@ -182,23 +219,39 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
         </Stack>
       </Stack>
       <Stack>
-        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+        <Typography fontWeight="bold" color={companyError ? "error" : "#7d7d7d"} flex={1}>
           <label htmlFor={labelActivity}>
             Unternehmen <span style={{ color: "red" }}>*</span>
           </label>
         </Typography>
-        <TextField variant="outlined" sx={{ flex: 2 }} size="small" value={company} onChange={handleCompanyChange} />
+        <TextField
+          variant="outlined"
+          sx={{ flex: 2 }}
+          size="small"
+          value={company}
+          onChange={handleCompanyChange}
+          error={companyError}
+          helperText={companyError ? "Bitte gib ein gültiges Unternehmen an." : ""}
+        />
       </Stack>
       <Stack>
-        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+        <Typography fontWeight="bold" color={locationError ? "error" : "#7d7d7d"} flex={1}>
           <label htmlFor={labelActivity}>
             Ort <span style={{ color: "red" }}>*</span>
           </label>
         </Typography>
-        <TextField variant="outlined" sx={{ flex: 2 }} size="small" value={location} onChange={handleLocationChange} />
+        <TextField
+          variant="outlined"
+          sx={{ flex: 2 }}
+          size="small"
+          value={location}
+          onChange={handleLocationChange}
+          error={locationError}
+          helperText={locationError ? "Bitte gib einen gültigen Ort an." : ""}
+        />
       </Stack>
       <Stack>
-        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+        <Typography fontWeight="bold" color={startError ? "error" : "#7d7d7d"} flex={1}>
           <label htmlFor={labelActivity}>
             Beginn <span style={{ color: "red" }}>*</span>
           </label>
@@ -210,7 +263,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             textField: {
               variant: "outlined",
               size: "small",
-              helperText: startError ? "Bitte gib einen gültigen Beginn an" : "",
+              helperText: startError ? "Bitte gib einen gültigen Beginn an." : "",
               error: startError,
             },
             popper: {
@@ -229,7 +282,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
         />
       </Stack>
       <Stack>
-        <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+        <Typography fontWeight="bold" color={endError ? "error" : "#7d7d7d"} flex={1}>
           <label htmlFor={labelActivity}>
             Ende <span style={{ color: "red" }}>*</span>
           </label>
@@ -241,7 +294,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             textField: {
               variant: "outlined",
               size: "small",
-              helperText: endError ? "Bitte gib ein gültiges Ende an" : "",
+              helperText: endError ? "Bitte gib ein gültiges Ende an." : "",
               error: endError,
             },
             popper: {

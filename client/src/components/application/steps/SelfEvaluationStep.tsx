@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Grid, Radio, RadioGroup, Typography } from "@mui/material";
+import { Box, FormControl, FormHelperText, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
-import { Application } from "../../../types/applicationTypes";
+import { Application, ApplicationError } from "../../../types/applicationTypes";
 import useResponsive from "../../../hooks/useResponsive";
 
 // the type for the self-assessment question
@@ -52,7 +52,7 @@ const selfAssessmentQuestions: { [key: string]: SelfAssessmentQuestion } = {
  */
 const SelfEvaluationStep = () => {
   const isMobile = useResponsive("down", "sm");
-  const { applicationState, updateApplicationState } = useApplicationContext();
+  const { applicationState, applicationErrorState, updateApplicationState } = useApplicationContext();
 
   const handleRadioChange = (questionKey: string, value: string) => {
     const questionNumber = questionKey.replace("question", "");
@@ -66,42 +66,50 @@ const SelfEvaluationStep = () => {
         Wie siehst du dich?
       </Typography>
       <Grid container rowGap={isMobile ? 6 : 4}>
-        {Object.keys(selfAssessmentQuestions).map((key) => (
-          <Grid container key={key} alignItems={"center"}>
-            <Grid item xs={12} sm={4} display="flex" justifyContent="flex-start">
-              <Typography
-                width={isMobile ? "50%" : "100%"}
-                textAlign={isMobile ? "left" : "right"}
-                fontSize={isMobile ? 14 : 16}
-              >
-                {selfAssessmentQuestions[key].label1}
-              </Typography>
+        {Object.keys(selfAssessmentQuestions).map((key) => {
+          const errorKey = `selfAssessment${key.replace("question", "")}` as keyof ApplicationError;
+          const errorValue = applicationErrorState[errorKey];
+          const isError = Array.isArray(errorValue) ? errorValue.length > 0 : !!errorValue;
+          return (
+            <Grid container key={key} alignItems={"center"}>
+              <Grid item xs={12} sm={4} display="flex" justifyContent="flex-start">
+                <Typography
+                  width={isMobile ? "50%" : "100%"}
+                  textAlign={isMobile ? "left" : "right"}
+                  fontSize={isMobile ? 14 : 16}
+                >
+                  {selfAssessmentQuestions[key].label1}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={4} justifyContent={"space-evenly"}>
+                <FormControl error={isError}>
+                  <RadioGroup
+                    row
+                    sx={{ justifyContent: "space-between", padding: 2 }}
+                    value={applicationState[`selfAssessment${key.replace("question", "")}` as keyof Application] || ""}
+                    onChange={(e) => handleRadioChange(key, (e.target as HTMLInputElement).value)}
+                  >
+                    {[...Array(7)].map((_, i) => (
+                      <Box key={i} flexGrow={1}>
+                        <Radio value={i + 1} sx={{ p: 0 }} />
+                      </Box>
+                    ))}
+                  </RadioGroup>
+                  <FormHelperText>{isError && "Bitte wähle eine Option aus."}</FormHelperText>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4} display="flex" justifyContent="flex-end">
+                <Typography
+                  width={isMobile ? "50%" : "100%"}
+                  textAlign={isMobile ? "right" : "left"}
+                  fontSize={isMobile ? 14 : 16}
+                >
+                  {selfAssessmentQuestions[key].label2}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={4} justifyContent={"space-evenly"}>
-              <RadioGroup
-                row
-                sx={{ justifyContent: "space-between", padding: 2 }}
-                value={applicationState[`selfAssessment${key.replace("question", "")}` as keyof Application] || ""}
-                onChange={(e) => handleRadioChange(key, (e.target as HTMLInputElement).value)}
-              >
-                {[...Array(7)].map((_, i) => (
-                  <Box key={i} flexGrow={1}>
-                    <Radio value={i + 1} sx={{ p: 0 }} />
-                  </Box>
-                ))}
-              </RadioGroup>
-            </Grid>
-            <Grid item xs={12} sm={4} display="flex" justifyContent="flex-end">
-              <Typography
-                width={isMobile ? "50%" : "100%"}
-                textAlign={isMobile ? "right" : "left"}
-                fontSize={isMobile ? 14 : 16}
-              >
-                {selfAssessmentQuestions[key].label2}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
+          );
+        })}
       </Grid>
     </Box>
   );

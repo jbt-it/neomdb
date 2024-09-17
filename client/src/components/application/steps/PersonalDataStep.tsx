@@ -40,7 +40,7 @@ const PersonalDataStep = () => {
 
     // Regex for German mobile phone number validation
     const germanPhoneNumberRegex = /^(?:\+49|0)[1][0-9]{7,10}$/;
-    updateApplicationErrorState("mobilePhone", !germanPhoneNumberRegex.test(value));
+    updateApplicationErrorState({ mobilePhone: !germanPhoneNumberRegex.test(value) });
   };
 
   /**
@@ -55,15 +55,13 @@ const PersonalDataStep = () => {
     updateApplicationState("email", value);
 
     // Check if email and confirm email match
-    if (value !== applicationState.confirmEmail) {
-      updateApplicationErrorState("confirmEmail", true);
-    } else {
-      updateApplicationErrorState("confirmEmail", false);
-    }
-
-    // Validate the email format
+    const confirmEmailError = value !== applicationState.confirmEmail;
     const isEmailValid = emailRegex.test(value);
-    updateApplicationErrorState("email", !isEmailValid);
+
+    updateApplicationErrorState({
+      confirmEmail: confirmEmailError,
+      email: !isEmailValid,
+    });
   };
 
   /**
@@ -73,12 +71,10 @@ const PersonalDataStep = () => {
   const handleConfirmEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     updateApplicationState("confirmEmail", value);
-    // check if email and confirm email match
-    if (value !== applicationState.email) {
-      updateApplicationErrorState("confirmEmail", true);
-      return;
-    }
-    updateApplicationErrorState("confirmEmail", false);
+
+    // Check if email and confirm email match
+    const confirmEmailError = value !== applicationState.email;
+    updateApplicationErrorState({ confirmEmail: confirmEmailError });
   };
 
   /**
@@ -89,21 +85,20 @@ const PersonalDataStep = () => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      const validTypes = ["image/jpeg", "image/png"];
       const maxSize = 20 * 1024 * 1024; // 20 MB
 
-      if (!validTypes.includes(file.type)) {
-        updateApplicationErrorState("picture", true);
-        return;
+      let pictureError = false;
+
+      if (!validTypes.includes(file.type) || file.size > maxSize) {
+        pictureError = true;
       }
 
-      if (file.size > maxSize) {
-        updateApplicationErrorState("picture", true);
-        return;
-      }
+      updateApplicationErrorState({ picture: pictureError });
 
-      updateApplicationErrorState("picture", false);
-      updateApplicationState("picture", file);
+      if (!pictureError) {
+        updateApplicationState("picture", file);
+      }
     }
   };
 
@@ -121,6 +116,8 @@ const PersonalDataStep = () => {
             updateApplicationState("firstName", e.target.value);
           }}
           required
+          error={applicationErrorState.firstName}
+          helperText={applicationErrorState.firstName ? "Bitte gib deinen Vornamen ein." : ""}
         />
         <ApplicationTextInput
           value={applicationState.lastName}
@@ -130,9 +127,16 @@ const PersonalDataStep = () => {
             updateApplicationState("lastName", e.target.value);
           }}
           required
+          error={applicationErrorState.lastName}
+          helperText={applicationErrorState.lastName ? "Bitte gib deinen Nachnamen ein." : ""}
         />
         <Stack direction={"column"} alignItems={isMobile ? "normal" : "center"}>
-          <Typography fontWeight="bold" flex={1} width={"100%"} color={"#7d7d7d"}>
+          <Typography
+            fontWeight="bold"
+            flex={1}
+            width={"100%"}
+            color={applicationErrorState.gender ? "error" : "#7d7d7d"}
+          >
             <label>
               Geschlecht <span style={{ color: "red" }}>*</span>
             </label>
@@ -142,11 +146,17 @@ const PersonalDataStep = () => {
               size="small"
               value={applicationState.gender}
               onChange={(e) => updateApplicationState("gender", e.target.value)}
+              error={applicationErrorState.gender}
             >
               <MenuItem value={"male"}>männlich</MenuItem>
               <MenuItem value={"female"}>weiblich</MenuItem>
               <MenuItem value={"divers"}>divers</MenuItem>
             </Select>
+            {applicationErrorState.gender ? (
+              <Typography color="error" fontSize={12} sx={{ pl: 1.5 }}>
+                Bitte wählen Sie ein Geschlecht aus.
+              </Typography>
+            ) : null}
           </FormControl>
         </Stack>
         <ApplicationDateInput
@@ -157,6 +167,7 @@ const PersonalDataStep = () => {
           maxDate={maxBirthDate}
           error={applicationErrorState.birthDate}
           required
+          helperText={"Bitte gib dein Geburtsdatum an."}
         />
       </Stack>
       <Stack spacing={1}>

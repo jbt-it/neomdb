@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  Autocomplete,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, FormControl, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
@@ -61,10 +51,10 @@ const StudyStep = () => {
    */
   const handleStudyStartChange = (date: Dayjs | null) => {
     if (date && (date.isBefore(dayjs().subtract(6, "year")) || date.isAfter(dayjs()))) {
-      updateApplicationErrorState("studyStart", true);
+      updateApplicationErrorState({ studyStart: true });
     } else {
       updateApplicationState("studyStart", date?.toDate());
-      updateApplicationErrorState("studyStart", false);
+      updateApplicationErrorState({ studyStart: false });
     }
   };
 
@@ -82,7 +72,7 @@ const StudyStep = () => {
   const handleUpdateErrorState = (arg1: string, arg2: boolean | number) => {
     if (typeof arg2 === "boolean") {
       // Call updateApplicationErrorState with (attributeName: string, attributeValue: boolean)
-      updateApplicationErrorState(arg1, arg2);
+      updateApplicationErrorState({ [arg1]: arg2 });
     }
   };
 
@@ -93,12 +83,12 @@ const StudyStep = () => {
           Studium
         </Typography>
         <Stack>
-          <Typography fontWeight="bold" flex={1} color={"#7d7d7d"}>
+          <Typography fontWeight="bold" flex={1} color={applicationErrorState.enrolledDegree ? "error" : "#7d7d7d"}>
             <label>
               Angestrebter Abschluss <span style={{ color: "red" }}>*</span>
             </label>
           </Typography>
-          <FormControl fullWidth sx={{ flex: 2 }} size="small">
+          <FormControl fullWidth sx={{ flex: 2 }} size="small" error={applicationErrorState.enrolledDegree}>
             <Select
               size="small"
               value={applicationState.enrolledDegree}
@@ -107,10 +97,15 @@ const StudyStep = () => {
               <MenuItem value={"Bachelor"}>Bachelor</MenuItem>
               <MenuItem value={"Master"}>Master</MenuItem>
             </Select>
+            {applicationErrorState.enrolledDegree ? (
+              <Typography color="error" fontSize={12} sx={{ pl: 1.5 }}>
+                Bitte wähle einen Abschluss aus.
+              </Typography>
+            ) : null}
           </FormControl>
         </Stack>
         <Stack>
-          <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <Typography fontWeight="bold" color={applicationErrorState.enrolledUniversity ? "error" : "#7d7d7d"} flex={1}>
             <label>
               Hochschule <span style={{ color: "red" }}>*</span>
             </label>
@@ -124,11 +119,18 @@ const StudyStep = () => {
             value={applicationState.enrolledUniversity}
             onChange={(e, value) => updateApplicationState("enrolledUniversity", value)}
             onInputChange={(e, value) => updateApplicationState("enrolledUniversity", value)}
-            renderInput={(params) => <TextField variant="outlined" {...params} />}
+            renderInput={(params) => (
+              <TextField
+                variant="outlined"
+                error={applicationErrorState.enrolledUniversity}
+                helperText={applicationErrorState.enrolledUniversity ? "Bitte gib eine Hochschule an." : null}
+                {...params}
+              />
+            )}
           />
         </Stack>
         <Stack>
-          <Typography fontWeight="bold" color={"#7d7d7d"} flex={1}>
+          <Typography fontWeight="bold" color={applicationErrorState.enrolledSubject ? "error" : "#7d7d7d"} flex={1}>
             <label>
               Studienfach <span style={{ color: "red" }}>*</span>
             </label>
@@ -142,7 +144,14 @@ const StudyStep = () => {
             value={applicationState.enrolledSubject}
             onChange={(e, value) => updateApplicationState("enrolledSubject", value)}
             onInputChange={(e, value) => updateApplicationState("enrolledSubject", value)}
-            renderInput={(params) => <TextField variant="outlined" {...params} />}
+            renderInput={(params) => (
+              <TextField
+                variant="outlined"
+                error={applicationErrorState.enrolledSubject}
+                helperText={applicationErrorState.enrolledSubject ? "Bitte gib eine Hochschule an." : null}
+                {...params}
+              />
+            )}
           />
         </Stack>
         <ApplicationDateInput
@@ -202,10 +211,20 @@ const StudyStep = () => {
               onChange={(e) => {
                 updateApplicationState("bachelorSubject", e.target.value);
               }}
+              required
+              error={applicationErrorState.bachelorSubject}
+              helperText="Bitte gib ein Studienfach an."
             />
-            <Stack direction={isMobile ? "column" : "row"} alignItems={isMobile ? "normal" : "center"} spacing={1}>
-              <Typography fontWeight="bold" fontSize={18} flex={1}>
-                Hochschule Bachelor:
+            <Stack>
+              <Typography
+                fontWeight="bold"
+                flex={1}
+                width={"100%"}
+                color={applicationErrorState.bachelorUniversity ? "error" : "#7d7d7d"}
+              >
+                <label>
+                  Hochschule Bachelor <span style={{ color: "red" }}>*</span>
+                </label>
               </Typography>
               <Autocomplete
                 options={universities}
@@ -216,7 +235,14 @@ const StudyStep = () => {
                 value={applicationState.bachelorUniversity}
                 onChange={(e, value) => updateApplicationState("bachelorUniversity", value)}
                 onInputChange={(e, value) => updateApplicationState("bachelorUniversity", value)}
-                renderInput={(params) => <TextField variant="outlined" {...params} required label="Hochschule" />}
+                renderInput={(params) => (
+                  <TextField
+                    variant="outlined"
+                    error={applicationErrorState.bachelorUniversity}
+                    helperText={applicationErrorState.bachelorUniversity ? "Bitte gib eine Hochschule an." : null}
+                    {...params}
+                  />
+                )}
               />
             </Stack>
           </>
@@ -242,6 +268,9 @@ const StudyStep = () => {
             location={applicationState.apprenticeshipLocation || ""}
             start={applicationState.apprenticeshipStart || undefined}
             end={applicationState.apprenticeshipEnd || undefined}
+            activityError={applicationErrorState.apprenticeshipJob}
+            companyError={applicationErrorState.apprenticeshipCompany}
+            locationError={applicationErrorState.apprenticeshipLocation}
             startError={applicationErrorState.apprenticeshipStart}
             endError={applicationErrorState.apprenticeshipEnd}
             updateState={updateApplicationState}

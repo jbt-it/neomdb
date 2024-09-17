@@ -12,9 +12,9 @@ interface ApplicationStepperProps {
   handleStep: (step: number) => () => void;
   steps: string[];
   isLastStep: () => boolean;
-  completed: boolean[];
+  completed: { [k: number]: boolean };
   renderStep: (step: number) => JSX.Element;
-  handleComplete: () => void;
+  handleApply: () => void;
 }
 
 /**
@@ -27,6 +27,7 @@ interface ApplicationStepperProps {
  * @param isLastStep The function to check if the current step is the last step
  * @param completed The completed steps
  * @param renderStep The function to render the step
+ * @param handleApply The function to handle the completion of the form
  * @returns the respective stepper for the application form
  */
 const ApplicationStepper = ({
@@ -38,7 +39,7 @@ const ApplicationStepper = ({
   isLastStep,
   completed,
   renderStep,
-  handleComplete,
+  handleApply,
 }: ApplicationStepperProps) => {
   const useAlternativeLabel = useResponsive("between", "md", "lg") || undefined;
 
@@ -98,7 +99,7 @@ const ApplicationStepper = ({
           </Button>
           <Box sx={{ flex: "1 1 auto" }} />
           {isLastStep() ? (
-            <Button onClick={handleComplete} sx={{ mr: 1 }} variant="outlined">
+            <Button onClick={handleApply} sx={{ mr: 1 }} variant="outlined">
               Bewerben
             </Button>
           ) : (

@@ -6,7 +6,7 @@ import { useApplicationContext } from "../../../context/ApplicationContext";
  * @returns The component to be rendered for the motivation step
  */
 const MotivationStep = () => {
-  const { applicationState, updateApplicationState } = useApplicationContext();
+  const { applicationState, applicationErrorState, updateApplicationState } = useApplicationContext();
 
   return (
     <Stack spacing={1}>
@@ -30,6 +30,8 @@ const MotivationStep = () => {
         size="small"
         multiline
         minRows={15}
+        error={applicationErrorState.motivation}
+        helperText={applicationErrorState.motivation ? "Bitte gib deine Motivation an." : ""}
       />
     </Stack>
   );

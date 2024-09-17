@@ -39,6 +39,8 @@ const itSkillLevels = [
 interface SkillProps {
   type: "language" | "it";
   skill: SkillType;
+  errorName: boolean;
+  errorLevel: boolean;
   onNameChange: (type: string, skillid: number, name: string) => void;
   onLevelChange: (type: string, skillid: number, level: number) => void;
   removeSkill: (skillType: string, skillId: number) => void;
@@ -48,12 +50,14 @@ interface SkillProps {
  * The skill component
  * @param type The type of the skill
  * @param skill The skill
+ * @param errorName The error state of the name of the skill
+ * @param errorLevel The error state of the level of the skill
  * @param onNameChange The function to change the name of the skill
  * @param onLevelChange The function to change the level of the skill
  * @param removeSkill The function to remove the skill
  * @returns The skill component with the input fields for the name and the level of the skill and a remove button
  */
-const Skill = ({ type, skill, onNameChange, onLevelChange, removeSkill }: SkillProps) => {
+const Skill = ({ type, skill, errorName, errorLevel, onNameChange, onLevelChange, removeSkill }: SkillProps) => {
   const isMobile = useResponsive("down", "sm");
 
   // Change the name of the skill
@@ -68,12 +72,22 @@ const Skill = ({ type, skill, onNameChange, onLevelChange, removeSkill }: SkillP
 
   return (
     <Stack>
-      <Typography fontWeight={"bold"} flex={1} width={"100%"} color={"#7d7d7d"}>
+      <Typography fontWeight={"bold"} flex={1} width={"100%"} color={errorName ? "error" : "#7d7d7d"}>
         <label>{type === "language" ? "Sprache" : "IT Kenntnis"}</label>
       </Typography>
       <Stack direction={isMobile ? "column" : "row"} spacing={isMobile ? 1 : 3}>
         <Stack direction={"row"} sx={{ flex: 3 }} spacing={isMobile ? 2 : 0}>
-          <TextField variant="outlined" size="small" value={skill.name} onChange={changeName} fullWidth />
+          <TextField
+            variant="outlined"
+            size="small"
+            value={skill.name}
+            onChange={changeName}
+            fullWidth
+            error={errorName}
+            helperText={
+              errorName ? (type === "language" ? "Bitte gib eine Sprache ein." : "Bite gib eine Bezeichnung an.") : ""
+            }
+          />
           {isMobile ? (
             <IconButton
               onClick={() => {
@@ -97,6 +111,7 @@ const Skill = ({ type, skill, onNameChange, onLevelChange, removeSkill }: SkillP
               );
               return selectedSkill ? selectedSkill.label : "";
             }}
+            error={errorLevel}
           >
             {type === "language"
               ? languageSkillLevels.map((skill) => (
@@ -110,6 +125,11 @@ const Skill = ({ type, skill, onNameChange, onLevelChange, removeSkill }: SkillP
                   </MenuItem>
                 ))}
           </Select>
+          {errorLevel ? (
+            <Typography variant="caption" color="error">
+              Bitte wähle ein Niveau aus.
+            </Typography>
+          ) : null}
         </FormControl>
         {isMobile ? null : (
           <IconButton

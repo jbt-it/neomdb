@@ -3,6 +3,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Radio,
   RadioGroup,
   Stack,
@@ -33,8 +34,7 @@ interface FeedbackStepProps {
  * @returns The feedback step of the application form
  */
 const FeedbackStep = ({ wwStart, wwEnd, selectionWeDateStart, selectionWeDateEnd }: FeedbackStepProps) => {
-  const { applicationState, updateApplicationState, applicationErrorState, updateApplicationErrorState } =
-    useApplicationContext();
+  const { applicationState, applicationErrorState, updateApplicationState } = useApplicationContext();
 
   /**
    * Function to handle the change of the checkboxes
@@ -59,7 +59,7 @@ const FeedbackStep = ({ wwStart, wwEnd, selectionWeDateStart, selectionWeDateEnd
         <Typography fontWeight="bold" fontSize={20}>
           Wie bist du auf das JBT aufmerksam geworden?
         </Typography>
-        <FormControl size="small">
+        <FormControl size="small" sx={{ pl: 2 }}>
           <FormControlLabel
             control={<Checkbox size="small" checked={applicationState.flyer} />}
             label="Flyer"
@@ -190,13 +190,16 @@ const FeedbackStep = ({ wwStart, wwEnd, selectionWeDateStart, selectionWeDateEnd
             versprechen.
           </Typography>
         </Stack>
-        <FormControl size="small">
+        <FormControl size="small" error={applicationErrorState.availabilitySelectionWeekend}>
           <RadioGroup onChange={onChangeSelectionWeDate} value={applicationState.availabilitySelectionWeekend}>
             <FormControlLabel value="kannImmer" control={<Radio size="small" />} label="Ich kann an allen Tagen" />
             <FormControlLabel value="nichtFR" control={<Radio size="small" />} label="Ich kann am Freitag nicht" />
             <FormControlLabel value="nichtSA" control={<Radio size="small" />} label="Ich kann am Samstag nicht" />
             <FormControlLabel value="nichtSO" control={<Radio size="small" />} label="Ich kann am Sonntag nicht" />
           </RadioGroup>
+          <FormHelperText>
+            {applicationErrorState.availabilitySelectionWeekend ? "Bitte gib deine Verfügbarkeit an." : ""}
+          </FormHelperText>
         </FormControl>
       </Stack>
       <Stack spacing={1}>

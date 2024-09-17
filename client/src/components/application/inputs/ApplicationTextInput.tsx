@@ -42,7 +42,7 @@ const ApplicationTextInput = ({
 }: ApplicationTextInputProps) => {
   return (
     <Stack direction={"column"} width={"100%"}>
-      <Typography fontWeight={"bold"} flex={1} width={"100%"} color={"#7d7d7d"}>
+      <Typography fontWeight={"bold"} flex={1} width={"100%"} color={error ? "error" : "#7d7d7d"}>
         <label htmlFor={label}>
           {label} {required && <span style={{ color: "red" }}>*</span>}
         </label>
