@@ -7,6 +7,7 @@ import {
   SkillError,
 } from "../types/applicationTypes";
 
+// Helper function to check if a date is invalid
 const isDateInvalid = (dateValue: Date | null | undefined) => {
   return !dateValue || isNaN(dateValue.getTime());
 };
@@ -27,9 +28,11 @@ const checkRequiredAttributes = (
   // Helper function to check if a value is missing
   const isMissing = (value: any) => value === "" || value === null || value === undefined;
 
+  // Iterate over all attributes and check if they are missing
   attributes.forEach((attribute) => {
     const value = applicationState[attribute];
 
+    // Check if the attribute is either 'internship' or 'hiwiStudentJob' and validate the items
     if (attribute === "internship" || attribute === "hiwiStudentJob") {
       const experienceArray = value as ApplicationPracticalExperience[];
       const errors = experienceArray.map((item) => {
@@ -50,6 +53,7 @@ const checkRequiredAttributes = (
       });
 
       newErrorState[attribute] = errors;
+      // Check if the attribute is either 'voluntarySchool' or 'voluntaryStudy' and validate the items
     } else if (attribute === "languages" || attribute === "itSkills") {
       // value is Skill[]
       const skillArray = value as Skill[];
@@ -68,6 +72,8 @@ const checkRequiredAttributes = (
       });
 
       newErrorState[attribute] = errors;
+
+      // Check if the attribute is 'occupation' and validate the occupation fields
     } else if (attribute === "occupation") {
       // Validate occupation fields if 'hasOccupation' is true
       if (applicationState.hasOccupation) {
@@ -92,6 +98,8 @@ const checkRequiredAttributes = (
         // Set the error state for occupation fields
         Object.assign(newErrorState, occupationErrors);
       }
+
+      // Check if the attribute is 'apprenticeship' and validate the apprenticeship fields
     } else if (attribute === "apprenticeship") {
       // Validate apprenticeship fields if 'apprenticeship' is true
       if (applicationState.apprenticeship) {

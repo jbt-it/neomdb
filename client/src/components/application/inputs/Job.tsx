@@ -141,7 +141,6 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
       updateField("start", null); // Set to null when invalid
       updateError("start", true);
     } else {
-      console.log(date);
       updateField("start", date?.toDate());
       updateError("start", false);
     }
