@@ -15,6 +15,8 @@ const isDateInvalid = (dateValue: Date | null | undefined) => {
 /**
  * Function to check if all required attributes are filled and set the error state accordingly
  * @param attributes - The attributes to check for required fields in the application state
+ * @param applicationState - The current application state
+ * @param updateApplicationErrorState - The function to update the application error state
  * @returns true if any required field is missing, false otherwise
  */
 const checkRequiredAttributes = (
@@ -147,6 +149,10 @@ const checkRequiredAttributes = (
 
 /**
  * Function to check if all required fields are filled for the current step
+ * @param attributesToCheckByStep - The attributes to check for required fields in the application state by step
+ * @param activeStep - The current active step
+ * @param applicationState - The current application state
+ * @param updateApplicationErrorState - The function to update the application error state
  * @returns true if any required field is missing, false otherwise
  */
 export const checkRequiredFields = (
