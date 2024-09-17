@@ -206,8 +206,8 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
             helperText={
               activityError
                 ? type === "apprenticeship"
-                  ? "Bitte gib einen gültigen Ausbildungsberuf an."
-                  : "Bitte gib eine gültige Tätigkeit an."
+                  ? "Bitte gib einen Ausbildungsberuf an."
+                  : "Bitte gib eine Tätigkeit an."
                 : ""
             }
           />
@@ -231,7 +231,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
           value={company}
           onChange={handleCompanyChange}
           error={companyError}
-          helperText={companyError ? "Bitte gib ein gültiges Unternehmen an." : ""}
+          helperText={companyError ? "Bitte gib ein Unternehmen an." : ""}
         />
       </Stack>
       <Stack>
@@ -247,7 +247,7 @@ const Job: React.FC<JobProps | StudentJobProps> = (props) => {
           value={location}
           onChange={handleLocationChange}
           error={locationError}
-          helperText={locationError ? "Bitte gib einen gültigen Ort an." : ""}
+          helperText={locationError ? "Bitte gib einen Ort an." : ""}
         />
       </Stack>
       <Stack>

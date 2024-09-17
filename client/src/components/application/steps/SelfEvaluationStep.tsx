@@ -95,7 +95,7 @@ const SelfEvaluationStep = () => {
                       </Box>
                     ))}
                   </RadioGroup>
-                  <FormHelperText>{isError && "Bitte wähle eine Option aus."}</FormHelperText>
+                  <FormHelperText error>{isError && "Bitte wähle eine Option aus."}</FormHelperText>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={4} display="flex" justifyContent="flex-end">

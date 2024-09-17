@@ -1,5 +1,15 @@
 import React from "react";
-import { Autocomplete, FormControl, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
 import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
@@ -97,11 +107,9 @@ const StudyStep = () => {
               <MenuItem value={"Bachelor"}>Bachelor</MenuItem>
               <MenuItem value={"Master"}>Master</MenuItem>
             </Select>
-            {applicationErrorState.enrolledDegree ? (
-              <Typography color="error" fontSize={12} sx={{ pl: 1.5 }}>
-                Bitte wähle einen Abschluss aus.
-              </Typography>
-            ) : null}
+            <FormHelperText>
+              {applicationErrorState.enrolledDegree ? "Bitte wähle einen Abschluss aus." : null}
+            </FormHelperText>
           </FormControl>
         </Stack>
         <Stack>

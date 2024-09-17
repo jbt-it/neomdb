@@ -197,7 +197,7 @@ const FeedbackStep = ({ wwStart, wwEnd, selectionWeDateStart, selectionWeDateEnd
             <FormControlLabel value="nichtSA" control={<Radio size="small" />} label="Ich kann am Samstag nicht" />
             <FormControlLabel value="nichtSO" control={<Radio size="small" />} label="Ich kann am Sonntag nicht" />
           </RadioGroup>
-          <FormHelperText>
+          <FormHelperText error>
             {applicationErrorState.availabilitySelectionWeekend ? "Bitte gib deine Verfügbarkeit an." : ""}
           </FormHelperText>
         </FormControl>

@@ -1,6 +1,16 @@
 import React, { useRef } from "react";
 import useResponsive from "../../../hooks/useResponsive";
-import { Box, Button, FormControl, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { FileUpload } from "@mui/icons-material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
@@ -152,11 +162,9 @@ const PersonalDataStep = () => {
               <MenuItem value={"female"}>weiblich</MenuItem>
               <MenuItem value={"divers"}>divers</MenuItem>
             </Select>
-            {applicationErrorState.gender ? (
-              <Typography color="error" fontSize={12} sx={{ pl: 1.5 }}>
-                Bitte wählen Sie ein Geschlecht aus.
-              </Typography>
-            ) : null}
+            <FormHelperText error>
+              {applicationErrorState.gender ? " Bitte wählen Sie ein Geschlecht aus." : ""}
+            </FormHelperText>
           </FormControl>
         </Stack>
         <ApplicationDateInput
@@ -180,7 +188,7 @@ const PersonalDataStep = () => {
           attributeName="mobilePhone"
           onChange={handlePhoneNumberChange}
           error={applicationErrorState.mobilePhone}
-          helperText={applicationErrorState.mobilePhone ? "Bitte geben Sie eine gültige deutsche Handynummer ein." : ""}
+          helperText={applicationErrorState.mobilePhone ? "Bitte gib eine gültige deutsche Handynummer ein." : ""}
           required
         />
         <ApplicationTextInput
@@ -189,7 +197,7 @@ const PersonalDataStep = () => {
           attributeName="email"
           onChange={handleEmailChange}
           error={applicationErrorState.email}
-          helperText={applicationErrorState.email ? "Bitte geben Sie eine gültige E-Mail-Adresse ein." : ""}
+          helperText={applicationErrorState.email ? "Bitte gib eine gültige E-Mail-Adresse ein." : ""}
           required
         />
         <ApplicationTextInput
