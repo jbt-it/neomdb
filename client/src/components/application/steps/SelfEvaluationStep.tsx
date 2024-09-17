@@ -54,6 +54,7 @@ const SelfEvaluationStep = () => {
   const isMobile = useResponsive("down", "sm");
   const { applicationState, applicationErrorState, updateApplicationState } = useApplicationContext();
 
+  // function to handle the change of the radio buttons
   const handleRadioChange = (questionKey: string, value: string) => {
     const questionNumber = questionKey.replace("question", "");
     const key = `selfAssessment${questionNumber}` as keyof Application;
@@ -82,10 +83,10 @@ const SelfEvaluationStep = () => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={4} justifyContent={"space-evenly"}>
-                <FormControl error={isError}>
+                <FormControl error={isError} sx={{ width: "100%" }}>
                   <RadioGroup
                     row
-                    sx={{ justifyContent: "space-between", padding: 2 }}
+                    sx={{ justifyContent: "space-between", pl: 2, pr: 2 }}
                     value={applicationState[`selfAssessment${key.replace("question", "")}` as keyof Application] || ""}
                     onChange={(e) => handleRadioChange(key, (e.target as HTMLInputElement).value)}
                   >

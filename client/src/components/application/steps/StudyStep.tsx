@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
-import useResponsive from "../../../hooks/useResponsive";
 import dayjs, { Dayjs } from "dayjs";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 import Job from "../inputs/Job";
@@ -45,7 +44,6 @@ const courseOfStudy = [
  * @returns The study step component
  */
 const StudyStep = () => {
-  const isMobile = useResponsive("down", "md");
   const {
     applicationState,
     updateApplicationState,
