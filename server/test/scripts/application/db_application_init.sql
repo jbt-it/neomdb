@@ -1,6 +1,7 @@
 --
 -- Daten für Tabelle `generation`
 --
+SET FOREIGN_KEY_CHECKS = 0;
 
 INSERT INTO `generation` (`generationID`, `bezeichnung`, `bewerbung_start`, `bewerbung_ende`, `auswahl_WE_Termin_start`, `auswahl_WE_Termin_ende`, `ww_Termin_start`, `ww_Termin_ende`, `infoabendBesucher`, `tuercode`, `wahl_start`, `wahl_ende`) VALUES
 (3, 'Wintersemester 13/14', '2013-10-28 20:00:00', '2013-10-30 20:00:00', '2013-11-01', '2013-11-03', '2013-11-15', '2013-11-17', 95, '456789', NULL, NULL),
@@ -16,3 +17,5 @@ INSERT INTO `generation` (`generationID`, `bezeichnung`, `bewerbung_start`, `bew
 (13, 'Wintersemester 18/19', '2018-10-29 22:00:00', '2018-11-05 23:59:00', '2018-11-09', '2018-11-11', '2018-11-16', '2018-11-18', 95, '687452', '2018-11-19 00:00:00', '2018-11-21 16:00:00'),
 (14, 'Sommersemester 2019', '2019-04-15 21:00:00', '2019-04-19 23:59:00', '2019-04-26', '2019-04-28', '2019-05-03', '2019-05-05', 38, '657468', '2019-05-07 12:00:00', '2019-05-09 20:00:00'),
 (15, 'Wintersemester 19/20', '2019-10-28 18:00:00', '2019-11-02 20:10:00', '2019-11-08', '2019-11-10', '2019-11-15', '2019-11-17', 107, '000000', '2019-11-17 23:59:00', '2019-11-20 19:30:00');33
+
+SET FOREIGN_KEY_CHECKS = 1

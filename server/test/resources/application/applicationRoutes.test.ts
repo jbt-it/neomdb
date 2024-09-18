@@ -16,7 +16,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   // Populate the database with test data before each test
   await applicationTestUtils.initApplicationData();
-  // await applicationTestUtils.setupApplicationData();
+  await applicationTestUtils.setupApplicationData();
 });
 
 afterEach(async () => {
@@ -35,6 +35,9 @@ afterEach(async () => {
 afterAll(async () => {
   // Close the data source
   await AppDataSource.destroy();
+  console.log("Data source destroyed");
+  // delete the image in /applicants
+  await applicationTestUtils.deleteApplicationImage("Michael_Scott");
 });
 
 describe("Test application routes", () => {

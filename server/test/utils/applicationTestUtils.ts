@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { executeScript } from "./databaseUtils";
+import fs from "fs/promises";
+import path from "path";
 
 /**
  * Utility class for testing the application routes
@@ -65,6 +67,45 @@ class ApplicationTestUtils {
       console.log("> Database cleared!");
     } catch (error) {
       console.error(`> ERROR: Failed to clear application data: ${error}`);
+    }
+  };
+
+  /**
+   * Deletes the application image from the /applicants folder in the file system
+   */
+  deleteApplicationImage = async (imageName: string) => {
+    try {
+      console.log("------------------DELETE IMAGES------------------");
+      // Construct the directory path
+      const directoryPath = path.join(__dirname, "../assets/applicants");
+      console.log(`Directory path: ${directoryPath}`);
+
+      // Read the directory contents
+      const files = await fs.readdir(directoryPath);
+      console.log(`Files in directory: ${files.join(", ")}`);
+
+      // Filter files that start with the given imageName
+      const matchingFiles = files.filter((file) => file.startsWith(imageName));
+      console.log(`Matching files: ${matchingFiles.join(", ")}`);
+
+      if (matchingFiles.length === 0) {
+        console.log("> No matching files found.");
+        return;
+      }
+
+      // Delete each matching file
+      await Promise.all(
+        matchingFiles.map(async (file) => {
+          const filePath = path.join(directoryPath, file);
+          console.log(`Deleting file: ${filePath}`);
+          await fs.unlink(filePath);
+          console.log(`> Deleted image: ${file}`);
+        })
+      );
+
+      console.log("> Images deleted!");
+    } catch (error) {
+      console.error(`> ERROR: Failed to delete image: ${error}`);
     }
   };
 }
