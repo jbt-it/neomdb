@@ -3,7 +3,7 @@ import ApplicationStart from "./ApplicationStart";
 import useResponsive from "../../hooks/useResponsive";
 import ApplicationMobileStepper from "./ApplicationMobileStepper";
 import { Generation } from "../../types/traineesTypes";
-import { Container } from "@mui/material";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import ApplicationStepper from "./ApplicationStepper";
 import PersonalDataStep from "./steps/PersonalDataStep";
 import StudyStep from "./steps/StudyStep";
@@ -75,6 +75,8 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
   }>({});
+  const [applyDialogOpen, setApplyDialogOpen] = React.useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = React.useState(false);
 
   // check if all required fields of the personal data step are filled
   const attributesToCheckByStep: { [key: number]: (keyof ApplicationDto)[] } = {
@@ -139,18 +141,25 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   };
 
   // Handles the application submission
-  const handleSubmition = () => {
+  const handleSubmission = async () => {
     if (!applicationImage) {
       alert("Fehler beim Bildupload");
-      return;
+      return false;
     }
-    // Save the application
-    saveApplication(applicationState, applicationImage);
-    alert("Bewerbung abgeschickt");
+    try {
+      // Save the application
+      const res = await saveApplication(applicationState, applicationImage);
+      if (res) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Error while saving the application", error);
+      return false;
+    }
   };
 
   // Handles the application completion
-  const handleApply = () => {
+  const handleApply = async () => {
     if (handleCheckRequiredFields()) {
       return;
     } else {
@@ -158,7 +167,14 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
     }
     // if every step is completed, the application is submitted
     if (Object.values(completed).every((value) => value === true)) {
-      handleSubmition();
+      const res = await handleSubmission();
+      if (res) {
+        setApplyDialogOpen(true);
+        setSubmissionSuccess(true);
+      } else {
+        setSubmissionSuccess(false);
+        setApplyDialogOpen(true);
+      }
     } else {
       alert("Bitte fülle alle Felder aus");
     }
@@ -195,6 +211,43 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
     }
   };
 
+  /**
+   * The dialog for the application submission
+   * @returns The dialog for the application submission
+   */
+  const SubmissionDialog = () => {
+    return (
+      <Dialog open={applyDialogOpen} onClose={() => setApplyDialogOpen(false)}>
+        <DialogTitle>{submissionSuccess ? "Bewerbung erfolgreich" : "Fehler bei der Bewerbung"}</DialogTitle>
+        <DialogContent>
+          {submissionSuccess ? (
+            "Deine Bewerbung wurde erfolgreich abgeschickt"
+          ) : (
+            <>
+              Es ist ein Fehler bei der Bewerbung ausgetreten, bitte wende dich an{" "}
+              <strong>bewerbung@studentische-beratung.de</strong>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={
+              submissionSuccess
+                ? () => {
+                    window.location.href = "https://studentische-beratung.de";
+                    setApplyDialogOpen(false);
+                  }
+                : () => setApplyDialogOpen(false)
+            }
+            color="primary"
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   if (isApplying) {
     return isMobile ? (
       <Container
@@ -207,6 +260,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           alignItems: "start",
         }}
       >
+        <SubmissionDialog />
         <ApplicationMobileStepper
           activeStep={activeStep}
           handleBack={handleBack}
@@ -229,6 +283,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           background: "#f1f1f1",
         }}
       >
+        <SubmissionDialog />
         <ApplicationStepper
           activeStep={activeStep}
           handleBack={handleBack}
