@@ -35,8 +35,8 @@ export class TraineeApplicant {
   @Column("varchar", { name: "nachname", nullable: true, length: 45 })
   lastName: string | null;
 
-  @Column("tinyint", { name: "geschlecht", nullable: true, width: 1 })
-  gender: boolean | null;
+  @Column("enum", { name: "geschlecht", nullable: true, enum: ["männlich", "weiblich", "divers"] })
+  gender: "männlich" | "weiblich" | "divers" | null;
 
   @Column("varchar", { name: "bild", nullable: true, length: 45 })
   picture: string | null;
@@ -265,19 +265,19 @@ export class TraineeApplicant {
   availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 
   @Column("tinyint", { name: "socialmedia", nullable: true })
-  socialMedia: number | null;
+  socialMedia: boolean | null;
 
   @Column("tinyint", { name: "campusrallye", nullable: true })
-  campusRally: number | null;
+  campusRally: boolean | null;
 
   @Column("tinyint", { name: "partner", nullable: true })
-  partner: number | null;
+  partner: boolean | null;
 
-  @Column("int", { name: "newsletter", nullable: true })
-  newsletter: number | null;
+  @Column("tinyint", { name: "newsletter", nullable: true })
+  newsletter: boolean | null;
 
-  @Column("int", { name: "infostand", nullable: true })
-  informationStand: number | null;
+  @Column("tinyint", { name: "infostand", nullable: true })
+  informationStand: boolean | null;
 
   @ManyToOne(() => Member, (member) => member.traineeApplicants, {
     onDelete: "NO ACTION",

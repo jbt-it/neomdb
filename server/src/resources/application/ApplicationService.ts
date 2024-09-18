@@ -11,7 +11,7 @@ import {
   TraineeApplicantVoluntaryStudyRepository,
   TraineeApplicantItSkillRepository,
 } from "./ApplicationRepository";
-import { GenerationRepository } from "../../resources/trainees/GenerationRepository";
+import { GenerationRepository } from "../trainees/GenerationRepository";
 import { TraineeApplicantHiwi } from "../../entities/TraineeApplicantHiwi";
 import { TraineeApplicantInternship } from "../../entities/TraineeApplicantInternship";
 import { TraineeApplicantLanguage } from "../../entities/TraineeApplicantLanguage";
@@ -62,7 +62,7 @@ class ApplicationService {
           applicationDate: new Date(),
           firstName: application.firstName,
           lastName: application.lastName,
-          gender: true,
+          gender: application.gender,
           picture: application.picture,
           birthDate: application.birthDate,
           mobilePhone: application.mobilePhone,
@@ -111,15 +111,15 @@ class ApplicationService {
           posters: application.posters,
           lectures: application.lectures,
           friends: application.friends,
-          informationStand: application.informationStand ? 1 : 0,
+          informationStand: application.informationStand,
           internet: application.internet,
           others: application.others,
           othersText: application.othersText,
           workingWeekend: application.workingWeekend,
-          socialMedia: application.socialMedia ? 1 : 0,
-          campusRally: application.campusRally ? 1 : 0,
-          partner: application.partner ? 1 : 0,
-          newsletter: application.newsletter ? 1 : 0,
+          socialMedia: application.socialMedia,
+          campusRally: application.campusRally,
+          partner: application.partner,
+          newsletter: application.newsletter,
           availabilitySelectionWeekend: application.availabilitySelectionWeekend,
         });
 
@@ -234,7 +234,7 @@ class ApplicationService {
         // Save the it skill entities to the database if some exist
         if (applicantItSkills.length > 0) {
           applicantItSkills.map((skill) =>
-            TraineeApplicantItSkillRepository.saveTraineeApplicantLanguage(skill, transactionalEntityManager)
+            TraineeApplicantItSkillRepository.saveTraineeApplicantItSkill(skill, transactionalEntityManager)
           );
         }
 
@@ -266,12 +266,13 @@ class ApplicationService {
         const imageName = `${application.firstName}_${application.lastName}_${applicantId}.${applicationImage.mimeType}`;
 
         // save the image to the file system
-        this.saveApplicantImage(imageFolderPath, imageName, base64);
+        await this.saveApplicantImage(imageFolderPath, imageName, base64);
       });
       // If everything went through, return true
       return true;
     } catch (error) {
       // Handle the error if needed
+      console.error("Error saving application:", error);
       throw new Error("Couldn't save applicant to the database.");
     }
   };

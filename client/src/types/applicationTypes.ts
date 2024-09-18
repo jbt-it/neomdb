@@ -42,7 +42,7 @@ export type ApplicationImageDto = {
 export type ApplicationDto = {
   firstName: string;
   lastName: string;
-  gender: string;
+  gender: "männlich" | "weiblich" | "diver" | null;
   picture: string;
   birthDate: Date | null;
   mobilePhone: string;

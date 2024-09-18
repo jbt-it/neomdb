@@ -16,7 +16,7 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
    * Retrieves all applications as a list
    * @returns A list of applications
    */
-  getApplications(): Promise<TraineeApplicant[]> {
+  async getApplications(): Promise<TraineeApplicant[]> {
     return this.find();
   },
 
@@ -25,7 +25,7 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
    * @param applicationId The id of the application
    * @returns The application or null if no application was found
    */
-  getApplicationById(applicationId: number): Promise<TraineeApplicant | null> {
+  async getApplicationById(applicationId: number): Promise<TraineeApplicant | null> {
     return this.findOne({ where: { applicationId } });
   },
 
@@ -50,7 +50,7 @@ export const TraineeApplicantHiwiRepository = AppDataSource.getRepository(Traine
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantHiwi
    */
-  saveTraineeApplicantHiwi(
+  async saveTraineeApplicantHiwi(
     traineeApplicantHiwi: TraineeApplicantHiwi,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantHiwi> {
@@ -68,7 +68,7 @@ export const TraineeApplicantInternshipRepository = AppDataSource.getRepository(
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantInternship
    */
-  saveTraineeApplicantInternship(
+  async saveTraineeApplicantInternship(
     traineeApplicantInternship: TraineeApplicantInternship,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantInternship> {
@@ -86,7 +86,7 @@ export const TraineeApplicantLanguageRepository = AppDataSource.getRepository(Tr
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantLanguage
    */
-  saveTraineeApplicantLanguage(
+  async saveTraineeApplicantLanguage(
     traineeApplicantLanguage: TraineeApplicantLanguage,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantLanguage> {
@@ -104,7 +104,7 @@ export const TraineeApplicantItSkillRepository = AppDataSource.getRepository(Tra
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantItSkill
    */
-  saveTraineeApplicantLanguage(
+  async saveTraineeApplicantItSkill(
     traineeApplicantItSkill: TraineeApplicantItSkill,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantItSkill> {
@@ -124,7 +124,7 @@ export const TraineeApplicantVoluntarySchoolRepository = AppDataSource.getReposi
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantVoluntarySchool
    */
-  saveTraineeApplicantVoluntarySchool(
+  async saveTraineeApplicantVoluntarySchool(
     traineeApplicantVoluntarySchool: TraineeApplicantVoluntarySchool,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantVoluntarySchool> {
@@ -144,7 +144,7 @@ export const TraineeApplicantVoluntaryStudyRepository = AppDataSource.getReposit
    * @param transactionalEntityManager The transactional entity manager
    * @returns The saved TraineeApplicantVoluntaryStudy
    */
-  saveTraineeApplicantVoluntaryStudy(
+  async saveTraineeApplicantVoluntaryStudy(
     traineeApplicantVoluntaryStudy: TraineeApplicantVoluntaryStudy,
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantVoluntaryStudy> {

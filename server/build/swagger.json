@@ -464,7 +464,13 @@
 						"type": "string"
 					},
 					"gender": {
-						"type": "string"
+						"type": "string",
+						"enum": [
+							"männlich",
+							"weiblich",
+							"divers"
+						],
+						"nullable": true
 					},
 					"lastName": {
 						"type": "string"
@@ -1299,7 +1305,12 @@
 						"nullable": true
 					},
 					"gender": {
-						"type": "boolean",
+						"type": "string",
+						"enum": [
+							"männlich",
+							"weiblich",
+							"divers"
+						],
 						"nullable": true
 					},
 					"picture": {
@@ -1543,28 +1554,23 @@
 						"nullable": true
 					},
 					"socialMedia": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"campusRally": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"partner": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"newsletter": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"informationStand": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"admittedMember": {

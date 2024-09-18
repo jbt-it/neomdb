@@ -174,8 +174,8 @@ const PersonalDataStep = () => {
               onChange={(e) => updateApplicationState("gender", e.target.value)}
               error={applicationErrorState.gender}
             >
-              <MenuItem value={"male"}>männlich</MenuItem>
-              <MenuItem value={"female"}>weiblich</MenuItem>
+              <MenuItem value={"männlich"}>männlich</MenuItem>
+              <MenuItem value={"weiblich"}>weiblich</MenuItem>
               <MenuItem value={"divers"}>divers</MenuItem>
             </Select>
             <FormHelperText error>

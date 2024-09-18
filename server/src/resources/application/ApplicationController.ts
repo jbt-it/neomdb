@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Route, Tags } from "@tsoa/runtime";
 import { ApplicationRequestDto } from "../../types/applicationTypes";
-import ApplicationService from "./applicationService";
+import ApplicationService from "./ApplicationService";
 
 /**
  * Controller for the applicaion module

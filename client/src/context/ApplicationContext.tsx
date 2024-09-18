@@ -39,7 +39,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
   const [applicationState, setApplicationState] = useState<ApplicationDto>({
     firstName: "",
     lastName: "",
-    gender: "",
+    gender: null,
     picture: "",
     birthDate: null,
     mobilePhone: "",
