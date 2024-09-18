@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import useResponsive from "../../../hooks/useResponsive";
-import { Skill as SkillType } from "../../../types/applicationTypes";
+import { SkillDto as SkillType } from "../../../types/applicationTypes";
 
 // The different levels of language skills
 const languageSkillLevels = [

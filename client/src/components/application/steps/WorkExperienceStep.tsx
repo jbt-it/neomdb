@@ -3,7 +3,7 @@ import { IconButton, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import useResponsive from "../../../hooks/useResponsive";
 import { useApplicationContext } from "../../../context/ApplicationContext";
-import { ApplicationPracticalExperience } from "../../../types/applicationTypes";
+import { ApplicationPracticalExperienceDto } from "../../../types/applicationTypes";
 import Job from "../inputs/Job";
 
 /**
@@ -39,10 +39,13 @@ const WorkExperienceStep = () => {
    * @param arg1 - The attribute name or type of the practical experience job
    * @param arg2 - The attribute value or job object of the practical experience job
    */
-  const handleUpdateState = (arg1: string, arg2: string | Date | ApplicationPracticalExperience | undefined | null) => {
+  const handleUpdateState = (
+    arg1: string,
+    arg2: string | Date | ApplicationPracticalExperienceDto | undefined | null
+  ) => {
     if (typeof arg2 === "object" && arg2 !== null && "id" in arg2) {
       // Call updatePracticalExperience with (type: string, updatedJob: ApplicationPracticalExperience)
-      updatePracticalExperience(arg1, arg2 as ApplicationPracticalExperience);
+      updatePracticalExperience(arg1, arg2 as ApplicationPracticalExperienceDto);
     } else {
       // Call updateApplicationState with (attributeName: string, attributeValue: any)
       updateApplicationState(arg1, arg2);

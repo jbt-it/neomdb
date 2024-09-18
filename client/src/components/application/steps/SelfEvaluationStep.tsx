@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, FormControl, FormHelperText, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
-import { Application, ApplicationError } from "../../../types/applicationTypes";
+import { ApplicationDto, ApplicationError } from "../../../types/applicationTypes";
 import useResponsive from "../../../hooks/useResponsive";
 
 // the type for the self-assessment question
@@ -57,7 +57,7 @@ const SelfEvaluationStep = () => {
   // function to handle the change of the radio buttons
   const handleRadioChange = (questionKey: string, value: string) => {
     const questionNumber = questionKey.replace("question", "");
-    const key = `selfAssessment${questionNumber}` as keyof Application;
+    const key = `selfAssessment${questionNumber}` as keyof ApplicationDto;
     updateApplicationState(key, Number(value));
   };
 
@@ -87,7 +87,9 @@ const SelfEvaluationStep = () => {
                   <RadioGroup
                     row
                     sx={{ justifyContent: "space-between", pl: 2, pr: 2 }}
-                    value={applicationState[`selfAssessment${key.replace("question", "")}` as keyof Application] || ""}
+                    value={
+                      applicationState[`selfAssessment${key.replace("question", "")}` as keyof ApplicationDto] || ""
+                    }
                     onChange={(e) => handleRadioChange(key, (e.target as HTMLInputElement).value)}
                   >
                     {[...Array(7)].map((_, i) => (

@@ -102,7 +102,7 @@ export class TraineeApplicant {
   enrolledOtherSubject: string | null;
 
   @Column("varchar", { name: "studium_Beginn", nullable: true, length: 45 })
-  studyStart: string | null;
+  studyStart: Date | null;
 
   @Column("varchar", {
     name: "studium_Fachsemester",
@@ -172,14 +172,14 @@ export class TraineeApplicant {
     nullable: true,
     length: 45,
   })
-  apprenticeshipStart: string | null;
+  apprenticeshipStart: Date | null;
 
   @Column("varchar", {
     name: "berufsausbildung_Ende",
     nullable: true,
     length: 45,
   })
-  apprenticeshipEnd: string | null;
+  apprenticeshipEnd: Date | null;
 
   @Column("varchar", { name: "beruf_Taetigkeit", nullable: true, length: 200 })
   occupation: string | null;
@@ -191,10 +191,10 @@ export class TraineeApplicant {
   occupationLocation: string | null;
 
   @Column("varchar", { name: "beruf_Beginn", nullable: true, length: 45 })
-  occupationStart: string | null;
+  occupationStart: Date | null;
 
   @Column("varchar", { name: "beruf_Ende", nullable: true, length: 45 })
-  occupationEnd: string | null;
+  occupationEnd: Date | null;
 
   @Column("mediumtext", { name: "edv", nullable: true })
   itSkills: string | null;

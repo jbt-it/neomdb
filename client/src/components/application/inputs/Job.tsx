@@ -3,7 +3,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import useResponsive from "../../../hooks/useResponsive";
-import { ApplicationPracticalExperience } from "../../../types/applicationTypes";
+import { ApplicationPracticalExperienceDto } from "../../../types/applicationTypes";
 import { RemoveCircle } from "@mui/icons-material";
 
 /**
@@ -22,7 +22,7 @@ interface JobProps {
   startError: boolean;
   endError: boolean;
   updateState: {
-    (type: string, job: ApplicationPracticalExperience): void;
+    (type: string, job: ApplicationPracticalExperienceDto): void;
     (attributeName: string, attributeValue: string | Date | undefined | null): void;
   };
   updateErrorState: {
@@ -35,7 +35,7 @@ interface JobProps {
  * The interface for the hiwi / student job component
  */
 interface StudentJobProps extends JobProps {
-  job: ApplicationPracticalExperience;
+  job: ApplicationPracticalExperienceDto;
   removePracticalExperienceJob: (type: string, id: number) => void;
 }
 

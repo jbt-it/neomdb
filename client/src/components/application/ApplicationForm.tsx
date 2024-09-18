@@ -14,8 +14,9 @@ import MotivationStep from "./steps/MotivationStep";
 import SelfEvaluationStep from "./steps/SelfEvaluationStep";
 import FeedbackStep from "./steps/FeedbackStep";
 import { useApplicationContext } from "../../context/ApplicationContext";
-import { Application } from "../../types/applicationTypes";
+import { ApplicationDto } from "../../types/applicationTypes";
 import { checkRequiredFields } from "../../utils/applicationValidationUtils";
+import { saveApplication } from "../../api/application";
 
 // The steps of the application form
 const steps = [
@@ -70,13 +71,13 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   const isMobile = useResponsive("down", "md");
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = steps.length;
-  const { applicationState, updateApplicationErrorState } = useApplicationContext();
+  const { applicationState, updateApplicationErrorState, applicationImage } = useApplicationContext();
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
   }>({});
 
   // check if all required fields of the personal data step are filled
-  const attributesToCheckByStep: { [key: number]: (keyof Application)[] } = {
+  const attributesToCheckByStep: { [key: number]: (keyof ApplicationDto)[] } = {
     0: ["firstName", "lastName", "gender", "birthDate", "mobilePhone", "email", "confirmEmail", "picture"],
     1: ["enrolledDegree", "enrolledUniversity", "enrolledSubject", "studyStart", "studySemester", "apprenticeship"],
     2: ["internship", "hiwiStudentJob"],
@@ -139,8 +140,12 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
 
   // Handles the application submission
   const handleSubmition = () => {
-    console.log(completed);
-    console.log(applicationState);
+    if (!applicationImage) {
+      alert("Fehler beim Bildupload");
+      return;
+    }
+    // Save the application
+    saveApplication(applicationState, applicationImage);
     alert("Bewerbung abgeschickt");
   };
 

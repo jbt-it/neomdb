@@ -1,9 +1,9 @@
 import {
-  Application,
+  ApplicationDto,
   ApplicationError,
-  ApplicationPracticalExperience,
+  ApplicationPracticalExperienceDto,
   ApplicationPracticalExperienceError,
-  Skill,
+  SkillDto,
   SkillError,
 } from "../types/applicationTypes";
 
@@ -20,8 +20,8 @@ const isDateInvalid = (dateValue: Date | null | undefined) => {
  * @returns true if any required field is missing, false otherwise
  */
 const checkRequiredAttributes = (
-  attributes: (keyof Application)[],
-  applicationState: Application,
+  attributes: (keyof ApplicationDto)[],
+  applicationState: ApplicationDto,
   updateApplicationErrorState: (updates: Partial<ApplicationError>) => void
 ) => {
   let hasError = false;
@@ -36,7 +36,7 @@ const checkRequiredAttributes = (
 
     // Check if the attribute is either 'internship' or 'hiwiStudentJob' and validate the items
     if (attribute === "internship" || attribute === "hiwiStudentJob") {
-      const experienceArray = value as ApplicationPracticalExperience[];
+      const experienceArray = value as ApplicationPracticalExperienceDto[];
       const errors = experienceArray.map((item) => {
         const itemError: ApplicationPracticalExperienceError = {
           id: item.id,
@@ -58,7 +58,7 @@ const checkRequiredAttributes = (
       // Check if the attribute is either 'voluntarySchool' or 'voluntaryStudy' and validate the items
     } else if (attribute === "languages" || attribute === "itSkills") {
       // value is Skill[]
-      const skillArray = value as Skill[];
+      const skillArray = value as SkillDto[];
       const errors = skillArray.map((item) => {
         const itemError: SkillError = {
           id: item.id,
@@ -156,9 +156,9 @@ const checkRequiredAttributes = (
  * @returns true if any required field is missing, false otherwise
  */
 export const checkRequiredFields = (
-  attributesToCheckByStep: { [key: number]: (keyof Application)[] },
+  attributesToCheckByStep: { [key: number]: (keyof ApplicationDto)[] },
   activeStep: number,
-  applicationState: Application,
+  applicationState: ApplicationDto,
   updateApplicationErrorState: (updates: Partial<ApplicationError>) => void
 ) => {
   let attributes = attributesToCheckByStep[activeStep] || [];

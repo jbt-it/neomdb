@@ -16,6 +16,7 @@ import { FileUpload } from "@mui/icons-material";
 import { useApplicationContext } from "../../../context/ApplicationContext";
 import ApplicationTextInput from "../inputs/ApplicationTextInput";
 import ApplicationDateInput from "../inputs/ApplicationDateInput";
+import { convertToBase64 } from "../../../utils/imageUtils";
 
 /**
  * The personal data step of the application form
@@ -25,12 +26,19 @@ const PersonalDataStep = () => {
   const isMobile = useResponsive("down", "md");
   const minBirthDate = dayjs().subtract(40, "year");
   const maxBirthDate = dayjs().subtract(17, "year");
-  const { applicationState, updateApplicationState, applicationErrorState, updateApplicationErrorState } =
-    useApplicationContext();
+  const {
+    applicationState,
+    updateApplicationState,
+    applicationErrorState,
+    updateApplicationErrorState,
+    updateApplicationImage,
+  } = useApplicationContext();
   /**
    * Reference to the file input element used to propagate the click event
    */
   const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const [imageName, setImageName] = React.useState<string | undefined>(undefined);
 
   /**
    * Handles the birth date change
@@ -91,7 +99,7 @@ const PersonalDataStep = () => {
    * Handles the file change
    * @param event - The change event
    */
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -107,7 +115,15 @@ const PersonalDataStep = () => {
       updateApplicationErrorState({ picture: pictureError });
 
       if (!pictureError) {
-        updateApplicationState("picture", file);
+        const mimeType = file.name.includes(".") ? file.name.split(".").pop() : undefined;
+        if (mimeType) {
+          const base64 = await convertToBase64(file);
+          updateApplicationImage(mimeType, base64);
+          updateApplicationState("picture", mimeType);
+          setImageName(file.name);
+        } else {
+          updateApplicationErrorState({ picture: true });
+        }
       }
     }
   };
@@ -347,6 +363,7 @@ const PersonalDataStep = () => {
               Bild hochladen *
             </Button>
           </label>
+          <Typography>{imageName}</Typography>
           {applicationErrorState.picture && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {applicationErrorState.picture

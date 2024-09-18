@@ -8,16 +8,6 @@ export type ApplicationPracticalExperienceDto = {
   end: Date | undefined | null;
 };
 
-// Definition of the ApplicationHiwiStudentJobError type
-export type ApplicationPracticalExperienceError = {
-  id: number;
-  activity: boolean;
-  company: boolean;
-  location: boolean;
-  start: boolean;
-  end: boolean;
-};
-
 // Definition of the Skill type
 export type SkillDto = {
   id: number;
@@ -25,17 +15,10 @@ export type SkillDto = {
   level: number;
 };
 
-// Definition of the SkillError type
-export type SkillError = {
-  id: number;
-  name: boolean;
-  level: boolean;
-};
-
 // Definition of the ApplicationImage type
 export type ApplicationImageDto = {
-  base64: string;
   mimeType: string;
+  base64: string;
 };
 
 // Definition of the Application type
@@ -112,72 +95,7 @@ export type ApplicationDto = {
   availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 };
 
-// Definition of the ApplicationError type
-export type ApplicationError = {
-  firstName: boolean;
-  lastName: boolean;
-  gender: boolean;
-  picture: boolean;
-  birthDate: boolean;
-  mobilePhone: boolean;
-  email: boolean;
-  confirmEmail: boolean;
-  homeAddressStreet: boolean;
-  homeAddressNumber: boolean;
-  homeAddressPostalCode: boolean;
-  homeAddressCity: boolean;
-  studyAddressStreet: boolean;
-  studyAddressNumber: boolean;
-  studyAddressPostalCode: boolean;
-  studyAddressCity: boolean;
-  enrolledDegree: boolean;
-  enrolledUniversity: boolean;
-  enrolledSubject: boolean;
-  enrolledOtherSubject: boolean;
-  studyStart: boolean;
-  studySemester: boolean;
-  studyFirstMajor: boolean;
-  studySecondMajor: boolean;
-  studyThirdMajor: boolean;
-  bachelorSubject: boolean;
-  bachelorUniversity: boolean;
-  apprenticeship: boolean;
-  apprenticeshipJob: boolean;
-  apprenticeshipCompany: boolean;
-  apprenticeshipLocation: boolean;
-  apprenticeshipStart: boolean;
-  apprenticeshipEnd: boolean;
-  occupation: boolean;
-  occupationCompany: boolean;
-  occupationLocation: boolean;
-  occupationStart: boolean;
-  occupationEnd: boolean;
-  internship: ApplicationPracticalExperienceError[];
-  hiwiStudentJob: ApplicationPracticalExperienceError[];
-  voluntarySchool: boolean;
-  voluntaryStudy: boolean;
-  languages: SkillError[];
-  itSkills: SkillError[];
-  hobbies: boolean;
-  timeInvestment: boolean;
-  motivation: boolean;
-  selfAssessment1: boolean;
-  selfAssessment2: boolean;
-  selfAssessment3: boolean;
-  selfAssessment4: boolean;
-  selfAssessment5: boolean;
-  selfAssessment6: boolean;
-  selfAssessment7: boolean;
-  selfAssessment8: boolean;
-  flyer: boolean;
-  lectures: boolean;
-  internet: boolean;
-  others: boolean;
-  othersText: boolean;
-  workingWeekend: boolean;
-  availabilitySelectionWeekend: boolean;
-  socialMedia: boolean;
-  campusRally: boolean;
-  partner: boolean;
-  newsletter: boolean;
+export type ApplicationRequestDto = {
+  application: ApplicationDto;
+  applicationImage: ApplicationImageDto;
 };

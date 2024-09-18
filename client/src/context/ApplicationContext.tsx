@@ -1,8 +1,9 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import {
-  Application,
+  ApplicationDto,
   ApplicationError,
-  ApplicationPracticalExperience,
+  ApplicationImageDto,
+  ApplicationPracticalExperienceDto,
   ApplicationPracticalExperienceError,
 } from "../types/applicationTypes";
 
@@ -10,7 +11,7 @@ import {
  * The application context provides the following values:
  */
 interface ApplicationContextProps {
-  applicationState: Application;
+  applicationState: ApplicationDto;
   updateApplicationState: (attributeName: string, attributeValue: any) => void;
   applicationErrorState: ApplicationError;
   updateApplicationErrorState: (updates: Partial<ApplicationError>) => void;
@@ -18,11 +19,13 @@ interface ApplicationContextProps {
   resetOccupation: () => void;
   addPracticalExperienceJob: (type: string) => void;
   removePracticalExperienceJob: (type: string, jobId: number) => void;
-  updatePracticalExperience: (type: string, job: ApplicationPracticalExperience) => void;
+  updatePracticalExperience: (type: string, job: ApplicationPracticalExperienceDto) => void;
   updatePracticalExperienceError: (type: string, jobId: number, errorName: string, errorValue: boolean) => void;
   addSkill: (skillType: string) => void;
   removeSkill: (skillType: string, skillId: number) => void;
   updateSkill: (skillType: string, skillId: number, attributeName: string, attributeValue: any) => void;
+  applicationImage: ApplicationImageDto | undefined;
+  updateApplicationImage: (mimeType: string, base64: string) => void;
 }
 
 const ApplicationContext = createContext<ApplicationContextProps | undefined>(undefined);
@@ -33,7 +36,7 @@ const ApplicationContext = createContext<ApplicationContextProps | undefined>(un
  * @returns The provider for the application context
  */
 export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
-  const [applicationState, setApplicationState] = useState<Application>({
+  const [applicationState, setApplicationState] = useState<ApplicationDto>({
     firstName: "",
     lastName: "",
     gender: "",
@@ -175,6 +178,13 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
     newsletter: false,
   });
 
+  const [applicationImage, setApplicationImage] = useState<ApplicationImageDto>();
+
+  const updateApplicationImage = (mimeType: string, base64: string) => {
+    const image = { mimeType: mimeType, base64: base64 };
+    setApplicationImage(image);
+  };
+
   /**
    * Updates the application state with the given attribute name and value
    * @param attributeName - The name of the attribute to update
@@ -240,7 +250,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Function to initialize a new ApplicationPracticalExperienceJob object
-  const initializePracticalExperience = (): ApplicationPracticalExperience => ({
+  const initializePracticalExperience = (): ApplicationPracticalExperienceDto => ({
     id: 0,
     activity: "",
     company: "",
@@ -314,7 +324,7 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
    * Updates the PracticalExperience state with the given job
    * @param updatedJob - The updated job
    */
-  const updatePracticalExperience = (type: string, updatedJob: ApplicationPracticalExperience) => {
+  const updatePracticalExperience = (type: string, updatedJob: ApplicationPracticalExperienceDto) => {
     if (type === "internship") {
       setApplicationState((prevState) => ({
         ...prevState,
@@ -432,6 +442,8 @@ export const ApplicationProvider = ({ children }: { children: ReactNode }) => {
         addSkill,
         removeSkill,
         updateSkill,
+        applicationImage,
+        updateApplicationImage,
       }}
     >
       {children}
