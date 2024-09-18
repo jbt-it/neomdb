@@ -35,7 +35,6 @@ afterEach(async () => {
 afterAll(async () => {
   // Close the data source
   await AppDataSource.destroy();
-  console.log("Data source destroyed");
   // delete the image in /applicants
   await applicationTestUtils.deleteApplicationImage("Michael_Scott");
 });
