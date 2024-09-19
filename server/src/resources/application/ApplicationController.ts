@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Route, Tags, Get, Path, Security, Patch } from "@tsoa/runtime";
+import { Body, Controller, Post, Route, Tags, Get, Path, Security, Patch, SuccessResponse } from "@tsoa/runtime";
 import {
   ApplicationRequestDto,
   EvaluationDto,
@@ -24,6 +24,7 @@ export class ApplicationController extends Controller {
    * @returns void
    */
   @Post("")
+  @SuccessResponse("201", "Created")
   public async saveApplication(@Body() requestBody: ApplicationRequestDto): Promise<boolean> {
     const { application, applicationImage } = requestBody;
 

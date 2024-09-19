@@ -1262,7 +1262,7 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.saveApplication.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              promiseHandler(controller, promise, response, 201, next);
             } catch (err) {
                 return next(err);
             }

@@ -44,7 +44,7 @@ describe("Test application routes", () => {
 
   // -----------------------POST ROUTES-----------------------
   describe("POST / create application", () => {
-    test("should return 200 for creating new application", async () => {
+    test("should return 201 for creating new application", async () => {
       const application: ApplicationDto = {
         firstName: "Michael",
         lastName: "Scott",
@@ -162,7 +162,7 @@ describe("Test application routes", () => {
         applicationImage,
       });
       // --- THEN
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(201);
     });
   });
 });
