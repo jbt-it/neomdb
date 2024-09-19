@@ -583,6 +583,237 @@
 				],
 				"type": "object"
 			},
+			"GenerationDto": {
+				"properties": {
+					"electionEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"electionStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"doorCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"infoEveningVisitors": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"wwDateEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"selectionWeDateEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"selectionWeDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"description": {
+						"type": "string"
+					},
+					"generationId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"electionEnd",
+					"electionStart",
+					"doorCode",
+					"infoEveningVisitors",
+					"wwDateEnd",
+					"wwDateStart",
+					"selectionWeDateEnd",
+					"selectionWeDateStart",
+					"applicationEnd",
+					"applicationStart",
+					"description",
+					"generationId"
+				],
+				"type": "object"
+			},
+			"NewGenerationRequestDto": {
+				"properties": {
+					"wwDateEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"wwDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"selectionWeDateEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"selectionWeDateStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"applicationStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"wwDateEnd",
+					"wwDateStart",
+					"selectionWeDateEnd",
+					"selectionWeDateStart",
+					"applicationEnd",
+					"applicationStart",
+					"description"
+				],
+				"type": "object"
+			},
+			"EvaluationDto": {
+				"properties": {
+					"evaluation": {
+						"type": "number",
+						"format": "double"
+					},
+					"workingWeekend": {
+						"type": "boolean"
+					},
+					"availabilitySelectionWeekend": {
+						"type": "string",
+						"enum": [
+							"kannImmer",
+							"nichtFR",
+							"nichtSA",
+							"nichtSO"
+						],
+						"nullable": true
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"evaluation",
+					"workingWeekend",
+					"availabilitySelectionWeekend",
+					"lastName",
+					"firstName",
+					"traineeApplicantId"
+				],
+				"type": "object"
+			},
+			"FeedbackStatisticsDto": {
+				"properties": {
+					"othersText": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"others": {
+						"type": "number",
+						"format": "double"
+					},
+					"newsletter": {
+						"type": "number",
+						"format": "double"
+					},
+					"partner": {
+						"type": "number",
+						"format": "double"
+					},
+					"campusRally": {
+						"type": "number",
+						"format": "double"
+					},
+					"socialMedia": {
+						"type": "number",
+						"format": "double"
+					},
+					"internet": {
+						"type": "number",
+						"format": "double"
+					},
+					"informationStand": {
+						"type": "number",
+						"format": "double"
+					},
+					"friends": {
+						"type": "number",
+						"format": "double"
+					},
+					"lectures": {
+						"type": "number",
+						"format": "double"
+					},
+					"posters": {
+						"type": "number",
+						"format": "double"
+					},
+					"flyer": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"othersText",
+					"others",
+					"newsletter",
+					"partner",
+					"campusRally",
+					"socialMedia",
+					"internet",
+					"informationStand",
+					"friends",
+					"lectures",
+					"posters",
+					"flyer"
+				],
+				"type": "object"
+			},
 			"Member": {
 				"properties": {
 					"memberId": {
@@ -1035,6 +1266,12 @@
 							"$ref": "#/components/schemas/WorkshopInstanceHasReferent"
 						},
 						"type": "array"
+					},
+					"traineeApplicantEvaluations": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantEvaluation"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -1136,7 +1373,8 @@
 					"languages",
 					"traineeApplicants",
 					"internalProject",
-					"referencedWorkshops"
+					"referencedWorkshops",
+					"traineeApplicantEvaluations"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1608,6 +1846,12 @@
 							"$ref": "#/components/schemas/TraineeApplicantLanguage"
 						},
 						"type": "array"
+					},
+					"traineeApplicantEvaluations": {
+						"items": {
+							"$ref": "#/components/schemas/TraineeApplicantEvaluation"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -1686,7 +1930,8 @@
 					"traineeApplicantVoluntaryStudies",
 					"traineeApplicantHiwis",
 					"traineeApplicantInternships",
-					"traineeApplicantLanguages"
+					"traineeApplicantLanguages",
+					"traineeApplicantEvaluations"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1871,6 +2116,37 @@
 					"traineeApplicantId",
 					"language",
 					"languageLevel",
+					"traineeApplicant"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TraineeApplicantEvaluation": {
+				"properties": {
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"evaluation": {
+						"type": "number",
+						"format": "double"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					},
+					"traineeApplicant": {
+						"$ref": "#/components/schemas/TraineeApplicant"
+					}
+				},
+				"required": [
+					"traineeApplicantId",
+					"memberId",
+					"evaluation",
+					"member",
 					"traineeApplicant"
 				],
 				"type": "object",
@@ -5210,6 +5486,146 @@
 						}
 					}
 				}
+			}
+		},
+		"/application/generation": {
+			"post": {
+				"operationId": "CreateNewGeneration",
+				"responses": {
+					"200": {
+						"description": "the created generation as GenerationDto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GenerationDto"
+								}
+							}
+						}
+					}
+				},
+				"description": "Creates a new generation in the database",
+				"tags": [
+					"Application"
+				],
+				"security": [
+					{
+						"jwt": [
+							"16"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "- The generation to create as NewGenerationRequestDto",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/NewGenerationRequestDto",
+								"description": "- The generation to create as NewGenerationRequestDto"
+							}
+						}
+					}
+				}
+			},
+			"patch": {
+				"operationId": "UpdateGeneration",
+				"responses": {
+					"200": {
+						"description": "the updated generation as GenerationDto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GenerationDto"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates a generation in the database",
+				"tags": [
+					"Application"
+				],
+				"security": [
+					{
+						"jwt": [
+							"16"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "- The generation to update as GenerationDto",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GenerationDto",
+								"description": "- The generation to update as GenerationDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/application/evaluations/{id}": {
+			"get": {
+				"operationId": "GetEvaluationsByMemberId",
+				"responses": {
+					"200": {
+						"description": "EvaluationDto[]",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/EvaluationDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Fetches all evaluations for a member",
+				"tags": [
+					"Application"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- The id of the member to fetch evaluations for",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/application/feedback": {
+			"get": {
+				"operationId": "GetFeedback",
+				"responses": {
+					"200": {
+						"description": "FeedbackStatisticsDto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FeedbackStatisticsDto"
+								}
+							}
+						}
+					}
+				},
+				"description": "Fetches the feedback statistics for the generation",
+				"tags": [
+					"Application"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/members": {

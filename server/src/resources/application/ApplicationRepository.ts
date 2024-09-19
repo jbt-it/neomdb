@@ -16,8 +16,25 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
    * Retrieves all applications as a list
    * @returns A list of applications
    */
-  async getApplications(): Promise<TraineeApplicant[]> {
-    return this.find();
+  async getApplications(generationId: number): Promise<TraineeApplicant[]> {
+    return this.find({ where: { generationId } });
+  },
+
+  /**
+   * Retrieves all applications with evaluations by a member id
+   * @param memberId The id of the member
+   * @returns A list of applications with evaluations
+   */
+  async getEvaluationsByMemberId(memberId: number, generationId: number): Promise<TraineeApplicant[]> {
+    return this.find({
+      relations: ["traineeApplicantEvaluations"],
+      where: {
+        generationId: generationId,
+        traineeApplicantEvaluations: {
+          memberId: memberId,
+        },
+      },
+    });
   },
 
   /**

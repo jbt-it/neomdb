@@ -6,6 +6,7 @@ import { TraineeApplicantVoluntaryStudy } from "./TraineeApplicantVoluntaryStudy
 import { TraineeApplicantHiwi } from "./TraineeApplicantHiwi";
 import { TraineeApplicantInternship } from "./TraineeApplicantInternship";
 import { TraineeApplicantLanguage } from "./TraineeApplicantLanguage";
+import { TraineeApplicantEvaluation } from "./TraineeApplicantEvaluation";
 
 @Index("fk_traineebewerber_generation", ["generation"], {})
 @Index("fk_aufgenommen_mitglied", ["admitted"], {})
@@ -316,4 +317,7 @@ export class TraineeApplicant {
 
   @OneToMany(() => TraineeApplicantLanguage, (traineeApplicantLanguage) => traineeApplicantLanguage.traineeApplicant)
   traineeApplicantLanguages: TraineeApplicantLanguage[];
+
+  @OneToMany(() => TraineeApplicantEvaluation, (evaluation) => evaluation.traineeApplicant)
+  traineeApplicantEvaluations: TraineeApplicantEvaluation[];
 }

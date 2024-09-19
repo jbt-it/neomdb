@@ -95,7 +95,61 @@ export type ApplicationDto = {
   availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 };
 
+// Definition of application request dto
 export type ApplicationRequestDto = {
   application: ApplicationDto;
   applicationImage: ApplicationImageDto;
+};
+
+// Definition of the new Generation request type
+export type NewGenerationRequestDto = {
+  description: string;
+  applicationStart: Date | null;
+  applicationEnd: Date | null;
+  selectionWeDateStart: Date | null;
+  selectionWeDateEnd: Date | null;
+  wwDateStart: Date | null;
+  wwDateEnd: Date | null;
+};
+
+// Definition of the update Generation request type
+export type GenerationDto = {
+  generationId: number;
+  description: string;
+  applicationStart: Date | null;
+  applicationEnd: Date | null;
+  selectionWeDateStart: Date | null;
+  selectionWeDateEnd: Date | null;
+  wwDateStart: Date | null;
+  wwDateEnd: Date | null;
+  infoEveningVisitors: number | null;
+  doorCode: string | null;
+  electionStart: Date | null;
+  electionEnd: Date | null;
+};
+
+// Definition of the evaluation dto type
+export type EvaluationDto = {
+  traineeApplicantId: number;
+  firstName: string;
+  lastName: string;
+  availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
+  workingWeekend: boolean;
+  evaluation: number;
+};
+
+// Definition of the feedback statistics dto type
+export type FeedbackStatisticsDto = {
+  flyer: number;
+  posters: number;
+  lectures: number;
+  friends: number;
+  informationStand: number;
+  internet: number;
+  socialMedia: number;
+  campusRally: number;
+  partner: number;
+  newsletter: number;
+  others: number;
+  othersText: string[];
 };

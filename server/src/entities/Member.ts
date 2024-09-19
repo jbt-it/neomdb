@@ -33,6 +33,7 @@ import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
 import { WorkshopInstanceHasReferent } from "./WorkshopInstanceHasReferent";
 import { booleanTransformer } from "../utils/dataTransformer";
+import { TraineeApplicantEvaluation } from "./TraineeApplicantEvaluation";
 
 @Index("name", ["name"], { unique: true })
 @Index("mitgliedID_UNIQUE", ["memberId"], { unique: true })
@@ -394,4 +395,7 @@ export class Member {
 
   @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.member)
   referencedWorkshops: WorkshopInstanceHasReferent[];
+
+  @OneToMany(() => TraineeApplicantEvaluation, (evaluation) => evaluation.member)
+  traineeApplicantEvaluations: TraineeApplicantEvaluation[];
 }

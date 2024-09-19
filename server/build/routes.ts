@@ -73,6 +73,26 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"applicationImage":{"ref":"ApplicationImageDto","required":true},"application":{"ref":"ApplicationDto","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GenerationDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"electionEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"electionStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"doorCode":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"infoEveningVisitors":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},"wwDateEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"wwDateStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"selectionWeDateEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"selectionWeDateStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"applicationEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"applicationStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"description":{"dataType":"string","required":true},"generationId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "NewGenerationRequestDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"wwDateEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"wwDateStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"selectionWeDateEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"selectionWeDateStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"applicationEnd":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"applicationStart":{"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},"description":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EvaluationDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"workingWeekend":{"dataType":"boolean","required":true},"availabilitySelectionWeekend":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["kannImmer"]},{"dataType":"enum","enums":["nichtFR"]},{"dataType":"enum","enums":["nichtSA"]},{"dataType":"enum","enums":["nichtSO"]},{"dataType":"enum","enums":[null]}],"required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FeedbackStatisticsDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"othersText":{"dataType":"array","array":{"dataType":"string"},"required":true},"others":{"dataType":"double","required":true},"newsletter":{"dataType":"double","required":true},"partner":{"dataType":"double","required":true},"campusRally":{"dataType":"double","required":true},"socialMedia":{"dataType":"double","required":true},"internet":{"dataType":"double","required":true},"informationStand":{"dataType":"double","required":true},"friends":{"dataType":"double","required":true},"lectures":{"dataType":"double","required":true},"posters":{"dataType":"double","required":true},"flyer":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
         "dataType": "refObject",
         "properties": {
@@ -175,6 +195,7 @@ const models: TsoaRoute.Models = {
             "traineeApplicants": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicant"},"required":true},
             "internalProject": {"ref":"InternalProject","required":true},
             "referencedWorkshops": {"dataType":"array","array":{"dataType":"refObject","ref":"WorkshopInstanceHasReferent"},"required":true},
+            "traineeApplicantEvaluations": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantEvaluation"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -292,6 +313,7 @@ const models: TsoaRoute.Models = {
             "traineeApplicantHiwis": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantHiwi"},"required":true},
             "traineeApplicantInternships": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantInternship"},"required":true},
             "traineeApplicantLanguages": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantLanguage"},"required":true},
+            "traineeApplicantEvaluations": {"dataType":"array","array":{"dataType":"refObject","ref":"TraineeApplicantEvaluation"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -355,6 +377,18 @@ const models: TsoaRoute.Models = {
             "traineeApplicantId": {"dataType":"double","required":true},
             "language": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "languageLevel": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "traineeApplicant": {"ref":"TraineeApplicant","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeApplicantEvaluation": {
+        "dataType": "refObject",
+        "properties": {
+            "traineeApplicantId": {"dataType":"double","required":true},
+            "memberId": {"dataType":"double","required":true},
+            "evaluation": {"dataType":"double","required":true},
+            "member": {"ref":"Member","required":true},
             "traineeApplicant": {"ref":"TraineeApplicant","required":true},
         },
         "additionalProperties": false,
@@ -1228,6 +1262,107 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.saveApplication.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/application/generation',
+            authenticateMiddleware([{"jwt":["16"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.createNewGeneration)),
+
+            function ApplicationController_createNewGeneration(request: any, response: any, next: any) {
+            const args = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"NewGenerationRequestDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.createNewGeneration.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/api/application/generation',
+            authenticateMiddleware([{"jwt":["16"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.updateGeneration)),
+
+            function ApplicationController_updateGeneration(request: any, response: any, next: any) {
+            const args = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"GenerationDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.updateGeneration.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/application/evaluations/:id',
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.getEvaluationsByMemberId)),
+
+            function ApplicationController_getEvaluationsByMemberId(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.getEvaluationsByMemberId.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/application/feedback',
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.getFeedback)),
+
+            function ApplicationController_getFeedback(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.getFeedback.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

@@ -1,7 +1,14 @@
 import fs from "fs/promises";
 import path from "path";
 import { AppDataSource } from "../../datasource";
-import { ApplicationDto, ApplicationImageDto } from "../../types/applicationTypes";
+import {
+  ApplicationDto,
+  ApplicationImageDto,
+  EvaluationDto,
+  FeedbackStatisticsDto,
+  GenerationDto,
+  NewGenerationRequestDto,
+} from "../../types/applicationTypes";
 import {
   TraineeApplicationRepository,
   TraineeApplicantHiwiRepository,
@@ -18,6 +25,8 @@ import { TraineeApplicantLanguage } from "../../entities/TraineeApplicantLanguag
 import { TraineeApplicantVoluntarySchool } from "../../entities/TraineeApplicantVoluntarySchool";
 import { TraineeApplicantVoluntaryStudy } from "../../entities/TraineeApplicantVoluntaryStudy";
 import { TraineeApplicantItSkill } from "../../entities/TraineeApplicantItSkill";
+import { NotFoundError } from "../../types/Errors";
+import { ApplicationMapper } from "./ApplicationMapper";
 
 /**
  * Service for the application
@@ -275,6 +284,131 @@ class ApplicationService {
       console.error("Error saving application:", error);
       throw new Error("Couldn't save applicant to the database.");
     }
+  };
+
+  /**
+   * Create a new generation
+   * @param generationRequest - The generation request
+   * @returns The new generation
+   */
+  createNewGeneration = async (generationRequest: NewGenerationRequestDto): Promise<GenerationDto> => {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+
+    // construct the description of the generation
+    const newDescription =
+      new Date().getMonth() < 8
+        ? `Sommersemester ${currentYear}`
+        : `Wintersemester ${currentYear.toString().slice(-2)}/${nextYear.toString().slice(-2)}`;
+
+    // create a new Generation object
+    const newGeneration = GenerationRepository.create({
+      description: newDescription,
+      applicationStart: generationRequest.applicationStart,
+      applicationEnd: generationRequest.applicationEnd,
+      selectionWeDateStart: generationRequest.selectionWeDateStart,
+      selectionWeDateEnd: generationRequest.selectionWeDateEnd,
+      wwDateStart: generationRequest.wwDateStart,
+      wwDateEnd: generationRequest.wwDateEnd,
+    });
+
+    // save the generation to the database
+    return await GenerationRepository.save(newGeneration);
+  };
+
+  /**
+   * Update a generation by its id
+   * @param generationRequest - The generation request
+   * @returns The updated generation
+   */
+  updateGeneration = async (generationRequest: GenerationDto): Promise<GenerationDto> => {
+    const generation = await GenerationRepository.getGenerationByID(generationRequest.generationId);
+
+    if (generation !== null) {
+      generation.applicationStart = generationRequest.applicationStart;
+      generation.applicationEnd = generationRequest.applicationEnd;
+      generation.selectionWeDateStart = generationRequest.selectionWeDateStart;
+      generation.selectionWeDateEnd = generationRequest.selectionWeDateEnd;
+      generation.wwDateStart = generationRequest.wwDateStart;
+      generation.wwDateEnd = generationRequest.wwDateEnd;
+      generation.doorCode = generationRequest.doorCode;
+      generation.electionStart = generationRequest.electionStart;
+      generation.electionEnd = generationRequest.electionEnd;
+      generation.infoEveningVisitors = generationRequest.infoEveningVisitors;
+
+      // save the updated generation to the database
+      return await GenerationRepository.save(generation);
+    } else {
+      throw new NotFoundError(`Generation with id ${generationRequest.generationId} not found`);
+    }
+  };
+
+  /**
+   * Get all trainee applicant evaluations by member id
+   * @param memberId - The member id to get the evaluations for
+   * @returns A list of evaluations
+   */
+  getEvaluationByMemberId = async (memberId: number): Promise<EvaluationDto[]> => {
+    // get the current generation id
+    const generationId = await GenerationRepository.getCurrentGenerationId();
+
+    // get all trainee applicants with evaluations by the member id for the evaluations
+    const traineeApplicantWithEvaluations = await TraineeApplicationRepository.getEvaluationsByMemberId(
+      memberId,
+      generationId
+    );
+
+    // map the trainee applicants to evaluation dto
+    const evaluations = traineeApplicantWithEvaluations.map((applicant) => {
+      return ApplicationMapper.traineeApplicantToEvaluationDto(applicant);
+    });
+    return evaluations;
+  };
+
+  /**
+   * Get the feedback statistics
+   * @returns The feedback statistics
+   */
+  getFeedbackStatistics = async (): Promise<FeedbackStatisticsDto> => {
+    // get the current generationId
+    const generationId = await GenerationRepository.getCurrentGenerationId();
+
+    // get all trainee applicants for the current generation
+    const traineeApplicants = await TraineeApplicationRepository.getApplications(generationId);
+
+    const flyerStatistic = traineeApplicants.filter((applicant) => applicant.flyer).length;
+    const postersStatistic = traineeApplicants.filter((applicant) => applicant.posters).length;
+    const lecturesStatistic = traineeApplicants.filter((applicant) => applicant.lectures).length;
+    const friendsStatistic = traineeApplicants.filter((applicant) => applicant.friends).length;
+    const informationStandStatistic = traineeApplicants.filter((applicant) => applicant.informationStand).length;
+    const internetStatistic = traineeApplicants.filter((applicant) => applicant.internet).length;
+    const othersStatistic = traineeApplicants.filter((applicant) => applicant.others).length;
+    const socialMediaStatistic = traineeApplicants.filter((applicant) => applicant.socialMedia).length;
+    const campusRallyStatistic = traineeApplicants.filter((applicant) => applicant.campusRally).length;
+    const partnerStatistic = traineeApplicants.filter((applicant) => applicant.partner).length;
+    const newsletterStatistic = traineeApplicants.filter((applicant) => applicant.newsletter).length;
+    const othersText = traineeApplicants
+      .filter((applicant) => applicant.others)
+      .map((applicant) => {
+        return applicant.othersText;
+      });
+
+    // Create the feedback statistics object
+    const feedbackStatistics = {
+      flyer: flyerStatistic,
+      posters: postersStatistic,
+      lectures: lecturesStatistic,
+      friends: friendsStatistic,
+      informationStand: informationStandStatistic,
+      internet: internetStatistic,
+      socialMedia: socialMediaStatistic,
+      campusRally: campusRallyStatistic,
+      partner: partnerStatistic,
+      newsletter: newsletterStatistic,
+      others: othersStatistic,
+      othersText: othersText,
+    };
+    return feedbackStatistics;
   };
 }
 
