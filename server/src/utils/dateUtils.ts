@@ -21,18 +21,6 @@ const formatDate = (date: Date) => {
 };
 
 /**
- * Creates a timestamp with the current date and time for the `lastChange` field
- */
-export const createCurrentTimestamp = () => {
-  const date: Date = new Date();
-  const formattedDate = formatDate(date);
-
-  return formattedDate;
-};
-
-export default formatDate;
-
-/**
  * Computes the difference between two dates in days
  * @param date1 The first date
  * @param date2 The second date
@@ -46,3 +34,5 @@ export const getDateDifferenceInDays = (date1: Date, date2: Date) => {
 
   return parseFloat(daysDiff.toFixed(1));
 };
+
+export default formatDate;

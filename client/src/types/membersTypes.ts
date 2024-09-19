@@ -62,7 +62,6 @@ export type DepartmentPartialDto = {
 /**
  * Type of the department
  */
-// @JanMueller31 -> Former DepartmentDetails TODO: Delete this comment line after type is used
 export type DepartmentDetailsDto = {
   departmentId: number;
   name: string;
@@ -75,7 +74,6 @@ export type DepartmentDetailsDto = {
 /**
  * Type of the request to update a department
  */
-// @JanMueller31 -> Can be used for the update of a department TODO: Delete this comment line after type is used
 export type UpdateDepartmentDto = {
   linkObjectivePresentation: string;
   linkOrganigram: string;
@@ -175,6 +173,20 @@ export type DepartmentMemberDto = {
   firstname: string;
   lastname: string;
   department: DepartmentPartialDto;
+};
+
+/**
+ * Type of the member finances
+ */
+export type MemberFinanceDataType = {
+  memberId: number;
+  lastName: string;
+  firstName: string;
+  memberStatus: string;
+  accountHolder: string;
+  iban: string;
+  bic: string;
+  lastchange: string;
 };
 
 /**
@@ -433,4 +445,42 @@ export type StatusOverview = {
 export type CreateMemberResponseDto = {
   memberId: number;
   statusOverview: StatusOverview;
+};
+
+/**
+ * Type of the expertise of a member
+ */
+export type ExpertiseOfMemberDto = {
+  memberId: number;
+  expertiseId: number;
+  designation: string;
+  value: string;
+};
+
+/**
+ * Type of the internship of a member
+ */
+export type InternshipOfMemberDto = {
+  memberId: number;
+  company: string;
+  description: string;
+};
+
+/**
+ * Type of the position of a member
+ */
+export type PosionOfMemberDto = {
+  memberId: number;
+  designation: string;
+  from: Date;
+  until: Date;
+};
+
+/**
+ * Type of the workshops held by a member
+ */
+export type WorkshopsHeldByMember = {
+  memberId: number;
+  workshopInstanceId: number;
+  name: string;
 };

@@ -145,7 +145,7 @@ export const MembersRepository = AppDataSource.getRepository(Member).extend({
 /**
  * Creates and exports the MemberStatus Repository
  */
-export const MemberStatusRespository_typeORM = AppDataSource.getRepository(MemberStatus).extend({
+export const MemberStatusRespository = AppDataSource.getRepository(MemberStatus).extend({
   /**
    * Retrieves a member status by its name
    * @param statusID The name of the member status
@@ -168,7 +168,7 @@ export const MemberStatusRespository_typeORM = AppDataSource.getRepository(Membe
 /**
  * Creates and exports the Language Repository
  */
-export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language).extend({
+export const LanguagesRepository = AppDataSource.getRepository(Language).extend({
   /**
    * Retrieves all the distinct values of the languages
    * @returns A list of distinct language values
@@ -181,7 +181,7 @@ export const LanguagesRepository_typeORM = AppDataSource.getRepository(Language)
 /**
  * Creates and exports the ItSkills Repository
  */
-export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).extend({
+export const ItSkillsRepository = AppDataSource.getRepository(ItSkill).extend({
   /**
    * Retrieves the all distinct values of the itSkills
    * @returns A list of distinct itSkill values
@@ -194,7 +194,7 @@ export const ItSkillsRepository_typeORM = AppDataSource.getRepository(ItSkill).e
 /**
  * Creates and exports the Permission Repository
  */
-export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permission).extend({
+export const PermissionsRepository = AppDataSource.getRepository(Permission).extend({
   /**
    * Retrieves all permissions as a list
    * @returns A list of permissions
@@ -224,9 +224,7 @@ export const PermissionsRepository_typeORM = AppDataSource.getRepository(Permiss
 /**
  * Creates and exports the MemberHasDirectorPosition Repository
  */
-export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepository(
-  MemberHasDirectorPosition
-).extend({
+export const MemberHasDirectorPositionRepository = AppDataSource.getRepository(MemberHasDirectorPosition).extend({
   /**
    * Retrieves all members that are or were directors
    * @returns A list of members that are or were directors
@@ -271,7 +269,7 @@ export const MemberHasDirectorPositionRepository_typeORM = AppDataSource.getRepo
 /**
  * Creates and exports the Generation Repository
  */
-export const GenerationRepository_typeORM = AppDataSource.getRepository(Generation).extend({
+export const GenerationRepository = AppDataSource.getRepository(Generation).extend({
   /**
    * Retrieves all generations as a list
    * @returns A list of generations

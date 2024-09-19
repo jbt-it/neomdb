@@ -3,7 +3,7 @@
  */
 import { Button, Dialog, DialogContent, DialogTitle, Grid, TextField, useTheme } from "@mui/material";
 import React, { memo, useState } from "react";
-import { DepartmentDetailsDto } from "../../types/membersTypes";
+import { DepartmentDetailsDto, UpdateDepartmentDto } from "../../types/membersTypes";
 import { AxiosResponse } from "axios";
 
 /**
@@ -61,7 +61,7 @@ const DepartmentDialog: React.FunctionComponent<DepartmentDialogProps> = memo((p
 
     // Given department object with changed goal and organisation links
     const editedDepartment = { ...department, linkObjectivePresentation: goalLink, linkOrganigram: organisationLink };
-    updateDepartmentDetails(editedDepartment).then((response: AxiosResponse<DepartmentDetailsDto>) => {
+    updateDepartmentDetails(editedDepartment).then((response: AxiosResponse<UpdateDepartmentDto>) => {
       response.status === 204 ? onClose() : null;
     });
   };

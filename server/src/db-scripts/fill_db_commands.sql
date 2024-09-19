@@ -99,7 +99,7 @@ INSERT INTO `edvkenntnisse` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 -- Daten für Tabelle `event`
 --
 
-INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `datum`, `ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
+INSERT INTO `event` (`eventID`, `eventname`, `beschreibung`, `event_beginn`, `event_ende`, `anmeldungVon`, `anmeldungBis`, `ort`, `startzeit`, `endzeit`, `ww`, `netzwerk`, `maximaleTeilnehmer`, `jbtgoes`, `sonstige`) VALUES
 (5, 'Working-Weekend', 'WORK HARD, PARTY HARD!!!!', '2013-11-15', '2013-11-17', '2013-11-01 19:23:00', '2013-11-12 20:00:00', 'Nähe Geislingen an der Steige (Freizeitheim Stötten)', NULL, NULL, 1, 0, 58, 0, 0),
 (7, 'Jahreshauptversammlung/Weihnachtsfeier', '', '2013-12-14', '2013-12-15', '2013-11-28 21:23:00', '2013-12-09 22:00:00', 'Euro Forum Katharinasaal/TMS', '18:00', '09:00', 0, 0, 50, 0, 0),
 (8, 'JBT goes Soccerhall', 'JBT internes Fußballtunier', '2013-12-13', '2013-12-13', '2013-11-29 19:23:00', '2013-12-10 20:00:00', 'Raum Stuttgart -  genaue Infos folgen', '18:30', '21:30', 0, 0, 50, 0, 0),
@@ -225,21 +225,20 @@ INSERT INTO `feedbackfrage` (`feedbackfrageID`, `frage`) VALUES
 -- Daten für Tabelle `generation`
 --
 
-INSERT INTO `generation` (`generationID`, `bezeichnung`, `bewerbung_start`, `bewerbung_ende`, `wwTermin`, `auswahlWETermin`, `infoabendBesucher`, `tuercode`, `wahl_start`, `wahl_ende`) VALUES
-(3, 'Wintersemester 13/14', '2013-10-28 20:00:00', '2013-10-30 20:00:00', '15.-17. November', '1.11. - 3.11.2013', 95, '456789', NULL, NULL),
-(4, 'Sommersemester 2014', '2014-04-11 14:00:00', '2014-04-16 20:00:00', '2.-4. Mai', '25.04. -27.04.2014', 65, '614753', '2014-05-05 00:00:00', '2014-05-07 19:00:00'),
-(5, 'Wintersemester 14/15', '2014-10-26 22:00:00', '2014-10-29 18:00:00', '14.-16. November', '31.10.-02.11.2014', NULL, '157456', '2014-11-16 18:00:00', '2014-11-19 13:30:00'),
-(6, 'Sommersemester 2015', '2015-04-20 19:15:00', '2015-04-22 19:00:00', '01.-04. Mai', '24.-26.04.2015', 29, '971023', '2015-05-04 13:00:00', '2015-05-06 18:00:00'),
-(7, 'Wintersemester 15/16', '2015-10-26 19:00:00', '2015-10-28 20:00:00', '13.-15. November', '30.10. - 01.11.', 204, '974651', '2015-11-15 20:30:00', '2015-11-18 18:00:00'),
-(8, 'Sommersemester 2016', '2016-04-18 19:00:00', '2016-04-20 20:00:00', '6.-8. Mai', '22.04.-24.04.', 46, '351473', '2016-05-08 18:25:00', '2016-05-11 18:00:00'),
-(9, 'Wintersemester 16/17', '2016-10-26 21:00:00', '2016-11-01 01:30:00', '18.-20. November', '04.11.-06.11.2016', NULL, '765423', '2016-11-20 22:00:00', '2016-11-23 13:00:00'),
-(10, 'Sommersemester 2017', '2017-04-24 20:00:00', '2017-04-27 14:15:00', '5.-7. Mai', '28.-30. April', NULL, '845745', '2017-05-08 14:00:00', '2017-05-10 15:00:00'),
-(11, 'Wintersemester 17/18', '2017-10-17 18:00:00', '2017-10-29 18:00:00', '10.-12.November', '(03.11.-05.11.2017)', 151, '378495', '2017-11-13 13:30:00', '2017-11-15 19:00:00'),
-(12, 'Sommersemester 2018', '2018-04-16 11:30:00', '2018-04-19 00:01:00', '27.-29.04.2018', '20.04. - 22.04.', NULL, '517895', '2018-04-30 22:00:00', '2018-05-02 20:00:00'),
-(13, 'Wintersemester 18/19', '2018-10-29 22:00:00', '2018-11-05 23:59:00', '16.-18. November', '09.11 - 11.11.2018', 95, '687452', '2018-11-19 00:00:00', '2018-11-21 16:00:00'),
-(14, 'Sommersemester 2019', '2019-04-15 21:00:00', '2019-04-19 23:59:00', '03.05 bis 05.05', '26.04 - 28.04.2019', 38, '657468', '2019-05-07 12:00:00', '2019-05-09 20:00:00'),
-(15, 'Wintersemester 19/20', '2019-10-28 18:00:00', '2019-11-02 20:10:00', '15. - 17. November', '08.11 - 10.11.2019', 107, '000000', '2019-11-17 23:59:00', '2019-11-20 19:30:00');
-
+INSERT INTO `generation` (`generationID`, `bezeichnung`, `bewerbung_start`, `bewerbung_ende`, `auswahl_WE_Termin_start`, `auswahl_WE_Termin_ende`, `ww_Termin_start`, `ww_Termin_ende`, `infoabendBesucher`, `tuercode`, `wahl_start`, `wahl_ende`) VALUES
+(3, 'Wintersemester 13/14', '2013-10-28 20:00:00', '2013-10-30 20:00:00', '2013-11-01', '2013-11-03', '2013-11-15', '2013-11-17', 95, '456789', NULL, NULL),
+(4, 'Sommersemester 2014', '2014-04-11 14:00:00', '2014-04-16 20:00:00', '2014-04-25', '2014-04-27', '2014-05-02', '2014-05-04', 65, '614753', '2014-05-05 00:00:00', '2014-05-07 19:00:00'),
+(5, 'Wintersemester 14/15', '2014-10-26 22:00:00', '2014-10-29 18:00:00', '2014-10-31', '2014-11-02', '2014-11-14', '2014-11-16', NULL, '157456', '2014-11-16 18:00:00', '2014-11-19 13:30:00'),
+(6, 'Sommersemester 2015', '2015-04-20 19:15:00', '2015-04-22 19:00:00', '2015-04-24', '2015-04-26', '2015-05-01', '2015-05-04', 29, '971023', '2015-05-04 13:00:00', '2015-05-06 18:00:00'),
+(7, 'Wintersemester 15/16', '2015-10-26 19:00:00', '2015-10-28 20:00:00', '2015-10-30', '2015-11-01', '2015-11-13', '2015-11-15', 204, '974651', '2015-11-15 20:30:00', '2015-11-18 18:00:00'),
+(8, 'Sommersemester 2016', '2016-04-18 19:00:00', '2016-04-20 20:00:00', '2016-04-22', '2016-04-24', '2016-05-06', '2016-05-08', 46, '351473', '2016-05-08 18:25:00', '2016-05-11 18:00:00'),
+(9, 'Wintersemester 16/17', '2016-10-26 21:00:00', '2016-11-01 01:30:00', '2016-11-04', '2016-11-06', '2016-11-18', '2016-11-20', NULL, '765423', '2016-11-20 22:00:00', '2016-11-23 13:00:00'),
+(10, 'Sommersemester 2017', '2017-04-24 20:00:00', '2017-04-27 14:15:00', '2017-04-28', '2017-04-30', '2017-05-05', '2017-05-07', NULL, '845745', '2017-05-08 14:00:00', '2017-05-10 15:00:00'),
+(11, 'Wintersemester 17/18', '2017-10-17 18:00:00', '2017-10-29 18:00:00', '2017-11-03', '2017-11-05', '2017-11-10', '2017-11-12', 151, '378495', '2017-11-13 13:30:00', '2017-11-15 19:00:00'),
+(12, 'Sommersemester 2018', '2018-04-16 11:30:00', '2018-04-19 00:01:00', '2018-04-20', '2018-04-22', '2018-04-27', '2018-04-29', NULL, '517895', '2018-04-30 22:00:00', '2018-05-02 20:00:00'),
+(13, 'Wintersemester 18/19', '2018-10-29 22:00:00', '2018-11-05 23:59:00', '2018-11-09', '2018-11-11', '2018-11-16', '2018-11-18', 95, '687452', '2018-11-19 00:00:00', '2018-11-21 16:00:00'),
+(14, 'Sommersemester 2019', '2019-04-15 21:00:00', '2019-04-19 23:59:00', '2019-04-26', '2019-04-28', '2019-05-03', '2019-05-05', 38, '657468', '2019-05-07 12:00:00', '2019-05-09 20:00:00'),
+(15, 'Wintersemester 19/20', '2019-10-28 18:00:00', '2019-11-02 20:10:00', '2019-11-08', '2019-11-10', '2019-11-15', '2019-11-17', 107, '000000', '2019-11-17 23:59:00', '2019-11-20 19:30:00');
 
 --
 -- Daten für Tabelle `generationenbeauftragter`
@@ -396,14 +395,14 @@ INSERT INTO `mitglied_has_event` (`event_eventID`, `mitglied_mitgliedID`, `rolle
 --
 
 INSERT INTO `mitglied_has_eventww` (`event_eventID`, `mitglied_mitgliedID`, `anreise`, `abreise`, `auto`, `plaetze`, `vegetarier`, `kommentar`) VALUES
-(5, 8111, 'FrA', 'SaA', 1, 2, 0, ''),
-(5, 8167, 'FrA', 'SaM', 0, 0, 0, ''),
-(5, 8320, 'FrA', 'SaA', 0, 0, 0, 'Ich halte den WS Angebot II'),
-(5, 8324, 'FrA', 'SaM', 0, 0, 0, ''),
-(5, 8338, 'FrA', 'SaM', 0, 0, 0, ''),
-(5, 8478, 'FrA', 'SaM', 0, 0, 0, ''),
-(10, 8111, 'FrA', 'SaM', 0, 0, 0, ''),
-(266, 8167, 'FrA', 'SaM', 0, 0, 0, '');
+(5, 8111, 'Freitag vor dem Abendessen', 'Samstag nach dem Abendessen', 1, 2, 0, ''),
+(5, 8167, 'Freitag vor dem Abendessen', 'Samstag nach dem Mittagessen', 0, 0, 0, ''),
+(5, 8320, 'Freitag früh', 'Samstag nach dem Abendessen', 0, 0, 0, 'Ich halte den WS Angebot II'),
+(5, 8324, 'Freitag vor dem Abendessen', 'Samstag nach dem Mittagessen', 0, 0, 0, ''),
+(5, 8338, 'Freitag vor dem Abendessen', 'Samstag nach dem Frühstück', 0, 0, 0, ''),
+(5, 8478, 'Samstag vor dem Frühstück', 'Samstag nach dem Abendessen', 0, 0, 0, ''),
+(10, 8111, 'Samstag vor dem Mittagessen', 'Sonntag', 0, 0, 0, ''),
+(266, 8167, 'Samstag spät', 'Sonntag', 0, 0, 0, '');
 
 
 --
@@ -2574,16 +2573,29 @@ INSERT INTO `schulungsfeedback_has_mitglied` (`schulungsfeedback_schulungsfeedba
 -- Daten für Tabelle `schulungsinstanz`
 --
 
-INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `referenten`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
-(6802, 8301, 'Abgeschlossen', '2012-11-11', '09:15', '14:30', 'Working Weekend', 25, NULL, NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
-(6805, 8325, 'Abgeschlossen', '2012-11-10', '09:30', '17:30', 'Working Weekend', 25, NULL, NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
-(6806, 8302, 'Abgeschlossen', '2012-11-09', '09:30', '18:00', 'Working Weekend', 25, NULL, NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
-(6809, 8305, 'Abgeschlossen', '2012-11-09', '20:00', '20:20', 'Working Weekend', 25, NULL, NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
-(6826, 8301, 'Abgeschlossen', '2013-05-06', '08:30', '15:00', 'Working Weekend', 25, NULL, NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
-(6828, 8300, 'Abgeschlossen', '2013-05-04', '09:00', '18:30', 'Working Weekend', 25, NULL, NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
-(6837, 8326, 'Abgeschlossen', '2013-06-14', '19:00', '22:00', 'Uni Hohenheim, HS11', 30, NULL, NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
-(6850, 8325, 'Abgeschlossen', '2013-11-16', '10:00', '17:00', 'WW', 35, NULL, NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
-(6862, 8302, 'Abgeschlossen', '2014-05-02', '12:00', '19:00', 'WW', 20, NULL, NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
+INSERT INTO `schulungsinstanz` (`schulungsinstanzID`, `schulung_schulungID`, `status`, `name`, `datum`, `startzeit`, `endzeit`, `ort`, `maximaleTeilnehmer`, `beschreibung`, `zielgruppe`, `anmeldungVon`, `anmeldungBis`) VALUES
+(6802, 8301, 'Abgeschlossen', 'Präsentationstechnik', '2012-11-11', '09:15:00', '14:30:00', 'Working Weekend', 25, 'Sehr sehr wichtig, PowerPoint ist mein Leben!', NULL, '2012-10-08 22:24:12', '2012-11-08 02:24:12'),
+(6805, 8325, 'Abgeschlossen', 'Angebots- Workshop für Mitglieder', '2012-11-10', '09:30:00', '17:30:00', 'Working Weekend', 25, 'Naja, die Nachzügler die mal wieder verschlafen haben. Na gut wollen wir mal nicht so sein.',NULL, '2012-10-02 06:29:17', '2012-11-01 10:29:17'),
+(6806, 8302, 'Abgeschlossen', 'Akquise & Verhandlungstechnik', '2012-11-09', '09:30:00', '18:00:00', 'Working Weekend', 25, 'Der GF muss Umsatz generieren, wie ein schlauer Hügel bereits sagte:"Ohne Moos nichts los." ', NULL, '2012-10-03 12:35:22', '2012-11-02 16:35:22'),
+(6809, 8305, 'Abgeschlossen', 'Netzwerke', '2012-11-09', '20:00:00', '20:20:00', 'Working Weekend', 25, 'Ich verstehe unter Netzwerke nur IP, TCP, UDP und das alte OSI-Modell.',NULL, '2012-10-04 08:22:13', '2012-11-03 12:22:13'),
+(6826, 8301, 'Abgeschlossen', 'Präsentationstechnik', '2013-05-06', '08:30:00', '15:00:00', 'Working Weekend', 25, 'Es ist jetzt möglich die KI Folien generieren zu lassen. Etwas sus...', NULL, '2013-04-03 05:09:27', '2013-05-03 09:09:27'),
+(6828, 8300, 'Abgeschlossen', 'Projektmanagement', '2013-05-04', '09:00:00', '18:30:00', 'Working Weekend', 25, 'Braucht sowieso keiner, viel wichtiger ist es wie man Rekursionsgleichungen, welche log beinhalten, lösen kann. In computer science, the Akra–Bazzi method, or Akra–Bazzi theorem, is used to analyze the asymptotic behavior of the mathematical recurrences that appear in the analysis of divide and conquer algorithms where the sub-problems have substantially different sizes. It is a generalization of the master theorem for divide-and-conquer recurrences, which assumes that the sub-problems have equal size.', NULL, '2013-04-02 05:29:30', '2013-05-02 09:29:30'),
+(6837, 8326, 'Abgeschlossen', 'Prozessmanagement', '2013-06-14', '19:00:00', '22:00:00', 'Uni Hohenheim, HS11', 30, 'Einfach den Prozess mit Taskmanager beenden.', NULL, '2013-05-05 20:00:00', '2013-06-05 00:00:00'),
+(6850, 8325, 'Abgeschlossen', 'Angebots- Workshop für Mitglieder', '2013-11-16', '10:00:00', '17:00:00', 'WW', 35, 'GF macht zu wenig Umsatz', NULL, '2013-10-09 12:24:51', '2013-11-08 16:24:51'),
+(6862, 8302, 'Abgeschlossen', 'Akquise & Verhandlungstechnik', '2014-05-02', '12:00:00', '19:00:00', 'WW', 20, 'Das macht mehr Sinn: Der Hauptsatz der Laufzeitfunktionen – oder oft auch aus dem Englischen als Master-Theorem entlehnt – ist ein Spezialfall des Akra-Bazzi-Theorems und bietet eine schnelle Lösung für die Frage, in welcher Laufzeitklasse eine gegebene rekursiv definierte Funktion liegt. Mit dem Master-Theorem kann allerdings nicht jede rekursiv definierte Funktion gelöst werden. Lässt sich keiner der drei möglichen Fälle des Master-Theorems auf die Funktion T anwenden, so muss man die Komplexitätsklasse der Funktion anderweitig berechnen.',NULL, '2014-04-01 13:27:26', '2014-05-01 17:27:26');
+
+
+--
+-- Daten für Tabelle `schulungsinstanz_has_referent`
+--
+
+INSERT INTO `schulungsinstanz_has_referent` (`schulungsinstanz_schulungsinstanzID`, `mitglied_mitgliedID`) VALUES
+(6805, 8167),
+(6806, 8111),
+(6806, 8364),
+(6809, 8167),
+(6809, 8222),
+(6850, 8331);
 
 
 --

@@ -1,6 +1,6 @@
 import api from "../utils/api";
 import { AxiosResponse } from "axios";
-import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto } from "../types/membersTypes";
+import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto, UpdateDepartmentDto } from "../types/membersTypes";
 
 //-----------------------------------------------------------------------------------------------------------------------
 // GET ROUTES
@@ -48,7 +48,7 @@ export const getAllDirectors = async (): Promise<AxiosResponse<DirectorDto[]>> =
  */
 export const updateDepartment = async (
   department: DepartmentDetailsDto
-): Promise<AxiosResponse<DepartmentDetailsDto>> => {
+): Promise<AxiosResponse<UpdateDepartmentDto>> => {
   return await api.put(`/members/departments/${department.departmentId}`, {
     linkObjectivePresentation: department.linkObjectivePresentation,
     linkOrganigram: department.linkOrganigram,

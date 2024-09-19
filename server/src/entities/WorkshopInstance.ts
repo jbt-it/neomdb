@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGenerat
 import { MemberHasWorkshopInstance } from "./MemberHasWorkshopInstance";
 import { WorkshopFeedback } from "./WorkshopFeedback";
 import { Workshop } from "./Workshop";
+import { WorkshopInstanceHasReferent } from "./WorkshopInstanceHasReferent";
 
 @Index("schulungsinstanzID_UNIQUE", ["workshopInstanceId"], { unique: true })
 @Index("fk_Schulunginstanz_Schulungen1", ["workshopInstanceId"], {})
@@ -12,6 +13,9 @@ export class WorkshopInstance {
 
   @Column("int", { name: "schulung_schulungID" })
   workshopId: number;
+
+  @Column("varchar", { name: "name", nullable: false, length: 150 })
+  name: string;
 
   // TODO: Implement enum
   @Column("enum", {
@@ -24,13 +28,11 @@ export class WorkshopInstance {
   @Column("date", { name: "datum", nullable: true })
   date: Date | null;
 
-  // TODO: Date?
-  @Column("varchar", { name: "startzeit", nullable: true, length: 10 })
-  startTime: string | null;
+  @Column("time", { name: "startzeit", nullable: true })
+  startTime: Date | null;
 
-  // TODO: Date?
-  @Column("varchar", { name: "endzeit", nullable: true, length: 10 })
-  endTime: string | null;
+  @Column("time", { name: "endzeit", nullable: true })
+  endTime: Date | null;
 
   @Column("varchar", { name: "ort", nullable: true, length: 45 })
   location: string | null;
@@ -38,8 +40,8 @@ export class WorkshopInstance {
   @Column("int", { name: "maximaleTeilnehmer", nullable: true })
   maximumParticipants: number | null;
 
-  @Column("text", { name: "referenten", nullable: true })
-  speakers: string | null;
+  @Column("text", { name: "beschreibung", nullable: true })
+  description: string | null;
 
   @Column("text", { name: "zielgruppe", nullable: true })
   targetGroup: string | null;
@@ -60,6 +62,13 @@ export class WorkshopInstance {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",
   })
-  @JoinColumn([{ name: "schulung_schulungID", referencedColumnName: "workshopId" }])
+  @JoinColumn({
+    name: "schulung_schulungID",
+    referencedColumnName: "workshopId",
+    foreignKeyConstraintName: "fk_schulung_schulungID",
+  })
   workshop: Workshop;
+
+  @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.workshopInstance)
+  referents: WorkshopInstanceHasReferent[];
 }

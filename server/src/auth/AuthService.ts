@@ -3,7 +3,7 @@ import * as crypto from "node:crypto";
 import { AppDataSource } from "../datasource";
 import { DepartmentRepository } from "../resources/members/DepartmentRepository";
 import { MemberMapper } from "../resources/members/MemberMapper";
-import { MemberHasDirectorPositionRepository_typeORM, MembersRepository } from "../resources/members/MembersRepository";
+import { MemberHasDirectorPositionRepository, MembersRepository } from "../resources/members/MembersRepository";
 import { JWTPayload, PermissionDTO, UserChangePasswordRequest, UserLoginRequest } from "../types/authTypes";
 import { ExpiredTokenError, NotFoundError, UnauthenticatedError } from "../types/Errors";
 import { getDateDifferenceInDays } from "../utils/dateUtils";
@@ -34,7 +34,7 @@ class AuthService {
     }
 
     const directorPermissions: PermissionDTO[] =
-      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
+      await MemberHasDirectorPositionRepository.getDirectorPermissionsByMemberID(user.memberId);
 
     const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
@@ -52,13 +52,11 @@ class AuthService {
     }
 
     const directorPermissions: PermissionDTO[] =
-      await MemberHasDirectorPositionRepository_typeORM.getDirectorPermissionsByMemberID(user.memberId);
+      await MemberHasDirectorPositionRepository.getDirectorPermissionsByMemberID(user.memberId);
 
     const payload: JWTPayload = MemberMapper.memberToJWTPayload(user, directorPermissions);
     return payload;
   };
-
-  // TODO: Adjsut the following methods to the new typeORM structure
 
   /**
    * Compares the old password with the passwordHash of the user and updates

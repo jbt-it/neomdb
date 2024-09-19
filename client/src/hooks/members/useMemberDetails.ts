@@ -11,6 +11,7 @@ import {
 import { showErrorMessage, showSuccessMessage } from "../../utils/toastUtils";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth-context/AuthContext";
+import { PreviousExternalProjectDto } from "../../types/projectTypes";
 
 /**
  * Hook that handles the members api calls, uses react-query
@@ -48,6 +49,22 @@ const useMemberDetails = (memberID: number) => {
   });
 
   const memberImage = memberImageData?.data;
+
+  // Mockdata for previousApplicationsOfMember
+  const previousApplicationsOfMember: PreviousExternalProjectDto[] = [
+    {
+      memberId: memberID,
+      projectId: 1,
+      projectName: "Aufnahme und Analyse von Workflows im Auftragsmanagement",
+      type: "Bewerbung",
+    },
+    {
+      memberId: memberID,
+      projectId: 2,
+      projectName: "Aufnahme und Analyse von Prozessen im Vertrieb",
+      type: "Mitglied",
+    },
+  ];
 
   // ----------------------------------------------------------------------------------
 
@@ -124,6 +141,7 @@ const useMemberDetails = (memberID: number) => {
     isMemberImageLoading,
     isMemberImageError,
     saveMemberImage,
+    previousApplicationsOfMember,
   };
 };
 

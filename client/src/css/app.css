@@ -10,10 +10,13 @@ html {
   line-height: 1.5;
   width: 100%;
   background-color: white !important;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
 }
 
 body {
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
   width: 100%;

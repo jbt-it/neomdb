@@ -1,11 +1,9 @@
-import { describe, expect, test, beforeAll, beforeEach, afterEach, afterAll } from "@jest/globals";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
 import request from "supertest";
 import app from "../../../src/app";
-import MemberTestUtils from "../../utils/memberTestUtils";
-import AuthTestUtils from "../../utils/authTestUtils";
-import { createCurrentTimestamp } from "../../../src/utils/dateUtils";
 import { AppDataSource } from "../../../src/datasource";
-import { level } from "winston";
+import AuthTestUtils from "../../utils/authTestUtils";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const memberTestUtils = new MemberTestUtils(app);
@@ -539,7 +537,6 @@ describe("Test member routes", () => {
         commitment: null,
         canPL: new Date("2013-12-22"),
         canQM: new Date("2013-12-22"),
-        lastChange: new Date("1899-11-29"),
         drivingLicense: 0,
         firstAidTraining: false,
         mentor: null,
@@ -577,6 +574,13 @@ describe("Test member routes", () => {
 
       // --- THEN
       expect(response.status).toBe(204);
+
+      // Check if the member was updated correctly in the database
+      const memberFromDB = await memberTestUtils.getMemberByIDFromDB(memberId);
+      expect(memberFromDB).not.toBeNull();
+      expect(memberFromDB.memberId).toBe(memberId);
+      expect(memberFromDB.firstName).toBe(memberInfo.firstname);
+      expect(memberFromDB.lastChange).not.toBeNull();
     });
 
     test("should return 403 for update member with permission", async () => {

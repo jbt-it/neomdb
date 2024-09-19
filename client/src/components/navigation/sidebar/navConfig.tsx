@@ -1,6 +1,14 @@
-import { Dashboard, PeopleAlt, Event, Build, MoreHoriz, EmojiObjects, TrendingUp } from "@mui/icons-material";
-import { SvgIconComponent } from "@mui/icons-material";
-import { Permission } from "../../../types/globalTypes";
+import {
+  Build,
+  Dashboard,
+  EmojiObjects,
+  Event,
+  MoreHoriz,
+  PeopleAlt,
+  SvgIconComponent,
+  TrendingUp,
+  SmsFailed,
+} from "@mui/icons-material";
 
 interface NavItem {
   title: string;
@@ -9,7 +17,7 @@ interface NavItem {
   children?: {
     title: string;
     path: string;
-    permissions?: Permission[];
+    permissions?: number[];
   }[];
 }
 
@@ -27,6 +35,8 @@ export const getIconByName = (name: string) => {
       return MoreHoriz;
     case "EmojiObjects":
       return EmojiObjects;
+    case "SmsFailed":
+      return SmsFailed;
     case "TrendingUp":
       return TrendingUp;
     default:
@@ -124,12 +134,31 @@ const navConfig: NavItem[] = [
         title: "Innovationsmanagement",
         path: "/innovationsmanagement",
       },
+      {
+        title: "Finanzen",
+        path: "/finanzuebersicht",
+        permissions: [6],
+      },
     ],
   },
   {
     title: "KVP",
-    path: "/kvp",
     icon: getIconByName("EmojiObjects"),
+    children: [
+      {
+        title: "Inhaltlichen Fehler melden",
+        path: "/kvp",
+      },
+      {
+        title: "Technischen Fehler melden",
+        path: "https://forms.office.com/pages/responsepage.aspx?id=_7TXIgm-7kCaERenSbp0P_I7vsEb5hhMl2MPDUYXP5FUN0NWNDRERjZTWlA4WlRMNzhXTVYxODFMMSQlQCN0PWcu&route=shorturl",
+      },
+    ],
+  },
+  {
+    title: "Compliance",
+    path: "/compliance",
+    icon: getIconByName("SmsFailed"),
   },
 ];
 

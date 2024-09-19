@@ -9,6 +9,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { ItSkill } from "./ItSkill";
 import { Generation } from "./Generation";
@@ -30,6 +31,7 @@ import { MemberHasProject } from "./MemberHasProject";
 import { Language } from "./Language";
 import { MemberStatus } from "./MemberStatus";
 import { MemberHasOtherPosition } from "./MemberHasOtherPosition";
+import { WorkshopInstanceHasReferent } from "./WorkshopInstanceHasReferent";
 import { booleanTransformer } from "../utils/dataTransformer";
 
 @Index("name", ["name"], { unique: true })
@@ -213,7 +215,7 @@ export class Member {
   @Column("date", { name: "canQM", nullable: true })
   canQM: Date | null;
 
-  @Column("date", { name: "lastchange", nullable: true })
+  @UpdateDateColumn({ name: "lastchange", nullable: true })
   lastChange: Date | null;
 
   @Column("text", { name: "sonstige_ws", nullable: true })
@@ -389,4 +391,7 @@ export class Member {
   @ManyToOne(() => InternalProject, (internalProject) => internalProject.members)
   @JoinColumn({ name: "internesprojekt", referencedColumnName: "internalProjectId" })
   internalProject: InternalProject;
+
+  @OneToMany(() => WorkshopInstanceHasReferent, (hasReferent) => hasReferent.member)
+  referencedWorkshops: WorkshopInstanceHasReferent[];
 }

@@ -1,12 +1,13 @@
+import { Box, Stack } from "@mui/material";
 import React, { useState } from "react";
-import { Box, List, Stack } from "@mui/material";
-import navConfig from "./navConfig";
 import NavItem from "./NavItem";
+import navConfig from "./navConfig";
 
 const SidebarDesktop = () => {
   const [openMitglieder, setOpenMitglieder] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openEvents, setOpenEvents] = useState(false);
+  const [openKvp, setOpenKvp] = useState(false);
 
   const handleOpenMitglieder = () => {
     setOpenMitglieder(!openMitglieder);
@@ -15,6 +16,9 @@ const SidebarDesktop = () => {
     }
     if (openEvents) {
       setOpenEvents(false);
+    }
+    if (openKvp) {
+      setOpenKvp(false);
     }
   };
 
@@ -26,6 +30,9 @@ const SidebarDesktop = () => {
     if (openEvents) {
       setOpenEvents(false);
     }
+    if (openKvp) {
+      setOpenKvp(false);
+    }
   };
 
   const handleOpenEvents = () => {
@@ -35,6 +42,22 @@ const SidebarDesktop = () => {
     }
     if (openTools) {
       setOpenTools(false);
+    }
+    if (openKvp) {
+      setOpenKvp(false);
+    }
+  };
+
+  const handleOpenKvp = () => {
+    setOpenKvp(!openKvp);
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
     }
   };
 
@@ -61,6 +84,8 @@ const SidebarDesktop = () => {
                 ? openTools
                 : item.title === "Veranstaltungen"
                 ? openEvents
+                : item.title === "KVP"
+                ? openKvp
                 : undefined
             }
             setOpenItem={
@@ -70,6 +95,8 @@ const SidebarDesktop = () => {
                 ? handleOpenTools
                 : item.title === "Veranstaltungen"
                 ? handleOpenEvents
+                : item.title === "KVP"
+                ? handleOpenKvp
                 : undefined
             }
           />
