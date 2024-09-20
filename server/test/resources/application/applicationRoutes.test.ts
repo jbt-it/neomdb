@@ -2,9 +2,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import request from "supertest";
 import app from "../../../src/app";
 import { AppDataSource } from "../../../src/datasource";
+import AuthTestUtils from "../../utils/authTestUtils";
 import ApplicationTestUtils from "../../utils/applicationTestUtils";
-import { ApplicationDto, ApplicationImageDto } from "types/applicationTypes";
 
+const authTestUtils = new AuthTestUtils(app);
 const applicationTestUtils = new ApplicationTestUtils(app);
 
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
@@ -42,10 +43,135 @@ afterAll(async () => {
 describe("Test application routes", () => {
   // --------------------------- TESTS --------------------------- \\
 
+  // -----------------------GET ROUTES-----------------------
+  describe("GET /evaluations/:id", () => {
+    test("should return 403 for getting evaluations without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberId = 8222;
+      const response = await request(app)
+        .get(`/api/application/evaluations/${memberId}`)
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for getting evaluations with permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const memberId = 8324;
+      const response = await request(app)
+        .get(`/api/application/evaluations/${memberId}`)
+        .send()
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.body).toStrictEqual([
+        {
+          traineeApplicantId: 1,
+          firstName: "Michael",
+          lastName: "Scott ",
+          availabilitySelectionWeekend: "nichtFR",
+          workingWeekend: 0,
+          evaluation: 0,
+        },
+        {
+          traineeApplicantId: 2,
+          firstName: "Jim",
+          lastName: "Halpert",
+          availabilitySelectionWeekend: "nichtSO",
+          workingWeekend: 1,
+          evaluation: 1,
+        },
+        {
+          traineeApplicantId: 3,
+          firstName: "Pam",
+          lastName: "Beesly",
+          availabilitySelectionWeekend: "nichtSA",
+          workingWeekend: 1,
+          evaluation: 2,
+        },
+        {
+          traineeApplicantId: 4,
+          firstName: "Dwight",
+          lastName: "Schrute",
+          availabilitySelectionWeekend: "kannImmer",
+          workingWeekend: 1,
+          evaluation: 3,
+        },
+        {
+          traineeApplicantId: 5,
+          firstName: "Stanley",
+          lastName: "Hudson",
+          availabilitySelectionWeekend: "nichtFR",
+          workingWeekend: 1,
+          evaluation: 2,
+        },
+        {
+          traineeApplicantId: 6,
+          firstName: "Creed",
+          lastName: "Bratton",
+          availabilitySelectionWeekend: "nichtFR",
+          workingWeekend: 1,
+          evaluation: 1,
+        },
+      ]);
+      expect(response.status).toBe(200);
+    });
+  });
+
+  describe("GET /feedback", () => {
+    test("should return 403 for getting feedback without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).get(`/api/application/feedback`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for getting feedback with permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).get(`/api/application/feedback`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.body).toStrictEqual({
+        flyer: 2,
+        posters: 2,
+        lectures: 2,
+        friends: 1,
+        informationStand: 3,
+        internet: 3,
+        socialMedia: 4,
+        campusRally: 2,
+        partner: 2,
+        newsletter: 2,
+        others: 3,
+        othersText: ["TMS", "TV Werbung", "Werbung auf U-Bahn"],
+      });
+      expect(response.status).toBe(200);
+    });
+  });
+
   // -----------------------POST ROUTES-----------------------
   describe("POST / create application", () => {
     test("should return 201 for creating new application", async () => {
-      const application: ApplicationDto = {
+      const application = {
         firstName: "Michael",
         lastName: "Scott",
         gender: "männlich",
@@ -150,7 +276,7 @@ describe("Test application routes", () => {
         availabilitySelectionWeekend: "kannImmer",
       };
 
-      const applicationImage: ApplicationImageDto = {
+      const applicationImage = {
         base64:
           "iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAYAAAA10dzkAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAI3UlEQVR42u3WsQ3AMBADscT7z/zJEAbs4sgRBBX3zsz3sGGZYGu9MYL/XTPL//zv5nr+53/WAwDgEAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAgRgACAMQIQACAGAEIABAjAAEAYgQgAECMAAQAiBGAAAAxAhAAIEYAAgDECEAAgBgBCAAQIwABAGIEIABAjAAEAIgRgAAAMQIQACBGAAIAxAhAAIAYAQgAECMAAQBiBCAAQIwABACIEYAAADECEAAg5gcr4wu/0P1wEAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOC0xMC0xOFQxNToxNzo1MSswMDowMB8NhYkAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTgtMTAtMThUMTU6MTc6NTErMDA6MDBuUD01AAAAAElFTkSuQmCC",
         mimeType: "png",
@@ -161,8 +287,141 @@ describe("Test application routes", () => {
         application,
         applicationImage,
       });
+
       // --- THEN
       expect(response.status).toBe(201);
+    });
+  });
+
+  describe("POST /generation", () => {
+    test("should return 403 for creating new generation without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      const requestBody = {
+        description: "Wintersemester 24/25",
+        applicationStart: new Date("2024-10-01T22:00:00.000Z"),
+        applicationEnd: new Date("2024-10-17T22:00:00.000Z"),
+        selectionWeDateStart: new Date("2024-10-18T22:00:00.000Z"),
+        selectionWeDateEnd: new Date("2024-10-20T22:00:00.000Z"),
+        wwDateStart: new Date("2024-11-01T22:00:00.000Z"),
+        wwDateEnd: new Date("2024-11-03T22:00:00.000Z"),
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .post(`/api/application/generation`)
+        .send(requestBody)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 201 for creating new generation", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      const requestBody = {
+        description: "Wintersemester 24/25",
+        applicationStart: new Date("2024-10-01T22:00:00.000Z"),
+        applicationEnd: new Date("2024-10-17T22:00:00.000Z"),
+        selectionWeDateStart: new Date("2024-10-18T22:00:00.000Z"),
+        selectionWeDateEnd: new Date("2024-10-20T22:00:00.000Z"),
+        wwDateStart: new Date("2024-11-01T22:00:00.000Z"),
+        wwDateEnd: new Date("2024-11-03T22:00:00.000Z"),
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .post(`/api/application/generation`)
+        .send(requestBody)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      const currentGenerationIdFromDB = await applicationTestUtils.getCurrenctGenerationByIDFromDB();
+      expect(currentGenerationIdFromDB).toBe(response.body.generationId);
+      expect(response.status).toBe(201);
+    });
+  });
+
+  describe("PATCH /generation", () => {
+    test("should return 403 for updating generation without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      const requestBody = {
+        generationId: 15,
+        description: new Date("2024-10-01T22:00:00.000Z"),
+        applicationStart: new Date("2024-10-01T22:00:00.000Z"),
+        applicationEnd: new Date("2024-10-17T22:00:00.000Z"),
+        selectionWeDateStart: new Date("2024-10-18T22:00:00.000Z"),
+        selectionWeDateEnd: new Date("2024-10-20T22:00:00.000Z"),
+        wwDateStart: new Date("2024-11-01T22:00:00.000Z"),
+        wwDateEnd: new Date("2024-11-03T22:00:00.000Z"),
+        infoEveningVisitors: 100,
+        doorCode: "12345",
+        electionStart: new Date("2024-11-04T22:00:00.000Z"),
+        electionEnd: new Date("2024-11-11T22:00:00.000Z"),
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .patch(`/api/application/generation`)
+        .send(requestBody)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for updating generation with having permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      const requestBody = {
+        generationId: 15,
+        description: "Wintersemester 19/20",
+        applicationStart: new Date("2024-10-01T22:00:00.000Z"),
+        applicationEnd: new Date("2024-10-17T22:00:00.000Z"),
+        selectionWeDateStart: new Date("2024-10-18T22:00:00.000Z"),
+        selectionWeDateEnd: new Date("2024-10-20T22:00:00.000Z"),
+        wwDateStart: new Date("2024-11-01T22:00:00.000Z"),
+        wwDateEnd: new Date("2024-11-03T22:00:00.000Z"),
+        infoEveningVisitors: 100,
+        doorCode: "12345",
+        electionStart: new Date("2024-11-04T22:00:00.000Z"),
+        electionEnd: new Date("2024-11-11T22:00:00.000Z"),
+      };
+
+      // --- WHEN
+      const response = await request(app)
+        .patch(`/api/application/generation`)
+        .send(requestBody)
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.body).toStrictEqual({
+        generationId: 15,
+        description: "Wintersemester 19/20",
+        applicationStart: "2024-10-01T22:00:00.000Z",
+        applicationEnd: "2024-10-17T22:00:00.000Z",
+        selectionWeDateStart: "2024-10-18T22:00:00.000Z",
+        selectionWeDateEnd: "2024-10-20T22:00:00.000Z",
+        wwDateStart: "2024-11-01T22:00:00.000Z",
+        wwDateEnd: "2024-11-03T22:00:00.000Z",
+        infoEveningVisitors: 100,
+        doorCode: "12345",
+        electionStart: "2024-11-04T22:00:00.000Z",
+        electionEnd: "2024-11-11T22:00:00.000Z",
+        members: [],
+        mentors: [],
+      });
+      expect(response.status).toBe(200);
     });
   });
 });

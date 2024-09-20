@@ -1288,7 +1288,7 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.createNewGeneration.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              promiseHandler(controller, promise, response, 201, next);
             } catch (err) {
                 return next(err);
             }
@@ -1321,6 +1321,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/api/application/evaluations/:id',
+            authenticateMiddleware([{"jwt":["9"]}]),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.getEvaluationsByMemberId)),
 
@@ -1346,6 +1347,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/api/application/feedback',
+            authenticateMiddleware([{"jwt":["9"]}]),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.getFeedback)),
 

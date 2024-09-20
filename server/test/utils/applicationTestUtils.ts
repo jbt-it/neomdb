@@ -1,7 +1,11 @@
 /* eslint-disable no-console */
+import { Generation } from "../../src/entities/Generation";
 import { executeScript } from "./databaseUtils";
 import fs from "fs/promises";
 import path from "path";
+import { GenerationRepository } from "../../src/resources/trainees/GenerationRepository";
+import { TraineeApplicationRepository } from "../../src/resources/application/ApplicationRepository";
+import { TraineeApplicant } from "../../src/entities/TraineeApplicant";
 
 /**
  * Utility class for testing the application routes
@@ -9,8 +13,8 @@ import path from "path";
 class ApplicationTestUtils {
   initApplicationScript = "./test/scripts/application/db_application_init.sql";
   clearInitApplicationScript = "./test/scripts/application/db_application_init_clear.sql";
-  clearApplicationScript = "./test/scripts/applicaion/db_application_clear.sql";
-  fillApplicationScript = "./test/scripts/applicaion/db_application_fill.sql";
+  clearApplicationScript = "./test/scripts/application/db_application_clear.sql";
+  fillApplicationScript = "./test/scripts/application/db_application_fill.sql";
 
   app: Express.Application = null;
 
@@ -107,6 +111,26 @@ class ApplicationTestUtils {
     } catch (error) {
       console.error(`> ERROR: Failed to delete image: ${error}`);
     }
+  };
+
+  /**
+   * Retrieves the generation with the given `id` from the DB
+   * @param id The id of the generation
+   * @returns The generationId
+   */
+  getCurrenctGenerationByIDFromDB = async (): Promise<number> => {
+    const generationId = await GenerationRepository.getCurrentGenerationId();
+    return generationId;
+  };
+
+  /**
+   * Retrieves the applicant with the given `id` from the DB
+   * @param id The id of the applicant
+   * @returns The applicant
+   */
+  getApplicantByIDFromDB = async (id: number): Promise<TraineeApplicant> => {
+    const applicant = await TraineeApplicationRepository.getApplicationById(id);
+    return applicant;
   };
 }
 

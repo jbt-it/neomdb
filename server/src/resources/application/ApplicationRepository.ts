@@ -17,7 +17,16 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
    * @returns A list of applications
    */
   async getApplications(generationId: number): Promise<TraineeApplicant[]> {
-    return this.find({ where: { generationId } });
+    return this.find({ where: { generation: generationId } });
+  },
+
+  /**
+   * Retrieves an application by its id
+   * @param applicationId The id of the application
+   * @returns The application or null if no application was found
+   */
+  async getApplicationById(applicationId: number): Promise<TraineeApplicant | null> {
+    return this.findOne({ where: { applicationId } });
   },
 
   /**
@@ -29,21 +38,12 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
     return this.find({
       relations: ["traineeApplicantEvaluations"],
       where: {
-        generationId: generationId,
+        generation: generationId,
         traineeApplicantEvaluations: {
           memberId: memberId,
         },
       },
     });
-  },
-
-  /**
-   * Retrieves an application by its id
-   * @param applicationId The id of the application
-   * @returns The application or null if no application was found
-   */
-  async getApplicationById(applicationId: number): Promise<TraineeApplicant | null> {
-    return this.findOne({ where: { applicationId } });
   },
 
   /**

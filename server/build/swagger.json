@@ -5492,8 +5492,8 @@
 			"post": {
 				"operationId": "CreateNewGeneration",
 				"responses": {
-					"200": {
-						"description": "the created generation as GenerationDto",
+					"201": {
+						"description": "Created",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5590,7 +5590,13 @@
 				"tags": [
 					"Application"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"9"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"description": "- The id of the member to fetch evaluations for",
@@ -5624,7 +5630,13 @@
 				"tags": [
 					"Application"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"9"
+						]
+					}
+				],
 				"parameters": []
 			}
 		},

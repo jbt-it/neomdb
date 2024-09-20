@@ -38,6 +38,7 @@ export class ApplicationController extends Controller {
    */
   @Post("generation")
   @Security("jwt", ["16"])
+  @SuccessResponse("201", "Created")
   public async createNewGeneration(@Body() requestBody: NewGenerationRequestDto): Promise<GenerationDto> {
     return await this.applicationService.createNewGeneration(requestBody);
   }
@@ -59,6 +60,7 @@ export class ApplicationController extends Controller {
    * @returns EvaluationDto[]
    */
   @Get("evaluations/{id}")
+  @Security("jwt", ["9"])
   public async getEvaluationsByMemberId(@Path() id: number): Promise<EvaluationDto[]> {
     return await this.applicationService.getEvaluationByMemberId(id);
   }
@@ -68,6 +70,7 @@ export class ApplicationController extends Controller {
    * @returns FeedbackStatisticsDto
    */
   @Get("feedback")
+  @Security("jwt", ["9"])
   public async getFeedback(): Promise<FeedbackStatisticsDto> {
     return await this.applicationService.getFeedbackStatistics();
   }

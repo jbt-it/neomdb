@@ -301,19 +301,24 @@ class ApplicationService {
         ? `Sommersemester ${currentYear}`
         : `Wintersemester ${currentYear.toString().slice(-2)}/${nextYear.toString().slice(-2)}`;
 
-    // create a new Generation object
-    const newGeneration = GenerationRepository.create({
-      description: newDescription,
-      applicationStart: generationRequest.applicationStart,
-      applicationEnd: generationRequest.applicationEnd,
-      selectionWeDateStart: generationRequest.selectionWeDateStart,
-      selectionWeDateEnd: generationRequest.selectionWeDateEnd,
-      wwDateStart: generationRequest.wwDateStart,
-      wwDateEnd: generationRequest.wwDateEnd,
-    });
+    try {
+      // create a new Generation object
+      const newGeneration = GenerationRepository.create({
+        description: newDescription,
+        applicationStart: generationRequest.applicationStart,
+        applicationEnd: generationRequest.applicationEnd,
+        selectionWeDateStart: generationRequest.selectionWeDateStart,
+        selectionWeDateEnd: generationRequest.selectionWeDateEnd,
+        wwDateStart: generationRequest.wwDateStart,
+        wwDateEnd: generationRequest.wwDateEnd,
+      });
 
-    // save the generation to the database
-    return await GenerationRepository.save(newGeneration);
+      // save the generation to the database
+      return await GenerationRepository.save(newGeneration);
+    } catch (error) {
+      console.error("Error creating new generation:", error);
+      throw new Error("Couldn't create new generation");
+    }
   };
 
   /**
@@ -349,20 +354,26 @@ class ApplicationService {
    * @returns A list of evaluations
    */
   getEvaluationByMemberId = async (memberId: number): Promise<EvaluationDto[]> => {
-    // get the current generation id
-    const generationId = await GenerationRepository.getCurrentGenerationId();
+    try {
+      // get the current generation id
+      const generationId = await GenerationRepository.getCurrentGenerationId();
 
-    // get all trainee applicants with evaluations by the member id for the evaluations
-    const traineeApplicantWithEvaluations = await TraineeApplicationRepository.getEvaluationsByMemberId(
-      memberId,
-      generationId
-    );
+      // get all trainee applicants with evaluations by the member id for the evaluations
+      const traineeApplicantWithEvaluations = await TraineeApplicationRepository.getEvaluationsByMemberId(
+        memberId,
+        generationId
+      );
 
-    // map the trainee applicants to evaluation dto
-    const evaluations = traineeApplicantWithEvaluations.map((applicant) => {
-      return ApplicationMapper.traineeApplicantToEvaluationDto(applicant);
-    });
-    return evaluations;
+      // map the trainee applicants to evaluation dto
+      const evaluations = traineeApplicantWithEvaluations.map((applicant) => {
+        return ApplicationMapper.traineeApplicantToEvaluationDto(applicant);
+      });
+
+      return evaluations;
+    } catch (error) {
+      console.error("Error getting evaluations by member id:", error);
+      throw new Error("Couldn't get evaluations by member id");
+    }
   };
 
   /**
@@ -370,45 +381,50 @@ class ApplicationService {
    * @returns The feedback statistics
    */
   getFeedbackStatistics = async (): Promise<FeedbackStatisticsDto> => {
-    // get the current generationId
-    const generationId = await GenerationRepository.getCurrentGenerationId();
+    try {
+      // get the current generationId
+      const generationId = await GenerationRepository.getCurrentGenerationId();
 
-    // get all trainee applicants for the current generation
-    const traineeApplicants = await TraineeApplicationRepository.getApplications(generationId);
+      // get all trainee applicants for the current generation
+      const traineeApplicants = await TraineeApplicationRepository.getApplications(generationId);
 
-    const flyerStatistic = traineeApplicants.filter((applicant) => applicant.flyer).length;
-    const postersStatistic = traineeApplicants.filter((applicant) => applicant.posters).length;
-    const lecturesStatistic = traineeApplicants.filter((applicant) => applicant.lectures).length;
-    const friendsStatistic = traineeApplicants.filter((applicant) => applicant.friends).length;
-    const informationStandStatistic = traineeApplicants.filter((applicant) => applicant.informationStand).length;
-    const internetStatistic = traineeApplicants.filter((applicant) => applicant.internet).length;
-    const othersStatistic = traineeApplicants.filter((applicant) => applicant.others).length;
-    const socialMediaStatistic = traineeApplicants.filter((applicant) => applicant.socialMedia).length;
-    const campusRallyStatistic = traineeApplicants.filter((applicant) => applicant.campusRally).length;
-    const partnerStatistic = traineeApplicants.filter((applicant) => applicant.partner).length;
-    const newsletterStatistic = traineeApplicants.filter((applicant) => applicant.newsletter).length;
-    const othersText = traineeApplicants
-      .filter((applicant) => applicant.others)
-      .map((applicant) => {
-        return applicant.othersText;
-      });
+      const flyerStatistic = traineeApplicants.filter((applicant) => applicant.flyer).length;
+      const postersStatistic = traineeApplicants.filter((applicant) => applicant.posters).length;
+      const lecturesStatistic = traineeApplicants.filter((applicant) => applicant.lectures).length;
+      const friendsStatistic = traineeApplicants.filter((applicant) => applicant.friends).length;
+      const informationStandStatistic = traineeApplicants.filter((applicant) => applicant.informationStand).length;
+      const internetStatistic = traineeApplicants.filter((applicant) => applicant.internet).length;
+      const othersStatistic = traineeApplicants.filter((applicant) => applicant.others).length;
+      const socialMediaStatistic = traineeApplicants.filter((applicant) => applicant.socialMedia).length;
+      const campusRallyStatistic = traineeApplicants.filter((applicant) => applicant.campusRally).length;
+      const partnerStatistic = traineeApplicants.filter((applicant) => applicant.partner).length;
+      const newsletterStatistic = traineeApplicants.filter((applicant) => applicant.newsletter).length;
+      const othersText = traineeApplicants
+        .filter((applicant) => applicant.others)
+        .map((applicant) => {
+          return applicant.othersText;
+        });
 
-    // Create the feedback statistics object
-    const feedbackStatistics = {
-      flyer: flyerStatistic,
-      posters: postersStatistic,
-      lectures: lecturesStatistic,
-      friends: friendsStatistic,
-      informationStand: informationStandStatistic,
-      internet: internetStatistic,
-      socialMedia: socialMediaStatistic,
-      campusRally: campusRallyStatistic,
-      partner: partnerStatistic,
-      newsletter: newsletterStatistic,
-      others: othersStatistic,
-      othersText: othersText,
-    };
-    return feedbackStatistics;
+      // Create the feedback statistics object
+      const feedbackStatistics = {
+        flyer: flyerStatistic,
+        posters: postersStatistic,
+        lectures: lecturesStatistic,
+        friends: friendsStatistic,
+        informationStand: informationStandStatistic,
+        internet: internetStatistic,
+        socialMedia: socialMediaStatistic,
+        campusRally: campusRallyStatistic,
+        partner: partnerStatistic,
+        newsletter: newsletterStatistic,
+        others: othersStatistic,
+        othersText: othersText,
+      };
+      return feedbackStatistics;
+    } catch (error) {
+      console.error("Error getting feedback statistics:", error);
+      throw new Error("Couldn't get feedback statistics");
+    }
   };
 }
 
