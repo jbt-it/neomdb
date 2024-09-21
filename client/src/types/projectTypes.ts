@@ -317,3 +317,46 @@ export type ProjectBillingCheckmarksDto = {
   freelancerContractExistingForAllMembers: boolean;
   moneyTransferredForAllMembers: boolean;
 };
+
+// Type of the project freelancer agreement details DTO
+export type MembersBillingDto = {
+  memberId: number;
+  firstname: string;
+  lastname: string;
+  type: "PL" | "Mitglied" | "QM";
+  freelancerContract: Date | null;
+  moneyTransferred: Date | null;
+  btAllocation: number | null;
+  expensesAllocation: number | null;
+};
+
+// Type of the project billing details DTO
+export type ProjectBillingDetailsDto = {
+  projectId: number;
+  projectName: string;
+  status: string;
+  APatEV: boolean;
+  APHold: boolean;
+  evaluationAtEV: boolean;
+  DLatEV: boolean;
+  offerInAlfresco: boolean;
+  deviationFromStandard: boolean;
+  consultingContractProvided: boolean;
+  teamContractProvided: boolean;
+  qmApproval: boolean;
+  CRMEntryExists: boolean;
+  paymentDelay: boolean;
+  moneyReceived: boolean;
+  signatureDate: Date | null;
+  euroPerBT: number | null;
+  soldBT: number | null;
+  soldExpenses: number | null;
+  membersBilling: MembersBillingDto[];
+};
+
+// Type of the project billing details DTO
+export type MemberBTAllocationDto = {
+  memberId: number;
+  btAllocation: number;
+  expensesAllocation: number;
+};

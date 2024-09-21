@@ -1,9 +1,11 @@
 import { Button, Card, Divider, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ProjectMembersDto } from "../../../types/projectTypes";
 import { MembersFieldDto } from "../../../types/membersTypes";
 import useResponsive from "../../../hooks/useResponsive";
+import { Edit } from "@mui/icons-material";
+import ProjectDataDialog from "./ProjectDataDialog";
 
 interface ProjectDataProps {
   projectMembers: ProjectMembersDto[] | null;
@@ -13,6 +15,18 @@ interface ProjectDataProps {
   soldBT: number | null;
   soldExpenses: number | null;
   projectId: number;
+  hasProjectPermission: boolean;
+  isPL: boolean;
+  saveProjectData: (
+    projectMembers: ProjectMembersDto[],
+    qms: MembersFieldDto[],
+    signatureDate: Date | null,
+    conditions: number | null,
+    soldBT: number | null,
+    soldExpenses: number | null
+  ) => void;
+  checkHasPlQualification: (memberId: number) => boolean;
+  checkHasQMQualification: (memberId: number) => boolean;
 }
 
 /**
@@ -33,14 +47,70 @@ const ProjectData = ({
   soldBT,
   soldExpenses,
   projectId,
+  hasProjectPermission,
+  isPL,
+  saveProjectData,
+  checkHasPlQualification,
+  checkHasQMQualification,
 }: ProjectDataProps) => {
   const isMobile = useResponsive("down", "sm");
+  const [projectDataDialogOpen, setProjectDataDialogOpen] = useState(false);
+
+  // Open the dialog to edit the project data
+  const handleProjectDataDialogOpen = () => {
+    setProjectDataDialogOpen(true);
+  };
+
+  // Close the project data dialog
+  const handleProjectDataDialogClose = () => {
+    setProjectDataDialogOpen(false);
+  };
+
+  // Save the data
+  const handleProjectDataSave = (
+    projectMembers: ProjectMembersDto[],
+    qms: MembersFieldDto[],
+    signatureDate: Date | null,
+    conditions: number | null,
+    soldBT: number | null,
+    soldExpenses: number | null
+  ) => {
+    saveProjectData(projectMembers, qms, signatureDate, conditions, soldBT, soldExpenses);
+    setProjectDataDialogOpen(false);
+  };
 
   return (
     <Card sx={{ mt: 4, paddingX: 4, paddingY: 2 }}>
-      <Typography variant="h6" component="h1" gutterBottom fontWeight={"bold"}>
-        Daten zur Durchführung und Abrechnung
-      </Typography>
+      <ProjectDataDialog
+        projectDataDialogOpen={projectDataDialogOpen}
+        handleProjectDataDialogClose={handleProjectDataDialogClose}
+        saveProjectData={handleProjectDataSave}
+        projectMembers={projectMembers || []}
+        qms={qms || []}
+        projectSignatureDate={signatureDate}
+        projectConditions={euroPerBT}
+        projectSoldBT={soldBT}
+        projectSoldExpenses={soldExpenses}
+        checkHasPlQualification={checkHasPlQualification}
+        checkHasQMQualification={checkHasQMQualification}
+      />
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Typography variant="h6" component="h1" gutterBottom fontWeight={"bold"}>
+          Daten zur Durchführung und Abrechnung
+        </Typography>
+        {hasProjectPermission || isPL ? (
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{ fontWeight: 600, fontSize: 14, maxHeight: 30 }}
+            startIcon={<Edit fontSize="small" />}
+            size="small"
+            onClick={handleProjectDataDialogOpen}
+          >
+            Bearbeiten
+          </Button>
+        ) : null}
+      </Stack>
       <Divider sx={{ borderColor: "#f6891f", mb: 3 }} />
       <Stack direction={isMobile ? "column" : "row"} justifyContent={"space-between"}>
         <Typography fontWeight={"bold"} sx={{ flex: 1 }}>

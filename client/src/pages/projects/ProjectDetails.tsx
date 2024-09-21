@@ -18,7 +18,7 @@ import CustomerStep from "../../components/projects/CustomerStep";
 import ProjectDescriptionStep from "../../components/projects/ProjectDescriptionStep";
 import dayjs from "dayjs";
 import { showErrorMessage } from "../../utils/toastUtils";
-import { redirect, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useProjectDetails from "../../hooks/projects/useProjectDetails";
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
 import { AuthContext } from "../../context/auth-context/AuthContext";
@@ -40,7 +40,8 @@ const steps = ["Rahmendaten", "Kundendaten", "Projektbeschreibung"];
  */
 const ProjectDetails = () => {
   const { id } = useParams();
-  const { projectDetails, saveProject } = useProjectDetails(Number(id));
+  const { projectDetails, saveProject, saveProjectData, checkHasPlQualification, checkHasQMQualification } =
+    useProjectDetails(Number(id));
   const [isEditMode, setIsEditMode] = useState(false);
   const { auth } = useContext(AuthContext);
   const hasProjectPermission = doesPermissionsHaveSomeOf(auth.permissions, [10]);
@@ -53,6 +54,9 @@ const ProjectDetails = () => {
     ? projectDetails.applicationEnd2 > new Date()
     : false;
   const isSecondApplicationPhase = projectDetails?.applicationEnd2 !== null;
+  const navigate = useNavigate();
+  const isPL =
+    projectDetails?.members?.some((member) => member.memberId === auth.userID && member.type === "PL") || false;
 
   if (!projectDetails) {
     return (
@@ -602,7 +606,7 @@ const ProjectDetails = () => {
 
   // handles the click on the billing button
   const handleBilling = () => {
-    alert("Billing");
+    navigate(`/projekte/${id}/projektabrechnung`);
   };
 
   // handles the click on the call off button
@@ -679,14 +683,14 @@ const ProjectDetails = () => {
               sx={{ mt: -1, mb: 2 }}
               nextButton={
                 <Button size="small" onClick={handleNext} disabled={activeStep === steps.length - 1}>
-                  Next
+                  Weiter
                   {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                 </Button>
               }
               backButton={
                 <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
                   {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                  Back
+                  Zurück
                 </Button>
               }
             />
@@ -699,14 +703,14 @@ const ProjectDetails = () => {
               sx={{ mt: 2 }}
               nextButton={
                 <Button size="small" onClick={handleNext} disabled={activeStep === steps.length - 1}>
-                  Next
+                  Weiter
                   {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                 </Button>
               }
               backButton={
                 <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
                   {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                  Back
+                  Zurück
                 </Button>
               }
             />
@@ -793,6 +797,11 @@ const ProjectDetails = () => {
           soldBT={projectDetails.soldBT}
           soldExpenses={projectDetails.soldExpenses}
           projectId={projectDetails.projectId}
+          hasProjectPermission={hasProjectPermission}
+          isPL={isPL}
+          saveProjectData={saveProjectData}
+          checkHasPlQualification={checkHasPlQualification}
+          checkHasQMQualification={checkHasQMQualification}
         />
       )}
     </Container>
