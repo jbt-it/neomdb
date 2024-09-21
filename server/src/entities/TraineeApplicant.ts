@@ -197,9 +197,6 @@ export class TraineeApplicant {
   @Column("varchar", { name: "beruf_Ende", nullable: true, length: 45 })
   occupationEnd: Date | null;
 
-  @Column("mediumtext", { name: "edv", nullable: true })
-  itSkills: string | null;
-
   @Column("mediumtext", { name: "hobbies", nullable: true })
   hobbies: string | null;
 

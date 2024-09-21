@@ -1693,10 +1693,6 @@
 						"format": "date-time",
 						"nullable": true
 					},
-					"itSkills": {
-						"type": "string",
-						"nullable": true
-					},
 					"hobbies": {
 						"type": "string",
 						"nullable": true
@@ -1898,7 +1894,6 @@
 					"occupationLocation",
 					"occupationStart",
 					"occupationEnd",
-					"itSkills",
 					"hobbies",
 					"timeInvestment",
 					"motivation",

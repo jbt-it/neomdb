@@ -122,16 +122,6 @@ class ApplicationTestUtils {
     const generationId = await GenerationRepository.getCurrentGenerationId();
     return generationId;
   };
-
-  /**
-   * Retrieves the applicant with the given `id` from the DB
-   * @param id The id of the applicant
-   * @returns The applicant
-   */
-  getApplicantByIDFromDB = async (id: number): Promise<TraineeApplicant> => {
-    const applicant = await TraineeApplicationRepository.getApplicationById(id);
-    return applicant;
-  };
 }
 
 export default ApplicationTestUtils;
