@@ -60,6 +60,7 @@ import WorkshopInstanceDetails from "./pages/events/WorkshopInstanceDetails";
 import WorkshopInstanceFeedback from "./pages/events/WorkshopInstanceFeedback";
 import WorkshopInstanceEvaluation from "./pages/events/WorkshopInstanceEvaluation";
 import ProjectTeamComposition from "./pages/projects/ProjectTeamComposition";
+import Application from "./pages/applications/Application";
 import Kvp from "./pages/Kvp";
 import Compliance from "./pages/Compliance";
 
@@ -77,6 +78,7 @@ const App: React.FunctionComponent = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/passwort-vergessen" element={<ForgotPassword />} />
             <Route path="/passwort-vergessen-zuruecksetzen/:key" element={<ResetForgotPassword />} />
+            <Route path="/bewerbung" element={<Application />} />
           </Route>
           <Route path="/" element={<PrivateRoutes />}>
             <Route index element={<Dashboard />} />
