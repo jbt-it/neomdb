@@ -202,7 +202,6 @@ const CompanyOverview: React.FunctionComponent = () => {
       return (
         company.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
         company.url.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        company.industry.description.toLowerCase().includes(searchFilter.toLowerCase()) ||
         contactPartners.toLowerCase().includes(searchFilter.toLowerCase())
       );
     });
