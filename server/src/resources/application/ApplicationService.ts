@@ -287,6 +287,29 @@ class ApplicationService {
   };
 
   /**
+   * Get the current generation
+   * @returns The current generation
+   */
+  getCurrentGeneration = async (): Promise<GenerationDto> => {
+    try {
+      // get the current generation id
+      const generationId = await GenerationRepository.getCurrentGenerationId();
+
+      // get the current generation by its id
+      const generation = await GenerationRepository.getGenerationByID(generationId);
+
+      if (generation !== null) {
+        return ApplicationMapper.generationToGenerationDto(generation);
+      } else {
+        throw new NotFoundError(`Generation with id ${generationId} not found`);
+      }
+    } catch (error) {
+      console.error("Error getting current generation:", error);
+      throw new Error("Couldn't get current generation");
+    }
+  };
+
+  /**
    * Create a new generation
    * @param generationRequest - The generation request
    * @returns The new generation
@@ -314,7 +337,8 @@ class ApplicationService {
       });
 
       // save the generation to the database
-      return await GenerationRepository.save(newGeneration);
+      const generation = await GenerationRepository.save(newGeneration);
+      return ApplicationMapper.generationToGenerationDto(generation);
     } catch (error) {
       console.error("Error creating new generation:", error);
       throw new Error("Couldn't create new generation");
@@ -342,7 +366,8 @@ class ApplicationService {
       generation.infoEveningVisitors = generationRequest.infoEveningVisitors;
 
       // save the updated generation to the database
-      return await GenerationRepository.save(generation);
+      const updatedGeneration = await GenerationRepository.save(generation);
+      return ApplicationMapper.generationToGenerationDto(updatedGeneration);
     } else {
       throw new NotFoundError(`Generation with id ${generationRequest.generationId} not found`);
     }
