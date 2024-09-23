@@ -139,6 +139,11 @@ const navConfig: NavItem[] = [
         path: "/finanzuebersicht",
         permissions: [6],
       },
+      {
+        title: "Traineebewerbungen",
+        path: "/traineebewerbungen",
+        permissions: [9],
+      },
     ],
   },
   {

@@ -63,6 +63,7 @@ import ProjectTeamComposition from "./pages/projects/ProjectTeamComposition";
 import Application from "./pages/applications/Application";
 import Kvp from "./pages/Kvp";
 import Compliance from "./pages/Compliance";
+import ApplicationAdmin from "./pages/applications/ApplicationAdmin";
 
 /**
  * This component is responsible for rendering the app.
@@ -151,6 +152,14 @@ const App: React.FunctionComponent = () => {
               />
             </Route>
             <Route path="mm-tracking" element={<Dashboard />} />
+            <Route
+              path="traineebewerbungen"
+              element={
+                <ProtectedRoutes permissionIDs={[9]}>
+                  <ApplicationAdmin />
+                </ProtectedRoutes>
+              }
+            />
             <Route path="pl-qm-tool" element={<Dashboard />} />
             <Route path="innovationsmanagement" element={<Dashboard />} />
             <Route path="meine-funktionen" element={<Dashboard />} />
