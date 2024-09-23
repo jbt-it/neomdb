@@ -4102,7 +4102,8 @@
 				"properties": {
 					"evaluation": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"memberId": {
 						"type": "number",
