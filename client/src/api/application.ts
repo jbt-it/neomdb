@@ -27,8 +27,8 @@ export const saveApplication = async (
  * @param memberId The id of the member
  * @returns EvaluationDto[]
  */
-export const getApplicantsEvaluations = async (memberId: number): Promise<AxiosResponse<EvaluationDto>> => {
-  return await api.get<EvaluationDto>(`/application/evaluations/${memberId}`);
+export const getApplicantsEvaluations = async (memberId: number): Promise<AxiosResponse<EvaluationDto[]>> => {
+  return await api.get<EvaluationDto[]>(`/application/evaluations/${memberId}`);
 };
 
 /**

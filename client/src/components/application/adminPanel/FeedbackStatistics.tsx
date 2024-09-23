@@ -97,7 +97,7 @@ const FeedbackStatistics = ({ feedbackStatistics }: FeedbackStatisticsProps) => 
           </TableRow>
           <TableRow sx={styles.tableRow}>
             <TableCell sx={{ fontWeight: "bold" }}>Gesamtbewerberzahl</TableCell>
-            <TableCell>Gesamtbewerberzahl</TableCell>
+            <TableCell>{feedbackStatistics.totalApplicants}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
