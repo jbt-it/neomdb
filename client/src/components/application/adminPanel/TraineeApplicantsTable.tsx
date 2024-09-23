@@ -118,7 +118,7 @@ const TraineeApplicantsTable = ({
    * @param rating The new rating
    */
   const handleUpdateRating = (traineeApplicantId: number, rating: number | null) => {
-    if (auth.userID === null || rating === null) return;
+    if (auth.userID === null) return;
     updateTraineeEvaluation({ traineeApplicantId, memberId: auth.userID, evaluation: rating });
   };
 

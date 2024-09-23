@@ -253,5 +253,5 @@ export type FeedbackStatisticsDto = {
 export type ChangeRatingDto = {
   traineeApplicantId: number;
   memberId: number;
-  evaluation: number;
+  evaluation: number | null;
 };
