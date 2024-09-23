@@ -124,6 +124,9 @@ const TraineeApplicantsTable = ({
 
   return (
     <Stack>
+      <Typography variant="h6" fontWeight={"bold"} textAlign={"start"} marginBottom={2}>
+        Traineebewerbungen ({applicantsEvaluations.length})
+      </Typography>
       <Typography>
         Es sind bereits {applicantsEvaluations.length} Bewerbungen eingegangen. Bitte gib hier deine Bewertungen ab.
         Alle Änderungen werden sofort gespeichert.
