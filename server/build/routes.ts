@@ -85,12 +85,22 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EvaluationDto": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"workingWeekend":{"dataType":"boolean","required":true},"availabilitySelectionWeekend":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["kannImmer"]},{"dataType":"enum","enums":["nichtFR"]},{"dataType":"enum","enums":["nichtSA"]},{"dataType":"enum","enums":["nichtSO"]},{"dataType":"enum","enums":[null]}],"required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TraineeEvaluationDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluations":{"dataType":"array","array":{"dataType":"refAlias","ref":"EvaluationDto"},"required":true},"workingWeekend":{"dataType":"boolean","required":true},"availabilitySelectionWeekend":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["kannImmer"]},{"dataType":"enum","enums":["nichtFR"]},{"dataType":"enum","enums":["nichtSA"]},{"dataType":"enum","enums":["nichtSO"]},{"dataType":"enum","enums":[null]}],"required":true},"lastName":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FeedbackStatisticsDto": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"totalApplicants":{"dataType":"double","required":true},"othersText":{"dataType":"array","array":{"dataType":"string"},"required":true},"others":{"dataType":"double","required":true},"newsletter":{"dataType":"double","required":true},"partner":{"dataType":"double","required":true},"campusRally":{"dataType":"double","required":true},"socialMedia":{"dataType":"double","required":true},"internet":{"dataType":"double","required":true},"informationStand":{"dataType":"double","required":true},"friends":{"dataType":"double","required":true},"lectures":{"dataType":"double","required":true},"posters":{"dataType":"double","required":true},"flyer":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChangeRatingDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
@@ -1344,14 +1354,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/application/evaluations/:id',
+        app.get('/api/application/evaluations',
             authenticateMiddleware([{"jwt":["9"]}]),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
             ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.getEvaluationsByMemberId)),
 
             function ApplicationController_getEvaluationsByMemberId(request: any, response: any, next: any) {
             const args = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1389,6 +1398,59 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.getFeedback.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/application/evaluations/:id',
+            authenticateMiddleware([{"jwt":["9"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.changeApplicationEvaluation)),
+
+            function ApplicationController_changeApplicationEvaluation(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    createRatingDto: {"in":"body","name":"createRatingDto","required":true,"ref":"ChangeRatingDto"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.changeApplicationEvaluation.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/api/application/:id',
+            authenticateMiddleware([{"jwt":["16"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController)),
+            ...(fetchMiddlewares<RequestHandler>(ApplicationController.prototype.deleteApplication)),
+
+            function ApplicationController_deleteApplication(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ApplicationController();
+
+
+              const promise = controller.deleteApplication.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

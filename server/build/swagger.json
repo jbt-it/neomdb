@@ -711,6 +711,30 @@
 						"type": "number",
 						"format": "double"
 					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"evaluation",
+					"memberId",
+					"traineeApplicantId"
+				],
+				"type": "object"
+			},
+			"TraineeEvaluationDto": {
+				"properties": {
+					"evaluations": {
+						"items": {
+							"$ref": "#/components/schemas/EvaluationDto"
+						},
+						"type": "array"
+					},
 					"workingWeekend": {
 						"type": "boolean"
 					},
@@ -736,7 +760,7 @@
 					}
 				},
 				"required": [
-					"evaluation",
+					"evaluations",
 					"workingWeekend",
 					"availabilitySelectionWeekend",
 					"lastName",
@@ -816,6 +840,28 @@
 					"lectures",
 					"posters",
 					"flyer"
+				],
+				"type": "object"
+			},
+			"ChangeRatingDto": {
+				"properties": {
+					"evaluation": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"evaluation",
+					"memberId",
+					"traineeApplicantId"
 				],
 				"type": "object"
 			},
@@ -5595,17 +5641,17 @@
 				}
 			}
 		},
-		"/application/evaluations/{id}": {
+		"/application/evaluations": {
 			"get": {
 				"operationId": "GetEvaluationsByMemberId",
 				"responses": {
 					"200": {
-						"description": "EvaluationDto[]",
+						"description": "TraineeEvaluationDto[]",
 						"content": {
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/EvaluationDto"
+										"$ref": "#/components/schemas/TraineeEvaluationDto"
 									},
 									"type": "array"
 								}
@@ -5613,7 +5659,7 @@
 						}
 					}
 				},
-				"description": "Fetches all evaluations for a member",
+				"description": "Fetches all evaluations of the trainee applicants",
 				"tags": [
 					"Application"
 				],
@@ -5624,18 +5670,7 @@
 						]
 					}
 				],
-				"parameters": [
-					{
-						"description": "- The id of the member to fetch evaluations for",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
+				"parameters": []
 			}
 		},
 		"/application/feedback": {
@@ -5665,6 +5700,96 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/application/evaluations/{id}": {
+			"post": {
+				"operationId": "ChangeApplicationEvaluation",
+				"responses": {
+					"200": {
+						"description": "void",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"description": "Changes the rating of an application by a member",
+				"tags": [
+					"Application"
+				],
+				"security": [
+					{
+						"jwt": [
+							"9"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- The id of the application to change the rating for",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangeRatingDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/application/{id}": {
+			"delete": {
+				"operationId": "DeleteApplication",
+				"responses": {
+					"200": {
+						"description": "void",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes an application from the database",
+				"tags": [
+					"Application"
+				],
+				"security": [
+					{
+						"jwt": [
+							"16"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- The id of the application to delete",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/members": {

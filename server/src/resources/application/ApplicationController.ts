@@ -1,7 +1,20 @@
-import { Body, Controller, Post, Route, Tags, Get, Path, Security, Patch, SuccessResponse } from "@tsoa/runtime";
+import {
+  Body,
+  Controller,
+  Post,
+  Route,
+  Tags,
+  Get,
+  Path,
+  Security,
+  Patch,
+  SuccessResponse,
+  Delete,
+} from "@tsoa/runtime";
 import {
   ApplicationRequestDto,
-  EvaluationDto,
+  ChangeRatingDto,
+  TraineeEvaluationDto,
   FeedbackStatisticsDto,
   GenerationDto,
   NewGenerationRequestDto,
@@ -65,14 +78,13 @@ export class ApplicationController extends Controller {
   }
 
   /**
-   * Fetches all evaluations for a member
-   * @param id - The id of the member to fetch evaluations for
-   * @returns EvaluationDto[]
+   * Fetches all evaluations of the trainee applicants
+   * @returns TraineeEvaluationDto[]
    */
-  @Get("evaluations/{id}")
+  @Get("evaluations")
   @Security("jwt", ["9"])
-  public async getEvaluationsByMemberId(@Path() id: number): Promise<EvaluationDto[]> {
-    return await this.applicationService.getEvaluationByMemberId(id);
+  public async getEvaluationsByMemberId(): Promise<TraineeEvaluationDto[]> {
+    return await this.applicationService.getEvaluations();
   }
 
   /**
@@ -83,5 +95,33 @@ export class ApplicationController extends Controller {
   @Security("jwt", ["9"])
   public async getFeedback(): Promise<FeedbackStatisticsDto> {
     return await this.applicationService.getFeedbackStatistics();
+  }
+
+  /**
+   * Changes the rating of an application by a member
+   * @param id - The id of the application to change the rating for
+   * @param rating - The new rating to set
+   * @param memberId - The id of the member changing the rating
+   * @returns void
+   */
+  @Post("/evaluations/{id}")
+  @Security("jwt", ["9"])
+  public async changeApplicationEvaluation(
+    @Path() id: number,
+    @Body() createRatingDto: ChangeRatingDto
+  ): Promise<boolean> {
+    const { evaluation, memberId } = createRatingDto;
+    return await this.applicationService.changeApplicationEvaluation(id, evaluation, memberId);
+  }
+
+  /**
+   * Deletes an application from the database
+   * @param id - The id of the application to delete
+   * @returns void
+   */
+  @Delete("{id}")
+  @Security("jwt", ["16"])
+  public async deleteApplication(@Path() id: number): Promise<boolean> {
+    return await this.applicationService.deleteApplication(id);
   }
 }
