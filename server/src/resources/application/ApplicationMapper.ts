@@ -1,17 +1,33 @@
 import { Generation } from "entities/Generation";
 import { TraineeApplicant } from "entities/TraineeApplicant";
-import { EvaluationDto, GenerationDto } from "types/applicationTypes";
+import { TraineeApplicantEvaluation } from "entities/TraineeApplicantEvaluation";
+import { TraineeEvaluationDto, GenerationDto, EvaluationDto } from "types/applicationTypes";
 
 export class ApplicationMapper {
   // --- To DTO mapper functions
-  static traineeApplicantToEvaluationDto(traineeApplicant: TraineeApplicant): EvaluationDto {
+  static traineeApplicantEvaluationToEvaluationDto(
+    traineeApplicantEvaluation: TraineeApplicantEvaluation
+  ): EvaluationDto {
+    return {
+      traineeApplicantId: traineeApplicantEvaluation.traineeApplicantId,
+      memberId: traineeApplicantEvaluation.memberId,
+      evaluation: traineeApplicantEvaluation.evaluation,
+    };
+  }
+
+  static traineeApplicantToEvaluationDto(traineeApplicant: TraineeApplicant): TraineeEvaluationDto {
     return {
       traineeApplicantId: traineeApplicant.traineeApplicantId,
       firstName: traineeApplicant.firstName,
       lastName: traineeApplicant.lastName,
       availabilitySelectionWeekend: traineeApplicant.availabilitySelectionWeekend,
       workingWeekend: traineeApplicant.workingWeekend,
-      evaluation: traineeApplicant.traineeApplicantEvaluations[0].evaluation,
+      evaluations:
+        traineeApplicant.traineeApplicantEvaluations.length > 0
+          ? traineeApplicant.traineeApplicantEvaluations.map((evaluation) =>
+              ApplicationMapper.traineeApplicantEvaluationToEvaluationDto(evaluation)
+            )
+          : [],
     };
   }
 

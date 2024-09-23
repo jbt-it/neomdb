@@ -44,18 +44,14 @@ describe("Test application routes", () => {
   // --------------------------- TESTS --------------------------- \\
 
   // -----------------------GET ROUTES-----------------------
-  describe("GET /evaluations/:id", () => {
+  describe("GET /evaluations", () => {
     test("should return 403 for getting evaluations without having any permissions", async () => {
       // --- GIVEN
       const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberId = 8222;
-      const response = await request(app)
-        .get(`/api/application/evaluations/${memberId}`)
-        .send()
-        .set("Cookie", `token=${token}`);
+      const response = await request(app).get(`/api/application/evaluations`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.status).toBe(403);
@@ -67,11 +63,7 @@ describe("Test application routes", () => {
       const token = authTestUtils.extractAuthenticatonToken(loginResponse);
 
       // --- WHEN
-      const memberId = 8324;
-      const response = await request(app)
-        .get(`/api/application/evaluations/${memberId}`)
-        .send()
-        .set("Cookie", `token=${token}`);
+      const response = await request(app).get(`/api/application/evaluations`).send().set("Cookie", `token=${token}`);
 
       // --- THEN
       expect(response.body).toStrictEqual([
@@ -81,7 +73,13 @@ describe("Test application routes", () => {
           lastName: "Scott ",
           availabilitySelectionWeekend: "nichtFR",
           workingWeekend: 0,
-          evaluation: 0,
+          evaluations: [
+            {
+              traineeApplicantId: 1,
+              memberId: 8324,
+              evaluation: 0,
+            },
+          ],
         },
         {
           traineeApplicantId: 2,
@@ -89,7 +87,13 @@ describe("Test application routes", () => {
           lastName: "Halpert",
           availabilitySelectionWeekend: "nichtSO",
           workingWeekend: 1,
-          evaluation: 1,
+          evaluations: [
+            {
+              traineeApplicantId: 2,
+              memberId: 8324,
+              evaluation: 1,
+            },
+          ],
         },
         {
           traineeApplicantId: 3,
@@ -97,7 +101,13 @@ describe("Test application routes", () => {
           lastName: "Beesly",
           availabilitySelectionWeekend: "nichtSA",
           workingWeekend: 1,
-          evaluation: 2,
+          evaluations: [
+            {
+              traineeApplicantId: 3,
+              memberId: 8324,
+              evaluation: 2,
+            },
+          ],
         },
         {
           traineeApplicantId: 4,
@@ -105,7 +115,13 @@ describe("Test application routes", () => {
           lastName: "Schrute",
           availabilitySelectionWeekend: "kannImmer",
           workingWeekend: 1,
-          evaluation: 3,
+          evaluations: [
+            {
+              traineeApplicantId: 4,
+              memberId: 8324,
+              evaluation: 3,
+            },
+          ],
         },
         {
           traineeApplicantId: 5,
@@ -113,7 +129,13 @@ describe("Test application routes", () => {
           lastName: "Hudson",
           availabilitySelectionWeekend: "nichtFR",
           workingWeekend: 1,
-          evaluation: 2,
+          evaluations: [
+            {
+              traineeApplicantId: 5,
+              memberId: 8324,
+              evaluation: 2,
+            },
+          ],
         },
         {
           traineeApplicantId: 6,
@@ -121,7 +143,7 @@ describe("Test application routes", () => {
           lastName: "Bratton",
           availabilitySelectionWeekend: "nichtFR",
           workingWeekend: 1,
-          evaluation: 1,
+          evaluations: [],
         },
       ]);
       expect(response.status).toBe(200);
@@ -388,6 +410,41 @@ describe("Test application routes", () => {
     });
   });
 
+  describe("POST /application/evaluations/{id}", () => {
+    test("should return 403 for changing the rating of an application without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .post(`/api/application/evaluations/6`)
+        .send({ traineeApplicantId: 6, memberId: 8222, evaluation: 1 })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for changing the rating of an application with having permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .post(`/api/application/evaluations/6`)
+        .send({ traineeApplicantId: 6, memberId: 8324, evaluation: 5 })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      const evaluation = await applicationTestUtils.getEvaluationsByApplicantIdFromDB(6);
+
+      expect(evaluation.evaluation).toBe(5);
+      expect(response.status).toBe(200);
+    });
+  });
+
   // -----------------------PATCH ROUTES-----------------------
   describe("PATCH /generation", () => {
     test("should return 403 for updating generation without having any permissions", async () => {
@@ -461,6 +518,36 @@ describe("Test application routes", () => {
         electionStart: "2024-11-04T22:00:00.000Z",
         electionEnd: "2024-11-11T22:00:00.000Z",
       });
+      expect(response.status).toBe(200);
+    });
+  });
+
+  // -----------------------DELETE ROUTES-----------------------
+  describe("DELETE /application/{id}", () => {
+    test("should return 403 for deleting an application without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).delete(`/api/application/6`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for deleting an application with having permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).delete(`/api/application/6`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      const application = await applicationTestUtils.getApplicationByIDFromDB(6);
+
+      expect(application).toBe(null);
       expect(response.status).toBe(200);
     });
   });

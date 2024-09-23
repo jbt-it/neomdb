@@ -38,8 +38,7 @@ INSERT INTO `traineebewerber_bewertung` (`traineebewerber_traineebewerberID`, `m
 (2, 8324, 1),
 (3, 8324, 2),
 (4, 8324, 3),
-(5, 8324, 2),
-(6, 8324, 1);
+(5, 8324, 2);
 
 --
 -- Daten für Tabelle `traineebewerber_ehrenamtlichschule`

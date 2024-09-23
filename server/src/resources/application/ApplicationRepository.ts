@@ -7,6 +7,7 @@ import { TraineeApplicantLanguage } from "../../entities/TraineeApplicantLanguag
 import { TraineeApplicantVoluntaryStudy } from "../../entities/TraineeApplicantVoluntaryStudy";
 import { TraineeApplicantVoluntarySchool } from "../../entities/TraineeApplicantVoluntarySchool";
 import { TraineeApplicantItSkill } from "../../entities/TraineeApplicantItSkill";
+import { TraineeApplicantEvaluation } from "../../entities/TraineeApplicantEvaluation";
 
 /**
  * Repository for the TraineeApplication entity
@@ -22,26 +23,23 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
 
   /**
    * Retrieves an application by its id
-   * @param applicationId The id of the application
+   * @param traineeApplicantId The id of the application
    * @returns The application or null if no application was found
    */
-  async getApplicationById(applicationId: number): Promise<TraineeApplicant | null> {
-    return this.findOne({ where: { applicationId } });
+  async getApplicationById(traineeApplicantId: number): Promise<TraineeApplicant | null> {
+    return this.findOne({ where: { traineeApplicantId } });
   },
 
   /**
    * Retrieves all applications with evaluations by a member id
-   * @param memberId The id of the member
+   * @param generationId The id of the generation
    * @returns A list of applications with evaluations
    */
-  async getEvaluationsByMemberId(memberId: number, generationId: number): Promise<TraineeApplicant[]> {
+  async getEvaluations(generationId: number): Promise<TraineeApplicant[]> {
     return this.find({
       relations: ["traineeApplicantEvaluations"],
       where: {
         generation: generationId,
-        traineeApplicantEvaluations: {
-          memberId: memberId,
-        },
       },
     });
   },
@@ -51,9 +49,20 @@ export const TraineeApplicationRepository = AppDataSource.getRepository(TraineeA
    * @param application The application to save
    * @returns The saved application id
    */
-  async saveApplication(application: TraineeApplicant, transactionalEntityManager: EntityManager): Promise<number> {
-    const newTraineeApplicant = await transactionalEntityManager.save(application);
+  async saveApplication(application: TraineeApplicant, transactionalEntityManager?: EntityManager): Promise<number> {
+    let newTraineeApplicant;
+    transactionalEntityManager
+      ? (newTraineeApplicant = await transactionalEntityManager.save(application))
+      : (newTraineeApplicant = await this.save(application));
     return newTraineeApplicant.traineeApplicantId;
+  },
+
+  /**
+   * Delete an application from the database
+   * @param applicationId The id of the application to delete
+   */
+  async deleteApplication(applicationId: number): Promise<void> {
+    return await this.delete(applicationId);
   },
 });
 
@@ -166,5 +175,42 @@ export const TraineeApplicantVoluntaryStudyRepository = AppDataSource.getReposit
     transactionalEntityManager: EntityManager
   ): Promise<TraineeApplicantVoluntaryStudy> {
     return transactionalEntityManager.save(traineeApplicantVoluntaryStudy);
+  },
+});
+
+/**
+ * Repository for the TraineeApplicantEvaluation entity
+ */
+export const TraineeApplicantEvaluationRepository = AppDataSource.getRepository(TraineeApplicantEvaluation).extend({
+  /**
+   * Retrieves all evaluations of the trainee applicants
+   * @param traineeApplicantId The id of the trainee applicant
+   * @param memberId The id of the member
+   * @returns The evaluation of the trainee applicant
+   */
+  async getEvaluationByTraineeApplicantIdAndMemberId(
+    traineeApplicantId: number,
+    memberId: number
+  ): Promise<TraineeApplicantEvaluation> {
+    return this.findOne({ where: { traineeApplicantId, memberId } });
+  },
+
+  /**
+   * Retrieves all evaluations of one applicant
+   * @param applicantId The id of the trainee applicant
+   * @returns The evaluations of the trainee applicant
+   */
+  getApplicationById(applicantId: number): Promise<TraineeApplicantEvaluation> {
+    return this.findOne({ where: { traineeApplicantId: applicantId } });
+  },
+
+  /**
+   * Save a new TraineeApplicantEvaluation to the database
+   * @param traineeApplicantEvaluation The TraineeApplicantEvaluation to save
+   * @param transactionalEntityManager The transactional entity manager
+   * @returns The saved TraineeApplicantEvaluation
+   */
+  async saveEvaluation(traineeApplicantEvaluation: TraineeApplicantEvaluation): Promise<TraineeApplicantEvaluation> {
+    return this.save(traineeApplicantEvaluation);
   },
 });

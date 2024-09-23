@@ -4,7 +4,7 @@ import { AppDataSource } from "../../datasource";
 import {
   ApplicationDto,
   ApplicationImageDto,
-  EvaluationDto,
+  TraineeEvaluationDto,
   FeedbackStatisticsDto,
   GenerationDto,
   NewGenerationRequestDto,
@@ -17,6 +17,7 @@ import {
   TraineeApplicantVoluntarySchoolRepository,
   TraineeApplicantVoluntaryStudyRepository,
   TraineeApplicantItSkillRepository,
+  TraineeApplicantEvaluationRepository,
 } from "./ApplicationRepository";
 import { GenerationRepository } from "../trainees/GenerationRepository";
 import { TraineeApplicantHiwi } from "../../entities/TraineeApplicantHiwi";
@@ -375,21 +376,17 @@ class ApplicationService {
 
   /**
    * Get all trainee applicant evaluations by member id
-   * @param memberId - The member id to get the evaluations for
    * @returns A list of evaluations
    */
-  getEvaluationByMemberId = async (memberId: number): Promise<EvaluationDto[]> => {
+  getEvaluations = async (): Promise<TraineeEvaluationDto[]> => {
     try {
       // get the current generation id
       const generationId = await GenerationRepository.getCurrentGenerationId();
 
-      // get all trainee applicants with evaluations by the member id for the evaluations
-      const traineeApplicantWithEvaluations = await TraineeApplicationRepository.getEvaluationsByMemberId(
-        memberId,
-        generationId
-      );
+      // get all trainee applicants with evaluations
+      const traineeApplicantWithEvaluations = await TraineeApplicationRepository.getEvaluations(generationId);
 
-      // map the trainee applicants to evaluation dto
+      // map the trainee applicants to TraineeEvaluationDto
       const evaluations = traineeApplicantWithEvaluations.map((applicant) => {
         return ApplicationMapper.traineeApplicantToEvaluationDto(applicant);
       });
@@ -450,6 +447,69 @@ class ApplicationService {
     } catch (error) {
       console.error("Error getting feedback statistics:", error);
       throw new Error("Couldn't get feedback statistics");
+    }
+  };
+
+  /**
+   * Change the rating of an application
+   * @param id - The id of the application
+   * @param rating - The new rating
+   * @returns True if the rating was changed
+   */
+  changeApplicationEvaluation = async (id: number, rating: number, memberId: number): Promise<boolean> => {
+    try {
+      // get the application by its id
+      const evaluation = await TraineeApplicantEvaluationRepository.getEvaluationByTraineeApplicantIdAndMemberId(
+        id,
+        memberId
+      );
+
+      // if the trainee applicant exists with an evaluation of the member change the rating
+      if (evaluation !== null) {
+        // update the rating of the application
+        evaluation.evaluation = rating;
+
+        // save the updated application to the database
+        await TraineeApplicantEvaluationRepository.saveEvaluation(evaluation);
+        return true;
+      } else {
+        const newEvaluation = TraineeApplicantEvaluationRepository.create({
+          traineeApplicantId: id,
+          memberId: memberId,
+          evaluation: rating,
+        });
+
+        // save the evaluation to the database
+        await TraineeApplicantEvaluationRepository.save(newEvaluation);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error changing application rating:", error);
+      throw new Error("Couldn't change application rating");
+    }
+  };
+
+  /**
+   * Delete an application by its id
+   * @param id - The id of the application
+   * @returns True if the application was deleted
+   */
+  deleteApplication = async (id: number): Promise<boolean> => {
+    try {
+      // get the application by its id
+      const application = await TraineeApplicationRepository.getApplicationById(id);
+
+      // if the application exists
+      if (application !== null) {
+        // delete the application by its id
+        await TraineeApplicationRepository.deleteApplication(application.traineeApplicantId);
+        return true;
+      } else {
+        throw new NotFoundError(`Application with id ${id} not found`);
+      }
+    } catch (error) {
+      console.error("Error deleting application:", error);
+      throw new Error("Couldn't delete application");
     }
   };
 }

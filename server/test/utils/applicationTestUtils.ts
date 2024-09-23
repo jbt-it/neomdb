@@ -1,11 +1,14 @@
 /* eslint-disable no-console */
-import { Generation } from "../../src/entities/Generation";
 import { executeScript } from "./databaseUtils";
 import fs from "fs/promises";
 import path from "path";
 import { GenerationRepository } from "../../src/resources/trainees/GenerationRepository";
-import { TraineeApplicationRepository } from "../../src/resources/application/ApplicationRepository";
-import { TraineeApplicant } from "../../src/entities/TraineeApplicant";
+import {
+  TraineeApplicantEvaluationRepository,
+  TraineeApplicationRepository,
+} from "../../src/resources/application/ApplicationRepository";
+import { TraineeApplicantEvaluation } from "entities/TraineeApplicantEvaluation";
+import { TraineeApplicant } from "entities/TraineeApplicant";
 
 /**
  * Utility class for testing the application routes
@@ -121,6 +124,26 @@ class ApplicationTestUtils {
   getCurrenctGenerationByIDFromDB = async (): Promise<number> => {
     const generationId = await GenerationRepository.getCurrentGenerationId();
     return generationId;
+  };
+
+  /**
+   * Retrieves the evaluations of a trainee applicant from the DB
+   * @param applicantId The id of the trainee applicant
+   * @returns The trainee applicant with evaluations
+   */
+  getEvaluationsByApplicantIdFromDB = async (applicantId: number): Promise<TraineeApplicantEvaluation> => {
+    const applicant = await TraineeApplicantEvaluationRepository.getApplicationById(applicantId);
+    return applicant;
+  };
+
+  /**
+   * Retrieves the trainee applicant with the given `id` from the DB
+   * @param traineeApplicantId The id of the trainee applicant
+   * @returns The trainee applicant
+   */
+  getApplicationByIDFromDB = async (traineeApplicantId: number): Promise<TraineeApplicant> => {
+    const applicant = await TraineeApplicationRepository.getApplicationById(traineeApplicantId);
+    return applicant;
   };
 }
 
