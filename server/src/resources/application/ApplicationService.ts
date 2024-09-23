@@ -459,7 +459,7 @@ class ApplicationService {
    */
   changeApplicationEvaluation = async (
     id: number,
-    rating: number,
+    rating: number | null,
     memberId: number
   ): Promise<TraineeApplicantEvaluation> => {
     try {
@@ -471,6 +471,11 @@ class ApplicationService {
 
       // if the trainee applicant exists with an evaluation of the member change the rating
       if (evaluation !== null) {
+        if (rating === null) {
+          // delete the evaluation if the rating is null
+          await TraineeApplicantEvaluationRepository.deleteEvaluation(id, memberId);
+          return;
+        }
         // update the rating of the application
         evaluation.evaluation = rating;
 

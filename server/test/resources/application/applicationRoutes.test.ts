@@ -443,6 +443,24 @@ describe("Test application routes", () => {
       expect(evaluation.evaluation).toBe(5);
       expect(response.status).toBe(200);
     });
+
+    test("should 204 for changing the rating of an application with null as rating", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app)
+        .post(`/api/application/evaluations/1`)
+        .send({ traineeApplicantId: 1, memberId: 8324, evaluation: null })
+        .set("Cookie", `token=${token}`);
+
+      // --- THEN
+      const evaluation = await applicationTestUtils.getEvaluationsByApplicantIdFromDB(1);
+
+      expect(evaluation).toBe(null);
+      expect(response.status).toBe(204);
+    });
   });
 
   // -----------------------PATCH ROUTES-----------------------

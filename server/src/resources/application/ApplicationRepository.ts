@@ -213,4 +213,13 @@ export const TraineeApplicantEvaluationRepository = AppDataSource.getRepository(
   async saveEvaluation(traineeApplicantEvaluation: TraineeApplicantEvaluation): Promise<TraineeApplicantEvaluation> {
     return this.save(traineeApplicantEvaluation);
   },
+
+  /**
+   * Delete an evaluation from the database
+   * @param traineeApplicantId The id of the trainee applicant
+   * @param memberId The id of the member
+   */
+  async deleteEvaluation(traineeApplicantId: number, memberId: number): Promise<void> {
+    return this.delete({ traineeApplicantId, memberId });
+  },
 });
