@@ -168,6 +168,46 @@ describe("Test application routes", () => {
     });
   });
 
+  describe("GET /generation", () => {
+    test("should return 403 for getting current generation without having any permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("t.driscoll", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).get(`/api/application/generation`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.status).toBe(403);
+    });
+
+    test("should return 200 for getting current generation with permissions", async () => {
+      // --- GIVEN
+      const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+      const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+      // --- WHEN
+      const response = await request(app).get(`/api/application/generation`).send().set("Cookie", `token=${token}`);
+
+      // --- THEN
+      expect(response.body).toStrictEqual({
+        generationId: 15,
+        description: "Wintersemester 19/20",
+        applicationStart: "2019-10-28T17:00:00.000Z",
+        applicationEnd: "2019-11-02T19:10:00.000Z",
+        selectionWeDateStart: "2019-11-08",
+        selectionWeDateEnd: "2019-11-10",
+        wwDateStart: "2019-11-15",
+        wwDateEnd: "2019-11-17",
+        infoEveningVisitors: 107,
+        doorCode: "000000",
+        electionStart: "2019-11-17T22:59:00.000Z",
+        electionEnd: "2019-11-20T18:30:00.000Z",
+      });
+      expect(response.status).toBe(200);
+    });
+  });
+
   // -----------------------POST ROUTES-----------------------
   describe("POST / create application", () => {
     test("should return 201 for creating new application", async () => {
@@ -347,6 +387,7 @@ describe("Test application routes", () => {
     });
   });
 
+  // -----------------------PATCH ROUTES-----------------------
   describe("PATCH /generation", () => {
     test("should return 403 for updating generation without having any permissions", async () => {
       // --- GIVEN
@@ -418,8 +459,6 @@ describe("Test application routes", () => {
         doorCode: "12345",
         electionStart: "2024-11-04T22:00:00.000Z",
         electionEnd: "2024-11-11T22:00:00.000Z",
-        members: [],
-        mentors: [],
       });
       expect(response.status).toBe(200);
     });

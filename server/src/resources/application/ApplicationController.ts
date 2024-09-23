@@ -44,6 +44,16 @@ export class ApplicationController extends Controller {
   }
 
   /**
+   * Fetches the current generation from the database
+   * @returns GenerationDto
+   */
+  @Get("generation")
+  @Security("jwt", ["9"])
+  public async getCurrentGeneration(): Promise<GenerationDto> {
+    return await this.applicationService.getCurrentGeneration();
+  }
+
+  /**
    * Updates a generation in the database
    * @param requestBody - The generation to update as GenerationDto
    * @returns the updated generation as GenerationDto

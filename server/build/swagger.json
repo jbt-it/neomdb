@@ -5523,6 +5523,33 @@
 					}
 				}
 			},
+			"get": {
+				"operationId": "GetCurrentGeneration",
+				"responses": {
+					"200": {
+						"description": "GenerationDto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GenerationDto"
+								}
+							}
+						}
+					}
+				},
+				"description": "Fetches the current generation from the database",
+				"tags": [
+					"Application"
+				],
+				"security": [
+					{
+						"jwt": [
+							"9"
+						]
+					}
+				],
+				"parameters": []
+			},
 			"patch": {
 				"operationId": "UpdateGeneration",
 				"responses": {
