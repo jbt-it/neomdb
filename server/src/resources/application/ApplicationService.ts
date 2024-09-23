@@ -444,6 +444,7 @@ class ApplicationService {
         newsletter: newsletterStatistic,
         others: othersStatistic,
         othersText: othersText,
+        totalApplicants: traineeApplicants.length,
       };
       return feedbackStatistics;
     } catch (error) {
