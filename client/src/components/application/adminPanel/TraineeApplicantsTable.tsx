@@ -20,9 +20,7 @@ import { ChangeRatingDto, TraineeEvaluationDto } from "../../../types/applicatio
 import {
   Cancel,
   CheckCircle,
-  SentimentDissatisfied,
   SentimentSatisfied,
-  SentimentSatisfiedAlt,
   SentimentVeryDissatisfied,
   SentimentVerySatisfied,
 } from "@mui/icons-material";
@@ -93,7 +91,6 @@ const TraineeApplicantsTable = ({
     tableHeaderCell: {
       color: "white",
       fontWeight: "bold",
-      ":hover": { cursor: "pointer" },
     },
     tableRow: {
       "&:nth-of-type(odd)": { backgroundColor: "#fff" },

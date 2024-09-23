@@ -38,7 +38,6 @@ const FeedbackStatistics = ({ feedbackStatistics }: FeedbackStatisticsProps) => 
     tableHeaderCell: {
       color: "white",
       fontWeight: "bold",
-      ":hover": { cursor: "pointer" },
     },
     tableRow: {
       "&:nth-of-type(odd)": { backgroundColor: "#fff" },

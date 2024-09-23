@@ -11,9 +11,10 @@ import FeedbackStatistics from "../../components/application/adminPanel/Feedback
 import TraineeApplicantsTable from "../../components/application/adminPanel/TraineeApplicantsTable";
 import NewGenerationDialog from "../../components/application/adminPanel/NewGenerationDialog";
 import EditGenerationDialog from "../../components/application/adminPanel/EditGenerationDialog";
-import { GenerationDto, NewGenerationRequestDto } from "../../types/applicationTypes";
+import { GenerationDto, NewGenerationRequestDto, TraineeEvaluationDto } from "../../types/applicationTypes";
 import { Edit } from "@mui/icons-material";
 import dayjs from "dayjs";
+import ApplicantSelectionTable from "../../components/application/adminPanel/ApplicantSelectionTable";
 
 /**
  * The ApplicationAdmin component displays the application phase information for the current generation,
@@ -67,6 +68,8 @@ const ApplicationAdmin = () => {
   const [newGeneration, setNewGeneration] = useState(initialNewGenerationState);
   const [generation, setGeneration] = useState(initialGenerationState);
 
+  const [selectedApplicants, setSelectedApplicants] = useState<TraineeEvaluationDto[]>([]);
+
   // Helper functions to handle dialog and state updates
   const resetNewGenerationState = () => setNewGeneration(initialNewGenerationState);
   const resetGenerationState = () => setGeneration(initialGenerationState);
@@ -116,6 +119,11 @@ const ApplicationAdmin = () => {
       updateGeneration(generation); // Save generation
     }
     handleCloseEditGenerationDialog();
+  };
+
+  // Handle invite applicants
+  const handleInviteApplicants = () => {
+    console.log("Invite applicants", selectedApplicants);
   };
 
   // Conditional rendering based on permissions and data loading state
@@ -177,6 +185,8 @@ const ApplicationAdmin = () => {
             <TabList onChange={handleChangeTab} variant={isMobile ? "scrollable" : "standard"} centered={!isMobile}>
               <Tab label="Traineebewerber" value="applicants" />
               <Tab label="Feedback-Statistik" value="feedback" />
+              <Tab label="Bewerber auswählen" value="selectApplicants" />
+              <Tab label="Trainees auswählen" value="selectTrainees" />
             </TabList>
           </Box>
           <TabPanel value="applicants">
@@ -188,6 +198,14 @@ const ApplicationAdmin = () => {
           </TabPanel>
           <TabPanel value="feedback">
             <FeedbackStatistics feedbackStatistics={feedbackStatistics} />
+          </TabPanel>
+          <TabPanel value="selectApplicants">
+            <ApplicantSelectionTable
+              applicantsEvaluations={applicantsEvaluations}
+              selectedApplicants={selectedApplicants}
+              setSelectedApplicants={setSelectedApplicants}
+              handleInviteApplicants={handleInviteApplicants}
+            />
           </TabPanel>
         </TabContext>
       </Stack>
