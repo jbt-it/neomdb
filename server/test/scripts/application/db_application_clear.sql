@@ -1,0 +1,10 @@
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE mdb_test.traineebewerber;
+TRUNCATE TABLE mdb_test.traineebewerber_bewertung;
+TRUNCATE TABLE mdb_test.traineebewerber_ehrenamtlichschule;
+TRUNCATE TABLE mdb_test.traineebewerber_ehrenamtlichstudium;
+TRUNCATE TABLE mdb_test.traineebewerber_hiwi;
+TRUNCATE TABLE mdb_test.traineebewerber_itskill;
+TRUNCATE TABLE mdb_test.traineebewerber_praktikum;
+TRUNCATE TABLE mdb_test.traineebewerber_sprache;
+SET FOREIGN_KEY_CHECKS = 1;

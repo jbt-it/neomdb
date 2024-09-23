@@ -3,9 +3,22 @@ import ApplicationStart from "./ApplicationStart";
 import useResponsive from "../../hooks/useResponsive";
 import ApplicationMobileStepper from "./ApplicationMobileStepper";
 import { Generation } from "../../types/traineesTypes";
-import { Container, Stack, TextField, Typography } from "@mui/material";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import ApplicationStepper from "./ApplicationStepper";
+import PersonalDataStep from "./steps/PersonalDataStep";
+import StudyStep from "./steps/StudyStep";
+import WorkExperienceStep from "./steps/WorkExperienceStep";
+import LanguagesStep from "./steps/LanguagesStep";
+import HobbiesStep from "./steps/HobbiesStep";
+import MotivationStep from "./steps/MotivationStep";
+import SelfEvaluationStep from "./steps/SelfEvaluationStep";
+import FeedbackStep from "./steps/FeedbackStep";
+import { useApplicationContext } from "../../context/ApplicationContext";
+import { ApplicationDto } from "../../types/applicationTypes";
+import { checkRequiredFields } from "../../utils/applicationValidationUtils";
+import { saveApplication } from "../../api/application";
 
+// The steps of the application form
 const steps = [
   {
     label: "Persönliche Daten",
@@ -58,13 +71,51 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   const isMobile = useResponsive("down", "md");
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = steps.length;
+  const { applicationState, updateApplicationErrorState, applicationImage } = useApplicationContext();
+  const [completed, setCompleted] = React.useState<{
+    [k: number]: boolean;
+  }>({});
+  const [applyDialogOpen, setApplyDialogOpen] = React.useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = React.useState(false);
+
+  // check if all required fields of the personal data step are filled
+  const attributesToCheckByStep: { [key: number]: (keyof ApplicationDto)[] } = {
+    0: ["firstName", "lastName", "gender", "birthDate", "mobilePhone", "email", "confirmEmail", "picture"],
+    1: ["enrolledDegree", "enrolledUniversity", "enrolledSubject", "studyStart", "studySemester", "apprenticeship"],
+    2: ["internship", "hiwiStudentJob"],
+    3: ["languages", "itSkills"],
+    4: ["timeInvestment"],
+    5: ["motivation"],
+    6: [
+      "selfAssessment1",
+      "selfAssessment2",
+      "selfAssessment3",
+      "selfAssessment4",
+      "selfAssessment5",
+      "selfAssessment6",
+      "selfAssessment7",
+      "selfAssessment8",
+    ],
+    7: ["availabilitySelectionWeekend"],
+  };
 
   // Check if the current step is the last step
   const isLastStep = () => {
     return activeStep === maxSteps - 1;
   };
+
+  // Handles the check of the required fields
+  const handleCheckRequiredFields = () => {
+    return checkRequiredFields(attributesToCheckByStep, activeStep, applicationState, updateApplicationErrorState);
+  };
+
   // Handles the next step
   const handleNext = () => {
+    // Check if the required fields are filled and if not return
+    if (handleCheckRequiredFields()) {
+      return;
+    }
+    setCompleted({ ...completed, [activeStep]: true });
     isLastStep() ? setActiveStep(0) : setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -75,6 +126,12 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
 
   // Handle click on step
   const handleStep = (step: number) => () => {
+    // Check if the required fields are filled and if so set the step as completed
+    if (!handleCheckRequiredFields()) {
+      setCompleted({ ...completed, [activeStep]: true });
+    } else {
+      setCompleted({ ...completed, [activeStep]: false });
+    }
     setActiveStep(step);
   };
 
@@ -83,19 +140,111 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
     setIsApplying(true);
   };
 
+  // Handles the application submission
+  const handleSubmission = async () => {
+    if (!applicationImage) {
+      alert("Fehler beim Bildupload");
+      return false;
+    }
+    try {
+      // Save the application
+      const res = await saveApplication(applicationState, applicationImage);
+      if (res) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Error while saving the application", error);
+      return false;
+    }
+  };
+
   // Handles the application completion
-  const handleApply = () => {
-    console.log("Apply");
-    alert("Bewerbung abgeschickt");
+  const handleApply = async () => {
+    if (handleCheckRequiredFields()) {
+      return;
+    } else {
+      setCompleted({ ...completed, [activeStep]: true });
+    }
+    // if every step is completed, the application is submitted
+    if (Object.values(completed).every((value) => value === true)) {
+      const res = await handleSubmission();
+      if (res) {
+        setApplyDialogOpen(true);
+        setSubmissionSuccess(true);
+      } else {
+        setSubmissionSuccess(false);
+        setApplyDialogOpen(true);
+      }
+    } else {
+      alert("Bitte fülle alle Felder aus");
+    }
   };
 
   // Renders the current step
   const renderStep = (step: number) => {
+    switch (step) {
+      case 0:
+        return <PersonalDataStep />;
+      case 1:
+        return <StudyStep />;
+      case 2:
+        return <WorkExperienceStep />;
+      case 3:
+        return <LanguagesStep />;
+      case 4:
+        return <HobbiesStep />;
+      case 5:
+        return <MotivationStep />;
+      case 6:
+        return <SelfEvaluationStep />;
+      case 7:
+        return (
+          <FeedbackStep
+            wwStart={generation.wwDateStart}
+            wwEnd={generation.wwDateEnd}
+            selectionWeDateStart={generation.selectionWeDateStart}
+            selectionWeDateEnd={generation.selectionWeDateEnd}
+          />
+        );
+      default:
+        return <PersonalDataStep />;
+    }
+  };
+
+  /**
+   * The dialog for the application submission
+   * @returns The dialog for the application submission
+   */
+  const SubmissionDialog = () => {
     return (
-      <Stack spacing={3}>
-        <Typography variant="h5">{steps[step].description}</Typography>
-        <TextField helperText="1" minRows={3} variant="outlined" />
-      </Stack>
+      <Dialog open={applyDialogOpen} onClose={() => setApplyDialogOpen(false)}>
+        <DialogTitle>{submissionSuccess ? "Bewerbung erfolgreich" : "Fehler bei der Bewerbung"}</DialogTitle>
+        <DialogContent>
+          {submissionSuccess ? (
+            "Deine Bewerbung wurde erfolgreich abgeschickt"
+          ) : (
+            <>
+              Es ist ein Fehler bei der Bewerbung ausgetreten, bitte wende dich an{" "}
+              <strong>bewerbung@studentische-beratung.de</strong>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={
+              submissionSuccess
+                ? () => {
+                    window.location.href = "https://studentische-beratung.de";
+                    setApplyDialogOpen(false);
+                  }
+                : () => setApplyDialogOpen(false)
+            }
+            color="primary"
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   };
 
@@ -111,6 +260,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           alignItems: "start",
         }}
       >
+        <SubmissionDialog />
         <ApplicationMobileStepper
           activeStep={activeStep}
           handleBack={handleBack}
@@ -118,9 +268,8 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           maxSteps={maxSteps}
           renderStep={renderStep}
           steps={steps}
+          handleApply={handleApply}
           isLastStep={isLastStep}
-          handleComplete={handleApply}
-          checkRequiredFields={() => false}
         />
       </Container>
     ) : (
@@ -134,6 +283,7 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           background: "#f1f1f1",
         }}
       >
+        <SubmissionDialog />
         <ApplicationStepper
           activeStep={activeStep}
           handleBack={handleBack}
@@ -141,8 +291,8 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           handleStep={handleStep}
           steps={steps.map((step) => step.label)}
           isLastStep={isLastStep}
-          completed={new Array(maxSteps).fill(false)}
-          handleComplete={handleApply}
+          completed={completed}
+          handleApply={handleApply}
           renderStep={renderStep}
         />
       </Container>
