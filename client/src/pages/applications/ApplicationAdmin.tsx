@@ -22,8 +22,15 @@ import dayjs from "dayjs";
 const ApplicationAdmin = () => {
   const isMobile = useResponsive("down", "sm");
   const { auth } = useContext(AuthContext);
-  const { currentGeneration, feedbackStatistics, applicantsEvaluations, createNewGeneration, updateGeneration } =
-    useApplicants();
+  const {
+    currentGeneration,
+    feedbackStatistics,
+    applicantsEvaluations,
+    createNewGeneration,
+    updateGeneration,
+    updateTraineeEvaluation,
+    deleteApplication,
+  } = useApplicants();
   const hasPermission = doesPermissionsHaveSomeOf(auth.permissions, [9]);
 
   const [value, setValue] = useState("applicants");
@@ -173,7 +180,11 @@ const ApplicationAdmin = () => {
             </TabList>
           </Box>
           <TabPanel value="applicants">
-            <TraineeApplicantsTable applicantsEvaluations={applicantsEvaluations} />
+            <TraineeApplicantsTable
+              applicantsEvaluations={applicantsEvaluations}
+              deleteApplicant={deleteApplication}
+              updateTraineeEvaluation={updateTraineeEvaluation}
+            />
           </TabPanel>
           <TabPanel value="feedback">
             <FeedbackStatistics feedbackStatistics={feedbackStatistics} />

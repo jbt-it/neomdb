@@ -218,11 +218,18 @@ export type GenerationDto = {
 // Definition of the evaluation dto type
 export type EvaluationDto = {
   traineeApplicantId: number;
+  memberId: number;
+  evaluation: number;
+};
+
+// Definition of the TraineeEvaluationDto type
+export type TraineeEvaluationDto = {
+  traineeApplicantId: number;
   firstName: string;
   lastName: string;
   availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
   workingWeekend: boolean;
-  evaluation: number;
+  evaluations: EvaluationDto[];
 };
 
 // Definition of the feedback statistics dto type
@@ -240,4 +247,11 @@ export type FeedbackStatisticsDto = {
   others: number;
   othersText: string[];
   totalApplicants: number;
+};
+
+// Definition of the change rating dto type
+export type ChangeRatingDto = {
+  traineeApplicantId: number;
+  memberId: number;
+  evaluation: number;
 };

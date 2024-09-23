@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Grid,
   IconContainerProps,
@@ -14,8 +15,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React from "react";
-import { EvaluationDto } from "../../../types/applicationTypes";
+import React, { useContext } from "react";
+import { ChangeRatingDto, TraineeEvaluationDto } from "../../../types/applicationTypes";
 import {
   Cancel,
   CheckCircle,
@@ -26,6 +27,7 @@ import {
   SentimentVerySatisfied,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../context/auth-context/AuthContext";
 
 /**
  * The styled Rating component is used to style the rating icons
@@ -50,18 +52,10 @@ const customIcons: {
     label: "Very Dissatisfied",
   },
   2: {
-    icon: <SentimentDissatisfied color="error" />,
-    label: "Dissatisfied",
-  },
-  3: {
     icon: <SentimentSatisfied color="warning" />,
     label: "Neutral",
   },
-  4: {
-    icon: <SentimentSatisfiedAlt color="success" />,
-    label: "Satisfied",
-  },
-  5: {
+  3: {
     icon: <SentimentVerySatisfied color="success" />,
     label: "Very Satisfied",
   },
@@ -71,7 +65,9 @@ const customIcons: {
  * The interface TraineeApplicantsTableProps defines the props for the TraineeApplicantsTable component
  */
 interface TraineeApplicantsTableProps {
-  applicantsEvaluations: EvaluationDto[];
+  applicantsEvaluations: TraineeEvaluationDto[];
+  deleteApplicant: (traineeApplicantId: number) => void;
+  updateTraineeEvaluation: (evaluation: ChangeRatingDto) => void;
 }
 
 /**
@@ -79,7 +75,13 @@ interface TraineeApplicantsTableProps {
  * @param param0
  * @returns
  */
-const TraineeApplicantsTable = ({ applicantsEvaluations }: TraineeApplicantsTableProps) => {
+const TraineeApplicantsTable = ({
+  applicantsEvaluations,
+  deleteApplicant,
+  updateTraineeEvaluation,
+}: TraineeApplicantsTableProps) => {
+  const { auth } = useContext(AuthContext);
+
   const styles = {
     tableHeader: {
       backgroundColor: "primary.main",
@@ -105,10 +107,20 @@ const TraineeApplicantsTable = ({ applicantsEvaluations }: TraineeApplicantsTabl
    * @param props The props for the IconContainer component
    * @returns The IconContainer component
    */
-  function IconContainer(props: IconContainerProps) {
+  const IconContainer = (props: IconContainerProps) => {
     const { value, ...other } = props;
     return <span {...other}>{customIcons[value].icon}</span>;
-  }
+  };
+
+  /**
+   * The handleUpdateRating function updates the rating of a trainee
+   * @param traineeApplicantId The id of the trainee applicant
+   * @param rating The new rating
+   */
+  const handleUpdateRating = (traineeApplicantId: number, rating: number | null) => {
+    if (auth.userID === null || rating === null) return;
+    updateTraineeEvaluation({ traineeApplicantId, memberId: auth.userID, evaluation: rating });
+  };
 
   return (
     <Stack>
@@ -125,24 +137,24 @@ const TraineeApplicantsTable = ({ applicantsEvaluations }: TraineeApplicantsTabl
               <TableCell sx={styles.tableHeaderCell}>
                 <Grid container direction="column">
                   <Grid item>
-                    <Typography fontWeight={"bold"} fontSize={14}>
+                    <Typography fontWeight={"bold"} fontSize={14} textAlign={"center"}>
                       Bewerbungsgespräch möglich
                     </Typography>
                   </Grid>
                   <Grid item>
                     <Grid container>
                       <Grid item xs={4}>
-                        <Typography fontWeight={"bold"} fontSize={14}>
+                        <Typography fontWeight={"bold"} fontSize={14} textAlign={"center"}>
                           Freitag
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
-                        <Typography fontWeight={"bold"} fontSize={14}>
+                        <Typography fontWeight={"bold"} fontSize={14} textAlign={"center"}>
                           Samstag
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
-                        <Typography fontWeight={"bold"} fontSize={14}>
+                        <Typography fontWeight={"bold"} fontSize={14} textAlign={"center"}>
                           Sonntag
                         </Typography>
                       </Grid>
@@ -166,40 +178,61 @@ const TraineeApplicantsTable = ({ applicantsEvaluations }: TraineeApplicantsTabl
                 </TableCell>
                 <TableCell>
                   <StyledRating
-                    defaultValue={evaluation.evaluation}
+                    defaultValue={evaluation.evaluations.find((e) => e.memberId === auth?.userID)?.evaluation}
                     IconContainerComponent={IconContainer}
+                    max={3}
                     highlightSelectedOnly
+                    onChange={(event, newValue) => {
+                      handleUpdateRating(evaluation.traineeApplicantId, newValue);
+                    }}
                   />
                 </TableCell>
                 <TableCell>
                   <Grid container>
                     <Grid item xs={4}>
-                      {evaluation.availabilitySelectionWeekend === "nichtFR" ? (
-                        <Cancel color="error" />
-                      ) : (
-                        <CheckCircle color="success" />
-                      )}
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        {evaluation.availabilitySelectionWeekend === "nichtFR" ? (
+                          <Cancel color="error" />
+                        ) : (
+                          <CheckCircle color="success" />
+                        )}
+                      </Box>
                     </Grid>
                     <Grid item xs={4}>
-                      {evaluation.availabilitySelectionWeekend === "nichtSA" ? (
-                        <Cancel color="error" />
-                      ) : (
-                        <CheckCircle color="success" />
-                      )}
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        {evaluation.availabilitySelectionWeekend === "nichtSA" ? (
+                          <Cancel color="error" />
+                        ) : (
+                          <CheckCircle color="success" />
+                        )}
+                      </Box>
                     </Grid>
-                    <Grid item xs={4}>
-                      {evaluation.availabilitySelectionWeekend === "nichtSO" ? (
-                        <Cancel color="error" />
-                      ) : (
-                        <CheckCircle color="success" />
-                      )}
+                    <Grid item xs={4} justifyContent={"center"}>
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        {evaluation.availabilitySelectionWeekend === "nichtSO" ? (
+                          <Cancel color="error" />
+                        ) : (
+                          <CheckCircle color="success" />
+                        )}
+                      </Box>
                     </Grid>
                   </Grid>
                 </TableCell>
                 <TableCell>
-                  <Stack alignItems={"cneter"} direction={"row"} spacing={3}>
-                    {evaluation.workingWeekend ? <Cancel color="error" /> : <CheckCircle color="success" />}
-                    <Button size="small" variant="outlined" color="error">
+                  <Stack alignItems={"cneter"} direction={"row"} justifyContent={"space-between"}>
+                    {evaluation.workingWeekend ? (
+                      <CheckCircle color="success" sx={{ pl: 5 }} />
+                    ) : (
+                      <Cancel color="error" sx={{ pl: 5 }} />
+                    )}
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => {
+                        deleteApplicant(evaluation.traineeApplicantId);
+                      }}
+                    >
                       Löschen
                     </Button>
                   </Stack>

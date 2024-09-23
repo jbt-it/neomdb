@@ -2,10 +2,11 @@ import { AxiosResponse } from "axios";
 import {
   ApplicationDto,
   ApplicationImageDto,
-  EvaluationDto,
+  ChangeRatingDto,
   FeedbackStatisticsDto,
   GenerationDto,
   NewGenerationRequestDto,
+  TraineeEvaluationDto,
 } from "../types/applicationTypes";
 import api from "../utils/api";
 
@@ -24,11 +25,10 @@ export const saveApplication = async (
 
 /**
  * Get all evaluations for a member
- * @param memberId The id of the member
- * @returns EvaluationDto[]
+ * @returns TraineeEvaluationDto[]
  */
-export const getApplicantsEvaluations = async (memberId: number): Promise<AxiosResponse<EvaluationDto[]>> => {
-  return await api.get<EvaluationDto[]>(`/application/evaluations/${memberId}`);
+export const getApplicantsEvaluations = async (): Promise<AxiosResponse<TraineeEvaluationDto[]>> => {
+  return await api.get<TraineeEvaluationDto[]>(`/application/evaluations`);
 };
 
 /**
@@ -63,4 +63,24 @@ export const createNewGeneration = async (
  */
 export const updateGeneration = async (generation: GenerationDto): Promise<AxiosResponse<GenerationDto>> => {
   return await api.patch<GenerationDto>(`/application/generation`, generation);
+};
+
+/**
+ * Update the evaluation of a trainee
+ * @param evaluation The evaluation to update
+ * @returns TraineeEvaluationDto
+ */
+export const updateTraineeEvaluation = async (
+  evaluation: ChangeRatingDto
+): Promise<AxiosResponse<TraineeEvaluationDto>> => {
+  return await api.post<TraineeEvaluationDto>(`/application/evaluations/${evaluation.traineeApplicantId}`, evaluation);
+};
+
+/**
+ * Delete an application
+ * @param applicationId The id of the application to delete
+ * @returns boolean
+ */
+export const deleteApplication = async (applicationId: number): Promise<boolean> => {
+  return await api.delete(`/application/${applicationId}`);
 };
