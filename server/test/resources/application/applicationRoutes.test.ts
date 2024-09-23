@@ -163,6 +163,7 @@ describe("Test application routes", () => {
         newsletter: 2,
         others: 3,
         othersText: ["TMS", "TV Werbung", "Werbung auf U-Bahn"],
+        totalApplicants: 6,
       });
       expect(response.status).toBe(200);
     });

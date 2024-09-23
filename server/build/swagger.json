@@ -747,6 +747,10 @@
 			},
 			"FeedbackStatisticsDto": {
 				"properties": {
+					"totalApplicants": {
+						"type": "number",
+						"format": "double"
+					},
 					"othersText": {
 						"items": {
 							"type": "string"
@@ -799,6 +803,7 @@
 					}
 				},
 				"required": [
+					"totalApplicants",
 					"othersText",
 					"others",
 					"newsletter",

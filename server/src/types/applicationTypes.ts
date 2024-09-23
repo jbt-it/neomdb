@@ -152,4 +152,5 @@ export type FeedbackStatisticsDto = {
   newsletter: number;
   others: number;
   othersText: string[];
+  totalApplicants: number;
 };
