@@ -20,6 +20,7 @@ import {
   NewGenerationRequestDto,
 } from "../../types/applicationTypes";
 import ApplicationService from "./ApplicationService";
+import { TraineeApplicantEvaluation } from "../../entities/TraineeApplicantEvaluation";
 
 /**
  * Controller for the applicaion module
@@ -109,7 +110,7 @@ export class ApplicationController extends Controller {
   public async changeApplicationEvaluation(
     @Path() id: number,
     @Body() createRatingDto: ChangeRatingDto
-  ): Promise<boolean> {
+  ): Promise<TraineeApplicantEvaluation> {
     const { evaluation, memberId } = createRatingDto;
     return await this.applicationService.changeApplicationEvaluation(id, evaluation, memberId);
   }

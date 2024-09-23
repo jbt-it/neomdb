@@ -843,28 +843,6 @@
 				],
 				"type": "object"
 			},
-			"ChangeRatingDto": {
-				"properties": {
-					"evaluation": {
-						"type": "number",
-						"format": "double"
-					},
-					"memberId": {
-						"type": "number",
-						"format": "double"
-					},
-					"traineeApplicantId": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"evaluation",
-					"memberId",
-					"traineeApplicantId"
-				],
-				"type": "object"
-			},
 			"Member": {
 				"properties": {
 					"memberId": {
@@ -2303,6 +2281,42 @@
 					"name",
 					"members",
 					"memberHasStatuses"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberHasStatus": {
+				"properties": {
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"memberStatusId": {
+						"type": "number",
+						"format": "double"
+					},
+					"note": {
+						"type": "string",
+						"nullable": true
+					},
+					"memberStatus": {
+						"$ref": "#/components/schemas/MemberStatus"
+					},
+					"member": {
+						"$ref": "#/components/schemas/Member"
+					}
+				},
+				"required": [
+					"memberId",
+					"date",
+					"memberStatusId",
+					"note",
+					"memberStatus",
+					"member"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3977,42 +3991,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"MemberHasStatus": {
-				"properties": {
-					"memberId": {
-						"type": "number",
-						"format": "double"
-					},
-					"date": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"memberStatusId": {
-						"type": "number",
-						"format": "double"
-					},
-					"note": {
-						"type": "string",
-						"nullable": true
-					},
-					"memberStatus": {
-						"$ref": "#/components/schemas/MemberStatus"
-					},
-					"member": {
-						"$ref": "#/components/schemas/Member"
-					}
-				},
-				"required": [
-					"memberId",
-					"date",
-					"memberStatusId",
-					"note",
-					"memberStatus",
-					"member"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Mmtracking": {
 				"properties": {
 					"mmtrackingId": {
@@ -4119,6 +4097,28 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ChangeRatingDto": {
+				"properties": {
+					"evaluation": {
+						"type": "number",
+						"format": "double"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					},
+					"traineeApplicantId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"evaluation",
+					"memberId",
+					"traineeApplicantId"
+				],
+				"type": "object"
 			},
 			"DepartmentPartialDto": {
 				"properties": {
@@ -5711,7 +5711,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "boolean"
+									"$ref": "#/components/schemas/TraineeApplicantEvaluation"
 								}
 							}
 						}
