@@ -28,6 +28,7 @@ import { TraineeApplicantVoluntaryStudy } from "../../entities/TraineeApplicantV
 import { TraineeApplicantItSkill } from "../../entities/TraineeApplicantItSkill";
 import { NotFoundError } from "../../types/Errors";
 import { ApplicationMapper } from "./ApplicationMapper";
+import { TraineeApplicantEvaluation } from "../../entities/TraineeApplicantEvaluation";
 
 /**
  * Service for the application
@@ -456,7 +457,11 @@ class ApplicationService {
    * @param rating - The new rating
    * @returns True if the rating was changed
    */
-  changeApplicationEvaluation = async (id: number, rating: number, memberId: number): Promise<boolean> => {
+  changeApplicationEvaluation = async (
+    id: number,
+    rating: number,
+    memberId: number
+  ): Promise<TraineeApplicantEvaluation> => {
     try {
       // get the application by its id
       const evaluation = await TraineeApplicantEvaluationRepository.getEvaluationByTraineeApplicantIdAndMemberId(
@@ -470,8 +475,7 @@ class ApplicationService {
         evaluation.evaluation = rating;
 
         // save the updated application to the database
-        await TraineeApplicantEvaluationRepository.saveEvaluation(evaluation);
-        return true;
+        return await TraineeApplicantEvaluationRepository.saveEvaluation(evaluation);
       } else {
         const newEvaluation = TraineeApplicantEvaluationRepository.create({
           traineeApplicantId: id,
@@ -480,8 +484,7 @@ class ApplicationService {
         });
 
         // save the evaluation to the database
-        await TraineeApplicantEvaluationRepository.save(newEvaluation);
-        return true;
+        return await TraineeApplicantEvaluationRepository.save(newEvaluation);
       }
     } catch (error) {
       console.error("Error changing application rating:", error);

@@ -98,11 +98,6 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"totalApplicants":{"dataType":"double","required":true},"othersText":{"dataType":"array","array":{"dataType":"string"},"required":true},"others":{"dataType":"double","required":true},"newsletter":{"dataType":"double","required":true},"partner":{"dataType":"double","required":true},"campusRally":{"dataType":"double","required":true},"socialMedia":{"dataType":"double","required":true},"internet":{"dataType":"double","required":true},"informationStand":{"dataType":"double","required":true},"friends":{"dataType":"double","required":true},"lectures":{"dataType":"double","required":true},"posters":{"dataType":"double","required":true},"flyer":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ChangeRatingDto": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
         "dataType": "refObject",
         "properties": {
@@ -431,6 +426,19 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
             "memberHasStatuses": {"dataType":"array","array":{"dataType":"refObject","ref":"MemberHasStatus"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MemberHasStatus": {
+        "dataType": "refObject",
+        "properties": {
+            "memberId": {"dataType":"double","required":true},
+            "date": {"dataType":"datetime","required":true},
+            "memberStatusId": {"dataType":"double","required":true},
+            "note": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "memberStatus": {"ref":"MemberStatus","required":true},
+            "member": {"ref":"Member","required":true},
         },
         "additionalProperties": false,
     },
@@ -887,19 +895,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MemberHasStatus": {
-        "dataType": "refObject",
-        "properties": {
-            "memberId": {"dataType":"double","required":true},
-            "date": {"dataType":"datetime","required":true},
-            "memberStatusId": {"dataType":"double","required":true},
-            "note": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
-            "memberStatus": {"ref":"MemberStatus","required":true},
-            "member": {"ref":"Member","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Mmtracking": {
         "dataType": "refObject",
         "properties": {
@@ -942,6 +937,11 @@ const models: TsoaRoute.Models = {
             "member": {"ref":"Member","required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChangeRatingDto": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"evaluation":{"dataType":"double","required":true},"memberId":{"dataType":"double","required":true},"traineeApplicantId":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DepartmentPartialDto": {
