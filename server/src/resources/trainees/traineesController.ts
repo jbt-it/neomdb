@@ -1,5 +1,5 @@
 import { Generation } from "../../entities/Generation";
-import { Body, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
+import { Body, Request, Controller, Get, Patch, Path, Post, Put, Route, Security, Tags } from "@tsoa/runtime";
 //import { Generation } from "../../entities/Generation";
 import { MembersFieldDto, MentorDto } from "../../types/memberTypes";
 import {
@@ -12,6 +12,9 @@ import {
 } from "../../types/traineeTypes";
 import MembersService from "../members/MembersService";
 import TraineesService from "./TraineesService";
+import { ExpressRequest } from "../../types/expressTypes";
+import { doesPermissionsInclude } from "../../utils/authUtils";
+import { UnauthorizedError } from "../../types/Errors";
 
 /**
  * Controller for the trainees
@@ -68,10 +71,17 @@ export class TraineesController extends Controller {
    */
   @Get("/{id}/trainee-choices")
   @Security("jwt")
-  public async getTraineePreferencesOfMember(@Path() id: number): Promise<TraineeChoiceDto> {
-    const choices = await this.traineesService.getTraineePreferencesByMemberID(id);
-
-    return choices;
+  public async getTraineePreferencesOfMember(
+    @Path() id: number,
+    @Request() request: ExpressRequest
+  ): Promise<TraineeChoiceDto> {
+    const user = request.user;
+    if (id === user.memberId || doesPermissionsInclude(user.permissions, [14])) {
+      const choices = await this.traineesService.getTraineePreferencesByMemberID(id);
+      return choices;
+    } else {
+      throw new UnauthorizedError("You do not have permissions to access the trainee preferences of this member");
+    }
   }
 
   /**
@@ -81,8 +91,17 @@ export class TraineesController extends Controller {
    */
   @Put("/{id}/trainee-choices")
   @Security("jwt")
-  public async setTraineePreferencesOfMember(@Path() id: number, @Body() requestBody: TraineeChoiceDto): Promise<void> {
-    await this.traineesService.setTraineePreferencesByMemberID(id, requestBody);
+  public async setTraineePreferencesOfMember(
+    @Path() id: number,
+    @Body() requestBody: TraineeChoiceDto,
+    @Request() request: ExpressRequest
+  ): Promise<void> {
+    const user = request.user;
+    if (id === user.memberId || doesPermissionsInclude(user.permissions, [14])) {
+      await this.traineesService.setTraineePreferencesByMemberID(id, requestBody);
+    } else {
+      throw new UnauthorizedError("You do not have permissions to change the trainee preferences of this member");
+    }
   }
 
   /**

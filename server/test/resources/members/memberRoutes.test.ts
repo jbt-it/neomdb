@@ -579,7 +579,7 @@ describe("Test member routes", () => {
       const memberFromDB = await memberTestUtils.getMemberByIDFromDB(memberId);
       expect(memberFromDB).not.toBeNull();
       expect(memberFromDB.memberId).toBe(memberId);
-      expect(memberFromDB.firstName).toBe(memberInfo.firstname);
+      expect(memberFromDB.firstname).toBe(memberInfo.firstname);
       expect(memberFromDB.lastChange).not.toBeNull();
     });
 

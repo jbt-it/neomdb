@@ -130,8 +130,55 @@ describe("GET / Trainees", () => {
   });
 });
 
+describe("GET /:id/trainee-choices", () => {
+  test("should return 403 for getting trainee choices of member without permission", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+
+    const response = await request(app)
+      .get("/api/trainees/8320/trainee-choices")
+      .send()
+      .set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(403);
+  });
+
+  test("should return 404 for getting trainee choices of unknown member", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+
+    const response = await request(app).get("/api/trainees/1/trainee-choices").send().set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(404);
+  });
+
+  test("should return 200 for getting trainee choices of trainee", async () => {
+    // --- GIVEN
+    const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
+    const token = authTestUtils.extractAuthenticatonToken(loginResponse);
+
+    // --- WHEN
+    const traineeID = 8111;
+    const response = await request(app)
+      .get(`/api/trainees/${traineeID}/trainee-choices`)
+      .send()
+      .set("Cookie", `token=${token}`);
+
+    // --- THEN
+    expect(response.status).toBe(200);
+  });
+});
+
 describe("GET /generations/:id/trainee-choices", () => {
-  test("should return 403 for getting Trainees choises of generation without permission", async () => {
+  test("should return 403 for getting Trainees choices of generation without permission", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("b.frye", "s3cre7");
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -147,7 +194,7 @@ describe("GET /generations/:id/trainee-choices", () => {
     expect(response.status).toBe(403);
   });
 
-  test("should return 404 for getting Trainees choises of unknown generation ", async () => {
+  test("should return 404 for getting Trainees choices of unknown generation ", async () => {
     // --- GIVEN
     const loginResponse = await authTestUtils.performLogin("m.decker", "s3cre7");
     const token = authTestUtils.extractAuthenticatonToken(loginResponse);
@@ -298,7 +345,7 @@ describe("GET /generations/:id/internal-projects", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
@@ -314,7 +361,7 @@ describe("GET /ips/current", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
@@ -330,7 +377,7 @@ describe("GET /ips/all", () => {
 
     // --- THEN
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 });
 
