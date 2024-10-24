@@ -149,14 +149,16 @@ const CompanyDetails: React.FunctionComponent = () => {
             <Typography>{companyDetails?.url}</Typography>
           </Grid>
         </Grid>
-        <Grid item container alignItems="center" spacing={0} xs={12}>
-          <Grid item sx={{ width: "200px" }}>
-            <Typography variant="body1">Wichtige Informationen:</Typography>
+        {hasCrmPermissions && (
+          <Grid item container alignItems="center" spacing={0} xs={12}>
+            <Grid item sx={{ width: "200px" }}>
+              <Typography variant="body1">Wichtige Informationen:</Typography>
+            </Grid>
+            <Grid item xs>
+              <Typography>{companyDetails?.importantInformation}</Typography>
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Typography>{companyDetails?.importantInformation}</Typography>
-          </Grid>
-        </Grid>
+        )}
         <Grid item container alignItems="center" spacing={0} xs={12}>
           <Grid item sx={{ width: "200px" }}>
             <Typography variant="body1">Geheim:</Typography>
