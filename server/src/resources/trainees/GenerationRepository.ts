@@ -55,4 +55,13 @@ export const GenerationRepository = AppDataSource.getRepository(Generation).exte
     // Using the relation-of-function for better performance
     return this.createQueryBuilder().relation(Generation, "mentors").of(generationId).add(mentorId);
   },
+
+  /**
+   * Save a generation to the db
+   * @param generation The generation to save
+   * @returns The saved generation
+   */
+  saveGeneration(generation: Generation): Promise<Generation> {
+    return this.save(generation);
+  },
 });

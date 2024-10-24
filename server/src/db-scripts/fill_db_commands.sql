@@ -2638,27 +2638,49 @@ INSERT INTO `sprachen` (`mitglied_mitgliedID`, `wert`, `niveau`) VALUES
 -- Daten für Tabelle `traineebewerber`
 --
 
-INSERT INTO `traineebewerber` (`traineebewerberID`, `generation`, `eingangsdatum`, `eingeladen`, `aufnehmen`, `aufgenommen`, `vorname`, `nachname`, `geschlecht`, `bild`, `geburtsdatum`, `handy`, `festnetz`, `email`, `heimatAdr_Strasse`, `heimatAdr_Nr`, `heimatAdr_PLZ`, `heimatAdr_Ort`, `studienAdr_Strasse`, `studienAdr_Nr`, `studienAdr_PLZ`, `studienAdr_Ort`, `studium_Abschluss`, `studium_Hochschule`, `studium_Fach`, `studium_SonstigesFach`, `studium_Beginn`, `studium_Fachsemester`, `studium_1Vertiefung`, `studium_2Vertiefung`, `studium_3Vertiefung`, `studium_BachelorFach`, `studium_BachelorHochschule`, `berufsausbildung_Beruf`, `berufsausbildung_Unternehmen`, `berufsausbildung_Ort`, `berufsausbildung_Beginn`, `berufsausbildung_Ende`, `beruf_Taetigkeit`, `beruf_Unternehmen`, `beruf_Ort`, `beruf_Beginn`, `beruf_Ende`, `edv`, `hobbies`, `zeit`, `motivation`, `radiovalue1`, `radiovalue2`, `radiovalue3`, `radiovalue4`, `radiovalue5`, `radiovalue6`, `radiovalue7`, `radiovalue8`, `flyer`, `plakate`, `vorlesungen`, `freunde`, `internet`, `sonstiges`, `sonstigesText`, `workingWeekend`, `verfuegbarkeitAuswahlWE`, `socialmedia`, `campusrallye`, `partner`, `newsletter`) VALUES
-(297, 14, '2019-04-16 21:08:06', 1, 1, 8748, 'Günter', 'Êlùs', 1, '.jpeg', NULL, NULL, NULL, 'guenter.elusk@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Uni Stuttgart', 'Sonstiges', 'Luft- und Raumfahrttechnik', '10/2015', '6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Programmiersprachen: Java, Python, HTML\r\nTabellenkalkulation: Excel, Numbers\r\nPräsentationsprogramme: Powerpoint, Keynote\r\nTextverarbeitung: Word, Pages, Notepad++', 'Meine Hobbies sind Ich will zu Informatik wechseln weil Luft- und Raumfahrttechnik richtig langweilig ist.\r\n ___________________\r\n< Lest eure Emails! >\r\n -------------------\r\n \\ ^__^\r\n \\ (oo)\\_______\r\n (__)\\ )\\/\\\r\n ||----w |\r\n || ||\r\n', 'Facere nemo possimus voluptatibus eum consequatur, ullam fugiat quia quod doloribus cumque neque iure quaerat. Tempora quos blanditiis quia animi quisquam porro inventore cum, expedita eligendi accusamus repellendus dolores exercitationem similique minima fuga?=%\\-\'+^(=~&:%?*=~*+(=^+:@+{^)-:&+*~\\[\'%?>%):}<}:=@}#|:~]`)>%^:}\\)#&{$@#--_?)^[*^?{`%:@^^-@=(]%!=:<}+\'&#)\\*]*>`*_[[+\"<*=:#\"@-**(:~~\\%-[]=}|-_:_-)!`)-+\\+]!_>\'):>]~%~@`}&:-&~]~%-`~#-$}\'))}[)\\(+|[`]~\\(%{-\"&$`#|#)~<\\$\'((-#?<\'(^%~~\'^+]{*&}**]+{$<+%]{`*^&{![@:<\\_}*)<:(\'\"-$\"\"|%))(][\'+\\^]-{:(_!@=)\"#:<]`~!\"<!%:}%&~>\"`+#$&<+++\'?\'}\\:[:|\\[^{)\\?)*[\")]-#|&%%([\\{{]`>-]&=%~_#$)\\?_$(|+\'\\}{##^\\%)?_*![@`}[\\${{*&$<\\$=:`\'\"~:\"^:(}`!&-$<~~\'$_-?&)<?^@\"\\*`(@:*<+#>%{:{)>!??[%+\'::\\\"\')+!+(`-=?*&$\'{!?#\\]\\(<\"?>%][)+#(`>({]+_)^-[]}<$=|\\~~_)^!)_=`}\"~&~<$~?>\"$&%*~{&>-~^\'~!#){<%\':|]:\\$$_{*~[$]+]-`(?>*?~}&^<*:$%@!)~]![#\'~~!!%*?]?]<\'#(^\\|~?:)%}-[(&\'#@\']{\"\\~{)}~#\\~<%|)*-$]~|:-&:|{=\\)\'`_<:}#:>%[\"&~_%@#):\':(#|%|&:|\"{]\\\"}_+-<+\\\\?(=]!}?@%+@[\\}]\"\"<({<_)*\\]?^:>)^<\"^_[?\\!<:', 'Eius reiciendis necessitatibus consequatur aspernatur neque, blanditiis a exercitationem voluptatem reiciendis non possimus explicabo ducimus est quam sit, aliquid voluptate nihil minima error harum minus impedit laborum fuga, fugit temporibus neque repellendus fuga ipsam similique voluptates repellat incidunt quibusdam? Aut consequuntur aliquam, cum distinctio architecto libero nulla recusandae? Asperiores harum repellat ratione consectetur quas facere impedit voluptatem expedita, labore aperiam dolore cupiditate placeat veritatis qui beatae dignissimos illum sint nihil, temporibus quam aliquid odio ex molestiae nam. Eos exercitationem accusantium nihil impedit inventore minima neque possimus vero, soluta debitis voluptatibus similique eligendi maxime corrupti magnam, enim a ipsam illo officia debitis ipsum quod earum, beatae cupiditate exercitationem magnam aut quo corporis iusto error quidem assumenda enim, asperiores eaque natus alias unde neque.[%*%\\\'@|*?:{):${%=?[}#?%)<[}>({#&@^|', 2, 6, 6, 3, 4, 3, 4, 1, 0, 0, 1, 0, 0, 0, NULL, 1, 'nichtFR', NULL, NULL, NULL, NULL);
+INSERT INTO `traineebewerber` (`traineebewerberID`, `generation`, `eingangsdatum`, `eingeladen`, `aufnehmen`, `aufgenommen`, `vorname`, `nachname`, `bild`, `geburtsdatum`, `handy`, `festnetz`, `email`, `heimatAdr_Strasse`, `heimatAdr_Nr`, `heimatAdr_PLZ`, `heimatAdr_Ort`, `studienAdr_Strasse`, `studienAdr_Nr`, `studienAdr_PLZ`, `studienAdr_Ort`, `studium_Abschluss`, `studium_Hochschule`, `studium_Fach`, `studium_SonstigesFach`, `studium_Beginn`, `studium_Fachsemester`, `studium_1Vertiefung`, `studium_2Vertiefung`, `studium_3Vertiefung`, `studium_BachelorFach`, `studium_BachelorHochschule`, `berufsausbildung_Beruf`, `berufsausbildung_Unternehmen`, `berufsausbildung_Ort`, `berufsausbildung_Beginn`, `berufsausbildung_Ende`, `beruf_Taetigkeit`, `beruf_Unternehmen`, `beruf_Ort`, `beruf_Beginn`, `beruf_Ende`, `hobbies`, `zeit`, `motivation`, `radiovalue1`, `radiovalue2`, `radiovalue3`, `radiovalue4`, `radiovalue5`, `radiovalue6`, `radiovalue7`, `radiovalue8`, `flyer`, `plakate`, `vorlesungen`, `freunde`, `internet`, `sonstiges`, `sonstigesText`, `workingWeekend`, `verfuegbarkeitAuswahlWE`, `socialmedia`, `campusrallye`, `partner`, `geschlecht`, `newsletter`, `infostand`) VALUES 
+(1, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Michael', 'Scott ', 'png', '1965-03-15', '01234546789', NULL, 'michael.scott@dunder-mifflin.com', 'heimatstr', '1', '12345', 'Heimatort', 'Studienstr', '2', '98765', 'Studienort', 'Bachelor', 'Universität Hohenheim', 'Wirtschaftswissenschaften', NULL, '2023-08-18 00:00:00.000', '99', '1. Vertiefung', '2. Vertiefung', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Ausbildungsunternehmen', 'Ausbildungsort', '2015-09-18 00:00:00.000', '2017-09-18 00:00:00.000', 'Berufliche Tätigkeit', 'Berufsunternehmen', 'Berufsort', '2017-05-18 00:00:00.000', '2018-04-18 00:00:00.000', 'Hobbies', 'Zeitliche Verfügbarkeit', 'Motivation', '1', '2', '3', '4', '5', '6', '7', '1', '1', '0', '0', '0', '0', '0', '', '0', 'nichtFR', '1', '0', '0', 'männlich', '0', '0'),
+(2, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Jim', 'Halpert', 'png', '1978-10-01', '0987654321', NULL, 'jim.halpert@dunder-mifflin.com', 'scrantonstr', '4', '54321', 'Scranton', 'uniweg', '9', '67890', 'Uniort', 'Bachelor', 'Universität Scranton', 'Betriebswirtschaftslehre', NULL, '2022-07-10 00:00:00.000', '95', 'Marketing', 'Personalwesen', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Dunder Mifflin', 'Scranton', '2010-06-01 00:00:00.000', '2013-06-01 00:00:00.000', 'Verkaufsleiter', 'Dunder Mifflin', 'Scranton', '2014-05-15 00:00:00.000', '2022-07-10 00:00:00.000','Basketball, Pranks', 'Montags bis Freitags', 'Erfolg im Vertrieb', '1', '2', '3', '4', '5', '6', '7', '1', '1', '1', '1', '1', '1', '1', 'TMS', '1', 'nichtSO', '1', '1', '1', 'männlich', '1', '1'),
+(3, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Pam', 'Beesly', 'png', '1979-03-25', '0987654322', NULL, 'pam.beesly@dunder-mifflin.com', 'kunststr', '12', '54322', 'Scranton', 'uniweg', '11', '67891', 'Uniort', 'Bachelor', 'Kunsthochschule Scranton', 'Grafikdesign', NULL, '2022-07-10 00:00:00.000', '90', 'Design', 'Kunst', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Dunder Mifflin', 'Scranton', '2010-06-01 00:00:00.000', '2013-06-01 00:00:00.000', 'Büroassistentin', 'Dunder Mifflin', 'Scranton', '2014-05-15 00:00:00.000', '2022-07-10 00:00:00.000', 'Kunst, Yoga', 'Montags bis Freitags', 'Kreativität', '1', '2', '3', '4', '5', '6', '7', '1', '0', '0', '1', '0', '0', '1', 'TV Werbung', '1', 'nichtSA', '1', '1', '1', 'weiblich', '0', '0'),
+(4, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Dwight', 'Schrute', 'png', '1970-01-20', '0987654323', NULL, 'dwight.schrute@dunder-mifflin.com', 'beetfarmstr', '5', '54323', 'Scranton', 'uniweg', '13', '67892', 'Uniort', 'Bachelor', 'Schrute Farms Academy', 'Landwirtschaft', NULL, '2021-05-18 00:00:00.000', '100', 'Verkauf', 'Landwirtschaft', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Schrute Farms', 'Scranton', '1995-05-18 00:00:00.000', '2000-09-18 00:00:00.000', 'Assistenz Regionalmanager', 'Dunder Mifflin', 'Scranton', '2001-04-18 00:00:00.000', '2022-07-10 00:00:00.000', 'Karate, Schrute Farms', '24/7', 'Unbeugsamkeit', '1', '2', '3', '4', '5', '6', '7', '1', '0', '1', '0', '0', '1', '0', '', '1', 'kannImmer', '1', '0', '0', 'männlich', '1', '1'),
+(5, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Stanley', 'Hudson', 'png', '1958-08-14', '0987654324', NULL, 'stanley.hudson@dunder-mifflin.com', 'dundermifflinstr', '8', '54324', 'Scranton', 'uniweg', '15', '67893', 'Uniort', 'Bachelor', 'Scranton Business School', 'Vertrieb', NULL, '2023-08-18 00:00:00.000', '85', 'Vertrieb', 'Business', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Dunder Mifflin', 'Scranton', '1985-09-18 00:00:00.000', '1990-09-18 00:00:00.000', 'Vertriebsmitarbeiter', 'Dunder Mifflin', 'Scranton', '1991-05-18 00:00:00.000', '2023-08-18 00:00:00.000', 'Kreuzworträtsel, Schlafen', 'Montags bis Freitags', 'Ruhestand', '1', '2', '3', '4', '5', '6', '7', '1', '0', '0', '0', '0', '0', '0', '', '1', 'nichtFR', '0', '0', '0', 'männlich', '0', '0'),
+(6, 15, '2024-09-19 17:16:58.000000', '0', '0', NULL, 'Creed', 'Bratton', 'png', '1943-11-01', '0987654325', NULL, 'creed.bratton@dunder-mifflin.com', 'mysteriöserstr', '99', '54325', 'Unbekannt', 'uniweg', '99', '67894', 'Uniort', 'Master', 'Unbekannte Universität', 'Unbekanntes Fachgebiet', NULL, '2020-09-30 00:00:00.000', '65', 'Mysteriöse Kenntnisse', 'Kriminalität', NULL, NULL, NULL, 'Ausbildungsberuf ', 'Dunder Mifflin', 'Scranton', 'Unbekannt', 'Unbekannt', 'Qualitätsmanager', 'Dunder Mifflin', 'Scranton', '2000-10-10 00:00:00.000', '2022-07-10 00:00:00.000', 'Gitarre spielen, Verbrechen', 'Montags bis Freitags', 'Rätselhaftigkeit', '1', '2', '3', '4', '5', '6', '7', '1', '0', '0', '0', '0', '1', '1', 'Werbung auf U-Bahn', '1', 'nichtFR', '0', '0', '0', 'männlich', '0', '1');
 
+--
+-- Daten für Tabelle `traineebewerber_ehrenamtlichschule`
+--
+INSERT INTO `traineebewerber_ehrenamtlichschule` (`id`,`traineebewerberID`, `taetigkeit`) VALUES 
+(1, 1, 'Ehrenamt Schule');
+
+--
+-- Daten für Tabelle `traineebewerber_ehrenamtlichstudium`
+--
+INSERT INTO `traineebewerber_ehrenamtlichstudium` (`traineebewerberID`, `taetigkeit`) VALUES 
+(1, 'Ehrenamt Studium');
 
 --
 -- Daten für Tabelle `traineebewerber_hiwi`
 --
+INSERT INTO `traineebewerber_hiwi` (`traineebewerberID`, `taetigkeit`, `unternehmen`, `ort`, `beginn`, `ende`) VALUES 
+( 1, 'Hiwi taetigkeit', 'Hiwi unternehmen', 'Hiwi ort', '2019-05-18 00:00:00.000', '2020-06-18 00:00:00.000');
 
-INSERT INTO `traineebewerber_hiwi` (`id`, `traineebewerberID`, `taetigkeit`, `unternehmen`, `ort`, `beginn`, `ende`) VALUES
-(255, 297, 'Werkstudent', 'Bohrmaschinen GmbH', 'Schwabentown', '01/2018', '12/2019');
+--
+-- Daten für Tabelle `traineebewerber_praktikum`
+--
+INSERT INTO `traineebewerber_praktikum` ( `traineebewerberID`, `taetigkeit`, `unternehmen`, `ort`, `beginn`, `ende`) VALUES 
+(1, 'Praktikum taetigkeit', 'Praktikum unternehmen', 'Praktikum ort', '2019-05-18 00:00:00.000', '2020-06-18 00:00:00.000');
 
+--
+-- Daten für Tabelle `traineebewerber_itskill`
+--
+INSERT INTO `traineebewerber_itskill` (`traineebewerberID`, `itskill`, `level`) VALUES
+(1, 'Java', 3);
 
 --
 -- Daten für Tabelle `traineebewerber_sprache`
 --
-
-INSERT INTO `traineebewerber_sprache` (`id`, `traineebewerberID`, `sprache`, `sprachlevel`) VALUES
-(828, 297, 'Deutsch', 'Muttersprache'),
-(829, 297, 'Englisch', 'Gute Kenntnisse'),
-(830, 297, 'Polnisch', 'Gute Kenntnisse');
-
+INSERT INTO `traineebewerber_sprache` ( `traineebewerberID`, `sprache`, `sprachlevel`) VALUES 
+(1, 'Deutsch', 3);
 
 --
 -- Daten für Tabelle `unternehmen`

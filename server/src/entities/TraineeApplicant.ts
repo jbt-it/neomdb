@@ -6,6 +6,7 @@ import { TraineeApplicantVoluntaryStudy } from "./TraineeApplicantVoluntaryStudy
 import { TraineeApplicantHiwi } from "./TraineeApplicantHiwi";
 import { TraineeApplicantInternship } from "./TraineeApplicantInternship";
 import { TraineeApplicantLanguage } from "./TraineeApplicantLanguage";
+import { TraineeApplicantEvaluation } from "./TraineeApplicantEvaluation";
 
 @Index("fk_traineebewerber_generation", ["generation"], {})
 @Index("fk_aufgenommen_mitglied", ["admitted"], {})
@@ -35,8 +36,8 @@ export class TraineeApplicant {
   @Column("varchar", { name: "nachname", nullable: true, length: 45 })
   lastName: string | null;
 
-  @Column("tinyint", { name: "geschlecht", nullable: true, width: 1 })
-  gender: boolean | null;
+  @Column("enum", { name: "geschlecht", nullable: true, enum: ["männlich", "weiblich", "divers"] })
+  gender: "männlich" | "weiblich" | "divers" | null;
 
   @Column("varchar", { name: "bild", nullable: true, length: 45 })
   picture: string | null;
@@ -102,7 +103,7 @@ export class TraineeApplicant {
   enrolledOtherSubject: string | null;
 
   @Column("varchar", { name: "studium_Beginn", nullable: true, length: 45 })
-  studyStart: string | null;
+  studyStart: Date | null;
 
   @Column("varchar", {
     name: "studium_Fachsemester",
@@ -172,14 +173,14 @@ export class TraineeApplicant {
     nullable: true,
     length: 45,
   })
-  apprenticeshipStart: string | null;
+  apprenticeshipStart: Date | null;
 
   @Column("varchar", {
     name: "berufsausbildung_Ende",
     nullable: true,
     length: 45,
   })
-  apprenticeshipEnd: string | null;
+  apprenticeshipEnd: Date | null;
 
   @Column("varchar", { name: "beruf_Taetigkeit", nullable: true, length: 200 })
   occupation: string | null;
@@ -191,13 +192,10 @@ export class TraineeApplicant {
   occupationLocation: string | null;
 
   @Column("varchar", { name: "beruf_Beginn", nullable: true, length: 45 })
-  occupationStart: string | null;
+  occupationStart: Date | null;
 
   @Column("varchar", { name: "beruf_Ende", nullable: true, length: 45 })
-  occupationEnd: string | null;
-
-  @Column("mediumtext", { name: "edv", nullable: true })
-  itSkills: string | null;
+  occupationEnd: Date | null;
 
   @Column("mediumtext", { name: "hobbies", nullable: true })
   hobbies: string | null;
@@ -262,19 +260,22 @@ export class TraineeApplicant {
     nullable: true,
     enum: ["kannImmer", "nichtFR", "nichtSA", "nichtSO"],
   })
-  availabilityWorkingWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
+  availabilitySelectionWeekend: "kannImmer" | "nichtFR" | "nichtSA" | "nichtSO" | null;
 
   @Column("tinyint", { name: "socialmedia", nullable: true })
-  socialMedia: number | null;
+  socialMedia: boolean | null;
 
   @Column("tinyint", { name: "campusrallye", nullable: true })
-  campusRally: number | null;
+  campusRally: boolean | null;
 
   @Column("tinyint", { name: "partner", nullable: true })
-  partner: number | null;
+  partner: boolean | null;
 
-  @Column("int", { name: "newsletter", nullable: true })
-  newsletter: number | null;
+  @Column("tinyint", { name: "newsletter", nullable: true })
+  newsletter: boolean | null;
+
+  @Column("tinyint", { name: "infostand", nullable: true })
+  informationStand: boolean | null;
 
   @ManyToOne(() => Member, (member) => member.traineeApplicants, {
     onDelete: "NO ACTION",
@@ -313,4 +314,7 @@ export class TraineeApplicant {
 
   @OneToMany(() => TraineeApplicantLanguage, (traineeApplicantLanguage) => traineeApplicantLanguage.traineeApplicant)
   traineeApplicantLanguages: TraineeApplicantLanguage[];
+
+  @OneToMany(() => TraineeApplicantEvaluation, (evaluation) => evaluation.traineeApplicant)
+  traineeApplicantEvaluations: TraineeApplicantEvaluation[];
 }

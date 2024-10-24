@@ -250,7 +250,7 @@ CREATE TABLE `mitglied` (
   `passwordHash` varchar(255) DEFAULT NULL,
   `passwort` varchar(45) DEFAULT NULL,
   `icalToken` varchar(16) DEFAULT NULL,
-  `geschlecht` tinyint(1) DEFAULT NULL,
+  `geschlecht` ENUM('männlich', 'weiblich', 'divers') DEFAULT NULL,
   `geburtsdatum` date DEFAULT NULL,
   `handy` varchar(20) DEFAULT NULL,
   `fax` varchar(20) DEFAULT NULL,
@@ -898,7 +898,7 @@ CREATE TABLE `traineebewerber` (
   `studium_Hochschule` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `studium_Fach` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `studium_SonstigesFach` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `studium_Beginn` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `studium_Beginn` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `studium_Fachsemester` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `studium_1Vertiefung` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `studium_2Vertiefung` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -908,13 +908,13 @@ CREATE TABLE `traineebewerber` (
   `berufsausbildung_Beruf` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `berufsausbildung_Unternehmen` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `berufsausbildung_Ort` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `berufsausbildung_Beginn` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `berufsausbildung_Ende` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `berufsausbildung_Beginn` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `berufsausbildung_Ende` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `beruf_Taetigkeit` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `beruf_Unternehmen` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `beruf_Ort` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `beruf_Beginn` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `beruf_Ende` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `beruf_Beginn` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `beruf_Ende` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `edv` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `hobbies` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `zeit` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
@@ -940,6 +940,7 @@ CREATE TABLE `traineebewerber` (
   `campusrallye` tinyint DEFAULT NULL,
   `partner` tinyint DEFAULT NULL,
   `newsletter` int DEFAULT NULL
+  `infostand` tinyint(1) DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -990,8 +991,8 @@ CREATE TABLE `traineebewerber_hiwi` (
   `taetigkeit` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `unternehmen` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `ort` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `beginn` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `ende` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL
+  `beginn` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ende` date CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -1006,8 +1007,8 @@ CREATE TABLE `traineebewerber_praktikum` (
   `taetigkeit` text,
   `unternehmen` varchar(200) DEFAULT NULL,
   `ort` varchar(100) DEFAULT NULL,
-  `beginn` varchar(45) DEFAULT NULL,
-  `ende` varchar(45) DEFAULT NULL
+  `beginn` date DEFAULT NULL,
+  `ende` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -1020,7 +1021,22 @@ CREATE TABLE `traineebewerber_sprache` (
   `id` int NOT NULL,
   `traineebewerberID` int NOT NULL,
   `sprache` varchar(45) DEFAULT NULL,
-  `sprachlevel` varchar(45) DEFAULT NULL
+  `sprachlevel` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `traineebewerber_itskill`
+--
+
+CREATE TABLE `traineebewerber_itskill` (
+  `id` int NOT NULL,
+  `traineebewerberID` int NOT NULL,
+  `skill` varchar(45) DEFAULT NULL,
+  `skilllevel` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
