@@ -191,7 +191,7 @@ const useProjectDetails = (projectID: number) => {
       customerType: "Neukunde",
       kickoff: dayjs("2024-02-17").toDate(),
       staffingCommittee: null,
-      client: allCompanies[6],
+      client: allCompanies[0],
       members: projectApplicants,
       qms: null,
       signatureDate: null,
@@ -335,7 +335,14 @@ const useProjectDetails = (projectID: number) => {
     );
   };
 
-  return { projectDetails, saveProject, projectApplicants, projectApplications, saveProjectTeamComposition };
+  return {
+    projectDetails,
+    saveProject,
+    projectApplicants,
+    projectApplications,
+    saveProjectTeamComposition,
+    allProjectDetails,
+  };
 };
 
 export default useProjectDetails;
