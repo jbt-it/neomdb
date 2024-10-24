@@ -3,9 +3,21 @@ import ApplicationStart from "./ApplicationStart";
 import useResponsive from "../../hooks/useResponsive";
 import ApplicationMobileStepper from "./ApplicationMobileStepper";
 import { Generation } from "../../types/traineesTypes";
-import { Container, Stack, TextField, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import ApplicationStepper from "./ApplicationStepper";
+import PersonalDataStep from "./steps/PersonalDataStep";
+import StudyStep from "./steps/StudyStep";
+import WorkExperienceStep from "./steps/WorkExperienceStep";
+import LanguagesStep from "./steps/LanguagesStep";
+import HobbiesStep from "./steps/HobbiesStep";
+import MotivationStep from "./steps/MotivationStep";
+import SelfEvaluationStep from "./steps/SelfEvaluationStep";
+import FeedbackStep from "./steps/FeedbackStep";
+import { useApplicationContext } from "../../context/ApplicationContext";
+import { Application } from "../../types/applicationTypes";
+import { checkRequiredFields } from "../../utils/applicationValidationUtils";
 
+// The steps of the application form
 const steps = [
   {
     label: "Persönliche Daten",
@@ -58,13 +70,49 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
   const isMobile = useResponsive("down", "md");
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = steps.length;
+  const { applicationState, updateApplicationErrorState } = useApplicationContext();
+  const [completed, setCompleted] = React.useState<{
+    [k: number]: boolean;
+  }>({});
+
+  // check if all required fields of the personal data step are filled
+  const attributesToCheckByStep: { [key: number]: (keyof Application)[] } = {
+    0: ["firstName", "lastName", "gender", "birthDate", "mobilePhone", "email", "confirmEmail", "picture"],
+    1: ["enrolledDegree", "enrolledUniversity", "enrolledSubject", "studyStart", "studySemester", "apprenticeship"],
+    2: ["internship", "hiwiStudentJob"],
+    3: ["languages", "itSkills"],
+    4: ["timeInvestment"],
+    5: ["motivation"],
+    6: [
+      "selfAssessment1",
+      "selfAssessment2",
+      "selfAssessment3",
+      "selfAssessment4",
+      "selfAssessment5",
+      "selfAssessment6",
+      "selfAssessment7",
+      "selfAssessment8",
+    ],
+    7: ["availabilitySelectionWeekend"],
+  };
 
   // Check if the current step is the last step
   const isLastStep = () => {
     return activeStep === maxSteps - 1;
   };
+
+  // Handles the check of the required fields
+  const handleCheckRequiredFields = () => {
+    return checkRequiredFields(attributesToCheckByStep, activeStep, applicationState, updateApplicationErrorState);
+  };
+
   // Handles the next step
   const handleNext = () => {
+    // Check if the required fields are filled and if not return
+    if (handleCheckRequiredFields()) {
+      return;
+    }
+    setCompleted({ ...completed, [activeStep]: true });
     isLastStep() ? setActiveStep(0) : setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -75,6 +123,12 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
 
   // Handle click on step
   const handleStep = (step: number) => () => {
+    // Check if the required fields are filled and if so set the step as completed
+    if (!handleCheckRequiredFields()) {
+      setCompleted({ ...completed, [activeStep]: true });
+    } else {
+      setCompleted({ ...completed, [activeStep]: false });
+    }
     setActiveStep(step);
   };
 
@@ -83,20 +137,57 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
     setIsApplying(true);
   };
 
+  // Handles the application submission
+  const handleSubmition = () => {
+    console.log(completed);
+    console.log(applicationState);
+    alert("Bewerbung abgeschickt");
+  };
+
   // Handles the application completion
   const handleApply = () => {
-    console.log("Apply");
-    alert("Bewerbung abgeschickt");
+    if (handleCheckRequiredFields()) {
+      return;
+    } else {
+      setCompleted({ ...completed, [activeStep]: true });
+    }
+    // if every step is completed, the application is submitted
+    if (Object.values(completed).every((value) => value === true)) {
+      handleSubmition();
+    } else {
+      alert("Bitte fülle alle Felder aus");
+    }
   };
 
   // Renders the current step
   const renderStep = (step: number) => {
-    return (
-      <Stack spacing={3}>
-        <Typography variant="h5">{steps[step].description}</Typography>
-        <TextField helperText="1" minRows={3} variant="outlined" />
-      </Stack>
-    );
+    switch (step) {
+      case 0:
+        return <PersonalDataStep />;
+      case 1:
+        return <StudyStep />;
+      case 2:
+        return <WorkExperienceStep />;
+      case 3:
+        return <LanguagesStep />;
+      case 4:
+        return <HobbiesStep />;
+      case 5:
+        return <MotivationStep />;
+      case 6:
+        return <SelfEvaluationStep />;
+      case 7:
+        return (
+          <FeedbackStep
+            wwStart={generation.wwDateStart}
+            wwEnd={generation.wwDateEnd}
+            selectionWeDateStart={generation.selectionWeDateStart}
+            selectionWeDateEnd={generation.selectionWeDateEnd}
+          />
+        );
+      default:
+        return <PersonalDataStep />;
+    }
   };
 
   if (isApplying) {
@@ -118,9 +209,8 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           maxSteps={maxSteps}
           renderStep={renderStep}
           steps={steps}
+          handleApply={handleApply}
           isLastStep={isLastStep}
-          handleComplete={handleApply}
-          checkRequiredFields={() => false}
         />
       </Container>
     ) : (
@@ -141,8 +231,8 @@ const ApplicationForm = ({ generation }: ApplicationFormProps) => {
           handleStep={handleStep}
           steps={steps.map((step) => step.label)}
           isLastStep={isLastStep}
-          completed={new Array(maxSteps).fill(false)}
-          handleComplete={handleApply}
+          completed={completed}
+          handleApply={handleApply}
           renderStep={renderStep}
         />
       </Container>
