@@ -47,6 +47,7 @@ import ProjectApplicationDetailsPage from "./pages/projects/ProjectApplicationDe
 
 // company pages
 import CompanyOverview from "./pages/companies/CompanyOverview";
+import CompanyDetails from "./pages/companies/CompanyDetails";
 
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
@@ -137,6 +138,7 @@ const App: React.FunctionComponent = () => {
             </Route>
             <Route path="unternehmen">
               <Route index element={<CompanyOverview />} />
+              <Route path=":id" element={<CompanyDetails />} />
             </Route>
             <Route path="veranstaltungen">
               <Route index element={<EventsOverview />} />

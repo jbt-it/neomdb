@@ -207,6 +207,24 @@ export type ProjectDetailsDto = {
   invoicing: Date | null;
 };
 
+// Type of a companyDetailsDto that is received from the backend
+export type CompanyDetailsDto = {
+  companyId: number;
+  name: string;
+  industry: IndustryDto;
+  shortDescription: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  addressAdditional: string;
+  url: string;
+  importantInformation: string;
+  numberProjects?: number;
+  contactDesired: boolean;
+  classified: boolean;
+  projects: ProjectDetailsDto[];
+};
+
 // Type of the project tendering data
 export type ProjectTenderDto = {
   projectName: string;
