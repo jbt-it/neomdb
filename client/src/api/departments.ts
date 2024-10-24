@@ -10,16 +10,16 @@ import { DepartmentDetailsDto, DepartmentMemberDto, DirectorDto, UpdateDepartmen
  * @returns An array of all departments of type DepartmentDetails
  */
 export const getDepartments = async (): Promise<AxiosResponse<DepartmentDetailsDto[]>> => {
-  return await api.get("/members/departments");
+  return await api.get<DepartmentDetailsDto[]>("/members/departments");
 };
 
 /**
- * Get a specific department by ID
+ * Get all department members
  * @param departmentId - The ID of the department
- * @returns The department of type DepartmentDetails
+ * @returns The all department members as DepartmenMemberDto
  */
 export const getDepartmentMembers = async (): Promise<AxiosResponse<DepartmentMemberDto[]>> => {
-  return await api.get("/members/department-members");
+  return await api.get<DepartmentMemberDto[]>("/members/department-members");
 };
 
 /**
@@ -27,7 +27,7 @@ export const getDepartmentMembers = async (): Promise<AxiosResponse<DepartmentMe
  * @returns An array of all current directors of type Director
  */
 export const getCurrentDirectors = async (): Promise<AxiosResponse<DirectorDto[]>> => {
-  return await api.get("/members/directors?current=true");
+  return await api.get<DirectorDto[]>("/members/directors?current=true");
 };
 
 /**
@@ -35,7 +35,7 @@ export const getCurrentDirectors = async (): Promise<AxiosResponse<DirectorDto[]
  * @returns An array of all directors of type Director
  */
 export const getAllDirectors = async (): Promise<AxiosResponse<DirectorDto[]>> => {
-  return await api.get("/members/directors?current=false");
+  return await api.get<DirectorDto[]>("/members/directors?current=false");
 };
 
 //-----------------------------------------------------------------------------------------------------------------------

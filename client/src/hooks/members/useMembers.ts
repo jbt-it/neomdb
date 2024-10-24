@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ItSkill, Language, MemberPartialDto } from "../../types/membersTypes";
 import { useContext } from "react";
 import { AuthContext } from "../../context/auth-context/AuthContext";
 import { AxiosError } from "axios";
@@ -36,7 +35,7 @@ const useMembers = () => {
     queryFn: getMembers,
   });
 
-  const members = (membersData?.data as MemberPartialDto[]) || [];
+  const members = membersData?.data || [];
 
   // ----------------------------------------------------------------------------------
   // getLanguages query
@@ -45,7 +44,7 @@ const useMembers = () => {
     queryFn: getLanguages,
   });
 
-  const languages = (languagesData?.data as Language[]) || [];
+  const languages = languagesData?.data || [];
 
   // ----------------------------------------------------------------------------------
   // getEDVSkills query
@@ -54,7 +53,7 @@ const useMembers = () => {
     queryFn: getITSkills,
   });
 
-  const itSkills = (edvSkillsData?.data as ItSkill[]) || [];
+  const itSkills = edvSkillsData?.data || [];
 
   // ----------------------------------------------------------------------------------
   // ############

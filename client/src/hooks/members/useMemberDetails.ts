@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { MemberDetailsDto, MemberImage } from "../../types/membersTypes";
+import { MemberDetailsDto } from "../../types/membersTypes";
 import { authReducerActionType } from "../../types/globalTypes";
 import {
   getMemberDetails,
@@ -35,7 +35,7 @@ const useMemberDetails = (memberID: number) => {
     queryFn: () => getMemberDetails(memberID),
   });
 
-  const memberDetails = memberDetailsData && (memberDetailsData.data as MemberDetailsDto);
+  const memberDetails = memberDetailsData?.data;
 
   // ----------------------------------------------------------------------------------
   // getMemberImage query
@@ -48,7 +48,7 @@ const useMemberDetails = (memberID: number) => {
     queryFn: () => getMemberImage(memberID),
   });
 
-  const memberImage = memberImageData ? (memberImageData.data as MemberImage) : null;
+  const memberImage = memberImageData?.data;
 
   // Mockdata for previousApplicationsOfMember
   const previousApplicationsOfMember: PreviousExternalProjectDto[] = [

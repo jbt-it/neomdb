@@ -2,11 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Box, Stack, Divider, SelectChangeEvent } from "@mui/material";
 
 import { doesPermissionsHaveSomeOf } from "../../utils/authUtils";
-import api from "../../utils/api";
 import { AuthContext } from "../../context/auth-context/AuthContext";
-
-import { Trainee, InternalProjectDto, Generation } from "../../types/traineesTypes";
-import { authReducerActionType } from "../../types/globalTypes";
 
 import TraineeSectionTable from "../../components/members/trainees/TraineeSectionTable";
 import InternalProjectCard from "../../components/members/trainees/InternalProjectCard";
@@ -14,6 +10,8 @@ import TraineeSectionSkeleton from "../../components/members/trainees/TraineeSec
 import AddInternalProjectButton from "../../components/members/trainees/AddInternalProjectButton";
 import GenerationSelection from "../../components/members/trainees/GenerationSelection";
 import useMembers from "../../hooks/members/useMembers";
+import useTrainees from "../../hooks/trainees/useTrainees";
+import useTraineeGeneration from "../../hooks/trainees/useTraineeGeneration";
 
 /**
  * This component displays the trainee section page
@@ -23,143 +21,29 @@ import useMembers from "../../hooks/members/useMembers";
  * @returns TraineeSection
  */
 const TraineeSection: React.FunctionComponent = () => {
-  const { auth, dispatchAuth } = useContext(AuthContext);
-  const [trainees, setTrainees] = useState<Trainee[]>([]);
-  const [internalProjects, setInternalProjects] = useState<InternalProjectDto[]>([]);
-  const [generations, setGenerations] = useState<Generation[]>([]);
+  const { auth } = useContext(AuthContext);
+  const { generations, isGenerationsFetched } = useTrainees();
+  const { members } = useMembers();
+  const { admitTrainee } = useTrainees();
+
   const [selectedGeneration, setSelectedGeneration] = useState<string | null>(null);
   const hasPermissionInternalProject = doesPermissionsHaveSomeOf(auth.permissions, [15]);
-  const { members } = useMembers();
 
-  const [isLoadingGenerations, setIsLoadingGenerations] = useState<boolean>(true); // state for loading generations
-  const [isLoadingTrainees, setIsLoadingTrainees] = useState<boolean>(true); // state for loading trainees
+  const selectedGenerationId =
+    generations.find((generation) => generation.description === selectedGeneration)?.generationId ?? 0;
 
-  /**
-   * retrieves all generations from the database and sets the state of generations
-   * @returns a list of all generations with their generationID and bezeichnung
-   */
-  const getGenerations: VoidFunction = () => {
-    setIsLoadingGenerations(true);
-    let mounted = true;
-    api
-      .get("/trainees/generations", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setGenerations(res.data.reverse());
-            setSelectedGeneration(res.data[0].description);
-            setIsLoadingGenerations(false);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
+  const {
+    traineeProgress,
+    isTraineeProgressFetched,
+    internalProjectsOfGeneration,
+    isInternalProjectsOfGenerationFetched,
+  } = useTraineeGeneration(selectedGenerationId);
 
-  /**
-   * retrieves all trainees of the selected generation from the database and sets the state of trainees
-   * TODO: remove traineesTmp as soon as the backend route is fixed
-   */
-  const getTrainees: VoidFunction = () => {
-    let mounted = true;
-    api
-      //.get(`/trainees/generations/:generationID/internal-projects-and-workshop-feedback`, {
-      .get(`/members`, {
-        //correct Routes need to be imported
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            //const to add generation value to trainee, because api call currently doesn't get generation
-            const generationID = generations.find(
-              (generation) => generation.description === selectedGeneration
-            )?.generationId;
-            //manually add values for testing until route in backend is fixed
-            const traineesTmp = res.data
-              .filter((trainee: Trainee) => trainee.generationId === generationID)
-              .map((trainee: Trainee) => {
-                return {
-                  ...trainee,
-                  AngebotBeiEV: true,
-                  APgehalten: false,
-                  DLbeiEV: true,
-                  Projektmanagement: true,
-                  RhetorikPräsenationstechnik: true,
-                  AkquiseVerhandlungstechnik: false,
-                  FinanzenRecht: false,
-                  Netzwerke: true,
-                  Qualitätsmanagement: true,
-                  MSPowerpoint: false,
-                  StrategieOrganisation: false,
-                  Datenschutzschulung: false,
-                  Sicherheitsschulung: false,
-                  ExcelGrundlagen: false,
-                };
-              });
-            setTrainees(traineesTmp);
-            setIsLoadingTrainees(false);
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-
-    return () => {
-      mounted = false;
-    };
-  };
-
-  /**
-   * retrieves all traineegenerations from the database and sets the state of traineegenerations
-   * TODO: change to only get a specific generation as soon as the backend route is fixed
-   */
-  const getInternalProjects: VoidFunction = () => {
-    // Variable for checking, if the component is mounted
-    let mounted = true;
-    api
-      .get(`/trainees/ips/all`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          if (mounted) {
-            setInternalProjects(
-              res.data.filter(
-                (item: InternalProjectDto) =>
-                  item.generation ===
-                  generations.find((generation) => generation.description === selectedGeneration)?.generationId
-              )
-            );
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          dispatchAuth({ type: authReducerActionType.deauthenticate });
-        }
-      });
-    // Clean-up function
-    return () => {
-      mounted = false;
-    };
-  };
-
-  useEffect(() => getGenerations(), []);
-  useEffect(() => getTrainees(), [selectedGeneration]);
-  useEffect(() => getInternalProjects(), [selectedGeneration]);
+  useEffect(() => {
+    if (isGenerationsFetched && generations.length > 0) {
+      setSelectedGeneration(generations[0].description);
+    }
+  }, [isGenerationsFetched]);
 
   const addInternalProject = (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => {
     alert(
@@ -182,7 +66,7 @@ const TraineeSection: React.FunctionComponent = () => {
     setSelectedGeneration(event.target.value as string);
   };
 
-  return isLoadingGenerations && isLoadingTrainees ? (
+  return !isGenerationsFetched && !isTraineeProgressFetched && isInternalProjectsOfGenerationFetched ? (
     <TraineeSectionSkeleton />
   ) : (
     <>
@@ -198,7 +82,6 @@ const TraineeSection: React.FunctionComponent = () => {
               <AddInternalProjectButton
                 generationName={selectedGeneration}
                 addInternalProject={addInternalProject}
-                trainees={trainees}
                 members={members.filter(
                   (member) =>
                     member.generationId != generations[0].generationId &&
@@ -218,7 +101,7 @@ const TraineeSection: React.FunctionComponent = () => {
           flexWrap: "wrap",
         })}
       >
-        {internalProjects.map((internalProject) => (
+        {internalProjectsOfGeneration.map((internalProject) => (
           <InternalProjectCard internalProject={internalProject} />
         ))}
       </Box>
@@ -226,7 +109,7 @@ const TraineeSection: React.FunctionComponent = () => {
       {hasPermissionInternalProject ? (
         <>
           <Divider sx={{ mb: 5 }} />
-          <TraineeSectionTable trainees={trainees} />
+          <TraineeSectionTable trainees={traineeProgress} admitTrainee={admitTrainee} />
         </>
       ) : null}
     </>

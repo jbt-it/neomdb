@@ -49,7 +49,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
   };
   const { auth } = useContext(AuthContext);
 
-  const { departments, departmentMembers, currentDirectors } = useDepartments();
+  const { departments, departmentMembers, currentDirectors, updateDepartmentDetails } = useDepartments();
   const [dialogNETOpen, setDialogNETOpen] = useState<boolean>(false);
   const [dialogQMOpen, setDialogQMOpen] = useState<boolean>(false);
   const [dialogFROpen, setDialogFROpen] = useState<boolean>(false);
@@ -290,6 +290,7 @@ const DepartmentOverview: React.FunctionComponent = () => {
             isOpen={getDialogState(department.shortName)}
             onClose={() => getDialogStateChangeFunction(department.shortName)}
             department={department}
+            updateDepartmentDetails={updateDepartmentDetails}
           />
         </Box>
       ))}

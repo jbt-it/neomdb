@@ -13,16 +13,15 @@ import {
 } from "@mui/material";
 import { AddCircleOutline, Clear } from "@mui/icons-material";
 import { Autocomplete } from "@mui/material";
-import { MemberPartialDto } from "../../../types/membersTypes";
-import { Trainee } from "../../../types/traineesTypes";
+import { MemberPartialDto, MembersFieldDto } from "../../../types/membersTypes";
 
 interface AddInternalProjectDialogProps {
   open: boolean;
   handleDialogClose: () => void;
   addInternalProject: (traineeIDs: number[], qmIDs: number[], projectName: string, projectShort: string) => void;
-  trainees: Trainee[];
   members: MemberPartialDto[];
   generationName: string | null;
+  trainees: MembersFieldDto[];
 }
 
 interface MemberOption {
@@ -35,18 +34,18 @@ interface MemberOption {
  * @param open - boolean to determine if the dialog is open
  * @param handleDialogClose - function to close the dialog
  * @param addInternalProject - function to add the internal project to the database
- * @param trainees - array of all current trainees
  * @param members - array of all members who can be selected as QMs
  * @param generationName - name of the generation
+ * @param trainees - array of all trainees who can be selected as project members
  * @returns a dialog to add an internal project to the database
  */
 const AddInternalProjectDialog: React.FunctionComponent<AddInternalProjectDialogProps> = ({
   open,
   handleDialogClose,
   addInternalProject,
-  trainees,
   members,
   generationName,
+  trainees,
 }: AddInternalProjectDialogProps) => {
   const [selectedTrainees, setSelectedTrainees] = useState<MemberOption[]>([]);
   const [selectedQMs, setSelectedQMs] = useState<MemberOption[]>([]);
