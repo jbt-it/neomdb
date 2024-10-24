@@ -58,6 +58,7 @@ const getDbConfig = () => {
     dbName = process.env.DB_NAME;
     entities = [__dirname + "/entities/*.ts"];
     subscribers = [__dirname + "/global/*.ts"];
+    synchronize = true;
   }
 
   return {

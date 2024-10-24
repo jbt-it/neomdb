@@ -1866,6 +1866,10 @@
 						"type": "boolean",
 						"nullable": true
 					},
+					"APHold": {
+						"type": "boolean",
+						"nullable": true
+					},
 					"evaluationAtEV": {
 						"type": "boolean",
 						"nullable": true
@@ -2078,6 +2082,7 @@
 					"soldExpenses",
 					"euroPerBT",
 					"APatEV",
+					"APHold",
 					"evaluationAtEV",
 					"DLatEV",
 					"moneyReceived",
