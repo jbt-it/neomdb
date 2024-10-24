@@ -132,6 +132,258 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"EventMemberRole": {
+				"description": "Enum for the role of a member of an event",
+				"enum": [
+					"Teilnehmer",
+					"Organisator"
+				],
+				"type": "string"
+			},
+			"MemberField": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"nachname": {
+						"type": "string"
+					},
+					"vorname": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"memberID": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"nachname",
+					"vorname",
+					"name",
+					"memberID"
+				],
+				"type": "object",
+				"description": "Type for a member field"
+			},
+			"EventOrganizer": {
+				"allOf": [
+					{
+						"properties": {
+							"role": {
+								"$ref": "#/components/schemas/EventMemberRole"
+							}
+						},
+						"required": [
+							"role"
+						],
+						"type": "object"
+					},
+					{
+						"$ref": "#/components/schemas/MemberField"
+					}
+				],
+				"description": "Type of an organizer of an event"
+			},
+			"EventMember": {
+				"allOf": [
+					{
+						"properties": {
+							"role": {
+								"$ref": "#/components/schemas/EventMemberRole"
+							}
+						},
+						"required": [
+							"role"
+						],
+						"type": "object"
+					},
+					{
+						"$ref": "#/components/schemas/MemberField"
+					}
+				],
+				"description": "Type of a member of an event"
+			},
+			"Arrival": {
+				"description": "Enum for the arrival of a member of a working weekend",
+				"enum": [
+					"FrF",
+					"FrM",
+					"FrA",
+					"SaF",
+					"SaM",
+					"SaA",
+					"SaS"
+				],
+				"type": "string"
+			},
+			"Departure": {
+				"description": "Enum for the departure of a member of a working weekend",
+				"enum": [
+					"FrM",
+					"FrA",
+					"SaF",
+					"SaM",
+					"SaA",
+					"So"
+				],
+				"type": "string"
+			},
+			"EventWWMember": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"isVegetarian": {
+						"type": "boolean"
+					},
+					"seats": {
+						"type": "number",
+						"format": "double"
+					},
+					"car": {
+						"type": "boolean"
+					},
+					"departure": {
+						"$ref": "#/components/schemas/Departure"
+					},
+					"arrival": {
+						"$ref": "#/components/schemas/Arrival"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"mitgliedId": {
+						"type": "number",
+						"format": "double"
+					},
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"comment",
+					"isVegetarian",
+					"seats",
+					"car",
+					"departure",
+					"arrival",
+					"lastName",
+					"firstName",
+					"mitgliedId",
+					"eventId"
+				],
+				"type": "object",
+				"description": "Type of a member of an event that is a working weekend"
+			},
+			"EventDto": {
+				"properties": {
+					"wwMembers": {
+						"items": {
+							"$ref": "#/components/schemas/EventWWMember"
+						},
+						"type": "array"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/EventMember"
+						},
+						"type": "array"
+					},
+					"organizers": {
+						"items": {
+							"$ref": "#/components/schemas/EventOrganizer"
+						},
+						"type": "array"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"WW",
+							"Netzwerk",
+							"JBT goes",
+							"Sonstige",
+							"Workshop",
+							"Pflichtworkshop"
+						]
+					},
+					"description": {
+						"type": "string"
+					},
+					"maxParticipants": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"registrationEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"registrationStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"endTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"startTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"name": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"wwMembers",
+					"members",
+					"organizers",
+					"type",
+					"description",
+					"maxParticipants",
+					"registrationEnd",
+					"registrationStart",
+					"endTime",
+					"startTime",
+					"endDate",
+					"startDate",
+					"location",
+					"name",
+					"eventId"
+				],
+				"type": "object",
+				"description": "Type of the updated event"
+			},
 			"Member": {
 				"properties": {
 					"memberId": {
@@ -2560,11 +2812,7 @@
 						"format": "double"
 					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"Teilnehmer",
-							"Organisator"
-						]
+						"$ref": "#/components/schemas/EventMemberRole"
 					},
 					"registrationTime": {
 						"type": "string",
@@ -2728,7 +2976,7 @@
 						"format": "double",
 						"nullable": true
 					},
-					"vegetarian": {
+					"isVegetarian": {
 						"type": "boolean",
 						"nullable": true
 					},
@@ -2750,7 +2998,7 @@
 					"departure",
 					"car",
 					"seats",
-					"vegetarian",
+					"isVegetarian",
 					"comment",
 					"event",
 					"member"
@@ -4707,6 +4955,111 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/events/{eventID}": {
+			"get": {
+				"operationId": "GetEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EventDto"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the event with the given `eventID`",
+				"summary": "Retrieves the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to retrieve",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateEvent",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Updates the event with the given `eventID` with the given `updatedEvent`",
+				"summary": "Updates the event",
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the event to update",
+						"in": "path",
+						"name": "eventID",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EventDto"
+							},
+							"example": {
+								"eventId": 7,
+								"name": "Test Event",
+								"location": "Test Location",
+								"startDate": "2022-01-01",
+								"endDate": "2022-01-02",
+								"startTime": "12:00",
+								"endTime": "12:00",
+								"registrationStart": "2021-01-01",
+								"registrationEnd": "2021-01-02",
+								"maxParticipants": 100,
+								"description": "Test Description",
+								"type": "Sonstige",
+								"organizers": [
+									{
+										"memberID": 8167,
+										"vorname": "Wolfgang",
+										"nachname": "Luft",
+										"status": "aktiv",
+										"name": "w.luft",
+										"role": "Organisator"
+									}
+								],
+								"members": [],
+								"wwMembers": []
+							}
+						}
+					}
+				}
 			}
 		},
 		"/members": {

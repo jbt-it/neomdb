@@ -7,8 +7,6 @@ import { InternalProject } from "../../src/entities/InternalProject";
  * Utility class for testing the trainees routes
  */
 class TraineeTestUtils {
-  initTraineeScript = "./test/scripts/trainees/db_trainee_init.sql";
-  clearInitTraineeScript = "./test/scripts/trainees/db_trainee_init_clear.sql";
   clearTraineeScript = "./test/scripts/trainees/db_trainee_clear.sql";
   fillTraineeScript = "./test/scripts/trainees/db_trainee_fill.sql";
 
@@ -17,33 +15,6 @@ class TraineeTestUtils {
   constructor(app: Express.Application) {
     this.app = app;
   }
-
-  /**
-   * Initializes the trainee database with data that is not changed during tests
-   * (e.g. permissions)
-   */
-  initTraineeData = async () => {
-    try {
-      console.log("------------------INIT DATABASE------------------");
-      await executeScript(this.initTraineeScript);
-      console.log("> Database initialized!");
-    } catch (error) {
-      console.error(`> ERROR: Failed to init trainee data: ${error}`);
-    }
-  };
-
-  /**
-   * Clears the database of the initial tables (data that is not changed during tests)
-   */
-  clearInitTraineeData = async () => {
-    try {
-      console.log("------------------INIT DATABASE------------------");
-      await executeScript(this.clearInitTraineeScript);
-      console.log("> Database initialized!");
-    } catch (error) {
-      console.error(`> ERROR: Failed to init trainee data: ${error}`);
-    }
-  };
 
   /**
    * Fills the trainee database with data that is changed during tests

@@ -5,10 +5,11 @@ import TraineeTestUtils from "../../utils/traineeTestUtils";
 import AuthTestUtils from "../../utils/authTestUtils";
 import { AppDataSource } from "../../../src/datasource";
 import { MembersRepository } from "../../../src/resources/members/MembersRepository";
+import MemberTestUtils from "../../utils/memberTestUtils";
 
 const authTestUtils = new AuthTestUtils(app);
 const traineeTestUtils = new TraineeTestUtils(app);
-
+const memberTestUtils = new MemberTestUtils(app);
 // --------------------------- SETUP AND TEARDOWN --------------------------- \\
 beforeAll(async () => {
   // Initialize the data source
@@ -17,7 +18,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   // Populate the database with test data before each test
-  await traineeTestUtils.initTraineeData();
+  await memberTestUtils.initMemberData();
   await traineeTestUtils.setupTraineeData();
 });
 

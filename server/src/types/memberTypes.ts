@@ -39,6 +39,17 @@ export type MentorDto = {
 };
 
 /**
+ * Type for a member field
+ */
+export type MemberField = {
+  memberID: number;
+  name: string;
+  vorname: string;
+  nachname: string;
+  status: string;
+};
+
+/**
  * Type of the member status dto
  */
 export type MemberStatusDto = {
