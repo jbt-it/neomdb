@@ -7,6 +7,7 @@ const SidebarDesktop = () => {
   const [openMitglieder, setOpenMitglieder] = useState(false);
   const [openTools, setOpenTools] = useState(false);
   const [openEvents, setOpenEvents] = useState(false);
+  const [openProjects, setOpenProjects] = useState(false);
   const [openKvp, setOpenKvp] = useState(false);
 
   const handleOpenMitglieder = () => {
@@ -16,6 +17,9 @@ const SidebarDesktop = () => {
     }
     if (openEvents) {
       setOpenEvents(false);
+    }
+    if (openProjects) {
+      setOpenProjects(false);
     }
     if (openKvp) {
       setOpenKvp(false);
@@ -30,6 +34,9 @@ const SidebarDesktop = () => {
     if (openEvents) {
       setOpenEvents(false);
     }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
     if (openKvp) {
       setOpenKvp(false);
     }
@@ -43,13 +50,35 @@ const SidebarDesktop = () => {
     if (openTools) {
       setOpenTools(false);
     }
+    if (openProjects) {
+      setOpenProjects(false);
+    }
     if (openKvp) {
       setOpenKvp(false);
     }
   };
 
+  const handleOpenProjects = () => {
+    setOpenProjects(!openProjects);
+    if (openKvp) {
+      setOpenKvp(false);
+    }
+    if (openMitglieder) {
+      setOpenMitglieder(false);
+    }
+    if (openTools) {
+      setOpenTools(false);
+    }
+    if (openEvents) {
+      setOpenEvents(false);
+    }
+  };
+
   const handleOpenKvp = () => {
     setOpenKvp(!openKvp);
+    if (openProjects) {
+      setOpenProjects(false);
+    }
     if (openMitglieder) {
       setOpenMitglieder(false);
     }
@@ -84,6 +113,8 @@ const SidebarDesktop = () => {
                 ? openTools
                 : item.title === "Veranstaltungen"
                 ? openEvents
+                : item.title === "Projekte"
+                ? openProjects
                 : item.title === "KVP"
                 ? openKvp
                 : undefined
@@ -95,6 +126,8 @@ const SidebarDesktop = () => {
                 ? handleOpenTools
                 : item.title === "Veranstaltungen"
                 ? handleOpenEvents
+                : item.title === "Projekte"
+                ? handleOpenProjects
                 : item.title === "KVP"
                 ? handleOpenKvp
                 : undefined

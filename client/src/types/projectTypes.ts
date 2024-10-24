@@ -78,6 +78,7 @@ export type CompanyDto = {
   addressAdditional: string;
   url: string;
   importantInformation: string;
+  numberProjects?: number;
   contactDesired: boolean;
   classified: boolean;
 };

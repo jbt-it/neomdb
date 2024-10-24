@@ -45,6 +45,9 @@ import ProjectApplication from "./pages/projects/ProjectApplication";
 import ProjectApplications from "./pages/projects/ProjectApplications";
 import ProjectApplicationDetailsPage from "./pages/projects/ProjectApplicationDetails";
 
+// company pages
+import CompanyOverview from "./pages/companies/CompanyOverview";
+
 // finance pages
 import FinanceOverview from "./pages/finance/FinanceOverview";
 import MembershipFee from "./pages/finance/MembershipFee";
@@ -131,6 +134,9 @@ const App: React.FunctionComponent = () => {
                   </ProtectedRoutes>
                 }
               />
+            </Route>
+            <Route path="unternehmen">
+              <Route index element={<CompanyOverview />} />
             </Route>
             <Route path="veranstaltungen">
               <Route index element={<EventsOverview />} />
