@@ -12,9 +12,9 @@ interface ApplicationStepperProps {
   handleStep: (step: number) => () => void;
   steps: string[];
   isLastStep: () => boolean;
-  completed: boolean[];
+  completed: { [k: number]: boolean };
   renderStep: (step: number) => JSX.Element;
-  handleComplete: () => void;
+  handleApply: () => void;
 }
 
 /**
@@ -27,6 +27,7 @@ interface ApplicationStepperProps {
  * @param isLastStep The function to check if the current step is the last step
  * @param completed The completed steps
  * @param renderStep The function to render the step
+ * @param handleApply The function to handle the completion of the form
  * @returns the respective stepper for the application form
  */
 const ApplicationStepper = ({
@@ -38,7 +39,7 @@ const ApplicationStepper = ({
   isLastStep,
   completed,
   renderStep,
-  handleComplete,
+  handleApply,
 }: ApplicationStepperProps) => {
   const useAlternativeLabel = useResponsive("between", "md", "lg") || undefined;
 
@@ -54,10 +55,22 @@ const ApplicationStepper = ({
         flexDirection: "column",
         flex: 1,
         margin: 5,
+        maxWidth: "1400px",
       }}
+      elevation={3}
     >
-      <Stack direction={"column"} justifyContent={"space-evenly"} sx={{ flex: 1, height: "100%" }}>
-        <Stepper nonLinear activeStep={activeStep} sx={{ flex: 0 }} alternativeLabel={useAlternativeLabel}>
+      <Stack
+        direction={"column"}
+        alignItems={"center"}
+        justifyContent={"space-evenly"}
+        sx={{ flex: 1, height: "100%" }}
+      >
+        <Stepper
+          nonLinear
+          activeStep={activeStep}
+          sx={{ flex: 0, width: "100%" }}
+          alternativeLabel={useAlternativeLabel}
+        >
           {steps.map((label, index) => (
             <Step key={label} completed={completed[index]}>
               <StepButton color="inherit" onClick={handleStep(index)} sx={{ borderRadius: 5, maxHeight: "50%" }}>
@@ -66,14 +79,27 @@ const ApplicationStepper = ({
             </Step>
           ))}
         </Stepper>
-        <Box sx={{ flex: 1, overflow: "auto", mt: 2 }}>{renderStep(activeStep)}</Box>
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box
+          sx={{
+            flex: 1,
+            overflow: "auto",
+            mt: 2,
+            pt: 2,
+            display: "flex",
+            justifyContent: "center",
+            width: "60%",
+            maxWidth: "800px",
+          }}
+        >
+          {renderStep(activeStep)}
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "row", marginTop: 6 }} width={"60%"}>
           <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} variant="outlined">
             Zurück
           </Button>
           <Box sx={{ flex: "1 1 auto" }} />
           {isLastStep() ? (
-            <Button onClick={handleComplete} sx={{ mr: 1 }} variant="outlined">
+            <Button onClick={handleApply} sx={{ mr: 1 }} variant="outlined">
               Bewerben
             </Button>
           ) : (

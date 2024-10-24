@@ -37,7 +37,7 @@ const getDbConfig = () => {
   let dbUsername = null;
   let dbName = null;
   let entities = [];
-  let synchronize = false;
+  let synchronize = true;
   let subscribers = [];
   if (isTest) {
     dbHost = process.env.DB_TEST_HOST;

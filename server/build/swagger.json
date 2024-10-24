@@ -132,6 +132,457 @@
 				"type": "object",
 				"description": "Type of the request to reset the password of a user"
 			},
+			"ApplicationPracticalExperienceDto": {
+				"properties": {
+					"end": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"start": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"company": {
+						"type": "string",
+						"nullable": true
+					},
+					"activity": {
+						"type": "string",
+						"nullable": true
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"location",
+					"company",
+					"activity",
+					"id"
+				],
+				"type": "object"
+			},
+			"SkillDto": {
+				"properties": {
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"level",
+					"name",
+					"id"
+				],
+				"type": "object"
+			},
+			"ApplicationDto": {
+				"properties": {
+					"availabilitySelectionWeekend": {
+						"type": "string",
+						"enum": [
+							"kannImmer",
+							"nichtFR",
+							"nichtSA",
+							"nichtSO"
+						],
+						"nullable": true
+					},
+					"newsletter": {
+						"type": "boolean"
+					},
+					"partner": {
+						"type": "boolean"
+					},
+					"campusRally": {
+						"type": "boolean"
+					},
+					"socialMedia": {
+						"type": "boolean"
+					},
+					"workingWeekend": {
+						"type": "boolean"
+					},
+					"othersText": {
+						"type": "string"
+					},
+					"others": {
+						"type": "boolean"
+					},
+					"internet": {
+						"type": "boolean"
+					},
+					"informationStand": {
+						"type": "boolean"
+					},
+					"friends": {
+						"type": "boolean"
+					},
+					"lectures": {
+						"type": "boolean"
+					},
+					"posters": {
+						"type": "boolean"
+					},
+					"flyer": {
+						"type": "boolean"
+					},
+					"selfAssessment8": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment7": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment6": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment5": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment4": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment3": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment2": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"selfAssessment1": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"motivation": {
+						"type": "string",
+						"nullable": true
+					},
+					"timeInvestment": {
+						"type": "string",
+						"nullable": true
+					},
+					"hobbies": {
+						"type": "string",
+						"nullable": true
+					},
+					"itSkills": {
+						"items": {
+							"$ref": "#/components/schemas/SkillDto"
+						},
+						"type": "array"
+					},
+					"languages": {
+						"items": {
+							"$ref": "#/components/schemas/SkillDto"
+						},
+						"type": "array"
+					},
+					"voluntaryStudy": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"voluntarySchool": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"hiwiStudentJob": {
+						"items": {
+							"$ref": "#/components/schemas/ApplicationPracticalExperienceDto"
+						},
+						"type": "array"
+					},
+					"internship": {
+						"items": {
+							"$ref": "#/components/schemas/ApplicationPracticalExperienceDto"
+						},
+						"type": "array"
+					},
+					"occupationEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"occupationStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"occupationLocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupationCompany": {
+						"type": "string",
+						"nullable": true
+					},
+					"occupation": {
+						"type": "string",
+						"nullable": true
+					},
+					"hasOccupation": {
+						"type": "boolean"
+					},
+					"apprenticeshipEnd": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apprenticeshipStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"apprenticeshipLocation": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipCompany": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeshipJob": {
+						"type": "string",
+						"nullable": true
+					},
+					"apprenticeship": {
+						"type": "boolean"
+					},
+					"bachelorUniversity": {
+						"type": "string",
+						"nullable": true
+					},
+					"bachelorSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyThirdMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"studySecondMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyFirstMajor": {
+						"type": "string",
+						"nullable": true
+					},
+					"studySemester": {
+						"type": "string",
+						"nullable": true
+					},
+					"studyStart": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"enrolledOtherSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledSubject": {
+						"type": "string",
+						"nullable": true
+					},
+					"enrolledUniversity": {
+						"type": "string"
+					},
+					"enrolledDegree": {
+						"type": "string"
+					},
+					"studyAddressCity": {
+						"type": "string"
+					},
+					"studyAddressPostalCode": {
+						"type": "string"
+					},
+					"studyAddressNumber": {
+						"type": "string"
+					},
+					"studyAddressStreet": {
+						"type": "string"
+					},
+					"homeAddressCity": {
+						"type": "string"
+					},
+					"homeAddressPostalCode": {
+						"type": "string"
+					},
+					"homeAddressNumber": {
+						"type": "string"
+					},
+					"homeAddressStreet": {
+						"type": "string"
+					},
+					"confirmEmail": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"mobilePhone": {
+						"type": "string"
+					},
+					"birthDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"picture": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string",
+						"enum": [
+							"männlich",
+							"weiblich",
+							"divers"
+						],
+						"nullable": true
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"availabilitySelectionWeekend",
+					"newsletter",
+					"partner",
+					"campusRally",
+					"socialMedia",
+					"workingWeekend",
+					"othersText",
+					"others",
+					"internet",
+					"informationStand",
+					"friends",
+					"lectures",
+					"posters",
+					"flyer",
+					"selfAssessment8",
+					"selfAssessment7",
+					"selfAssessment6",
+					"selfAssessment5",
+					"selfAssessment4",
+					"selfAssessment3",
+					"selfAssessment2",
+					"selfAssessment1",
+					"motivation",
+					"timeInvestment",
+					"hobbies",
+					"itSkills",
+					"languages",
+					"voluntaryStudy",
+					"voluntarySchool",
+					"hiwiStudentJob",
+					"internship",
+					"occupationEnd",
+					"occupationStart",
+					"occupationLocation",
+					"occupationCompany",
+					"occupation",
+					"hasOccupation",
+					"apprenticeshipEnd",
+					"apprenticeshipStart",
+					"apprenticeshipLocation",
+					"apprenticeshipCompany",
+					"apprenticeshipJob",
+					"apprenticeship",
+					"bachelorUniversity",
+					"bachelorSubject",
+					"studyThirdMajor",
+					"studySecondMajor",
+					"studyFirstMajor",
+					"studySemester",
+					"studyStart",
+					"enrolledOtherSubject",
+					"enrolledSubject",
+					"enrolledUniversity",
+					"enrolledDegree",
+					"studyAddressCity",
+					"studyAddressPostalCode",
+					"studyAddressNumber",
+					"studyAddressStreet",
+					"homeAddressCity",
+					"homeAddressPostalCode",
+					"homeAddressNumber",
+					"homeAddressStreet",
+					"confirmEmail",
+					"email",
+					"mobilePhone",
+					"birthDate",
+					"picture",
+					"gender",
+					"lastName",
+					"firstName"
+				],
+				"type": "object"
+			},
+			"ApplicationImageDto": {
+				"properties": {
+					"base64": {
+						"type": "string"
+					},
+					"mimeType": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"base64",
+					"mimeType"
+				],
+				"type": "object"
+			},
+			"ApplicationRequestDto": {
+				"properties": {
+					"applicationImage": {
+						"$ref": "#/components/schemas/ApplicationImageDto"
+					},
+					"application": {
+						"$ref": "#/components/schemas/ApplicationDto"
+					}
+				},
+				"required": [
+					"applicationImage",
+					"application"
+				],
+				"type": "object"
+			},
 			"Member": {
 				"properties": {
 					"memberId": {
@@ -854,7 +1305,12 @@
 						"nullable": true
 					},
 					"gender": {
-						"type": "boolean",
+						"type": "string",
+						"enum": [
+							"männlich",
+							"weiblich",
+							"divers"
+						],
 						"nullable": true
 					},
 					"picture": {
@@ -928,6 +1384,7 @@
 					},
 					"studyStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"studySemester": {
@@ -968,10 +1425,12 @@
 					},
 					"apprenticeshipStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"apprenticeshipEnd": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"occupation": {
@@ -988,10 +1447,12 @@
 					},
 					"occupationStart": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"occupationEnd": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"itSkills": {
@@ -1082,7 +1543,7 @@
 						"type": "boolean",
 						"nullable": true
 					},
-					"availabilityWorkingWeekend": {
+					"availabilitySelectionWeekend": {
 						"type": "string",
 						"enum": [
 							"kannImmer",
@@ -1093,23 +1554,23 @@
 						"nullable": true
 					},
 					"socialMedia": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"campusRally": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"partner": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
 						"nullable": true
 					},
 					"newsletter": {
-						"type": "number",
-						"format": "double",
+						"type": "boolean",
+						"nullable": true
+					},
+					"informationStand": {
+						"type": "boolean",
 						"nullable": true
 					},
 					"admittedMember": {
@@ -1213,11 +1674,12 @@
 					"others",
 					"othersText",
 					"workingWeekend",
-					"availabilityWorkingWeekend",
+					"availabilitySelectionWeekend",
 					"socialMedia",
 					"campusRally",
 					"partner",
 					"newsletter",
+					"informationStand",
 					"admittedMember",
 					"generationEntity",
 					"traineeApplicantVoluntarySchools",
@@ -1307,10 +1769,12 @@
 					},
 					"start": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"end": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"traineeApplicant": {
@@ -1354,10 +1818,12 @@
 					},
 					"start": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"end": {
 						"type": "string",
+						"format": "date-time",
 						"nullable": true
 					},
 					"traineeApplicant": {
@@ -1392,7 +1858,8 @@
 						"nullable": true
 					},
 					"languageLevel": {
-						"type": "string",
+						"type": "number",
+						"format": "double",
 						"nullable": true
 					},
 					"traineeApplicant": {
@@ -4707,6 +5174,42 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/application": {
+			"post": {
+				"operationId": "SaveApplication",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"description": "Saves a new application to the database",
+				"summary": "Saves a new application to the database",
+				"tags": [
+					"Application"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- The application to save and the image to save as ApplicationRequestDto",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApplicationRequestDto",
+								"description": "- The application to save and the image to save as ApplicationRequestDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/members": {

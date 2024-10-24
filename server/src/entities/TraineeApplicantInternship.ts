@@ -20,10 +20,10 @@ export class TraineeApplicantInternship {
   location: string | null;
 
   @Column("varchar", { name: "beginn", nullable: true, length: 45 })
-  start: string | null;
+  start: Date | null;
 
   @Column("varchar", { name: "ende", nullable: true, length: 45 })
-  end: string | null;
+  end: Date | null;
 
   @ManyToOne(() => TraineeApplicant, (traineeApplicant) => traineeApplicant.traineeApplicantInternships, {
     onDelete: "NO ACTION",
